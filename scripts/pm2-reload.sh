@@ -24,7 +24,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 set -euo pipefail
 
-PM2_PROCESS="english-tutor"
+PM2_PROCESS="dhcb"
 PORT="${PORT:-3001}"
 HEALTH_URL="http://localhost:$PORT/api/health"
 MAX_WAIT=30   # giây tối đa đợi health OK sau reload

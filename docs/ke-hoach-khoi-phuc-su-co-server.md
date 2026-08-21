@@ -19,7 +19,7 @@
 | VPS IP                  | `103.118.29.58` (VPS 3 vCPU / 3GB RAM)                                                         |
 | Domain                  | `donghanhcungban.org` (Hub), `en-vi.donghanhcungban.org` (English App)                         |
 | Thư mục app             | `/var/www/dhcb`                                                                                |
-| PM2 process             | `english-tutor` (port **3001**, 3 workers cluster)                                             |
+| PM2 process             | `dhcb` (port **3001**, 3 workers cluster)                                                      |
 | Health check            | `curl https://en-vi.donghanhcungban.org/api/health`                                            |
 | Database                | PostgreSQL tự host, db `dhcb`, user `dhcb_app`                                                 |
 | Backup DB               | `/var/backups/dhcb_YYYYMMDD.sql.gz` (cron 3h sáng, giữ 7 bản)                                  |
@@ -54,9 +54,9 @@ Host dhcb
 Cách dùng sau khi thêm:
 
 ```bash
-ssh app                              # vào thẳng /var/www/english-tutor, không cần gõ cd
+ssh app                              # vào thẳng /var/www/dhcb, không cần gõ cd
 ssh xboss                            # vào VPS bình thường (thư mục home)
-ssh xboss "pm2 logs english-tutor"   # chạy 1 lệnh lẻ rồi thoát, không vào shell
+ssh xboss "pm2 logs dhcb"   # chạy 1 lệnh lẻ rồi thoát, không vào shell
 ```
 
 > ⚠️ Đổi `IdentityFile` cho khớp đúng khóa SSH bạn dùng, và đổi `HostName` nếu IP VPS đổi (xem
@@ -121,7 +121,7 @@ ssh root@103.81.87.174
 pm2 status
 
 # 4. Log lỗi gần nhất
-pm2 logs english-tutor --lines 50 --nostream
+pm2 logs dhcb --lines 50 --nostream
 
 # 5. Database còn sống không?
 sudo -u postgres psql -c "SELECT 1;"
@@ -166,7 +166,7 @@ khiến kernel không phản hồi SSH.
 3. Nếu máy "đã tắt"/"treo": **restart VPS** qua control panel.
 4. Sau khi VPS lên lại: SSH vào, chạy chẩn đoán Phần 2 lại từ đầu — PM2 thường **tự khởi động
    lại** app nếu đã chạy `pm2 startup` + `pm2 save` trước đó (kiểm tra: `pm2 status`; nếu app
-   không tự lên, chạy `pm2 resurrect` hoặc `cd /var/www/english-tutor && pm2 start
+   không tự lên, chạy `pm2 resurrect` hoặc `cd /var/www/dhcb && pm2 start
 ecosystem.config.cjs`).
 5. Nếu nguyên nhân là **hết RAM** (kiểm tra `dmesg | grep -i "out of memory"` sau khi vào lại
    được) → xem thêm mục 3.7 (quá tải).
@@ -176,7 +176,7 @@ ecosystem.config.cjs`).
 **Triệu chứng:** `pm2 status` báo `errored` hoặc `↺` (restart count) tăng liên tục.
 
 ```bash
-pm2 logs english-tutor --lines 100 --nostream   # đọc lỗi thật gây crash
+pm2 logs dhcb --lines 100 --nostream   # đọc lỗi thật gây crash
 ```
 
 **Xử lý theo nguyên nhân log cho thấy:**
@@ -191,18 +191,18 @@ pm2 logs english-tutor --lines 100 --nostream   # đọc lỗi thật gây crash
   `docs/rollback-runbook.md`.
 - **Không rõ nguyên nhân, cần app sống lại ngay:**
   ```bash
-  cd /var/www/english-tutor
-  pm2 delete english-tutor
+  cd /var/www/dhcb
+  pm2 delete dhcb
   pm2 start ecosystem.config.cjs
-  pm2 logs english-tutor --lines 30   # xem có lên ổn không
+  pm2 logs dhcb --lines 30   # xem có lên ổn không
   ```
 - Nếu vẫn lỗi → build lại sạch từ đầu (loại trừ `node_modules`/`dist` hỏng):
   ```bash
-  cd /var/www/english-tutor
+  cd /var/www/dhcb
   rm -rf dist dist-server node_modules
   npm ci
   npm run build
-  pm2 restart english-tutor
+  pm2 restart dhcb
   ```
 
 **Xác minh xong:** `curl https://en-vi.donghanhcungban.com/api/health` trả `{"status":"ok",...}`
@@ -215,7 +215,7 @@ và thử đăng nhập + 1 luồng thật (tra từ điển hoặc gửi 1 tin 
 
 ```bash
 # Tìm thư mục chiếm nhiều dung lượng nhất
-du -sh /var/www/english-tutor/* | sort -rh | head -10
+du -sh /var/www/dhcb/* | sort -rh | head -10
 du -sh /var/backups/* 2>/dev/null | sort -rh | head -10
 du -sh /root/.pm2/logs/* 2>/dev/null | sort -rh | head -10
 ```
@@ -228,11 +228,11 @@ du -sh /root/.pm2/logs/* 2>/dev/null | sort -rh | head -10
 2. Backup Postgres **quá hạn giữ** (script `verify-pg-backup.sh`/cron đã tự xoá bản >7 ngày —
    nếu chưa chạy, xoá tay bản cũ nhất, **giữ lại ít nhất 1-2 bản gần nhất**):
    ```bash
-   ls -lt /var/backups/english_tutor_*.sql.gz
+   ls -lt /var/backups/dhcb_*.sql.gz
    ```
 3. `node_modules`/`dist` cũ không dùng (an toàn, build lại được):
    ```bash
-   cd /var/www/english-tutor && rm -rf dist dist-server node_modules && npm ci && npm run build
+   cd /var/www/dhcb && rm -rf dist dist-server node_modules && npm ci && npm run build
    ```
 4. **Không xoá** `uploads/` (audio cache, nếu `STORAGE_DRIVER=local`) hay dữ liệu Postgres thật —
    đây là dữ liệu người dùng, không tái tạo được.
@@ -259,7 +259,7 @@ sudo -u postgres psql -c "SELECT count(*), state FROM pg_stat_activity GROUP BY 
   `sudo journalctl -u postgresql -n 100 --no-pager`. Nguyên nhân thường gặp: hết ổ đĩa (→ 3.3),
   file cấu hình `postgresql.conf`/`pg_hba.conf` bị sửa sai gần đây, hoặc dữ liệu (`PGDATA`) hỏng.
 - **`too many clients`** → app có thể đang leak connection pool (`pg.Pool` trong
-  `api/_lib/pgPool.ts`) — restart app trước (`pm2 restart english-tutor`) để giải phóng kết nối
+  `api/_lib/pgPool.ts`) — restart app trước (`pm2 restart dhcb`) để giải phóng kết nối
   cũ, sau đó điều tra code nếu lặp lại thường xuyên (không phải sự cố tạm thời).
 - **Dữ liệu nghi hỏng (không chỉ là không kết nối được)** → **DỪNG, không tự sửa tay trong DB**,
   chuyển sang mục 3.5 (restore từ backup) — sửa tay khi đang hoảng dễ làm mất thêm dữ liệu.
@@ -273,25 +273,25 @@ sudo -u postgres psql -c "SELECT count(*), state FROM pg_stat_activity GROUP BY 
 
 ```bash
 # 1. Xem các bản backup có sẵn (mới nhất trước)
-ls -lt /var/backups/english_tutor_*.sql.gz
+ls -lt /var/backups/dhcb_*.sql.gz
 
 # 2. LUÔN backup trạng thái HIỆN TẠI trước khi ghi đè (dù đang lỗi — có thể vẫn cứu được ít dữ liệu)
-sudo -u postgres pg_dump english_tutor | gzip > /var/backups/before-restore-$(date +%Y%m%d-%H%M).sql.gz
+sudo -u postgres pg_dump dhcb | gzip > /var/backups/before-restore-$(date +%Y%m%d-%H%M).sql.gz
 
 # 3. Test khôi phục vào DB TẠM trước (không đụng DB thật) — dùng script có sẵn:
-bash /var/www/english-tutor/scripts/verify-pg-backup.sh /var/backups/english_tutor_<ngày-cần>.sql.gz
+bash /var/www/dhcb/scripts/verify-pg-backup.sh /var/backups/dhcb_<ngày-cần>.sql.gz
 
 # 4. Nếu bước 3 OK (backup không hỏng) — mới restore đè lên DB thật:
-pm2 stop english-tutor   # dừng app trong lúc restore, tránh ghi đè song song
-sudo -u postgres dropdb english_tutor
-sudo -u postgres createdb english_tutor -O tutor_app
-gunzip -c /var/backups/english_tutor_<ngày-cần>.sql.gz | sudo -u postgres psql english_tutor
+pm2 stop dhcb   # dừng app trong lúc restore, tránh ghi đè song song
+sudo -u postgres dropdb dhcb
+sudo -u postgres createdb dhcb -O tutor_app
+gunzip -c /var/backups/dhcb_<ngày-cần>.sql.gz | sudo -u postgres psql dhcb
 
 # 5. Chạy lại migration nếu backup cũ hơn schema hiện tại (bản backup có thể thiếu bảng/cột mới)
-cd /var/www/english-tutor && npm run migrate:pg
+cd /var/www/dhcb && npm run migrate:pg
 
 # 6. Khởi động lại app + xác minh
-pm2 start english-tutor
+pm2 start dhcb
 curl http://localhost:3001/api/health
 ```
 
@@ -341,14 +341,14 @@ sudo tail -n 5000 /var/log/nginx/access.log | awk '{print $1}' | sort | uniq -c 
 
 ### 3.8 Nghi bị xâm nhập bảo mật
 
-**Dấu hiệu:** file lạ trong `/var/www/english-tutor`, tài khoản Postgres lạ, log SSH có đăng nhập
+**Dấu hiệu:** file lạ trong `/var/www/dhcb`, tài khoản Postgres lạ, log SSH có đăng nhập
 từ IP không quen, `crontab` có dòng lạ.
 
 **Xử lý (ưu tiên ngăn chặn trước, điều tra sau):**
 
 1. **Đổi ngay mọi secret** có khả năng đã lộ: mật khẩu Postgres (`tutor_app`), `JWT_SECRET`/khoá
    ký token trong `.env`, API key AI (Claude/Groq/OpenAI/Google TTS) — thu hồi key cũ ở nhà cung
-   cấp, tạo key mới, cập nhật `.env`, `pm2 restart english-tutor --update-env`.
+   cấp, tạo key mới, cập nhật `.env`, `pm2 restart dhcb --update-env`.
 2. Đổi mật khẩu SSH/khoá SSH của VPS; kiểm tra `~/.ssh/authorized_keys` có khoá lạ không.
 3. Kiểm tra `crontab -l` (cả user thường và `sudo -u postgres crontab -l`) — xoá dòng lạ không
    phải do mình thêm.
@@ -379,10 +379,10 @@ tài liệu khác (`docs/deploy-vps-ubuntu.md`) vẫn ghi IP cũ tới khi có n
    Cloudflare R2 — xem `scripts/backup-pg-to-r2.ts` + `scripts/restore-pg-from-r2.ts`):
 
    ```bash
-   cd /var/www/english-tutor
+   cd /var/www/dhcb
    npm run restore:r2 -- --list                       # xem các bản backup có sẵn
    RESTORE_PSQL_URL='postgresql://postgres:MẬT-KHẨU-SUPERUSER@localhost:5432/postgres' \
-     npm run restore:r2 -- --restore-into english_tutor --yes
+     npm run restore:r2 -- --restore-into dhcb --yes
    ```
 
    - Nếu **không nhớ/không chắc mật khẩu superuser `postgres`** trên máy mới (rất có thể — máy mới
@@ -398,7 +398,7 @@ tài liệu khác (`docs/deploy-vps-ubuntu.md`) vẫn ghi IP cũ tới khi có n
      ```bash
      npm run restore:r2 -- --download                 # tải 1 lần, giữ lại file
      RESTORE_PSQL_URL='...' npm run restore:r2 -- \
-       --restore-into english_tutor --from-file ./english-tutor-2026-08-08.sql.gz --yes
+       --restore-into dhcb --from-file ./dhcb-2026-08-08.sql.gz --yes
      ```
      File truyền qua `--from-file` **không bị script tự xoá** (khác file tạm tự tải, sẽ xoá sau khi
      restore xong).
@@ -428,7 +428,7 @@ tài liệu khác (`docs/deploy-vps-ubuntu.md`) vẫn ghi IP cũ tới khi có n
    **không đủ**, phải xoá và start lại đúng bằng file ecosystem):
 
    ```bash
-   pm2 delete english-tutor
+   pm2 delete dhcb
    pm2 start ecosystem.config.cjs
    pm2 save
    curl -I http://localhost:3001   # đổi đúng port thật của app này
@@ -555,7 +555,7 @@ báo lỗi**; hễ xác minh pass thì dừng, không cần chạy tiếp các b
    cấp quyền CREATE cho owner database nữa — xem `docs/setup-postgresql-vps.md` mục 3):
    - Trên VPS, chạy:
      ```bash
-     sudo -u postgres psql -d english_tutor -c "GRANT ALL ON SCHEMA public TO tutor_app;"
+     sudo -u postgres psql -d dhcb -c "GRANT ALL ON SCHEMA public TO tutor_app;"
      ```
    - Quay lại bước 6 (rerun) để xác minh.
 
@@ -644,7 +644,7 @@ Nguyên nhân gốc: VPS bị dựng lại hoàn toàn (ngoài phạm vi code/ap
 
 **Các bước đã xử lý thật, theo đúng thứ tự (đã gộp vào kịch bản 3.9 ở trên để dùng lại sau này):**
 
-1. Phát hiện qua lệnh `npm run restore:r2 -- --restore-into english_tutor --yes` báo
+1. Phát hiện qua lệnh `npm run restore:r2 -- --restore-into dhcb --yes` báo
    `password authentication failed for user "postgres"` — mật khẩu superuser đoán không đúng.
 2. **Cảnh giác nhầm ban đầu:** dòng log `◇ injected env (27) from .env // tip: ⌁ auth for agents
 [www.vestauth.com]` trông giống prompt injection nhắm AI agent. Đã điều tra kỹ (đọc thẳng source
@@ -738,7 +738,7 @@ Nguyên nhân gốc: 3 lỗi ĐỘC LẬP xếp chồng, phải xử lý tuần 
 4. Rerun → SSH qua được, `npm ci` chạy xong, nhưng dừng ở `migrate:pg` với lỗi
    `permission denied for schema public` (mã `42501`) → xác định là lỗi Postgres, không phải
    SSH/secret.
-5. Chạy `sudo -u postgres psql -d english_tutor -c "GRANT ALL ON SCHEMA public TO tutor_app;"`
+5. Chạy `sudo -u postgres psql -d dhcb -c "GRANT ALL ON SCHEMA public TO tutor_app;"`
    trên VPS.
 6. Rerun lần cuối (attempt #6) → **thành công** (`conclusion: success`).
 

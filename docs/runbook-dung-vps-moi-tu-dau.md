@@ -59,11 +59,11 @@ Host app
     User root
     IdentityFile ~/.ssh/id_ed25519
     RequestTTY yes
-    RemoteCommand cd /var/www/english-tutor && exec $SHELL -l
+    RemoteCommand cd /var/www/dhcb && exec $SHELL -l
 ```
 
 Dùng: `ssh app` (vào thẳng thư mục dự án) · `ssh xboss` (vào bình thường) ·
-`ssh xboss "pm2 logs english-tutor"` (chạy 1 lệnh lẻ — **không** dùng được với host `app` vì có
+`ssh xboss "pm2 logs dhcb"` (chạy 1 lệnh lẻ — **không** dùng được với host `app` vì có
 `RemoteCommand`, sẽ báo lỗi xung đột).
 
 Nếu khóa SSH có passphrase (khuyên dùng), tránh gõ lại mỗi lần bằng `ssh-agent`:
@@ -165,8 +165,8 @@ Ghi lại `REDIS_URL=redis://:mat-khau-redis-that-cua-ban@127.0.0.1:6379` — d�
 
 ```bash
 cd /var/www
-git clone https://github.com/seeker19110/bilingual-english-vietnamese.git english-tutor
-cd english-tutor
+git clone https://github.com/seeker19110/bilingual-english-vietnamese.git dhcb
+cd dhcb
 mkdir -p logs uploads
 npm install   # cần chạy trước để có lệnh npm run restore:env dùng được ở bước dưới
 ```
@@ -211,7 +211,7 @@ ALLOWED_ORIGINS=https://en-vi.donghanhcungban.com
 
 # ── Lưu audio TTS ──
 STORAGE_DRIVER=local
-UPLOADS_DIR=/var/www/english-tutor/uploads
+UPLOADS_DIR=/var/www/dhcb/uploads
 # STORAGE_DRIVER=r2 cần thêm R2_ACCOUNT_ID/R2_ACCESS_KEY_ID/R2_SECRET_ACCESS_KEY/R2_BUCKET/R2_PUBLIC_BASE_URL
 
 # ── Backup R2 (bucket RIÊNG, PRIVATE, khác R2_BUCKET của audio) ──
@@ -256,7 +256,7 @@ cat ecosystem.config.cjs   # xác nhận env.PORT khớp .env
 ## 8. Nginx reverse proxy (chưa bật HTTPS vội)
 
 ```bash
-cd /var/www/english-tutor
+cd /var/www/dhcb
 sudo cp nginx/en-vi.conf /etc/nginx/sites-available/en-vi
 sudo ln -s /etc/nginx/sites-available/en-vi /etc/nginx/sites-enabled/
 ```
@@ -294,7 +294,7 @@ sudo nginx -t   # kỳ vọng: LỖI ở đây, bỏ qua, không chạy `systemc
 ## 10. Khôi phục database từ R2 (KHÔNG cần VPS cũ còn sống)
 
 ```bash
-cd /var/www/english-tutor
+cd /var/www/dhcb
 
 # Xem có bản backup nào trên R2
 RESTORE_PSQL_URL=postgresql://postgres:MAT_KHAU_SUPERUSER@localhost:5432/postgres \
@@ -358,10 +358,10 @@ npm run migrate:pg   # tạo schema trống, không có dữ liệu người dù
 ## 11. Bật app với PM2
 
 ```bash
-cd /var/www/english-tutor
+cd /var/www/dhcb
 pm2 start ecosystem.config.cjs
 pm2 status                       # cột "status" phải là "online"
-pm2 logs english-tutor --lines 30   # xác nhận dòng "đang chạy tại http://localhost:XXXX" đúng port .env
+pm2 logs dhcb --lines 30   # xác nhận dòng "đang chạy tại http://localhost:XXXX" đúng port .env
 
 pm2 startup   # chạy lệnh sudo nó in ra
 pm2 save      # để PM2 tự khởi động lại khi VPS reboot
@@ -376,7 +376,7 @@ _trước khi_ code app đọc `.env` (`dotenv` mặc định không override bi
 `process.env`). Phải xoá hẳn process rồi start lại đúng bằng `ecosystem.config.cjs`:
 
 ```bash
-pm2 delete english-tutor
+pm2 delete dhcb
 pm2 start ecosystem.config.cjs
 pm2 save
 ```
@@ -449,9 +449,9 @@ Thêm 3 dòng:
 
 ```cron
 0 3 * * * pg_dump english_tutor | gzip > /var/backups/english_tutor_$(date +\%Y\%m\%d).sql.gz && find /var/backups -name 'english_tutor_*.sql.gz' -mtime +7 -delete
-5 3 * * * cd /var/www/english-tutor && npm run backup:r2 >> /var/log/pg-backup-r2.log 2>&1
-10 3 * * * cd /var/www/english-tutor && ENV_BACKUP_PASSPHRASE="passphrase-that-cua-ban" npm run backup:env >> /var/log/env-backup-r2.log 2>&1
-0 4 * * 0 bash /var/www/english-tutor/scripts/verify-pg-backup.sh >> /var/log/pg-restore-test.log 2>&1
+5 3 * * * cd /var/www/dhcb && npm run backup:r2 >> /var/log/pg-backup-r2.log 2>&1
+10 3 * * * cd /var/www/dhcb && ENV_BACKUP_PASSPHRASE="passphrase-that-cua-ban" npm run backup:env >> /var/log/env-backup-r2.log 2>&1
+0 4 * * 0 bash /var/www/dhcb/scripts/verify-pg-backup.sh >> /var/log/pg-restore-test.log 2>&1
 ```
 
 ---
@@ -459,7 +459,7 @@ Thêm 3 dòng:
 ## 14. Pre-cache audio (tùy chọn, giảm độ trễ lần đầu cho người dùng)
 
 ```bash
-cd /var/www/english-tutor
+cd /var/www/dhcb
 npm run seed:pronunciation
 BASE_URL=https://en-vi.donghanhcungban.com npm run prefetch:tts-patterns
 ```

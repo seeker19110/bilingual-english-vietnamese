@@ -40,7 +40,7 @@ thư viện hiện tại, không còn ràng buộc riêng nào từ Supabase).
 | Domain chính  | `donghanhcungban.org`, `en-vi.donghanhcungban.org` |
 | Domain phụ    | `donghanhcungban.com`, `en-vi.donghanhcungban.com` |
 | Audio storage | **Cloudflare R2** (`STORAGE_DRIVER=r2`)            |
-| PM2 app name  | `english-tutor` (3 cluster workers)                |
+| PM2 app name  | `dhcb` (3 cluster workers)                         |
 | Database      | PostgreSQL `dhcb`, user `dhcb_app`                 |
 
 > Xem chi tiết bảng so sánh **Cấu hình tối thiểu vs Cấu hình khuyến nghị** tại [`docs/system-requirements.md`](system-requirements.md).
@@ -288,7 +288,7 @@ PM2 phải được cài bằng Node ≥ 22 (VPS này: Node hệ thống v22, `/
 Kiểm tra Node mà PM2 dùng:
 
 ```bash
-pm2 info english-tutor | grep -i 'node.js version'
+pm2 info dhcb | grep -i 'node.js version'
 ```
 
 ---
@@ -300,7 +300,7 @@ pm2 start ecosystem.config.cjs
 
 pm2 status   # cột "status" phải là "online"
 
-pm2 logs english-tutor   # log realtime (Ctrl+C để thoát)
+pm2 logs dhcb   # log realtime (Ctrl+C để thoát)
 
 # Tự khởi động khi VPS reboot
 pm2 startup   # chạy lệnh sudo nó in ra
@@ -385,7 +385,7 @@ h2load -n 100 -c 10 https://en-vi.donghanhcungban.com
 Chạy trước để người dùng đầu tiên đã có audio ngay, không phải chờ generate:
 
 ```bash
-cd /var/www/english-tutor
+cd /var/www/dhcb
 
 # Cache phát âm từ điển (~8800 từ × 2 giọng nam/nữ)
 npm run seed:pronunciation
@@ -413,7 +413,7 @@ build → reload PM2 kèm nạp lại `.env` (`scripts/pm2-reload.sh`, có vài 
 ghi chú fork mode trong `ecosystem.config.cjs`).
 
 ```bash
-cd /var/www/english-tutor   # hoặc đường dẫn thật trên VPS của bạn
+cd /var/www/dhcb   # hoặc đường dẫn thật trên VPS của bạn
 bash scripts/deploy.sh
 ```
 
@@ -425,7 +425,7 @@ bash scripts/deploy.sh
 <summary>Deploy thủ công từng bước (không dùng <code>scripts/deploy.sh</code>)</summary>
 
 ```bash
-cd /var/www/english-tutor
+cd /var/www/dhcb
 git pull origin main
 npm install        # chỉ cần nếu package.json đổi
 npm run migrate:pg # chạy migration Postgres tự host còn thiếu (cần DATABASE_URL trong .env)
@@ -442,7 +442,7 @@ bash scripts/pm2-reload.sh   # reload + health check
 VPS này đang có 2 app PM2:
 
 - **`xboss`** (id 0) — Next.js, port 3000, interpreter riêng
-- **`english-tutor`** — Express, port 3001, cluster mode (Node của PM2, hệ thống v22)
+- **`dhcb`** — Express, port 3001, cluster mode (Node của PM2, hệ thống v22)
 
 Mỗi app có `PORT` riêng trong `ecosystem.config.cjs` của mình → không xung đột.
 
@@ -460,8 +460,8 @@ curl https://en-vi.donghanhcungban.com/api/health
 ## Theo dõi dung lượng audio
 
 ```bash
-du -sh /var/www/english-tutor/uploads/          # tổng
-du -sh /var/www/english-tutor/uploads/*/        # theo thư mục con
+du -sh /var/www/dhcb/uploads/          # tổng
+du -sh /var/www/dhcb/uploads/*/        # theo thư mục con
 ls uploads/tts-cache/en-US/female/ | wc -l      # đếm file đã cache
 df -h                                            # ổ cứng tổng thể
 ```
@@ -485,11 +485,11 @@ tự host không có backup tự động như Supabase, tự chịu trách nhi�
 
 ```bash
 # Backup uploads thủ công
-tar -czf ~/backup-uploads-$(date +%Y%m%d).tar.gz /var/www/english-tutor/uploads/
+tar -czf ~/backup-uploads-$(date +%Y%m%d).tar.gz /var/www/dhcb/uploads/
 
 # Tự động hàng tuần (Chủ Nhật 2h sáng)
 crontab -e
-# 0 2 * * 0 tar -czf ~/backup-uploads-$(date +\%Y\%m\%d).tar.gz /var/www/english-tutor/uploads/
+# 0 2 * * 0 tar -czf ~/backup-uploads-$(date +\%Y\%m\%d).tar.gz /var/www/dhcb/uploads/
 ```
 
 ---
@@ -499,13 +499,13 @@ crontab -e
 ### App không start
 
 ```bash
-pm2 logs english-tutor --lines 50
+pm2 logs dhcb --lines 50
 ```
 
 Hay gặp: PM2 chạy bằng Node < 22 (cluster mode dùng Node của chính PM2) — kiểm tra:
 
 ```bash
-pm2 info english-tutor | grep -i 'node.js version'   # phải >= 22
+pm2 info dhcb | grep -i 'node.js version'   # phải >= 22
 which node   # Node hệ thống, nơi PM2 được cài
 ```
 
@@ -531,13 +531,13 @@ pm2 reload ecosystem.config.cjs --update-env
 ```
 
 Hay gặp: `ALLOWED_ORIGINS` không có domain của bạn → bị chặn CORS. `DATABASE_URL` sai/DB
-chưa chạy → mọi request lỗi 500 (`pm2 logs english-tutor` sẽ thấy lỗi kết nối Postgres).
+chưa chạy → mọi request lỗi 500 (`pm2 logs dhcb` sẽ thấy lỗi kết nối Postgres).
 
 ### Audio không phát / fallback về giọng trình duyệt
 
 ```bash
 # Kiểm tra file audio đã có chưa
-ls /var/www/english-tutor/uploads/tts-cache/en-US/female/ | head
+ls /var/www/dhcb/uploads/tts-cache/en-US/female/ | head
 
 # Kiểm tra Nginx phục vụ được không
 curl -I https://en-vi.donghanhcungban.com/uploads/tts-cache/en-US/female/<tên-file>.mp3
@@ -580,7 +580,7 @@ Cách dùng:
 ```bash
 ssh dhcb                             # → vào thẳng /var/www/dhcb
 ssh vps                              # → vào VPS như cũ (thư mục home)
-ssh vps "pm2 logs english-tutor"     # → chạy lệnh lẻ trên VPS
+ssh vps "pm2 logs dhcb"     # → chạy lệnh lẻ trên VPS
 ```
 
 > ⚠️ Host có `RemoteCommand` (ở đây là `app`) **không** chạy được lệnh lẻ kiểu
@@ -594,19 +594,19 @@ ssh vps "pm2 logs english-tutor"     # → chạy lệnh lẻ trên VPS
 
 ```bash
 pm2 status                                # trạng thái tất cả app
-pm2 logs english-tutor                    # log realtime
+pm2 logs dhcb                    # log realtime
 pm2 reload ecosystem.config.cjs          # restart không downtime
-pm2 restart english-tutor --update-env   # restart + nạp lại .env
+pm2 restart dhcb --update-env   # restart + nạp lại .env
 sudo nginx -t && sudo systemctl reload nginx   # reload Nginx sau khi sửa config
 
 # Deploy nhanh
-~/deploy-english-tutor.sh
+~/deploy-dhcb.sh
 
 # Kiểm tra
 curl https://en-vi.donghanhcungban.com/api/health
 
 # Audio cache
-du -sh /var/www/english-tutor/uploads/
+du -sh /var/www/dhcb/uploads/
 BASE_URL=https://en-vi.donghanhcungban.com npm run prefetch:tts-patterns -- --force
 ```
 

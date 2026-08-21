@@ -24,7 +24,7 @@ check_backend() {
   else
     echo -e "${RED}❌ Backend NOT responding on port 3001${NC}"
     echo "   Trying to restart..."
-    pm2 restart english-tutor
+    pm2 restart dhcb
     sleep 2
     curl -s http://localhost:3001/api/health | jq . || echo "Still not responding"
   fi
@@ -45,7 +45,7 @@ check_nginx_logs() {
 
 check_pm2_logs() {
   echo -e "${YELLOW}[5/5] PM2 App Logs (last 50 lines)${NC}"
-  pm2 logs english-tutor --lines 50 --nostream
+  pm2 logs dhcb --lines 50 --nostream
   echo ""
 }
 
@@ -59,8 +59,8 @@ check_pm2_logs
 echo -e "${YELLOW}═══════════════════════════════════════════${NC}"
 echo -e "${YELLOW}Fix suggestions:${NC}"
 echo "1. If backend not responding:"
-echo "   pm2 restart english-tutor"
-echo "   pm2 logs english-tutor"
+echo "   pm2 restart dhcb"
+echo "   pm2 logs dhcb"
 echo ""
 echo "2. If Nginx config error:"
 echo "   cat /etc/nginx/sites-available/english-tutor"
@@ -70,5 +70,5 @@ echo ""
 echo "3. If port 3001 in use:"
 echo "   lsof -i :3001"
 echo "   kill -9 <PID>"
-echo "   pm2 restart english-tutor"
+echo "   pm2 restart dhcb"
 echo -e "${YELLOW}═══════════════════════════════════════════${NC}"

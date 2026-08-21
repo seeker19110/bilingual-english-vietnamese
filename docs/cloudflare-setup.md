@@ -91,7 +91,7 @@ sudo nginx -t && sudo systemctl reload nginx
    chính không đổi gì cả (Cloudflare chỉ là lớp trung gian, không đổi code app).
 3. **Rate-limit vẫn nhận đúng IP thật** (quan trọng nhất — xác nhận
    `nginx/cloudflare-realip.conf` hoạt động đúng): trên VPS chạy
-   `pm2 logs english-tutor` rồi thử gọi 1 request bất kỳ, xem log
+   `pm2 logs dhcb` rồi thử gọi 1 request bất kỳ, xem log
    `[Security][...]` (nếu có) có in ra IP **thật của bạn**, không phải IP nội bộ
    Cloudflare (dải `173.245.x.x`, `103.21.x.x`, v.v.).
 

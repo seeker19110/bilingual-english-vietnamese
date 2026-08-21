@@ -15,7 +15,7 @@
 ## GĐ1 — Cluster mode PM2
 
 **Triệu chứng lỗi:** `pm2 status` báo `errored`/khởi động lại liên tục sau deploy; `/api/health`
-không phản hồi; `pm2 logs english-tutor` không in được log gì (crash im lặng — dấu hiệu đặc
+không phản hồi; `pm2 logs dhcb` không in được log gì (crash im lặng — dấu hiệu đặc
 trưng của lỗi tương thích Node `cluster` + loader, xem lịch sử PR #283/#284/#285).
 
 **Rollback:**

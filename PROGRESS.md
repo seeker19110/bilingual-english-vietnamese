@@ -720,8 +720,7 @@ Tiếp nối PR 0 (hệ thống bạn bè, đã tạo PR #602). PR này làm bac
 - Migration `postgres/migrations/0054_chat.sql` (đổi số từ 0053 dự kiến ban đầu vì phát hiện
   nhánh `feat/chat-feature` khác cũng dùng 0053 cho mục đích khác — xem quyết định dưới) — schema
   `chat.*`: `rooms`/`room_members`/`messages` (content + content_clean sau lọc + moderation_flags
-  - is_blocked)/`moderation_events`, kèm view `public.chat_*` theo đúng quy ước
-    `english.chat_sessions` cũ.
+  - is*blocked)/`moderation_events`, kèm view `public.chat*\*`theo đúng quy ước`english.chat_sessions` cũ.
 - `packages/core-chat/moderator.ts` + `wordlist-vi.ts`/`wordlist-en.ts`: chuẩn hoá token (bỏ dấu,
   gộp ký tự lặp, leetspeak cơ bản), so khớp theo token + cặp token liền kề (bắt cụm 2 từ như "óc
   chó", dùng so khớp CHÍNH XÁC cho cặp để tránh báo nhầm khi 2 từ vô hại ghép lại trùng ngẫu nhiên
@@ -731,9 +730,14 @@ Tiếp nối PR 0 (hệ thống bạn bè, đã tạo PR #602). PR này làm bac
   khi lưu), `getMessages`/`getRooms`/`markRead`/`deleteMessage`, mọi thao tác tự kiểm thành viên
   phòng.
 - `packages/core-chat/redisChat.ts`: pub/sub theo kênh `chat:user:<userId>` — có Redis thật thì
-  dùng `ioredis`, **chưa có `REDIS_URL` (đúng tình trạng VPS hiện tại) thì tự fallback sang
-  EventEmitter nội bộ**, chỉ hoạt động trong 1 tiến trình PM2 (đủ dùng vì VPS hiện 1 vCPU/1
-  instance — xem CLAUDE.md mục 13). Khi cài Redis thật, code không cần sửa gì thêm.
+  dùng `ioredis`, chưa có `REDIS_URL` thì tự fallback sang EventEmitter nội bộ (chỉ hoạt động
+  trong 1 tiến trình PM2). **[Cập nhật 2026-08-21] VPS đã nâng 3 vCPU, PM2 cluster mode nay chạy
+  thật 3 instances** (CLAUDE.md mục 13) và `REDIS_URL` đã được điền cho rate-limit — vì dùng
+  chung biến môi trường, `redisChat.ts` cũng tự lên Redis thật theo, không cần sửa code. **Cần
+  xác nhận lại bằng smoke test thật** (gửi tin nhắn, kiểm tin đến đúng ở tiến trình PM2 khác) vì
+  trước đây tính năng fallback EventEmitter chưa từng bị stress test đa tiến trình — nếu vì lý do
+  nào đó Redis không kết nối được, chat giữa 2 người sẽ chỉ nhận tin khi trúng cùng 1 trong 3
+  tiến trình (im lặng, khó phát hiện).
 - `packages/core-chat/wsHandler.ts`: gắn WebSocket vào CHÍNH `http.Server` của `server.ts` (không
   mở cổng riêng), path `/ws/chat`; auth qua cookie HttpOnly (đọc header `cookie` của upgrade
   request, tái dùng `validateAuth()` sẵn có bằng cách dựng 1 Web Request tối giản); presence
@@ -772,9 +776,9 @@ Bước đầu của kế hoạch **"Real-time User-to-User Chat với Content M
 người dùng 2026-08-17): **PR 0 (hệ thống bạn bè) — PR 1 (backend chat WS+Redis) — PR 2 (frontend
 chat UI)**. Quyết định phạm vi đã chốt: chỉ **DM 1-1** (schema chừa chỗ group sau), **chỉ chat được
 giữa 2 user đã kết bạn** (nên phải xây bạn bè TRƯỚC), moderation **filter theo severity** (low/medium
-che ***, high chặn hẳn + ghi nhận vi phạm), **kết bạn qua URL/mã QR** (không qua luồng gửi/chấp nhận
+che **\*, high chặn hẳn + ghi nhận vi phạm), **kết bạn qua URL/mã QR** (không qua luồng gửi/chấp nhận
 lời mời — chia sẻ link đã là hành động chủ động, người quét xác nhận 1 lần là thành bạn ngay, đối
-xứng 2 chiều). VPS **chưa có Redis** → PR 1 sẽ cần fallback broadcast trong 1 process.
+xứng 2 chiều). VPS **chưa có Redis\*\* → PR 1 sẽ cần fallback broadcast trong 1 process.
 
 **PR 0 này đã xong:**
 
@@ -1547,7 +1551,7 @@ Speech, đúng hiện tượng "chữ Việt đọc giọng Anh" mà chính `Pro
 2. **`seed-all.ts` seed được vi-VN**: `PronTask` có thêm `lang`; nguồn là chuỗi `vi` của cùng từ
    điển (khử trùng còn 11.572), 14 giọng Chirp3-HD (KHÔNG Studio — Google không có Studio cho
    vi-VN). Quy mô mới: **162.008 dòng** (11.572 × 14), ~~2,72 triệu ký tự → sau 1 triệu miễn phí là
-   **~~$3,4** ở mức $2/1M. Tiếng Việt xếp SAU tiếng Anh để dừng giữa chừng vẫn xong phần chính.
+   \*\*~~$3,4\*\* ở mức $2/1M. Tiếng Việt xếp SAU tiếng Anh để dừng giữa chừng vẫn xong phần chính.
 3. **Thread `lang` qua TOÀN BỘ đường đi** — đây là phần nguy hiểm nhất: khoá `word:voice` cũ thiếu
    `lang` sẽ khiến `verifyDb` coi 162.008 dòng vi-VN là "orphan" và `--clean-orphans --yes` **xoá
    thật**. Nay dùng chung `pronKey(word, voice, lang)` ở dedupe/audit/verify/orphan; keyset
@@ -2137,7 +2141,7 @@ seed:stories:gemini` (script riêng `scripts/seed-stories-gemini-tts.ts` — tá
 ### Sửa mất dữ liệu học tập (2026-08-04, điều tra "admin mất hết dữ liệu")
 
 **Nguyên nhân:** `pushProgress()`/`pushProgressAsync()` (`lib/progressSync.ts`) mỗi lần gọi đều
-đọc TOÀN BỘ localStorage (learned/hard/srs/cefr_*/placement/weeklyGoal/achievements) rồi gửi lên
+đọc TOÀN BỘ localStorage (learned/hard/srs/cefr\_\*/placement/weeklyGoal/achievements) rồi gửi lên
 `POST /api/progress`, và server GHI ĐÈ THẲNG (`on conflict do update set x = excluded.x`) — không
 hợp nhất như phía client (`pullProgress()`) vẫn làm. Nếu máy/tab VỪA mở app (localStorage rỗng/cũ,
 vd trình duyệt mới, xoá cache, ẩn danh — admin hay làm khi test) và người dùng bấm học 1 từ NGAY
@@ -4057,15 +4061,50 @@ fast-uri` — thuần devDependency (commitlint hook), không vào bundle chạy
   xác nhận log đúng như thiết kế: phát hiện đổi `fork_mode → cluster_mode`, xoá + start lại,
   health check OK sau 1s.
 
-  **NHƯNG: log PM2 báo `App [english-tutor] launched (1 instances)`** — dù cấu hình
-  `instances: 'max'`, chỉ có **đúng 1 tiến trình** được tạo. Kết luận gần như chắc chắn: **VPS
-  hiện tại chỉ có 1 vCPU** (`'max'` = số core thật của máy). Cơ chế cluster mode ĐÃ ĐÚNG và chạy
-  ổn định, nhưng **không có lợi ích song song thật** cho tới khi máy có nhiều hơn 1 core — đây
-  là bằng chứng cụ thể xác nhận GĐ2 (thêm VPS, tách máy khỏi app "xboss" dùng chung) là điều
-  kiện BẮT BUỘC, không phải tuỳ chọn, để kế hoạch scale 50k concurrent
-  (`docs/research/ke-hoach-scale-30k-concurrent.md`) có ý nghĩa thực tế. Nợ kỹ thuật này coi là
-  **đã đóng về mặt cơ chế** (không cần sửa code thêm), còn mở về mặt **phần cứng** (chuyển sang
-  GĐ2).
+  **[Lúc đó] log PM2 báo `App [english-tutor] launched (1 instances)`** — dù cấu hình
+  `instances: 'max'`, chỉ có đúng 1 tiến trình được tạo, vì VPS lúc đó chỉ có 1 vCPU (`'max'` =
+  số core thật của máy).
+
+  **[Cập nhật 2026-08-21] VPS ĐÃ NÂNG CẤP LÊN 3 vCPU / 3GB RAM** (người dùng xác nhận). Theo
+  CLAUDE.md mục 13 (cập nhật 2026-08-19), PM2 đang chạy **cluster mode 3 instances thật** tận
+  dụng cả 3 core, cùng `REDIS_URL` cho rate-limit tập trung (mục ngay bên dưới) — nghĩa là lợi
+  ích song song thật ĐÃ CÓ, không còn bị giới hạn bởi phần cứng như trước. Nợ kỹ thuật này coi
+  là **đã đóng hoàn toàn** (cả cơ chế lẫn phần cứng).
+
+  **[Cùng ngày 2026-08-21] Tên tiến trình PM2 đổi từ `english-tutor` sang `dhcb`** (người dùng
+  xác nhận đã đổi thật trên VPS). Đã đồng bộ lại trong repo: `ecosystem.config.cjs` (`name`),
+  `scripts/deploy.sh` + `scripts/pm2-reload.sh` (`PM2_PROCESS`), `scripts/diagnose-502.sh`, và
+  các docs vận hành trực tiếp dùng lệnh `pm2 ...`/đường dẫn `/var/www/...`:
+  `docs/deploy-vps-ubuntu.md`, `docs/system-requirements.md`,
+  `docs/runbook-platform-v2-production-deployment.md`, `docs/setup-postgresql-vps.md`,
+  `docs/ke-hoach-khoi-phuc-su-co-server.md`, `docs/cloudflare-setup.md`, `docs/DEPLOY.md`,
+  `docs/rollback-runbook.md`, `docs/runbook-dung-vps-moi-tu-dau.md`,
+  `docs/huong-dan-lien-ket-facebook-apple-microsoft.md`, `docs/huong-dan-tu-host-scale-50k.md`,
+  `docs/email-setup.md`.
+
+  **[Cập nhật tiếp, cùng ngày] Đã xác minh + dọn xong mục database.** Trên VPS thật có SONG SONG
+  2 database (`sudo -u postgres psql -l+`): `dhcb` (356MB, 41 bảng) và `english_tutor` (301MB, 40
+  bảng, cùng 18 users) — số liệu gần giống nhau vì `english_tutor` là **bản sao/rác còn sót lại
+  từ lúc đổi tên trước đây**. Xác nhận DB thật app đang dùng qua `DATABASE_URL` trong `.env`:
+  `postgresql://tutor_app:...@localhost:5432/dhcb` → **`dhcb` mới là DB sống, `english_tutor` là
+  rác**. Đã xử lý: backup phòng hờ (`pg_dump english_tutor | gzip > /var/backups/english_tutor-
+truoc-khi-xoa-20260821.sql.gz`), xác nhận 0 kết nối đang dùng
+  (`pg_stat_activity`), rồi `dropdb english_tutor` — VPS giờ chỉ còn đúng 1 database `dhcb`. Đã
+  sửa nốt `docs/ke-hoach-khoi-phuc-su-co-server.md` + `docs/setup-postgresql-vps.md` (toàn bộ
+  lệnh `pg_dump`/`dropdb`/`createdb`/`psql -d`/`--restore-into`/tên file backup `*.sql.gz` đổi từ
+  `english_tutor` sang `dhcb`; **role `tutor_app` giữ nguyên** — đó là role Postgres thật đang
+  dùng, không phải tên cần đổi). Role name khác database name là chủ ý của hệ thống, không phải
+  lỗi.
+
+  Còn lại **2 chỗ chưa đổi**, không thuộc hạ tầng vận hành nên chưa cần gấp: (1) tên GitHub repo
+  `seeker19110/english-tutor` trong `docs/CODEX_CLOUD_SETUP.md` (khác `seeker19110/donghanh`
+  đang dùng thật — có thể là repo cũ trước khi đổi tên, cần người dùng xác nhận có còn dùng
+  không); (2) tên gọi dự án "english-tutor" trong `docs/MASTER_SPEC.md` dòng mở đầu (mang tính mô
+  tả lịch sử dự án, không phải định danh hạ tầng).
+
+  Việc còn lại thuộc GĐ2 scale xa hơn (nếu
+  cần vượt quá 3 vCPU cho mục tiêu 30k-50k concurrent) là quyết định mở rộng tiếp theo, không
+  còn là nợ kỹ thuật cấp thiết.
 
   Cũng cần đặt `REDIS_URL` (xem mục ngay bên dưới — rate limit chuyển sang Redis) trước khi bật
   cluster mode nhiều tiến trình thật (sau khi thêm VPS ở GĐ2), không thì rate limit lỏng hơn N
@@ -4088,12 +4127,13 @@ fast-uri` — thuần devDependency (commitlint hook), không vào bundle chạy
 deploy.yml` không còn tự inline các bước, nay gọi thẳng `bash scripts/deploy.sh` (1 nguồn
   chân lý duy nhất cho cả thủ công lẫn tự động). Đã cập nhật mọi doc còn nhắc `deploy.sh` gốc
   (`docs/DEPLOY.md`, `docs/deploy-vps-ubuntu.md`, `DEPLOY_STEPS.md`, `CLAUDE.md`).
-- **[Ý tưởng, 2026-07-30] Phòng chat cho bạn bè cùng luyện tập** — chưa làm, mới bàn sơ bộ.
-  2 hướng: (1) chat đơn giản lưu tin nhắn qua PostgreSQL + polling định kỳ, tận dụng hạ tầng
-  `api/` hiện có — nhẹ, làm được ngay; (2) chat real-time thật (WebSocket, typing indicator,
-  online status) — nặng hơn nhiều, cần thêm WebSocket server và sẽ vướng scale vì VPS hiện
-  chỉ có 1 vCPU + chưa có Redis dùng chung giữa các tiến trình (xem nợ kỹ thuật cluster mode ở
-  trên). Cần người dùng chọn hướng trước khi làm.
+- ⚠️ **[Ý tưởng, 2026-07-30] Phòng chat cho bạn bè cùng luyện tập** — ghi "chưa làm, mới bàn sơ
+  bộ" nhưng mục `packages/core-chat/redisChat.ts` + `packages/core-chat/wsHandler.ts` ở TRÊN
+  trong file này mô tả WebSocket + Redis pub/sub đã code xong (route `/ws/chat`, moderation,
+  presence…) — **hai đoạn mâu thuẫn nhau, cần phiên sau xác minh lại tính năng chat bạn bè đã
+  triển khai tới đâu thật sự** trước khi coi đây còn là "ý tưởng chưa làm". Ràng buộc phần cứng
+  cũ (VPS 1 vCPU, chưa có Redis) đã hết hiệu lực: VPS nay 3 vCPU + `REDIS_URL` đã điền
+  (2026-08-21).
 - Không còn hạng mục a11y/kiểm thử lớn nào mở. Xem "Tiếp theo" ở trên cho việc sản phẩm còn dở.
 - `docs/research/thu-thach-vlog-30-ngay.md` dùng tên cũ "Vlog" (tính năng đã đổi tên thành
   "Challenge" — route `/challenge`, bảng `challenge_entries`) — tài liệu đó là ghi chép lịch sử

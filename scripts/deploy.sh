@@ -3,9 +3,9 @@
 # deploy.sh — Triển khai English Tutor, CHẠY TRỰC TIẾP TRÊN VPS (không SSH).
 #
 # Cách dùng (đang đứng trên VPS, user root):
-#     cd /var/www/english-tutor
+#     cd /var/www/dhcb
 #     bash scripts/deploy.sh
-#   (hoặc gọi từ bất kỳ đâu: bash /var/www/english-tutor/scripts/deploy.sh)
+#   (hoặc gọi từ bất kỳ đâu: bash /var/www/dhcb/scripts/deploy.sh)
 #
 # Cơ chế: ép thư mục code KHỚP CHÍNH XÁC với origin/main (git reset --hard) →
 #         dọn file build/data cũ → cài + build sạch → restart PM2 → health check.
@@ -20,7 +20,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 APP_DIR="${APP_DIR:-$SCRIPT_DIR}"        # tự động nhận thư mục (vd /var/www/dhcb)
 BRANCH="main"                            # luôn deploy main (gồm mọi PR đã merge)
-PM2_PROCESS="english-tutor"
+PM2_PROCESS="dhcb"
 PORT="3001"                              # cổng app để kiểm tra health sau restart
 
 # Biến môi trường cần thêm (bỏ trống nếu đã có sẵn trong .env trên VPS)

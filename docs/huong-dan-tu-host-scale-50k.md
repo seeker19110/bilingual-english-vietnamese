@@ -142,7 +142,7 @@ trọng (dữ liệu người dùng thật, mật khẩu đã băm, session toke
 
 ## 8. Chuyển VPS app sang dùng máy mới
 
-Trên VPS app, sửa `.env` (`nano /var/www/english-tutor/.env` hoặc tương đương):
+Trên VPS app, sửa `.env` (`nano /var/www/dhcb/.env` hoặc tương đương):
 
 ```bash
 DATABASE_URL=postgresql://english_tutor_app:MẬT-KHẨU@<ip-vps-db>:6432/english_tutor
@@ -156,7 +156,7 @@ MIGRATE_DATABASE_URL=postgresql://english_tutor_app:MẬT-KHẨU@<ip-vps-db>:543
 Reload app (KHÔNG cần deploy lại toàn bộ code, chỉ đổi `.env`):
 
 ```bash
-cd /var/www/english-tutor
+cd /var/www/dhcb
 bash scripts/pm2-reload.sh
 curl http://localhost:3001/api/health
 ```
@@ -164,7 +164,7 @@ curl http://localhost:3001/api/health
 **Kiểm tra kỹ trước khi coi bước này xong:**
 
 - `pm2 status` báo `online` (KHÔNG phải `errored`/khởi động lại liên tục).
-- `pm2 logs english-tutor --lines 30` không có lỗi kết nối DB/Redis.
+- `pm2 logs dhcb --lines 30` không có lỗi kết nối DB/Redis.
 - Thử 1 luồng thật qua trình duyệt: đăng nhập, tra 1 từ trong từ điển, gửi 1 tin nhắn Chat.
 
 **Nếu có sự cố** → xem `docs/rollback-runbook.md` mục "GĐ2" (trả `.env` về giá trị cũ, KHÔNG xoá
@@ -224,7 +224,7 @@ Nếu k6 cho thấy 1 VPS app hiện tại đã là trần (p95 tăng vọt ở 
 ## 12. Bật Sentry (quan sát lỗi thật)
 
 Tạo tài khoản miễn phí tại sentry.io → lấy DSN → điền `SENTRY_DSN`/`VITE_SENTRY_DSN` vào `.env`
-VPS app → build lại (`npm run build`) → `pm2 restart english-tutor --update-env`. Code đã sẵn
+VPS app → build lại (`npm run build`) → `pm2 restart dhcb --update-env`. Code đã sẵn
 sàng (no-op tới khi có DSN) — chỉ cần điền giá trị.
 
 ## 13. Checklist hoàn tất

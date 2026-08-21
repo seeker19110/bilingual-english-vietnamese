@@ -180,7 +180,7 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
 - [x] Chế độ Chat (MVP) — gọi AI thật qua `/api/agent` (edge function ép model + token)
 - [x] Chế độ Luyện viết + chấm điểm (MVP) — chấm kiểu IELTS
 - [x] Giới hạn lượt — lượt dùng đã đồng bộ lên Supabase (`daily_usage`); gói `plan` đọc từ bảng `profiles`. ~~Quyết định 2026-07-11: dự án dùng MIỄN PHÍ cho cộng đồng — KHÔNG làm thanh toán Pro~~ **[Cập nhật 2026-07-27] Đã đảo ngược — người dùng chủ động yêu cầu làm thanh toán thật.** Đã triển khai xong M2: mua Pro/VIP qua SePay (chuyển khoản ngân hàng cá nhân, không qua cổng trung gian). Giá: Pro 20.000đ/10 ngày · 40.000đ/tháng · 360.000đ/năm; VIP 30.000đ/10 ngày · 75.000đ/tháng · 500.000đ/năm — lưu trong `plan_prices` (migration `0014`), đổi giá không cần deploy. Xem chi tiết mục 13 "Trạng thái hiện tại" và `docs/research/dac-ta-thanh-toan-2026-07-25.md`.
-- [x] Deploy VPS (Express `server.ts` + PM2 + Nginx + Let's Encrypt) — ĐÃ deploy thật tại https://donghanhcungban.org và https://en-vi.donghanhcungban.org (PM2 process `english-tutor`, port 3001, VPS mới 3 vCPU / 3GB RAM `103.118.29.58`, thư mục `/var/www/dhcb`). SSL Let's Encrypt tự renew. **[Cập nhật 2026-08-19] Đang chạy CLUSTER MODE 3 instances ổn định.** Cấu hình `instances: 'max'` tận dụng toàn bộ 3 vCPU cores, `REDIS_URL` rate-limit tập trung, `DATABASE_URL` kết nối PostgreSQL `dhcb`. (code + hướng dẫn: `docs/deploy-vps-ubuntu.md`)
+- [x] Deploy VPS (Express `server.ts` + PM2 + Nginx + Let's Encrypt) — ĐÃ deploy thật tại https://donghanhcungban.org và https://en-vi.donghanhcungban.org (PM2 process `dhcb` — đổi tên từ `english-tutor`, xác nhận 2026-08-21, port 3001, VPS 3 vCPU / 3GB RAM `103.118.29.58`, thư mục `/var/www/dhcb`). SSL Let's Encrypt tự renew. **[Cập nhật 2026-08-19] Đang chạy CLUSTER MODE 3 instances ổn định.** Cấu hình `instances: 'max'` tận dụng toàn bộ 3 vCPU cores, `REDIS_URL` rate-limit tập trung, `DATABASE_URL` kết nối PostgreSQL `dhcb`. (code + hướng dẫn: `docs/deploy-vps-ubuntu.md`)
 - [x] Đồng bộ dữ liệu — chat/viết/nói/lượt dùng lưu lên DB, login thống nhất cho mọi trang. **[Cập nhật 2026-07-20]** Đã rời Supabase hoàn toàn sang PostgreSQL tự host + auth Bearer token tự viết. Xem `docs/migration-thoat-ly-supabase.md` + `postgres/schema.sql`
 - [x] Chế độ Luyện nói song ngữ — TTS chính Google Cloud TTS qua `/api/tts` (cache mã hóa AES-256-GCM trên Supabase Storage, bắt buộc đăng nhập mới lấy được khoá giải mã), Web Speech API chỉ còn fallback. **STT thật**: ghi âm trình duyệt (`MediaRecorder`, `src/lib/sttServer.ts`) → base64 lên `/api/stt` → Whisper qua Groq hoặc OpenAI (`api/stt.ts` + `api/_lib/openaiStt.ts`, có `GROQ_API_KEY` thì dùng Groq `whisper-large-v3-turbo`, không thì OpenAI `gpt-4o-mini-transcribe`); Web Speech API (`src/lib/stt.ts`) chỉ còn dự phòng. Cần `GROQ_API_KEY` (hoặc `OPENAI_API_KEY`).
 - [x] Mở chiều B: dạy tiếng Việt cho người nước ngoài (nút gạt ngôn ngữ + đảo giọng) — `lib/direction.ts`
@@ -200,9 +200,12 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
    `speaking`: cột `stt_count`, giới hạn free 10/pro 100 — `api/_lib/usage.ts`, `src/types.ts`). Còn: thêm
    `GROQ_API_KEY` (hoặc `OPENAI_API_KEY`) vào `.env` trên VPS.
 2. Cluster mode đã áp dụng thật trên VPS (xác nhận 2026-07-25) — chuyển fork→cluster qua
-   `scripts/pm2-reload.sh` đã chạy xong, không còn việc phải làm. Còn mở về **phần cứng**: VPS
-   1 vCPU nên chưa có lợi ích song song; cần thêm VPS (GĐ2) + `REDIS_URL` mới phát huy.
-   `api/_lib/security.ts` (`validateAuth`) đã rà lại — repo sạch, không còn debug log tạm.
+   `scripts/pm2-reload.sh` đã chạy xong. **[Cập nhật 2026-08-21] VPS đã nâng lên 3 vCPU / 3GB
+   RAM** — cluster mode nay chạy thật 3 instances song song (không còn bị giới hạn 1 vCPU như
+   trước), khớp với mô tả PM2 3 instances ở mục 13. `api/_lib/security.ts` (`validateAuth`) đã
+   rà lại — repo sạch, không còn debug log tạm. Còn cần: smoke test chat real-time
+   (`packages/core-chat/`) qua Redis đa tiến trình để xác nhận không bị lệch (xem PROGRESS.md
+   "Nợ kỹ thuật còn mở").
 3. ~~Thanh toán Pro chưa có~~ **ĐÃ XONG (2026-07-27)** — code M2 hoàn tất (checkout + webhook
    SePay + UI). Còn lại là VIỆC TAY của bạn, ngoài khả năng AI: đăng ký tài khoản SePay + liên
    kết ngân hàng, điền `SEPAY_WEBHOOK_API_KEY`/`SEPAY_BANK_ACCOUNT`/`SEPAY_BANK_CODE` trên VPS,
