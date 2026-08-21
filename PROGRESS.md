@@ -720,8 +720,7 @@ Tiếp nối PR 0 (hệ thống bạn bè, đã tạo PR #602). PR này làm bac
 - Migration `postgres/migrations/0054_chat.sql` (đổi số từ 0053 dự kiến ban đầu vì phát hiện
   nhánh `feat/chat-feature` khác cũng dùng 0053 cho mục đích khác — xem quyết định dưới) — schema
   `chat.*`: `rooms`/`room_members`/`messages` (content + content_clean sau lọc + moderation_flags
-  - is_blocked)/`moderation_events`, kèm view `public.chat_*` theo đúng quy ước
-    `english.chat_sessions` cũ.
+  - is*blocked)/`moderation_events`, kèm view `public.chat*\*`theo đúng quy ước`english.chat_sessions` cũ.
 - `packages/core-chat/moderator.ts` + `wordlist-vi.ts`/`wordlist-en.ts`: chuẩn hoá token (bỏ dấu,
   gộp ký tự lặp, leetspeak cơ bản), so khớp theo token + cặp token liền kề (bắt cụm 2 từ như "óc
   chó", dùng so khớp CHÍNH XÁC cho cặp để tránh báo nhầm khi 2 từ vô hại ghép lại trùng ngẫu nhiên
@@ -777,9 +776,9 @@ Bước đầu của kế hoạch **"Real-time User-to-User Chat với Content M
 người dùng 2026-08-17): **PR 0 (hệ thống bạn bè) — PR 1 (backend chat WS+Redis) — PR 2 (frontend
 chat UI)**. Quyết định phạm vi đã chốt: chỉ **DM 1-1** (schema chừa chỗ group sau), **chỉ chat được
 giữa 2 user đã kết bạn** (nên phải xây bạn bè TRƯỚC), moderation **filter theo severity** (low/medium
-che ***, high chặn hẳn + ghi nhận vi phạm), **kết bạn qua URL/mã QR** (không qua luồng gửi/chấp nhận
+che **\*, high chặn hẳn + ghi nhận vi phạm), **kết bạn qua URL/mã QR** (không qua luồng gửi/chấp nhận
 lời mời — chia sẻ link đã là hành động chủ động, người quét xác nhận 1 lần là thành bạn ngay, đối
-xứng 2 chiều). VPS **chưa có Redis** → PR 1 sẽ cần fallback broadcast trong 1 process.
+xứng 2 chiều). VPS **chưa có Redis\*\* → PR 1 sẽ cần fallback broadcast trong 1 process.
 
 **PR 0 này đã xong:**
 
@@ -1552,7 +1551,7 @@ Speech, đúng hiện tượng "chữ Việt đọc giọng Anh" mà chính `Pro
 2. **`seed-all.ts` seed được vi-VN**: `PronTask` có thêm `lang`; nguồn là chuỗi `vi` của cùng từ
    điển (khử trùng còn 11.572), 14 giọng Chirp3-HD (KHÔNG Studio — Google không có Studio cho
    vi-VN). Quy mô mới: **162.008 dòng** (11.572 × 14), ~~2,72 triệu ký tự → sau 1 triệu miễn phí là
-   **~~$3,4** ở mức $2/1M. Tiếng Việt xếp SAU tiếng Anh để dừng giữa chừng vẫn xong phần chính.
+   \*\*~~$3,4\*\* ở mức $2/1M. Tiếng Việt xếp SAU tiếng Anh để dừng giữa chừng vẫn xong phần chính.
 3. **Thread `lang` qua TOÀN BỘ đường đi** — đây là phần nguy hiểm nhất: khoá `word:voice` cũ thiếu
    `lang` sẽ khiến `verifyDb` coi 162.008 dòng vi-VN là "orphan" và `--clean-orphans --yes` **xoá
    thật**. Nay dùng chung `pronKey(word, voice, lang)` ở dedupe/audit/verify/orphan; keyset
@@ -2142,7 +2141,7 @@ seed:stories:gemini` (script riêng `scripts/seed-stories-gemini-tts.ts` — tá
 ### Sửa mất dữ liệu học tập (2026-08-04, điều tra "admin mất hết dữ liệu")
 
 **Nguyên nhân:** `pushProgress()`/`pushProgressAsync()` (`lib/progressSync.ts`) mỗi lần gọi đều
-đọc TOÀN BỘ localStorage (learned/hard/srs/cefr_*/placement/weeklyGoal/achievements) rồi gửi lên
+đọc TOÀN BỘ localStorage (learned/hard/srs/cefr\_\*/placement/weeklyGoal/achievements) rồi gửi lên
 `POST /api/progress`, và server GHI ĐÈ THẲNG (`on conflict do update set x = excluded.x`) — không
 hợp nhất như phía client (`pullProgress()`) vẫn làm. Nếu máy/tab VỪA mở app (localStorage rỗng/cũ,
 vd trình duyệt mới, xoá cache, ẩn danh — admin hay làm khi test) và người dùng bấm học 1 từ NGAY
@@ -4089,7 +4088,7 @@ fast-uri` — thuần devDependency (commitlint hook), không vào bundle chạy
   từ lúc đổi tên trước đây**. Xác nhận DB thật app đang dùng qua `DATABASE_URL` trong `.env`:
   `postgresql://tutor_app:...@localhost:5432/dhcb` → **`dhcb` mới là DB sống, `english_tutor` là
   rác**. Đã xử lý: backup phòng hờ (`pg_dump english_tutor | gzip > /var/backups/english_tutor-
-  truoc-khi-xoa-20260821.sql.gz`), xác nhận 0 kết nối đang dùng
+truoc-khi-xoa-20260821.sql.gz`), xác nhận 0 kết nối đang dùng
   (`pg_stat_activity`), rồi `dropdb english_tutor` — VPS giờ chỉ còn đúng 1 database `dhcb`. Đã
   sửa nốt `docs/ke-hoach-khoi-phuc-su-co-server.md` + `docs/setup-postgresql-vps.md` (toàn bộ
   lệnh `pg_dump`/`dropdb`/`createdb`/`psql -d`/`--restore-into`/tên file backup `*.sql.gz` đổi từ

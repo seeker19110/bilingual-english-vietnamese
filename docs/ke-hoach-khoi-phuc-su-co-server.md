@@ -19,7 +19,7 @@
 | VPS IP                  | `103.118.29.58` (VPS 3 vCPU / 3GB RAM)                                                         |
 | Domain                  | `donghanhcungban.org` (Hub), `en-vi.donghanhcungban.org` (English App)                         |
 | Thư mục app             | `/var/www/dhcb`                                                                                |
-| PM2 process             | `dhcb` (port **3001**, 3 workers cluster)                                             |
+| PM2 process             | `dhcb` (port **3001**, 3 workers cluster)                                                      |
 | Health check            | `curl https://en-vi.donghanhcungban.org/api/health`                                            |
 | Database                | PostgreSQL tự host, db `dhcb`, user `dhcb_app`                                                 |
 | Backup DB               | `/var/backups/dhcb_YYYYMMDD.sql.gz` (cron 3h sáng, giữ 7 bản)                                  |

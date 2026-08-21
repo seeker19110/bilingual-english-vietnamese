@@ -62,8 +62,8 @@ Script `scripts/deploy.sh` **tự động chạy** `npm run migrate:pg` trong b�
 ## 4. Xử Lý Sự Cố Nhanh (Troubleshooting Quick Guide)
 
 | Hiện tượng                    | Nguyên nhân                            | Lệnh kiểm tra & xử lý                                                                           |
-| :---------------------------- | :------------------------------------- | :---------------------------------------------------------------------------------------------- |
-| **502 Bad Gateway**           | App chưa start hoặc bị crash           | `pm2 logs dhcb --lines 50`<br>`curl http://localhost:3001/api/health`                  |
+| :---------------------------- | :------------------------------------- | :---------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| **502 Bad Gateway**           | App chưa start hoặc bị crash           | `pm2 logs dhcb --lines 50`<br>`curl http://localhost:3001/api/health`                           |
 | **Port 3001 bị chiếm**        | Tiến trình cũ còn kẹt socket           | `lsof -i :3001` sau đó `kill -9 <PID>`                                                          |
 | **Đăng nhập lỗi / DB lỗi**    | Thiếu biến môi trường hoặc DB pool đầy | `grep -E "^DATABASE_URL                                                                         | ^GOOGLE_CLIENT_ID" .env`<br>`bash scripts/pm2-reload.sh` |
 | **Lỗi cache / node_modules**  | Cần xóa sạch cài lại                   | `rm -rf dist dist-server node_modules && npm ci && npm run build && bash scripts/pm2-reload.sh` |

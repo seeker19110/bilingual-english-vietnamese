@@ -40,7 +40,7 @@ thư viện hiện tại, không còn ràng buộc riêng nào từ Supabase).
 | Domain chính  | `donghanhcungban.org`, `en-vi.donghanhcungban.org` |
 | Domain phụ    | `donghanhcungban.com`, `en-vi.donghanhcungban.com` |
 | Audio storage | **Cloudflare R2** (`STORAGE_DRIVER=r2`)            |
-| PM2 app name  | `dhcb` (3 cluster workers)                |
+| PM2 app name  | `dhcb` (3 cluster workers)                         |
 | Database      | PostgreSQL `dhcb`, user `dhcb_app`                 |
 
 > Xem chi tiết bảng so sánh **Cấu hình tối thiểu vs Cấu hình khuyến nghị** tại [`docs/system-requirements.md`](system-requirements.md).
