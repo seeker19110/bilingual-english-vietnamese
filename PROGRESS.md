@@ -3818,6 +3818,23 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- 🟡 **[2026-08-21] Gemini Live — đã thay code GIẢ bằng kết nối WebSocket THẬT, nhưng CHƯA test
+  với API key thật.** Nhánh `claude/gemini-live-integration-xo175x` trước đó (commit `cf44362`
+  "feat: implement horizon features and stress test suite") đã có sẵn một bộ khung lớn (~4100
+  dòng: `packages/core-ai/geminiLiveService.ts`, `wsGeminiLiveHandler.ts`, `api/gemini-live.ts`,
+  contract `packages/core-contracts/geminiLive.ts`, hook `apps/english/src/lib/geminiLiveApi.ts`,
+  đã gắn vào `server.ts` chạy thật) — nhưng khi đọc kỹ, `geminiLiveService.ts` **không hề gọi API
+  Gemini thật**: mỗi 20 audio chunk người dùng gửi lên, code chỉ **echo ngược chính audio đó** giả
+  làm phản hồi AI. Đã sửa `packages/core-ai/geminiLiveService.ts` để **thật sự mở WebSocket** tới
+  `wss://generativelanguage.googleapis.com/.../BidiGenerateContent` (đọc `docs/research/dac-ta-gemini-live-2026-08-21.md`
+  để biết bối cảnh — chọn Phương án C: Live chỉ cho phần hội thoại, giữ pipeline STT/LLM/TTS cũ
+  cho phần sửa lỗi 2 giọng). Đã verify: test đơn vị (mock `ws` qua `_setWebSocketFactoryForTests`,
+  6/6 pass), `npm test` toàn bộ 5019/5019 pass, build/typecheck/lint xanh. **CHƯA verify được** với
+  `GEMINI_API_KEY` thật (sandbox không có key) — trước khi dùng thật cần: (1) thêm
+  `GEMINI_API_KEY` vào `.env`, (2) xác nhận model Live khả dụng qua `GEMINI_LIVE_MODEL` (mặc định
+  `gemini-2.0-flash-exp`, Google hay đổi tên/khả dụng model Live), (3) thử 1 phiên thật qua
+  `/ws/gemini-live`, (4) audit lại các file "V6.x/V7.0" khác cùng thời điểm với `cf44362` xem có
+  scaffolding giả tương tự không (chưa rà — người dùng đã được báo, quyết định xử lý riêng sau).
 - 🟡 **[2026-08-18, cập nhật khi fix PR #603] `eslint-plugin-react-hooks` đã ghim TẠM về lại
   `^4.6.2`** (đúng bản trước PR #574) để CI/lint xanh trở lại ngay — bản `7.1.1` mà PR #574 bump
   lên mang theo 5 rule React Compiler mới, làm lộ **73 lỗi trải trên 45+ file**: `set-state-in-effect`
