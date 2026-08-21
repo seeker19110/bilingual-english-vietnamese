@@ -74,7 +74,7 @@ _Xác nhận log trả về `Backup PostgreSQL lên Cloudflare R2 thành công` 
 Thực hiện triển khai code mới và áp dụng migrations:
 
 ```bash
-cd /var/www/english-tutor
+cd /var/www/dhcb
 bash scripts/deploy.sh
 ```
 

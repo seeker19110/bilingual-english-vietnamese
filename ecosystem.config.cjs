@@ -36,7 +36,7 @@
 module.exports = {
   apps: [
     {
-      name: 'english-tutor',
+      name: 'dhcb',
 
       // Chạy JS đã biên dịch sẵn (npm run build:server) — không qua loader tsx nữa,
       // đây là điều kiện để cluster mode chạy được (xem ghi chú 2026-07-25 ở trên).
@@ -76,7 +76,7 @@ module.exports = {
       max_restarts: 10,
       min_uptime: '10s',
 
-      // Ghi log ra file (xem bằng: pm2 logs english-tutor)
+      // Ghi log ra file (xem bằng: pm2 logs dhcb)
       error_file: './logs/pm2-error.log',
       out_file: './logs/pm2-out.log',
       log_date_format: 'YYYY-MM-DD HH:mm:ss',

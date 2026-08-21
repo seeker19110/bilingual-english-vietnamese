@@ -112,7 +112,7 @@ phải restore thật), ghi log ra file để xem lại khi cần:
 ```bash
 sudo -u postgres crontab -e
 # Thêm dòng (chạy 4h sáng Chủ nhật, sau giờ backup hàng ngày):
-0 4 * * 0 bash /var/www/english-tutor/scripts/verify-pg-backup.sh >> /var/log/pg-restore-test.log 2>&1
+0 4 * * 0 bash /var/www/dhcb/scripts/verify-pg-backup.sh >> /var/log/pg-restore-test.log 2>&1
 ```
 
 ### 7.2 Đẩy backup lên Cloudflare R2 (BẮT BUỘC — backup không được nằm cùng ổ đĩa với DB gốc)
@@ -136,7 +136,7 @@ thời:
 ```bash
 sudo -u postgres crontab -e
 # 3h05 sáng — 5 phút sau pg_dump (0 3 * * *) để chắc chắn file đã ghi xong local trước khi upload:
-5 3 * * * cd /var/www/english-tutor && npm run backup:r2 >> /var/log/pg-backup-r2.log 2>&1
+5 3 * * * cd /var/www/dhcb && npm run backup:r2 >> /var/log/pg-backup-r2.log 2>&1
 ```
 
 An toàn chạy lại nhiều lần — file đã có trên R2 (đúng kích thước) sẽ tự bỏ qua, nên nếu R2 lỗi
@@ -164,7 +164,7 @@ không đọc `.env` của shell tương tác):
 
 ```bash
 sudo -u postgres crontab -e
-10 3 * * * cd /var/www/english-tutor && ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run backup:env >> /var/log/env-backup-r2.log 2>&1
+10 3 * * * cd /var/www/dhcb && ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run backup:env >> /var/log/env-backup-r2.log 2>&1
 ```
 
 **Khôi phục** khi cần (tải bản mới nhất, giải mã, ghi ra `.env.restored` để tự kiểm tra trước khi
@@ -196,7 +196,7 @@ user khác — khác `backup:r2`/`backup:env` chạy bằng user `postgres`):
 
 ```bash
 sudo crontab -e
-15 3 * * * cd /var/www/english-tutor && ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run backup:system >> /var/log/system-backup-r2.log 2>&1
+15 3 * * * cd /var/www/dhcb && ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run backup:system >> /var/log/system-backup-r2.log 2>&1
 ```
 
 **Khôi phục** khi cần (tải bản mới nhất, giải mã, ghi ra `system-restored.tar.gz` — KHÔNG tự giải
@@ -227,7 +227,7 @@ dòng cron). Trên VPS thật (xác nhận 2026-07-31) đã gộp cả `backup:r
 # /root/backup-all.sh (root-only, KHÔNG nằm trong git — chứa passphrase thật)
 #!/bin/bash
 set -e
-cd /var/www/english-tutor
+cd /var/www/dhcb
 export ENV_BACKUP_PASSPHRASE="passphrase-that-cua-ban"
 npm run backup:r2
 npm run backup:env
@@ -243,7 +243,7 @@ sudo crontab -l
 
 sudo -u postgres crontab -l
 # 0 3 * * * pg_dump english_tutor | gzip > /var/backups/english_tutor_$(date +\%Y\%m\%d).sql.gz && find /var/backups -name 'english_tutor_*.sql.gz' -mtime +7 -delete
-# 0 4 * * 0 bash /var/www/english-tutor/scripts/verify-pg-backup.sh >> /var/log/pg-restore-test.log 2>&1
+# 0 4 * * 0 bash /var/www/dhcb/scripts/verify-pg-backup.sh >> /var/log/pg-restore-test.log 2>&1
 ```
 
 `pg_dump` (user `postgres`, 3:00) chạy trước, `/root/backup-all.sh` (user `root`, 3:10) chạy sau —

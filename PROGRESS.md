@@ -4070,7 +4070,26 @@ fast-uri` — thuần devDependency (commitlint hook), không vào bundle chạy
   CLAUDE.md mục 13 (cập nhật 2026-08-19), PM2 đang chạy **cluster mode 3 instances thật** tận
   dụng cả 3 core, cùng `REDIS_URL` cho rate-limit tập trung (mục ngay bên dưới) — nghĩa là lợi
   ích song song thật ĐÃ CÓ, không còn bị giới hạn bởi phần cứng như trước. Nợ kỹ thuật này coi
-  là **đã đóng hoàn toàn** (cả cơ chế lẫn phần cứng). Việc còn lại thuộc GĐ2 scale xa hơn (nếu
+  là **đã đóng hoàn toàn** (cả cơ chế lẫn phần cứng).
+
+  **[Cùng ngày 2026-08-21] Tên tiến trình PM2 đổi từ `english-tutor` sang `dhcb`** (người dùng
+  xác nhận đã đổi thật trên VPS). Đã đồng bộ lại trong repo: `ecosystem.config.cjs` (`name`),
+  `scripts/deploy.sh` + `scripts/pm2-reload.sh` (`PM2_PROCESS`), `scripts/diagnose-502.sh`, và
+  các docs vận hành trực tiếp dùng lệnh `pm2 ...`/đường dẫn `/var/www/...`:
+  `docs/deploy-vps-ubuntu.md`, `docs/system-requirements.md`,
+  `docs/runbook-platform-v2-production-deployment.md`, `docs/setup-postgresql-vps.md`,
+  `docs/ke-hoach-khoi-phuc-su-co-server.md`, `docs/cloudflare-setup.md`, `docs/DEPLOY.md`,
+  `docs/rollback-runbook.md`, `docs/runbook-dung-vps-moi-tu-dau.md`,
+  `docs/huong-dan-lien-ket-facebook-apple-microsoft.md`, `docs/huong-dan-tu-host-scale-50k.md`,
+  `docs/email-setup.md`. **Cố ý CHƯA đổi** 3 chỗ khác dùng tên `english-tutor`/`english_tutor` vì
+  không rõ có nằm trong phạm vi đổi tên này không, cần người dùng xác nhận thêm: (1) tên database
+  Postgres `english_tutor` + user `tutor_app` trong `docs/ke-hoach-khoi-phuc-su-co-server.md`
+  (nhiều dòng) — ngược lại `docs/deploy-vps-ubuntu.md` đã ghi sẵn DB tên `dhcb`/`dhcb_app` từ
+  trước, hai file đang MÂU THUẪN nhau về tên DB thật, cần xác minh trên VPS bằng `sudo -u
+  postgres psql -l`; (2) tên GitHub repo `seeker19110/english-tutor` trong
+  `docs/CODEX_CLOUD_SETUP.md` (khác `seeker19110/donghanh` đang dùng thật — có thể là repo cũ
+  trước khi đổi tên); (3) tên gọi dự án "english-tutor" trong `docs/MASTER_SPEC.md` dòng mở đầu
+  (mang tính mô tả lịch sử dự án, không phải định danh hạ tầng). Việc còn lại thuộc GĐ2 scale xa hơn (nếu
   cần vượt quá 3 vCPU cho mục tiêu 30k-50k concurrent) là quyết định mở rộng tiếp theo, không
   còn là nợ kỹ thuật cấp thiết.
 

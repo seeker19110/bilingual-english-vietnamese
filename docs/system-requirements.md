@@ -40,7 +40,7 @@ Hệ thống backend được thiết kế theo mô hình **Modular Monolith** c
 > **Thông số máy chủ Production thực tế hiện tại:**
 >
 > - VPS: 3 vCPU / 3 GB RAM (Ubuntu 24.04).
-> - PM2: 3 cluster workers (`english-tutor`, port 3001).
+> - PM2: 3 cluster workers (`dhcb`, port 3001).
 > - PostgreSQL: Database `dhcb`, user `dhcb_app`.
 > - Redis: Cấu hình `REDIS_URL` nội bộ xử lý rate-limit và WebSocket pub/sub.
 > - Audio Storage: **Cloudflare R2** (`STORAGE_DRIVER=r2`), lưu trữ vĩnh viễn audio cache mã hóa an toàn.

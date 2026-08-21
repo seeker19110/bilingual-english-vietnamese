@@ -84,7 +84,7 @@ tên. Không cần làm gì thêm.
 
 ```bash
 npm run build          # bắt buộc — build lại để nhúng VITE_* mới vào bundle
-pm2 reload english-tutor   # hoặc theo scripts/pm2-reload.sh, xem docs/deploy-vps-ubuntu.md
+pm2 reload dhcb   # hoặc theo scripts/pm2-reload.sh, xem docs/deploy-vps-ubuntu.md
 ```
 
 Kiểm tra: mở trang đăng nhập ở domain thật (không phải localhost, vì Facebook/Apple yêu cầu đúng

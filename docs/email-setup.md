@@ -50,13 +50,13 @@ SMTP_PASS=<Brevo cấp — SMTP key, KHÔNG phải mật khẩu đăng nhập>
 SMTP_FROM=noreply@donghanhcungban.com
 ```
 
-7. Khởi động lại app: `pm2 restart english-tutor`
+7. Khởi động lại app: `pm2 restart dhcb`
 
 ### Kiểm tra đã chạy chưa
 
 Đăng ký một tài khoản mới bằng email thật của bạn → phải nhận được mã 6 chữ số trong ~1 phút.
 
-Nếu không nhận được, xem log: `pm2 logs english-tutor | grep mailer`
+Nếu không nhận được, xem log: `pm2 logs dhcb | grep mailer`
 
 | Log                                    | Nghĩa là                    | Sửa thế nào                                      |
 | -------------------------------------- | --------------------------- | ------------------------------------------------ |
