@@ -62,9 +62,7 @@ export default function WordDetail() {
   if (entry === null) {
     return (
       <div className="min-h-dvh bg-zinc-950 theme-light:bg-white flex flex-col items-center justify-center px-4 text-center">
-        <p className="text-zinc-300 theme-light:text-zinc-700 text-sm mb-4">
-          Không tìm thấy từ "{word}" trong từ điển.
-        </p>
+        <p className="text-zinc-300 text-sm mb-4">Không tìm thấy từ "{word}" trong từ điển.</p>
         <button
           type="button"
           onClick={() => nav('/welcome')}
@@ -137,7 +135,7 @@ export default function WordDetail() {
         )}
 
         <div className="mt-8 rounded-2xl border border-accent-500/30 bg-accent-500/5 p-4 text-center">
-          <p className="text-sm text-zinc-300 theme-light:text-zinc-700 mb-3">
+          <p className="text-sm text-zinc-300 mb-3">
             Muốn học và ghi nhớ từ này? Luyện cùng gia sư AI — sửa lỗi bằng giọng tiếng Việt, miễn
             phí.
           </p>

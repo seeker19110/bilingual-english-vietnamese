@@ -10,7 +10,7 @@ vi.mock('../packages/core-auth/security.js', () => ({
   validateAuth: vi.fn(),
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
-  checkRateLimit: () => Promise.resolve(true),
+  checkRateLimit: vi.fn(() => Promise.resolve(true)),
   logSecurityEvent: vi.fn(),
 }))
 
@@ -23,7 +23,7 @@ vi.mock('../packages/core-auth/adminAuth.js', () => ({
 }))
 
 import { getPgPool } from '../packages/core-db/pgPool.js'
-import { validateAuth } from '../packages/core-auth/security.js'
+import { validateAuth, checkRateLimit } from '../packages/core-auth/security.js'
 import { getUserById } from '../packages/core-auth/authService.js'
 
 type UserInfo = Awaited<ReturnType<typeof getUserById>>
@@ -117,5 +117,90 @@ describe('/api/admin-feedback', () => {
     expect(res.status).toBe(200)
     const json = await res.json()
     expect(json.ok).toBe(true)
+  })
+
+  it('trả về 204 với OPTIONS preflight', async () => {
+    const req = new Request('http://localhost/api/admin-feedback', { method: 'OPTIONS' })
+    const res = await handler(req)
+    expect(res.status).toBe(204)
+  })
+
+  it('chặn khi vượt rate limit (429)', async () => {
+    vi.mocked(checkRateLimit).mockResolvedValueOnce(false)
+    const req = new Request('http://localhost/api/admin-feedback')
+    const res = await handler(req)
+    expect(res.status).toBe(429)
+  })
+
+  it('từ chối method không hỗ trợ (405)', async () => {
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'a1',
+      email: 'admin@example.com',
+    } as UserInfo)
+    const req = new Request('http://localhost/api/admin-feedback', { method: 'DELETE' })
+    const res = await handler(req)
+    expect(res.status).toBe(405)
+  })
+
+  it('PATCH báo 404 khi id không tồn tại', async () => {
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'a1',
+      email: 'admin@example.com',
+    } as UserInfo)
+    queryMock.mockResolvedValueOnce({ rows: [] })
+
+    const req = new Request('http://localhost/api/admin-feedback', {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', status: 'resolved' }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(404)
+  })
+
+  it('PATCH báo lỗi validate khi body sai định dạng', async () => {
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'a1',
+      email: 'admin@example.com',
+    } as UserInfo)
+
+    const req = new Request('http://localhost/api/admin-feedback', {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ id: 'not-a-uuid' }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
+  })
+
+  it('lấy phản hồi gia sư AI khi type=tutor không kèm source filter', async () => {
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'a1',
+      email: 'admin@example.com',
+    } as UserInfo)
+    queryMock.mockResolvedValueOnce({ rows: [] })
+
+    const req = new Request('http://localhost/api/admin-feedback?type=tutor')
+    const res = await handler(req)
+    expect(res.status).toBe(200)
+    const json = await res.json()
+    expect(json.type).toBe('tutor')
+  })
+
+  it('lọc danh sách ý kiến người dùng theo category và status', async () => {
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'a1',
+      email: 'admin@example.com',
+    } as UserInfo)
+    queryMock.mockResolvedValueOnce({ rows: [] })
+
+    const req = new Request('http://localhost/api/admin-feedback?category=bug&status=new')
+    const res = await handler(req)
+    expect(res.status).toBe(200)
   })
 })

@@ -4207,3 +4207,80 @@ deploy.yml` không còn tự inline các bước, nay gọi thẳng `bash script
       uptime monitoring ngoài (UptimeRobot/Better Uptime), PWA/offline (`manifest.json` + service
       worker — có đặc tả sẵn ở `docs/framework/BO-SUNG-nang-cao-i18n-PWA-Sentry-SEO.md` nhưng
       viết cho Next.js, cần điều chỉnh cho Vite), dashboard theo dõi tổng chi phí AI/tháng.
+
+- **[Audit toàn diện 2026-08-21] Tầng 1–3+5a+6 chạy lại đầy đủ theo `docs/framework/QUY-TRINH-AUDIT.md`
+  (nhánh `claude/quet-sau-toan-dien-du-an-a3fnv5`), phát hiện 2 vấn đề mới phát sinh cùng đợt thêm bộ
+  "10 SOTA Agent Super Skills" (mục 2.1 CLAUDE.md) — cả hai đã VÁ trong cùng PR này, không chờ PR riêng.**
+  - **Phát hiện 1 — CORS mở quá rộng:** 18 endpoint REST mới
+    (`api/agent-orchestrator.ts`, `avatar-embodiment.ts`, `life-synthesis.ts`, `memory-palace.ts`,
+    `debate-arena.ts`, `pvp-arena.ts`, `daily-quests.ts`, `referral-vip.ts`, `mesh-telemetry.ts`,
+    `stem-scratchpad.ts`, `action-canvas.ts`, `metacognitive-reflection.ts`, `neural-curriculum.ts`,
+    `co-learning-audio.ts`, `gemini-live.ts`, `realtime-multimodal.ts`, `acoustic-phonetics.ts`,
+    `proactive-agent.ts`) set cứng `Access-Control-Allow-Origin: '*'` ở OPTIONS preflight, khác thiết
+    kế same-origin của các endpoint cũ (whitelist `getCorsHeaders()` trong
+    `packages/core-auth/security.ts`, đọc `ALLOWED_ORIGINS`). **Đã sửa:** đổi cả 18 file sang dùng
+    `getCorsHeaders(req)` thay vì khối `'*'` tự viết tay — hành vi giữ nguyên với origin hợp lệ, nhưng
+    origin lạ giờ bị chặn đúng theo whitelist thay vì luôn được chấp nhận. Cập nhật kèm 3 file test có
+    `vi.mock('../packages/core-auth/security.js', ...)` toàn module (thiếu export `getCorsHeaders`,
+    gây lỗi mock khi thêm test OPTIONS).
+  - **Phát hiện 2 — Coverage branches tụt dưới sàn:** đo được branches 89.23% (tụt từ mốc đặt ngưỡng
+    90.32%, dưới sàn 90% ở `vitest.config.ts`) — các service/handler mới của bộ 10 Super Skills thiếu
+    test ca biên (OPTIONS, method không hỗ trợ, thiếu field bắt buộc, action không hợp lệ, JSON hỏng,
+    404/400 theo nhánh nghiệp vụ). **Đã sửa:** viết thêm ~70 test ca biên cho 10 file
+    (`referral-vip`, `agent-orchestrator`, `acoustic-phonetics`, `pvp-arena`, `admin-feedback`,
+    `avatar-embodiment`, `gemini-live`, `realtime-multimodal`, `action-canvas`, `life-synthesis`,
+    `daily-quests` — không đổi code nghiệp vụ, chỉ thêm test) → branches về **90.02%** (statements
+    94.07% · functions 97.15% · lines 94.07%), qua ngưỡng `npm run test:coverage`.
+  - Chạy lại toàn bộ cổng sau khi vá: build ✅ · typecheck ✅ (4 tsconfig) · lint ✅ (0 cảnh báo) ·
+    format ✅ · test ✅ **417 file / 5018 test** · size ✅ (JS 120.58/123 kB · CSS 15.62/16 kB brotli) ·
+    `npm audit --omit=dev` 0 lỗ hổng · 0 secret hardcode · `.env` không bị track · 0 `console.log` rác ·
+    0 `TODO`/`any` mới. Git: `origin/main`...HEAD 0 ahead/0 behind lúc audit.
+  - **Còn để ngỏ (chưa làm, ghi nhận để phiên sau xử lý nếu cần):** mâu thuẫn nội bộ PROGRESS.md về
+    tính năng "phòng chat bạn bè" (một đoạn ghi "chưa làm", đoạn khác mô tả code đã xong ở
+    `packages/core-chat/`) — cần audit luồng riêng (mục 5 quy trình audit) để xác minh, không thuộc
+    phạm vi đợt này. E2E+a11y và audit luồng dữ liệu sâu (Tầng 5c, Tầng 8–9) chưa chạy lượt này.
+  - **[Cập nhật cùng ngày] CI e2e (PR #616) đỏ, xác nhận đỏ Y HỆT trên `main`** (job e2e của cả
+    2 nhánh đều "230 passed" + đúng cùng 4 test fail, không phải do PR gây ra) — **đã vá 2/4** vì
+    là test lỗi thời theo sau thay đổi sản phẩm thật, không phải bug:
+    - `e2e/bottomnav.spec.ts` — tab "Tiến độ" đã bị thay bằng tab "Đồng Hành" (AI companion,
+      `/dong-hanh`) ở `BottomNav.tsx` (Platform V7.0), test cũ chưa cập nhật theo. Đã sửa assertion
+      sang `/Đồng Hành/`. Trang `/tien-do` vẫn tồn tại (vào qua Cá nhân/Dashboard), chỉ không còn
+      là tab riêng.
+    - `e2e/admin.spec.ts` (3 test Analytics feedback) — `AdminFeedbackPanel.tsx` giờ có 2 tab con
+      "Ý Kiến Người Dùng" (mặc định) và "Đánh Giá Gia Sư AI 👎" (thêm sau PR feedback người dùng,
+      `feat(feedback): implement full user feedback & suggestion system`) — nội dung phản hồi gia
+      sư AI (`userInput`, dropdown nguồn, tiêu đề "Phản Hồi 👎...") chỉ hiện sau khi bấm sang tab
+      con thứ 2. Đã thêm bước click tab trước khi assert. Cả 2 file đã chạy pass cục bộ
+      (Playwright Chromium).
+  - **[Cùng ngày, tiếp] Đã vá NỐT toàn bộ 68 vi phạm a11y `color-contrast` còn lại** (không dừng ở
+    2/4 ban đầu — người dùng yêu cầu xử lý hết). Gốc rễ: nhiều nơi dùng thẳng màu pastel Tailwind
+    (`text-emerald-300`, `text-sky-300`, `text-blue-300`, `text-purple-300`, `text-cyan-300`,
+    `text-red-300`...) — vốn chỉ đọc tốt trên nền tối — mà THIẾU biến thể `theme-light:` (quy ước
+    đã có sẵn ở nhiều nơi khác, `tailwind.config.js` định nghĩa variant `theme-light:` = áp cho
+    3 theme nền sáng blue-sky/pink/kid) nên rớt AA trên 3 theme đó. 2 lỗi có tính LAN RỘNG (xuất
+    hiện ở gần như MỌI trang vì nằm trong component dùng chung):
+    - Nút "Đồng Hành AI" toàn cục trong `Layout.tsx` (header mọi trang) — `text-accent-300` thiếu
+      `theme-light:text-accent-800`.
+    - `PageHeader.tsx` (subtitle mọi trang có tiêu đề) — có bug NGƯỢC: ai đó thêm
+      `theme-light:text-zinc-600` tưởng số càng cao càng đậm (quy ước Tailwind chuẩn), nhưng hệ
+      thống token `--z-*` của dự án ĐẢO CHIỀU thang màu cho theme nền sáng (xem
+      `packages/core-ui/theme.css` — z-50 đậm nhất/z-950 nhạt nhất ở theme sáng, ngược hẳn theme
+      tối) nên `z-600` ở blue-sky lại NHẠT HƠN z-400 mặc định — ghi đè lên đúng giá trị đã đúng sẵn.
+      Đã bỏ hẳn override sai (base `text-zinc-400` tự đúng theo theme nhờ CSS var). Cùng bug lặp lại
+      ở `Landing.tsx`, `LandingEn.tsx`, `WordDetail.tsx` (`theme-light:text-zinc-600/700`) — đã sửa
+      luôn dù 3 trang này chưa có trong `e2e/a11y.spec.ts`, để tránh tái phát khi được thêm vào quét.
+    - Còn lại: `Home.tsx` (9 chỗ), `HomeUniversalAiBar.tsx` (6 chỗ badge gợi ý câu hỏi AI),
+      `Writing.tsx` (lỗi/sửa lỗi ngữ pháp trong màn chấm bài), `EdgeAiIndicator.tsx` (badge chế độ
+      WASM/WebGPU) — mỗi chỗ thêm đúng 1 class `theme-light:text-*-800` (hoặc `-700` cho đỏ, khớp
+      quy ước đã dùng ở `CefrLessonViews.tsx`), không đổi cấu trúc/hành vi, chỉ đổi màu chữ ở
+      3 theme sáng.
+    - **Xác minh:** `e2e/a11y.spec.ts` 122/122 pass · `e2e/a11y-aaa.spec.ts` 75/75 pass · toàn bộ
+      `npm run test:e2e` 305/305 pass · `npm test` 417 file/5018 test · build/size/typecheck/
+      lint/format đều xanh. Không đổi hành vi nghiệp vụ, chỉ đổi màu chữ ở theme sáng.
+    - **`e2e/v2-hubs.spec.ts`** — 1 lỗi KHÁC phát sinh khi CI chạy lại (không có trong danh sách
+      fail của `main`, không liên quan CORS/coverage/a11y): `getByText('Bạn Đồng Hành AI')` khớp 2
+      phần tử (tiêu đề thẻ AI companion trên Home + mô tả nhiệm vụ hàng ngày "...cùng Bạn Đồng Hành
+      AI..." của `DailyQuestsCard`, cả hai đã có sẵn từ commit `f67bbcf`, chỉ là test dùng
+      `getByText` không đủ cụ thể + phụ thuộc thời điểm phản hồi `/api/daily-quests` không mock
+      trong test này). Đã sửa locator sang `getByRole('heading', { name: /Bạn Đồng Hành AI/ })` cho
+      rõ ràng, không đổi sản phẩm.

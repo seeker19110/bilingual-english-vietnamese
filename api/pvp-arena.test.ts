@@ -4,6 +4,7 @@ import handler from './pvp-arena.js'
 
 vi.mock('../packages/core-auth/security.js', () => ({
   validateAuth: vi.fn().mockResolvedValue({ userId: 'u-test-123' }),
+  getCorsHeaders: vi.fn().mockReturnValue({}),
 }))
 
 describe('api/pvp-arena endpoint', () => {
@@ -83,5 +84,143 @@ describe('api/pvp-arena endpoint', () => {
     expect(submitData.p1Action.isCorrect).toBe(true)
     expect(submitData.p1Action.pointsEarned).toBeGreaterThan(100)
     expect(submitData.p2Action).toBeDefined()
+  })
+
+  it('handles OPTIONS preflight', async () => {
+    const req = new Request('http://localhost/api/pvp-arena', { method: 'OPTIONS' })
+    const res = await handler(req)
+    expect(res.status).toBe(204)
+  })
+
+  it('rejects unsupported method', async () => {
+    const req = new Request('http://localhost/api/pvp-arena', { method: 'DELETE' })
+    const res = await handler(req)
+    expect(res.status).toBe(405)
+  })
+
+  it('rejects get_match without matchId', async () => {
+    const req = new Request('http://localhost/api/pvp-arena?action=get_match', { method: 'GET' })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
+  })
+
+  it('404s get_match for unknown matchId', async () => {
+    const req = new Request(
+      'http://localhost/api/pvp-arena?action=get_match&matchId=does-not-exist',
+      { method: 'GET' },
+    )
+    const res = await handler(req)
+    expect(res.status).toBe(404)
+  })
+
+  it('finds an existing match via get_match', async () => {
+    const makeReq = new Request('http://localhost/api/pvp-arena?action=matchmake', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'vocab_speed_duel' }),
+    })
+    const makeRes = await handler(makeReq)
+    const makeData = await makeRes.json()
+    const matchId = makeData.match.matchId
+
+    const req = new Request(`http://localhost/api/pvp-arena?action=get_match&matchId=${matchId}`, {
+      method: 'GET',
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(data.match.matchId).toBe(matchId)
+  })
+
+  it('rejects submit_round missing required parameters', async () => {
+    const req = new Request('http://localhost/api/pvp-arena?action=submit_round', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
+  })
+
+  it('rejects submit_round for unknown matchId', async () => {
+    const req = new Request('http://localhost/api/pvp-arena?action=submit_round', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        matchId: 'does-not-exist',
+        roundIndex: 0,
+        selectedOption: 0,
+        responseTimeMs: 1000,
+      }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(404)
+  })
+
+  it('rejects submit_round with invalid roundIndex', async () => {
+    const makeReq = new Request('http://localhost/api/pvp-arena?action=matchmake', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'vocab_speed_duel' }),
+    })
+    const makeRes = await handler(makeReq)
+    const makeData = await makeRes.json()
+    const matchId = makeData.match.matchId
+
+    const req = new Request('http://localhost/api/pvp-arena?action=submit_round', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ matchId, roundIndex: 999, selectedOption: 0, responseTimeMs: 1000 }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
+  })
+
+  it('completes the match after the final round', async () => {
+    const makeReq = new Request('http://localhost/api/pvp-arena?action=matchmake', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mode: 'vocab_speed_duel' }),
+    })
+    const makeRes = await handler(makeReq)
+    const makeData = await makeRes.json()
+    const { matchId, totalRounds, questions } = makeData.match
+
+    let lastData: { isMatchCompleted?: boolean } = {}
+    for (let i = 0; i < totalRounds; i++) {
+      const submitReq = new Request('http://localhost/api/pvp-arena?action=submit_round', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          matchId,
+          roundIndex: i,
+          selectedOption: questions[i].correctIndex,
+          responseTimeMs: 1200,
+        }),
+      })
+      const submitRes = await handler(submitReq)
+      lastData = await submitRes.json()
+    }
+    expect(lastData.isMatchCompleted).toBe(true)
+  })
+
+  it('rejects invalid POST action', async () => {
+    const req = new Request('http://localhost/api/pvp-arena?action=unknown', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
+  })
+
+  it('rejects invalid JSON payload on POST', async () => {
+    const req = new Request('http://localhost/api/pvp-arena?action=matchmake', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{invalid',
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
   })
 })

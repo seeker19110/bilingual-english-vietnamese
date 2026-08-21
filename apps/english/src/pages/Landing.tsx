@@ -93,7 +93,7 @@ export default function Landing() {
             <br />
             <span className="text-accent-400">sai chỗ nào, được giảng lại bằng tiếng Việt</span>
           </h1>
-          <p className="mt-3 text-base text-zinc-400 theme-light:text-zinc-600">
+          <p className="mt-3 text-base text-zinc-400">
             Miễn phí. Không cần biết trước tiếng Anh vẫn học được.
           </p>
 
@@ -110,7 +110,7 @@ export default function Landing() {
         <section className="mt-10 rounded-2xl border border-accent-500/30 bg-accent-500/5 p-4">
           <div className="flex items-start gap-3">
             <Volume2 className="mt-0.5 h-5 w-5 shrink-0 text-accent-400" aria-hidden="true" />
-            <p className="text-sm text-zinc-300 theme-light:text-zinc-700">
+            <p className="text-sm text-zinc-300">
               <strong className="text-zinc-100 theme-light:text-zinc-900">Điểm khác biệt:</strong>{' '}
               AI không chỉ sửa lỗi bằng chữ — mà còn{' '}
               <strong>đọc to lời giải thích bằng giọng tiếng Việt</strong>, trong khi hội thoại
@@ -137,9 +137,7 @@ export default function Landing() {
                   <h3 className="font-semibold text-zinc-100 theme-light:text-zinc-900">
                     {mode.title}
                   </h3>
-                  <p className="mt-0.5 text-sm text-zinc-400 theme-light:text-zinc-600">
-                    {mode.desc}
-                  </p>
+                  <p className="mt-0.5 text-sm text-zinc-400">{mode.desc}</p>
                 </div>
               </div>
             ))}
@@ -148,7 +146,7 @@ export default function Landing() {
 
         {/* Giới hạn dùng — thành thật, không phóng đại */}
         <section className="mt-8 rounded-xl border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/40 theme-light:bg-zinc-50 p-4 text-center">
-          <p className="text-sm text-zinc-400 theme-light:text-zinc-600">
+          <p className="text-sm text-zinc-400">
             Miễn phí, có giới hạn lượt dùng mỗi ngày để mọi người cùng dùng được.
           </p>
         </section>

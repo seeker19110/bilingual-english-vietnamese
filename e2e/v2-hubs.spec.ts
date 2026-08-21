@@ -342,8 +342,10 @@ test.describe('Platform V2 Specialized Domain Hubs & Companion E2E', () => {
     // Khối "Không Gian Chuyên Biệt" đã dời khỏi Trang chủ sang /profile (Personal Command
     // Center) — xem PROGRESS.md mục "V2 UI — Multi-Subject Learning...". Trang chủ chỉ còn thẻ
     // "Bạn Đồng Hành AI" dẫn tới /dong-hanh.
+    // Dùng heading (Home.tsx <h4>"Bạn Đồng Hành AI Đa Miền"</h4>) thay vì getByText: DailyQuestsCard
+    // (Home.tsx) cũng hiện mô tả nhiệm vụ "...cùng Bạn Đồng Hành AI..." nên getByText khớp 2 phần tử.
     await page.goto('/')
-    await expect(page.getByText('Bạn Đồng Hành AI')).toBeVisible()
+    await expect(page.getByRole('heading', { name: /Bạn Đồng Hành AI/ })).toBeVisible()
 
     await page.goto('/profile')
     await expect(page.getByText('Sự nghiệp', { exact: true })).toBeVisible()

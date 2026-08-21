@@ -37,7 +37,7 @@ const PROMPT_CHIPS: PromptChip[] = [
     icon: MessageSquare,
     query: 'Luyện phát âm với từ vựng',
     route: '/luyen-noi',
-    badgeColor: 'hover:border-sky-500/50 hover:bg-sky-500/10 text-sky-300',
+    badgeColor: 'hover:border-sky-500/50 hover:bg-sky-500/10 text-sky-300 theme-light:text-sky-800',
   },
   {
     id: 'math',
@@ -45,7 +45,8 @@ const PROMPT_CHIPS: PromptChip[] = [
     icon: Calculator,
     query: 'Tìm cực trị của hàm số bậc 3: y = x^3 - 3x + 2',
     route: '/subjects/mathematics',
-    badgeColor: 'hover:border-blue-500/50 hover:bg-blue-500/10 text-blue-300',
+    badgeColor:
+      'hover:border-blue-500/50 hover:bg-blue-500/10 text-blue-300 theme-light:text-blue-800',
   },
   {
     id: 'career',
@@ -53,7 +54,8 @@ const PROMPT_CHIPS: PromptChip[] = [
     icon: Briefcase,
     query: 'Mô phỏng câu hỏi phỏng vấn STAR cho vị trí Data Analyst',
     route: '/career/interview',
-    badgeColor: 'hover:border-purple-500/50 hover:bg-purple-500/10 text-purple-300',
+    badgeColor:
+      'hover:border-purple-500/50 hover:bg-purple-500/10 text-purple-300 theme-light:text-purple-800',
   },
   {
     id: 'simulators',
@@ -61,7 +63,8 @@ const PROMPT_CHIPS: PromptChip[] = [
     icon: Activity,
     query: 'Cách tính tiền điện bậc thang EVN và tối ưu công suất',
     route: '/ung-dung-thuc-te',
-    badgeColor: 'hover:border-cyan-500/50 hover:bg-cyan-500/10 text-cyan-300',
+    badgeColor:
+      'hover:border-cyan-500/50 hover:bg-cyan-500/10 text-cyan-300 theme-light:text-cyan-800',
   },
   {
     id: 'companion',
@@ -69,7 +72,8 @@ const PROMPT_CHIPS: PromptChip[] = [
     icon: Brain,
     query: 'Cách xây dựng Cung điện Trí nhớ (Memory Palace) để học từ vựng',
     route: '/dong-hanh',
-    badgeColor: 'hover:border-accent-500/50 hover:bg-accent-500/10 text-accent-300',
+    badgeColor:
+      'hover:border-accent-500/50 hover:bg-accent-500/10 text-accent-300 theme-light:text-accent-800',
   },
 ]
 
@@ -375,7 +379,7 @@ export default function HomeUniversalAiBar() {
                     </div>
                   )}
 
-                  <div className="flex items-start gap-2 p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">
+                  <div className="flex items-start gap-2 p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 theme-light:text-emerald-800">
                     <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
                     <span>{aiAnswerContent.socraticPoint}</span>
                   </div>

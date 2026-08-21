@@ -1,6 +1,6 @@
 // api/referral-vip.ts — REST handler cho Tiếp thị Liên kết & Giới thiệu Bạn bè VIP (Referral VIP Booster).
 import { jsonResponse } from './_lib/http.js'
-import { validateAuth } from '../packages/core-auth/security.js'
+import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
 import {
   buildReferralDashboard,
   prepareViralCardData,
@@ -13,14 +13,7 @@ const userRefereesMap = new Map<string, RefereeRecord[]>()
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      },
-    })
+    return new Response(null, { status: 204, headers: getCorsHeaders(req) })
   }
 
   const auth = await validateAuth(req)

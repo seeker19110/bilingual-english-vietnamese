@@ -138,10 +138,14 @@ function ResultView({
                   className="border border-zinc-800/90 rounded-2xl overflow-hidden shadow-inner bg-zinc-950/60"
                 >
                   <div className="px-3.5 py-2.5 bg-red-500/10 border-b border-zinc-800/80">
-                    <p className="text-xs text-red-300 font-medium line-through">{err.original}</p>
+                    <p className="text-xs text-red-300 theme-light:text-red-700 font-medium line-through">
+                      {err.original}
+                    </p>
                   </div>
                   <div className="px-3.5 py-2.5 bg-emerald-500/10 border-b border-zinc-800/80">
-                    <p className="text-xs text-emerald-300 font-semibold">→ {err.corrected}</p>
+                    <p className="text-xs text-emerald-300 theme-light:text-emerald-800 font-semibold">
+                      → {err.corrected}
+                    </p>
                   </div>
                   <div className="px-3.5 py-2.5">
                     <p className="text-xs text-zinc-400">{err.explanation}</p>

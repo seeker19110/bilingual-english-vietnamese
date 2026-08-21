@@ -16,9 +16,7 @@ export default function PageHeader({ title, subtitle, className = '' }: Props) {
         {title}
       </h1>
       {subtitle && (
-        <p className="text-sm text-zinc-400 theme-light:text-zinc-600 mt-1.5 leading-relaxed font-normal">
-          {subtitle}
-        </p>
+        <p className="text-sm text-zinc-400 mt-1.5 leading-relaxed font-normal">{subtitle}</p>
       )}
     </div>
   )

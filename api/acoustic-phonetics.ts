@@ -1,6 +1,6 @@
 // api/acoustic-phonetics.ts — API Endpoint phân tích âm học và tính điểm GOP V4.
 import { jsonResponse } from './_lib/http.js'
-import { validateAuth } from '../packages/core-auth/security.js'
+import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
 import { analyzeAcousticPhonetics } from '../packages/core-ai/acousticPhoneticsService.js'
 import { z } from 'zod'
 
@@ -13,14 +13,7 @@ const AcousticRequestSchema = z.object({
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      },
-    })
+    return new Response(null, { status: 204, headers: getCorsHeaders(req) })
   }
 
   if (req.method !== 'POST') {

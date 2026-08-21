@@ -41,4 +41,33 @@ describe('api/acoustic-phonetics', () => {
     expect(data.phonemes.length).toBeGreaterThan(0)
     expect(data.schemaVersion).toBe('v4.0.0')
   })
+
+  it('handles OPTIONS preflight', async () => {
+    const req = new Request('http://localhost/api/acoustic-phonetics', { method: 'OPTIONS' })
+    const res = await handler(req)
+    expect(res.status).toBe(204)
+  })
+
+  it('rejects unsupported method', async () => {
+    const req = new Request('http://localhost/api/acoustic-phonetics', { method: 'GET' })
+    const res = await handler(req)
+    expect(res.status).toBe(405)
+  })
+
+  it('rejects invalid payload with 400', async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValueOnce({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+
+    const req = new Request('http://localhost/api/acoustic-phonetics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ targetSentence: '' }),
+    })
+
+    const res = await handler(req)
+    expect(res.status).toBe(400)
+    const data = await res.json()
+    expect(data.error).toBe('Invalid acoustic analysis payload')
+  })
 })
