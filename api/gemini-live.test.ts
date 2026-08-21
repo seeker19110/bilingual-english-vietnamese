@@ -12,6 +12,7 @@ vi.mock('../packages/core-auth/security.js', () => ({
     }
     return null
   }),
+  getCorsHeaders: vi.fn().mockReturnValue({}),
 }))
 
 describe('api/gemini-live', () => {
@@ -62,5 +63,60 @@ describe('api/gemini-live', () => {
     })
     const delRes = await handler(delReq)
     expect(delRes.status).toBe(200)
+  })
+
+  it('handles OPTIONS preflight', async () => {
+    const req = new Request('http://localhost/api/gemini-live', { method: 'OPTIONS' })
+    const res = await handler(req)
+    expect(res.status).toBe(204)
+  })
+
+  it('rejects unsupported method', async () => {
+    const req = new Request('http://localhost/api/gemini-live', {
+      method: 'PATCH',
+      headers: { Authorization: 'Bearer valid-token' },
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(405)
+  })
+
+  it('rejects GET without sessionId', async () => {
+    const req = new Request('http://localhost/api/gemini-live', {
+      method: 'GET',
+      headers: { Authorization: 'Bearer valid-token' },
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
+  })
+
+  it('404s GET for unknown sessionId', async () => {
+    const req = new Request('http://localhost/api/gemini-live?sessionId=does-not-exist', {
+      method: 'GET',
+      headers: { Authorization: 'Bearer valid-token' },
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(404)
+  })
+
+  it('rejects DELETE without sessionId', async () => {
+    const req = new Request('http://localhost/api/gemini-live', {
+      method: 'DELETE',
+      headers: { Authorization: 'Bearer valid-token' },
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
+  })
+
+  it('rejects invalid POST configuration', async () => {
+    const req = new Request('http://localhost/api/gemini-live', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer valid-token',
+      },
+      body: JSON.stringify({ voiceName: 12345 }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
   })
 })

@@ -4,6 +4,7 @@ import handler from './daily-quests.js'
 
 vi.mock('../packages/core-auth/security.js', () => ({
   validateAuth: vi.fn().mockResolvedValue({ userId: 'u-quest-tester' }),
+  getCorsHeaders: vi.fn().mockReturnValue({}),
 }))
 
 describe('api/daily-quests endpoint', () => {
@@ -78,5 +79,47 @@ describe('api/daily-quests endpoint', () => {
     expect(data.success).toBe(true)
     expect(data.rewards.streakFreeze).toBe(1)
     expect(data.state.chestState.isClaimed).toBe(true)
+  })
+
+  it('handles OPTIONS preflight', async () => {
+    const req = new Request('http://localhost/api/daily-quests', { method: 'OPTIONS' })
+    const res = await handler(req)
+    expect(res.status).toBe(204)
+  })
+
+  it('rejects unsupported method', async () => {
+    const req = new Request('http://localhost/api/daily-quests', { method: 'DELETE' })
+    const res = await handler(req)
+    expect(res.status).toBe(405)
+  })
+
+  it('rejects update_progress missing category', async () => {
+    const req = new Request('http://localhost/api/daily-quests?action=update_progress', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
+  })
+
+  it('rejects invalid POST action', async () => {
+    const req = new Request('http://localhost/api/daily-quests?action=unknown', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
+  })
+
+  it('rejects invalid JSON payload on POST', async () => {
+    const req = new Request('http://localhost/api/daily-quests?action=update_progress', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{invalid',
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
   })
 })

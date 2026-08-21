@@ -1,6 +1,6 @@
 // api/daily-quests.ts — REST handler cho Nhiệm Vụ Hàng Ngày & Rương Báu Bí Ẩn (Daily Quests & Streak Vault).
 import { jsonResponse } from './_lib/http.js'
-import { validateAuth } from '../packages/core-auth/security.js'
+import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
 import {
   generateDailyQuests,
   updateQuestProgress,
@@ -16,14 +16,7 @@ const userDailyQuestsMap = new Map<string, DailyQuestsState>()
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      },
-    })
+    return new Response(null, { status: 204, headers: getCorsHeaders(req) })
   }
 
   const auth = await validateAuth(req)

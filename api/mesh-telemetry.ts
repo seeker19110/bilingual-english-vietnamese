@@ -1,6 +1,6 @@
 // api/mesh-telemetry.ts — REST handler cho WebSocket Mesh & Realtime Telemetry V4.4.
 import { jsonResponse } from './_lib/http.js'
-import { validateAuth } from '../packages/core-auth/security.js'
+import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
 import {
   RealtimeSessionTelemetry,
   RealtimeSessionTelemetrySchema,
@@ -12,14 +12,7 @@ const inMemorySessionTelemetry = new Map<string, RealtimeSessionTelemetry>()
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      },
-    })
+    return new Response(null, { status: 204, headers: getCorsHeaders(req) })
   }
 
   const auth = await validateAuth(req)

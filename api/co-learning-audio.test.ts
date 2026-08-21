@@ -12,6 +12,7 @@ vi.mock('../packages/core-auth/security.js', () => ({
     }
     return null
   }),
+  getCorsHeaders: vi.fn().mockReturnValue({}),
 }))
 
 describe('api/co-learning-audio', () => {

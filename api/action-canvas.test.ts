@@ -69,4 +69,82 @@ describe('Action Canvas API Handler (/api/action-canvas)', () => {
     expect(data.format).toBe('markdown')
     expect(data.markdown).toBeDefined()
   })
+
+  it('handles OPTIONS preflight', async () => {
+    const req = new Request('http://localhost/api/action-canvas', { method: 'OPTIONS' })
+    const res = await handler(req)
+    expect(res.status).toBe(204)
+  })
+
+  it('rejects unsupported method', async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValueOnce({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+    const req = new Request('http://localhost/api/action-canvas', { method: 'DELETE' })
+    const res = await handler(req)
+    expect(res.status).toBe(405)
+  })
+
+  it('404s auto_layout/export when no canvas exists yet for the user', async () => {
+    const freshUser = '22222222-2222-4222-8222-222222222222'
+    vi.spyOn(security, 'validateAuth').mockResolvedValueOnce({ userId: freshUser })
+    const layoutReq = new Request('http://localhost/api/action-canvas?action=auto_layout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    })
+    const layoutRes = await handler(layoutReq)
+    expect(layoutRes.status).toBe(404)
+
+    vi.spyOn(security, 'validateAuth').mockResolvedValueOnce({ userId: freshUser })
+    const exportReq = new Request('http://localhost/api/action-canvas?action=export', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    })
+    const exportRes = await handler(exportReq)
+    expect(exportRes.status).toBe(404)
+  })
+
+  it('auto_layout re-arranges nodes of an existing canvas', async () => {
+    const userId = '11111111-1111-4111-8111-111111111111'
+    vi.spyOn(security, 'validateAuth').mockResolvedValueOnce({ userId })
+    const req = new Request('http://localhost/api/action-canvas?action=auto_layout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(data.success).toBe(true)
+  })
+
+  it('rejects invalid full-canvas payload with 400', async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValueOnce({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+    const req = new Request('http://localhost/api/action-canvas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nodes: 'not-an-array' }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
+    const data = await res.json()
+    expect(data.error).toBe('invalid_request')
+  })
+
+  it('rejects invalid JSON payload on POST', async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValueOnce({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+    const req = new Request('http://localhost/api/action-canvas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{not valid',
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
+  })
 })

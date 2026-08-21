@@ -4207,3 +4207,35 @@ deploy.yml` không còn tự inline các bước, nay gọi thẳng `bash script
       uptime monitoring ngoài (UptimeRobot/Better Uptime), PWA/offline (`manifest.json` + service
       worker — có đặc tả sẵn ở `docs/framework/BO-SUNG-nang-cao-i18n-PWA-Sentry-SEO.md` nhưng
       viết cho Next.js, cần điều chỉnh cho Vite), dashboard theo dõi tổng chi phí AI/tháng.
+
+- **[Audit toàn diện 2026-08-21] Tầng 1–3+5a+6 chạy lại đầy đủ theo `docs/framework/QUY-TRINH-AUDIT.md`
+  (nhánh `claude/quet-sau-toan-dien-du-an-a3fnv5`), phát hiện 2 vấn đề mới phát sinh cùng đợt thêm bộ
+  "10 SOTA Agent Super Skills" (mục 2.1 CLAUDE.md) — cả hai đã VÁ trong cùng PR này, không chờ PR riêng.**
+  - **Phát hiện 1 — CORS mở quá rộng:** 18 endpoint REST mới
+    (`api/agent-orchestrator.ts`, `avatar-embodiment.ts`, `life-synthesis.ts`, `memory-palace.ts`,
+    `debate-arena.ts`, `pvp-arena.ts`, `daily-quests.ts`, `referral-vip.ts`, `mesh-telemetry.ts`,
+    `stem-scratchpad.ts`, `action-canvas.ts`, `metacognitive-reflection.ts`, `neural-curriculum.ts`,
+    `co-learning-audio.ts`, `gemini-live.ts`, `realtime-multimodal.ts`, `acoustic-phonetics.ts`,
+    `proactive-agent.ts`) set cứng `Access-Control-Allow-Origin: '*'` ở OPTIONS preflight, khác thiết
+    kế same-origin của các endpoint cũ (whitelist `getCorsHeaders()` trong
+    `packages/core-auth/security.ts`, đọc `ALLOWED_ORIGINS`). **Đã sửa:** đổi cả 18 file sang dùng
+    `getCorsHeaders(req)` thay vì khối `'*'` tự viết tay — hành vi giữ nguyên với origin hợp lệ, nhưng
+    origin lạ giờ bị chặn đúng theo whitelist thay vì luôn được chấp nhận. Cập nhật kèm 3 file test có
+    `vi.mock('../packages/core-auth/security.js', ...)` toàn module (thiếu export `getCorsHeaders`,
+    gây lỗi mock khi thêm test OPTIONS).
+  - **Phát hiện 2 — Coverage branches tụt dưới sàn:** đo được branches 89.23% (tụt từ mốc đặt ngưỡng
+    90.32%, dưới sàn 90% ở `vitest.config.ts`) — các service/handler mới của bộ 10 Super Skills thiếu
+    test ca biên (OPTIONS, method không hỗ trợ, thiếu field bắt buộc, action không hợp lệ, JSON hỏng,
+    404/400 theo nhánh nghiệp vụ). **Đã sửa:** viết thêm ~70 test ca biên cho 10 file
+    (`referral-vip`, `agent-orchestrator`, `acoustic-phonetics`, `pvp-arena`, `admin-feedback`,
+    `avatar-embodiment`, `gemini-live`, `realtime-multimodal`, `action-canvas`, `life-synthesis`,
+    `daily-quests` — không đổi code nghiệp vụ, chỉ thêm test) → branches về **90.02%** (statements
+    94.07% · functions 97.15% · lines 94.07%), qua ngưỡng `npm run test:coverage`.
+  - Chạy lại toàn bộ cổng sau khi vá: build ✅ · typecheck ✅ (4 tsconfig) · lint ✅ (0 cảnh báo) ·
+    format ✅ · test ✅ **417 file / 5018 test** · size ✅ (JS 120.58/123 kB · CSS 15.62/16 kB brotli) ·
+    `npm audit --omit=dev` 0 lỗ hổng · 0 secret hardcode · `.env` không bị track · 0 `console.log` rác ·
+    0 `TODO`/`any` mới. Git: `origin/main`...HEAD 0 ahead/0 behind lúc audit.
+  - **Còn để ngỏ (chưa làm, ghi nhận để phiên sau xử lý nếu cần):** mâu thuẫn nội bộ PROGRESS.md về
+    tính năng "phòng chat bạn bè" (một đoạn ghi "chưa làm", đoạn khác mô tả code đã xong ở
+    `packages/core-chat/`) — cần audit luồng riêng (mục 5 quy trình audit) để xác minh, không thuộc
+    phạm vi đợt này. E2E+a11y và audit luồng dữ liệu sâu (Tầng 5c, Tầng 8–9) chưa chạy lượt này.
