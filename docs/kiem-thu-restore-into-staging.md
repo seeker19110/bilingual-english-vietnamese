@@ -8,7 +8,7 @@
 > lúc sự cố. Xem bối cảnh nợ kỹ thuật ở `PROGRESS.md` mục "Nợ kỹ thuật còn mở".
 >
 > **Nguyên tắc an toàn:** toàn bộ quy trình dưới đây dùng tên database TẠM
-> (`english_tutor_restore_test`), khác hẳn `english_tutor` (production). Script chỉ
+> (`dhcb_restore_test`), khác hẳn `dhcb` (production). Script chỉ
 > `DROP`/`CREATE` đúng tên database truyền vào `--restore-into`, không đụng database nào khác —
 > chỉ cần gõ đúng tên là an toàn tuyệt đối cho dữ liệu thật.
 
@@ -33,7 +33,7 @@ DATABASE`.
 npm run restore:r2 -- --list
 ```
 
-Ghi lại tên file backup mới nhất (dạng `pg-backups/english_tutor_YYYYMMDD.sql.gz`).
+Ghi lại tên file backup mới nhất (dạng `pg-backups/dhcb_YYYYMMDD.sql.gz`).
 
 ## Bước 3 — Ghi lại số liệu đối chiếu từ database THẬT (chỉ đọc, không sửa)
 
@@ -49,12 +49,12 @@ Lưu 3 con số này ra một chỗ (ghi tay hoặc `> /tmp/counts-before.txt`).
 ## Bước 4 — Chạy nhánh phá huỷ NHẮM VÀO DATABASE TẠM
 
 ```bash
-npm run restore:r2 -- --restore-into english_tutor_restore_test --yes
+npm run restore:r2 -- --restore-into dhcb_restore_test --yes
 ```
 
 Kỳ vọng thấy log tuần tự: tải file `.sql.gz` về `.restore-*.sql.gz` → `drop database if exists
-english_tutor_restore_test` → `create database english_tutor_restore_test` → `gunzip | psql`
-chạy không lỗi → dòng `✅ Khôi phục xong vào database "english_tutor_restore_test"`.
+dhcb_restore_test` → `create database dhcb_restore_test` → `gunzip | psql`
+chạy không lỗi → dòng `✅ Khôi phục xong vào database "dhcb_restore_test"`.
 
 **Nếu lệnh báo lỗi** (thiếu quyền, sai connection string, gunzip lỗi định dạng…) — đây chính là
 mục tiêu của bài test: phát hiện lỗi TRƯỚC lúc sự cố thật, không phải lúc server đang sập. Sửa
@@ -63,7 +63,7 @@ nguyên nhân rồi chạy lại bước 4.
 ## Bước 5 — Đối chiếu dữ liệu database tạm với số liệu đã ghi ở bước 3
 
 ```bash
-RESTORE_TEST_URL=$(echo "$RESTORE_PSQL_URL" | sed 's#/[^/?]*\(?\|$\)#/english_tutor_restore_test\1#')
+RESTORE_TEST_URL=$(echo "$RESTORE_PSQL_URL" | sed 's#/[^/?]*\(?\|$\)#/dhcb_restore_test\1#')
 psql "$RESTORE_TEST_URL" -c "select count(*) from public.users;"
 psql "$RESTORE_TEST_URL" -c "select count(*) from public.chat_messages;"
 psql "$RESTORE_TEST_URL" -c "select count(*) from public.payments;"
@@ -84,7 +84,7 @@ psql "$DATABASE_URL" -c "\dt public.*" | wc -l
 ## Bước 6 — Dọn dẹp database tạm
 
 ```bash
-psql "$RESTORE_PSQL_URL" -c "drop database if exists english_tutor_restore_test;"
+psql "$RESTORE_PSQL_URL" -c "drop database if exists dhcb_restore_test;"
 ```
 
 ## Bước 7 — Ghi kết quả vào `PROGRESS.md`

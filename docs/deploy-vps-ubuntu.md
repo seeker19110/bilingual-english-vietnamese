@@ -639,15 +639,15 @@ sudo systemctl enable --now postgresql pgbouncer
 Tạo database + user (đổi tên/mật khẩu thật, không dùng giá trị mẫu):
 
 ```bash
-sudo -u postgres psql -c "create database english_tutor;"
-sudo -u postgres psql -c "create user english_tutor_app with encrypted password 'ĐỔI-MẬT-KHẨU-THẬT';"
-sudo -u postgres psql -c "grant all privileges on database english_tutor to english_tutor_app;"
+sudo -u postgres psql -c "create database dhcb;"
+sudo -u postgres psql -c "create user tutor_app with encrypted password 'ĐỔI-MẬT-KHẨU-THẬT';"
+sudo -u postgres psql -c "grant all privileges on database dhcb to tutor_app;"
 ```
 
 Chạy schema + migration (từ máy có repo, trỏ `DATABASE_URL` tạm thời vào máy mới):
 
 ```bash
-DATABASE_URL="postgresql://english_tutor_app:MẬT-KHẨU@<ip-vps-db>:5432/english_tutor" \
+DATABASE_URL="postgresql://tutor_app:MẬT-KHẨU@<ip-vps-db>:5432/dhcb" \
   npm run migrate:pg
 ```
 
@@ -687,7 +687,7 @@ sudo ufw enable
 Trên VPS app, sửa `.env`:
 
 ```bash
-DATABASE_URL=postgresql://english_tutor_app:MẬT-KHẨU@<ip-vps-db>:6432/english_tutor
+DATABASE_URL=postgresql://tutor_app:MẬT-KHẨU@<ip-vps-db>:6432/dhcb
 REDIS_URL=redis://:MẬT-KHẨU-REDIS@<ip-vps-db>:6379
 PG_POOL_MAX=20   # khớp default_pool_size trong pgbouncer.ini — xem comment file mẫu
 ```
