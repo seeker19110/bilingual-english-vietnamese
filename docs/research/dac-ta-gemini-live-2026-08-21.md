@@ -11,6 +11,7 @@ Ghi âm (MediaRecorder) → /api/stt (Whisper Groq/OpenAI) → text
   → /api/agent (Claude/Gemini/Groq text) → 2 câu trả lời (hội thoại + sửa lỗi)
   → /api/tts (Google Cloud TTS) × 2 lần, 2 giọng khác nhau → phát audio
 ```
+
 3 bước tuần tự, độ trễ cộng dồn (STT ~1-2s + LLM ~1-3s + TTS ~1-2s), nhưng **kiểm soát được từng bước** — đặc biệt là tách được 2 giọng (giọng đích cho hội thoại, giọng mẹ đẻ cho sửa lỗi/giải thích) vì TTS gọi riêng cho từng đoạn text.
 
 **Gemini Live API**: 1 kết nối **WebSocket song công** (WSS) duy nhất tới Gemini — client gửi audio stream liên tục, server Google tự làm STT + suy luận + TTS **bên trong mô hình**, trả về audio ngay khi có (không đợi câu nói xong hẳn), hỗ trợ **barge-in** (ngắt lời AI giữa chừng), độ trễ mục tiêu là "gần real-time" (dưới ~1s), không có bước "text ở giữa" mà ứng dụng kiểm soát trực tiếp.
@@ -23,11 +24,11 @@ Ghi âm (MediaRecorder) → /api/stt (Whisper Groq/OpenAI) → text
 
 **3 phương án khả thi, xếp theo mức xáo trộn kiến trúc:**
 
-| Phương án | Cách làm | Ưu | Nhược |
-|---|---|---|---|
-| **A. Không đổi kiến trúc, chỉ thay STT** | Dùng Live API kiểu "chỉ nghe" (nhận audio → trả text, tắt output audio) thay Whisper, giữ nguyên LLM text + TTS Google 2 giọng như cũ | Rủi ro thấp, không phá tính năng 2 giọng | Không tận dụng được lợi ích chính của Live (độ trễ thấp, barge-in) — gần như phí Live để làm việc mà Whisper đã làm rẻ hơn |
-| **B. 2 phiên Live song song** | 1 phiên Live giọng đích cho hội thoại, 1 phiên Live giọng mẹ đẻ cho sửa lỗi, đồng bộ tay | Có barge-in + độ trễ thấp cho cả 2 luồng | Phức tạp cao: 2 WebSocket, chi phí gần gấp đôi, đồng bộ 2 audio stream dễ lệch/rối UI |
-| **C. Live cho hội thoại, giữ pipeline cũ cho sửa lỗi** | Hội thoại chính (nói qua nói lại) chạy qua Live (1 giọng đích, có barge-in); phần sửa lỗi/giải thích vẫn lấy transcript rồi gọi `/api/agent` + `/api/tts` như cũ | Cân bằng: có trải nghiệm real-time cho phần hội thoại (giá trị UX rõ nhất), giữ nguyên cơ chế 2 giọng đã có | Vẫn phải chạy 2 hệ thống song song trong cùng 1 tính năng, tăng độ phức tạp code |
+| Phương án                                              | Cách làm                                                                                                                                                         | Ưu                                                                                                          | Nhược                                                                                                                      |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **A. Không đổi kiến trúc, chỉ thay STT**               | Dùng Live API kiểu "chỉ nghe" (nhận audio → trả text, tắt output audio) thay Whisper, giữ nguyên LLM text + TTS Google 2 giọng như cũ                            | Rủi ro thấp, không phá tính năng 2 giọng                                                                    | Không tận dụng được lợi ích chính của Live (độ trễ thấp, barge-in) — gần như phí Live để làm việc mà Whisper đã làm rẻ hơn |
+| **B. 2 phiên Live song song**                          | 1 phiên Live giọng đích cho hội thoại, 1 phiên Live giọng mẹ đẻ cho sửa lỗi, đồng bộ tay                                                                         | Có barge-in + độ trễ thấp cho cả 2 luồng                                                                    | Phức tạp cao: 2 WebSocket, chi phí gần gấp đôi, đồng bộ 2 audio stream dễ lệch/rối UI                                      |
+| **C. Live cho hội thoại, giữ pipeline cũ cho sửa lỗi** | Hội thoại chính (nói qua nói lại) chạy qua Live (1 giọng đích, có barge-in); phần sửa lỗi/giải thích vẫn lấy transcript rồi gọi `/api/agent` + `/api/tts` như cũ | Cân bằng: có trải nghiệm real-time cho phần hội thoại (giá trị UX rõ nhất), giữ nguyên cơ chế 2 giọng đã có | Vẫn phải chạy 2 hệ thống song song trong cùng 1 tính năng, tăng độ phức tạp code                                           |
 
 **Đề xuất cá nhân: Phương án C**, thử nghiệm trước ở dạng tính năng phụ (ví dụ nút "Chế độ real-time" riêng trong Luyện nói), không thay thế luồng cũ ngay — để so sánh trải nghiệm + chi phí thật trước khi quyết định thay hẳn.
 
