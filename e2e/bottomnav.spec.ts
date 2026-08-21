@@ -21,7 +21,9 @@ test.describe('BottomNav (U-5)', () => {
     const nav = page.locator('nav[aria-label]')
     await expect(nav).toBeVisible()
     await expect(page.getByRole('link', { name: /Trang chủ/ })).toBeVisible()
-    await expect(page.getByRole('link', { name: /Lộ trình/ })).toBeVisible()
+    // Tab 2 đổi từ "Lộ trình" sang "Học Tiếng Anh" (feat(navigation): restructure platform hub
+    // and dedicated english studio routing, commit fd188ef) — xem BottomNav.tsx.
+    await expect(page.getByRole('link', { name: /Học Tiếng Anh/ })).toBeVisible()
     await expect(page.getByRole('link', { name: /Luyện tập/ })).toBeVisible()
     // Tab 3 đổi từ "Tiến độ" sang "Đồng Hành" (AI companion, dẫn tới /dong-hanh) — xem
     // BottomNav.tsx (nút tâm điểm Orb Glow, Platform V7.0). Trang /tien-do vẫn tồn tại (vào qua

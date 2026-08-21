@@ -326,7 +326,10 @@ for (const theme of THEMES) {
       value: ['apple', 'banana', 'cherry'],
     })
     await mockLogin(page, 'vi', theme)
-    await page.goto('/', { waitUntil: 'domcontentloaded' })
+    // Nút gợi ý này đã dời từ trang chủ hub "/" sang trang riêng môn Tiếng Anh
+    // "/hoc-tieng-anh" (feat(navigation): restructure platform hub and dedicated
+    // english studio routing, commit fd188ef) — xem EnglishHome.tsx.
+    await page.goto('/hoc-tieng-anh', { waitUntil: 'domcontentloaded' })
     await expect(page.getByText(/Luyện nói với 3 từ vừa học/)).toBeVisible()
     const { all } = await scan(page)
     expect(all).toEqual([])

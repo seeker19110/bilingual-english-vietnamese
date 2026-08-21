@@ -3818,6 +3818,23 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- 🟢 **[2026-08-21] Đã vá 15 test e2e đỏ trên `main`** (phát hiện khi driving PR #617 tới green —
+  commit `fd188ef` "restructure platform hub and dedicated english studio routing" đổi route "/"
+  từ `EnglishHome` sang `Home` (platform hub mới) và dời `EnglishHome` sang `/hoc-tieng-anh`, kéo
+  theo 2 loại lỗi:
+  1. **5 test sai route** (`e2e/a11y.spec.ts` "Home — gợi ý luyện nói..." × 5 theme,
+     `e2e/comeback.spec.ts` × 2, `e2e/bottomnav.spec.ts` × 1 — nhãn tab đổi "Lộ trình" →
+     "Học Tiếng Anh"): sửa test trỏ đúng `/hoc-tieng-anh` thay vì `/` cho nội dung đã dời, và
+     cập nhật locator theo nhãn mới.
+  2. **9 lỗi a11y `color-contrast` thật** trên `Home.tsx` (platform hub mới) và `EnglishHome.tsx`
+     — 2 dạng bug lặp lại từ đợt vá PR #616 trước: (a) pill/nút dùng thẳng `text-emerald/blue/
+purple/orange/amber/sky-300` thiếu biến thể `theme-light:text-*-800` nên nhạt trên 3 theme
+     sáng; (b) nút nền `bg-accent-500`/`bg-emerald-500` dùng `text-zinc-950` — token `--z-950`
+     BỊ ĐẢO CHIỀU ở theme sáng (nhạt nhất thay vì đậm nhất, xem PROGRESS.md đợt vá PR #616) nên
+     chữ gần trắng trên nền sáng → sửa bằng màu cố định `text-[#09090b]` (không qua token z-*,
+     đã tính contrast ≥ 5.9:1 trên cả 5 theme accent màu khác nhau) thay vì `text-zinc-950`.
+     Xác nhận: `npx playwright test e2e/a11y.spec.ts e2e/bottomnav.spec.ts e2e/comeback.spec.ts`
+     134/134 pass cục bộ; build/typecheck/lint/format/`npm test` (5019/5019) đều xanh.
 - 🟡 **[2026-08-21] Gemini Live — đã thay code GIẢ bằng kết nối WebSocket THẬT, nhưng CHƯA test
   với API key thật.** Nhánh `claude/gemini-live-integration-xo175x` trước đó (commit `cf44362`
   "feat: implement horizon features and stress test suite") đã có sẵn một bộ khung lớn (~4100
