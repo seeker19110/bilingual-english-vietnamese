@@ -4102,6 +4102,28 @@ truoc-khi-xoa-20260821.sql.gz`), xác nhận 0 kết nối đang dùng
   không); (2) tên gọi dự án "english-tutor" trong `docs/MASTER_SPEC.md` dòng mở đầu (mang tính mô
   tả lịch sử dự án, không phải định danh hạ tầng).
 
+  **[Hoàn tất, cùng ngày] Đã merge + deploy thật lên VPS, xác nhận qua `pm2 list`.** PR #614
+  (đổi tên PM2 + dọn DB) merge vào `main` bằng squash (commit `e2477d4`) sau khi vá 2 lỗi CI
+  không liên quan tới nội dung đổi tên: (1) PR body thiếu mục bắt buộc khi chuyển draft → ready
+  (gate `metadata`) — bổ sung đủ 6 mục theo template; (2) `quality` fail 2 lần vì lỗi format
+  Prettier — lần 2 do **lệch phiên bản Prettier** giữa `npx` cache cũ (3.8.1) và bản khai trong
+  `package.json` (^3.9.6, đúng bài học CLAUDE.md mục 8 "công cụ phải khớp lockfile"), sửa bằng
+  `npm ci` rồi format lại. **Phát hiện phụ, chưa xử lý**: gate coverage của `quality`
+  (branches ≥90%) đang FAIL LIÊN TỤC trên `main` qua rất nhiều commit gần đây (89.23%, thấp hơn
+  ngưỡng) — không phải lỗi do PR này, là nợ kỹ thuật có sẵn ảnh hưởng mọi PR, `merge_pull_request`
+  vẫn cho qua nên `quality` không phải required status check chặn merge trên branch protection
+  hiện tại (khác mô tả ở CLAUDE.md mục 13 "CI check quality/e2e xanh"). Cần người dùng quyết định
+  có ưu tiên vá coverage hay không.
+
+  Sau merge, người dùng tự chạy trên VPS: `git pull origin main` → `npm ci && npm run build` →
+  `pm2 delete english-tutor` → `pm2 start ecosystem.config.cjs` → `pm2 save`. Kết quả xác nhận
+  **cả 3 tiến trình `dhcb` chạy `cluster`/`online`**, `english-tutor` đã biến mất khỏi `pm2 list`,
+  health check `/api/health` trả `{"status":"ok"}`. Site production đã khôi phục hoàn toàn sau
+  sự cố 502 (do 3 tiến trình `english-tutor` cũ bị crash-loop hết `max_restarts` trước khi đổi
+  tên — nguyên nhân gốc chưa xác minh kỹ vì standalone `node dist-server/server.js` chạy hoàn
+  toàn ổn không lỗi, nhiều khả năng do PM2 exec_mode/wait_ready chưa khớp cấu hình cũ, không phải
+  lỗi code).
+
   Việc còn lại thuộc GĐ2 scale xa hơn (nếu
   cần vượt quá 3 vCPU cho mục tiêu 30k-50k concurrent) là quyết định mở rộng tiếp theo, không
   còn là nợ kỹ thuật cấp thiết.
