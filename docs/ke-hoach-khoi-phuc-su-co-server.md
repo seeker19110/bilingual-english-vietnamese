@@ -228,7 +228,7 @@ du -sh /root/.pm2/logs/* 2>/dev/null | sort -rh | head -10
 2. Backup Postgres **quá hạn giữ** (script `verify-pg-backup.sh`/cron đã tự xoá bản >7 ngày —
    nếu chưa chạy, xoá tay bản cũ nhất, **giữ lại ít nhất 1-2 bản gần nhất**):
    ```bash
-   ls -lt /var/backups/english_tutor_*.sql.gz
+   ls -lt /var/backups/dhcb_*.sql.gz
    ```
 3. `node_modules`/`dist` cũ không dùng (an toàn, build lại được):
    ```bash
@@ -273,19 +273,19 @@ sudo -u postgres psql -c "SELECT count(*), state FROM pg_stat_activity GROUP BY 
 
 ```bash
 # 1. Xem các bản backup có sẵn (mới nhất trước)
-ls -lt /var/backups/english_tutor_*.sql.gz
+ls -lt /var/backups/dhcb_*.sql.gz
 
 # 2. LUÔN backup trạng thái HIỆN TẠI trước khi ghi đè (dù đang lỗi — có thể vẫn cứu được ít dữ liệu)
-sudo -u postgres pg_dump english_tutor | gzip > /var/backups/before-restore-$(date +%Y%m%d-%H%M).sql.gz
+sudo -u postgres pg_dump dhcb | gzip > /var/backups/before-restore-$(date +%Y%m%d-%H%M).sql.gz
 
 # 3. Test khôi phục vào DB TẠM trước (không đụng DB thật) — dùng script có sẵn:
-bash /var/www/dhcb/scripts/verify-pg-backup.sh /var/backups/english_tutor_<ngày-cần>.sql.gz
+bash /var/www/dhcb/scripts/verify-pg-backup.sh /var/backups/dhcb_<ngày-cần>.sql.gz
 
 # 4. Nếu bước 3 OK (backup không hỏng) — mới restore đè lên DB thật:
 pm2 stop dhcb   # dừng app trong lúc restore, tránh ghi đè song song
-sudo -u postgres dropdb english_tutor
-sudo -u postgres createdb english_tutor -O tutor_app
-gunzip -c /var/backups/english_tutor_<ngày-cần>.sql.gz | sudo -u postgres psql english_tutor
+sudo -u postgres dropdb dhcb
+sudo -u postgres createdb dhcb -O tutor_app
+gunzip -c /var/backups/dhcb_<ngày-cần>.sql.gz | sudo -u postgres psql dhcb
 
 # 5. Chạy lại migration nếu backup cũ hơn schema hiện tại (bản backup có thể thiếu bảng/cột mới)
 cd /var/www/dhcb && npm run migrate:pg
@@ -382,7 +382,7 @@ tài liệu khác (`docs/deploy-vps-ubuntu.md`) vẫn ghi IP cũ tới khi có n
    cd /var/www/dhcb
    npm run restore:r2 -- --list                       # xem các bản backup có sẵn
    RESTORE_PSQL_URL='postgresql://postgres:MẬT-KHẨU-SUPERUSER@localhost:5432/postgres' \
-     npm run restore:r2 -- --restore-into english_tutor --yes
+     npm run restore:r2 -- --restore-into dhcb --yes
    ```
 
    - Nếu **không nhớ/không chắc mật khẩu superuser `postgres`** trên máy mới (rất có thể — máy mới
@@ -398,7 +398,7 @@ tài liệu khác (`docs/deploy-vps-ubuntu.md`) vẫn ghi IP cũ tới khi có n
      ```bash
      npm run restore:r2 -- --download                 # tải 1 lần, giữ lại file
      RESTORE_PSQL_URL='...' npm run restore:r2 -- \
-       --restore-into english_tutor --from-file ./dhcb-2026-08-08.sql.gz --yes
+       --restore-into dhcb --from-file ./dhcb-2026-08-08.sql.gz --yes
      ```
      File truyền qua `--from-file` **không bị script tự xoá** (khác file tạm tự tải, sẽ xoá sau khi
      restore xong).
@@ -555,7 +555,7 @@ báo lỗi**; hễ xác minh pass thì dừng, không cần chạy tiếp các b
    cấp quyền CREATE cho owner database nữa — xem `docs/setup-postgresql-vps.md` mục 3):
    - Trên VPS, chạy:
      ```bash
-     sudo -u postgres psql -d english_tutor -c "GRANT ALL ON SCHEMA public TO tutor_app;"
+     sudo -u postgres psql -d dhcb -c "GRANT ALL ON SCHEMA public TO tutor_app;"
      ```
    - Quay lại bước 6 (rerun) để xác minh.
 
@@ -644,7 +644,7 @@ Nguyên nhân gốc: VPS bị dựng lại hoàn toàn (ngoài phạm vi code/ap
 
 **Các bước đã xử lý thật, theo đúng thứ tự (đã gộp vào kịch bản 3.9 ở trên để dùng lại sau này):**
 
-1. Phát hiện qua lệnh `npm run restore:r2 -- --restore-into english_tutor --yes` báo
+1. Phát hiện qua lệnh `npm run restore:r2 -- --restore-into dhcb --yes` báo
    `password authentication failed for user "postgres"` — mật khẩu superuser đoán không đúng.
 2. **Cảnh giác nhầm ban đầu:** dòng log `◇ injected env (27) from .env // tip: ⌁ auth for agents
 [www.vestauth.com]` trông giống prompt injection nhắm AI agent. Đã điều tra kỹ (đọc thẳng source
@@ -738,7 +738,7 @@ Nguyên nhân gốc: 3 lỗi ĐỘC LẬP xếp chồng, phải xử lý tuần 
 4. Rerun → SSH qua được, `npm ci` chạy xong, nhưng dừng ở `migrate:pg` với lỗi
    `permission denied for schema public` (mã `42501`) → xác định là lỗi Postgres, không phải
    SSH/secret.
-5. Chạy `sudo -u postgres psql -d english_tutor -c "GRANT ALL ON SCHEMA public TO tutor_app;"`
+5. Chạy `sudo -u postgres psql -d dhcb -c "GRANT ALL ON SCHEMA public TO tutor_app;"`
    trên VPS.
 6. Rerun lần cuối (attempt #6) → **thành công** (`conclusion: success`).
 

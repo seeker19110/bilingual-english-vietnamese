@@ -4081,15 +4081,29 @@ fast-uri` — thuần devDependency (commitlint hook), không vào bundle chạy
   `docs/ke-hoach-khoi-phuc-su-co-server.md`, `docs/cloudflare-setup.md`, `docs/DEPLOY.md`,
   `docs/rollback-runbook.md`, `docs/runbook-dung-vps-moi-tu-dau.md`,
   `docs/huong-dan-lien-ket-facebook-apple-microsoft.md`, `docs/huong-dan-tu-host-scale-50k.md`,
-  `docs/email-setup.md`. **Cố ý CHƯA đổi** 3 chỗ khác dùng tên `english-tutor`/`english_tutor` vì
-  không rõ có nằm trong phạm vi đổi tên này không, cần người dùng xác nhận thêm: (1) tên database
-  Postgres `english_tutor` + user `tutor_app` trong `docs/ke-hoach-khoi-phuc-su-co-server.md`
-  (nhiều dòng) — ngược lại `docs/deploy-vps-ubuntu.md` đã ghi sẵn DB tên `dhcb`/`dhcb_app` từ
-  trước, hai file đang MÂU THUẪN nhau về tên DB thật, cần xác minh trên VPS bằng `sudo -u
-  postgres psql -l`; (2) tên GitHub repo `seeker19110/english-tutor` trong
-  `docs/CODEX_CLOUD_SETUP.md` (khác `seeker19110/donghanh` đang dùng thật — có thể là repo cũ
-  trước khi đổi tên); (3) tên gọi dự án "english-tutor" trong `docs/MASTER_SPEC.md` dòng mở đầu
-  (mang tính mô tả lịch sử dự án, không phải định danh hạ tầng). Việc còn lại thuộc GĐ2 scale xa hơn (nếu
+  `docs/email-setup.md`.
+
+  **[Cập nhật tiếp, cùng ngày] Đã xác minh + dọn xong mục database.** Trên VPS thật có SONG SONG
+  2 database (`sudo -u postgres psql -l+`): `dhcb` (356MB, 41 bảng) và `english_tutor` (301MB, 40
+  bảng, cùng 18 users) — số liệu gần giống nhau vì `english_tutor` là **bản sao/rác còn sót lại
+  từ lúc đổi tên trước đây**. Xác nhận DB thật app đang dùng qua `DATABASE_URL` trong `.env`:
+  `postgresql://tutor_app:...@localhost:5432/dhcb` → **`dhcb` mới là DB sống, `english_tutor` là
+  rác**. Đã xử lý: backup phòng hờ (`pg_dump english_tutor | gzip > /var/backups/english_tutor-
+  truoc-khi-xoa-20260821.sql.gz`), xác nhận 0 kết nối đang dùng
+  (`pg_stat_activity`), rồi `dropdb english_tutor` — VPS giờ chỉ còn đúng 1 database `dhcb`. Đã
+  sửa nốt `docs/ke-hoach-khoi-phuc-su-co-server.md` + `docs/setup-postgresql-vps.md` (toàn bộ
+  lệnh `pg_dump`/`dropdb`/`createdb`/`psql -d`/`--restore-into`/tên file backup `*.sql.gz` đổi từ
+  `english_tutor` sang `dhcb`; **role `tutor_app` giữ nguyên** — đó là role Postgres thật đang
+  dùng, không phải tên cần đổi). Role name khác database name là chủ ý của hệ thống, không phải
+  lỗi.
+
+  Còn lại **2 chỗ chưa đổi**, không thuộc hạ tầng vận hành nên chưa cần gấp: (1) tên GitHub repo
+  `seeker19110/english-tutor` trong `docs/CODEX_CLOUD_SETUP.md` (khác `seeker19110/donghanh`
+  đang dùng thật — có thể là repo cũ trước khi đổi tên, cần người dùng xác nhận có còn dùng
+  không); (2) tên gọi dự án "english-tutor" trong `docs/MASTER_SPEC.md` dòng mở đầu (mang tính mô
+  tả lịch sử dự án, không phải định danh hạ tầng).
+
+  Việc còn lại thuộc GĐ2 scale xa hơn (nếu
   cần vượt quá 3 vCPU cho mục tiêu 30k-50k concurrent) là quyết định mở rộng tiếp theo, không
   còn là nợ kỹ thuật cấp thiết.
 

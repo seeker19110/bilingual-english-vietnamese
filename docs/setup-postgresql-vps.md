@@ -103,7 +103,7 @@ vài bảng cốt lõi có dữ liệu, rồi tự xoá database tạm — an to
 
 ```bash
 bash scripts/verify-pg-backup.sh                              # tự tìm backup mới nhất
-bash scripts/verify-pg-backup.sh /var/backups/english_tutor_20260725.sql.gz  # chỉ định file
+bash scripts/verify-pg-backup.sh /var/backups/dhcb_20260725.sql.gz  # chỉ định file
 ```
 
 Nên thêm vào cron chạy **hàng tuần** (không cần hàng ngày — tốn tài nguyên hơn `pg_dump` vì
@@ -242,7 +242,7 @@ sudo crontab -l
 # 10 3 * * * /root/backup-all.sh >> /var/log/backup-all.log 2>&1
 
 sudo -u postgres crontab -l
-# 0 3 * * * pg_dump english_tutor | gzip > /var/backups/english_tutor_$(date +\%Y\%m\%d).sql.gz && find /var/backups -name 'english_tutor_*.sql.gz' -mtime +7 -delete
+# 0 3 * * * pg_dump dhcb | gzip > /var/backups/dhcb_$(date +\%Y\%m\%d).sql.gz && find /var/backups -name 'dhcb_*.sql.gz' -mtime +7 -delete
 # 0 4 * * 0 bash /var/www/dhcb/scripts/verify-pg-backup.sh >> /var/log/pg-restore-test.log 2>&1
 ```
 
@@ -255,7 +255,7 @@ sudo -u postgres crontab -l
 ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run restore:all
 
 # Kèm khôi phục THẬT Postgres (DROP + tạo lại database đích — cần RESTORE_PSQL_URL trong .env):
-ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run restore:all -- --restore-into english_tutor --yes
+ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run restore:all -- --restore-into dhcb --yes
 ```
 
 Dù chạy gộp, phần Nginx/crontab vẫn phải tự khôi phục TỪNG PHẦN theo hướng dẫn mục 7.4 (script chỉ
