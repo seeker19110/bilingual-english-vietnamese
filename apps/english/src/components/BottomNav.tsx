@@ -9,9 +9,13 @@ import type { useOneHandedDrag } from '../lib/useOneHandedDrag'
 const HIDDEN_PATHS = ['/login', '/onboarding']
 
 const LEARNING_PATHS = [
-  '/lo-trinh-hoc',
+  '/hoc-tieng-anh',
+  '/tieng-anh',
+  '/english',
+  '/hoc-mon-hoc',
   '/subjects',
   '/mon-hoc',
+  '/hoc-ung-dung',
   '/applied-knowledge',
   '/ung-dung-thuc-te',
   '/mo-phong',
@@ -35,12 +39,20 @@ const PROFILE_PATHS = [
   '/cai-dat',
   '/tien-do',
   '/lich-su-hoc',
+  '/su-nghiep-cua-toi',
+  '/hoc-su-nghiep',
   '/su-nghiep',
   '/career',
+  '/cong-viec-cua-toi',
+  '/hoc-cong-viec',
   '/cong-viec',
   '/work',
+  '/toi-khoi-nghiep',
+  '/hoc-khoi-nghiep',
   '/khoi-nghiep',
   '/startup',
+  '/cuoc-song-cua-toi',
+  '/hoc-cuoc-song',
   '/cuoc-song',
   '/life',
   '/life-graph',
@@ -118,9 +130,9 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
           <span className="truncate max-w-[4.5rem] tracking-tight">{T.home}</span>
         </Link>
 
-        {/* Tab 2: Lộ trình & Môn học */}
+        {/* Tab 2: Học Tiếng Anh */}
         <Link
-          to="/lo-trinh-hoc"
+          to="/hoc-tieng-anh"
           aria-current={isLearning ? 'page' : undefined}
           className={`tap-44 relative flex flex-col items-center justify-center gap-1 text-center text-xs font-medium transition-all duration-200 group ${
             isLearning
@@ -139,7 +151,7 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
               className={`w-5 h-5 transition-transform duration-200 ${isLearning ? 'scale-110' : 'group-hover:scale-105'}`}
             />
           </div>
-          <span className="truncate max-w-[4.5rem] tracking-tight">{T.navPath}</span>
+          <span className="truncate max-w-[4.5rem] tracking-tight">Học Tiếng Anh</span>
         </Link>
 
         {/* Tab 3: Bạn Đồng Hành AI (Nút tâm điểm Orb Glow) */}

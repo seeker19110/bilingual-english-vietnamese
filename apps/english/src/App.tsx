@@ -26,6 +26,7 @@ const LandingEn = lazyWithRetry(() => import('./pages/LandingEn'))
 const WordDetail = lazyWithRetry(() => import('./pages/WordDetail'))
 const ResetPassword = lazyWithRetry(() => import('./pages/ResetPassword'))
 const Home = lazyWithRetry(() => import('./pages/Home'))
+const EnglishHome = lazyWithRetry(() => import('./pages/EnglishHome'))
 const Chat = lazyWithRetry(() => import('./pages/Chat'))
 const Writing = lazyWithRetry(() => import('./pages/Writing'))
 const Speaking = lazyWithRetry(() => import('./pages/Speaking'))
@@ -299,7 +300,23 @@ export default function App() {
                           </RequireAuth>
                         }
                       />
-                      {/* V2 Specialized Domain Hubs */}
+                      {/* V2 Specialized Domain Hubs & Hoc-* Routes */}
+                      <Route
+                        path="/su-nghiep-cua-toi"
+                        element={
+                          <RequireAuth>
+                            <Career />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/hoc-su-nghiep"
+                        element={
+                          <RequireAuth>
+                            <Career />
+                          </RequireAuth>
+                        }
+                      />
                       <Route
                         path="/career"
                         element={
@@ -313,6 +330,22 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <Career />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/cong-viec-cua-toi"
+                        element={
+                          <RequireAuth>
+                            <Work />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/hoc-cong-viec"
+                        element={
+                          <RequireAuth>
+                            <Work />
                           </RequireAuth>
                         }
                       />
@@ -333,6 +366,22 @@ export default function App() {
                         }
                       />
                       <Route
+                        path="/toi-khoi-nghiep"
+                        element={
+                          <RequireAuth>
+                            <Startup />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/hoc-khoi-nghiep"
+                        element={
+                          <RequireAuth>
+                            <Startup />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
                         path="/startup"
                         element={
                           <RequireAuth>
@@ -345,6 +394,22 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <Startup />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/cuoc-song-cua-toi"
+                        element={
+                          <RequireAuth>
+                            <Life />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/hoc-cuoc-song"
+                        element={
+                          <RequireAuth>
+                            <Life />
                           </RequireAuth>
                         }
                       />
@@ -366,6 +431,14 @@ export default function App() {
                       />
                       {/* V2 Multi-Subject Learning Hub & Sub-pages */}
                       <Route
+                        path="/hoc-mon-hoc"
+                        element={
+                          <RequireAuth>
+                            <Subjects />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
                         path="/subjects"
                         element={
                           <RequireAuth>
@@ -378,6 +451,14 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <Subjects />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/hoc-mon-hoc/:subjectId"
+                        element={
+                          <RequireAuth>
+                            <SubjectDetail />
                           </RequireAuth>
                         }
                       />
@@ -482,6 +563,30 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <Home />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/hoc-tieng-anh"
+                        element={
+                          <RequireAuth>
+                            <EnglishHome />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/tieng-anh"
+                        element={
+                          <RequireAuth>
+                            <EnglishHome />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/english"
+                        element={
+                          <RequireAuth>
+                            <EnglishHome />
                           </RequireAuth>
                         }
                       />

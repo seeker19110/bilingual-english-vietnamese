@@ -327,9 +327,9 @@ export default function Subjects() {
                   <button
                     onClick={() => {
                       if (sub.id === 'english') {
-                        nav('/')
+                        nav('/hoc-tieng-anh')
                       } else {
-                        nav(`/subjects/${sub.id}`)
+                        nav(`/mon-hoc/${sub.id}`)
                       }
                     }}
                     className={`w-full mt-2 tap-44 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-semibold transition active:scale-[0.98] ${
@@ -339,7 +339,11 @@ export default function Subjects() {
                     }`}
                   >
                     <Bot className="w-4 h-4" />
-                    <span>Vào phòng học & Giải đề AI</span>
+                    <span>
+                      {sub.id === 'english'
+                        ? 'Vào Không Gian Học Tiếng Anh'
+                        : 'Vào phòng học & Giải đề AI'}
+                    </span>
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>

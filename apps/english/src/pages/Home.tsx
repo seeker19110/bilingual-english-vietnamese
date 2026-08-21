@@ -1,25 +1,16 @@
-// apps/english/src/pages/Home.tsx — Tiered AI Architecture Homepage
+// apps/english/src/pages/Home.tsx — Đồng Hành Platform Hub (Trang Chủ Nền Tảng Đa Lĩnh Vực)
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  MessageCircle,
-  PenLine,
-  Mic,
   ChevronRight,
-  BookOpen,
   History,
-  Target,
   TrendingUp,
   Brain,
-  Video,
   Bot,
   X,
   Sparkles,
-  Headphones,
-  Activity,
   Calculator,
   Briefcase,
-  Heart,
   Rocket,
   GraduationCap,
 } from 'lucide-react'
@@ -39,7 +30,7 @@ import type { CefrLevel } from '../data/cefr'
 import type { Circle } from '../data/curriculum'
 import { loadCefr } from '../data/cefrLoader'
 import { loadFoundation } from '../data/curriculumLoader'
-import { getLearnedWords, getRecentlyLearnedWords } from '../lib/vocab'
+import { getLearnedWords } from '../lib/vocab'
 import {
   getDoneGrammar,
   computeLockedMapPersisted,
@@ -56,9 +47,6 @@ import {
   COMEBACK_SRS_CARDS,
   COMEBACK_NEW_WORDS,
 } from '../lib/comeback'
-
-// Số từ vừa học tối đa gợi ý cho 1 phiên Speaking (② M4)
-const RECENT_WORDS_FOR_SPEAKING = 8
 
 export default function Home() {
   const nav = useNavigate()
@@ -106,8 +94,6 @@ export default function Home() {
     setComebackClosed(true)
   }
 
-  const recentWords = getRecentlyLearnedWords(uid, RECENT_WORDS_FOR_SPEAKING)
-
   if (!user) return null
 
   const srsDue = getSRSStats(user.id).due
@@ -142,7 +128,7 @@ export default function Home() {
       <main className="max-w-3xl mx-auto px-4 pt-4 pb-[calc(2rem+var(--bnav-h))] space-y-5">
         <h1 className="sr-only">{T.greeting}</h1>
 
-        {/* ── TẦNG 1: EXECUTIVE AI COMPANION (Hạt Nhân Điều Phối Tại Trang Chủ) ── */}
+        {/* ── TẦNG 1: EXECUTIVE AI COMPANION (Hạt Nhân Điều Phối Trung Tâm) ── */}
         <HomeAiBriefingCard
           userName={user.name || user.email?.split('@')[0]}
           srsDueCount={srsDue}
@@ -153,7 +139,7 @@ export default function Home() {
           onContinueClick={goToNextStep}
         />
 
-        {/* ── Universal AI Ask & Voice Bar (Hỏi nhanh đa năng mọi bộ môn) ── */}
+        {/* ── Universal AI Ask & Voice Bar (Hỏi nhanh đa năng mọi bộ môn & lĩnh vực) ── */}
         <HomeUniversalAiBar />
 
         {/* ── Luồng "quay lại sau khi bỏ bẵng" ── */}
@@ -212,344 +198,236 @@ export default function Home() {
           </div>
         )}
 
-        {/* ── Mẹo kiếm huy hiệu & thưởng ── */}
+        {/* ── Mẹo thưởng & Nhiệm vụ ── */}
         {uid && <RewardTipBanner uid={uid} isA={isA} />}
-
-        {/* ── Gợi ý "Luyện nói với từ vừa học" ── */}
-        {recentWords.length > 0 && (
-          <button
-            onClick={() => nav(`/luyen-noi?words=${encodeURIComponent(recentWords.join(','))}`)}
-            className="tap-44 w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-sky-500/10 border border-sky-500/25 text-xs text-sky-300 theme-light:text-sky-800 hover:border-sky-500/50 transition animate-fade-in"
-          >
-            <Mic className="w-3.5 h-3.5 shrink-0" />
-            {isA
-              ? `Luyện nói với ${recentWords.length} từ vừa học`
-              : `Practice speaking with ${recentWords.length} recent words`}
-          </button>
-        )}
-
-        {/* ── NHIỆM VỤ HÀNG NGÀY & RƯƠNG BÍ ẨN ── */}
         <DailyQuestsCard />
-
-        {/* ── CHƯƠNG TRÌNH MỜI BẠN NHẬN VIP ── */}
         <ReferralVipBanner />
 
-        {/* ── TẦNG 2: PHÂN CẤP BỘ MÔN & MIỀN CHUYÊN BIỆT (Domain Hubs) ── */}
-
-        {/* MIỀN 1: NGÔN NGỮ & TIẾNG ANH (Language & Communication Hub) */}
-        <section aria-label="Bộ môn Ngôn ngữ và Tiếng Anh" className="space-y-3">
+        {/* ── TẦNG 2: CÁC KHÔNG GIAN BỘ MÔN & MIỀN CHUYÊN BIỆT (Platform Domain Hubs) ── */}
+        <section aria-label="Danh mục Không gian & Bộ môn" className="space-y-4 pt-1">
           <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
-                <GraduationCap className="w-4 h-4" />
-              </div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                1. Ngôn Ngữ & Giao Tiếp (Language Hub)
-              </h3>
-            </div>
-            <button
-              onClick={() => nav('/lo-trinh-hoc')}
-              className="text-xs text-emerald-400 hover:text-emerald-300 theme-light:text-emerald-800 theme-light:hover:text-emerald-900 font-medium flex items-center gap-0.5"
-            >
-              Lộ trình CEFR <ChevronRight className="w-3.5 h-3.5" />
-            </button>
+            <h2 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+              Các Không Gian & Bộ Môn
+            </h2>
+            <span className="text-[11px] text-zinc-500 font-medium">4 Không gian chuyên sâu</span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {/* Lộ trình CEFR */}
-            <button
-              onClick={() => nav('/lo-trinh-hoc')}
-              className="p-4 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-zinc-800/80 hover:border-emerald-500/50 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex items-start gap-3.5"
-            >
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-                <Target className="w-5 h-5 text-zinc-950 font-bold" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h4 className="font-bold text-white text-sm">Học Theo Lộ Trình CEFR</h4>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-300 theme-light:text-emerald-800 font-semibold border border-emerald-500/20">
-                    A1-C2
-                  </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            {/* KHÔNG GIAN 1: MÔN TIẾNG ANH (Chuyên biệt ngôn ngữ) */}
+            <div className="p-4 rounded-3xl bg-zinc-900/90 border border-emerald-500/30 hover:border-emerald-500/60 transition-all duration-200 shadow-md group flex flex-col justify-between space-y-3.5">
+              <div className="flex items-start gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+                  <GraduationCap className="w-6 h-6 text-zinc-950 font-black" />
                 </div>
-                <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
-                  Bắt đầu từ chữ cái, số... 5-20 từ mới mỗi ngày theo vòng tròn chủ đề ngữ cảnh.
-                </p>
-              </div>
-            </button>
-
-            {/* Từ điển & Ngữ pháp */}
-            <button
-              onClick={() => nav('/tu-dien')}
-              className="p-4 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-zinc-800/80 hover:border-amber-500/50 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex items-start gap-3.5"
-            >
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500 to-orange-400 flex items-center justify-center shrink-0 shadow-md shadow-amber-500/20 group-hover:scale-105 transition-transform">
-                <BookOpen className="w-5 h-5 text-zinc-950 font-bold" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h4 className="font-bold text-white text-sm">Từ Điển Song Ngữ 12.000+</h4>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-300 theme-light:text-amber-800 font-semibold border border-amber-500/20">
-                    Audio IPA
-                  </span>
-                </div>
-                <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
-                  Tra cứu phát âm chuẩn IPA, câu ví dụ thực tế và giải thích chi tiết ngữ cảnh.
-                </p>
-              </div>
-            </button>
-          </div>
-
-          {/* Gia Sư 4 Kỹ Năng AI (Nghe, Chat, Nói, Viết) */}
-          <div className="p-4 rounded-3xl bg-zinc-900/80 border border-zinc-800/80 space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-accent-500/15 text-accent-400 border border-accent-500/20">
-                  <Bot className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-white">Gia Sư Luyện 4 Kỹ Năng AI</h4>
-                  <p className="text-xs text-zinc-400">
-                    Luyện phản xạ Nghe, Nói, Đọc, Viết có chấm điểm & sửa lỗi Socratic
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <h3 className="font-bold text-white text-base">Môn Tiếng Anh</h3>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+                      CEFR A1–C2
+                    </span>
+                  </div>
+                  <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
+                    Gia sư song ngữ 2 chiều Việt ⇄ Anh: Luyện phát âm chuẩn IPA, chấm bài viết
+                    IELTS, luyện nghe sâu và từ điển 12.000+ từ.
                   </p>
                 </div>
               </div>
+
+              {/* Lối tắt con trong Tiếng Anh */}
+              <div className="grid grid-cols-3 gap-1.5 pt-1 border-t border-zinc-800/80">
+                <button
+                  onClick={() => nav('/lo-trinh-hoc')}
+                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-emerald-300 transition text-center truncate"
+                >
+                  Lộ trình CEFR
+                </button>
+                <button
+                  onClick={() => nav('/luyen-noi')}
+                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-emerald-300 transition text-center truncate"
+                >
+                  Luyện Nói IPA
+                </button>
+                <button
+                  onClick={() => nav('/tu-dien')}
+                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-emerald-300 transition text-center truncate"
+                >
+                  Từ Điển 12k+
+                </button>
+              </div>
+
+              <button
+                onClick={() => nav('/hoc-tieng-anh')}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 font-semibold text-xs transition active:scale-[0.98]"
+              >
+                <span>Vào Không Gian Học Tiếng Anh</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <button
-                onClick={() => nav('/luyen-nghe')}
-                className="tap-44 flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-zinc-950/60 hover:bg-zinc-800 border border-zinc-800/80 hover:border-rose-500/40 transition active:scale-95 group"
-              >
-                <div className="w-8 h-8 rounded-xl bg-zinc-900 flex items-center justify-center group-hover:scale-110 transition">
-                  <Headphones className="w-4 h-4 text-rose-400" />
+            {/* KHÔNG GIAN 2: KHOA HỌC & STEM (Toán, Lý, Hóa, Sinh) */}
+            <div className="p-4 rounded-3xl bg-zinc-900/90 border border-blue-500/30 hover:border-blue-500/60 transition-all duration-200 shadow-md group flex flex-col justify-between space-y-3.5">
+              <div className="flex items-start gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
+                  <Calculator className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-xs font-semibold text-zinc-200">Luyện Nghe</span>
-              </button>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <h3 className="font-bold text-white text-base">Khoa Học & STEM</h3>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-bold border border-blue-500/30">
+                      Vision OCR
+                    </span>
+                  </div>
+                  <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
+                    Gia sư giải Toán, Lý, Hóa, Sinh từng bước bằng AI, công thức LaTeX, kèm phòng
+                    thí nghiệm 10 Simulators ứng dụng thực tế.
+                  </p>
+                </div>
+              </div>
+
+              {/* Lối tắt con trong STEM */}
+              <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-zinc-800/80">
+                <button
+                  onClick={() => nav('/mon-hoc')}
+                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-blue-300 transition text-center truncate"
+                >
+                  4 Môn Toán Lý Hóa Sinh
+                </button>
+                <button
+                  onClick={() => nav('/ung-dung-thuc-te')}
+                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-cyan-300 transition text-center truncate"
+                >
+                  10 Simulators Thí Nghiệm
+                </button>
+              </div>
 
               <button
-                onClick={() => nav('/tro-truyen')}
-                className="tap-44 flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-zinc-950/60 hover:bg-zinc-800 border border-zinc-800/80 hover:border-accent-500/40 transition active:scale-95 group"
+                onClick={() => nav('/mon-hoc')}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-blue-500/15 hover:bg-blue-500/25 text-blue-300 border border-blue-500/30 font-semibold text-xs transition active:scale-[0.98]"
               >
-                <div className="w-8 h-8 rounded-xl bg-zinc-900 flex items-center justify-center group-hover:scale-110 transition">
-                  <MessageCircle className="w-4 h-4 text-accent-400" />
-                </div>
-                <span className="text-xs font-semibold text-zinc-200">Chat Đối Thoại</span>
+                <span>Vào Không Gian Môn Học & STEM</span>
+                <ChevronRight className="w-3.5 h-3.5" />
               </button>
+            </div>
+
+            {/* KHÔNG GIAN 3: SỰ NGHIỆP & CÔNG VIỆC */}
+            <div className="p-4 rounded-3xl bg-zinc-900/90 border border-purple-500/30 hover:border-purple-500/60 transition-all duration-200 shadow-md group flex flex-col justify-between space-y-3.5">
+              <div className="flex items-start gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shrink-0 shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform">
+                  <Briefcase className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <h3 className="font-bold text-white text-base">Sự Nghiệp & Công Việc</h3>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30">
+                      Career Hub
+                    </span>
+                  </div>
+                  <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
+                    Mô phỏng phỏng vấn thử việc STAR với AI Recruiter, Action Canvas và Bảng điều
+                    khiển công việc Kanban.
+                  </p>
+                </div>
+              </div>
+
+              {/* Lối tắt con trong Career */}
+              <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-zinc-800/80">
+                <button
+                  onClick={() => nav('/career/interview')}
+                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-purple-300 transition text-center truncate"
+                >
+                  Phỏng Vấn STAR
+                </button>
+                <button
+                  onClick={() => nav('/cong-viec-cua-toi')}
+                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-purple-300 transition text-center truncate"
+                >
+                  Công Việc Của Tôi
+                </button>
+              </div>
 
               <button
-                onClick={() => nav('/luyen-noi')}
-                className="tap-44 flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-zinc-950/60 hover:bg-zinc-800 border border-zinc-800/80 hover:border-sky-500/40 transition active:scale-95 group"
+                onClick={() => nav('/su-nghiep-cua-toi')}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-500/30 font-semibold text-xs transition active:scale-[0.98]"
               >
-                <div className="w-8 h-8 rounded-xl bg-zinc-900 flex items-center justify-center group-hover:scale-110 transition">
-                  <Mic className="w-4 h-4 text-sky-400" />
-                </div>
-                <span className="text-xs font-semibold text-zinc-200">Luyện Nói & IPA</span>
+                <span>Vào Không Gian Sự Nghiệp Của Tôi</span>
+                <ChevronRight className="w-3.5 h-3.5" />
               </button>
+            </div>
+
+            {/* KHÔNG GIAN 4: KHỞI NGHIỆP & ĐỜI SỐNG */}
+            <div className="p-4 rounded-3xl bg-zinc-900/90 border border-orange-500/30 hover:border-orange-500/60 transition-all duration-200 shadow-md group flex flex-col justify-between space-y-3.5">
+              <div className="flex items-start gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shrink-0 shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform">
+                  <Rocket className="w-6 h-6 text-zinc-950 font-black" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <h3 className="font-bold text-white text-base">Tôi Khởi Nghiệp & Đời Sống</h3>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 font-bold border border-orange-500/30">
+                      Life OS
+                    </span>
+                  </div>
+                  <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
+                    Cố vấn mô hình kinh doanh Lean Startup Canvas, cân bằng 8 khía cạnh Bánh xe cuộc
+                    đời và mạng lưới Life Graph.
+                  </p>
+                </div>
+              </div>
+
+              {/* Lối tắt con trong Startup/Life */}
+              <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-zinc-800/80">
+                <button
+                  onClick={() => nav('/startup/canvas')}
+                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-orange-300 transition text-center truncate"
+                >
+                  Lean Canvas
+                </button>
+                <button
+                  onClick={() => nav('/cuoc-song-cua-toi')}
+                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-pink-300 transition text-center truncate"
+                >
+                  Bánh Xe Cuộc Đời
+                </button>
+              </div>
 
               <button
-                onClick={() => nav('/luyen-viet')}
-                className="tap-44 flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-zinc-950/60 hover:bg-zinc-800 border border-zinc-800/80 hover:border-violet-500/40 transition active:scale-95 group"
+                onClick={() => nav('/toi-khoi-nghiep')}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 border border-orange-500/30 font-semibold text-xs transition active:scale-[0.98]"
               >
-                <div className="w-8 h-8 rounded-xl bg-zinc-900 flex items-center justify-center group-hover:scale-110 transition">
-                  <PenLine className="w-4 h-4 text-violet-400" />
-                </div>
-                <span className="text-xs font-semibold text-zinc-200">Luyện Viết AI</span>
+                <span>Vào Không Gian Tôi Khởi Nghiệp</span>
+                <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
         </section>
 
-        {/* MIỀN 2: KHOA HỌC STEM & GIẢI BÀI TẬP AI (STEM & Problem Solvers Hub) */}
-        <section aria-label="Bộ môn Khoa học và STEM" className="space-y-3 pt-2">
-          <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-blue-500/15 text-blue-400 border border-blue-500/20">
-                <Calculator className="w-4 h-4" />
-              </div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                2. Khoa Học & STEM (STEM Solvers Hub)
+        {/* ── BẠN ĐỒNG HÀNH AI ĐA LĨNH VỰC HERO BANNER ── */}
+        <div className="p-4 rounded-3xl bg-gradient-to-br from-zinc-900 via-zinc-900 to-accent-950/40 border border-accent-500/30 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent-500 via-indigo-500 to-purple-600 flex items-center justify-center shrink-0 shadow-lg shadow-accent-500/25">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 className="font-bold text-white text-sm">
+                Bạn Đồng Hành AI Đa Miền (Companion Live Voice)
               </h3>
-            </div>
-            <button
-              onClick={() => nav('/subjects')}
-              className="text-xs text-blue-400 hover:text-blue-300 theme-light:text-blue-800 theme-light:hover:text-blue-900 font-medium flex items-center gap-0.5"
-            >
-              5 Môn Học <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {/* Không Gian Môn Học & Vision Solver */}
-            <button
-              onClick={() => nav('/subjects')}
-              className="p-4 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-zinc-800/80 hover:border-blue-500/50 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex items-start gap-3.5"
-            >
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shrink-0 shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
-                <Calculator className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h4 className="font-bold text-white text-sm">Gia Sư AI: Toán, Lý, Hóa, Sinh</h4>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-300 theme-light:text-blue-800 font-semibold border border-blue-500/20">
-                    Vision OCR
-                  </span>
-                </div>
-                <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
-                  Chụp/nhập đề bài để AI phân tích lời giải từng bước, công thức LaTeX và bảng biến
-                  thiên.
-                </p>
-              </div>
-            </button>
-
-            {/* Phòng Thí Nghiệm 10 Simulators */}
-            <button
-              onClick={() => nav('/ung-dung-thuc-te')}
-              className="p-4 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-zinc-800/80 hover:border-cyan-500/50 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex items-start gap-3.5"
-            >
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shrink-0 shadow-md shadow-cyan-500/20 group-hover:scale-105 transition-transform">
-                <Activity className="w-5 h-5 text-zinc-950 font-bold" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h4 className="font-bold text-white text-sm">Phòng Thí Nghiệm 10 Simulators</h4>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-500/15 text-cyan-300 theme-light:text-cyan-800 font-semibold border border-cyan-500/20">
-                    Tương tác
-                  </span>
-                </div>
-                <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
-                  Mô phỏng bài toán thực tế: tối ưu lợi nhuận, hóa đơn điện EVN, lãi kép, vệ tinh
-                  GPS.
-                </p>
-              </div>
-            </button>
-          </div>
-        </section>
-
-        {/* MIỀN 3: SỰ NGHIỆP & CÔNG VIỆC (Career & Work Hub) */}
-        <section aria-label="Sự nghiệp và Công việc" className="space-y-3 pt-2">
-          <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-purple-500/15 text-purple-400 border border-purple-500/20">
-                <Briefcase className="w-4 h-4" />
-              </div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                3. Sự Nghiệp & Không Gian Làm Việc (Career & Work)
-              </h3>
-            </div>
-            <button
-              onClick={() => nav('/dong-hanh')}
-              className="text-xs text-purple-400 hover:text-purple-300 theme-light:text-purple-800 theme-light:hover:text-purple-900 font-medium flex items-center gap-0.5"
-            >
-              Executive Suite <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {/* Bạn Đồng Hành AI Đa Lĩnh Vực Hero Link */}
-            <button
-              onClick={() => nav('/dong-hanh')}
-              className="p-4 rounded-2xl bg-gradient-to-br from-zinc-900/95 via-zinc-900/80 to-accent-950/40 border border-accent-500/30 hover:border-accent-500/60 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex items-start gap-3.5"
-            >
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-accent-500 via-indigo-500 to-purple-600 flex items-center justify-center shrink-0 shadow-md shadow-accent-500/25 group-hover:scale-105 transition-transform">
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h4 className="font-bold text-white text-sm">Bạn Đồng Hành AI Đa Miền</h4>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-accent-500/15 text-accent-300 theme-light:text-accent-800 font-semibold border border-accent-500/20">
-                    Live Voice
-                  </span>
-                </div>
-                <p className="text-xs text-zinc-300 line-clamp-2 leading-relaxed">
-                  Đàm thoại thời gian thực, 3D Avatar, Goal Autopilot & Cung điện ký ức.
-                </p>
-              </div>
-            </button>
-
-            {/* Phỏng Vấn Thử Việc & Action Canvas */}
-            <button
-              onClick={() => nav('/career/interview')}
-              className="p-4 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-zinc-800/80 hover:border-purple-500/50 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex items-start gap-3.5"
-            >
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shrink-0 shadow-md shadow-purple-500/20 group-hover:scale-105 transition-transform">
-                <Briefcase className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h4 className="font-bold text-white text-sm">AI Phỏng Vấn Thử Việc</h4>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-purple-500/15 text-purple-300 theme-light:text-purple-800 font-semibold border border-purple-500/20">
-                    STAR Model
-                  </span>
-                </div>
-                <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
-                  Mô phỏng phỏng vấn tiếng Anh/Việt chuyên sâu với AI Recruiter và phân tích khoảng
-                  cách kỹ năng.
-                </p>
-              </div>
-            </button>
-          </div>
-        </section>
-
-        {/* MIỀN 4: KHỞI NGHIỆP & ĐỜI SỐNG (Startup & Life Hub) */}
-        <section aria-label="Khởi nghiệp và Đời sống" className="space-y-3 pt-2">
-          <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-orange-500/15 text-orange-400 border border-orange-500/20">
-                <Rocket className="w-4 h-4" />
-              </div>
-              <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-                4. Khởi Nghiệp & Đời Sống (Startup & Life)
-              </h3>
+              <p className="text-xs text-zinc-400 mt-0.5">
+                Đàm thoại thời gian thực, 3D Avatar, Goal Autopilot & Cung điện ký nhớ Loci
+              </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            {/* Startup Lean Canvas */}
-            <button
-              onClick={() => nav('/startup/canvas')}
-              className="p-3.5 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-zinc-800/80 hover:border-orange-500/40 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex items-center gap-3"
-            >
-              <div className="w-9 h-9 rounded-xl bg-orange-500/15 text-orange-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
-                <Rocket className="w-4 h-4" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <h4 className="font-bold text-white text-xs truncate">Lean Startup Canvas</h4>
-                <p className="text-[11px] text-zinc-400 truncate">Cố vấn mô hình kinh doanh</p>
-              </div>
-            </button>
-
-            {/* Bánh Xe Cuộc Đời */}
-            <button
-              onClick={() => nav('/life/wheel')}
-              className="p-3.5 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-zinc-800/80 hover:border-pink-500/40 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex items-center gap-3"
-            >
-              <div className="w-9 h-9 rounded-xl bg-pink-500/15 text-pink-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
-                <Heart className="w-4 h-4" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <h4 className="font-bold text-white text-xs truncate">Bánh Xe Cuộc Đời</h4>
-                <p className="text-[11px] text-zinc-400 truncate">Cân bằng 8 khía cạnh</p>
-              </div>
-            </button>
-
-            {/* Video Thử Thách */}
-            <button
-              onClick={() => nav('/thu-thach')}
-              className="p-3.5 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-zinc-800/80 hover:border-rose-500/40 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex items-center gap-3"
-            >
-              <div className="w-9 h-9 rounded-xl bg-rose-500/15 text-rose-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
-                <Video className="w-4 h-4" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <h4 className="font-bold text-white text-xs truncate">Thử Thách Video</h4>
-                <p className="text-[11px] text-zinc-400 truncate">1 phút mỗi ngày</p>
-              </div>
-            </button>
-          </div>
-        </section>
+          <button
+            onClick={() => nav('/dong-hanh')}
+            className="tap-44 w-full sm:w-auto px-5 py-2.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-zinc-950 font-bold text-xs shadow-md shadow-accent-500/25 transition active:scale-95 shrink-0 flex items-center justify-center gap-1.5"
+          >
+            <Bot className="w-4 h-4" />
+            <span>Mở Bạn Đồng Hành</span>
+          </button>
+        </div>
 
         {/* ── TIẾN ĐỘ & LỊCH SỬ HỌC ── */}
-        <div className="grid grid-cols-2 gap-3 pt-2">
+        <div className="grid grid-cols-2 gap-3 pt-1">
           <button
             onClick={() => nav('/tien-do')}
             aria-label="Xem bảng tiến độ"
