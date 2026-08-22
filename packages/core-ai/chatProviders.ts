@@ -16,7 +16,12 @@
 // dòng) vẫn xanh — bằng chứng hành vi observable không đổi.
 
 import { fetchWithTimeout } from '../../api/_lib/fetchTimeout.js'
-import { groqKeyPool, isSkippableGroqKeyError, nextGroqKeyStartIndex } from './groqKeyPool.js'
+import {
+  groqKeyPool,
+  groqModelPool,
+  isSkippableGroqKeyError,
+  nextGroqKeyStartIndex,
+} from './groqKeyPool.js'
 
 export const CHAT_PROVIDER_TIMEOUT_MS = 30_000
 
@@ -106,11 +111,10 @@ export async function callGroqChat(
 }
 
 /**
- * Gọi Groq xoay vòng qua toàn bộ key trong GROQ_API_KEY (hỗ trợ nhiều key cách nhau dấu
- * phẩy/xuống dòng — xem groqKeyPool.ts). Khi 1 key lỗi do CHÍNH nó (401 key sai/bị revoke,
- * 429 hết hạn mức) → tự thử key kế tiếp trong bể; lỗi khác (mạng, 5xx, body hỏng...) trả về
- * ngay, không thử key khác vì thử lại cũng lỗi y hệt. `ai.ts` đọc `ChatCallResult` giống hệt
- * `callGroqChat()` đơn key — không cần đổi logic fallback/hoàn lượt phía gọi.
+ * Gọi Groq xoay vòng qua toàn bộ model (GROQ_CHAT_MODEL / danh sách model phân cách bởi dấu phẩy)
+ * và toàn bộ key trong GROQ_API_KEY (hỗ trợ nhiều key cách nhau dấu phẩy/xuống dòng — xem groqKeyPool.ts).
+ * Khi 1 key lỗi do CHÍNH nó (401 key sai/bị revoke, 429 hết hạn mức) → thử key kế tiếp trong bể.
+ * Khi 1 model lỗi (400/404 model_not_found, hoặc toàn bộ key của model đều lỗi) → tự động chuyển sang model kế tiếp trong bể model.
  */
 export async function callGroqChatWithKeyPool(
   model: string,
@@ -120,6 +124,15 @@ export async function callGroqChatWithKeyPool(
   timeoutMs: number = CHAT_PROVIDER_TIMEOUT_MS,
 ): Promise<ChatCallResult> {
   const pool = groqKeyPool()
+  if (pool.length === 0) {
+    return {
+      kind: 'network_error',
+      message: 'Server chưa cấu hình GROQ_API_KEY',
+      latencyMs: 0,
+    }
+  }
+
+  const models = groqModelPool(model)
   const startIndex = nextGroqKeyStartIndex(pool.length)
 
   let lastResult: ChatCallResult = {
@@ -127,13 +140,26 @@ export async function callGroqChatWithKeyPool(
     message: 'Server chưa cấu hình GROQ_API_KEY',
     latencyMs: 0,
   }
-  for (let i = 0; i < pool.length; i++) {
-    const apiKey = pool[(startIndex + i) % pool.length]!
-    lastResult = await callGroqChat(apiKey, model, system, messages, maxTokens, timeoutMs)
-    if (lastResult.kind !== 'http_error' || !isSkippableGroqKeyError(lastResult.status)) {
-      return lastResult
+
+  for (const currentModel of models) {
+    for (let i = 0; i < pool.length; i++) {
+      const apiKey = pool[(startIndex + i) % pool.length]!
+      lastResult = await callGroqChat(apiKey, currentModel, system, messages, maxTokens, timeoutMs)
+
+      if (lastResult.kind === 'success') {
+        return lastResult
+      }
+
+      // Nếu lỗi do key (401/429), thử key kế tiếp cho cùng model này
+      if (lastResult.kind === 'http_error' && isSkippableGroqKeyError(lastResult.status)) {
+        continue
+      }
+
+      // Nếu lỗi khác (model_not_found 400/404, 5xx, v.v.), chuyển sang thử model kế tiếp trong pool
+      break
     }
   }
+
   return lastResult
 }
 

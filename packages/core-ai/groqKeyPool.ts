@@ -33,6 +33,16 @@ export function nextGroqKeyStartIndex(poolLength: number): number {
   return startIndex
 }
 
+export function groqModelPool(customModelString?: string): string[] {
+  const raw =
+    customModelString !== undefined ? customModelString : process.env.GROQ_CHAT_MODEL || ''
+  const models = raw
+    .split(/[,\n]/)
+    .map((m) => m.trim())
+    .filter(Boolean)
+  return models.length > 0 ? models : ['openai/gpt-oss-120b']
+}
+
 // Chỉ dùng trong test — con trỏ round-robin sống ở module scope nên rò rỉ trạng thái giữa
 // các test case nếu không reset (thứ tự thử key trong 1 test phụ thuộc test chạy trước nó).
 export function __resetGroqKeyRotationForTests(): void {

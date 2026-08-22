@@ -1,6 +1,7 @@
 import { describe, it, expect, afterEach } from 'vitest'
 import {
   groqKeyPool,
+  groqModelPool,
   hasGroqKey,
   isSkippableGroqKeyError,
   nextGroqKeyStartIndex,
@@ -8,11 +9,14 @@ import {
 } from './groqKeyPool.js'
 
 const OLD_GROQ = process.env.GROQ_API_KEY
+const OLD_MODEL = process.env.GROQ_CHAT_MODEL
 
 afterEach(() => {
   __resetGroqKeyRotationForTests()
   if (OLD_GROQ === undefined) delete process.env.GROQ_API_KEY
   else process.env.GROQ_API_KEY = OLD_GROQ
+  if (OLD_MODEL === undefined) delete process.env.GROQ_CHAT_MODEL
+  else process.env.GROQ_CHAT_MODEL = OLD_MODEL
 })
 
 describe('groqKeyPool', () => {
@@ -69,5 +73,30 @@ describe('nextGroqKeyStartIndex', () => {
     nextGroqKeyStartIndex(2)
     __resetGroqKeyRotationForTests()
     expect(nextGroqKeyStartIndex(2)).toBe(0)
+  })
+})
+
+describe('groqModelPool', () => {
+  it('không có config và không có arg → fallback openai/gpt-oss-120b', () => {
+    delete process.env.GROQ_CHAT_MODEL
+    expect(groqModelPool()).toEqual(['openai/gpt-oss-120b'])
+  })
+
+  it('1 model đơn → mảng 1 phần tử', () => {
+    expect(groqModelPool('llama-3.3-70b-versatile')).toEqual(['llama-3.3-70b-versatile'])
+  })
+
+  it('nhiều model cách nhau dấu phẩy → tách thành mảng đúng thứ tự, bỏ khoảng trắng', () => {
+    const list = groqModelPool('llama-3.3-70b-versatile, openai/gpt-oss-120b, qwen/qwen3.6-27b')
+    expect(list).toEqual(['llama-3.3-70b-versatile', 'openai/gpt-oss-120b', 'qwen/qwen3.6-27b'])
+  })
+
+  it('nhiều model từ biến môi trường GROQ_CHAT_MODEL → tách đúng', () => {
+    process.env.GROQ_CHAT_MODEL = 'llama-3.3-70b-versatile,openai/gpt-oss-120b'
+    expect(groqModelPool()).toEqual(['llama-3.3-70b-versatile', 'openai/gpt-oss-120b'])
+  })
+
+  it('dấu phẩy thừa hoặc rỗng → lọc bỏ phần tử rỗng', () => {
+    expect(groqModelPool('model1,,model2,')).toEqual(['model1', 'model2'])
   })
 })

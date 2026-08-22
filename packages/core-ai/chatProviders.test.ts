@@ -221,7 +221,7 @@ describe('callGroqChatWithKeyPool', () => {
     expect(fetchSpy).toHaveBeenCalledTimes(2)
   })
 
-  it('lỗi không liên quan tới key (500) → trả lỗi ngay, không thử key khác', async () => {
+  it('lỗi không liên quan tới key (500) và chỉ có 1 model → trả lỗi ngay, không thử key khác', async () => {
     process.env.GROQ_API_KEY = 'key-1,key-2'
     const fetchSpy = vi
       .fn()
@@ -230,5 +230,43 @@ describe('callGroqChatWithKeyPool', () => {
     const result = await callGroqChatWithKeyPool('model-x', '', [], 100)
     expect(result).toMatchObject({ kind: 'http_error', status: 500 })
     expect(fetchSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('nhiều model, model 1 bị 400 (model_not_found) → tự chuyển sang model 2 và thành công', async () => {
+    process.env.GROQ_API_KEY = 'gsk-key'
+    const fetchSpy = vi.fn().mockImplementation((_url, init: RequestInit) => {
+      const body = JSON.parse(init.body as string)
+      if (body.model === 'model-unavailable') {
+        return Promise.resolve({
+          ok: false,
+          status: 400,
+          text: async () => 'model_not_found',
+        } as Response)
+      }
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: async () => ({ choices: [{ message: { content: 'trả lời từ model 2' } }] }),
+      } as Response)
+    })
+    global.fetch = fetchSpy
+
+    const result = await callGroqChatWithKeyPool('model-unavailable, model-working', '', [], 100)
+    expect(result).toMatchObject({ kind: 'success', text: 'trả lời từ model 2' })
+    expect(fetchSpy).toHaveBeenCalledTimes(2)
+  })
+
+  it('nhiều model, toàn bộ model đều lỗi → trả về lỗi của model cuối', async () => {
+    process.env.GROQ_API_KEY = 'gsk-key'
+    const fetchSpy = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 400,
+      text: async () => 'model_not_found',
+    } as Response)
+    global.fetch = fetchSpy
+
+    const result = await callGroqChatWithKeyPool('model-bad1, model-bad2', '', [], 100)
+    expect(result).toMatchObject({ kind: 'http_error', status: 400 })
+    expect(fetchSpy).toHaveBeenCalledTimes(2)
   })
 })

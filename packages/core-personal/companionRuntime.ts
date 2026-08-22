@@ -13,7 +13,7 @@ import {
   getLearningReadModel,
   formatLearningReadModelForContext,
 } from '../core-learner/learningReadModelService.js'
-import { callGroqChat, callAnthropicChat } from '../core-ai/chatProviders.js'
+import { callGroqChatWithKeyPool, callAnthropicChat } from '../core-ai/chatProviders.js'
 import { callGemini } from '../../api/_lib/geminiApi.js'
 import { ALLOWED_MODEL, GEMINI_CHAT_MODEL, GROQ_CHAT_MODEL } from '../core-ai/aiConfig.js'
 
@@ -315,8 +315,7 @@ export async function synthesizeCompanionReply(
   // 1. Nhánh Groq (ưu tiên hàng đầu — chung model với gia sư tiếng Anh: GROQ_CHAT_MODEL)
   if (groqKey) {
     try {
-      const groqRes = await callGroqChat(
-        groqKey,
+      const groqRes = await callGroqChatWithKeyPool(
         GROQ_CHAT_MODEL,
         systemPrompt,
         messages,

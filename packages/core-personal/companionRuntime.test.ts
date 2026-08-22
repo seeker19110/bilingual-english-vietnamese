@@ -31,11 +31,13 @@ vi.mock('./proposedActionService.js', () => ({
 
 const chatProvidersMock = vi.hoisted(() => ({
   callGroqChat: vi.fn(),
+  callGroqChatWithKeyPool: vi.fn(),
   callAnthropicChat: vi.fn(),
 }))
 
 vi.mock('../core-ai/chatProviders.js', () => ({
   callGroqChat: (...a: unknown[]) => chatProvidersMock.callGroqChat(...a),
+  callGroqChatWithKeyPool: (...a: unknown[]) => chatProvidersMock.callGroqChatWithKeyPool(...a),
   callAnthropicChat: (...a: unknown[]) => chatProvidersMock.callAnthropicChat(...a),
 }))
 
@@ -515,7 +517,7 @@ describe('synthesizeCompanionReply with shared AI models', () => {
 
   it('gọi Groq thành công khi có GROQ_API_KEY', async () => {
     process.env.GROQ_API_KEY = 'test-groq-key'
-    chatProvidersMock.callGroqChat.mockResolvedValueOnce({
+    chatProvidersMock.callGroqChatWithKeyPool.mockResolvedValueOnce({
       kind: 'success',
       text: 'Chào bạn! Tôi là Bạn Đồng Hành AI sẵn sàng cùng bạn chinh phục IELTS.',
       latencyMs: 120,
@@ -530,14 +532,14 @@ describe('synthesizeCompanionReply with shared AI models', () => {
     )
 
     expect(reply).toBe('Chào bạn! Tôi là Bạn Đồng Hành AI sẵn sàng cùng bạn chinh phục IELTS.')
-    expect(chatProvidersMock.callGroqChat).toHaveBeenCalled()
+    expect(chatProvidersMock.callGroqChatWithKeyPool).toHaveBeenCalled()
     delete process.env.GROQ_API_KEY
   })
 
   it('fallback sang Anthropic khi Groq lỗi và có ANTHROPIC_API_KEY', async () => {
     process.env.GROQ_API_KEY = 'test-groq-key'
     process.env.ANTHROPIC_API_KEY = 'test-anthropic-key'
-    chatProvidersMock.callGroqChat.mockResolvedValueOnce({
+    chatProvidersMock.callGroqChatWithKeyPool.mockResolvedValueOnce({
       kind: 'network_error',
       message: 'Connection timeout',
       latencyMs: 500,
