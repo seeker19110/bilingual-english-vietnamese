@@ -10,6 +10,7 @@
 // Có thể ép model riêng qua STT_MODEL.
 
 import { fetchWithTimeout } from '../../api/_lib/fetchTimeout.js'
+import { groqKeyPool, isSkippableGroqKeyError, nextGroqKeyStartIndex } from './groqKeyPool.js'
 
 // STT có thể chậm hơn chat (phải xử lý cả file audio) → cho timeout rộng hơn.
 const STT_TIMEOUT_MS = 45_000
@@ -18,19 +19,21 @@ export type SttLang = 'en' | 'vi'
 
 interface SttProvider {
   url: string
-  apiKey: string
+  // Groq: 1 hoặc nhiều key (GROQ_API_KEY cách nhau dấu phẩy/xuống dòng) — thử lần lượt khi
+  // key hiện tại lỗi 401/429 (xem groqKeyPool.ts). OpenAI: luôn đúng 1 key.
+  apiKeys: string[]
   model: string
   name: string
 }
 
 // Quyết định dùng nhà cung cấp nào dựa trên key có sẵn trong môi trường.
 function resolveProvider(): SttProvider {
-  const groqKey = process.env.GROQ_API_KEY
-  if (groqKey) {
+  const groqKeys = groqKeyPool()
+  if (groqKeys.length > 0) {
     return {
       name: 'Groq',
       url: 'https://api.groq.com/openai/v1/audio/transcriptions',
-      apiKey: groqKey,
+      apiKeys: groqKeys,
       model: process.env.STT_MODEL || 'whisper-large-v3-turbo',
     }
   }
@@ -40,7 +43,7 @@ function resolveProvider(): SttProvider {
     return {
       name: 'OpenAI',
       url: 'https://api.openai.com/v1/audio/transcriptions',
-      apiKey: openaiKey,
+      apiKeys: [openaiKey],
       // Giữ tương thích ngược với biến cũ OPENAI_STT_MODEL.
       model: process.env.STT_MODEL || process.env.OPENAI_STT_MODEL || 'gpt-4o-mini-transcribe',
     }
@@ -69,36 +72,51 @@ export async function transcribeAudio(
   const cleanMime = mime || 'audio/webm'
   const blob = new Blob([audio], { type: cleanMime })
 
-  // Cả Groq lẫn OpenAI đều nhận multipart/form-data với 1 file audio.
-  const form = new FormData()
-  form.append('file', blob, `audio.${extFromMime(cleanMime)}`)
-  form.append('model', provider.model)
-  form.append('language', lang)
-  form.append('response_format', 'json')
+  const startIndex = nextGroqKeyStartIndex(provider.apiKeys.length)
 
-  const resp = await fetchWithTimeout(
-    provider.url,
-    {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${provider.apiKey}` },
-      body: form,
-    },
-    STT_TIMEOUT_MS,
-  )
+  let lastError: Error | undefined
+  for (let i = 0; i < provider.apiKeys.length; i++) {
+    const apiKey = provider.apiKeys[(startIndex + i) % provider.apiKeys.length]!
 
-  if (!resp.ok) {
-    const detail = await resp.text().catch(() => '')
-    throw new Error(`${provider.name} STT lỗi (${resp.status}): ${detail.slice(0, 200)}`)
+    // Cả Groq lẫn OpenAI đều nhận multipart/form-data với 1 file audio — FormData mới mỗi
+    // lượt thử vì fetch tiêu thụ stream của request trước đó.
+    const form = new FormData()
+    form.append('file', blob, `audio.${extFromMime(cleanMime)}`)
+    form.append('model', provider.model)
+    form.append('language', lang)
+    form.append('response_format', 'json')
+
+    const resp = await fetchWithTimeout(
+      provider.url,
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${apiKey}` },
+        body: form,
+      },
+      STT_TIMEOUT_MS,
+    )
+
+    if (!resp.ok) {
+      const detail = await resp.text().catch(() => '')
+      lastError = new Error(`${provider.name} STT lỗi (${resp.status}): ${detail.slice(0, 200)}`)
+      // Lỗi do CHÍNH key này (401 sai/bị revoke, 429 hết hạn mức) và còn key khác trong bể
+      // (chỉ áp dụng cho Groq, OpenAI luôn có đúng 1 key) → thử key kế tiếp thay vì báo lỗi
+      // ngay. Lỗi khác (5xx, tham số sai...) ném ngay vì thử key khác cũng lỗi y hệt.
+      if (isSkippableGroqKeyError(resp.status) && i < provider.apiKeys.length - 1) continue
+      throw lastError
+    }
+
+    // Ném lỗi khi thiếu/sai kiểu trường `text` — để nơi gọi (api/stt.ts) hoàn lượt,
+    // giống nguyên tắc đã áp dụng cho nhánh Groq của /api/agent (xem parseGroqText
+    // trong api/ai.ts): 200 nhưng body hỏng KHÔNG được coi là thành công. Chuỗi RỖNG
+    // hợp lệ (im lặng thật, không phát hiện giọng nói) vẫn được trả về bình thường,
+    // không throw — chỉ throw khi cấu trúc response sai (không phải im lặng).
+    const data = (await resp.json()) as { text?: unknown }
+    if (typeof data.text !== 'string') {
+      throw new Error(`${provider.name} STT trả về cấu trúc không hợp lệ (thiếu trường text)`)
+    }
+    return data.text.trim()
   }
 
-  // Ném lỗi khi thiếu/sai kiểu trường `text` — để nơi gọi (api/stt.ts) hoàn lượt,
-  // giống nguyên tắc đã áp dụng cho nhánh Groq của /api/agent (xem parseGroqText
-  // trong api/ai.ts): 200 nhưng body hỏng KHÔNG được coi là thành công. Chuỗi RỖNG
-  // hợp lệ (im lặng thật, không phát hiện giọng nói) vẫn được trả về bình thường,
-  // không throw — chỉ throw khi cấu trúc response sai (không phải im lặng).
-  const data = (await resp.json()) as { text?: unknown }
-  if (typeof data.text !== 'string') {
-    throw new Error(`${provider.name} STT trả về cấu trúc không hợp lệ (thiếu trường text)`)
-  }
-  return data.text.trim()
+  throw lastError ?? new Error(`${provider.name} STT lỗi: không có key nào dùng được`)
 }

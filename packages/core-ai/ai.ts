@@ -19,7 +19,8 @@ import {
 } from '../core-auth/security.js'
 import { checkAndConsumeUsage, refundUsage, type UsageMode } from '../core-billing/usage.js'
 import { callGemini } from '../../api/_lib/geminiApi.js'
-import { callGroqChat, callAnthropicChat } from './chatProviders.js'
+import { callGroqChatWithKeyPool, callAnthropicChat } from './chatProviders.js'
+import { hasGroqKey } from './groqKeyPool.js'
 import { withConcurrencyLimit } from '../core-db/concurrencyLimiter.js'
 import { createRequestLogger } from '../core-db/logger.js'
 import { createRequestId } from '../core-db/requestId.js'
@@ -154,7 +155,7 @@ export default async function handler(req: Request): Promise<Response> {
   // xuống cuối, xem PROGRESS.md).
   // Cần ít nhất một trong ba key.
   const geminiKey = process.env.GEMINI_API_KEY
-  const groqKey = process.env.GROQ_API_KEY
+  const groqKey = hasGroqKey()
   const anthropicKey = process.env.ANTHROPIC_API_KEY
   if (!geminiKey && !groqKey && !anthropicKey) {
     return jsonResponse(
@@ -217,7 +218,7 @@ export default async function handler(req: Request): Promise<Response> {
 
     log.debug(`gọi Groq bắt đầu, mode=${mode}`)
     const groqResult = await withConcurrencyLimit('groq', () =>
-      callGroqChat(groqKey, GROQ_CHAT_MODEL, system, sanitizedMessages, maxTokens, AI_TIMEOUT_MS),
+      callGroqChatWithKeyPool(GROQ_CHAT_MODEL, system, sanitizedMessages, maxTokens, AI_TIMEOUT_MS),
     )
     recordLatency('ai_groq_ms', groqResult.latencyMs)
     incrementCounter(`ai_groq_${groqResult.kind}`)

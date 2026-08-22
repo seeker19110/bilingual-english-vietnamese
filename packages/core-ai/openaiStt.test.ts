@@ -6,12 +6,14 @@
 
 import { describe, it, expect, afterEach, vi } from 'vitest'
 import { transcribeAudio } from './openaiStt'
+import { __resetGroqKeyRotationForTests } from './groqKeyPool.js'
 
 const OLD_GROQ = process.env.GROQ_API_KEY
 const OLD_OPENAI = process.env.OPENAI_API_KEY
 
 afterEach(() => {
   vi.unstubAllGlobals()
+  __resetGroqKeyRotationForTests()
   if (OLD_GROQ === undefined) delete process.env.GROQ_API_KEY
   else process.env.GROQ_API_KEY = OLD_GROQ
   if (OLD_OPENAI === undefined) delete process.env.OPENAI_API_KEY
@@ -164,5 +166,35 @@ describe('transcribeAudio — chọn nhà cung cấp (Groq ưu tiên hơn OpenAI
     expect(opts.body.get('file')).toBeTruthy()
     expect(opts.body.get('language')).toBe('vi')
     expect(opts.body.get('response_format')).toBe('json')
+  })
+})
+
+describe('transcribeAudio — GROQ_API_KEY nhiều key (cách nhau dấu phẩy) tự xoay vòng', () => {
+  it('key đầu 401 → tự chuyển sang key kế tiếp, thành công', async () => {
+    process.env.GROQ_API_KEY = 'key-bad,key-good'
+    const fetchSpy = vi.fn(async (_url: string, init: RequestInit) => {
+      const auth = (init.headers as Record<string, string>).Authorization
+      if (auth === 'Bearer key-bad') return new Response('invalid', { status: 401 })
+      return new Response(JSON.stringify({ text: 'ok' }), { status: 200 })
+    })
+    vi.stubGlobal('fetch', fetchSpy)
+    await expect(transcribeAudio(new ArrayBuffer(4), 'audio/webm', 'en')).resolves.toBe('ok')
+    expect(fetchSpy).toHaveBeenCalledTimes(2)
+  })
+
+  it('toàn bộ key đều 429 → throw kèm mã lỗi của lần thử cuối', async () => {
+    process.env.GROQ_API_KEY = 'key-1,key-2'
+    const fetchSpy = vi.fn(async () => new Response('rate limited', { status: 429 }))
+    vi.stubGlobal('fetch', fetchSpy)
+    await expect(transcribeAudio(new ArrayBuffer(4), 'audio/webm', 'en')).rejects.toThrow(/429/)
+    expect(fetchSpy).toHaveBeenCalledTimes(2)
+  })
+
+  it('lỗi không liên quan tới key (500) → throw ngay, không thử key khác', async () => {
+    process.env.GROQ_API_KEY = 'key-1,key-2'
+    const fetchSpy = vi.fn(async () => new Response('server error', { status: 500 }))
+    vi.stubGlobal('fetch', fetchSpy)
+    await expect(transcribeAudio(new ArrayBuffer(4), 'audio/webm', 'en')).rejects.toThrow(/500/)
+    expect(fetchSpy).toHaveBeenCalledTimes(1)
   })
 })

@@ -157,6 +157,30 @@ describe('featureStatusChecks', () => {
     expect(results.find((r) => r.key === 'groq')?.status).toBe('down')
   })
 
+  it('groq: nhiều key (cách nhau dấu phẩy), key đầu 401 → thử key kế tiếp → up', async () => {
+    queryMock.mockResolvedValue({ rows: [] })
+    process.env.GROQ_API_KEY = 'key-bad,key-good'
+    vi.mocked(fetch).mockImplementation((_url, init) => {
+      const auth = (init as RequestInit).headers as Record<string, string>
+      if (auth.Authorization === 'Bearer key-bad') {
+        return Promise.resolve(new Response('invalid', { status: 401 }))
+      }
+      return Promise.resolve(new Response('{}', { status: 200 }))
+    })
+    const results = await runAllFeatureChecks()
+    expect(results.find((r) => r.key === 'groq')?.status).toBe('up')
+  })
+
+  it('groq: toàn bộ key trong bể đều 401 → down', async () => {
+    queryMock.mockResolvedValue({ rows: [] })
+    process.env.GROQ_API_KEY = 'key-1,key-2'
+    vi.mocked(fetch).mockResolvedValue(new Response('invalid', { status: 401 }))
+    const results = await runAllFeatureChecks()
+    const groq = results.find((r) => r.key === 'groq')
+    expect(groq?.status).toBe('down')
+    expect(groq?.message).toContain('401')
+  })
+
   it('openai-stt: unconfigured khi thiếu key, up khi có key và fetch 200, down khi HTTP lỗi', async () => {
     queryMock.mockResolvedValue({ rows: [] })
     let results = await runAllFeatureChecks()
