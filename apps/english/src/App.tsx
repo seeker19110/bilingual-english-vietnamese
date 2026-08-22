@@ -261,6 +261,22 @@ export default function App() {
                         }
                       />
                       <Route
+                        path="/agent-ban-dong-hanh"
+                        element={
+                          <RequireAuth>
+                            <Companion />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/ban-dong-hanh"
+                        element={
+                          <RequireAuth>
+                            <Companion />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
                         path="/dong-hanh"
                         element={
                           <RequireAuth>

@@ -33,7 +33,14 @@ const PRACTICE_PATHS = [
   '/so-tay-loi-sai',
   '/thu-thach',
 ]
-const COMPANION_PATHS = ['/dong-hanh', '/companion', '/workspace', '/action-canvas']
+const COMPANION_PATHS = [
+  '/agent-ban-dong-hanh',
+  '/ban-dong-hanh',
+  '/dong-hanh',
+  '/companion',
+  '/workspace',
+  '/action-canvas',
+]
 const PROFILE_PATHS = [
   '/profile',
   '/cai-dat',
@@ -156,10 +163,10 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
 
         {/* Tab 3: Bạn Đồng Hành AI (Nút tâm điểm Orb Glow) */}
         <Link
-          to="/dong-hanh"
+          to="/agent-ban-dong-hanh"
           aria-current={isCompanion ? 'page' : undefined}
           className="tap-44 relative flex flex-col items-center justify-center -mt-3.5 text-center text-xs font-medium transition-all duration-200 group"
-          title="Bạn Đồng Hành AI Toàn Năng"
+          title="Bạn Đồng Hành AI"
         >
           <div
             className={`relative flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-accent-600 via-accent-500 to-indigo-500 text-zinc-950 shadow-lg shadow-accent-500/35 transition-all duration-200 group-hover:scale-110 group-active:scale-95 ${
@@ -176,7 +183,7 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
               isCompanion ? 'text-accent-300' : 'text-zinc-300 group-hover:text-white'
             }`}
           >
-            Đồng Hành
+            Bạn Đồng Hành
           </span>
         </Link>
 

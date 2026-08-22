@@ -36,9 +36,9 @@ interface Props {
 const STUDIOS = [
   {
     id: 'companion',
-    title: 'Bạn Đồng Hành AI',
+    title: 'Bạn Đồng Hành',
     subtitle: 'Live Voice, 3D Avatar & Socratic AI',
-    to: '/dong-hanh',
+    to: '/agent-ban-dong-hanh',
     icon: Sparkles,
     badge: 'Executive',
     color: 'text-amber-400 bg-amber-500/10 border-amber-500/30 hover:border-amber-500/60',

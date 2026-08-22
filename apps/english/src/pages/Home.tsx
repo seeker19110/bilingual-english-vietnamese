@@ -418,7 +418,7 @@ export default function Home() {
           </div>
 
           <button
-            onClick={() => nav('/dong-hanh')}
+            onClick={() => nav('/agent-ban-dong-hanh')}
             className="tap-44 w-full sm:w-auto px-5 py-2.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-zinc-950 font-bold text-xs shadow-md shadow-accent-500/25 transition active:scale-95 shrink-0 flex items-center justify-center gap-1.5"
           >
             <Bot className="w-4 h-4" />
