@@ -13,6 +13,25 @@ import {
   getLearningReadModel,
   formatLearningReadModelForContext,
 } from '../core-learner/learningReadModelService.js'
+import { callGroqChat, callAnthropicChat } from '../core-ai/chatProviders.js'
+import { callGemini } from '../../api/_lib/geminiApi.js'
+import { ALLOWED_MODEL, GEMINI_CHAT_MODEL, GROQ_CHAT_MODEL } from '../core-ai/aiConfig.js'
+
+export const COMPANION_SYSTEM_PROMPT =
+  'Bạn là Bạn Đồng Hành AI — Người đồng hành trí tuệ, thấu cảm và tận tâm trong nền tảng "Đồng Hành Cùng Bạn".\n\n' +
+  '🌟 SỨ MỆNH & ĐỊNH HƯỚNG CỦA BẠN:\n' +
+  'Đồng hành cùng người dùng trên hành trình tự học, phát triển bản thân và làm chủ cuộc sống xuyên suốt 5 lĩnh vực cốt lõi:\n' +
+  '1. 📚 Học tập (Learning): Làm chủ tiếng Anh (IELTS, phát âm IPA, từ vựng theo ngữ cảnh, giao tiếp tự nhiên), phương pháp tự học Socratic và tư duy đa ngành.\n' +
+  '2. 💼 Sự nghiệp (Career): Định hướng phát triển nghề nghiệp, giải mã năng lực cá nhân, xây dựng lộ trình thăng tiến bền vững theo chuẩn quốc tế.\n' +
+  '3. ⚡ Công việc (Work): Giải quyết bài toán chuyên môn, tư duy hệ thống & kiến trúc, nâng cao năng suất và ra quyết định hiệu quả.\n' +
+  '4. 🚀 Khởi nghiệp (Venture): Thẩm định ý tưởng sáng tạo, kiểm chứng giả định thực tế, phản biện logic và xây dựng giải pháp thực thi tinh gọn.\n' +
+  '5. 🌿 Đời sống (Life): Cân bằng thân - tâm - trí, quản lý nhịp sinh học, nuôi dưỡng thói quen tích cực và duy trì trạng thái dòng chảy (Flow State).\n\n' +
+  '💬 PHONG CÁCH GIAO TIẾP & TÍNH CÁCH:\n' +
+  '- Thân thiện, chân thành, ấm áp, giàu năng lượng tích cực và luôn sẵn sàng lắng nghe.\n' +
+  '- Xưng hô linh hoạt, tự nhiên ("tôi" - "bạn" hoặc "Đồng Hành" - "bạn") như một người bạn tri kỷ, một cố vấn đáng tin cậy.\n' +
+  '- Dẫn dắt thông minh bằng phương pháp gợi mở Socratic: không áp đặt câu trả lời cứng nhắc mà đặt những câu hỏi sâu sắc để người dùng tự khám phá tiềm năng.\n' +
+  '- Câu trả lời súc tích, gãy gọn, có cấu trúc mạch lạc, truyền cảm hứng và mang tính hành động cụ thể.\n' +
+  '- Ngôn ngữ: Sử dụng tiếng Việt tự nhiên, chuẩn mực; kết hợp song ngữ Việt - Anh khi hỗ trợ học tiếng Anh để tăng tính tương tác và phản xạ.\n'
 
 export const CompanionRequestSchema = z.object({
   personId: z.string().uuid(),
@@ -249,6 +268,125 @@ export function synthesizeReply(
 }
 
 /**
+ * Synthesizes intelligent response using real LLM providers (Groq -> Gemini -> Anthropic)
+ * with graceful fallback to deterministic synthesis when offline or keys missing.
+ */
+export async function synthesizeCompanionReply(
+  userMessage: string,
+  intent: string,
+  domain: string,
+  proposedActions: ProposedAction[],
+  contextPackage: ContextPackage,
+): Promise<string> {
+  const groqKey = process.env.GROQ_API_KEY
+  const geminiKey = process.env.GEMINI_API_KEY
+  const anthropicKey = process.env.ANTHROPIC_API_KEY
+
+  if (!groqKey && !geminiKey && !anthropicKey) {
+    return synthesizeReply(userMessage, intent, proposedActions, contextPackage)
+  }
+
+  const contextDetails = contextPackage.items
+    .map((item) => `- [${item.sourceType}]: ${item.content}`)
+    .join('\n')
+
+  const actionsSummary =
+    proposedActions.length > 0
+      ? `\n\nCác tác vụ hệ thống liên quan:\n` +
+        proposedActions
+          .map(
+            (a) =>
+              `- Tác vụ: ${a.action} (Lĩnh vực: ${a.targetDomain}, Trạng thái: ${a.status}, Mức rủi ro: ${a.riskLevel})`,
+          )
+          .join('\n')
+      : ''
+
+  const domainContext =
+    domain && domain !== 'general' && domain !== 'all'
+      ? `Lĩnh vực trọng tâm của lượt thoại này: ${domain}.\n`
+      : ''
+
+  const systemPrompt = `${COMPANION_SYSTEM_PROMPT}\n${domainContext}${
+    contextDetails ? `\nThông tin ngữ cảnh người dùng trích xuất:\n${contextDetails}` : ''
+  }${actionsSummary}\n\nHãy trả lời người dùng với giọng điệu tự nhiên, ấm áp, thông tuệ và truyền cảm hứng dựa trên ngữ cảnh.`
+
+  const messages = [{ role: 'user', content: userMessage }]
+
+  // 1. Nhánh Groq (ưu tiên hàng đầu — chung model với gia sư tiếng Anh: GROQ_CHAT_MODEL)
+  if (groqKey) {
+    try {
+      const groqRes = await callGroqChat(
+        groqKey,
+        GROQ_CHAT_MODEL,
+        systemPrompt,
+        messages,
+        1024,
+        30_000,
+      )
+      if (groqRes.kind === 'success' && groqRes.text.trim()) {
+        return groqRes.text.trim()
+      }
+    } catch {
+      // fallback
+    }
+  }
+
+  // 2. Nhánh Anthropic Claude (chất lượng cao — chung model với gia sư tiếng Anh: ALLOWED_MODEL)
+  if (anthropicKey) {
+    try {
+      const anthropicRes = await callAnthropicChat(
+        anthropicKey,
+        ALLOWED_MODEL,
+        systemPrompt,
+        messages,
+        1024,
+        30_000,
+      )
+      if (
+        anthropicRes.kind === 'response' &&
+        anthropicRes.status >= 200 &&
+        anthropicRes.status < 300
+      ) {
+        try {
+          const parsed = JSON.parse(anthropicRes.bodyText) as {
+            content?: Array<{ text?: string }>
+          }
+          const text = parsed.content?.[0]?.text
+          if (typeof text === 'string' && text.trim()) {
+            return text.trim()
+          }
+        } catch {
+          // fallback
+        }
+      }
+    } catch {
+      // fallback
+    }
+  }
+
+  // 3. Nhánh Google Gemini (dự phòng — chung model với gia sư tiếng Anh: GEMINI_CHAT_MODEL)
+  if (geminiKey) {
+    try {
+      const geminiText = await callGemini(
+        geminiKey,
+        GEMINI_CHAT_MODEL,
+        systemPrompt,
+        messages as Array<{ role: 'user' | 'assistant'; content: string }>,
+        1024,
+      )
+      if (geminiText && geminiText.trim()) {
+        return geminiText.trim()
+      }
+    } catch {
+      // fallback
+    }
+  }
+
+  // Fallback về template nếu mọi provider đều không phản hồi
+  return synthesizeReply(userMessage, intent, proposedActions, contextPackage)
+}
+
+/**
  * Main Companion Runtime Execution Entrypoint.
  * Connects Intent/Domain Resolution -> Context Builder -> Planner -> Policy Gate -> ProposedActions -> Response.
  */
@@ -330,8 +468,14 @@ export async function executeCompanionTurn(
     }
   }
 
-  // Step 6: Synthesize Read Model / Response
-  const reply = synthesizeReply(userMessage, intent, proposedActions, contextPackage)
+  // Step 6: Synthesize Read Model / Intelligent LLM Response
+  const reply = await synthesizeCompanionReply(
+    userMessage,
+    intent,
+    domain,
+    proposedActions,
+    contextPackage,
+  )
 
   return {
     reply,

@@ -31,6 +31,8 @@ export default defineConfig(({ mode }) => {
     'GOOGLE_TTS_API_KEY',
     'GOOGLE_TTS_API_KEYS',
     'TTS_ENCRYPTION_MASTER_KEY',
+    'GEMINI_API_KEY',
+    'GEMINI_MODEL',
     'ANTHROPIC_API_KEY',
     'OPENAI_API_KEY',
     'GROQ_API_KEY',
@@ -157,6 +159,7 @@ const API_ROUTES: { prefix: string; module: string }[] = [
   { prefix: '/api/admin-settings', module: '/api/admin-settings.ts' },
   { prefix: '/api/app-settings', module: '/api/app-settings.ts' },
   { prefix: '/api/avatar-visemes', module: '/api/avatar-visemes.ts' },
+  { prefix: '/api/companion', module: '/api/companion.ts' },
 ]
 
 function apiEdgeDevMiddleware(): Plugin {
