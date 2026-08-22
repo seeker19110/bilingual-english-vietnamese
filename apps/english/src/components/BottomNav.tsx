@@ -1,7 +1,7 @@
 // BottomNav — thanh điều hướng dưới cố định, hiện ở MỌI kích thước màn hình
-// 5 Tab lõi: Trang chủ · Học tập · Đồng Hành AI (Glowing Center Orb) · Luyện tập · Cá nhân
+// 5 Tab lõi: Trang chủ · Phòng Học · Agent Bạn Đồng Hành · Luyện tập · Profile
 import { Link, useLocation } from 'react-router-dom'
-import { Home, Target, Dumbbell, Sparkles, User, ChevronDown, ChevronUp } from 'lucide-react'
+import { Home, GraduationCap, Dumbbell, Sparkles, User, ChevronDown, ChevronUp } from 'lucide-react'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import type { useOneHandedDrag } from '../lib/useOneHandedDrag'
@@ -9,18 +9,21 @@ import type { useOneHandedDrag } from '../lib/useOneHandedDrag'
 const HIDDEN_PATHS = ['/login', '/onboarding']
 
 const LEARNING_PATHS = [
-  '/hoc-tieng-anh',
-  '/tieng-anh',
-  '/english',
+  '/phong-hoc',
   '/hoc-mon-hoc',
   '/subjects',
   '/mon-hoc',
+  '/hoc-tieng-anh',
+  '/tieng-anh',
+  '/english',
+  '/lo-trinh-hoc',
   '/hoc-ung-dung',
   '/applied-knowledge',
   '/ung-dung-thuc-te',
   '/mo-phong',
 ]
 const PRACTICE_PATHS = [
+  '/phong-luyen-tap',
   '/luyen-tap',
   '/tro-truyen',
   '/luyen-noi',
@@ -134,12 +137,12 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
               className={`w-5 h-5 transition-transform duration-200 ${isHome ? 'scale-110' : 'group-hover:scale-105'}`}
             />
           </div>
-          <span className="truncate max-w-[4.5rem] tracking-tight">{T.home}</span>
+          <span className="truncate max-w-[4.5rem] tracking-tight">{T.home ?? 'Trang chủ'}</span>
         </Link>
 
-        {/* Tab 2: Học Tiếng Anh */}
+        {/* Tab 2: Phòng Học */}
         <Link
-          to="/hoc-tieng-anh"
+          to="/phong-hoc"
           aria-current={isLearning ? 'page' : undefined}
           className={`tap-44 relative flex flex-col items-center justify-center gap-1 text-center text-xs font-medium transition-all duration-200 group ${
             isLearning
@@ -154,19 +157,19 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
                 : 'group-hover:bg-zinc-800/40 group-active:scale-95'
             }`}
           >
-            <Target
+            <GraduationCap
               className={`w-5 h-5 transition-transform duration-200 ${isLearning ? 'scale-110' : 'group-hover:scale-105'}`}
             />
           </div>
-          <span className="truncate max-w-[4.5rem] tracking-tight">Học Tiếng Anh</span>
+          <span className="truncate max-w-[4.5rem] tracking-tight">Phòng Học</span>
         </Link>
 
-        {/* Tab 3: Bạn Đồng Hành AI (Nút tâm điểm Orb Glow) */}
+        {/* Tab 3: Agent Bạn Đồng Hành (Nút tâm điểm Orb Glow) */}
         <Link
           to="/agent-ban-dong-hanh"
           aria-current={isCompanion ? 'page' : undefined}
           className="tap-44 relative flex flex-col items-center justify-center -mt-3.5 text-center text-xs font-medium transition-all duration-200 group"
-          title="Bạn Đồng Hành AI"
+          title="Agent Bạn Đồng Hành"
         >
           <div
             className={`relative flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-accent-600 via-accent-500 to-indigo-500 text-zinc-950 shadow-lg shadow-accent-500/35 transition-all duration-200 group-hover:scale-110 group-active:scale-95 ${
@@ -179,17 +182,17 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-zinc-950 animate-pulse" />
           </div>
           <span
-            className={`truncate max-w-[4.5rem] tracking-tight mt-0.5 text-[11px] font-bold ${
+            className={`truncate max-w-[5.25rem] tracking-tight mt-0.5 text-[10px] sm:text-[11px] font-bold ${
               isCompanion ? 'text-accent-300' : 'text-zinc-300 group-hover:text-white'
             }`}
           >
-            Bạn Đồng Hành
+            Agent Bạn Đồng Hành
           </span>
         </Link>
 
         {/* Tab 4: Hub Luyện tập */}
         <Link
-          to="/luyen-tap"
+          to="/phong-luyen-tap"
           aria-current={isPractice ? 'page' : undefined}
           className={`tap-44 relative flex flex-col items-center justify-center gap-1 text-center text-xs font-medium transition-all duration-200 group ${
             isPractice
@@ -208,10 +211,12 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
               className={`w-5 h-5 transition-transform duration-200 ${isPractice ? 'scale-110' : 'group-hover:scale-105'}`}
             />
           </div>
-          <span className="truncate max-w-[4.5rem] tracking-tight">{T.navPractice}</span>
+          <span className="truncate max-w-[4.5rem] tracking-tight">
+            {T.navPractice ?? 'Luyện tập'}
+          </span>
         </Link>
 
-        {/* Tab 5: Cá nhân / Hồ sơ */}
+        {/* Tab 5: Profile */}
         <Link
           to="/profile"
           aria-current={isProfile ? 'page' : undefined}
@@ -232,7 +237,7 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
               className={`w-5 h-5 transition-transform duration-200 ${isProfile ? 'scale-110' : 'group-hover:scale-105'}`}
             />
           </div>
-          <span className="truncate max-w-[4.5rem] tracking-tight">{T.navProfile}</span>
+          <span className="truncate max-w-[4.5rem] tracking-tight">Profile</span>
         </Link>
       </div>
     </nav>

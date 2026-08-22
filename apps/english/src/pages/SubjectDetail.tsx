@@ -99,7 +99,7 @@ export default function SubjectDetail() {
         }
       })
       .catch(() => {
-        nav('/subjects')
+        nav('/phong-hoc')
       })
   }, [subjectId, nav])
 
@@ -261,7 +261,7 @@ export default function SubjectDetail() {
 
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
-      <Layout onBack={() => nav('/subjects')} />
+      <Layout onBack={() => nav('/phong-hoc')} />
 
       <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
         <PageHeader

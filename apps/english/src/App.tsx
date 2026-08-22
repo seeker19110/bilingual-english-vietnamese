@@ -447,6 +447,22 @@ export default function App() {
                       />
                       {/* V2 Multi-Subject Learning Hub & Sub-pages */}
                       <Route
+                        path="/phong-hoc"
+                        element={
+                          <RequireAuth>
+                            <Subjects />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/phong-hoc/:subjectId"
+                        element={
+                          <RequireAuth>
+                            <SubjectDetail />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
                         path="/hoc-mon-hoc"
                         element={
                           <RequireAuth>
@@ -467,6 +483,14 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <Subjects />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/mon-hoc/:subjectId"
+                        element={
+                          <RequireAuth>
+                            <SubjectDetail />
                           </RequireAuth>
                         }
                       />
@@ -637,6 +661,14 @@ export default function App() {
                         }
                       />
                       <Route
+                        path="/phong-luyen-tap"
+                        element={
+                          <RequireAuth>
+                            <Practice />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
                         path="/luyen-tap"
                         element={
                           <RequireAuth>
@@ -769,22 +801,6 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/cai-dat-tieng-anh"
-                        element={
-                          <RequireAuth>
-                            <EnglishSettings />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/settings"
-                        element={
-                          <RequireAuth>
-                            <EnglishSettings />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
                         path="/nhiem-vu"
                         element={
                           <RequireAuth>
@@ -802,50 +818,6 @@ export default function App() {
                           </RequireAuth>
                         }
                       />
-
-                      {/* Chuyển hướng tương thích ngược cho đường dẫn tiếng Anh & alias cũ */}
-                      <Route path="/chat" element={<Navigate to="/tro-truyen" replace />} />
-                      <Route path="/ai-chat" element={<Navigate to="/tro-truyen" replace />} />
-                      <Route path="/messages" element={<Navigate to="/tin-nhan" replace />} />
-                      <Route path="/ho-so" element={<Navigate to="/profile" replace />} />
-                      <Route path="/writing" element={<Navigate to="/luyen-viet" replace />} />
-                      <Route path="/speaking" element={<Navigate to="/luyen-noi" replace />} />
-                      <Route path="/practice" element={<Navigate to="/luyen-tap" replace />} />
-                      <Route
-                        path="/learning-path"
-                        element={<Navigate to="/lo-trinh-hoc" replace />}
-                      />
-                      <Route
-                        path="/learning-path/:levelId"
-                        element={
-                          <RequireAuth>
-                            <FeatureGate featureKey="learning_path">
-                              <CefrLevelPage />
-                            </FeatureGate>
-                          </RequireAuth>
-                        }
-                      />
-                      <Route path="/dictionary" element={<Navigate to="/tu-dien" replace />} />
-                      <Route path="/lessons" element={<Navigate to="/bai-hoc" replace />} />
-                      <Route path="/phrases" element={<Navigate to="/cau-thong-dung" replace />} />
-                      <Route path="/listening" element={<Navigate to="/luyen-nghe" replace />} />
-                      <Route path="/stories" element={<Navigate to="/truyen-song-ngu" replace />} />
-                      <Route
-                        path="/stories/:id"
-                        element={<Navigate to="/truyen-song-ngu" replace />}
-                      />
-                      <Route path="/history" element={<Navigate to="/lich-su-hoc" replace />} />
-                      <Route path="/progress" element={<Navigate to="/tien-do" replace />} />
-                      <Route path="/mistakes" element={<Navigate to="/so-tay-loi-sai" replace />} />
-                      <Route path="/challenge" element={<Navigate to="/thu-thach" replace />} />
-                      <Route path="/quests" element={<Navigate to="/nhiem-vu" replace />} />
-
-                      {/* Redirects quản trị cũ */}
-                      <Route
-                        path="/admin-settings"
-                        element={<Navigate to="/admin-s?tab=limits" replace />}
-                      />
-                      <Route path="/admin" element={<Navigate to="/admin-s" replace />} />
                       <Route
                         path="/admin-s"
                         element={

@@ -143,7 +143,7 @@ export default function Subjects() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-4">
             <button
-              onClick={() => nav('/subjects/mathematics')}
+              onClick={() => nav('/phong-hoc/mathematics')}
               className="tap-44 flex items-center justify-between p-3 rounded-2xl bg-zinc-950/70 hover:bg-zinc-800 border border-blue-500/30 hover:border-blue-500/60 text-left transition-all active:scale-[0.98] group"
             >
               <div className="flex items-center gap-2.5 min-w-0">
@@ -329,7 +329,7 @@ export default function Subjects() {
                       if (sub.id === 'english') {
                         nav('/hoc-tieng-anh')
                       } else {
-                        nav(`/mon-hoc/${sub.id}`)
+                        nav(`/phong-hoc/${sub.id}`)
                       }
                     }}
                     className={`w-full mt-2 tap-44 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-semibold transition active:scale-[0.98] ${

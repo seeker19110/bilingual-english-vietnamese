@@ -20,7 +20,7 @@ export function generateDailyQuests(
       targetGoal: 10,
       isCompleted: false,
       rewardExp: 50,
-      actionUrl: '/learning-path',
+      actionUrl: '/lo-trinh-hoc',
     },
     {
       id: `quest-pvp-${dateStr}`,
@@ -32,7 +32,7 @@ export function generateDailyQuests(
       targetGoal: 1,
       isCompleted: false,
       rewardExp: 80,
-      actionUrl: '/luyen-tap',
+      actionUrl: '/phong-luyen-tap',
     },
     {
       id: `quest-ai-${dateStr}`,

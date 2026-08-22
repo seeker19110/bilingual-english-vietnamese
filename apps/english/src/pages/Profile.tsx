@@ -157,8 +157,8 @@ export default function Profile() {
       bg: 'bg-indigo-500/10 border-indigo-500/30 hover:border-indigo-500/60',
     },
     {
-      path: '/subjects',
-      title: isA ? 'Các môn học & STEM' : 'Multi-Subject Learning',
+      path: '/phong-hoc',
+      title: isA ? 'Phòng học & STEM' : 'Multi-Subject Learning Room',
       desc: isA
         ? 'Toán học, Vật lý, Hóa học, Sinh học & Tiếng Anh'
         : 'Math, Physics, Chemistry, Biology & English',

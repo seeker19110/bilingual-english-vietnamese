@@ -289,9 +289,9 @@ type ActiveTab = 'chat' | 'writing' | 'speaking'
 
 // Route + nhãn CTA "Bắt đầu luyện tập" theo đúng tab đang rỗng.
 const EMPTY_CTA: Record<ActiveTab, { path: string; label: string }> = {
-  chat: { path: '/chat', label: 'Chat với gia sư' },
-  writing: { path: '/writing', label: 'Luyện viết & chấm điểm' },
-  speaking: { path: '/speaking', label: 'Luyện nói song ngữ' },
+  chat: { path: '/tro-truyen', label: 'Chat với gia sư' },
+  writing: { path: '/luyen-viet', label: 'Luyện viết & chấm điểm' },
+  speaking: { path: '/luyen-noi', label: 'Luyện nói song ngữ' },
 }
 
 export default function History() {

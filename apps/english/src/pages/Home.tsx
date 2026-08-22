@@ -287,7 +287,7 @@ export default function Home() {
               {/* Lối tắt con trong STEM */}
               <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-zinc-800/80">
                 <button
-                  onClick={() => nav('/mon-hoc')}
+                  onClick={() => nav('/phong-hoc')}
                   className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-blue-300 transition text-center truncate"
                 >
                   4 Môn Toán Lý Hóa Sinh
@@ -301,10 +301,10 @@ export default function Home() {
               </div>
 
               <button
-                onClick={() => nav('/mon-hoc')}
+                onClick={() => nav('/phong-hoc')}
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-blue-500/15 hover:bg-blue-500/25 text-blue-300 theme-light:text-blue-800 border border-blue-500/30 font-semibold text-xs transition active:scale-[0.98]"
               >
-                <span>Vào Không Gian Môn Học & STEM</span>
+                <span>Vào Không Gian Phòng Học & STEM</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>

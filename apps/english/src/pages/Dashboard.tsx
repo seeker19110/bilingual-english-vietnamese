@@ -558,7 +558,7 @@ export default function Dashboard() {
               {vi ? 'Sổ lỗi của tôi' : 'Mistake Bank'}
             </h2>
             <button
-              onClick={() => nav('/mistakes')}
+              onClick={() => nav('/so-tay-loi-sai')}
               className="w-full bg-zinc-900/80 border border-zinc-800/80 hover:border-rose-500/40 rounded-2xl p-4 flex items-center justify-between transition group text-left"
             >
               <div>

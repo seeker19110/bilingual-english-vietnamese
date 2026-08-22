@@ -37,7 +37,7 @@ export async function fetchDailyQuests(): Promise<DailyQuestsState> {
           targetGoal: 10,
           isCompleted: false,
           rewardExp: 50,
-          actionUrl: '/learning-path',
+          actionUrl: '/lo-trinh-hoc',
         },
         {
           id: `q-2-${todayStr}`,
@@ -49,7 +49,7 @@ export async function fetchDailyQuests(): Promise<DailyQuestsState> {
           targetGoal: 1,
           isCompleted: true,
           rewardExp: 80,
-          actionUrl: '/luyen-tap',
+          actionUrl: '/phong-luyen-tap',
         },
         {
           id: `q-3-${todayStr}`,

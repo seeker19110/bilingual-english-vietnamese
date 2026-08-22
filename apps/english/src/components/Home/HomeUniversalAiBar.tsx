@@ -44,7 +44,7 @@ const PROMPT_CHIPS: PromptChip[] = [
     label: '📐 Giải Toán & STEM',
     icon: Calculator,
     query: 'Tìm cực trị của hàm số bậc 3: y = x^3 - 3x + 2',
-    route: '/subjects/mathematics',
+    route: '/phong-hoc/mathematics',
     badgeColor:
       'hover:border-blue-500/50 hover:bg-blue-500/10 text-blue-300 theme-light:text-blue-800',
   },
@@ -119,7 +119,7 @@ export default function HomeUniversalAiBar() {
       q.includes('cực trị') ||
       q.includes('hình học')
     ) {
-      route = '/subjects/mathematics'
+      route = '/phong-hoc/mathematics'
       domainName = 'Gia Sư Toán Học AI'
       summary =
         'Đối với dạng toán này, chìa khóa là xác định tập xác định D, tính đạo hàm bậc nhất f’(x), giải nghiệm f’(x) = 0 và lập bảng biến thiên để kết luận.'
@@ -127,7 +127,7 @@ export default function HomeUniversalAiBar() {
         'Gợi ý Socratic: Bạn hãy nhớ kiểm tra dấu của đạo hàm khi đi qua các nghiệm bội lẻ và bội chẵn!'
       formulaOrKey = "y' = 0 \\iff x = x_0; \\quad y'' (x_0) > 0 \\implies Cực tiểu"
     } else if (q.includes('vật lý') || q.includes('con lắc') || q.includes('dao động')) {
-      route = '/subjects/physics'
+      route = '/phong-hoc/physics'
       domainName = 'Gia Sư Vật Lý AI'
       summary =
         'Dao động điều hòa tuân theo phương trình li độ x = A*cos(ωt + φ). Chu kỳ T = 2π/ω phụ thuộc vào đặc tính quán tính và lực hồi phục của hệ.'
@@ -135,7 +135,7 @@ export default function HomeUniversalAiBar() {
         'Gợi ý Socratic: Vận tốc đạt cực đại khi vật qua vị trí cân bằng và bằng 0 ở 2 biên!'
       formulaOrKey = 'T = 2\\pi \\sqrt{\\frac{m}{k}} = 2\\pi \\sqrt{\\frac{\\Delta l}{g}}'
     } else if (q.includes('hóa học') || q.includes('phản ứng') || q.includes('oxi hóa')) {
-      route = '/subjects/chemistry'
+      route = '/phong-hoc/chemistry'
       domainName = 'Gia Sư Hóa Học AI'
       summary =
         'Phản ứng oxi hóa - khử bản chất là quá trình chuyển dịch electron. Chất khử cho electron (số oxi hóa tăng), chất oxi hóa nhận electron (số oxi hóa giảm).'
@@ -143,7 +143,7 @@ export default function HomeUniversalAiBar() {
       formulaOrKey =
         'n_{e\\,cho} = n_{e\\,nhận} \\implies \\sum (n \\cdot \\Delta e)_{ox} = \\sum (n \\cdot \\Delta e)_{red}'
     } else if (q.includes('sinh học') || q.includes('di truyền') || q.includes('adn')) {
-      route = '/subjects/biology'
+      route = '/phong-hoc/biology'
       domainName = 'Gia Sư Sinh Học AI'
       summary =
         'Quy luật di truyền Mendel: Phân ly độc lập khi các cặp gen quy định các tính trạng nằm trên các cặp NST tương đồng khác nhau.'
