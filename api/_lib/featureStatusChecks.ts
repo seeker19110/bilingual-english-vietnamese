@@ -9,6 +9,7 @@
 // provider).
 
 import { getPgPool } from '../../packages/core-db/pgPool.js'
+import { groqKeyPool, isSkippableGroqKeyError } from '../../packages/core-ai/groqKeyPool.js'
 
 export type FeatureCheckStatus = 'up' | 'down' | 'unconfigured'
 
@@ -91,21 +92,34 @@ async function checkGemini(): Promise<FeatureCheckResult> {
   }
 }
 
+// Thử LẦN LƯỢT từng key trong bể (GROQ_API_KEY có thể chứa nhiều key cách nhau dấu phẩy/
+// xuống dòng — xem groqKeyPool.ts) — chỉ báo 'down' khi KHÔNG key nào dùng được, vì code
+// thật (chatProviders.ts/openaiStt.ts) cũng tự xoay vòng nên 1 key lỗi chưa làm tính năng
+// gián đoạn thật.
 async function checkGroq(): Promise<FeatureCheckResult> {
   const base = { key: 'groq', label: 'AI hội thoại + STT — Groq', usesApi: true }
-  const apiKey = process.env.GROQ_API_KEY
-  if (!apiKey) return { ...base, status: 'unconfigured' }
-  try {
-    const { ms, value: res } = await timed(() =>
-      fetchWithTimeout('https://api.groq.com/openai/v1/models', {
-        headers: { Authorization: `Bearer ${apiKey}` },
-      }),
-    )
-    if (!res.ok) return { ...base, status: 'down', latencyMs: ms, message: `HTTP ${res.status}` }
-    return { ...base, status: 'up', latencyMs: ms }
-  } catch (err) {
-    return { ...base, status: 'down', message: err instanceof Error ? err.message : String(err) }
+  const pool = groqKeyPool()
+  if (pool.length === 0) return { ...base, status: 'unconfigured' }
+
+  let lastMs = 0
+  let lastMessage = ''
+  for (const apiKey of pool) {
+    try {
+      const { ms, value: res } = await timed(() =>
+        fetchWithTimeout('https://api.groq.com/openai/v1/models', {
+          headers: { Authorization: `Bearer ${apiKey}` },
+        }),
+      )
+      if (res.ok) return { ...base, status: 'up', latencyMs: ms }
+      lastMs = ms
+      lastMessage = `HTTP ${res.status}`
+      if (!isSkippableGroqKeyError(res.status)) break
+    } catch (err) {
+      lastMessage = err instanceof Error ? err.message : String(err)
+      break
+    }
   }
+  return { ...base, status: 'down', latencyMs: lastMs, message: lastMessage }
 }
 
 async function checkOpenAiStt(): Promise<FeatureCheckResult> {

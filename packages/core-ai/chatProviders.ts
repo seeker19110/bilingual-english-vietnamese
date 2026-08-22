@@ -16,6 +16,7 @@
 // dòng) vẫn xanh — bằng chứng hành vi observable không đổi.
 
 import { fetchWithTimeout } from '../../api/_lib/fetchTimeout.js'
+import { groqKeyPool, isSkippableGroqKeyError, nextGroqKeyStartIndex } from './groqKeyPool.js'
 
 export const CHAT_PROVIDER_TIMEOUT_MS = 30_000
 
@@ -102,6 +103,38 @@ export async function callGroqChat(
     const message = err instanceof Error ? err.message : String(err)
     return { kind: 'malformed_body', message, latencyMs: Date.now() - startedAt }
   }
+}
+
+/**
+ * Gọi Groq xoay vòng qua toàn bộ key trong GROQ_API_KEY (hỗ trợ nhiều key cách nhau dấu
+ * phẩy/xuống dòng — xem groqKeyPool.ts). Khi 1 key lỗi do CHÍNH nó (401 key sai/bị revoke,
+ * 429 hết hạn mức) → tự thử key kế tiếp trong bể; lỗi khác (mạng, 5xx, body hỏng...) trả về
+ * ngay, không thử key khác vì thử lại cũng lỗi y hệt. `ai.ts` đọc `ChatCallResult` giống hệt
+ * `callGroqChat()` đơn key — không cần đổi logic fallback/hoàn lượt phía gọi.
+ */
+export async function callGroqChatWithKeyPool(
+  model: string,
+  system: string,
+  messages: unknown[],
+  maxTokens: number,
+  timeoutMs: number = CHAT_PROVIDER_TIMEOUT_MS,
+): Promise<ChatCallResult> {
+  const pool = groqKeyPool()
+  const startIndex = nextGroqKeyStartIndex(pool.length)
+
+  let lastResult: ChatCallResult = {
+    kind: 'network_error',
+    message: 'Server chưa cấu hình GROQ_API_KEY',
+    latencyMs: 0,
+  }
+  for (let i = 0; i < pool.length; i++) {
+    const apiKey = pool[(startIndex + i) % pool.length]!
+    lastResult = await callGroqChat(apiKey, model, system, messages, maxTokens, timeoutMs)
+    if (lastResult.kind !== 'http_error' || !isSkippableGroqKeyError(lastResult.status)) {
+      return lastResult
+    }
+  }
+  return lastResult
 }
 
 /**
