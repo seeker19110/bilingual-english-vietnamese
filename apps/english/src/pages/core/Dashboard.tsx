@@ -1,0 +1,769 @@
+import { useState, useEffect, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
+import {
+  Flame,
+  BookOpen,
+  Target,
+  GraduationCap,
+  MessageCircle,
+  PenLine,
+  Mic,
+  RotateCcw,
+  TrendingUp,
+  CalendarDays,
+  Trophy,
+  BookMarked,
+  ArrowRight,
+  CalendarCheck,
+} from 'lucide-react'
+import Layout from '../../components/Layout'
+import PageHeader from '../../components/PageHeader'
+import QuickActions from '../../components/QuickActions'
+import { useAuth } from '../../context/useAuth'
+import { useLang } from '../../context/useLang'
+import { useCloudSync } from '../../lib/useCloudSync'
+import { useOnboarding } from '../../lib/onboarding'
+import {
+  getStreak,
+  getUsage,
+  getChatSessions,
+  getWritingSubs,
+  getSpeakingSessions,
+} from '../../lib/storage'
+import { getLearnedWords, getLearnedCount } from '../../lib/vocab'
+import { getSRSStats } from '../../lib/srs'
+import { getMistakeStats } from '../../lib/mistakes'
+import { getExamMap } from '../../lib/cefrExam'
+import {
+  loadCurriculum,
+  getPathProgress,
+  getDailyLearned,
+  getDailySpeed,
+} from '../../lib/curriculum'
+import {
+  getActivity7Days,
+  getWeekTotal,
+  getCefrProgress,
+  getActivityCalendar,
+  getWritingProgress,
+  type LevelProgress,
+} from '../../lib/stats'
+import { getWeeklyProgress, type WeeklyProgress } from '../../lib/weeklyGoal'
+import { effectivePlan } from '../../lib/promo'
+import { fetchWeeklyCredit, type WeeklyCreditInfo } from '../../lib/weeklyCredit'
+import { getLimits } from '../../lib/appSettings'
+
+// Màu ô heatmap theo số hoạt động trong ngày (đậm dần).
+function heatColor(count: number): string {
+  if (count <= 0) return 'bg-zinc-800/50'
+  if (count <= 2) return 'bg-accent-900'
+  if (count <= 5) return 'bg-accent-700'
+  if (count <= 10) return 'bg-accent-500'
+  return 'bg-accent-400'
+}
+
+// Màu theo band IELTS (đồng bộ với trang Luyện viết).
+function bandBar(v: number): string {
+  return v >= 7 ? 'bg-accent-500' : v >= 5 ? 'bg-amber-500' : 'bg-red-500'
+}
+function bandText(v: number): string {
+  return v >= 7
+    ? 'text-accent-400 theme-light:text-accent-800'
+    : v >= 5
+      ? 'text-amber-400 theme-light:text-amber-800'
+      : 'text-red-400 theme-light:text-red-700'
+}
+
+// Bảng màu nhấn cho từng cấp CEFR (Tailwind cần class tĩnh — không ghép động được).
+const ACCENT: Record<LevelProgress['accent'], { bar: string; text: string; soft: string }> = {
+  emerald: {
+    bar: 'bg-accent-500',
+    text: 'text-accent-300 theme-light:text-accent-800',
+    soft: 'bg-accent-500/10',
+  },
+  sky: { bar: 'bg-sky-500', text: 'text-sky-300 theme-light:text-sky-800', soft: 'bg-sky-500/10' },
+  violet: {
+    bar: 'bg-violet-500',
+    text: 'text-violet-300 theme-light:text-violet-800',
+    soft: 'bg-violet-500/10',
+  },
+  amber: {
+    bar: 'bg-amber-500',
+    text: 'text-amber-300 theme-light:text-amber-800',
+    soft: 'bg-amber-500/10',
+  },
+  rose: {
+    bar: 'bg-rose-500',
+    text: 'text-rose-300 theme-light:text-rose-800',
+    soft: 'bg-rose-500/10',
+  },
+  cyan: {
+    bar: 'bg-cyan-500',
+    text: 'text-cyan-300 theme-light:text-cyan-800',
+    soft: 'bg-cyan-500/10',
+  },
+}
+
+// Một thẻ số liệu nhỏ (icon + số to + nhãn) kiểu Bento hiện đại.
+function StatCard({
+  icon,
+  value,
+  label,
+  sub,
+  color,
+}: {
+  icon: React.ReactNode
+  value: string | number
+  label: string
+  sub?: string
+  color: string
+}) {
+  return (
+    <div className="bg-zinc-900/80 border border-zinc-800/80 hover:border-zinc-700/80 rounded-2xl sm:rounded-3xl p-4 flex flex-col justify-between gap-2 transition-all duration-200 hover:shadow-md">
+      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${color}`}>
+        {icon}
+      </div>
+      <div>
+        <p className="text-2xl sm:text-3xl font-extrabold text-white leading-none tracking-tight">
+          {value}
+        </p>
+        <p className="text-xs font-medium text-zinc-400 leading-tight mt-1">{label}</p>
+        {sub && <p className="text-[11px] text-zinc-400 leading-tight mt-0.5">{sub}</p>}
+      </div>
+    </div>
+  )
+}
+
+// Vòng tiến độ MỤC TIÊU TUẦN (② M1) — SVG tròn, % = số ngày đã học / mục tiêu.
+// Dùng stroke="currentColor" + class text-* để ăn theo design tokens (--a-*).
+function GoalRing({ done, goal }: { done: number; goal: number }) {
+  const size = 76
+  const stroke = 8
+  const r = (size - stroke) / 2
+  const c = 2 * Math.PI * r
+  const pct = Math.min(1, goal > 0 ? done / goal : 0)
+  return (
+    <div className="relative w-[76px] h-[76px] shrink-0" aria-hidden="true">
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          strokeWidth={stroke}
+          fill="none"
+          stroke="currentColor"
+          className="text-zinc-800/80"
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          strokeWidth={stroke}
+          fill="none"
+          strokeLinecap="round"
+          stroke="currentColor"
+          strokeDasharray={c}
+          strokeDashoffset={c * (1 - pct)}
+          className="text-accent-400 transition-all duration-500"
+        />
+      </svg>
+      <span className="absolute inset-0 flex items-center justify-center text-sm font-extrabold text-white">
+        {done}/{goal}
+      </span>
+    </div>
+  )
+}
+
+// Dòng động viên theo trạng thái mục tiêu tuần.
+function weeklyLine(p: WeeklyProgress, vi: boolean): string {
+  if (p.achieved)
+    return vi
+      ? '🎉 Đã đạt mục tiêu tuần này — giữ nhịp nhé!'
+      : '🎉 Weekly goal reached — keep the rhythm!'
+  const left = p.goal - p.daysDone
+  if (left === 1)
+    return vi
+      ? 'Chỉ còn 1 ngày học nữa là đạt mục tiêu tuần!'
+      : 'Just 1 more study day to hit your weekly goal!'
+  return vi
+    ? `Đã học ${p.daysDone}/${p.goal} ngày tuần này — mỗi ngày một chút nhé!`
+    : `${p.daysDone}/${p.goal} days this week — a little every day!`
+}
+
+// Thanh tiến độ ngang đơn giản.
+function Bar({ pct, color }: { pct: number; color: string }) {
+  return (
+    <div className="h-2 rounded-full bg-zinc-800/90 overflow-hidden">
+      <div
+        className={`h-full rounded-full ${color} transition-all duration-500 shadow-sm`}
+        style={{ width: `${Math.min(100, pct)}%` }}
+      />
+    </div>
+  )
+}
+
+export default function Dashboard() {
+  const nav = useNavigate()
+  const { user } = useAuth()
+  const { T, lang } = useLang()
+  const vi = lang === 'vi'
+  // PHẢI dùng giá trị trả về (xem cảnh báo trong useCloudSync.ts) — thêm vào deps của mọi
+  // useMemo bên dưới đọc localStorage, nếu không stats sẽ đứng yên ở 0 trên thiết bị mới cho
+  // tới khi có lý do khác khiến deps đổi (bug đã xác nhận 2026-07-28).
+  const syncVersion = useCloudSync(user?.id)
+  const onboarding = useOnboarding(user?.id) // nhóm tuổi (GĐ 4, PROGRESS.md) — lọc % lộ trình
+
+  const [ready, setReady] = useState(false)
+  const [cefr, setCefr] = useState<LevelProgress[]>([])
+  // Gói Free: kho lượt AI tuần chung nằm ở server (weekly_ai_credit), không suy ra được
+  // từ dữ liệu local như Pro/VIP (per-mode, theo ngày) — phải hỏi server (usage-summary.ts).
+  const [weeklyCredit, setWeeklyCredit] = useState<WeeklyCreditInfo | null>(null)
+  useEffect(() => {
+    if (!user || effectivePlan(user.plan) !== 'free') return
+    let alive = true
+    fetchWeeklyCredit().then((info) => {
+      if (alive) setWeeklyCredit(info)
+    })
+    return () => {
+      alive = false
+    }
+  }, [user])
+  // Kết quả thi cuối cấp — để hiện huy hiệu "🎓 Đã qua" cạnh từng cấp.
+  // syncVersion: KHÔNG dùng trong thân hàm nhưng BẮT BUỘC có trong deps — báo hiệu cloud sync
+  // vừa kéo dữ liệu mới, cần đọc lại localStorage (xem cảnh báo trong useCloudSync.ts).
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const examMap = useMemo(() => getExamMap(user?.id ?? ''), [user, syncVersion])
+
+  // Nạp dữ liệu từ điển (cho tiến độ lộ trình) + tiến độ CEFR — đều bất đồng bộ.
+  useEffect(() => {
+    if (!user) return
+    let alive = true
+    ;(async () => {
+      await loadCurriculum()
+      const levels = await getCefrProgress(getLearnedWords(user.id))
+      if (!alive) return
+      setCefr(levels)
+      setReady(true)
+    })()
+    return () => {
+      alive = false
+    }
+    // syncVersion: nạp lại tiến độ CEFR sau khi cloud sync xong (learned words vừa được kéo
+    // từ server về có thể khác bản local cũ trên thiết bị này).
+  }, [user, syncVersion])
+
+  // Số liệu đọc tức thì từ localStorage (re-tính khi đã nạp xong dữ liệu).
+  const stats = useMemo(() => {
+    if (!user) return null
+    const usage = getUsage(user.id)
+    const limit = getLimits()[effectivePlan(user.plan)]
+    return {
+      streak: getStreak(user.id),
+      week: getActivity7Days(user.id),
+      weekTotal: getWeekTotal(user.id),
+      calendar: getActivityCalendar(user.id, 35),
+      weekly: getWeeklyProgress(user.id),
+      writing: getWritingProgress(user.id),
+      learnedToday: getDailyLearned(user.id),
+      learnedTotal: getLearnedCount(user.id),
+      dailySpeed: getDailySpeed(user.id),
+      path: ready
+        ? getPathProgress(getLearnedWords(user.id), onboarding?.ageGroup)
+        : { done: 0, total: 0 },
+      srs: getSRSStats(user.id),
+      mistakes: getMistakeStats(user.id),
+      usage,
+      limit,
+      chatN: getChatSessions(user.id).length,
+      writeN: getWritingSubs(user.id).length,
+      speakN: getSpeakingSessions(user.id).length,
+    }
+    // syncVersion: bắt buộc có trong deps dù không dùng trong thân hàm — xem examMap ở trên.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, ready, onboarding?.ageGroup, syncVersion])
+
+  if (!user || !stats) return null
+
+  const maxDay = Math.max(1, ...stats.week.map((d) => d.count))
+  const DOW_VI = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7']
+  const DOW_EN = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+  const dow = vi ? DOW_VI : DOW_EN
+  // Nhãn thứ bắt đầu từ Thứ 2 — cho lưới lịch heatmap.
+  const WDOW = vi ? ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'] : ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+  const wp = stats.writing
+
+  // Tổng tiến độ CEFR (trung bình % 4 cấp) — chỉ để hiển thị 1 con số tổng quan.
+  const cefrOverall = cefr.length
+    ? Math.round(cefr.reduce((s, l) => s + l.pct, 0) / cefr.length)
+    : 0
+
+  return (
+    <div className="min-h-dvh bg-zinc-950">
+      <Layout />
+
+      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
+        {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
+        <PageHeader
+          title={vi ? 'Tiến độ học' : 'Your Progress'}
+          subtitle={
+            vi
+              ? 'Chuỗi ngày, mục tiêu hôm nay và tiến độ lộ trình'
+              : 'Streak, today’s goal and roadmap progress'
+          }
+        />
+
+        {/* ── Streak + biểu đồ 7 ngày ─────────────────────────────────── */}
+        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-5 sm:p-6 shadow-sm animate-fade-in">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3.5">
+              <div
+                className={`w-13 h-13 rounded-2xl flex items-center justify-center p-3 ${
+                  stats.streak > 0
+                    ? 'bg-gradient-to-br from-orange-500/20 to-amber-500/10 border border-orange-500/30'
+                    : 'bg-zinc-800'
+                }`}
+              >
+                <Flame
+                  className={`w-7 h-7 ${stats.streak > 0 ? 'text-orange-400' : 'text-zinc-400'}`}
+                />
+              </div>
+              <div>
+                <p className="text-3xl font-extrabold text-white leading-none tracking-tight">
+                  {stats.streak}
+                </p>
+                <p className="text-xs font-medium text-zinc-400 mt-1">{T.streakDays}</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-3xl font-extrabold text-white leading-none tracking-tight">
+                {stats.weekTotal}
+              </p>
+              <p className="text-xs font-medium text-zinc-400 mt-1">
+                {vi ? 'hoạt động / 7 ngày' : 'activities / 7 days'}
+              </p>
+            </div>
+          </div>
+
+          {/* Cột hoạt động 7 ngày gần nhất */}
+          <div className="flex items-end justify-between gap-2 h-20 pt-2">
+            {stats.week.map((d) => (
+              <div key={d.date} className="flex-1 flex flex-col items-center gap-1.5">
+                <div className="w-full flex-1 flex items-end">
+                  <div
+                    className={`w-full rounded-lg transition-all duration-300 ${
+                      d.active
+                        ? 'bg-gradient-to-t from-orange-500 to-amber-400 shadow-sm shadow-orange-500/20'
+                        : 'bg-zinc-800/80'
+                    }`}
+                    style={{ height: `${d.active ? Math.max(16, (d.count / maxDay) * 100) : 8}%` }}
+                    title={`${d.count} ${vi ? 'hoạt động' : 'activities'}`}
+                  />
+                </div>
+                <span className="text-[11px] font-medium text-zinc-400">{dow[d.dow]}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── Mục tiêu tuần (② M1) ────────────────────────────────────── */}
+        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-5 sm:p-6 shadow-sm animate-fade-in">
+          <div className="flex items-center gap-4">
+            <GoalRing done={stats.weekly.daysDone} goal={stats.weekly.goal} />
+            <div className="min-w-0 flex-1">
+              <h2 className="text-sm font-bold text-zinc-200 flex items-center gap-2">
+                <CalendarCheck className="w-4 h-4 text-accent-400" />
+                {vi ? 'Mục tiêu tuần' : 'Weekly goal'}
+              </h2>
+              {/* Số liệu cho screen reader — vòng SVG bên trái là aria-hidden */}
+              <p className="text-sm text-zinc-300 mt-1 leading-relaxed">
+                <span className="sr-only">
+                  {vi
+                    ? `Đã học ${stats.weekly.daysDone} trên ${stats.weekly.goal} ngày mục tiêu. `
+                    : `Studied ${stats.weekly.daysDone} of ${stats.weekly.goal} goal days. `}
+                </span>
+                {weeklyLine(stats.weekly, vi)}
+              </p>
+              <button
+                onClick={() => nav('/profile')}
+                className="text-xs font-medium text-accent-400 theme-light:text-accent-800 hover:underline mt-1.5 inline-flex items-center gap-1"
+              >
+                {vi ? 'Đổi mục tiêu ở Hồ sơ →' : 'Change goal in Profile →'}
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Lịch hoạt động 5 tuần (heatmap) ─────────────────────────── */}
+        <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-5 sm:p-6 shadow-sm animate-fade-in">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-zinc-300 flex items-center gap-2">
+              <CalendarDays className="w-4 h-4 text-accent-400" />{' '}
+              {vi ? 'Lịch hoạt động' : 'Activity calendar'}
+            </h2>
+            <span className="text-xs text-zinc-400">
+              {stats.calendar.activeDays} {vi ? 'ngày / 5 tuần' : 'days / 5 weeks'}
+            </span>
+          </div>
+
+          {/* Nhãn thứ */}
+          <div className="grid grid-cols-7 gap-1.5 mb-1.5">
+            {WDOW.map((w, i) => (
+              <span key={i} className="text-[11px] text-zinc-400 text-center">
+                {w}
+              </span>
+            ))}
+          </div>
+
+          {/* Lưới ngày — ô đầu lệch cột theo thứ trong tuần */}
+          <div className="grid grid-cols-7 gap-1.5">
+            {stats.calendar.days.map((d, idx) => (
+              <div
+                key={d.date}
+                style={idx === 0 ? { gridColumnStart: stats.calendar.firstColumn + 1 } : undefined}
+                className={`aspect-square rounded-[4px] ${heatColor(d.count)} ${d.date === stats.calendar.days[stats.calendar.days.length - 1]?.date ? 'ring-1 ring-accent-400/70' : ''}`}
+                title={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
+              />
+            ))}
+          </div>
+
+          {/* Chú thích đậm nhạt */}
+          <div className="flex items-center justify-end gap-1.5 mt-3 text-[11px] text-zinc-400">
+            <span>{vi ? 'Ít' : 'Less'}</span>
+            <span className="w-3 h-3 rounded-[3px] bg-zinc-800/50" />
+            <span className="w-3 h-3 rounded-[3px] bg-accent-900" />
+            <span className="w-3 h-3 rounded-[3px] bg-accent-700" />
+            <span className="w-3 h-3 rounded-[3px] bg-accent-500" />
+            <span className="w-3 h-3 rounded-[3px] bg-accent-400" />
+            <span>{vi ? 'Nhiều' : 'More'}</span>
+          </div>
+        </section>
+
+        {/* ── Hôm nay ──────────────────────────────────────────────────── */}
+        <section className="animate-fade-in">
+          <h2 className="text-sm font-semibold text-zinc-300 mb-3 flex items-center gap-2">
+            <Target className="w-4 h-4 text-lime-400" /> {vi ? 'Hôm nay' : 'Today'}
+          </h2>
+
+          {/* Mục tiêu từ mới hôm nay */}
+          <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 mb-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-zinc-300">
+                {vi ? 'Từ mới hôm nay' : 'New words today'}
+              </span>
+              <span className="text-sm font-semibold text-lime-300 theme-light:text-lime-800">
+                {stats.learnedToday}/{stats.dailySpeed}
+              </span>
+            </div>
+            <Bar pct={(stats.learnedToday / stats.dailySpeed) * 100} color="bg-lime-500" />
+          </div>
+
+          {/* Lượt dùng còn lại — gói Free: 1 kho lượt AI CHUNG theo tuần (xem
+              api/usage-summary.ts); Pro/VIP: giữ nguyên hiển thị theo từng tính năng/ngày. */}
+          {effectivePlan(user.plan) === 'free' ? (
+            <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-zinc-300 flex items-center gap-1.5">
+                  <MessageCircle className="w-4 h-4 text-accent-400" />
+                  {vi ? 'Lượt AI tuần này (chat + nói + viết...)' : 'AI credits this week'}
+                </span>
+                <span className="text-sm font-semibold text-accent-300 theme-light:text-accent-800">
+                  {weeklyCredit?.freeWeeklyCredit ?? '…'}/{weeklyCredit?.freeWeeklyCap ?? 35}
+                </span>
+              </div>
+              <Bar
+                pct={
+                  weeklyCredit
+                    ? ((weeklyCredit.freeWeeklyCredit ?? 0) / weeklyCredit.freeWeeklyCap) * 100
+                    : 0
+                }
+                color="bg-accent-500"
+              />
+              <p className="text-[11px] text-zinc-400 mt-2">
+                {vi
+                  ? 'Học từ mới/hoàn thành bài mỗi ngày để được +5 lượt (tối đa 35, tính theo 7 ngày gần nhất).'
+                  : 'Learn a new word or finish a lesson each day for +5 credits (up to 35, based on the last 7 days).'}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                {
+                  icon: <MessageCircle className="w-4 h-4 text-accent-400" />,
+                  label: vi ? 'Chat' : 'Chat',
+                  used: stats.usage.chatCount,
+                  max: stats.limit.chat,
+                },
+                {
+                  icon: <Mic className="w-4 h-4 text-sky-400" />,
+                  label: vi ? 'Nói' : 'Speak',
+                  used: stats.usage.speakingCount,
+                  max: stats.limit.speaking,
+                },
+                {
+                  icon: <PenLine className="w-4 h-4 text-violet-400" />,
+                  label: vi ? 'Viết' : 'Write',
+                  used: stats.usage.writingCount,
+                  max: stats.limit.writing,
+                },
+              ].map((m) => (
+                <div
+                  key={m.label}
+                  className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-3 text-center"
+                >
+                  <div className="flex justify-center mb-1.5">{m.icon}</div>
+                  <p className="text-base font-bold text-white leading-none">
+                    {m.used}
+                    <span className="text-zinc-400 text-xs">/{m.max}</span>
+                  </p>
+                  <p className="text-[11px] text-zinc-400 mt-1">{m.label}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* ── Từ vựng ──────────────────────────────────────────────────── */}
+        <section className="animate-fade-in">
+          <h2 className="text-sm font-semibold text-zinc-300 mb-3 flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-amber-400" /> {vi ? 'Từ vựng' : 'Vocabulary'}
+          </h2>
+          <div className="grid grid-cols-3 gap-3">
+            <StatCard
+              icon={<BookOpen className="w-5 h-5 text-amber-300" />}
+              color="bg-amber-500/10"
+              value={stats.learnedTotal}
+              label={vi ? 'từ đã thuộc' : 'words learned'}
+            />
+            <StatCard
+              icon={<RotateCcw className="w-5 h-5 text-teal-300" />}
+              color="bg-teal-500/10"
+              value={stats.srs.due}
+              label={vi ? 'cần ôn hôm nay' : 'due to review'}
+              sub={vi ? `${stats.srs.total} trong SRS` : `${stats.srs.total} in SRS`}
+            />
+            <StatCard
+              icon={<TrendingUp className="w-5 h-5 text-lime-300" />}
+              color="bg-lime-500/10"
+              value={
+                stats.path.total
+                  ? `${Math.round((stats.path.done / stats.path.total) * 100)}%`
+                  : '—'
+              }
+              label={vi ? 'lộ trình' : 'of path'}
+              sub={ready ? `${stats.path.done}/${stats.path.total}` : '…'}
+            />
+          </div>
+        </section>
+
+        {/* ── Sổ lỗi cá nhân ──────────────────────────────────────────── */}
+        {stats.mistakes.total > 0 && (
+          <section className="animate-fade-in">
+            <h2 className="text-sm font-semibold text-zinc-300 mb-3 flex items-center gap-2">
+              <BookMarked className="w-4 h-4 text-rose-400" />{' '}
+              {vi ? 'Sổ lỗi của tôi' : 'Mistake Bank'}
+            </h2>
+            <button
+              onClick={() => nav('/so-tay-loi-sai')}
+              className="w-full bg-zinc-900/80 border border-zinc-800/80 hover:border-rose-500/40 rounded-2xl p-4 flex items-center justify-between transition group text-left"
+            >
+              <div>
+                <p className="text-sm text-zinc-200">
+                  {stats.mistakes.due > 0
+                    ? vi
+                      ? `${stats.mistakes.due} lỗi cần ôn hôm nay`
+                      : `${stats.mistakes.due} mistakes to review`
+                    : vi
+                      ? 'Không có lỗi cần ôn hôm nay'
+                      : 'No mistakes due today'}
+                </p>
+                <p className="text-xs text-zinc-400 mt-0.5">
+                  {vi
+                    ? `${stats.mistakes.total} lỗi đã ghi từ Chat · Viết · Nói`
+                    : `${stats.mistakes.total} recorded from Chat · Writing · Speaking`}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                {stats.mistakes.due > 0 && (
+                  <span className="text-sm font-bold text-rose-300 theme-light:text-rose-700 bg-rose-500/10 rounded-full w-8 h-8 flex items-center justify-center">
+                    {stats.mistakes.due}
+                  </span>
+                )}
+                <ArrowRight className="w-4 h-4 text-zinc-400 group-hover:text-rose-400 transition" />
+              </div>
+            </button>
+          </section>
+        )}
+
+        {/* ── Lộ trình CEFR ───────────────────────────────────────────── */}
+        <section className="animate-fade-in">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-zinc-300 flex items-center gap-2">
+              <GraduationCap className="w-4 h-4 text-accent-400" />{' '}
+              {vi ? 'Lộ trình CEFR' : 'CEFR Roadmap'}
+            </h2>
+            {cefr.length > 0 && (
+              <span className="text-xs text-zinc-400">
+                {vi ? 'Tổng' : 'Overall'} {cefrOverall}%
+              </span>
+            )}
+          </div>
+          <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 space-y-4">
+            {cefr.length === 0 ? (
+              <p className="text-sm text-zinc-400 text-center py-2">
+                {vi ? 'Đang tải…' : 'Loading…'}
+              </p>
+            ) : (
+              cefr.map((l) => {
+                const c = ACCENT[l.accent]
+                const exam = examMap[l.id]
+                return (
+                  <div key={l.id}>
+                    <div className="flex items-center justify-between mb-1.5 text-sm">
+                      <span className={`font-semibold ${c.text} flex items-center gap-1.5`}>
+                        {vi ? l.titleVi : l.titleEn}
+                        {exam?.passed && (
+                          <span className="flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 theme-light:text-amber-800">
+                            <GraduationCap className="w-2.5 h-2.5" />
+                            {exam.bestPct}%
+                          </span>
+                        )}
+                      </span>
+                      <span className="text-zinc-400 text-xs">
+                        {l.doneWords}/{l.totalWords} {vi ? 'từ' : 'words'} · {l.pct}%
+                      </span>
+                    </div>
+                    <Bar pct={l.pct} color={c.bar} />
+                  </div>
+                )
+              })
+            )}
+          </div>
+        </section>
+
+        {/* ── Điểm IELTS luyện viết theo thời gian ─────────────────────── */}
+        <section className="animate-fade-in">
+          <h2 className="text-sm font-semibold text-zinc-300 mb-3 flex items-center gap-2">
+            <PenLine className="w-4 h-4 text-violet-400" />{' '}
+            {vi ? 'Điểm viết IELTS (ước lượng)' : 'IELTS writing score (estimated)'}
+          </h2>
+
+          {wp.count === 0 ? (
+            <button
+              onClick={() => nav('/luyen-viet')}
+              className="w-full bg-zinc-900/80 border border-zinc-800/80 hover:border-violet-500/40 rounded-2xl p-5 text-center transition group"
+            >
+              <p className="text-sm text-zinc-400">
+                {vi ? 'Chưa có bài viết nào được chấm.' : 'No graded essays yet.'}
+              </p>
+              <p className="text-xs text-violet-400 theme-light:text-violet-800 mt-1 group-hover:underline">
+                {vi ? 'Viết bài đầu tiên →' : 'Write your first essay →'}
+              </p>
+            </button>
+          ) : (
+            <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 space-y-4">
+              {/* 3 số tổng quan: gần nhất · cao nhất · trung bình */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="text-center">
+                  <p className={`text-2xl font-bold leading-none ${bandText(wp.latest!)}`}>
+                    {wp.latest}
+                  </p>
+                  <p className="text-[11px] text-zinc-400 mt-1">{vi ? 'gần nhất' : 'latest'}</p>
+                </div>
+                <div className="text-center border-x border-zinc-800">
+                  <p className="text-2xl font-bold leading-none text-amber-300 flex items-center justify-center gap-1">
+                    <Trophy className="w-4 h-4" />
+                    {wp.best}
+                  </p>
+                  <p className="text-[11px] text-zinc-400 mt-1">{vi ? 'cao nhất' : 'best'}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold leading-none text-zinc-200">{wp.avg}</p>
+                  <p className="text-[11px] text-zinc-400 mt-1">{vi ? 'trung bình' : 'average'}</p>
+                </div>
+              </div>
+
+              {/* Biểu đồ cột band qua các bài (tối đa 12 bài gần nhất), thang 0–9 */}
+              <div>
+                <p className="text-[11px] text-zinc-400 mb-2">
+                  {vi ? `${wp.count} bài đã chấm` : `${wp.count} essays graded`}
+                </p>
+                <div className="flex items-end justify-between gap-1.5 h-24">
+                  {wp.history.slice(-12).map((p, i) => (
+                    <div
+                      key={`${p.date}-${i}`}
+                      className="flex-1 flex flex-col items-center gap-1"
+                      title={`${p.date}: ${p.overall}`}
+                    >
+                      <span className="text-[11px] text-zinc-400">{p.overall}</span>
+                      <div className="w-full flex-1 flex items-end">
+                        <div
+                          className={`w-full rounded-md ${bandBar(p.overall)} transition-all`}
+                          style={{ height: `${(p.overall / 9) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Điểm trung bình từng tiêu chí — chỉ ra điểm mạnh / yếu */}
+              {wp.components && (
+                <div className="space-y-2 pt-1">
+                  {[
+                    {
+                      label: vi ? 'Trả lời đề (TR)' : 'Task Response',
+                      val: wp.components.task_response,
+                    },
+                    { label: vi ? 'Mạch lạc (CC)' : 'Coherence', val: wp.components.coherence },
+                    { label: vi ? 'Từ vựng (LR)' : 'Lexical', val: wp.components.lexical },
+                    { label: vi ? 'Ngữ pháp (GRA)' : 'Grammar', val: wp.components.grammar },
+                  ].map((c) => (
+                    <div key={c.label} className="flex items-center gap-2">
+                      <span className="text-xs text-zinc-400 w-28 shrink-0">{c.label}</span>
+                      <div className="flex-1">
+                        <Bar pct={(c.val / 9) * 100} color={bandBar(c.val)} />
+                      </div>
+                      <span className={`text-xs font-semibold w-6 text-right ${bandText(c.val)}`}>
+                        {c.val}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </section>
+
+        {/* ── Tổng kết hoạt động ──────────────────────────────────────── */}
+        <section className="animate-fade-in">
+          <h2 className="text-sm font-semibold text-zinc-300 mb-3">
+            {vi ? 'Tổng kết' : 'All-time totals'}
+          </h2>
+          <div className="grid grid-cols-3 gap-3">
+            <StatCard
+              icon={<MessageCircle className="w-5 h-5 text-accent-300" />}
+              color="bg-accent-500/10"
+              value={stats.chatN}
+              label={vi ? 'phiên chat' : 'chat sessions'}
+            />
+            <StatCard
+              icon={<Mic className="w-5 h-5 text-sky-300" />}
+              color="bg-sky-500/10"
+              value={stats.speakN}
+              label={vi ? 'lượt luyện nói' : 'speaking turns'}
+            />
+            <StatCard
+              icon={<PenLine className="w-5 h-5 text-violet-300" />}
+              color="bg-violet-500/10"
+              value={stats.writeN}
+              label={vi ? 'bài đã chấm' : 'graded essays'}
+            />
+          </div>
+        </section>
+
+        {/* Hàng hành động nhanh ở đáy trang */}
+        <QuickActions />
+      </main>
+    </div>
+  )
+}

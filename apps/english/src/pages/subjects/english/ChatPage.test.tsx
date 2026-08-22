@@ -3,11 +3,11 @@ import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { MemoryRouter } from 'react-router-dom'
 import ChatPage from './ChatPage'
-import * as chatApi from '../lib/chatApi'
+import * as chatApi from '../../../lib/chatApi'
 
 ;(globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
-vi.mock('../context/useAuth', () => ({
+vi.mock('../../../context/useAuth', () => ({
   useAuth: () => ({
     user: { id: 'user-self', name: 'Self User' },
   }),
@@ -20,7 +20,7 @@ vi.mock('@core/ToastProvider', () => ({
   }),
 }))
 
-vi.mock('../components/Layout', () => ({
+vi.mock('../../../components/Layout', () => ({
   default: () => <div data-testid="layout">Layout Mock</div>,
 }))
 

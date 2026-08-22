@@ -18,85 +18,63 @@ import FeatureGate from './components/FeatureGate'
 import OfflineSyncIndicator from './components/OfflineSyncIndicator'
 import { useOneHandedDrag } from './lib/useOneHandedDrag'
 // Dùng lazyWithRetry thay cho React.lazy: tự tải lại 1 lần khi chunk lỗi
-// (thường do app vừa deploy bản mới, chunk cũ không còn) thay vì sập trang.
-const Login = lazyWithRetry(() => import('./pages/Login'))
-// Trang landing công khai (không cần đăng nhập) — điểm đến cho link quảng cáo TikTok/Facebook/SEO.
-const Landing = lazyWithRetry(() => import('./pages/Landing'))
-const LandingEn = lazyWithRetry(() => import('./pages/LandingEn'))
-const WordDetail = lazyWithRetry(() => import('./pages/WordDetail'))
-const ResetPassword = lazyWithRetry(() => import('./pages/ResetPassword'))
-const Home = lazyWithRetry(() => import('./pages/Home'))
-const EnglishHome = lazyWithRetry(() => import('./pages/EnglishHome'))
-const Chat = lazyWithRetry(() => import('./pages/Chat'))
-const Writing = lazyWithRetry(() => import('./pages/Writing'))
-const Speaking = lazyWithRetry(() => import('./pages/Speaking'))
-// Trang "Luyện tập" gộp — hub điều hướng 4 kỹ năng, dùng lại curriculum + listening.
-const Practice = lazyWithRetry(() => import('./pages/Practice'))
-const CommonPhrases = lazyWithRetry(() => import('./pages/CommonPhrases'))
+// ── 1. Core Platform & Shared Pages (Nền tảng dùng chung)
+const Login = lazyWithRetry(() => import('./pages/core/Login'))
+const Landing = lazyWithRetry(() => import('./pages/core/Landing'))
+const LandingEn = lazyWithRetry(() => import('./pages/core/LandingEn'))
+const ResetPassword = lazyWithRetry(() => import('./pages/core/ResetPassword'))
+const Home = lazyWithRetry(() => import('./pages/core/Home'))
+const History = lazyWithRetry(() => import('./pages/core/History'))
+const Dashboard = lazyWithRetry(() => import('./pages/core/Dashboard'))
+const Profile = lazyWithRetry(() => import('./pages/core/Profile'))
+const Onboarding = lazyWithRetry(() => import('./pages/core/Onboarding'))
+const MistakeBank = lazyWithRetry(() => import('./pages/core/MistakeBank'))
+const Quests = lazyWithRetry(() => import('./pages/core/Quests'))
+const About = lazyWithRetry(() => import('./pages/core/About'))
+const AdminDashboard = lazyWithRetry(() => import('./pages/core/AdminDashboard'))
+const Friends = lazyWithRetry(() => import('./pages/core/Friends'))
+const AddFriend = lazyWithRetry(() => import('./pages/core/AddFriend'))
 
-// Trang "Thư viện Nghe" (/listening) — 2 tab, tái dùng patterns/dialogues.
-const Listening = lazyWithRetry(() => import('./pages/Listening'))
-// Trang "Nghe - Đọc - Kể Truyện" (/stories) — tách riêng khỏi /listening (2026-08-02).
-const Stories = lazyWithRetry(() => import('./pages/Stories'))
-const StoryReader = lazyWithRetry(() => import('./pages/StoryReader'))
-const History = lazyWithRetry(() => import('./pages/History'))
-const Dashboard = lazyWithRetry(() => import('./pages/Dashboard'))
-const Profile = lazyWithRetry(() => import('./pages/Profile'))
-const EnglishSettings = lazyWithRetry(() => import('./pages/EnglishSettings'))
-const Onboarding = lazyWithRetry(() => import('./pages/Onboarding'))
-const Placement = lazyWithRetry(() => import('./pages/Placement'))
-const MistakeBank = lazyWithRetry(() => import('./pages/MistakeBank'))
-const Quests = lazyWithRetry(() => import('./pages/Quests'))
-// Trang giới thiệu app (tính năng + mẹo học hiệu quả) — vào từ logo "Gia sư AI" ở header.
-const About = lazyWithRetry(() => import('./pages/About'))
+// ── 2. AI Companion & Decision Studio (Bạn Đồng Hành AI)
+const Companion = lazyWithRetry(() => import('./pages/companion/Companion'))
+const ActionCanvas = lazyWithRetry(() => import('./pages/companion/ActionCanvas'))
+const AvatarDemo = lazyWithRetry(() => import('./pages/companion/AvatarDemo'))
 
-// Thử thách "Challenge 1 phút" (chu kỳ tuần) — ghi hình/IndexedDB chỉ tải khi bấm vào.
-const Challenge = lazyWithRetry(() => import('./pages/Challenge'))
+// ── 3. Multi-Subject Learning & STEM Studio (Phòng Học & Luyện Tập Đa Môn)
+const Subjects = lazyWithRetry(() => import('./pages/learning/Subjects'))
+const SubjectDetail = lazyWithRetry(() => import('./pages/learning/SubjectDetail'))
+const Practice = lazyWithRetry(() => import('./pages/learning/Practice'))
+const AppliedKnowledge = lazyWithRetry(() => import('./pages/learning/AppliedKnowledge'))
 
-// Trang Từ điển chứa file dữ liệu rất lớn (7.428 từ) — chỉ tải khi người dùng
-// thực sự bấm vào, không gộp vào bundle chính để app khởi động nhanh hơn.
-const Dictionary = lazyWithRetry(() => import('./pages/Dictionary'))
+// ── 4. Life Synthesis Domains (Sự nghiệp, Công việc, Khởi nghiệp, Cuộc sống)
+const Career = lazyWithRetry(() => import('./pages/domains/career/Career'))
+const CareerInterview = lazyWithRetry(() => import('./pages/domains/career/CareerInterview'))
+const Work = lazyWithRetry(() => import('./pages/domains/work/Work'))
+const WorkKanban = lazyWithRetry(() => import('./pages/domains/work/WorkKanban'))
+const Startup = lazyWithRetry(() => import('./pages/domains/startup/Startup'))
+const StartupCanvas = lazyWithRetry(() => import('./pages/domains/startup/StartupCanvas'))
+const Life = lazyWithRetry(() => import('./pages/domains/life/Life'))
+const LifeGraph = lazyWithRetry(() => import('./pages/domains/life/LifeGraph'))
+const LifeWheel = lazyWithRetry(() => import('./pages/domains/life/LifeWheel'))
 
-// Trang Bài học cũng chứa dữ liệu hội thoại lớn (sẽ lên tới 100 bài) — lazy-load tương tự.
-const Lessons = lazyWithRetry(() => import('./pages/Lessons'))
-
-// Trang Học theo lộ trình cũng dùng toàn bộ từ điển (qua lib/curriculum) — lazy-load.
-const Learn = lazyWithRetry(() => import('./pages/Learn'))
-
-// Trang riêng của từng cấp CEFR (/learning-path/a1…b2) — lazy-load tương tự.
-const CefrLevelPage = lazyWithRetry(() => import('./pages/CefrLevelPage'))
-
-// Trang quản trị tổng — chỉ admin (ADMIN_EMAILS) dùng được, lazy-load vì hiếm khi truy cập.
-const AdminDashboard = lazyWithRetry(() => import('./pages/AdminDashboard'))
-
-// Trang Mạng lưới cá nhân (Life Graph)
-const LifeGraph = lazyWithRetry(() => import('./pages/LifeGraph'))
-
-// Trang Bạn Đồng Hành AI Đa Lĩnh Vực (Companion Runtime)
-const Companion = lazyWithRetry(() => import('./pages/Companion'))
-
-// Các Hub Chuyên Biệt Platform V2
-const Career = lazyWithRetry(() => import('./pages/Career'))
-const Work = lazyWithRetry(() => import('./pages/Work'))
-const Startup = lazyWithRetry(() => import('./pages/Startup'))
-const Life = lazyWithRetry(() => import('./pages/Life'))
-
-// Các Trang Con Chuyên Sâu Platform V2 (Sub-pages & Multi-Subject)
-const Subjects = lazyWithRetry(() => import('./pages/Subjects'))
-const SubjectDetail = lazyWithRetry(() => import('./pages/SubjectDetail'))
-const AppliedKnowledge = lazyWithRetry(() => import('./pages/AppliedKnowledge'))
-const CareerInterview = lazyWithRetry(() => import('./pages/CareerInterview'))
-const WorkKanban = lazyWithRetry(() => import('./pages/WorkKanban'))
-const StartupCanvas = lazyWithRetry(() => import('./pages/StartupCanvas'))
-const ActionCanvas = lazyWithRetry(() => import('./pages/ActionCanvas'))
-const LifeWheel = lazyWithRetry(() => import('./pages/LifeWheel'))
-const Friends = lazyWithRetry(() => import('./pages/Friends'))
-const AddFriend = lazyWithRetry(() => import('./pages/AddFriend'))
-const ChatPage = lazyWithRetry(() => import('./pages/ChatPage'))
-
-// PoC nội bộ — không link từ menu/BottomNav, chỉ vào qua URL trực tiếp /avatar-demo.
-// Xem docs/research/dac-ta-avatar-ai-noi-chuyen-2026-07-28.md.
-const AvatarDemo = lazyWithRetry(() => import('./pages/AvatarDemo'))
+// ── 5. English Subject Module (Module Môn Học Tiếng Anh Chuyên Biệt)
+const EnglishHome = lazyWithRetry(() => import('./pages/subjects/english/EnglishHome'))
+const Chat = lazyWithRetry(() => import('./pages/subjects/english/Chat'))
+const Writing = lazyWithRetry(() => import('./pages/subjects/english/Writing'))
+const Speaking = lazyWithRetry(() => import('./pages/subjects/english/Speaking'))
+const CommonPhrases = lazyWithRetry(() => import('./pages/subjects/english/CommonPhrases'))
+const Listening = lazyWithRetry(() => import('./pages/subjects/english/Listening'))
+const Stories = lazyWithRetry(() => import('./pages/subjects/english/Stories'))
+const StoryReader = lazyWithRetry(() => import('./pages/subjects/english/StoryReader'))
+const EnglishSettings = lazyWithRetry(() => import('./pages/subjects/english/EnglishSettings'))
+const Placement = lazyWithRetry(() => import('./pages/subjects/english/Placement'))
+const Challenge = lazyWithRetry(() => import('./pages/subjects/english/Challenge'))
+const Dictionary = lazyWithRetry(() => import('./pages/subjects/english/Dictionary'))
+const WordDetail = lazyWithRetry(() => import('./pages/subjects/english/WordDetail'))
+const Lessons = lazyWithRetry(() => import('./pages/subjects/english/Lessons'))
+const Learn = lazyWithRetry(() => import('./pages/subjects/english/Learn'))
+const CefrLevelPage = lazyWithRetry(() => import('./pages/subjects/english/CefrLevelPage'))
+const ChatPage = lazyWithRetry(() => import('./pages/subjects/english/ChatPage'))
 
 // Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang.
 // Hiện khung skeleton nhấp nháy thay vì chữ trơ, đỡ cảm giác đơ.
@@ -160,13 +138,13 @@ function CanonicalUpdater() {
 function usePrefetchPages() {
   useEffect(() => {
     const prefetch = () => {
-      void import('./pages/Home')
-      void import('./pages/Chat')
-      void import('./pages/Learn')
-      void import('./pages/Dictionary')
-      void import('./pages/Lessons')
-      void import('./pages/CommonPhrases')
-      void import('./pages/Speaking')
+      void import('./pages/core/Home')
+      void import('./pages/subjects/english/Chat')
+      void import('./pages/subjects/english/Learn')
+      void import('./pages/subjects/english/Dictionary')
+      void import('./pages/subjects/english/Lessons')
+      void import('./pages/subjects/english/CommonPhrases')
+      void import('./pages/subjects/english/Speaking')
     }
     if ('requestIdleCallback' in window) {
       requestIdleCallback(prefetch)
