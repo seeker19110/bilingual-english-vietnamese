@@ -119,7 +119,7 @@ export default function AdminFeatureStatusPanel() {
             <button
               type="button"
               onClick={fetchStatus}
-              aria-label="Tải lại"
+              aria-label="Tải lại trạng thái tính năng"
               className="p-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 rounded-lg"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />

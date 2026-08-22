@@ -32,9 +32,9 @@ vi.mock('./_lib/featureStatusChecks.js', () => ({
 }))
 
 import { getPgPool } from '../packages/core-db/pgPool.js'
-import { validateAuth } from '../packages/core-auth/security.js'
+import { validateAuth, logSecurityEvent, checkRateLimit } from '../packages/core-auth/security.js'
 import { getUserById } from '../packages/core-auth/authService.js'
-import { runAllFeatureChecks } from './_lib/featureStatusChecks.js'
+import { runAllFeatureChecks, summarizeOverallStatus } from './_lib/featureStatusChecks.js'
 
 type UserInfo = Awaited<ReturnType<typeof getUserById>>
 
@@ -44,6 +44,33 @@ describe('/api/admin-feature-status', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     delete process.env.FEATURE_STATUS_CRON_KEY
+  })
+
+  it('OPTIONS trả 204 (preflight CORS)', async () => {
+    const req = new Request('http://localhost/api/admin-feature-status', { method: 'OPTIONS' })
+    const res = await handler(req)
+    expect(res.status).toBe(204)
+  })
+
+  it('GET trả latest=null khi chưa có lượt kiểm tra nào', async () => {
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'a1',
+      email: 'admin@example.com',
+    } as UserInfo)
+    queryMock.mockResolvedValueOnce({ rows: [] })
+    const req = new Request('http://localhost/api/admin-feature-status')
+    const res = await handler(req)
+    const json = await res.json()
+    expect(json.latest).toBeNull()
+    expect(json.history).toEqual([])
+  })
+
+  it('từ chối khi vượt hạn mức lượt gọi (429)', async () => {
+    vi.mocked(checkRateLimit).mockResolvedValueOnce(false)
+    const req = new Request('http://localhost/api/admin-feature-status')
+    const res = await handler(req)
+    expect(res.status).toBe(429)
   })
 
   it('GET từ chối người dùng chưa đăng nhập (401)', async () => {
@@ -130,5 +157,42 @@ describe('/api/admin-feature-status', () => {
     })
     const res = await handler(req)
     expect(res.status).toBe(401)
+  })
+
+  it('POST từ chối người đăng nhập nhưng không phải admin (403)', async () => {
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'a1',
+      email: 'user@example.com',
+    } as UserInfo)
+    const req = new Request('http://localhost/api/admin-feature-status', { method: 'POST' })
+    const res = await handler(req)
+    expect(res.status).toBe(403)
+  })
+
+  it('POST ghi log bảo mật khi overall_status không phải up (degraded)', async () => {
+    vi.mocked(summarizeOverallStatus).mockReturnValueOnce('degraded')
+    vi.mocked(validateAuth).mockResolvedValueOnce({ userId: 'a1' })
+    vi.mocked(getUserById).mockResolvedValueOnce({
+      id: 'a1',
+      email: 'admin@example.com',
+    } as UserInfo)
+    queryMock.mockResolvedValueOnce({
+      rows: [{ id: 4, triggered_by: 'manual', overall_status: 'degraded', results: [] }],
+    })
+    const req = new Request('http://localhost/api/admin-feature-status', { method: 'POST' })
+    const res = await handler(req)
+    expect(res.status).toBe(200)
+    expect(logSecurityEvent).toHaveBeenCalledWith(
+      'FEATURE_STATUS_DEGRADED',
+      expect.any(String),
+      expect.objectContaining({ overallStatus: 'degraded' }),
+    )
+  })
+
+  it('từ chối phương thức không hỗ trợ (405)', async () => {
+    const req = new Request('http://localhost/api/admin-feature-status', { method: 'DELETE' })
+    const res = await handler(req)
+    expect(res.status).toBe(405)
   })
 })
