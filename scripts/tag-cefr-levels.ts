@@ -139,7 +139,7 @@ function pickProvider(): { provider: Provider; key: string } {
 }
 
 async function callGroq(system: string, user: string): Promise<string> {
-  const model = process.env.GROQ_CHAT_MODEL || 'llama-3.3-70b-versatile'
+  const model = process.env.GROQ_CHAT_MODEL || 'openai/gpt-oss-120b'
   const resp = await fetchWithTimeout(
     'https://api.groq.com/openai/v1/chat/completions',
     {

@@ -21,6 +21,11 @@ export const MODEL_PRICING_REGISTRY: Record<string, ModelPricing> = {
     promptCostPer1MTokensUsd: 0.59,
     completionCostPer1MTokensUsd: 0.79,
   },
+  // [2026-08-22] Groq gỡ llama-3.3-70b-versatile — model mặc định mới là
+  // 'openai/gpt-oss-120b' (xem aiConfig.ts), CHƯA thêm giá thật vào bảng này vì không xác
+  // minh được giá công bố hiện hành trong lúc vá khẩn cấp — tạm dùng DEFAULT_FALLBACK_PRICING
+  // bên dưới (ước tính, không chính xác tuyệt đối). Cần điền giá thật từ
+  // https://groq.com/pricing khi xác nhận được.
   'gpt-4o-mini': {
     promptCostPer1MTokensUsd: 0.15,
     completionCostPer1MTokensUsd: 0.6,
