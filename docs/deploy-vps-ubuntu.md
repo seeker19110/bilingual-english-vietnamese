@@ -457,6 +457,29 @@ curl https://en-vi.donghanhcungban.com/api/health
 
 ---
 
+## Kiểm tra trạng thái tính năng (Admin — tự động 2 lần/ngày)
+
+Trang `/admin` tab "Sử dụng, chi phí & Vận hành" có mục "Trạng thái tính năng": kiểm tra
+CSDL, AI hội thoại (Anthropic/Gemini/Groq), STT (Groq/OpenAI), TTS (Google Cloud), lưu trữ R2,
+thanh toán SePay còn phản hồi không — bấm "Kiểm tra thủ công" bất kỳ lúc nào, hoặc để crontab
+VPS tự gọi 2 lần/ngày qua `POST /api/admin-feature-status` (header `x-cron-key` khớp
+`FEATURE_STATUS_CRON_KEY` trong `.env`, không cần đăng nhập admin).
+
+Thêm crontab (2 lần/ngày, 7h và 19h giờ Việt Nam = 0h và 12h UTC — đổi giờ nếu VPS đặt timezone
+khác UTC, kiểm tra bằng `timedatectl`):
+
+```bash
+crontab -e
+```
+
+Thêm dòng (thay `<FEATURE_STATUS_CRON_KEY>` bằng giá trị thật trong `.env` trên VPS):
+
+```
+0 0,12 * * * curl -s -X POST -H "x-cron-key: <FEATURE_STATUS_CRON_KEY>" https://en-vi.donghanhcungban.org/api/admin-feature-status >/dev/null 2>&1
+```
+
+---
+
 ## Theo dõi dung lượng audio
 
 ```bash

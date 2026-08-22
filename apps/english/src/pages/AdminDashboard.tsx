@@ -28,6 +28,7 @@ import AdminSystemControlPanel from '../components/admin/AdminSystemControlPanel
 import AdminReservedNamesPanel from '../components/admin/AdminReservedNamesPanel'
 import AdminFeedbackPanel from '../components/admin/AdminFeedbackPanel'
 import AdminTtsCachePanel from '../components/admin/AdminTtsCachePanel'
+import AdminFeatureStatusPanel from '../components/admin/AdminFeatureStatusPanel'
 
 type TabKey =
   | 'usage'
@@ -76,6 +77,7 @@ function AdminPanel({ tabKey }: { tabKey: TabKey }) {
       return (
         <>
           <AdminUsagePanel />
+          <AdminFeatureStatusPanel />
           <AdminSystemControlPanel />
         </>
       )
