@@ -68,6 +68,7 @@ import adminSystemControlHandler from './api/admin-system-control.js'
 import adminTtsCacheHandler from './api/admin-tts-cache.js'
 import adminReservedNamesHandler from './api/admin-reserved-names.js'
 import adminFeedbackHandler from './api/admin-feedback.js'
+import adminFeatureStatusHandler from './api/admin-feature-status.js'
 import planPricesHandler from './packages/core-billing/plan-prices.js'
 import checkoutHandler from './packages/core-billing/checkout.js'
 import paymentWebhookHandler from './packages/core-billing/payment-webhook.js'
@@ -280,6 +281,7 @@ app.all('/api/admin-system-control', wrapEdge(adminSystemControlHandler))
 app.all('/api/admin-tts-cache', wrapEdge(adminTtsCacheHandler))
 app.all('/api/admin-reserved-names', wrapEdge(adminReservedNamesHandler))
 app.all('/api/admin-feedback', wrapEdge(adminFeedbackHandler))
+app.all('/api/admin-feature-status', wrapEdge(adminFeatureStatusHandler))
 app.all('/api/plan-prices', wrapEdge(planPricesHandler))
 app.all('/api/checkout', wrapEdge(checkoutHandler))
 app.all('/api/payment-webhook', wrapEdge(paymentWebhookHandler))
