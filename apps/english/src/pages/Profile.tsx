@@ -167,8 +167,8 @@ export default function Profile() {
       bg: 'bg-amber-500/10 border-amber-500/30 hover:border-amber-500/60',
     },
     {
-      path: '/dong-hanh',
-      title: isA ? 'Bạn Đồng Hành AI' : 'AI Companion',
+      path: '/agent-ban-dong-hanh',
+      title: isA ? 'Bạn Đồng Hành' : 'AI Companion',
       desc: isA
         ? 'Trợ lý đàm thoại & đề xuất đa lĩnh vực'
         : 'Multi-domain companion & proposed actions',

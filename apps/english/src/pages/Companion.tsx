@@ -230,12 +230,12 @@ export default function Companion() {
 
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100 flex flex-col">
-      <Layout back={true} title="Đồng Hành AI" />
+      <Layout back={true} title="Bạn Đồng Hành" />
 
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-4 flex flex-col">
         <PageHeader
-          title="Bạn Đồng Hành Đa Lĩnh Vực"
-          subtitle="Executive AI Suite kết nối sâu Học tập, Sự nghiệp, Công việc, Khởi nghiệp & Đời sống."
+          title="Bạn Đồng Hành"
+          subtitle="Người đồng hành trí tuệ kết nối sâu Học tập, Sự nghiệp, Công việc, Khởi nghiệp & Đời sống."
         />
 
         <RealtimeTelemetryBar />

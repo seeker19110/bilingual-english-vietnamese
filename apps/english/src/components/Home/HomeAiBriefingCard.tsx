@@ -120,9 +120,9 @@ export default function HomeAiBriefingCard({
 
         {/* Live Voice Shortcut */}
         <button
-          onClick={() => nav('/dong-hanh')}
+          onClick={() => nav('/agent-ban-dong-hanh')}
           className="tap-44 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent-500/15 hover:bg-accent-500/25 border border-accent-500/30 text-accent-300 text-xs font-semibold transition-all shadow-sm active:scale-95 shrink-0"
-          aria-label="Mở Không Gian Đồng Hành AI"
+          aria-label="Mở Không Gian Bạn Đồng Hành"
         >
           <Radio className="w-3.5 h-3.5 text-accent-400 animate-pulse" />
           <span className="hidden sm:inline">Live Studio</span>

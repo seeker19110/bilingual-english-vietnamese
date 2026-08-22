@@ -5,6 +5,7 @@ import {
   resolveIntentAndDomain,
   generatePlan,
   synthesizeReply,
+  synthesizeCompanionReply,
   executeCompanionTurn,
 } from './companionRuntime.js'
 
@@ -26,6 +27,24 @@ const proposedActionMock = vi.hoisted(() => ({
 
 vi.mock('./proposedActionService.js', () => ({
   proposeAction: (...a: unknown[]) => proposedActionMock.proposeAction(...a),
+}))
+
+const chatProvidersMock = vi.hoisted(() => ({
+  callGroqChat: vi.fn(),
+  callAnthropicChat: vi.fn(),
+}))
+
+vi.mock('../core-ai/chatProviders.js', () => ({
+  callGroqChat: (...a: unknown[]) => chatProvidersMock.callGroqChat(...a),
+  callAnthropicChat: (...a: unknown[]) => chatProvidersMock.callAnthropicChat(...a),
+}))
+
+const geminiApiMock = vi.hoisted(() => ({
+  callGemini: vi.fn(),
+}))
+
+vi.mock('../../api/_lib/geminiApi.js', () => ({
+  callGemini: (...a: unknown[]) => geminiApiMock.callGemini(...a),
 }))
 
 const pool = {} as Pool
@@ -470,5 +489,113 @@ describe('executeCompanionTurn — trạng thái confirmed không rơi vào ô �
 
     expect(res.executionSummary.pendingConfirmationSteps).toBe(1)
     expect(res.reply).toContain('Có 1 đề xuất hành động cần bạn xác nhận')
+  })
+})
+
+describe('synthesizeCompanionReply with shared AI models', () => {
+  const sampleContext = {
+    id: CTX_ID,
+    personId: PERSON_ID,
+    requestId: 'req-3',
+    items: [
+      {
+        sourceType: 'user_declared_fact' as const,
+        sourceId: SOURCE_ID,
+        content: 'Mục tiêu: Đạt IELTS 7.5 trong 6 tháng',
+        provenance: 'profile:goals',
+        sensitivity: 'personal' as const,
+        tokenEstimate: 10,
+      },
+    ],
+    tokenBudget: 2000,
+    tokenUsed: 10,
+    createdAt: new Date().toISOString(),
+    schemaVersion: 1,
+  }
+
+  it('gọi Groq thành công khi có GROQ_API_KEY', async () => {
+    process.env.GROQ_API_KEY = 'test-groq-key'
+    chatProvidersMock.callGroqChat.mockResolvedValueOnce({
+      kind: 'success',
+      text: 'Chào bạn! Tôi là Bạn Đồng Hành AI sẵn sàng cùng bạn chinh phục IELTS.',
+      latencyMs: 120,
+    })
+
+    const reply = await synthesizeCompanionReply(
+      'Xin chào',
+      'general_conversation',
+      'learning',
+      [],
+      sampleContext,
+    )
+
+    expect(reply).toBe('Chào bạn! Tôi là Bạn Đồng Hành AI sẵn sàng cùng bạn chinh phục IELTS.')
+    expect(chatProvidersMock.callGroqChat).toHaveBeenCalled()
+    delete process.env.GROQ_API_KEY
+  })
+
+  it('fallback sang Anthropic khi Groq lỗi và có ANTHROPIC_API_KEY', async () => {
+    process.env.GROQ_API_KEY = 'test-groq-key'
+    process.env.ANTHROPIC_API_KEY = 'test-anthropic-key'
+    chatProvidersMock.callGroqChat.mockResolvedValueOnce({
+      kind: 'network_error',
+      message: 'Connection timeout',
+      latencyMs: 500,
+    })
+    chatProvidersMock.callAnthropicChat.mockResolvedValueOnce({
+      kind: 'response',
+      status: 200,
+      bodyText: JSON.stringify({
+        content: [{ text: 'Phản hồi từ Anthropic Claude cho Bạn Đồng Hành.' }],
+      }),
+      latencyMs: 350,
+    })
+
+    const reply = await synthesizeCompanionReply(
+      'Tư vấn sự nghiệp',
+      'general_conversation',
+      'career',
+      [],
+      sampleContext,
+    )
+
+    expect(reply).toBe('Phản hồi từ Anthropic Claude cho Bạn Đồng Hành.')
+    expect(chatProvidersMock.callAnthropicChat).toHaveBeenCalled()
+    delete process.env.GROQ_API_KEY
+    delete process.env.ANTHROPIC_API_KEY
+  })
+
+  it('fallback sang Gemini khi Groq/Anthropic không có hoặc lỗi', async () => {
+    process.env.GEMINI_API_KEY = 'test-gemini-key'
+    geminiApiMock.callGemini.mockResolvedValueOnce('Phản hồi từ Google Gemini 2.0 Flash.')
+
+    const reply = await synthesizeCompanionReply(
+      'Lên kế hoạch',
+      'general_conversation',
+      'work',
+      [],
+      sampleContext,
+    )
+
+    expect(reply).toBe('Phản hồi từ Google Gemini 2.0 Flash.')
+    expect(geminiApiMock.callGemini).toHaveBeenCalled()
+    delete process.env.GEMINI_API_KEY
+  })
+
+  it('fallback về template deterministic khi không có bất kỳ API key nào', async () => {
+    delete process.env.GROQ_API_KEY
+    delete process.env.ANTHROPIC_API_KEY
+    delete process.env.GEMINI_API_KEY
+
+    const reply = await synthesizeCompanionReply(
+      'Xin chào bạn',
+      'general_conversation',
+      'learning',
+      [],
+      sampleContext,
+    )
+
+    expect(reply).toContain('Đồng Hành đã nhận được tin nhắn: "Xin chào bạn".')
+    expect(reply).toContain('[Sử dụng 10/2000 token ngữ cảnh]')
   })
 })

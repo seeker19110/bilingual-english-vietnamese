@@ -40,7 +40,7 @@ export default function ProactiveBriefingCard() {
         </div>
 
         <Link
-          to="/dong-hanh"
+          to="/agent-ban-dong-hanh"
           className="text-xs font-medium text-indigo-400 hover:text-indigo-300 flex items-center gap-1 shrink-0 px-2.5 py-1 rounded-lg bg-indigo-900/30 hover:bg-indigo-900/50 border border-indigo-500/20 transition-all"
         >
           Hội thoại
