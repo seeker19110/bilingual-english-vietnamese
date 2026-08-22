@@ -12,7 +12,12 @@ export const ALLOWED_MODEL = 'claude-haiku-4-5-20251001'
 export const GEMINI_CHAT_MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash'
 
 // Model chat của Groq (FREE, nếu có GROQ_API_KEY). Đổi qua biến môi trường.
-export const GROQ_CHAT_MODEL = process.env.GROQ_CHAT_MODEL || 'llama-3.3-70b-versatile'
+// [2026-08-22] Đổi mặc định từ llama-3.3-70b-versatile — Groq đã gỡ model này khỏi danh
+// sách được phép (API trả "model_not_found"), xác nhận qua curl trực tiếp trên production.
+// KHÔNG chạy được npm run eval:tutor để so baseline trước khi đổi (môi trường sửa lỗi không
+// có key AI thật) — đây là vá khẩn cấp do NHÀ CUNG CẤP gỡ model (không phải đổi ý thích chủ
+// quan), xem PROGRESS.md. Cần chạy eval:tutor xác nhận chất lượng sau khi có key thật.
+export const GROQ_CHAT_MODEL = process.env.GROQ_CHAT_MODEL || 'openai/gpt-oss-120b'
 
 // Guardrail cố định do SERVER chèn vào ĐẦU system prompt. Prompt nền dựng ở client
 // (src/prompts) nên người đã đăng nhập về lý thuyết có thể gửi prompt tuỳ ý để biến API
