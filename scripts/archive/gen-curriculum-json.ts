@@ -14,8 +14,8 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { FOUNDATION } from '../apps/dhcb/src/data/curriculum.ts'
-import type { DictEntry } from '../apps/dhcb/src/types.ts'
+import { FOUNDATION } from '../../apps/dhcb/src/data/curriculum.ts'
+import type { DictEntry } from '../../apps/dhcb/src/types.ts'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DICT_DIR = path.join(ROOT, 'apps/dhcb/public/data/dictionary')
