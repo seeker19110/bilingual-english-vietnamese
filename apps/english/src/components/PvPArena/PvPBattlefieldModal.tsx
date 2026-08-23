@@ -1,11 +1,13 @@
 // apps/english/src/components/PvPArena/PvPBattlefieldModal.tsx — Sân Đấu Đối Kháng 1v1 PvP Trực Tiếp 60 FPS.
 import { useState, useEffect, useRef } from 'react'
 import { X, Zap, Flame, Timer, Sparkles, CheckCircle2, XCircle } from 'lucide-react'
+import { useToast } from '@core/ToastProvider'
 import type {
   PvPMatchState,
   PvPRoundAction,
 } from '../../../../../packages/core-contracts/pvpArena.js'
 import { submitPvPRoundAction } from '../../lib/pvpArenaApi.js'
+import { updateQuestProgress } from '../../lib/dailyQuestsApi.js'
 
 interface PvPBattlefieldModalProps {
   initialMatch: PvPMatchState
@@ -32,6 +34,7 @@ export default function PvPBattlefieldModal({
 
   const startTimeRef = useRef<number>(Date.now())
   const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const toast = useToast()
 
   const currentQ = match.questions[currentRound]
 
@@ -75,30 +78,43 @@ export default function PvPBattlefieldModal({
     const responseTimeMs =
       forcedElapsedMs !== undefined ? forcedElapsedMs : Date.now() - startTimeRef.current
 
-    const res = await submitPvPRoundAction({
-      matchId: match.matchId,
-      roundIndex: currentRound,
-      selectedOption: optionIndex,
-      responseTimeMs,
-    })
+    try {
+      const res = await submitPvPRoundAction({
+        matchId: match.matchId,
+        roundIndex: currentRound,
+        selectedOption: optionIndex,
+        responseTimeMs,
+      })
 
-    setRoundResult({
-      p1Action: res.p1Action,
-      p2Action: res.p2Action,
-      showExplanation: true,
-    })
+      setRoundResult({
+        p1Action: res.p1Action,
+        p2Action: res.p2Action,
+        showExplanation: true,
+      })
 
-    setMatch(res.match)
+      setMatch(res.match)
 
-    // Chờ 2.5 giây hiển thị kết quả hiệp rồi chuyển vòng hoặc kết thúc
-    setTimeout(() => {
-      if (res.isMatchCompleted || currentRound + 1 >= match.totalRounds) {
-        setIsFinished(true)
-        onMatchComplete?.(res.match)
-      } else {
-        setCurrentRound((r) => r + 1)
-      }
-    }, 2500)
+      // Chờ 2.5 giây hiển thị kết quả hiệp rồi chuyển vòng hoặc kết thúc
+      setTimeout(() => {
+        if (res.isMatchCompleted || currentRound + 1 >= match.totalRounds) {
+          setIsFinished(true)
+          onMatchComplete?.(res.match)
+          if (res.match.scores.player1Score > res.match.scores.player2Score) {
+            updateQuestProgress('pvp_battle').catch(() => {
+              /* nhiệm vụ ngày là phần thưởng phụ — lỗi ở đây không chặn kết quả trận đấu */
+            })
+          }
+        } else {
+          setCurrentRound((r) => r + 1)
+        }
+      }, 2500)
+    } catch (err) {
+      // Không rõ trận còn sống không (network chớp giữa chừng) — cho người chơi thử lại
+      // ngay lượt này thay vì treo cứng màn hình.
+      toast.error(err instanceof Error ? err.message : 'Gửi câu trả lời thất bại. Bấm để thử lại.')
+      setSelectedOption(null)
+      setIsSubmitting(false)
+    }
   }
 
   const p1Score = match.scores.player1Score

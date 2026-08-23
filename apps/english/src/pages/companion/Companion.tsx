@@ -16,6 +16,7 @@ import {
   confirmProposedAction,
   rejectProposedAction,
 } from '../../lib/companionApi'
+import { updateQuestProgress } from '../../lib/dailyQuestsApi'
 import type { ProposedAction } from '../../../../../packages/core-contracts/proposedAction'
 import type { ContextPackage } from '../../../../../packages/core-contracts/contextPackage'
 import { EmbodimentMode } from '../../components/Companion3D/AvatarEmbodimentSelector'
@@ -157,6 +158,9 @@ export default function Companion() {
                   : m,
               ),
             )
+            updateQuestProgress('ai_dialogue').catch(() => {
+              /* nhiệm vụ ngày là phần thưởng phụ — lỗi ở đây không chặn hội thoại chính */
+            })
           },
         },
       )

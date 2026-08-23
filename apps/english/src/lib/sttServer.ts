@@ -62,7 +62,10 @@ export async function startRecording(lang: 'en' | 'vi'): Promise<Recorder> {
             cleanup()
             const blob = new Blob(chunks, { type: mime || 'audio/webm' })
             if (blob.size === 0) {
-              resolve('')
+              // Chưa hề gọi /api/stt (không có gì để gửi) — phân biệt với case server ĐÃ gọi
+              // nhưng Whisper nghe ra rỗng (transcribe() dưới), để caller biết có nên tính
+              // 1 lượt STT hay không (server chỉ trừ lượt khi thực sự gọi Whisper).
+              reject(new Error('EMPTY_RECORDING'))
               return
             }
             const b64 = await blobToBase64(blob)
@@ -122,9 +125,9 @@ async function transcribe(audioB64: string, mime: string, lang: 'en' | 'vi'): Pr
   if (typeof text !== 'string') {
     throw new Error('STT API returned non-string text')
   }
-  if (!text.trim()) {
-    throw new Error('STT API returned empty text')
-  }
+  // Whisper có thể nghe ra rỗng (im lặng/tạp âm) — vẫn là 1 lần gọi API THÀNH CÔNG (server
+  // đã trừ lượt), khác hẳn case EMPTY_RECORDING (chưa hề gọi API) ở trên. Trả '' thay vì
+  // throw để caller (đã `await` thành công) tính đúng 1 lượt STT thay vì bỏ sót.
   return text.trim()
 }
 

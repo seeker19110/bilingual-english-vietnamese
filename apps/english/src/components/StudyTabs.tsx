@@ -44,6 +44,7 @@ import WeeklyGoalCelebration from './WeeklyGoalCelebration'
 import { shouldCelebrateWeeklyGoal, markWeeklyGoalCelebrated } from '../lib/weeklyGoal'
 import { checkNewAchievements, achievementMessage } from '../lib/achievements'
 import { useToast } from '@core/ToastProvider'
+import { updateQuestProgress } from '../lib/dailyQuestsApi'
 import { getLearnedWords, markLearned, getDifficultWords } from '../lib/vocab'
 import ShareResultCard from './ShareResultCard'
 import { buildQuizShareContent } from '../lib/shareContent'
@@ -506,6 +507,9 @@ export function TodayLesson({
     markLearned(uid, card.word)
     addToSRS(uid, card.word)
     bumpDailyLearned(uid)
+    updateQuestProgress('vocab_mastery').catch(() => {
+      /* nhiệm vụ ngày là phần thưởng phụ — lỗi ở đây không chặn luồng học chính */
+    })
     markStudiedToday(uid) // ghi nhận có học hôm nay → tính streak (đồng bộ server)
     onProgress()
     // Huy hiệu mới (chuỗi ngày/khối lượng từ vựng — ② M2) — kiểm tra sau mỗi từ học
