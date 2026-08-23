@@ -16,7 +16,7 @@ dotenv.config()
 
 import { initSentryServer, captureServerException } from './api/_lib/sentry.js'
 import { registerApiRoutes, CSP_HEADER } from './routes.js'
-import { warnIfClusterWithoutRedis } from '@dhcb/core-auth/security'
+import { warnIfClusterWithoutRedis, reportRedisStatusAtStartup } from '@dhcb/core-auth/security'
 
 // Bật Sentry (error tracking) — no-op nếu chưa cấu hình SENTRY_DSN (xem api/_lib/sentry.ts).
 initSentryServer()
@@ -235,6 +235,9 @@ const server = app.listen(PORT, () => {
   if (pm2Instance === undefined || pm2Instance === '0') {
     startReminderScheduler()
     startPlanExpiryScheduler()
+    // Kiểm Redis CHỈ ở instance 0: cấu hình REDIS_URL giống hệt nhau ở mọi instance nên một
+    // lần là đủ, in 3 lần chỉ làm rối log. Không await — đo đạc không được làm chậm khởi động.
+    void reportRedisStatusAtStartup()
   } else {
     console.log(`   Scheduler: tắt ở instance ${pm2Instance} (chỉ instance 0 chạy)`)
   }

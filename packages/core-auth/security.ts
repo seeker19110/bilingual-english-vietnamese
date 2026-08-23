@@ -207,6 +207,39 @@ export function warnIfClusterWithoutRedis(): void {
   }
 }
 
+/**
+ * Kiểm Redis NGAY LÚC KHỞI ĐỘNG và in kết quả rõ ràng vào log.
+ *
+ * VÌ SAO CẦN (sự cố thật 2026-08-23): `REDIS_URL` trên VPS thiếu mật khẩu trong khi Redis bật
+ * `requirepass`. Client không bao giờ đạt trạng thái `ready`, nên rate limit chạy Map in-memory
+ * LIÊN TỤC — cluster 3 instance nghĩa là hạn mức chống lạm dụng lỏng gấp 3. Lỗi này nằm im
+ * nhiều ngày vì log chỉ có vài dòng rải rác, nhìn như trục trặc thoáng qua.
+ *
+ * Có hàm này thì ngay dòng log khởi động đã nói thẳng Redis sống hay chết, kèm lý do — không
+ * phải suy đoán từ log rải rác hay chờ tới lúc bị lạm dụng mới biết.
+ *
+ * KHÔNG chặn khởi động: gọi kiểu "bắn rồi quên", app vẫn phục vụ bình thường dù Redis hỏng.
+ *
+ * `pingFn` cho phép test tiêm hàm giả (mặc định dùng pingRedis thật). Cần tiêm vì lời gọi nằm
+ * NỘI BỘ trong module này — mock ở tầng module không chặn được lời gọi nội bộ.
+ */
+export async function reportRedisStatusAtStartup(
+  pingFn: () => Promise<{ ok: boolean; latencyMs?: number; error?: string }> = pingRedis,
+): Promise<void> {
+  if (!process.env.REDIS_URL) return // đã có warnIfClusterWithoutRedis() lo trường hợp này
+
+  const ping = await pingFn()
+  if (ping.ok) {
+    console.log(`   Redis    : ✅ dùng chung toàn cluster (${ping.latencyMs}ms)`)
+    return
+  }
+  console.warn(
+    `   Redis    : ❌ KHÔNG dùng được (${ping.error}) — rate limit đang đếm RIÊNG mỗi ` +
+      'instance, hạn mức lỏng gấp N lần. Kiểm REDIS_URL trong .env: Redis có mật khẩu thì ' +
+      'URL phải dạng redis://:MẬT_KHẨU@127.0.0.1:6379 (chú ý dấu hai chấm sau //).',
+  )
+}
+
 // Trả về true nếu được phép, false nếu vượt quá giới hạn.
 // `bucket` cho phép một IP có NHIỀU bộ đếm riêng biệt — ví dụ tách "tổng số request"
 // (kể cả cache HIT, rất rẻ) với "số lần tạo audio mới" (cache MISS, tốn tiền Google TTS).
