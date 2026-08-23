@@ -152,6 +152,7 @@ export default function AdminFeedbackPanel() {
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
+                  aria-label="Lọc theo danh mục"
                   className="bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-accent-500"
                 >
                   <option value="all">Tất cả danh mục</option>
@@ -165,6 +166,7 @@ export default function AdminFeedbackPanel() {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
+                  aria-label="Lọc theo trạng thái"
                   className="bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-accent-500"
                 >
                   <option value="all">Tất cả trạng thái</option>
@@ -179,6 +181,7 @@ export default function AdminFeedbackPanel() {
               <select
                 value={sourceFilter}
                 onChange={(e) => setSourceFilter(e.target.value)}
+                aria-label="Lọc theo nguồn"
                 className="bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500"
               >
                 <option value="all">Tất cả nguồn</option>
@@ -190,6 +193,7 @@ export default function AdminFeedbackPanel() {
             <button
               type="button"
               onClick={fetchFeedback}
+              aria-label="Tải lại danh sách phản hồi"
               className="p-1.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 rounded-lg"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
