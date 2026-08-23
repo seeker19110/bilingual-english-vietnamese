@@ -4541,15 +4541,18 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
-- 🟡 **[2026-08-23] MÃ HOÁ DỮ LIỆU NGƯỜI DÙNG — ghi nợ theo quyết định người dùng.** Hạ tầng
+- 🟡 **[2026-08-23] MÃ HOÁ DỮ LIỆU NGƯỜI DÙNG — ĐÃ BẬT cho dữ liệu MỚI; còn nợ dữ liệu CŨ.**
+  _(Cập nhật cùng ngày: người dùng đảo quyết định — "phải mã hoá dữ liệu người dùng". Secret 2FA
+  đã mã hoá thật ngay từ bản đầu, không có giai đoạn plaintext. Phần còn nợ là **viết lại dữ liệu
+  CŨ đang có** — tên, email, tiến độ — vốn rủi ro cao vì đụng dữ liệu thật; và **người dùng vẫn
+  cần chốt nơi cất khoá gốc**, hướng dẫn ở `docs/van-hanh-khoa-ma-hoa.md`.)_ Hạ tầng
   **đã dựng xong và có test** (`packages/core-config/userDataCrypto.ts`, 18 test: AES-256-GCM,
   khoá mỗi người suy ra bằng `HMAC(USER_DATA_MASTER_KEY, user_id)`, chuỗi tự mô tả
   `v<n>:<iv>:<cipher>`, IV luôn ngẫu nhiên, `keyVersion` sẵn từ bản đầu, `isEncryptedField()` cho
   phép chuyển đổi dần, `hashLookupValue()` cho cột cần tra cứu). **Nhưng CHƯA nối vào bất kỳ dữ
   liệu nào** — module hiện đang NGỦ, không chỗ nào gọi, không ảnh hưởng gì đang chạy.
 
-  **Vì sao hoãn:** chưa có câu trả lời cho câu hỏi chặn đường — **cất khoá gốc
-  `USER_DATA_MASTER_KEY` ở đâu?** Khoá phải nằm KHÁC chỗ với backup DB (cất chung thì mã hoá vô
+  **Việc còn lại + câu hỏi chưa có đáp án — **cất khoá gốc `USER_DATA_MASTER_KEY` ở đâu?** Khoá phải nằm KHÁC chỗ với backup DB (cất chung thì mã hoá vô
   nghĩa: ai lấy được backup lấy luôn khoá), mà **mất khoá = mất vĩnh viễn toàn bộ dữ liệu đã mã
   hoá, không có đường khôi phục**. Bật mã hoá khi chưa chốt chỗ cất khoá là tự tạo rủi ro mất dữ
   liệu lớn hơn rủi ro nó định phòng.

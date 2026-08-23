@@ -14,6 +14,7 @@ import leaderboardHandler from './api/platform/leaderboard.js'
 import pronounceAssessHandler from './api/subjects/english/pronounce-assess.js'
 import authHandler from '@dhcb/core-auth/auth'
 import profileHandler from './api/core/profile.js'
+import twoFactorHandler from './api/core/two-factor.js'
 import progressHandler from './api/core/progress.js'
 import usageSummaryHandler from './api/core/usage-summary.js'
 import historyHandler from './api/core/history.js'
@@ -193,6 +194,7 @@ export function registerApiRoutes(app: express.Express): void {
   app.all('/api/leaderboard', wrapEdge(leaderboardHandler))
   app.all('/api/auth', wrapEdge(authHandler))
   app.all('/api/profile', wrapEdge(profileHandler))
+  app.all('/api/two-factor', wrapEdge(twoFactorHandler))
   app.all('/api/progress', wrapEdge(progressHandler))
   app.all('/api/usage-summary', wrapEdge(usageSummaryHandler))
   app.all('/api/history', wrapEdge(historyHandler))
