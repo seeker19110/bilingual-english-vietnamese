@@ -17,7 +17,12 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const auth = await validateAuth(req)
-  const userId = auth?.userId || 'u-default'
+  // Bắt buộc đăng nhập — trước đây fallback 'u-default' khiến MỌI khách vãng lai dùng chung
+  // một bucket dữ liệu (vá 2026-08-23, đề xuất N1 mục B1).
+  if (!auth) {
+    return jsonResponse({ error: 'Unauthorized' }, 401)
+  }
+  const userId = auth.userId
   const todayStr = new Date().toISOString().slice(0, 10)
 
   const url = new URL(req.url)

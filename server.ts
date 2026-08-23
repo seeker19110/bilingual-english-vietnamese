@@ -327,7 +327,6 @@ app.all('/api/health/deep', wrapEdge(healthDeepHandler))
 // Proactive Briefing (V2 Flagship P1) — Morning / Evening personalized proactive briefs.
 app.all('/api/proactive-briefing', wrapEdge(proactiveBriefingHandler))
 // Multimodal Vision Solver (V2 Flagship P1) — STEM & Document OCR solver.
-app.all('/api/vision-solve', wrapEdge(visionSolveHandler))
 // External Integrations (V2 Flagship) — Google Calendar & Notion sync.
 app.all('/api/integrations', wrapEdge(integrationsHandler))
 // Subconscious Cognition & Nightly REM Consolidation (V3 Flagship) — Autonomous cognition & predictive strategy.
@@ -443,6 +442,13 @@ app.use(
   }),
 )
 
+// /api/* không khớp route nào ở trên → JSON 404 rõ ràng. Trước đây rơi xuống catch-all
+// SPA bên dưới, trả index.html 200 — client tưởng thành công, khó debug
+// (vá 2026-08-23, đề xuất N1 mục B6).
+app.all('/api/*', (_req, res) => {
+  res.status(404).json({ error: 'API route không tồn tại' })
+})
+
 // Mọi route client SPA (Toán, Tiếng Anh, Lộ trình, Luyện nói, Đồng Hành, Simulators, v.v.) đều trả index.html đầy đủ
 app.get('*', (_req, res) => {
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
@@ -535,8 +541,16 @@ const server = app.listen(PORT, () => {
   console.log(`✅ English Tutor đang chạy tại http://localhost:${PORT}`)
   console.log(`   NODE_ENV : ${process.env.NODE_ENV || 'production'}`)
   console.log(`   Node.js  : ${process.version}`)
-  startReminderScheduler()
-  startPlanExpiryScheduler()
+  // PM2 cluster: chỉ instance 0 chạy scheduler — trước đây CẢ 3 instance cùng chạy nên
+  // push/email nhắc học gửi 3 lần/người và downgradeExpiredPlans() chạy 3 lần
+  // (vá 2026-08-23, đề xuất N1 mục B5). Chạy ngoài PM2 thì biến không tồn tại → vẫn chạy.
+  const pm2Instance = process.env.NODE_APP_INSTANCE
+  if (pm2Instance === undefined || pm2Instance === '0') {
+    startReminderScheduler()
+    startPlanExpiryScheduler()
+  } else {
+    console.log(`   Scheduler: tắt ở instance ${pm2Instance} (chỉ instance 0 chạy)`)
+  }
   // Báo PM2 là app ĐÃ nhận request được (đi với wait_ready trong ecosystem.config.cjs).
   // Khi reload, PM2 đợi tín hiệu này từ process MỚI rồi mới tắt process CŨ → không có
   // khoảng chết. Chạy ngoài PM2 (npm start tay) thì process.send không tồn tại → bỏ qua.

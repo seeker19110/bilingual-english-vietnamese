@@ -1,3 +1,8 @@
+> **[2026-08-23 — THAM KHẢO, KHÔNG PHẢI CAM KẾT LỘ TRÌNH]** Người dùng chốt một nguồn thi
+> hành duy nhất: `PROGRESS.md` (trạng thái thật) + `docs/research/dac-ta-kien-truc-platform-dhcb-2026-08-23.md`
+> (kiến trúc + trình tự S3→S6/N1→N5). 46 file phase trong thư mục này là kho tham khảo
+> nghiệm thu khi làm tới phần tương ứng — KHÔNG tự mở phase, không coi đây là backlog đang chạy.
+
 # English Tutor OS — Phase Specifications
 
 Read `../MASTER_SPEC.md` first. These files state the architectural intent of each phase; before

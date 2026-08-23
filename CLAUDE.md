@@ -45,10 +45,10 @@ Ba chế độ:
 - `docs/framework/AP-DUNG-vao-du-an-co-san.md` — cách áp khung lên dự án có sẵn (đang theo runbook này).
 - `docs/deploy-vps-ubuntu.md` — hướng dẫn deploy VPS. ADR (quyết định kiến trúc lớn): đặt ở `docs/adr/` khi có.
 - `docs/ke-hoach-khoi-phuc-su-co-server.md` — **quy trình khôi phục khi server sập/gặp sự cố** (chẩn đoán nhanh → kịch bản xử lý → restore backup → post-mortem). Đọc khi có sự cố thật hoặc chuẩn bị runbook. Khác `docs/DEPLOY.md` (deploy + fix nhanh) và `docs/rollback-runbook.md` (rollback cấu hình theo PR cụ thể).
-- `docs/MASTER_SPEC.md` + `docs/phases/00..45-*.md` — đặc tả lộ trình nâng cấp kiến trúc lớn "English
-  Tutor OS" (45 giai đoạn, nhiều tháng). Tiến độ theo dõi CHUNG trong `PROGRESS.md` mục "Lộ trình mới:
-  English Tutor OS" (không có file tiến độ riêng). Đọc khi làm việc thuộc lộ trình này; chưa bắt đầu
-  thực thi (mới có đặc tả) — mỗi cổng chuyển giai đoạn vẫn cần xác nhận người dùng theo mục 3.
+- `docs/MASTER_SPEC.md` — tầm nhìn kiến trúc Đồng Hành Platform (THAM KHẢO tầm nhìn).
+  **Nguồn thi hành duy nhất (chốt Q2, 2026-08-23): `PROGRESS.md` +
+  `docs/research/dac-ta-kien-truc-platform-dhcb-2026-08-23.md`.** `docs/phases/00..45-*.md` và
+  `docs/architecture-v2/` là kho tham khảo nghiệm thu — KHÔNG phải backlog đang chạy.
 
 ## 2.1. Hệ thống 10 Siêu Kỹ Năng Tác Tử (`.agents/skills/`)
 

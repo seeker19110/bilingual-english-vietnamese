@@ -1,6 +1,12 @@
 // api/co-learning-audio.ts — REST handler cho Phòng Học Nhóm Âm Thanh Thời Gian Thực V7.1.
 import { jsonResponse } from '@dhcb/core-http/http'
-import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
+import {
+  validateAuth,
+  getCorsHeaders,
+  checkRateLimit,
+  logSecurityEvent,
+} from '@dhcb/core-auth/security'
+import { getClientIp } from '@dhcb/core-http/http'
 import {
   createAudioRoom,
   getAudioRoom,
@@ -14,6 +20,12 @@ import {
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: getCorsHeaders(req) })
+  }
+
+  const clientIp = getClientIp(req)
+  if (!(await checkRateLimit(clientIp, 30, 'co_learning'))) {
+    logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/co-learning-audio' })
+    return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429)
   }
 
   const auth = await validateAuth(req)

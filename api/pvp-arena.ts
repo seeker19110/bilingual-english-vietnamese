@@ -25,8 +25,13 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const auth = await validateAuth(req)
-  const userId = auth?.userId || 'guest-learner'
-  const userName = auth?.userId ? 'Learner' : 'Khách Học Viên'
+  // Bắt buộc đăng nhập — trước đây fallback 'guest-learner' khiến mọi khách vãng lai dùng
+  // chung một hồ sơ PvP (vá 2026-08-23, đề xuất N1 mục B1).
+  if (!auth) {
+    return jsonResponse({ error: 'Unauthorized' }, 401)
+  }
+  const userId = auth.userId
+  const userName = 'Learner'
 
   const url = new URL(req.url)
   const action = url.searchParams.get('action')

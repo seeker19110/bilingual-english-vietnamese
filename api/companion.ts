@@ -14,6 +14,7 @@ import { executeCompanionTurn, streamCompanionTurn } from '@dhcb/core-personal/c
 import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
 import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
 import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { checkAndConsumeUsage, refundUsage } from '@dhcb/core-billing/usage'
 
 const CompanionApiRequestSchema = z
   .object({
@@ -54,6 +55,14 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse(validation.error, validation.error.status, headers)
   }
 
+  // Đếm lượt như chế độ 'chat' — Companion gọi đúng các model trả phí của /api/agent nên
+  // phải chịu cùng hạn mức Free/Pro (lỗ hổng chi phí vá 2026-08-23, xem đề xuất N1 mục B3).
+  const gate = await checkAndConsumeUsage(auth.userId, 'chat')
+  if (!gate.ok) {
+    logSecurityEvent('USAGE_LIMIT', clientIp, { path: '/api/companion' })
+    return jsonResponse({ error: gate.message }, 429, headers)
+  }
+
   try {
     const pool = getPgPool()
     const person = await getOrCreatePerson(pool, auth.userId)
@@ -77,6 +86,8 @@ export default async function handler(req: Request): Promise<Response> {
             }
             controller.close()
           } catch (streamErr) {
+            // Provider lỗi giữa chừng → trả lại lượt vừa trừ (cùng quy ước /api/agent)
+            refundUsage(auth.userId, 'chat', gate.day).catch(() => {})
             const errPayload = isAppError(streamErr)
               ? toErrorBody(streamErr)
               : {
@@ -106,6 +117,8 @@ export default async function handler(req: Request): Promise<Response> {
 
     return jsonResponse(response, 200, headers)
   } catch (err: unknown) {
+    // Lỗi trước khi có phản hồi AI → trả lại lượt (cùng quy ước /api/agent)
+    refundUsage(auth.userId, 'chat', gate.day).catch(() => {})
     if (isAppError(err)) {
       return jsonResponse(toErrorBody(err), err.status, headers)
     }

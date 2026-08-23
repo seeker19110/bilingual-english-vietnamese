@@ -1,11 +1,23 @@
 // api/avatar-embodiment.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+
+// Mock kho feature state bằng Map in-memory — thay Postgres thật, giữ hành vi
+// "state sống giữa các request trong cùng 1 test" giống Map cấp module cũ.
+const store = new Map<string, unknown>()
+vi.mock('@dhcb/core-db/featureState', () => ({
+  getFeatureState: vi.fn(async (u: string, f: string) => store.get(u + '|' + f) ?? null),
+  setFeatureState: vi.fn(
+    async (u: string, f: string, s: unknown) => void store.set(u + '|' + f, s),
+  ),
+}))
+
 import handler from './avatar-embodiment.js'
 import * as security from '@dhcb/core-auth/security'
 
 describe('Avatar Embodiment API Handler (/api/avatar-embodiment)', () => {
   beforeEach(() => {
     vi.restoreAllMocks()
+    store.clear()
   })
 
   it('rejects unauthorized requests with 401', async () => {

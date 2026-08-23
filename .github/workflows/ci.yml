@@ -59,6 +59,15 @@ jobs:
           done
           echo "❌ Server không trả /api/health sau 20s"; kill $SERVER_PID || true; exit 1
 
+      # Gate bảo mật dependency: 0 lỗ hổng ở production deps (tiêu chuẩn N5, 2026-08-23).
+      # devDependencies vá qua overrides trong package.json, không chặn ở đây.
+      - name: npm audit (production deps, 0 lỗ hổng)
+        run: npm audit --omit=dev
+
+      # Gate kiến trúc: 0 chu trình import trong toàn repo (tiêu chuẩn N5, 2026-08-23).
+      - name: Chu trình import (codemap cycles = 0)
+        run: npm run codemap -- cycles | grep -q "Không có chu trình import"
+
   e2e:
     runs-on: ubuntu-latest
     steps:

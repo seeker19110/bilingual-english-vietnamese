@@ -96,17 +96,23 @@ CI 3 job (typecheck/lint/format/test+coverage sàn 90/build/size-budget/boot-che
 WCAG 15 trang × 5 theme) · migration đánh số + backup/restore kiểm chứng · secret qua env ·
 zero-downtime deploy (PM2 wait_ready).
 
-**Còn thiếu so với "cao nhất của ngành" (đưa vào lộ trình, đúng thứ tự đề xuất N1→N5):**
+**Còn thiếu so với "cao nhất của ngành" (cập nhật trạng thái 2026-08-23 cuối ngày):**
 
-1. Persistence cho mọi tính năng đang hiển thị (33 API in-memory — vi phạm 12-factor
-   "stateless process"; vỡ trong cluster). → N1/N3 + việc quyết định #2.
-2. Đếm lượt/rate-limit đủ 100% đường gọi AI trả tiền (5 đường đang hở). → N1.
-3. `quality`/`e2e` phải là **required status check** (hiện coverage đỏ vẫn merge được). →
-   việc tay GitHub Settings, N5.
-4. `npm audit` + `codemap cycles` vào CI. → N5.
+1. Persistence 33 API in-memory — **ĐANG TRẢ DẦN**: đã có nền `platform.feature_state`
+   (migration 0058 + `core-db/featureState.ts`) và chuyển lô đầu 5 handler nhóm B
+   (memory-palace, metacognitive-reflection, neural-curriculum, action-canvas,
+   avatar-embodiment). Còn: nhóm A gộp/xoá (daily-quests/referral-vip/leaderboard giả),
+   nhóm C state phiên tạm (trận PvP, phòng audio, realtime…) → lô sau.
+2. ~~Đếm lượt/rate-limit đủ 100% đường AI trả tiền~~ **ĐÃ XONG** (B3): companion/
+   vision-solve/ambient-vision trừ `chat` + refund; gemini-live rate-limit + trừ `speaking`;
+   co-learning rate-limit. Kèm B1 (bỏ fallback u-default), B2 (health/deep gate admin),
+   B5 (scheduler instance 0), B6 (trùng route + JSON 404).
+3. `quality`/`e2e` phải là **required status check** — VIỆC TAY người dùng trên GitHub
+   Settings → Branches, chưa làm được từ phía AI.
+4. ~~`npm audit` + `codemap cycles` vào CI~~ **ĐÃ XONG** (2 gate mới trong job quality).
 5. Observability: Sentry đã có; thiếu uptime monitor + alert chi phí AI theo token thật. → N4.
-6. Một lộ trình kiến trúc duy nhất (Q2 vẫn chờ chốt: khuyến nghị đóng băng cả 45-phase lẫn
-   V2-Wave thành tham khảo, nguồn chân lý là PROGRESS.md + tài liệu này).
+6. ~~Một lộ trình duy nhất~~ **ĐÃ CHỐT Q2**: thi hành = PROGRESS.md + tài liệu này;
+   MASTER_SPEC = tầm nhìn; `docs/phases/` + `docs/architecture-v2/` = tham khảo (đã gắn banner).
 
 ## 6. Trình tự còn lại (điều chỉnh)
 

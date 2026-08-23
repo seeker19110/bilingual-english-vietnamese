@@ -1,10 +1,13 @@
 // api/metacognitive-reflection.ts — REST handler cho Metacognitive Reflection & Socratic Journaling.
+// State đã chuyển sang bảng platform.feature_state (migration 0058, packages/core-db/featureState.ts)
+// — thay cho Map in-memory cấp module, tránh mất dữ liệu/vỡ trong PM2 cluster.
 import { jsonResponse } from '@dhcb/core-http/http'
 import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
 import { MetacognitiveReflectionService } from '@dhcb/core-personal/metacognitiveReflectionService'
 import { MetacognitiveReflection } from '@dhcb/core-contracts/metacognitiveReflection'
+import { getFeatureState, setFeatureState } from '@dhcb/core-db/featureState'
 
-const userReflectionsMap = new Map<string, MetacognitiveReflection[]>()
+const FEATURE = 'metacognitive_reflection'
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
@@ -46,12 +49,12 @@ export default async function handler(req: Request): Promise<Response> {
     }
 
     if (action === 'summary') {
-      const list = userReflectionsMap.get(personId) || []
+      const list = (await getFeatureState<MetacognitiveReflection[]>(personId, FEATURE)) || []
       const summary = MetacognitiveReflectionService.summarizeReflections(list)
       return jsonResponse({ success: true, summary, reflections: list }, 200)
     }
 
-    const list = userReflectionsMap.get(personId) || []
+    const list = (await getFeatureState<MetacognitiveReflection[]>(personId, FEATURE)) || []
     return jsonResponse({ success: true, reflections: list }, 200)
   }
 
@@ -72,9 +75,10 @@ export default async function handler(req: Request): Promise<Response> {
           userReflection,
         })
 
-        const currentList = userReflectionsMap.get(personId) || []
+        const currentList =
+          (await getFeatureState<MetacognitiveReflection[]>(personId, FEATURE)) || []
         currentList.unshift(analysis)
-        userReflectionsMap.set(personId, currentList)
+        await setFeatureState(personId, FEATURE, currentList)
 
         return jsonResponse({ success: true, reflection: analysis }, 200)
       }

@@ -1,4 +1,6 @@
 // api/neural-curriculum.ts — REST handler cho Lộ trình Vi mô Thần kinh & Collocations V4.3.
+// State đã chuyển sang bảng platform.feature_state (migration 0058, packages/core-db/featureState.ts)
+// — thay cho Map in-memory cấp module, tránh mất dữ liệu/vỡ trong PM2 cluster.
 import { jsonResponse } from '@dhcb/core-http/http'
 import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
 import {
@@ -7,8 +9,9 @@ import {
   NEURAL_CURRICULUM_VERSION,
 } from '@dhcb/core-contracts/neuralCurriculum'
 import { NeuralCurriculumService } from '@dhcb/core-ai/neuralCurriculumService'
+import { getFeatureState, setFeatureState } from '@dhcb/core-db/featureState'
 
-const inMemoryCurriculumMap = new Map<string, NeuralCurriculumState>()
+const FEATURE = 'neural_curriculum'
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
@@ -29,8 +32,9 @@ export default async function handler(req: Request): Promise<Response> {
 
   if (req.method === 'GET') {
     const existing =
-      inMemoryCurriculumMap.get(personId) || NeuralCurriculumService.createDefaultState(personId)
-    inMemoryCurriculumMap.set(personId, existing)
+      (await getFeatureState<NeuralCurriculumState>(personId, FEATURE)) ||
+      NeuralCurriculumService.createDefaultState(personId)
+    await setFeatureState(personId, FEATURE, existing)
 
     return jsonResponse(
       {
@@ -59,7 +63,7 @@ export default async function handler(req: Request): Promise<Response> {
         })
 
         const current =
-          inMemoryCurriculumMap.get(personId) ||
+          (await getFeatureState<NeuralCurriculumState>(personId, FEATURE)) ||
           NeuralCurriculumService.createDefaultState(personId)
         const updatedState: NeuralCurriculumState = {
           ...current,
@@ -68,7 +72,7 @@ export default async function handler(req: Request): Promise<Response> {
           updatedAt: new Date().toISOString(),
         }
 
-        inMemoryCurriculumMap.set(personId, updatedState)
+        await setFeatureState(personId, FEATURE, updatedState)
         return jsonResponse({ success: true, module: newModule, state: updatedState }, 200)
       }
 
@@ -78,7 +82,7 @@ export default async function handler(req: Request): Promise<Response> {
         const review = NeuralCurriculumService.computeNextSpacedReview(previousInterval, isCorrect)
 
         const current =
-          inMemoryCurriculumMap.get(personId) ||
+          (await getFeatureState<NeuralCurriculumState>(personId, FEATURE)) ||
           NeuralCurriculumService.createDefaultState(personId)
         const newScore = Math.max(0, Math.min(100, current.masteryScore + review.masteryDelta))
         const updatedState: NeuralCurriculumState = {
@@ -87,7 +91,7 @@ export default async function handler(req: Request): Promise<Response> {
           updatedAt: new Date().toISOString(),
         }
 
-        inMemoryCurriculumMap.set(personId, updatedState)
+        await setFeatureState(personId, FEATURE, updatedState)
         return jsonResponse({ success: true, review, state: updatedState }, 200)
       }
 
@@ -101,7 +105,7 @@ export default async function handler(req: Request): Promise<Response> {
         return jsonResponse({ error: 'invalid_request', details: parseResult.error.format() }, 400)
       }
 
-      inMemoryCurriculumMap.set(personId, parseResult.data)
+      await setFeatureState(personId, FEATURE, parseResult.data)
       return jsonResponse({ success: true, state: parseResult.data }, 200)
     } catch (err) {
       return jsonResponse({ error: 'Invalid payload', details: String(err) }, 400)

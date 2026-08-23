@@ -1,10 +1,13 @@
 // api/memory-palace.ts — REST handler cho Spatial Memory Palace & Method of Loci.
+// State đã chuyển sang bảng platform.feature_state (migration 0058, packages/core-db/featureState.ts)
+// — thay cho Map in-memory cấp module, tránh mất dữ liệu/vỡ trong PM2 cluster.
 import { jsonResponse } from '@dhcb/core-http/http'
 import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
 import { MemoryPalaceService } from '@dhcb/core-ai/memoryPalaceService'
 import { MemoryPalaceRoom, MemoryPalaceState } from '@dhcb/core-contracts/memoryPalace'
+import { getFeatureState, setFeatureState } from '@dhcb/core-db/featureState'
 
-const userPalaceMap = new Map<string, MemoryPalaceRoom[]>()
+const FEATURE = 'memory_palace'
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
@@ -27,17 +30,18 @@ export default async function handler(req: Request): Promise<Response> {
   const action = url.searchParams.get('action')
 
   // Đảm bảo user có ít nhất 1 phòng mặc định
-  if (!userPalaceMap.has(personId)) {
+  let rooms = await getFeatureState<MemoryPalaceRoom[]>(personId, FEATURE)
+  if (!rooms) {
     const defaultRoom = MemoryPalaceService.createMemoryPalaceRoom(personId, {
       name: 'Đại Sảnh Thư Viện Cổ Điển',
       theme: 'knowledge_library',
       description: 'Lưu trữ các cấu trúc ngữ âm, từ vựng C1/C2 và các quy luật ghi nhớ đỉnh cao.',
     })
-    userPalaceMap.set(personId, [defaultRoom])
+    rooms = [defaultRoom]
+    await setFeatureState(personId, FEATURE, rooms)
   }
 
   if (req.method === 'GET') {
-    const rooms = userPalaceMap.get(personId) || []
     const totalMastered = rooms.reduce((acc, r) => acc + r.masteredAnchorsCount, 0)
     const avgRetention =
       rooms.length > 0
@@ -71,9 +75,9 @@ export default async function handler(req: Request): Promise<Response> {
           initialConcepts,
         })
 
-        const currentRooms = userPalaceMap.get(personId) || []
+        const currentRooms = rooms
         currentRooms.push(newRoom)
-        userPalaceMap.set(personId, currentRooms)
+        await setFeatureState(personId, FEATURE, currentRooms)
 
         return jsonResponse({ success: true, room: newRoom }, 200)
       }
@@ -84,7 +88,7 @@ export default async function handler(req: Request): Promise<Response> {
           return jsonResponse({ error: 'Missing roomId, locusId or userRecallText' }, 400)
         }
 
-        const currentRooms = userPalaceMap.get(personId) || []
+        const currentRooms = rooms
         const targetRoom = currentRooms.find((r) => r.id === roomId)
         if (!targetRoom) {
           return jsonResponse({ error: 'Room not found' }, 404)
@@ -109,6 +113,8 @@ export default async function handler(req: Request): Promise<Response> {
           targetRoom.loci.reduce((acc, l) => acc + l.retentionStrength, 0) / targetRoom.loci.length,
         )
         targetRoom.updatedAt = new Date().toISOString()
+
+        await setFeatureState(personId, FEATURE, currentRooms)
 
         return jsonResponse({ success: true, result: recallResult, updatedLocus: targetLocus }, 200)
       }

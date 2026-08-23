@@ -1,5 +1,18 @@
 // api/action-canvas.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+
+// Mock kho feature state bằng Map in-memory — thay Postgres thật. KHÔNG clear() giữa các
+// test: nhiều test trong file này cố ý dựa vào state của test trước (giống hệt hành vi
+// Map cấp module cũ, sống suốt cả file test) — ví dụ test auto_layout/export cần canvas
+// đã được synthesize ở test trước đó cho cùng userId.
+const store = new Map<string, unknown>()
+vi.mock('@dhcb/core-db/featureState', () => ({
+  getFeatureState: vi.fn(async (u: string, f: string) => store.get(u + '|' + f) ?? null),
+  setFeatureState: vi.fn(
+    async (u: string, f: string, s: unknown) => void store.set(u + '|' + f, s),
+  ),
+}))
+
 import handler from './action-canvas.js'
 import * as security from '@dhcb/core-auth/security'
 

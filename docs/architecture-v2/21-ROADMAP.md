@@ -2,7 +2,11 @@
 
 ## Trạng thái
 
-V2 là roadmap kiến trúc active. English Tutor OS v1 đã frozen; phase v1 chỉ được tiếp tục khi phục vụ stability/migration của production hiện tại.
+> **[2026-08-23]** Nguồn thi hành duy nhất là `PROGRESS.md` +
+> `docs/research/dac-ta-kien-truc-platform-dhcb-2026-08-23.md`. File này giữ vai trò THAM
+> KHẢO thiết kế V2 — không coi các Wave ở đây là backlog đang chạy song song.
+
+V2 là roadmap kiến trúc THAM KHẢO (trước đây ghi "active"). English Tutor OS v1 đã frozen; phase v1 chỉ được tiếp tục khi phục vụ stability/migration của production hiện tại.
 
 ## Wave A — Architecture & boundaries
 

@@ -13,6 +13,9 @@ vi.mock('@dhcb/core-auth/security', () => ({
     return null
   }),
   getCorsHeaders: vi.fn().mockReturnValue({}),
+  // Handler mới thêm rate limit + log (vá N1 2026-08-23) — mock cho qua
+  checkRateLimit: vi.fn(async () => true),
+  logSecurityEvent: vi.fn(),
 }))
 
 describe('api/co-learning-audio', () => {

@@ -1,6 +1,8 @@
 # Đồng Hành Platform — Master Architecture Specification v2.0
 
-> Trạng thái: **ACTIVE / source of truth kiến trúc cấp cao** từ 2026-08-15.
+> Trạng thái: **ACTIVE — source of truth TẦM NHÌN/kiến trúc cấp cao** từ 2026-08-15.
+> **[2026-08-23]** Thi hành KHÔNG theo file này: nguồn thi hành duy nhất là `PROGRESS.md` +
+> `docs/research/dac-ta-kien-truc-platform-dhcb-2026-08-23.md` (chốt Q2 — một lộ trình).
 > English Tutor OS v1 đã **FROZEN**; xem `docs/legacy/ENGLISH_TUTOR_OS_V1_FROZEN.md` và `docs/architecture-v2/20-MIGRATION-V1-V2.md`.
 
 ## Mission
