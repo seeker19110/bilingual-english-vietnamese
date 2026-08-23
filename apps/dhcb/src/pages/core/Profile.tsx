@@ -29,6 +29,7 @@ import PageHeader from '../../components/PageHeader'
 import ReferralSection from '../../components/ReferralSection'
 import QuestsPanel from '../../components/QuestsPanel'
 import EmailVerifySection from '../../components/EmailVerifySection'
+import TwoFactorSection from '../../components/TwoFactorSection'
 import UpgradeSection from '../../components/UpgradeSection'
 import PricePromoBanner from '../../components/PricePromoBanner'
 import FeedbackModal from '../../components/FeedbackModal'
@@ -432,6 +433,9 @@ export default function Profile() {
             onVerified={() => void refresh()}
           />
         )}
+
+        {/* Xác thực hai bước (tuỳ chọn) */}
+        <TwoFactorSection isA={isA} />
 
         {/* Mời bạn cùng học */}
         <ReferralSection isA={isA} />

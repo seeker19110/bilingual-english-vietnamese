@@ -36,6 +36,18 @@ function hashToken(rawToken: string): string {
   return createHash('sha256').update(rawToken).digest('hex')
 }
 
+/**
+ * Băm session token đúng cách bảng `public.sessions` đang lưu (cột `session_token` là BĂM, không
+ * phải token gốc).
+ *
+ * Xuất ra ngoài để module khác cần truy vấn/cập nhật đúng hàng session (vd. `twoFactor.ts` ghi
+ * cửa sổ nâng quyền) dùng lại thay vì tự băm — tự băm là chép lại thuật toán, và nếu sau này đổi
+ * cách băm ở đây thì chỗ chép sẽ âm thầm trỏ sai hàng.
+ */
+export function hashSessionToken(rawToken: string): string {
+  return hashToken(rawToken)
+}
+
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, BCRYPT_ROUNDS)
 }

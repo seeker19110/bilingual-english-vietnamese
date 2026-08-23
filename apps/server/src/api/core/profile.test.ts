@@ -23,6 +23,17 @@ import { getPgPool } from '@dhcb/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()
+// Ghi onboarding chạy trong transaction (withTransaction → pool.connect()), nên phải mock cả
+// client chứ không chỉ pool.query. `clientQuery` nhận luôn cả BEGIN/COMMIT do helper phát ra.
+const clientQuery = vi.fn()
+const release = vi.fn()
+
+// Chỉ lấy các câu SQL nghiệp vụ, bỏ BEGIN/COMMIT/ROLLBACK của withTransaction.
+function businessQueries(): { sql: string; params: unknown[] }[] {
+  return clientQuery.mock.calls
+    .filter((c) => typeof c[0] === 'string' && !/^\s*(BEGIN|COMMIT|ROLLBACK)\s*$/i.test(c[0]))
+    .map((c) => ({ sql: c[0] as string, params: (c[1] ?? []) as unknown[] }))
+}
 
 beforeEach(() => {
   authState.user = { userId: 'user-1' }
@@ -30,7 +41,13 @@ beforeEach(() => {
   ensureProfileRowMock.mockReset()
   ensureProfileRowMock.mockResolvedValue({})
   query.mockReset()
-  mockedGetPool.mockReturnValue({ query } as unknown as ReturnType<typeof getPgPool>)
+  clientQuery.mockReset()
+  clientQuery.mockResolvedValue({ rows: [] })
+  release.mockReset()
+  mockedGetPool.mockReturnValue({
+    query,
+    connect: async () => ({ query: clientQuery, release }),
+  } as unknown as ReturnType<typeof getPgPool>)
 })
 
 function makeGet(): Request {
@@ -80,6 +97,17 @@ describe('GET /api/profile', () => {
     })
   })
 
+  it('đọc bằng LEFT JOIN, ưu tiên bảng môn rồi rơi về public.profiles', async () => {
+    query.mockResolvedValue({ rows: [] })
+    await handler(makeGet())
+    const sql = String(query.mock.calls[0]?.[0])
+    expect(sql).toContain('left join english.user_profile')
+    expect(sql).toContain('coalesce(e.user_level, p.user_level)')
+    // age_group chỉ lấy từ bảng nền tảng — không coalesce với bảng môn (0059 đã xoá cột đó).
+    expect(sql).toContain('p.age_group')
+    expect(sql).not.toContain('e.age_group')
+  })
+
   it('đã có hồ sơ → trả đúng dữ liệu đã lưu', async () => {
     query.mockResolvedValue({
       rows: [
@@ -122,13 +150,61 @@ describe('POST /api/profile', () => {
     )
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({ ok: true })
-    expect(query).toHaveBeenCalledWith(expect.stringContaining('update public.profiles'), [
-      'beginner',
-      'daily',
-      15,
-      'user-1',
-      null,
-    ])
+    const platform = businessQueries().find((q) => q.sql.includes('update public.profiles'))
+    expect(platform?.params).toEqual(['beginner', 'daily', 15, 'user-1', null])
+  })
+
+  // ── C1b: ranh giới nền tảng vs môn học (migration 0059) ────────────────────────────
+  it('onboarding ghi CẢ HAI nơi: public.profiles và english.user_profile', async () => {
+    await handler(
+      makePost({ action: 'onboarding', level: 'advanced', goal: 'ielts', dailyMinutes: 30 }),
+    )
+    const sqls = businessQueries().map((q) => q.sql)
+    expect(sqls.some((sql) => sql.includes('update public.profiles'))).toBe(true)
+    expect(sqls.some((sql) => sql.includes('insert into english.user_profile'))).toBe(true)
+  })
+
+  it('bản ghi bên bảng môn KHÔNG mang age_group (nhóm tuổi thuộc nền tảng)', async () => {
+    await handler(
+      makePost({
+        action: 'onboarding',
+        level: 'beginner',
+        goal: 'daily',
+        dailyMinutes: 10,
+        ageGroup: 'thieu_nien',
+      }),
+    )
+    const subject = businessQueries().find((q) => q.sql.includes('english.user_profile'))
+    expect(subject?.sql).not.toContain('age_group')
+    expect(subject?.params).toEqual(['user-1', 'beginner', 'daily', 10])
+
+    // Nhóm tuổi vẫn phải được ghi — nhưng ở bảng NỀN TẢNG.
+    const platform = businessQueries().find((q) => q.sql.includes('update public.profiles'))
+    expect(platform?.params).toContain('thieu_nien')
+  })
+
+  it('hai lần ghi nằm trong CÙNG một transaction', async () => {
+    await handler(
+      makePost({ action: 'onboarding', level: 'beginner', goal: 'daily', dailyMinutes: 10 }),
+    )
+    const all = clientQuery.mock.calls.map((c) => String(c[0]))
+    expect(all[0]).toMatch(/BEGIN/i)
+    expect(all[all.length - 1]).toMatch(/COMMIT/i)
+    expect(release).toHaveBeenCalled()
+  })
+
+  it('ghi bảng môn lỗi → rollback, KHÔNG để hai nơi lệch nhau', async () => {
+    clientQuery.mockImplementation(async (sql: string) => {
+      if (String(sql).includes('english.user_profile')) throw new Error('mất kết nối')
+      return { rows: [] }
+    })
+    await expect(
+      handler(
+        makePost({ action: 'onboarding', level: 'beginner', goal: 'daily', dailyMinutes: 10 }),
+      ),
+    ).rejects.toThrow('mất kết nối')
+    expect(clientQuery.mock.calls.some((c) => /ROLLBACK/i.test(String(c[0])))).toBe(true)
+    expect(release).toHaveBeenCalled()
   })
 
   it('action set-age-group → 200, chỉ đổi cột age_group', async () => {

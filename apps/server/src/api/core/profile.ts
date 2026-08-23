@@ -5,9 +5,25 @@
 //
 // GET  /api/profile                                          (cần đăng nhập — cookie)
 // POST /api/profile  body { action: 'onboarding', level, goal, dailyMinutes }
+//
+// ── RANH GIỚI NỀN TẢNG vs MÔN HỌC (PR C1b, migration 0059) ────────────────────────────────
+// `public.profiles` giữ dữ liệu CẤP NỀN TẢNG (plan, tên, đã onboard chưa, `age_group`).
+// `english.user_profile` giữ dữ liệu CHỈ ĐÚNG VỚI MÔN TIẾNG ANH (`user_level` kiểu CEFR thô,
+// `goal`, `daily_minutes`) — bảng do migration 0036 tạo sẵn rồi để NGỦ; file này là nơi đánh
+// thức nó.
+//
+// `age_group` thuộc NỀN TẢNG chứ không thuộc môn (0036 xếp nhầm): nó quyết định giọng
+// Companion (`prompts/index.ts` → ageGroupToneBlock), nội dung theo lứa tuổi, và băng tuổi
+// trong hồ sơ năng lực — dùng cho MỌI môn. Migration 0059 đã xoá cột trùng bên bảng môn.
+//
+// Chiến lược chuyển đổi AN TOÀN, đảo ngược được: GHI CẢ HAI nơi (dual-write, trong cùng một
+// transaction), ĐỌC ưu tiên bảng môn rồi rơi về `public.profiles`. Nhờ vậy rollback = revert
+// code, không cần đụng dữ liệu. Xoá hẳn 3 cột cũ trên `public.profiles` là bước RIÊNG, chỉ làm
+// sau khi bản dual-write này đã chạy ổn định trên production một thời gian.
 
 import { z } from 'zod'
 import { getPgPool } from '@dhcb/core-db/pgPool'
+import { withTransaction } from '@dhcb/core-db/transaction'
 import { ensureProfileRow } from '@dhcb/core-auth/authService'
 import { resolvePlan } from '@dhcb/core-billing/plan'
 import {
@@ -67,8 +83,16 @@ export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'GET') {
     await ensureProfileRow(auth.userId, '') // tạo profile nếu chưa có (an toàn, idempotent)
     const pool = getPgPool()
+    // coalesce = ưu tiên bảng môn, rơi về cột cũ trên public.profiles khi người dùng chưa có
+    // hàng bên english.user_profile (đăng ký trước 0036/0059, hoặc chưa onboard môn Anh).
     const { rows } = await pool.query<ProfileRow>(
-      'select plan, plan_expires_at, onboarded, name, user_level, goal, daily_minutes, age_group from public.profiles where id = $1',
+      `select p.plan, p.plan_expires_at, p.onboarded, p.name, p.age_group,
+              coalesce(e.user_level, p.user_level)       as user_level,
+              coalesce(e.goal, p.goal)                   as goal,
+              coalesce(e.daily_minutes, p.daily_minutes) as daily_minutes
+         from public.profiles p
+         left join english.user_profile e on e.user_id = p.id
+        where p.id = $1`,
       [auth.userId],
     )
     const row = rows[0]
@@ -111,19 +135,28 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ ok: true }, 200, allHeaders)
   }
 
-  await pool.query(
-    `update public.profiles
-       set user_level = $1, goal = $2, daily_minutes = $3, onboarded = true,
-           age_group = coalesce($5, age_group)
-     where id = $4`,
-    [
-      result.data.level,
-      result.data.goal,
-      result.data.dailyMinutes,
-      auth.userId,
-      result.data.ageGroup ?? null,
-    ],
-  )
+  const { level, goal, dailyMinutes, ageGroup } = result.data
+
+  // Dual-write trong MỘT transaction: hai nơi không được phép lệch nhau. Nếu chỉ ghi một nơi rồi
+  // lỗi, lần đọc sau sẽ lấy `coalesce` ra giá trị cũ của nơi kia — sai mà không báo lỗi gì.
+  await withTransaction(pool, async (client) => {
+    await client.query(
+      `update public.profiles
+         set user_level = $1, goal = $2, daily_minutes = $3, onboarded = true,
+             age_group = coalesce($5, age_group)
+       where id = $4`,
+      [level, goal, dailyMinutes, auth.userId, ageGroup ?? null],
+    )
+    await client.query(
+      `insert into english.user_profile (user_id, user_level, goal, daily_minutes)
+       values ($1, $2, $3, $4)
+       on conflict (user_id) do update
+         set user_level = excluded.user_level,
+             goal = excluded.goal,
+             daily_minutes = excluded.daily_minutes`,
+      [auth.userId, level, goal, dailyMinutes],
+    )
+  })
 
   // Outbox/Reconciliation: Cập nhật lại read view của Life Graph
   try {

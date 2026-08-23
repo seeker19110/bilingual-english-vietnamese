@@ -8,6 +8,264 @@
 
 ## Giai đoạn hiện tại
 
+### feat: panel "Luồng người mới" trong trang admin (2026-08-23)
+
+`AdminIntakePanel` gắn vào tab **Analytics** của `/admin-s`, đọc `/api/admin-intake-stats`.
+
+**Trình bày tách làm HAI khối, cố ý không gộp thành một bảng số:** khối 1 "Suy luận có đúng
+không?" (nhận việc chính / đổi việc / bỏ qua), khối 2 "Có tác dụng thật không?" (làm xong, và làm
+xong trong 7 ngày). Gộp lại thì người đọc chỉ thấy một con số "tỷ lệ thành công" mơ hồ và không
+biết phải sửa gì. Mẫu số của khối 2 là những người **đã chọn việc**, không phải toàn bộ người trả
+lời — người chưa chọn thì không có gì để làm xong.
+
+Ghi thẳng lên giao diện hai điều dễ đọc sai: tỷ lệ "đổi việc" cao **không hẳn xấu**, và số "đã làm
+xong" là **tự khai**.
+
+**`formatRate` (tách sang `lib/statFormat.ts`):** `null` = chưa có dữ liệu → hiện dấu gạch, KHÔNG
+hiện `0%`. Thấy 0% người ta kết luận "gợi ý trượt hoàn toàn" trong khi sự thật có thể là chưa ai
+đi qua luồng này. Có test riêng cho luật này.
+
+**Vá 4 lỗi a11y CÓ SẴN** trong `AdminFeedbackPanel` (3 `<select>` và 1 nút thiếu tên — mức
+`critical`), phát hiện khi quét cả trang. Sửa chỉ là thêm `aria-label`, rủi ro bằng 0.
+
+**Nợ ghi lại (KHÔNG sửa trong PR này):** trang `/admin-s` còn lỗi `color-contrast` ở **theme sáng**
+(hộp báo lỗi `text-red-300`, nút tab `text-accent-300`) — thuộc các panel khác, và sửa đúng cách là
+chỉnh token/biến thể `theme-light:` cho cả lớp lỗi này. Vì vậy `e2e/a11y-admin-intake.spec.ts` giới
+hạn phạm vi quét vào `#admin-intake-panel`, để không biến nó thành cổng cho toàn bộ trang admin vốn
+chưa từng được gác.
+
+**Kiểm chứng:** 5077 test xanh (+4) · a11y **48/48** (chạy lại cả 3 spec mới để chắc bản vá
+`AdminFeedbackPanel` không phá gì) · build/typecheck/lint xanh · e2e kiểm số liệu thật hiện đúng
+(mẫu số 87 = 62+25, không phải 100) và ca "chưa có dữ liệu" hiện dấu gạch chứ không phải 0%.
+
+### feat: đo gợi ý của luồng người mới có TRÚNG không (2026-08-23)
+
+Migration `0062` + `getIntakeStats()` + `/api/admin-intake-stats` + thẻ "việc đầu tiên" trên trang
+chủ. Tách **hai câu hỏi khác nhau** (trộn lẫn là mất cả hai):
+
+1. **Suy luận có đúng không?** → nhận việc CHÍNH / đổi sang lựa chọn khác / bỏ qua.
+2. **Có tác dụng thật không?** → làm xong việc đầu **trong 7 ngày**.
+
+Một gợi ý được nhận ngay nhưng không ai làm xong vẫn là gợi ý tồi. Ngược lại, tỷ lệ "đổi việc" cao
+KHÔNG hẳn xấu — nghĩa là màn gợi ý đang làm đúng việc của nó (đưa lựa chọn thật), chỉ là thứ tự
+xếp chưa chuẩn.
+
+**Ba quyết định đáng nhớ:**
+
+- **Lưu `suggested_task_id` thay vì tính lại.** `buildIntakeResult()` thuần nên hôm nay tính lại
+  vẫn đúng — nhưng ngày mai sửa thuật toán là toàn bộ số liệu lịch sử đổi theo và **mất khả năng
+  so sánh trước/sau khi cải tiến**.
+- **`markTaskDone` có `where task_done_at is null`** — bấm lại không dời mốc; không có điều kiện
+  này thì mọi phép đo "trong 7 ngày" đều sai.
+- **Mẫu số 0 trả `null`, không phải 0** — "chưa có dữ liệu" và "bằng không" là hai chuyện khác
+  nhau, gộp lại là tự lừa mình khi đọc số liệu.
+
+**Thẻ "việc đầu tiên" (`FirstTaskCard`)** là điều kiện cần để chỉ số tồn tại: không có chỗ đánh dấu
+xong thì tỷ lệ hoàn thành vĩnh viễn bằng 0 — đo đúng con số 0 rồi tưởng gợi ý dở. Thẻ tự ẩn khi
+xong, không nhắc lại, không đếm ngày còn lại (Luật 8: không lấy thời gian người dùng làm chỉ số).
+
+**Trung thực về số liệu:** "đã làm xong" là **tự khai**, không đo được khách quan — ghi thẳng vào
+payload API để người đọc số liệu không quên. Thống kê chỉ ĐẾM, không đụng hai cột đã mã hoá (có
+test chốt).
+
+**Kiểm chứng:** 5073 test xanh (+9) · a11y 21/21 · **truy vấn thống kê chạy THẬT trên PostgreSQL 16
+với dữ liệu dựng sẵn** — người trả lời cách đây 100 ngày bị loại đúng, và người làm xong ở **ngày
+thứ 9 KHÔNG** bị tính vào "trong 7 ngày" (đúng chỗ mock không bắt được) · boot check
+`/api/admin-intake-stats` trả 401 khi chưa đăng nhập.
+
+**Ghi lại một sai lầm của chính tôi trong lượt này:** một thay thế mã nguồn im lặng không khớp
+(prettier đã gộp chữ ký hàm thành một dòng), và tôi đã **chẩn đoán nhầm là `dist/` cũ gây typecheck
+xanh giả** — thực ra typecheck luôn trung thực, chỉ là mã nguồn chưa hề đổi. Bài học: script sửa mã
+phải `assert` mọi thay thế, và khi typecheck xanh bất ngờ thì nghi mã nguồn trước khi nghi công cụ.
+
+### feat: C1b-2 — luồng người mới 5 câu → hồ sơ ẩn → gợi ý một việc (2026-08-23)
+
+Thi hành **Luật số 1** (kết quả chẩn đoán không bao giờ là màn hình chính) thành code chạy được.
+Kiến trúc 3 lớp đúng đặc tả `luong-nguoi-moi-ho-so-nang-luc-an-2026-08-23.md`:
+
+- **Lớp HỎI** — `pages/core/Intake.tsx` tại route `/bat-dau`: 5 câu, bỏ qua câu nào cũng được, bỏ
+  hết vẫn vào được app. Không thanh tiến trình kiểu bài thi, không đếm điểm.
+- **Lớp HỒ SƠ ẨN** — `core-personal/intakeService.ts` + migration `0061` (`personal.intake`).
+  Hai câu TỰ DO (câu 3, 4) **mã hoá** bằng `userDataCrypto`; câu chọn-sẵn để nguyên (giá trị đóng,
+  cần lọc/thống kê, chỉ 6 và 4 khả năng nên giấu cũng vô nghĩa). Nhóm tuổi **không** lưu ở đây —
+  nguồn sự thật vẫn là `public.profiles.age_group` (giữ đúng ranh giới mà `0059` vừa dọn).
+- **Lớp GỢI Ý** — `core-personal/intakeSuggestion.ts`: hàm THUẦN, tất định, không gọi AI. Trả đúng
+  **1 việc** + ≤2 lựa chọn. Câu "vì sao" **trích lại lời người dùng** (ưu tiên câu 4 > câu 3 > mối
+  bận tâm), không bao giờ nói về "hồ sơ" hay suy luận.
+
+**Bộ lọc ngôn ngữ + test quét toàn bộ:** vì hàm thuần và không gian đầu vào nhỏ, test quét **hết
+1.575 tổ hợp** (5 tuổi × 7 bận tâm × 5 đà học × 3 × 3 văn bản) và khẳng định không tổ hợp nào sinh
+ra điểm số / xếp loại / so sánh / định mệnh luận tuổi tác. Đây là thứ biến Luật số 1 từ lời hứa
+thành bảo chứng máy kiểm được (bất biến T1/T3 của đặc tả).
+
+**Một bẫy đáng ghi lại:** bản đầu bộ lọc dùng `\b` của JS — nhưng `\b` chỉ hiểu `[A-Za-z0-9_]`,
+nên `\bđáng lẽ` và `mà\b` KHÔNG BAO GIỜ khớp. Nghĩa là bộ lọc mù với đúng phần tiếng Việt có dấu
+mà nó sinh ra để canh. Test bắt được ngay; đã đổi sang lookaround `(?<!\p{L})…(?!\p{L})` với cờ
+`u`. **Bài học chung: đừng dùng `\b` cho tiếng Việt.**
+
+**Luồng người mới nối liền:** `RequireAuth` đổi đích từ `/onboarding` → `/bat-dau`; trang `/bat-dau`
+tự hỏi server, ai trả lời rồi thì chuyển thẳng sang `/onboarding` (onboarding MÔN). Cố ý **không**
+thêm cờ vào payload `/api/auth` — cờ đó nằm trong luồng đăng nhập của mọi người dùng, đụng vào là
+rủi ro cho cả người không liên quan. **Người đã onboarded từ trước không bao giờ vào nhánh này.**
+
+**Kiểm chứng:** 5064 test xanh (+30 mới) · build/typecheck/lint xanh · `e2e/a11y-intake.spec.ts`
+16/16 (3 màn × 5 theme + 1 test bất biến chống rò số) · migration `0061` chạy THẬT trên PostgreSQL 16
+(idempotent, ràng buộc CHECK chặn đúng giá trị lạ) · boot check `/api/intake` trả 401 khi chưa đăng nhập.
+
+### feat: 2FA TOTP — giao diện trong trang Hồ sơ (2026-08-23)
+
+`TwoFactorSection.tsx` + `lib/twoFactorApi.ts`, gắn vào `pages/core/Profile.tsx` (khối thu gọn,
+cùng khuôn `EmailVerifySection`/`ReferralSection`). Luồng: bật (QR + gõ tay secret → nhập mã xác
+nhận) · hiện mã khôi phục ĐÚNG MỘT LẦN kèm nút sao chép · tạo bộ mã mới · tắt (đòi cả mã 2FA lẫn
+mật khẩu). Song ngữ theo `isA`. Cảnh báo khi còn ≤2 mã khôi phục.
+
+**Phát hiện: trang Hồ sơ KHÔNG nằm trong 9 route mà `e2e/a11y.spec.ts` quét** — nên component mới
+sẽ không được cổng a11y gác. Đã bù bằng `e2e/a11y-2fa.spec.ts`: quét 4 trạng thái (thu gọn · quét
+QR · bảng mã khôi phục · khối tắt) × 5 theme = **20 test**, giới hạn phạm vi vào `#two-factor-section`
+để không vô tình biến nó thành cổng cho cả trang Hồ sơ vốn chưa từng được gác.
+
+**Cổng đó bắt được lỗi thật ngay lần chạy đầu:** nút "Tắt" dùng `bg-rose-500` + chữ trắng chỉ đạt
+**3,67:1**, dưới sàn AA 4,5:1, và hỏng ở **cả 5 theme** (cả hai màu đều cố định nên không theme nào
+cứu được). Sửa sang `bg-rose-700`. Đây đúng là loại lỗi sẽ lọt ra production nếu chỉ nhìn bằng mắt
+trên theme tối.
+
+**Nợ còn mở (ghi để không quên):** 9 route được gác a11y chưa gồm `/profile`, `/tien-do`, `/lich-su`
+và các trang cá nhân khác — chúng đang không có cổng a11y nào. Mở rộng danh sách quét là việc riêng,
+cần làm nhưng sẽ lộ ra vi phạm có sẵn nên phải tách PR.
+
+### feat: C1b tách ranh giới nền tảng/môn + S-2 hạ tầng mã hoá dữ liệu người dùng (2026-08-23)
+
+**Người dùng chốt 3 việc:** ① hồ sơ năng lực **ẩn nhưng xem được khi hỏi** · ② bộ **5 câu**
+onboarding duyệt nguyên trạng · ③ **làm C1b luôn**. Kèm yêu cầu mới: _"mã hoá toàn bộ dữ liệu
+người dùng, chỉ tài khoản đó khi kích hoạt 2FA thì mới xem và hỏi được"_.
+
+**Đã làm (code, cổng xanh toàn bộ):**
+
+1. **S-2 — hạ tầng mã hoá** `packages/core-config/userDataCrypto.ts` (+18 test):
+   AES-256-GCM, khoá mỗi người suy ra bằng `HMAC(USER_DATA_MASTER_KEY, user_id)` nên **không cần
+   bảng khoá**; chuỗi lưu tự mô tả `v<n>:<iv>:<cipher>` ⇒ không cần cột phụ; **IV luôn ngẫu nhiên**
+   (tránh đúng lỗi dùng lại nonce mà `ttsCrypto` từng mắc, audit 2026-08-12); **`keyVersion` có
+   ngay từ bản đầu** nên xoay khoá không phải viết lại toàn bộ dữ liệu; `isEncryptedField()` cho
+   phép chuyển đổi DẦN (bản ghi cũ plaintext vẫn đọc được); `hashLookupValue()` cho cột cần tra cứu
+   (email) — cố định phiên bản 1 vì đổi là mọi user cũ không đăng nhập được. Biến môi trường +
+   **cảnh báo mất khoá = mất vĩnh viễn** đã ghi vào `.env.example`.
+2. **C1b — tách ranh giới nền tảng vs môn học:** migration `0059` + `/api/profile` (+5 test).
+   `english.user_profile` (bảng NGỦ từ `0036`) được đánh thức: **dual-write trong một
+   transaction**, đọc bằng LEFT JOIN ưu tiên bảng môn rồi rơi về `public.profiles`.
+   **Sửa một phân loại sai của `0036`:** `age_group` là dữ liệu **NỀN TẢNG** (quyết định giọng
+   Companion qua `ageGroupToneBlock`, nội dung theo lứa, băng tuổi hồ sơ năng lực — dùng cho MỌI
+   môn), không phải dữ liệu môn Anh ⇒ `0059` xoá cột trùng bên bảng môn, giữ nguồn sự thật duy
+   nhất ở `public.profiles`. Rollback = revert code, **không đụng dữ liệu**.
+
+**Tài liệu mới:** `docs/research/dac-ta-ma-hoa-du-lieu-va-2fa-2026-08-23.md` — khảo sát hiện trạng
+(**2FA CHƯA CÓ**; đã có tiền lệ mã hoá ở `core-ai/ttsCrypto.ts`), so sánh mã hoá phía server vs
+E2EE, **phân tầng T0/T1/T2**, thiết kế TOTP (mã khôi phục, cửa sổ nâng quyền 15 phút, chống dò),
+và bảng "mã hoá KHÔNG giải quyết được gì".
+
+**Ba điểm tôi nói ngược lại, chờ người dùng chốt (mục 7 của tài liệu đó):**
+
+1. **Không nên làm E2EE.** Khoá dẫn xuất từ mật khẩu người dùng ⇒ server mù ⇒ **Companion không
+   đọc được hồ sơ** (mất chức năng cốt lõi), **quên mật khẩu = mất sạch dữ liệu**, không tính được
+   streak/lượt dùng/bảng xếp hạng. Khuyến nghị **mã hoá phía server** (đã dựng ở S-2).
+2. **2FA nên TUỲ CHỌN**, chỉ bắt buộc khi XEM hồ sơ ẩn / hỏi "bạn biết gì về tôi". Bắt buộc toàn
+   bộ sẽ chặn học sinh 10–18 chưa có điện thoại riêng. Companion vẫn **dùng** hồ sơ để gợi ý mà
+   không cần 2FA; chỉ **đọc nội dung hồ sơ ra thành lời** mới cần.
+3. **Mã hoá dữ liệu cũ (S-4) nên để sau.** Dữ liệu MỚI mã hoá gần như miễn phí (chưa tồn tại);
+   dữ liệu CŨ đắt và rủi ro cao. Thứ tự đề xuất: **S-1 (2FA) → S-3 (mã hoá dữ liệu mới) → dừng
+   đánh giá → S-4**.
+
+**➡️ Người dùng chốt (2026-08-23): MÃ HOÁ — GHI NỢ.** Hạ tầng giữ lại (đã có test, đang NGỦ,
+không nối vào dữ liệu nào nên không ảnh hưởng gì đang chạy). Điều kiện gỡ nợ + rủi ro đang chấp
+nhận: xem mục "Nợ kỹ thuật còn mở" đầu danh sách.
+
+### research: Năng lực cá nhân theo độ tuổi × bậc thành thạo × ngành nghề (2026-08-23)
+
+**Yêu cầu người dùng:** "nghiên cứu năng lực cá nhân theo các độ tuổi, chia theo giới tính, thâm
+niên các ngành nghề… liệt kê để xác định và hướng dẫn cá nhân ở độ tuổi đó đạt được những năng lực
+và khả năng đó."
+
+**Đã làm:** tài liệu nghiên cứu + đặc tả
+`docs/research/dac-ta-nang-luc-ca-nhan-theo-do-tuoi-2026-08-23.md` (trụ LIFE + CAREER). Nội dung:
+6 khung khoa học nền (Erikson · Havighurst · Super · CHC/Hartshorne–Germine 2015 · Dreyfus ·
+Baltes SOC) đối chiếu WEF Future of Jobs 2025 + OECD PIAAC 2024; **30 năng lực lõi** mã hoá
+`CAP-<nhóm>-<số>` theo 6 nhóm COG/SEL/TEC/PRO/FIN/WEL; **bảng chính 8 băng tuổi** (khớp đúng 8
+`LifeStageType` đã có) × năng lực trọng tâm × dấu hiệu đạt quan sát được × hành động 90 ngày;
+thang 5 bậc thành thạo thay cho "số năm kinh nghiệm"; 8 họ ngành nghề (đỉnh nghề, cửa sổ then
+chốt, rủi ro tự động hoá, nhánh chuyển hướng); công thức chấm + xếp hạng khoảng cách; 4 loại bằng
+chứng; 7 rủi ro; kế hoạch 5 PR (C1→C5).
+
+**3 quyết định thiết kế quan trọng (cần người dùng biết):**
+
+1. **Giới tính KHÔNG dùng làm trục kỳ vọng năng lực.** Bằng chứng: hình phạt làm mẹ giải thích
+   ~80% khoảng cách thu nhập theo giới; chênh lệch bám vào sự kiện sinh con + định kiến tuyển
+   dụng, không bám vào khả năng. Thay bằng biến **"vai trò chăm sóc & gián đoạn nghề"** (tuỳ chọn,
+   mở cho mọi giới) + đo thâm niên bằng **tháng hoạt động nghề**. Giới tính chỉ dùng cho nội dung
+   sức khoẻ (nhóm WEL) — chỗ nó thực sự có ý nghĩa y khoa.
+2. **Thâm niên đo bằng BẬC (Dreyfus B1–B5), không bằng SỐ NĂM** — kèm cờ cảnh báo "đóng băng kinh
+   nghiệm" (≥6 năm nghề mà vẫn B2).
+3. **Tái dùng `LifeStageType` 8 giai đoạn đã có** trong `lifeMilestoneMasteryService.ts` — KHÔNG
+   tạo hệ giai đoạn thứ hai (bài học nợ N3 "hợp nhất hệ trùng").
+
+**Chờ người dùng chốt trước khi viết code (mục 12.2 của tài liệu):** làm tới đâu (C1–C3 nền hay đủ
+C1–C5 có UI) · có hỏi giới tính không · 8 họ nghề đã đủ cho tệp VN chưa (thiếu nông nghiệp, du
+lịch–NHKS, logistics?) · ưu tiên băng tuổi nào trước (đề xuất: 18–38).
+
+**Bổ sung cùng ngày — 2 tài liệu nữa (người dùng thu hẹp phạm vi + nêu tầm nhìn sản phẩm):**
+
+- `docs/research/nang-luc-10-40-chi-tiet-2026-08-23.md` — người dùng chốt quãng **10–40**. Chia
+  **6 băng nhỏ N1–N6** (10–14 · 15–18 · 19–22 · 23–27 · 28–33 · 34–40), mỗi băng có ngưỡng đo
+  được, 5 câu tự chẩn đoán, chương trình 12 tuần, biến thể theo họ nghề, đường bù khi chưa đạt;
+  bảng **cửa sổ hẹp dần / cửa sổ mở rộng** theo tuổi (kèm luật chống định mệnh luận); bảng **tự
+  chẩn đoán nhanh 23 câu**; cơ chế `tuổi_nghề_hiệu_dụng` cho người có gián đoạn chăm sóc.
+- `docs/research/dong-hanh-va-phat-trien-nang-khieu-2026-08-23.md` — người dùng nêu tầm nhìn:
+  _"DHCB là bạn đồng hành… phát triển vượt bậc năng khiếu… góp phần phát triển xã hội"_. Tài liệu
+  dịch tuyên bố thành 4 cam kết kiểm được + **8 luật hành xử của Companion** (nền SDT, cắm vào
+  `MotivationDiagnostic` đã có) + **đường ĐỈNH năng khiếu** tách khỏi đường nền (mô hình Gagné DMGT
+  - Talent Development Megamodel; 12 lĩnh vực với quỹ đạo riêng; 5 tín hiệu nhận diện; 6 luật chống
+    dán nhãn; 4 giai đoạn G1–G4 kèm **luật chuyển giao sang thầy người thật**) + 4 cơ chế đóng góp xã
+    hội đo được + 6 rủi ro riêng R8–R13.
+
+**Căng thẳng đã nêu thẳng với người dùng:** hai tài liệu đầu nghiêng về chẩn đoán/ngưỡng — đúng cho
+năng lực nền, nhưng bê nguyên sang quan hệ hằng ngày sẽ thành máy chấm điểm người. Giải bằng
+**Luật số 1**: kết quả chẩn đoán không bao giờ là màn hình chính, chỉ là công cụ chọn việc.
+
+**Kế hoạch PR cập nhật:** thêm **C0** (hiến chương đồng hành — 8 luật thành ràng buộc kiểm được
+trong `SupremePrincipleCompliance` đã có, **làm TRƯỚC C1** vì chi phối toàn bộ giọng sản phẩm),
+**C6** (đường đỉnh năng khiếu), **C7** (vòng kèm cặp). Thứ tự đề xuất: C0 → C1 → C2b (bảng chẩn
+đoán) → C5 màn chẩn đoán → C2 → C3 → C4 → C6 → C7.
+
+**Bổ sung đợt 3 — 2 tài liệu nữa (cùng ngày):**
+
+- `docs/research/nang-luc-10-18-nen-tang-va-nang-khieu-2026-08-23.md` — đào sâu N1+N2 theo yêu cầu
+  "10–18 tuổi phát triển năng khiếu và năng lực nền tảng: học hành, nghiên cứu, hiểu biết về mọi
+  thứ". Tách rõ **3 trụ khác nhau** (học hành = nạp thứ đã có đáp án · nghiên cứu = tìm câu trả lời
+  chưa ai đưa · hiểu biết rộng = móc để cái mới bám vào). Nội dung: bảng kỹ thuật học theo mức bằng
+  chứng (Dunlosky 2013 — cao: tự kiểm tra + giãn cách; thấp: đọc lại/tô màu; "phong cách học tập"
+  không có cơ sở); **thang nghiên cứu R1–R5** + khuôn dự án 12 tuần; **7 miền tri thức nền** + cơ
+  chế rèn; năng khiếu chia **chế độ MỞ RỘNG 10–14** (thử 8–12 tuần/lĩnh vực, cấm chốt sớm) và
+  **THU HẸP 15–18**; ngân sách 5 giờ/tuần ghép với mùa thi VN; 7 cạm bẫy; bảng "đo bằng gì / KHÔNG
+  đo bằng gì".
+- `docs/research/luong-nguoi-moi-ho-so-nang-luc-an-2026-08-23.md` — thi hành Luật số 1. Kiến trúc
+  **3 lớp** (HỎI → HỒ SƠ ẨN → GỢI Ý), **5 câu ~90 giây** mỗi câu làm hai việc, hồ sơ dày lên bằng
+  **hành vi** chứ không bằng thêm bài kiểm tra, **luật ngôn ngữ cấm/cho phép** (cấm điểm số, thang,
+  "bạn thiếu…", biểu đồ radar trên trang chủ), luật trích lại lời người dùng khi giải thích "vì
+  sao", xử lý trung thực khi người dùng hỏi "bạn có chấm điểm tôi không", 7 **test bất biến chặn
+  CI** (T1: không con số năng lực nào rò lên UI).
+
+**Phát hiện khi đọc code (định hình thiết kế):** `pages/core/Onboarding.tsx` nằm ở `core/` nhưng
+thực chất là onboarding **MÔN TIẾNG ANH** (trình độ CEFR, mục tiêu IELTS/du lịch); chỉ `age_group`
+là dữ liệu cấp nền tảng. Migration `0036_english_user_profile.sql` **đã lường trước** và tạo sẵn
+bảng ngủ `english.user_profile`. ⇒ Onboarding nền tảng phải là **lớp MỚI chạy TRƯỚC**, giữ nguyên
+màn hiện tại làm onboarding môn — thêm **PR C1b** (tách lớp + chuyển `age_group` lên platform,
+hoàn tất bước 0036 để ngỏ; đụng màn onboarding của mọi user đang hoạt động nên cần test kỹ).
+
+**Điểm tôi nói ngược lại yêu cầu (chờ người dùng chốt):** "không hiện cho người dùng biết" — tôi đề
+xuất **ẩn ≠ giấu**: mặc định không bao giờ tự bật ra, không ở màn hình chính, nhưng **xem được khi
+người dùng chủ động hỏi** và **xoá được**. Lý do: niềm tin, dữ liệu suy luận vẫn là dữ liệu cá nhân
+(repo đã có `consentGrant`), nhất quán với Luật 6 của tư thế đồng hành, và phụ huynh trẻ vị thành
+niên chắc chắn sẽ hỏi. Nếu người dùng vẫn muốn ẩn tuyệt đối thì làm theo, nhưng đề nghị giữ tối
+thiểu nút "Xoá dữ liệu đánh giá về tôi".
+
 ### feat(security): báo trạng thái Redis ngay lúc khởi động (2026-08-23)
 
 **Bối cảnh — sự cố thật vừa xảy ra:** Redis trên VPS **KHÔNG chết** (chạy tốt 1 ngày 23 giờ,
@@ -4800,6 +5058,38 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   - Kết quả người dùng xác nhận: hết treo, hết OOM, tốc độ xoá orphan "cải thiện rất nhanh".
 
 ## Nợ kỹ thuật còn mở
+
+- 🟡 **[2026-08-23] MÃ HOÁ DỮ LIỆU NGƯỜI DÙNG — ĐÃ BẬT cho dữ liệu MỚI; còn nợ dữ liệu CŨ.**
+  _(Cập nhật cùng ngày: người dùng đảo quyết định — "phải mã hoá dữ liệu người dùng". Secret 2FA
+  đã mã hoá thật ngay từ bản đầu, không có giai đoạn plaintext. Phần còn nợ là **viết lại dữ liệu
+  CŨ đang có** — tên, email, tiến độ — vốn rủi ro cao vì đụng dữ liệu thật; và **người dùng vẫn
+  cần chốt nơi cất khoá gốc**, hướng dẫn ở `docs/van-hanh-khoa-ma-hoa.md`.)_ Hạ tầng
+  **đã dựng xong và có test** (`packages/core-config/userDataCrypto.ts`, 18 test: AES-256-GCM,
+  khoá mỗi người suy ra bằng `HMAC(USER_DATA_MASTER_KEY, user_id)`, chuỗi tự mô tả
+  `v<n>:<iv>:<cipher>`, IV luôn ngẫu nhiên, `keyVersion` sẵn từ bản đầu, `isEncryptedField()` cho
+  phép chuyển đổi dần, `hashLookupValue()` cho cột cần tra cứu). **Nhưng CHƯA nối vào bất kỳ dữ
+  liệu nào** — module hiện đang NGỦ, không chỗ nào gọi, không ảnh hưởng gì đang chạy.
+
+  **Việc còn lại + câu hỏi chưa có đáp án — **cất khoá gốc `USER_DATA_MASTER_KEY` ở đâu?** Khoá phải nằm KHÁC chỗ với backup DB (cất chung thì mã hoá vô
+  nghĩa: ai lấy được backup lấy luôn khoá), mà **mất khoá = mất vĩnh viễn toàn bộ dữ liệu đã mã
+  hoá, không có đường khôi phục**. Bật mã hoá khi chưa chốt chỗ cất khoá là tự tạo rủi ro mất dữ
+  liệu lớn hơn rủi ro nó định phòng.
+
+  **Điều kiện gỡ nợ:** người dùng chốt nơi cất + cách sao lưu khoá gốc. Xong việc đó thì làm theo
+  thứ tự ở `docs/research/dac-ta-ma-hoa-du-lieu-va-2fa-2026-08-23.md` mục 6:
+  **S-3 trước** (mã hoá dữ liệu MỚI — gần như miễn phí vì dữ liệu chưa tồn tại), **S-4 sau và
+  cân nhắc kỹ** (mã hoá dữ liệu CŨ — đụng dữ liệu thật của người dùng đang hoạt động, rủi ro cao).
+
+  **Rủi ro đang chấp nhận trong lúc ghi nợ:** bản dump PostgreSQL và file backup trên Cloudflare R2
+  vẫn là **plaintext** — lộ khoá R2 là lộ dữ liệu người dùng. Đây là lý do món nợ này không nên để
+  quá lâu. Giảm nhẹ tạm thời: siết quyền truy cập khoá R2 và rà lại ai đang giữ nó.
+
+  **Hệ quả cần biết khi làm tiếp tính năng:** hồ sơ năng lực ẩn và câu trả lời tự do (câu 3–4 của
+  luồng người mới) là dữ liệu tầng T2 — theo đặc tả thì phải mã hoá. Nếu làm **C1b-2** (màn 5 câu)
+  trước khi gỡ nợ này, dữ liệu đó sẽ nằm plaintext. Hai lựa chọn khi tới đó: ① chấp nhận plaintext
+  tạm rồi mã hoá sau (module đã sẵn, chỉ cần thêm 1 biến môi trường + viết lại dữ liệu), hoặc
+  ② hoãn C1b-2, làm **S-1 (2FA TOTP)** trước — 2FA độc lập hoàn toàn với mã hoá và không bị chặn
+  bởi câu hỏi khoá gốc.
 
 - 🟢 **[2026-08-21] Đã vá 15 test e2e đỏ trên `main`** (phát hiện khi driving PR #617 tới green —
   commit `fd188ef` "restructure platform hub and dedicated english studio routing" đổi route "/"

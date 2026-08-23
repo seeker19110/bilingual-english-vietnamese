@@ -22,6 +22,7 @@ import AdminPlanMarketingPanel from '../../components/admin/AdminPlanMarketingPa
 import AdminPricePromoPanel from '../../components/admin/AdminPricePromoPanel'
 import AdminAchievementRewardsPanel from '../../components/admin/AdminAchievementRewardsPanel'
 import AdminAnalyticsPanel from '../../components/admin/AdminAnalyticsPanel'
+import AdminIntakePanel from '../../components/admin/AdminIntakePanel'
 import AdminUsagePanel from '../../components/admin/AdminUsagePanel'
 import AdminPaymentsPanel from '../../components/admin/AdminPaymentsPanel'
 import AdminSystemControlPanel from '../../components/admin/AdminSystemControlPanel'
@@ -100,6 +101,7 @@ function AdminPanel({ tabKey }: { tabKey: TabKey }) {
       return (
         <>
           <AdminAnalyticsPanel />
+          <AdminIntakePanel />
           <AdminFeedbackPanel />
         </>
       )

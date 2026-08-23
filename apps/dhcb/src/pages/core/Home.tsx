@@ -1,5 +1,6 @@
 // apps/dhcb/src/pages/Home.tsx — Đồng Hành Platform Hub (Trang Chủ Nền Tảng Đa Lĩnh Vực)
 import { useEffect, useMemo, useState } from 'react'
+import FirstTaskCard from '../../components/FirstTaskCard'
 import { useNavigate } from 'react-router-dom'
 import {
   ChevronRight,
@@ -125,6 +126,9 @@ export default function Home() {
 
       <main className="max-w-3xl mx-auto px-4 pt-4 pb-[calc(2rem+var(--bnav-h))] space-y-5">
         <h1 className="sr-only">{T.greeting}</h1>
+
+        {/* Việc đầu tiên chọn ở luồng người mới — tự ẩn khi đã xong hoặc chưa chọn */}
+        <FirstTaskCard />
 
         {/* ── TẦNG 1: EXECUTIVE AI COMPANION (Hạt Nhân Điều Phối Trung Tâm) ── */}
         <HomeAiBriefingCard

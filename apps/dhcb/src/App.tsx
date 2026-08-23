@@ -28,6 +28,7 @@ const History = lazyWithRetry(() => import('./pages/core/History'))
 const Dashboard = lazyWithRetry(() => import('./pages/core/Dashboard'))
 const Profile = lazyWithRetry(() => import('./pages/core/Profile'))
 const Onboarding = lazyWithRetry(() => import('./pages/core/Onboarding'))
+const Intake = lazyWithRetry(() => import('./pages/core/Intake'))
 const MistakeBank = lazyWithRetry(() => import('./pages/core/MistakeBank'))
 const Quests = lazyWithRetry(() => import('./pages/core/Quests'))
 const About = lazyWithRetry(() => import('./pages/core/About'))
@@ -93,7 +94,10 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
   if (loading) return <PageLoading />
   if (!user) return <Navigate to="/login" replace />
-  if (!user.onboarded) return <Navigate to="/onboarding" replace />
+  // Người MỚI đi qua lớp nền tảng trước (5 câu ~90 giây), rồi mới tới onboarding của môn.
+  // Người đã onboarded từ trước KHÔNG bị chạm tới — họ không bao giờ vào nhánh này.
+  // Trang /bat-dau tự kiểm: ai đã trả lời rồi thì nó chuyển thẳng sang /onboarding.
+  if (!user.onboarded) return <Navigate to="/bat-dau" replace />
   return (
     <>
       {/* Chỉ hiện cho user đã đăng nhập + đã onboard — banner báo trước sắp hết
@@ -212,6 +216,7 @@ export default function App() {
                       <Route path="/learn-vietnamese" element={<LandingEn />} />
                       <Route path="/tu-vung/:word" element={<WordDetail />} />
                       <Route path="/reset-password" element={<ResetPassword />} />
+                      <Route path="/bat-dau" element={<Intake />} />
                       <Route path="/onboarding" element={<Onboarding />} />
                       <Route path="/placement" element={<Placement />} />
                       <Route
