@@ -19,6 +19,8 @@ interface IntakeRow {
   extra_hour_enc: string | null
   flow_activity_enc: string | null
   chosen_task_id: string | null
+  suggested_task_id: string | null
+  task_done_at: Date | null
   completed_at: Date | null
 }
 
@@ -27,6 +29,8 @@ export interface IntakeState {
   done: boolean
   answers: IntakeAnswers
   chosenTaskId: string | null
+  /** Việc người dùng đã tự đánh dấu là làm xong. */
+  taskDone: boolean
 }
 
 /**
@@ -47,12 +51,13 @@ async function decOptional(userId: string, stored: string | null): Promise<strin
 /** Đọc trạng thái luồng người mới. Chưa từng trả lời ⇒ `done: false`, câu trả lời rỗng. */
 export async function getIntakeState(pool: Pool, userId: string): Promise<IntakeState> {
   const { rows } = await pool.query<IntakeRow>(
-    `select focus, last_learned, extra_hour_enc, flow_activity_enc, chosen_task_id, completed_at
+    `select focus, last_learned, extra_hour_enc, flow_activity_enc,
+            chosen_task_id, suggested_task_id, task_done_at, completed_at
        from personal.intake where user_id = $1`,
     [userId],
   )
   const row = rows[0]
-  if (!row) return { done: false, answers: {}, chosenTaskId: null }
+  if (!row) return { done: false, answers: {}, chosenTaskId: null, taskDone: false }
 
   return {
     done: row.completed_at != null,
@@ -63,6 +68,7 @@ export async function getIntakeState(pool: Pool, userId: string): Promise<Intake
       flowActivity: await decOptional(userId, row.flow_activity_enc),
     },
     chosenTaskId: row.chosen_task_id,
+    taskDone: row.task_done_at != null,
   }
 }
 
@@ -73,17 +79,24 @@ export async function getIntakeState(pool: Pool, userId: string): Promise<Intake
  * nhất của dữ liệu nền tảng, xem migration 0059). Trả về câu trả lời đã chuẩn hoá để nơi gọi sinh
  * gợi ý từ đúng thứ vừa lưu.
  */
-export async function saveIntake(pool: Pool, userId: string, raw: unknown): Promise<IntakeAnswers> {
+export async function saveIntake(
+  pool: Pool,
+  userId: string,
+  raw: unknown,
+  suggestedTaskId: string,
+): Promise<IntakeAnswers> {
   const answers = IntakeAnswersSchema.parse(raw)
   await pool.query(
     `insert into personal.intake
-       (user_id, focus, last_learned, extra_hour_enc, flow_activity_enc, completed_at, updated_at)
-     values ($1, $2, $3, $4, $5, now(), now())
+       (user_id, focus, last_learned, extra_hour_enc, flow_activity_enc,
+        suggested_task_id, completed_at, updated_at)
+     values ($1, $2, $3, $4, $5, $6, now(), now())
      on conflict (user_id) do update
        set focus = excluded.focus,
            last_learned = excluded.last_learned,
            extra_hour_enc = excluded.extra_hour_enc,
            flow_activity_enc = excluded.flow_activity_enc,
+           suggested_task_id = excluded.suggested_task_id,
            completed_at = now(),
            updated_at = now()`,
     [
@@ -92,15 +105,119 @@ export async function saveIntake(pool: Pool, userId: string, raw: unknown): Prom
       answers.lastLearned ?? null,
       await encOptional(userId, answers.extraHour),
       await encOptional(userId, answers.flowActivity),
+      suggestedTaskId,
     ],
   )
   return answers
 }
 
-/** Ghi lại việc người dùng CHỌN — để về sau đo được gợi ý có trúng không. */
+/** Ghi lại việc người dùng CHỌN. So với `suggested_task_id` sẽ ra độ chính xác của suy luận. */
 export async function saveChosenTask(pool: Pool, userId: string, taskId: string): Promise<void> {
   await pool.query(
-    'update personal.intake set chosen_task_id = $2, updated_at = now() where user_id = $1',
+    `update personal.intake
+        set chosen_task_id = $2, task_chosen_at = now(), updated_at = now()
+      where user_id = $1`,
     [userId, taskId],
   )
+}
+
+/**
+ * Người dùng tự đánh dấu đã làm xong việc đầu tiên.
+ *
+ * Đây là TỰ KHAI, không phải đo được khách quan — và phải nói thẳng như vậy ở nơi hiển thị số
+ * liệu. Nhưng nó vẫn là tín hiệu tốt nhất có được: cái ta cần biết là "việc này có xảy ra trong
+ * đời thật không", mà đời thật thì app không nhìn thấy.
+ *
+ * `where task_done_at is null` để lần đánh dấu ĐẦU TIÊN là mốc được giữ — bấm lại không dời mốc,
+ * nếu không thì mọi phép đo "trong 7 ngày" đều sai.
+ */
+export async function markTaskDone(pool: Pool, userId: string): Promise<void> {
+  await pool.query(
+    `update personal.intake
+        set task_done_at = now(), updated_at = now()
+      where user_id = $1 and task_done_at is null`,
+    [userId],
+  )
+}
+
+// ── Đo: gợi ý có TRÚNG không ────────────────────────────────────────────────
+
+export interface IntakeStats {
+  /** Số người đã trả lời xong 5 câu trong khoảng thời gian xét. */
+  answered: number
+  /** Nhận đúng việc được gợi ý — tín hiệu suy luận ĐÚNG. */
+  tookSuggested: number
+  /** Đổi sang một trong hai lựa chọn khác — tín hiệu suy luận LỆCH nhưng vẫn còn dùng được. */
+  switched: number
+  /** Không chọn việc nào ("Để sau cũng được") — tín hiệu suy luận TRƯỢT hẳn. */
+  skipped: number
+  /** Đã tự đánh dấu làm xong việc đầu tiên. */
+  done: number
+  /** Làm xong TRONG 7 NGÀY kể từ lúc chọn — chỉ số quan trọng nhất của cả luồng. */
+  doneWithin7Days: number
+  /** Việc nào hay được chọn nhất — để biết kho việc đang lệch về đâu. */
+  topTasks: { taskId: string; chosen: number; done: number }[]
+}
+
+/**
+ * Tổng hợp kết quả luồng người mới trong `days` ngày gần nhất.
+ *
+ * Chỉ đếm, KHÔNG đọc nội dung câu trả lời của ai — hai cột tự do vốn đã mã hoá và không có việc
+ * gì phải giải mã ở đây. Thống kê không phải cái cớ để mở hồ sơ cá nhân.
+ */
+export async function getIntakeStats(pool: Pool, days: number): Promise<IntakeStats> {
+  const { rows } = await pool.query<{
+    answered: string
+    took_suggested: string
+    switched: string
+    skipped: string
+    done: string
+    done_within_7d: string
+  }>(
+    `select
+       count(*)::text as answered,
+       count(*) filter (where chosen_task_id is not null
+                          and chosen_task_id = suggested_task_id)::text as took_suggested,
+       count(*) filter (where chosen_task_id is not null
+                          and chosen_task_id <> suggested_task_id)::text as switched,
+       count(*) filter (where chosen_task_id is null)::text as skipped,
+       count(*) filter (where task_done_at is not null)::text as done,
+       count(*) filter (where task_done_at is not null
+                          and task_chosen_at is not null
+                          and task_done_at <= task_chosen_at + interval '7 days')::text
+         as done_within_7d
+     from personal.intake
+     where completed_at is not null
+       and completed_at >= now() - ($1 || ' days')::interval`,
+    [String(days)],
+  )
+  const r = rows[0]
+
+  const { rows: taskRows } = await pool.query<{ task_id: string; chosen: string; done: string }>(
+    `select chosen_task_id as task_id,
+            count(*)::text as chosen,
+            count(*) filter (where task_done_at is not null)::text as done
+       from personal.intake
+      where chosen_task_id is not null
+        and chosen_task_id <> ''
+        and completed_at >= now() - ($1 || ' days')::interval
+      group by chosen_task_id
+      order by count(*) desc
+      limit 10`,
+    [String(days)],
+  )
+
+  return {
+    answered: Number(r?.answered ?? '0'),
+    tookSuggested: Number(r?.took_suggested ?? '0'),
+    switched: Number(r?.switched ?? '0'),
+    skipped: Number(r?.skipped ?? '0'),
+    done: Number(r?.done ?? '0'),
+    doneWithin7Days: Number(r?.done_within_7d ?? '0'),
+    topTasks: taskRows.map((t) => ({
+      taskId: t.task_id,
+      chosen: Number(t.chosen),
+      done: Number(t.done),
+    })),
+  }
 }

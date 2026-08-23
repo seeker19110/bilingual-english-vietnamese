@@ -18,7 +18,12 @@ import {
   logSecurityEvent,
 } from '@dhcb/core-auth/security'
 import { IntakeAnswersSchema, AgeGroupSchema } from '@dhcb/core-contracts/intake'
-import { getIntakeState, saveIntake, saveChosenTask } from '@dhcb/core-personal/intakeService'
+import {
+  getIntakeState,
+  saveIntake,
+  saveChosenTask,
+  markTaskDone,
+} from '@dhcb/core-personal/intakeService'
 import { buildIntakeResult } from '@dhcb/core-personal/intakeSuggestion'
 import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
 import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
@@ -31,6 +36,7 @@ const BodySchema = z.union([
     ageGroup: AgeGroupSchema.optional(),
   }),
   z.object({ action: z.literal('choose'), taskId: z.string().min(1).max(60) }),
+  z.object({ action: z.literal('done') }),
 ])
 
 export default async function handler(req: Request): Promise<Response> {
@@ -54,6 +60,7 @@ export default async function handler(req: Request): Promise<Response> {
       {
         done: state.done,
         chosenTaskId: state.chosenTaskId,
+        taskDone: state.taskDone,
         // Chỉ sinh gợi ý khi đã trả lời — chưa trả lời mà đưa gợi ý là đoán mò không có cơ sở nào.
         result: state.done ? buildIntakeResult(state.answers) : null,
       },
@@ -77,7 +84,16 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ ok: true }, 200, allHeaders)
   }
 
-  const answers = await saveIntake(pool, auth.userId, result.data.answers)
+  if (result.data.action === 'done') {
+    await markTaskDone(pool, auth.userId)
+    return jsonResponse({ ok: true }, 200, allHeaders)
+  }
+
+  // Sinh gợi ý TRƯỚC rồi mới lưu: cần ghi lại đúng việc ĐÃ gợi ý (`suggested_task_id`) để về sau
+  // đo được suy luận có trúng không. Tính lại lúc thống kê thì mọi số liệu lịch sử sẽ đổi theo mỗi
+  // lần sửa thuật toán, và ta mất khả năng so sánh trước/sau khi cải tiến.
+  const preview = buildIntakeResult(IntakeAnswersSchema.parse(result.data.answers))
+  const answers = await saveIntake(pool, auth.userId, result.data.answers, preview.primary.id)
   if (result.data.ageGroup) {
     await pool.query('update public.profiles set age_group = $1 where id = $2', [
       result.data.ageGroup,

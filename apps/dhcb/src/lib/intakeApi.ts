@@ -40,7 +40,12 @@ async function call<T>(init?: RequestInit): Promise<Res<T>> {
 }
 
 export const fetchIntake = () =>
-  call<{ done: boolean; chosenTaskId: string | null; result: IntakeResult | null }>()
+  call<{
+    done: boolean
+    chosenTaskId: string | null
+    taskDone: boolean
+    result: IntakeResult | null
+  }>()
 
 export const saveIntake = (answers: IntakeAnswers, ageGroup?: AgeGroup) =>
   call<{ result: IntakeResult }>({
@@ -50,3 +55,7 @@ export const saveIntake = (answers: IntakeAnswers, ageGroup?: AgeGroup) =>
 
 export const chooseTask = (taskId: string) =>
   call<{ ok: true }>({ method: 'POST', body: JSON.stringify({ action: 'choose', taskId }) })
+
+/** Người dùng tự đánh dấu đã làm xong việc đầu tiên — tín hiệu quan trọng nhất của cả luồng. */
+export const markTaskDone = () =>
+  call<{ ok: true }>({ method: 'POST', body: JSON.stringify({ action: 'done' }) })

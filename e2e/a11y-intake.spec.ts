@@ -96,3 +96,32 @@ test('màn gợi ý KHÔNG hiện điểm số, thang bậc hay so sánh', async
   }
   expect(text).not.toMatch(/\d+\s*%/)
 })
+
+// ── Thẻ "việc đầu tiên" trên trang chủ ────────────────────────────────────────────────────
+// Thẻ chỉ hiện khi người dùng đã chọn việc mà chưa đánh dấu xong — trạng thái mà người dùng E2E
+// mặc định không có, nên `e2e/a11y.spec.ts` (vốn có quét '/') cũng không chạm tới nó.
+for (const theme of THEMES) {
+  test(`a11y: thẻ "việc đầu tiên" trên trang chủ, theme=${theme}`, async ({ page }) => {
+    await mockLogin(page, 'vi', theme)
+    await page.route('**/api/intake', async (route) =>
+      route.fulfill({
+        json: {
+          done: true,
+          chosenTaskId: 'tien-ghi-chi-tieu',
+          taskDone: false,
+          result: {
+            primary: {
+              id: 'tien-ghi-chi-tieu',
+              title: 'Ghi lại mọi khoản chi trong 7 ngày tới — chỉ ghi, chưa cần cắt giảm gì',
+              why: 'Bạn có nhắc tới "vẽ tranh".',
+            },
+            alternatives: [],
+          },
+        },
+      }),
+    )
+    await page.goto('/', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByRole('button', { name: 'Mình làm xong rồi' })).toBeVisible()
+    expect(await scan(page)).toEqual([])
+  })
+}
