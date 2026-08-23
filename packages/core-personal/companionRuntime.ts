@@ -16,6 +16,11 @@ import {
 import { callGroqChatWithKeyPool, callAnthropicChat } from '@dhcb/core-ai/chatProviders'
 import { callGemini } from '@dhcb/core-ai/geminiApi'
 import { ALLOWED_MODEL, GEMINI_CHAT_MODEL, GROQ_CHAT_MODEL } from '@dhcb/core-ai/aiConfig'
+import {
+  recordAiTokenUsage,
+  parseAnthropicUsageFromText,
+  type AiTokenUsage,
+} from '@dhcb/core-ai/aiTokenUsage'
 
 export const COMPANION_SYSTEM_PROMPT =
   'Bạn là Bạn Đồng Hành AI — Người đồng hành trí tuệ, thấu cảm và tận tâm trong nền tảng "Đồng Hành Cùng Bạn".\n\n' +
@@ -323,6 +328,14 @@ export async function synthesizeCompanionReply(
         30_000,
       )
       if (groqRes.kind === 'success' && groqRes.text.trim()) {
+        // Ghi chi phí AI theo token THẬT (mục N4) — mode 'companion' để tách khỏi lượt gia sư
+        // tiếng Anh trong dashboard. Không await: đo đạc không được làm chậm câu trả lời.
+        void recordAiTokenUsage({
+          provider: 'groq',
+          model: groqRes.model,
+          mode: 'companion',
+          usage: groqRes.usage,
+        })
         return groqRes.text.trim()
       }
     } catch {
@@ -352,6 +365,12 @@ export async function synthesizeCompanionReply(
           }
           const text = parsed.content?.[0]?.text
           if (typeof text === 'string' && text.trim()) {
+            void recordAiTokenUsage({
+              provider: 'anthropic',
+              model: ALLOWED_MODEL,
+              mode: 'companion',
+              usage: parseAnthropicUsageFromText(anthropicRes.bodyText),
+            })
             return text.trim()
           }
         } catch {
@@ -365,6 +384,7 @@ export async function synthesizeCompanionReply(
 
   // 3. Nhánh Google Gemini (dự phòng — chung model với gia sư tiếng Anh: GEMINI_CHAT_MODEL)
   if (geminiKey) {
+    let geminiUsage: AiTokenUsage | null = null
     try {
       const geminiText = await callGemini(
         geminiKey,
@@ -372,7 +392,17 @@ export async function synthesizeCompanionReply(
         systemPrompt,
         messages as Array<{ role: 'user' | 'assistant'; content: string }>,
         1024,
+        undefined,
+        (usage) => {
+          geminiUsage = usage
+        },
       )
+      void recordAiTokenUsage({
+        provider: 'gemini',
+        model: GEMINI_CHAT_MODEL,
+        mode: 'companion',
+        usage: geminiUsage,
+      })
       if (geminiText && geminiText.trim()) {
         return geminiText.trim()
       }

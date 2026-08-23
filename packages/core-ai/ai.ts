@@ -19,6 +19,11 @@ import {
 } from '@dhcb/core-auth/security'
 import { checkAndConsumeUsage, refundUsage, type UsageMode } from '@dhcb/core-billing/usage'
 import { callGemini } from './geminiApi.js'
+import {
+  recordAiTokenUsage,
+  parseAnthropicUsageFromText,
+  type AiTokenUsage,
+} from './aiTokenUsage.js'
 import { callGroqChatWithKeyPool, callAnthropicChat } from './chatProviders.js'
 import { hasGroqKey } from './groqKeyPool.js'
 import { withConcurrencyLimit } from '@dhcb/core-db/concurrencyLimiter'
@@ -260,6 +265,14 @@ export default async function handler(req: Request): Promise<Response> {
         `Groq trả body hỏng (${groqResult.message}) — chuyển sang provider dự phòng (Anthropic/Gemini)`,
       )
     } else {
+      // Ghi CHI PHÍ THẬT theo token (mục N4). Cố ý KHÔNG await — đo đạc không được làm chậm
+      // câu trả lời, và recordAiTokenUsage() tự nuốt mọi lỗi bên trong.
+      void recordAiTokenUsage({
+        provider: 'groq',
+        model: groqResult.model,
+        mode,
+        usage: groqResult.usage,
+      })
       // Chuẩn hoá về đúng format Anthropic mà frontend (apps/dhcb/src/lib/ai.ts) đang đọc:
       // data.content[0].text
       return jsonResponse({ content: [{ type: 'text', text: groqResult.text }] }, 200, allHeaders)
@@ -314,6 +327,15 @@ export default async function handler(req: Request): Promise<Response> {
         // Thành công HOẶC không còn provider dự phòng → forward thẳng status/body gốc, giữ
         // đúng hành vi cũ (kể cả lỗi 4xx/5xx của Anthropic, không bọc lại thành JSON riêng).
         if (!respOk) await refundUsage(authResult.userId, mode, gate.day)
+        // Chỉ ghi chi phí khi Anthropic thực sự trả lời (lỗi 4xx/5xx không tính tiền token).
+        if (respOk) {
+          void recordAiTokenUsage({
+            provider: 'anthropic',
+            model: ALLOWED_MODEL,
+            mode,
+            usage: parseAnthropicUsageFromText(anthropicResult.bodyText),
+          })
+        }
         return new Response(anthropicResult.bodyText, {
           status: anthropicResult.status,
           headers: { 'content-type': 'application/json', ...allHeaders },
@@ -325,6 +347,8 @@ export default async function handler(req: Request): Promise<Response> {
   // ── Nhánh Gemini (cuối cùng — chỉ dùng khi Groq/Anthropic không có key hoặc đều lỗi)
   const geminiStartedAt = Date.now()
   log.debug(`gọi Gemini bắt đầu, mode=${mode}`)
+  // callGemini() trả về text; token thật lấy qua callback onUsage (xem geminiApi.ts).
+  let geminiUsage: AiTokenUsage | null = null
   try {
     const geminiText = await withConcurrencyLimit('gemini', () =>
       callGemini(
@@ -333,14 +357,33 @@ export default async function handler(req: Request): Promise<Response> {
         system,
         sanitizedMessages as Array<{ role: 'user' | 'assistant'; content: string }>,
         maxTokens,
+        undefined,
+        (usage) => {
+          geminiUsage = usage
+        },
       ),
     )
+    void recordAiTokenUsage({
+      provider: 'gemini',
+      model: GEMINI_CHAT_MODEL,
+      mode,
+      usage: geminiUsage,
+    })
     recordLatency('ai_gemini_ms', Date.now() - geminiStartedAt)
     incrementCounter('ai_gemini_success')
     log.debug(`Gemini xong sau ${Date.now() - geminiStartedAt}ms`)
     return jsonResponse({ content: [{ type: 'text', text: geminiText }] }, 200, allHeaders)
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err)
+    // Gemini vẫn TÍNH TIỀN token khi đã trả body (vd body hợp lệ nhưng text rỗng → callGemini
+    // ném lỗi). Ghi chi phí ở cả nhánh lỗi để số liệu không thiếu hụt; usage = null (lỗi mạng,
+    // chưa có body) thì recordAiTokenUsage() tự bỏ qua.
+    void recordAiTokenUsage({
+      provider: 'gemini',
+      model: GEMINI_CHAT_MODEL,
+      mode,
+      usage: geminiUsage,
+    })
     recordLatency('ai_gemini_ms', Date.now() - geminiStartedAt)
     incrementCounter('ai_gemini_error')
     log.warn(`Gemini lỗi sau ${Date.now() - geminiStartedAt}ms: ${errMsg}`)

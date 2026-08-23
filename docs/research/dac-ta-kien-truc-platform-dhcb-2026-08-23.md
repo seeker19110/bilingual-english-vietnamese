@@ -111,11 +111,18 @@ zero-downtime deploy (PM2 wait_ready).
 3. `quality`/`e2e` phải là **required status check** — VIỆC TAY người dùng trên GitHub
    Settings → Branches, chưa làm được từ phía AI.
 4. ~~`npm audit` + `codemap cycles` vào CI~~ **ĐÃ XONG** (2 gate mới trong job quality).
-5. Observability: Sentry đã có; thiếu uptime monitor + alert chi phí AI theo token thật. → N4.
+5. Observability: Sentry đã có. **Alert chi phí AI theo token thật ĐÃ XONG (N4, 2026-08-23)**:
+   bảng `platform.ai_token_usage_daily` (migration 0059) ghi token THẬT do nhà cung cấp báo về
+   cho đường chat gia sư + Companion, quy giá bằng `capabilityCostTracker`, ngưỡng
+   `AI_DAILY_BUDGET_USD` cảnh báo 1 lần/ngày, dashboard admin hiện cạnh số ước tính cũ. CÒN
+   THIẾU: uptime monitor (cần dịch vụ ngoài — việc tay người dùng) và TTS/STT/chấm phát âm
+   (tính theo ký tự/giờ audio, không theo token — vẫn dùng ước tính).
 6. ~~Một lộ trình duy nhất~~ **ĐÃ CHỐT Q2**: thi hành = PROGRESS.md + tài liệu này;
    MASTER_SPEC = tầm nhìn; `docs/phases/` + `docs/architecture-v2/` = tham khảo (đã gắn banner).
 
 ## 6. Trình tự còn lại (điều chỉnh)
 
 ~~S3 (server → `apps/server/`)~~ ✅ ĐÃ XONG (cùng ngày) · ~~N1~~ ✅ ĐÃ XONG trong PR #625 (vá tiền/bảo mật — không
-phụ thuộc cấu trúc) → ~~S4 (chia `api/` + `subject-english` + `core-domains`)~~ ✅ ĐÃ XONG (cùng ngày) → ~~S5~~ ✅ (thu hẹp: xoá mồ côi kiểm chứng; regroup components/lib HOÃN sau N3 — xem ADR-0004 mục 6) → ~~S6~~ ✅ (archive 24 script + ADR-0004). **Lộ trình S1→S6 HOÀN TẤT 2026-08-23.** Tiếp theo: N3 → N4 + việc tay required status check.
+phụ thuộc cấu trúc) → ~~S4 (chia `api/` + `subject-english` + `core-domains`)~~ ✅ ĐÃ XONG (cùng ngày) → ~~S5~~ ✅ (thu hẹp: xoá mồ côi kiểm chứng; regroup components/lib HOÃN sau N3 — xem ADR-0004 mục 6) → ~~S6~~ ✅ (archive 24 script + ADR-0004). **Lộ trình S1→S6 HOÀN TẤT 2026-08-23.** ~~N3~~ ✅ (PR #629) → ~~N4~~ ✅ (đo chi phí AI theo
+token thật + cảnh báo ngân sách). Còn lại: việc tay của người dùng (required status check,
+uptime monitor) + persistence nhóm C khi các tính năng realtime được dùng thật.
