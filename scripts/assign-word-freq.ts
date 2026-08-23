@@ -30,7 +30,7 @@ import { detectWordFreqFormat, parseWordRanks } from '../api/_lib/wordFreq.ts'
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DICT_DIR = process.env.DICT_DIR
   ? path.resolve(PROJECT_ROOT, process.env.DICT_DIR)
-  : path.join(PROJECT_ROOT, 'public/data/dictionary')
+  : path.join(PROJECT_ROOT, 'apps/english/public/data/dictionary')
 
 interface DictEntry {
   word: string

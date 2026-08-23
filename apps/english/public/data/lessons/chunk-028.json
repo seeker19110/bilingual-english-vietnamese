@@ -1,0 +1,550 @@
+[
+  {
+    "id": 281,
+    "title": "Chăm sóc cây bonsai",
+    "situation": "Một người chỉ cho bạn cách chăm cây bonsai.",
+    "speakerAGender": "male",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Ông Tâm", "en": "Mr Tam" },
+    "speakerBName": { "vi": "Khoa", "en": "Khoa" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Your bonsai trees are beautiful, Mr Tam.",
+        "vi": "Cây bonsai của bác đẹp quá ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you. They take a lot of patience.",
+        "vi": "Cảm ơn cháu. Chúng cần nhiều kiên nhẫn lắm."
+      },
+      {
+        "speaker": "A",
+        "en": "How often do you water them?",
+        "vi": "Bác tưới chúng bao lâu một lần?"
+      },
+      {
+        "speaker": "B",
+        "en": "Every day in summer, less in winter.",
+        "vi": "Mỗi ngày vào mùa hè, ít hơn vào mùa đông."
+      },
+      {
+        "speaker": "A",
+        "en": "Do they need a lot of sunlight?",
+        "vi": "Chúng có cần nhiều nắng không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, but not the harsh afternoon sun.",
+        "vi": "Có, nhưng không phải nắng gắt buổi chiều."
+      },
+      { "speaker": "A", "en": "When do you trim the branches?", "vi": "Khi nào bác tỉa cành ạ?" },
+      {
+        "speaker": "B",
+        "en": "In spring, when new shoots appear.",
+        "vi": "Vào mùa xuân, khi chồi mới mọc ra."
+      },
+      { "speaker": "A", "en": "It really is an art.", "vi": "Đúng là một môn nghệ thuật." },
+      {
+        "speaker": "B",
+        "en": "It is. Start with one small tree first.",
+        "vi": "Đúng vậy. Cháu bắt đầu với một cây nhỏ trước nhé."
+      }
+    ]
+  },
+  {
+    "id": 282,
+    "title": "Làm vườn trên sân thượng",
+    "situation": "Hai người bạn bàn về việc làm vườn trên sân thượng.",
+    "speakerAGender": "female",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Hoa", "en": "Hoa" },
+    "speakerBName": { "vi": "Mai", "en": "Mai" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "I'm thinking of making a rooftop garden.",
+        "vi": "Mình đang định làm vườn trên sân thượng."
+      },
+      {
+        "speaker": "B",
+        "en": "What a great idea! Is there enough sun?",
+        "vi": "Ý hay quá! Có đủ nắng không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, the roof gets sun all morning.",
+        "vi": "Có, sân thượng có nắng cả buổi sáng."
+      },
+      { "speaker": "B", "en": "What will you grow up there?", "vi": "Cậu định trồng gì trên đó?" },
+      { "speaker": "A", "en": "Vegetables and some flowers.", "vi": "Rau và một ít hoa." },
+      {
+        "speaker": "B",
+        "en": "Be careful about the weight of the soil.",
+        "vi": "Cẩn thận về trọng lượng của đất nhé."
+      },
+      {
+        "speaker": "A",
+        "en": "Good point. I'll use light pots.",
+        "vi": "Đúng đấy. Mình sẽ dùng chậu nhẹ."
+      },
+      {
+        "speaker": "B",
+        "en": "And make sure the water can drain.",
+        "vi": "Và đảm bảo nước thoát được."
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, I'll add a drainage layer.",
+        "vi": "Ừ, mình sẽ thêm lớp thoát nước."
+      },
+      {
+        "speaker": "B",
+        "en": "Sounds like a good plan. I can't wait to see it.",
+        "vi": "Nghe kế hoạch tốt đấy. Mình nóng lòng muốn xem."
+      }
+    ]
+  },
+  {
+    "id": 283,
+    "title": "Đặt lịch xét nghiệm máu",
+    "situation": "Bệnh nhân gọi điện đặt lịch xét nghiệm máu.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Bệnh nhân Bình", "en": "Patient Binh" },
+    "speakerBName": { "vi": "Lễ tân phòng khám Vy", "en": "Clinic staff Vy" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I'd like to book a blood test.",
+        "vi": "Alô, tôi muốn đặt lịch xét nghiệm máu."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. Is it for a general check-up?",
+        "vi": "Được ạ. Để kiểm tra sức khỏe tổng quát à?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, my doctor recommended it.",
+        "vi": "Vâng, bác sĩ của tôi đề nghị."
+      },
+      {
+        "speaker": "B",
+        "en": "Do you need to fast beforehand?",
+        "vi": "Anh có cần nhịn ăn trước không ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'm not sure. What's the rule?",
+        "vi": "Tôi không chắc. Quy định thế nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "For this test, fast for eight hours.",
+        "vi": "Với xét nghiệm này, nhịn ăn tám tiếng."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay. Can I come tomorrow morning?",
+        "vi": "Được. Mai sáng tôi đến được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, come before nine to avoid the crowd.",
+        "vi": "Được ạ, anh đến trước chín giờ để tránh đông."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. How long for the results?",
+        "vi": "Tuyệt. Bao lâu có kết quả ạ?"
+      },
+      { "speaker": "B", "en": "Usually the same afternoon.", "vi": "Thường là chiều cùng ngày." }
+    ]
+  },
+  {
+    "id": 284,
+    "title": "Nhận kết quả xét nghiệm",
+    "situation": "Bệnh nhân nghe bác sĩ giải thích kết quả xét nghiệm.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Bệnh nhân Hương", "en": "Patient Huong" },
+    "speakerBName": { "vi": "Bác sĩ Nam", "en": "Doctor Nam" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Doctor, are my test results ready?",
+        "vi": "Bác sĩ ơi, kết quả của tôi có chưa ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, and overall they look good.",
+        "vi": "Có rồi, và nhìn chung khá tốt."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a relief. Is everything normal?",
+        "vi": "Tôi mừng quá. Mọi thứ bình thường chứ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Mostly. Your cholesterol is slightly high.",
+        "vi": "Phần lớn là vậy. Nhưng mỡ máu của chị hơi cao."
+      },
+      { "speaker": "A", "en": "Oh. Is that serious?", "vi": "Ồ. Có nghiêm trọng không ạ?" },
+      {
+        "speaker": "B",
+        "en": "Not yet, but you should watch your diet.",
+        "vi": "Chưa, nhưng chị nên chú ý chế độ ăn."
+      },
+      { "speaker": "A", "en": "What should I avoid eating?", "vi": "Tôi nên tránh ăn gì ạ?" },
+      { "speaker": "B", "en": "Less fried and fatty food.", "vi": "Bớt đồ chiên và đồ nhiều mỡ." },
+      {
+        "speaker": "A",
+        "en": "Should I exercise more?",
+        "vi": "Tôi có nên tập thể dục nhiều hơn không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, thirty minutes of walking a day helps.",
+        "vi": "Có, đi bộ ba mươi phút mỗi ngày là tốt."
+      }
+    ]
+  },
+  {
+    "id": 285,
+    "title": "Hỏi về tiêm vaccine",
+    "situation": "Một người hỏi nhân viên y tế về việc tiêm vaccine.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Khách Đức", "en": "Customer Duc" },
+    "speakerBName": { "vi": "Y tá Lan", "en": "Nurse Lan" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "I'd like to ask about the flu vaccine.",
+        "vi": "Tôi muốn hỏi về vaccine cúm."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. Would you like to get one today?",
+        "vi": "Được ạ. Anh muốn tiêm hôm nay không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Maybe. How often should I get it?",
+        "vi": "Có thể. Bao lâu nên tiêm một lần ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Once a year, before the flu season.",
+        "vi": "Mỗi năm một lần, trước mùa cúm."
+      },
+      { "speaker": "A", "en": "Are there any side effects?", "vi": "Có tác dụng phụ gì không ạ?" },
+      {
+        "speaker": "B",
+        "en": "Maybe a sore arm for a day.",
+        "vi": "Có thể đau tay một ngày thôi."
+      },
+      {
+        "speaker": "A",
+        "en": "That's not bad. Is it safe for everyone?",
+        "vi": "Vậy cũng nhẹ. Có an toàn cho mọi người không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, but tell me if you have any allergies.",
+        "vi": "Có, nhưng anh báo tôi nếu có dị ứng gì."
+      },
+      {
+        "speaker": "A",
+        "en": "I don't have any. Let's do it.",
+        "vi": "Tôi không bị gì cả. Tiêm thôi ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "Great. Please roll up your sleeve.",
+        "vi": "Tuyệt. Anh xắn tay áo lên giúp tôi."
+      }
+    ]
+  },
+  {
+    "id": 286,
+    "title": "Đo thính lực",
+    "situation": "Bệnh nhân đi đo thính lực và trao đổi với kỹ thuật viên.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Bệnh nhân Hoa", "en": "Patient Hoa" },
+    "speakerBName": { "vi": "Kỹ thuật viên Tuấn", "en": "Technician Tuan" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "I've been having trouble hearing lately.",
+        "vi": "Dạo này tôi nghe hơi khó khăn."
+      },
+      {
+        "speaker": "B",
+        "en": "Let's do a hearing test then.",
+        "vi": "Vậy mình làm một bài đo thính lực nhé."
+      },
+      { "speaker": "A", "en": "What do I need to do?", "vi": "Tôi cần làm gì ạ?" },
+      {
+        "speaker": "B",
+        "en": "Put on these headphones and listen carefully.",
+        "vi": "Chị đeo tai nghe này và nghe kỹ nhé."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay. What should I do when I hear a sound?",
+        "vi": "Vâng. Khi nghe thấy tiếng tôi làm gì ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Press this button each time you hear a beep.",
+        "vi": "Bấm nút này mỗi khi chị nghe tiếng bíp."
+      },
+      {
+        "speaker": "A",
+        "en": "Got it. Some sounds are very soft.",
+        "vi": "Hiểu rồi. Có tiếng rất nhỏ."
+      },
+      {
+        "speaker": "B",
+        "en": "That's fine. Just do your best.",
+        "vi": "Không sao. Chị cứ cố hết sức."
+      },
+      { "speaker": "A", "en": "Is my hearing very bad?", "vi": "Tai tôi có tệ lắm không ạ?" },
+      {
+        "speaker": "B",
+        "en": "Let me check. It's only slightly reduced.",
+        "vi": "Để tôi xem. Chỉ giảm nhẹ thôi ạ."
+      }
+    ]
+  },
+  {
+    "id": 287,
+    "title": "Tham gia ban nhạc",
+    "situation": "Một người xin gia nhập một ban nhạc nghiệp dư.",
+    "speakerAGender": "male",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Khoa", "en": "Khoa" },
+    "speakerBName": { "vi": "Trưởng nhóm Hùng", "en": "Band leader Hung" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I heard your band needs a guitarist.",
+        "vi": "Chào anh, tôi nghe ban nhạc cần một tay guitar."
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, we do. Do you play well?",
+        "vi": "Đúng vậy. Cậu chơi giỏi không?"
+      },
+      {
+        "speaker": "A",
+        "en": "I've played for about five years.",
+        "vi": "Tôi chơi được khoảng năm năm rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "Great. What kind of music do you like?",
+        "vi": "Tuyệt. Cậu thích loại nhạc nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "Mostly pop and a bit of rock.",
+        "vi": "Chủ yếu là pop và một chút rock."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect, that's our style too.",
+        "vi": "Tuyệt, cũng là phong cách của bọn mình."
+      },
+      { "speaker": "A", "en": "When do you practice?", "vi": "Các anh tập khi nào?" },
+      {
+        "speaker": "B",
+        "en": "Twice a week, evenings at my place.",
+        "vi": "Hai buổi một tuần, tối ở nhà tôi."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I join the next practice?",
+        "vi": "Tôi tham gia buổi tập tới được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. Bring your guitar this Friday.",
+        "vi": "Được. Thứ Sáu này mang guitar đến nhé."
+      }
+    ]
+  },
+  {
+    "id": 288,
+    "title": "Mua nhạc cụ",
+    "situation": "Khách hỏi mua một cây đàn guitar tại cửa hàng nhạc cụ.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Khách Mai", "en": "Customer Mai" },
+    "speakerBName": { "vi": "Nhân viên Tài", "en": "Staff Tai" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'm looking for a guitar for a beginner.",
+        "vi": "Chào anh, tôi tìm một cây guitar cho người mới."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. Acoustic or classical?",
+        "vi": "Được ạ. Guitar thùng hay guitar cổ điển?"
+      },
+      { "speaker": "A", "en": "What's the difference?", "vi": "Hai loại khác nhau thế nào?" },
+      {
+        "speaker": "B",
+        "en": "Classical has softer nylon strings, easier on the fingers.",
+        "vi": "Cổ điển có dây nylon mềm, dễ cho ngón tay hơn."
+      },
+      {
+        "speaker": "A",
+        "en": "Then classical sounds better for me.",
+        "vi": "Vậy cổ điển hợp với tôi hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Good choice. This one is great for beginners.",
+        "vi": "Lựa chọn tốt. Cây này rất hợp người mới."
+      },
+      { "speaker": "A", "en": "How much is it?", "vi": "Bao nhiêu vậy ạ?" },
+      {
+        "speaker": "B",
+        "en": "One and a half million, with a free bag.",
+        "vi": "Một triệu rưỡi, kèm túi đựng miễn phí."
+      },
+      { "speaker": "A", "en": "Does it come with a tuner?", "vi": "Có kèm máy lên dây không ạ?" },
+      {
+        "speaker": "B",
+        "en": "Yes, and I'll teach you how to use it.",
+        "vi": "Có, và tôi sẽ hướng dẫn chị cách dùng."
+      }
+    ]
+  },
+  {
+    "id": 289,
+    "title": "Thực tập tại bệnh viện",
+    "situation": "Sinh viên y khoa trao đổi với bác sĩ hướng dẫn trong kỳ thực tập.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Sinh viên Linh", "en": "Intern Linh" },
+    "speakerBName": { "vi": "Bác sĩ Nam", "en": "Doctor Nam" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good morning, doctor. I'm the new intern.",
+        "vi": "Chào bác sĩ. Em là thực tập sinh mới."
+      },
+      {
+        "speaker": "B",
+        "en": "Welcome. Have you worked in a hospital before?",
+        "vi": "Chào em. Em đã làm ở bệnh viện bao giờ chưa?"
+      },
+      { "speaker": "A", "en": "No, this is my first time.", "vi": "Chưa ạ, đây là lần đầu." },
+      {
+        "speaker": "B",
+        "en": "No worries. Just observe carefully today.",
+        "vi": "Đừng lo. Hôm nay em quan sát kỹ là được."
+      },
+      { "speaker": "A", "en": "What will I be doing this week?", "vi": "Tuần này em sẽ làm gì ạ?" },
+      {
+        "speaker": "B",
+        "en": "You'll follow me during patient rounds.",
+        "vi": "Em sẽ theo tôi đi thăm bệnh nhân."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I ask questions during the rounds?",
+        "vi": "Em hỏi trong lúc đi thăm bệnh được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, but wait until we leave the room.",
+        "vi": "Được, nhưng đợi ra khỏi phòng đã."
+      },
+      {
+        "speaker": "A",
+        "en": "Understood. I'll take notes too.",
+        "vi": "Hiểu rồi ạ. Em cũng sẽ ghi chép."
+      },
+      {
+        "speaker": "B",
+        "en": "Good attitude. You'll learn a lot here.",
+        "vi": "Thái độ tốt. Em sẽ học được nhiều ở đây."
+      }
+    ]
+  },
+  {
+    "id": 290,
+    "title": "Thực tập tại ngân hàng",
+    "situation": "Sinh viên thực tập hỏi quản lý ngân hàng về công việc.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Sinh viên Đức", "en": "Intern Duc" },
+    "speakerBName": { "vi": "Quản lý Hương", "en": "Manager Huong" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I'm starting my internship today.",
+        "vi": "Chào chị, hôm nay em bắt đầu kỳ thực tập."
+      },
+      {
+        "speaker": "B",
+        "en": "Welcome. Which department are you in?",
+        "vi": "Chào em. Em ở phòng nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "The customer service department.",
+        "vi": "Phòng dịch vụ khách hàng ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "Great. You'll learn how to help customers.",
+        "vi": "Tốt. Em sẽ học cách hỗ trợ khách hàng."
+      },
+      {
+        "speaker": "A",
+        "en": "What will my main tasks be?",
+        "vi": "Nhiệm vụ chính của em là gì ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "At first, just watch how the staff work.",
+        "vi": "Lúc đầu, em chỉ quan sát nhân viên làm việc."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I help customers myself later?",
+        "vi": "Sau này em tự giúp khách được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, once you understand the process.",
+        "vi": "Được, khi em hiểu quy trình."
+      },
+      { "speaker": "A", "en": "I'm a little nervous, honestly.", "vi": "Thật ra em hơi lo." },
+      {
+        "speaker": "B",
+        "en": "That's normal. Everyone is here to help you.",
+        "vi": "Bình thường thôi. Mọi người ở đây đều sẵn sàng giúp em."
+      }
+    ]
+  }
+]

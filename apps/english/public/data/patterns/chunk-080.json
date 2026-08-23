@@ -1,0 +1,1356 @@
+[
+  {
+    "starter": "My sister is",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "My sister is ready for the weekend.", "vi": "Chị gái tôi sẵn sàng cho cuối tuần." },
+      { "en": "My sister is joyful.", "vi": "Chị gái tôi hân hoan." },
+      { "en": "My sister is cheerful.", "vi": "Chị gái tôi vui vẻ." },
+      { "en": "My sister is reliable.", "vi": "Chị gái tôi đáng tin cậy." },
+      { "en": "My sister is tired but happy.", "vi": "Chị gái tôi mệt nhưng vui." },
+      { "en": "My sister is right on time.", "vi": "Chị gái tôi đúng giờ." },
+      { "en": "My sister is confident in the team.", "vi": "Chị gái tôi tin tưởng vào nhóm." },
+      { "en": "My sister is glad it worked.", "vi": "Chị gái tôi vui vì nó hiệu quả." },
+      { "en": "My sister is totally focused.", "vi": "Chị gái tôi hoàn toàn tập trung." },
+      {
+        "en": "My sister is grateful for your help.",
+        "vi": "Chị gái tôi biết ơn sự giúp đỡ của bạn."
+      },
+      { "en": "My sister is surprisingly calm.", "vi": "Chị gái tôi bình tĩnh đến lạ." },
+      { "en": "My sister is sure.", "vi": "Chị gái tôi chắc chắn." },
+      { "en": "My sister is ready for anything.", "vi": "Chị gái tôi sẵn sàng cho mọi thứ." },
+      { "en": "My sister is cautious.", "vi": "Chị gái tôi thận trọng." },
+      { "en": "My sister is interested.", "vi": "Chị gái tôi quan tâm." },
+      { "en": "My sister is lonely.", "vi": "Chị gái tôi cô đơn." },
+      { "en": "My sister is okay.", "vi": "Chị gái tôi ổn cả." },
+      { "en": "My sister is happy.", "vi": "Chị gái tôi vui." },
+      { "en": "My sister is ready.", "vi": "Chị gái tôi sẵn sàng." },
+      { "en": "My sister is lucky.", "vi": "Chị gái tôi may mắn." },
+      { "en": "My sister is energetic.", "vi": "Chị gái tôi tràn đầy năng lượng." },
+      { "en": "My sister is from Vietnam.", "vi": "Chị gái tôi đến từ Việt Nam." },
+      { "en": "My sister is hardworking.", "vi": "Chị gái tôi chăm chỉ." },
+      { "en": "My sister is worried about the exam.", "vi": "Chị gái tôi lo lắng về kỳ thi." },
+      { "en": "My sister is nervous but excited.", "vi": "Chị gái tôi hồi hộp nhưng hào hứng." },
+      { "en": "My sister is happy to help.", "vi": "Chị gái tôi sẵn lòng giúp đỡ." },
+      { "en": "My sister is excited about the trip.", "vi": "Chị gái tôi hào hứng về chuyến đi." },
+      { "en": "My sister is early.", "vi": "Chị gái tôi sớm." },
+      { "en": "My sister is calm.", "vi": "Chị gái tôi bình tĩnh." },
+      { "en": "My sister is glad to help.", "vi": "Chị gái tôi vui được giúp đỡ." },
+      { "en": "My sister is quite confident.", "vi": "Chị gái tôi khá tự tin." },
+      { "en": "My sister is free this weekend.", "vi": "Chị gái tôi rảnh cuối tuần này." },
+      { "en": "My sister is refreshed.", "vi": "Chị gái tôi sảng khoái." },
+      { "en": "My sister is sorry to hear that.", "vi": "Chị gái tôi tiếc khi nghe điều đó." },
+      { "en": "My sister is sick.", "vi": "Chị gái tôi ốm." },
+      { "en": "My sister is angry.", "vi": "Chị gái tôi tức giận." },
+      { "en": "My sister is back at the office.", "vi": "Chị gái tôi đã trở lại văn phòng." },
+      { "en": "My sister is working from home.", "vi": "Chị gái tôi làm việc tại nhà." },
+      { "en": "My sister is disappointed.", "vi": "Chị gái tôi thất vọng." },
+      { "en": "My sister is ready to go.", "vi": "Chị gái tôi sẵn sàng đi." },
+      { "en": "My sister is out of practice.", "vi": "Chị gái tôi lâu rồi không luyện." },
+      { "en": "My sister is so excited.", "vi": "Chị gái tôi rất hào hứng." },
+      { "en": "My sister is a little tired.", "vi": "Chị gái tôi hơi mệt." },
+      { "en": "My sister is available after lunch.", "vi": "Chị gái tôi rảnh sau bữa trưa." },
+      {
+        "en": "My sister is ready for the challenge.",
+        "vi": "Chị gái tôi sẵn sàng cho thử thách."
+      },
+      { "en": "My sister is free right now.", "vi": "Chị gái tôi rảnh ngay bây giờ." },
+      { "en": "My sister is more than happy.", "vi": "Chị gái tôi hơn cả vui." },
+      { "en": "My sister is wide awake.", "vi": "Chị gái tôi tỉnh táo hẳn." },
+      { "en": "My sister is done with work.", "vi": "Chị gái tôi xong việc." },
+      { "en": "My sister is friendly.", "vi": "Chị gái tôi thân thiện." },
+      { "en": "My sister is confident about the result.", "vi": "Chị gái tôi tự tin về kết quả." },
+      { "en": "My sister is open to ideas.", "vi": "Chị gái tôi cởi mở với ý tưởng." },
+      { "en": "My sister is running late.", "vi": "Chị gái tôi bị trễ." },
+      { "en": "My sister is close to the goal.", "vi": "Chị gái tôi gần đạt mục tiêu." },
+      { "en": "My sister is grateful.", "vi": "Chị gái tôi biết ơn." },
+      { "en": "My sister is eager to learn.", "vi": "Chị gái tôi háo hức học hỏi." },
+      { "en": "My sister is scared.", "vi": "Chị gái tôi sợ hãi." },
+      { "en": "My sister is out for lunch.", "vi": "Chị gái tôi ra ngoài ăn trưa." },
+      { "en": "My sister is stronger than before.", "vi": "Chị gái tôi mạnh mẽ hơn trước." },
+      { "en": "My sister is hopeful for the best.", "vi": "Chị gái tôi hy vọng điều tốt nhất." },
+      { "en": "My sister is stressed.", "vi": "Chị gái tôi căng thẳng." },
+      { "en": "My sister is late.", "vi": "Chị gái tôi muộn." },
+      { "en": "My sister is fine.", "vi": "Chị gái tôi ổn." },
+      { "en": "My sister is flexible.", "vi": "Chị gái tôi linh hoạt." },
+      { "en": "My sister is delighted.", "vi": "Chị gái tôi vui sướng." },
+      { "en": "My sister is a bit nervous.", "vi": "Chị gái tôi hơi hồi hộp." },
+      { "en": "My sister is slightly worried.", "vi": "Chị gái tôi hơi lo." },
+      { "en": "My sister is in a hurry.", "vi": "Chị gái tôi đang vội." },
+      { "en": "My sister is impressed.", "vi": "Chị gái tôi ấn tượng." },
+      { "en": "My sister is in a good mood.", "vi": "Chị gái tôi đang vui vẻ." },
+      { "en": "My sister is worried.", "vi": "Chị gái tôi lo lắng." },
+      { "en": "My sister is on my way.", "vi": "Chị gái tôi đang trên đường." },
+      { "en": "My sister is cautiously optimistic.", "vi": "Chị gái tôi lạc quan thận trọng." },
+      { "en": "My sister is surprised.", "vi": "Chị gái tôi ngạc nhiên." },
+      { "en": "My sister is fully prepared.", "vi": "Chị gái tôi chuẩn bị kỹ càng." },
+      { "en": "My sister is considerate.", "vi": "Chị gái tôi biết quan tâm." },
+      { "en": "My sister is sad to leave.", "vi": "Chị gái tôi buồn khi phải đi." },
+      { "en": "My sister is available tomorrow.", "vi": "Chị gái tôi rảnh vào ngày mai." },
+      { "en": "My sister is full of ideas.", "vi": "Chị gái tôi đầy ý tưởng." },
+      { "en": "My sister is serious about this.", "vi": "Chị gái tôi nghiêm túc về việc này." },
+      { "en": "My sister is encouraged.", "vi": "Chị gái tôi được động viên." },
+      { "en": "My sister is stuck in traffic.", "vi": "Chị gái tôi kẹt xe." },
+      { "en": "My sister is full of energy.", "vi": "Chị gái tôi tràn đầy năng lượng." },
+      { "en": "My sister is good at English.", "vi": "Chị gái tôi giỏi tiếng Anh." },
+      { "en": "My sister is relaxed.", "vi": "Chị gái tôi thư giãn." },
+      { "en": "My sister is committed to the plan.", "vi": "Chị gái tôi cam kết với kế hoạch." },
+      { "en": "My sister is bored.", "vi": "Chị gái tôi chán." },
+      { "en": "My sister is peaceful.", "vi": "Chị gái tôi yên bình." },
+      { "en": "My sister is confident.", "vi": "Chị gái tôi tự tin." },
+      { "en": "My sister is hard to please.", "vi": "Chị gái tôi khó chiều." },
+      { "en": "My sister is satisfied.", "vi": "Chị gái tôi hài lòng." },
+      { "en": "My sister is proud and grateful.", "vi": "Chị gái tôi tự hào và biết ơn." },
+      { "en": "My sister is excited.", "vi": "Chị gái tôi hào hứng." },
+      { "en": "My sister is responsible.", "vi": "Chị gái tôi có trách nhiệm." },
+      { "en": "My sister is almost done.", "vi": "Chị gái tôi gần xong." },
+      { "en": "My sister is happy to see you.", "vi": "Chị gái tôi vui khi gặp bạn." },
+      { "en": "My sister is sorry for the delay.", "vi": "Chị gái tôi xin lỗi vì sự chậm trễ." },
+      {
+        "en": "My sister is nervous about the interview.",
+        "vi": "Chị gái tôi hồi hộp về buổi phỏng vấn."
+      },
+      { "en": "My sister is proud of the progress.", "vi": "Chị gái tôi tự hào về sự tiến bộ." },
+      { "en": "My sister is creative.", "vi": "Chị gái tôi sáng tạo." }
+    ]
+  },
+  {
+    "starter": "My sister was",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "My sister was surprisingly calm.", "vi": "Chị gái tôi đã bình tĩnh đến lạ." },
+      {
+        "en": "My sister was ready for the weekend.",
+        "vi": "Chị gái tôi đã sẵn sàng cho cuối tuần."
+      },
+      { "en": "My sister was thirsty.", "vi": "Chị gái tôi đã khát." },
+      { "en": "My sister was stronger than before.", "vi": "Chị gái tôi đã mạnh mẽ hơn trước." },
+      {
+        "en": "My sister was hopeful for the best.",
+        "vi": "Chị gái tôi đã hy vọng điều tốt nhất."
+      },
+      { "en": "My sister was alert.", "vi": "Chị gái tôi đã tỉnh táo." },
+      {
+        "en": "My sister was nervous about the interview.",
+        "vi": "Chị gái tôi đã hồi hộp về buổi phỏng vấn."
+      },
+      { "en": "My sister was super hungry.", "vi": "Chị gái tôi đã đói lắm." },
+      { "en": "My sister was honest.", "vi": "Chị gái tôi đã trung thực." },
+      { "en": "My sister was eager to learn.", "vi": "Chị gái tôi đã háo hức học hỏi." },
+      {
+        "en": "My sister was confident about the result.",
+        "vi": "Chị gái tôi đã tự tin về kết quả."
+      },
+      { "en": "My sister was hard to please.", "vi": "Chị gái tôi đã khó chiều." },
+      { "en": "My sister was excited.", "vi": "Chị gái tôi đã hào hứng." },
+      {
+        "en": "My sister was proud of the progress.",
+        "vi": "Chị gái tôi đã tự hào về sự tiến bộ."
+      },
+      { "en": "My sister was quite confident.", "vi": "Chị gái tôi đã khá tự tin." },
+      { "en": "My sister was hopeful.", "vi": "Chị gái tôi đã tràn đầy hy vọng." },
+      { "en": "My sister was available tomorrow.", "vi": "Chị gái tôi đã rảnh vào ngày mai." },
+      { "en": "My sister was full of energy.", "vi": "Chị gái tôi đã tràn đầy năng lượng." },
+      { "en": "My sister was right on time.", "vi": "Chị gái tôi đã đúng giờ." },
+      { "en": "My sister was humble.", "vi": "Chị gái tôi đã khiêm tốn." },
+      { "en": "My sister was really proud.", "vi": "Chị gái tôi đã thực sự tự hào." },
+      { "en": "My sister was a bit nervous.", "vi": "Chị gái tôi đã hơi hồi hộp." },
+      { "en": "My sister was deeply grateful.", "vi": "Chị gái tôi đã vô cùng biết ơn." },
+      { "en": "My sister was on a break.", "vi": "Chị gái tôi đã đang nghỉ giải lao." },
+      { "en": "My sister was open to ideas.", "vi": "Chị gái tôi đã cởi mở với ý tưởng." },
+      { "en": "My sister was from Vietnam.", "vi": "Chị gái tôi đã đến từ Việt Nam." },
+      { "en": "My sister was back at the office.", "vi": "Chị gái tôi đã đã trở lại văn phòng." },
+      { "en": "My sister was fully prepared.", "vi": "Chị gái tôi đã chuẩn bị kỹ càng." },
+      { "en": "My sister was done for today.", "vi": "Chị gái tôi đã xong việc cho hôm nay." },
+      { "en": "My sister was careful.", "vi": "Chị gái tôi đã cẩn thận." },
+      { "en": "My sister was upset.", "vi": "Chị gái tôi đã buồn bực." },
+      { "en": "My sister was totally lost.", "vi": "Chị gái tôi đã hoàn toàn lạc lối." },
+      { "en": "My sister was proud.", "vi": "Chị gái tôi đã tự hào." },
+      {
+        "en": "My sister was hopeful about the future.",
+        "vi": "Chị gái tôi đã hy vọng về tương lai."
+      },
+      { "en": "My sister was thankful.", "vi": "Chị gái tôi đã biết ơn." },
+      { "en": "My sister was satisfied.", "vi": "Chị gái tôi đã hài lòng." },
+      { "en": "My sister was extremely tired.", "vi": "Chị gái tôi đã cực kỳ mệt." },
+      { "en": "My sister was happy to be back.", "vi": "Chị gái tôi đã vui khi trở lại." },
+      { "en": "My sister was ready to start.", "vi": "Chị gái tôi đã sẵn sàng bắt đầu." },
+      { "en": "My sister was slightly worried.", "vi": "Chị gái tôi đã hơi lo." },
+      { "en": "My sister was patient.", "vi": "Chị gái tôi đã kiên nhẫn." },
+      { "en": "My sister was truly impressed.", "vi": "Chị gái tôi đã thực sự ấn tượng." },
+      { "en": "My sister was glad it worked.", "vi": "Chị gái tôi đã vui vì nó hiệu quả." },
+      { "en": "My sister was content.", "vi": "Chị gái tôi đã mãn nguyện." },
+      { "en": "My sister was very happy.", "vi": "Chị gái tôi đã rất vui." },
+      { "en": "My sister was tired but happy.", "vi": "Chị gái tôi đã mệt nhưng vui." },
+      { "en": "My sister was okay.", "vi": "Chị gái tôi đã ổn cả." },
+      { "en": "My sister was done with work.", "vi": "Chị gái tôi đã xong việc." },
+      { "en": "My sister was used to it.", "vi": "Chị gái tôi đã đã quen với nó." },
+      { "en": "My sister was curious.", "vi": "Chị gái tôi đã tò mò." },
+      { "en": "My sister was quick to respond.", "vi": "Chị gái tôi đã phản hồi nhanh." },
+      { "en": "My sister was hopeful again.", "vi": "Chị gái tôi đã lại tràn hy vọng." },
+      { "en": "My sister was perfectly fine.", "vi": "Chị gái tôi đã hoàn toàn ổn." },
+      { "en": "My sister was short on time.", "vi": "Chị gái tôi đã thiếu thời gian." },
+      { "en": "My sister was available after lunch.", "vi": "Chị gái tôi đã rảnh sau bữa trưa." },
+      { "en": "My sister was ready.", "vi": "Chị gái tôi đã sẵn sàng." },
+      { "en": "My sister was thankful for everything.", "vi": "Chị gái tôi đã biết ơn vì tất cả." },
+      { "en": "My sister was proud of the team.", "vi": "Chị gái tôi đã tự hào về đội." },
+      { "en": "My sister was ready for anything.", "vi": "Chị gái tôi đã sẵn sàng cho mọi thứ." },
+      { "en": "My sister was glad to be here.", "vi": "Chị gái tôi đã vui khi được ở đây." },
+      { "en": "My sister was comfortable.", "vi": "Chị gái tôi đã thoải mái." },
+      { "en": "My sister was nervous.", "vi": "Chị gái tôi đã hồi hộp." },
+      { "en": "My sister was glad to help.", "vi": "Chị gái tôi đã vui được giúp đỡ." },
+      { "en": "My sister was delighted.", "vi": "Chị gái tôi đã vui sướng." },
+      { "en": "My sister was out of practice.", "vi": "Chị gái tôi đã lâu rồi không luyện." },
+      { "en": "My sister was creative.", "vi": "Chị gái tôi đã sáng tạo." },
+      { "en": "My sister was focused.", "vi": "Chị gái tôi đã tập trung." },
+      { "en": "My sister was disappointed.", "vi": "Chị gái tôi đã thất vọng." },
+      { "en": "My sister was happy to help.", "vi": "Chị gái tôi đã sẵn lòng giúp đỡ." },
+      { "en": "My sister was cheerful.", "vi": "Chị gái tôi đã vui vẻ." },
+      { "en": "My sister was out for lunch.", "vi": "Chị gái tôi đã ra ngoài ăn trưa." },
+      { "en": "My sister was responsible.", "vi": "Chị gái tôi đã có trách nhiệm." },
+      { "en": "My sister was thankful for today.", "vi": "Chị gái tôi đã biết ơn ngày hôm nay." },
+      { "en": "My sister was confident in the team.", "vi": "Chị gái tôi đã tin tưởng vào nhóm." },
+      { "en": "My sister was proud and grateful.", "vi": "Chị gái tôi đã tự hào và biết ơn." },
+      { "en": "My sister was sick.", "vi": "Chị gái tôi đã ốm." },
+      { "en": "My sister was free this weekend.", "vi": "Chị gái tôi đã rảnh cuối tuần này." },
+      { "en": "My sister was so excited.", "vi": "Chị gái tôi đã rất hào hứng." },
+      { "en": "My sister was in a meeting.", "vi": "Chị gái tôi đã đang họp." },
+      { "en": "My sister was glad you came.", "vi": "Chị gái tôi đã vui vì bạn đã đến." },
+      { "en": "My sister was lonely.", "vi": "Chị gái tôi đã cô đơn." },
+      { "en": "My sister was under pressure.", "vi": "Chị gái tôi đã dưới áp lực." },
+      { "en": "My sister was a bit overwhelmed.", "vi": "Chị gái tôi đã hơi quá tải." },
+      { "en": "My sister was cautious.", "vi": "Chị gái tôi đã thận trọng." },
+      { "en": "My sister was working from home.", "vi": "Chị gái tôi đã làm việc tại nhà." },
+      { "en": "My sister was serious about this.", "vi": "Chị gái tôi đã nghiêm túc về việc này." },
+      { "en": "My sister was organized.", "vi": "Chị gái tôi đã ngăn nắp." },
+      { "en": "My sister was sorry to hear that.", "vi": "Chị gái tôi đã tiếc khi nghe điều đó." },
+      { "en": "My sister was stuck in traffic.", "vi": "Chị gái tôi đã kẹt xe." },
+      { "en": "My sister was ambitious.", "vi": "Chị gái tôi đã tham vọng." },
+      { "en": "My sister was excited for tomorrow.", "vi": "Chị gái tôi đã háo hức cho ngày mai." },
+      { "en": "My sister was low on battery.", "vi": "Chị gái tôi đã sắp hết pin." },
+      { "en": "My sister was grateful.", "vi": "Chị gái tôi đã biết ơn." },
+      { "en": "My sister was busy but okay.", "vi": "Chị gái tôi đã bận nhưng ổn." },
+      { "en": "My sister was considerate.", "vi": "Chị gái tôi đã biết quan tâm." },
+      { "en": "My sister was short of money.", "vi": "Chị gái tôi đã thiếu tiền." },
+      { "en": "My sister was proud of everyone.", "vi": "Chị gái tôi đã tự hào về mọi người." },
+      { "en": "My sister was hardworking.", "vi": "Chị gái tôi đã chăm chỉ." },
+      { "en": "My sister was sad to leave.", "vi": "Chị gái tôi đã buồn khi phải đi." },
+      { "en": "My sister was generous.", "vi": "Chị gái tôi đã rộng lượng." }
+    ]
+  },
+  {
+    "starter": "My sister has",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "My sister has a startup plan.", "vi": "Chị gái tôi có một kế hoạch khởi nghiệp." },
+      { "en": "My sister has a favorite book.", "vi": "Chị gái tôi có một cuốn sách yêu thích." },
+      { "en": "My sister has a remote job.", "vi": "Chị gái tôi có một công việc từ xa." },
+      { "en": "My sister has a car.", "vi": "Chị gái tôi có một chiếc xe hơi." },
+      { "en": "My sister has a to-do list.", "vi": "Chị gái tôi có một danh sách việc cần làm." },
+      { "en": "My sister has an important call.", "vi": "Chị gái tôi có một cuộc gọi quan trọng." },
+      { "en": "My sister has a discount.", "vi": "Chị gái tôi có một ưu đãi giảm giá." },
+      { "en": "My sister has a better option.", "vi": "Chị gái tôi có một lựa chọn tốt hơn." },
+      { "en": "My sister has a helpful tip.", "vi": "Chị gái tôi có một mẹo hữu ích." },
+      {
+        "en": "My sister has a promotion soon.",
+        "vi": "Chị gái tôi có một đợt thăng chức sắp tới."
+      },
+      { "en": "My sister has a reservation.", "vi": "Chị gái tôi có một chỗ đặt trước." },
+      { "en": "My sister has a positive review.", "vi": "Chị gái tôi có một đánh giá tích cực." },
+      { "en": "My sister has a good point.", "vi": "Chị gái tôi có một ý hay." },
+      { "en": "My sister has a home-cooked meal.", "vi": "Chị gái tôi có một bữa ăn tự nấu." },
+      { "en": "My sister has a concern.", "vi": "Chị gái tôi có một mối lo ngại." },
+      { "en": "My sister has a return ticket.", "vi": "Chị gái tôi có một vé khứ hồi." },
+      { "en": "My sister has a fever.", "vi": "Chị gái tôi có bị sốt." },
+      { "en": "My sister has a morning routine.", "vi": "Chị gái tôi có một thói quen buổi sáng." },
+      { "en": "My sister has a pet dog.", "vi": "Chị gái tôi có một chú chó cưng." },
+      { "en": "My sister has a lot of homework.", "vi": "Chị gái tôi có rất nhiều bài tập." },
+      { "en": "My sister has a backup device.", "vi": "Chị gái tôi có một thiết bị dự phòng." },
+      { "en": "My sister has a flight at noon.", "vi": "Chị gái tôi có một chuyến bay lúc trưa." },
+      {
+        "en": "My sister has a phone call to make.",
+        "vi": "Chị gái tôi có một cuộc gọi cần thực hiện."
+      },
+      { "en": "My sister has a detailed plan.", "vi": "Chị gái tôi có một kế hoạch chi tiết." },
+      { "en": "My sister has a busy inbox.", "vi": "Chị gái tôi có một hộp thư đầy ắp." },
+      { "en": "My sister has a special offer.", "vi": "Chị gái tôi có một ưu đãi đặc biệt." },
+      {
+        "en": "My sister has a deadline tomorrow.",
+        "vi": "Chị gái tôi có một thời hạn vào ngày mai."
+      },
+      { "en": "My sister has a new neighbor.", "vi": "Chị gái tôi có một người hàng xóm mới." },
+      {
+        "en": "My sister has a big decision to make.",
+        "vi": "Chị gái tôi có một quyết định lớn phải đưa ra."
+      },
+      { "en": "My sister has a clear answer.", "vi": "Chị gái tôi có một câu trả lời rõ ràng." },
+      { "en": "My sister has a realistic goal.", "vi": "Chị gái tôi có một mục tiêu thực tế." },
+      { "en": "My sister has an email to send.", "vi": "Chị gái tôi có một email cần gửi." },
+      {
+        "en": "My sister has a strong team spirit.",
+        "vi": "Chị gái tôi có một tinh thần đồng đội mạnh mẽ."
+      },
+      { "en": "My sister has a great mentor.", "vi": "Chị gái tôi có một người cố vấn tuyệt vời." },
+      {
+        "en": "My sister has a feeling about this.",
+        "vi": "Chị gái tôi có một linh cảm về điều này."
+      },
+      { "en": "My sister has a glass of water.", "vi": "Chị gái tôi có một ly nước." },
+      {
+        "en": "My sister has a job interview.",
+        "vi": "Chị gái tôi có một buổi phỏng vấn việc làm."
+      },
+      { "en": "My sister has good news.", "vi": "Chị gái tôi có tin tốt." },
+      { "en": "My sister has a warm welcome.", "vi": "Chị gái tôi có một sự chào đón nồng nhiệt." },
+      { "en": "My sister has a new phone.", "vi": "Chị gái tôi có một chiếc điện thoại mới." },
+      { "en": "My sister has a packed calendar.", "vi": "Chị gái tôi có một lịch kín." },
+      { "en": "My sister has a savings plan.", "vi": "Chị gái tôi có một kế hoạch tiết kiệm." },
+      { "en": "My sister has a busy schedule.", "vi": "Chị gái tôi có một lịch trình bận rộn." },
+      { "en": "My sister has a gym membership.", "vi": "Chị gái tôi có một thẻ tập gym." },
+      { "en": "My sister has a kind gesture.", "vi": "Chị gái tôi có một cử chỉ tử tế." },
+      { "en": "My sister has a meeting.", "vi": "Chị gái tôi có một cuộc họp." },
+      { "en": "My sister has a shopping list.", "vi": "Chị gái tôi có một danh sách mua sắm." },
+      { "en": "My sister has a daily routine.", "vi": "Chị gái tôi có một thói quen hằng ngày." },
+      {
+        "en": "My sister has a good relationship with them.",
+        "vi": "Chị gái tôi có một mối quan hệ tốt với họ."
+      },
+      { "en": "My sister has health insurance.", "vi": "Chị gái tôi có bảo hiểm sức khỏe." },
+      { "en": "My sister has a good habit.", "vi": "Chị gái tôi có một thói quen tốt." },
+      {
+        "en": "My sister has a question about the price.",
+        "vi": "Chị gái tôi có một câu hỏi về giá."
+      },
+      { "en": "My sister has a notebook and pen.", "vi": "Chị gái tôi có một quyển sổ và bút." },
+      { "en": "My sister has a big surprise.", "vi": "Chị gái tôi có một bất ngờ lớn." },
+      {
+        "en": "My sister has a flexible schedule.",
+        "vi": "Chị gái tôi có một lịch trình linh hoạt."
+      },
+      { "en": "My sister has a sore throat.", "vi": "Chị gái tôi có đau họng." },
+      {
+        "en": "My sister has a long way to go.",
+        "vi": "Chị gái tôi có một chặng đường dài phía trước."
+      },
+      { "en": "My sister has a chance to win.", "vi": "Chị gái tôi có một cơ hội để thắng." },
+      { "en": "My sister has a balanced diet.", "vi": "Chị gái tôi có một chế độ ăn cân bằng." },
+      { "en": "My sister has a standing desk.", "vi": "Chị gái tôi có một bàn đứng." },
+      { "en": "My sister has a positive attitude.", "vi": "Chị gái tôi có một thái độ tích cực." },
+      { "en": "My sister has a meaningful goal.", "vi": "Chị gái tôi có một mục tiêu ý nghĩa." },
+      { "en": "My sister has a new project.", "vi": "Chị gái tôi có một dự án mới." },
+      { "en": "My sister has a supportive family.", "vi": "Chị gái tôi có một gia đình ủng hộ." },
+      { "en": "My sister has a small family.", "vi": "Chị gái tôi có một gia đình nhỏ." },
+      {
+        "en": "My sister has a busy week ahead.",
+        "vi": "Chị gái tôi có một tuần bận rộn phía trước."
+      },
+      {
+        "en": "My sister has a personal trainer.",
+        "vi": "Chị gái tôi có một huấn luyện viên riêng."
+      },
+      { "en": "My sister has some experience.", "vi": "Chị gái tôi có một chút kinh nghiệm." },
+      { "en": "My sister has a passport ready.", "vi": "Chị gái tôi có một hộ chiếu sẵn sàng." },
+      { "en": "My sister has a good movie.", "vi": "Chị gái tôi có một bộ phim hay." },
+      {
+        "en": "My sister has a reservation for two.",
+        "vi": "Chị gái tôi có một chỗ đặt cho hai người."
+      },
+      {
+        "en": "My sister has a presentation today.",
+        "vi": "Chị gái tôi có một bài thuyết trình hôm nay."
+      },
+      { "en": "My sister has an account here.", "vi": "Chị gái tôi có một tài khoản ở đây." },
+      {
+        "en": "My sister has a clear schedule today.",
+        "vi": "Chị gái tôi có một lịch trình trống hôm nay."
+      },
+      { "en": "My sister has a new hobby.", "vi": "Chị gái tôi có một sở thích mới." },
+      { "en": "My sister has a tight deadline.", "vi": "Chị gái tôi có một thời hạn gấp." },
+      { "en": "My sister has a strong resume.", "vi": "Chị gái tôi có một bản lý lịch ấn tượng." },
+      { "en": "My sister has a lovely garden.", "vi": "Chị gái tôi có một khu vườn đáng yêu." },
+      {
+        "en": "My sister has a meeting this afternoon.",
+        "vi": "Chị gái tôi có một cuộc họp chiều nay."
+      },
+      {
+        "en": "My sister has a marketing strategy.",
+        "vi": "Chị gái tôi có một chiến lược tiếp thị."
+      },
+      { "en": "My sister has a suggestion.", "vi": "Chị gái tôi có một đề xuất." },
+      { "en": "My sister has a lot to do.", "vi": "Chị gái tôi có nhiều việc phải làm." },
+      {
+        "en": "My sister has a meeting at 3 PM.",
+        "vi": "Chị gái tôi có một cuộc họp lúc 3 giờ chiều."
+      },
+      { "en": "My sister has a spare room.", "vi": "Chị gái tôi có một phòng trống." },
+      {
+        "en": "My sister has a loyal customer.",
+        "vi": "Chị gái tôi có một khách hàng trung thành."
+      },
+      { "en": "My sister has a driver's license.", "vi": "Chị gái tôi có một bằng lái xe." },
+      { "en": "My sister has a minor issue.", "vi": "Chị gái tôi có một vấn đề nhỏ." },
+      {
+        "en": "My sister has a doctor's appointment.",
+        "vi": "Chị gái tôi có một cuộc hẹn với bác sĩ."
+      },
+      { "en": "My sister has a pay raise.", "vi": "Chị gái tôi có một đợt tăng lương." },
+      {
+        "en": "My sister has a big presentation.",
+        "vi": "Chị gái tôi có một bài thuyết trình lớn."
+      },
+      { "en": "My sister has a short break.", "vi": "Chị gái tôi có một khoảng nghỉ ngắn." },
+      { "en": "My sister has a good reason.", "vi": "Chị gái tôi có một lý do chính đáng." },
+      { "en": "My sister has a fresh perspective.", "vi": "Chị gái tôi có một góc nhìn mới mẻ." },
+      { "en": "My sister has a great opportunity.", "vi": "Chị gái tôi có một cơ hội tuyệt vời." },
+      { "en": "My sister has a question for you.", "vi": "Chị gái tôi có một câu hỏi cho bạn." },
+      {
+        "en": "My sister has a part-time job.",
+        "vi": "Chị gái tôi có một công việc bán thời gian."
+      },
+      {
+        "en": "My sister has a meeting tomorrow morning.",
+        "vi": "Chị gái tôi có một cuộc họp sáng mai."
+      },
+      { "en": "My sister has a strong connection.", "vi": "Chị gái tôi có một kết nối bền chặt." },
+      {
+        "en": "My sister has a question about the schedule.",
+        "vi": "Chị gái tôi có một câu hỏi về lịch trình."
+      },
+      {
+        "en": "My sister has a comfortable chair.",
+        "vi": "Chị gái tôi có một chiếc ghế thoải mái."
+      }
+    ]
+  },
+  {
+    "starter": "My sister wants to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "My sister wants to cook dinner.", "vi": "Chị gái tôi muốn nấu bữa tối." },
+      { "en": "My sister wants to change the plan.", "vi": "Chị gái tôi muốn thay đổi kế hoạch." },
+      {
+        "en": "My sister wants to negotiate the terms.",
+        "vi": "Chị gái tôi muốn thương lượng điều khoản."
+      },
+      { "en": "My sister wants to lead the project.", "vi": "Chị gái tôi muốn dẫn dắt dự án." },
+      { "en": "My sister wants to help out.", "vi": "Chị gái tôi muốn giúp đỡ." },
+      { "en": "My sister wants to listen to music.", "vi": "Chị gái tôi muốn nghe nhạc." },
+      { "en": "My sister wants to order food.", "vi": "Chị gái tôi muốn gọi đồ ăn." },
+      {
+        "en": "My sister wants to celebrate together.",
+        "vi": "Chị gái tôi muốn ăn mừng cùng nhau."
+      },
+      { "en": "My sister wants to keep in touch.", "vi": "Chị gái tôi muốn giữ liên lạc." },
+      { "en": "My sister wants to quit smoking.", "vi": "Chị gái tôi muốn bỏ thuốc lá." },
+      { "en": "My sister wants to breathe deeply.", "vi": "Chị gái tôi muốn hít thở sâu." },
+      { "en": "My sister wants to give it a try.", "vi": "Chị gái tôi muốn thử một lần." },
+      {
+        "en": "My sister wants to save for the future.",
+        "vi": "Chị gái tôi muốn tiết kiệm cho tương lai."
+      },
+      { "en": "My sister wants to report the bug.", "vi": "Chị gái tôi muốn báo lỗi." },
+      { "en": "My sister wants to sign the contract.", "vi": "Chị gái tôi muốn ký hợp đồng." },
+      { "en": "My sister wants to take notes.", "vi": "Chị gái tôi muốn ghi chép." },
+      { "en": "My sister wants to miss the flight.", "vi": "Chị gái tôi muốn lỡ chuyến bay." },
+      { "en": "My sister wants to book a hotel.", "vi": "Chị gái tôi muốn đặt khách sạn." },
+      {
+        "en": "My sister wants to reset the password.",
+        "vi": "Chị gái tôi muốn đặt lại mật khẩu."
+      },
+      { "en": "My sister wants to visit my family.", "vi": "Chị gái tôi muốn thăm gia đình." },
+      { "en": "My sister wants to remember the password.", "vi": "Chị gái tôi muốn nhớ mật khẩu." },
+      { "en": "My sister wants to cook breakfast.", "vi": "Chị gái tôi muốn nấu bữa sáng." },
+      { "en": "My sister wants to sign up today.", "vi": "Chị gái tôi muốn đăng ký hôm nay." },
+      {
+        "en": "My sister wants to solve this issue.",
+        "vi": "Chị gái tôi muốn giải quyết vấn đề này."
+      },
+      { "en": "My sister wants to keep a diary.", "vi": "Chị gái tôi muốn viết nhật ký." },
+      { "en": "My sister wants to wake up early.", "vi": "Chị gái tôi muốn dậy sớm." },
+      { "en": "My sister wants to learn to swim.", "vi": "Chị gái tôi muốn học bơi." },
+      { "en": "My sister wants to throw a party.", "vi": "Chị gái tôi muốn tổ chức tiệc." },
+      { "en": "My sister wants to scan the receipt.", "vi": "Chị gái tôi muốn quét hóa đơn." },
+      { "en": "My sister wants to share the post.", "vi": "Chị gái tôi muốn chia sẻ bài viết." },
+      {
+        "en": "My sister wants to confirm the booking.",
+        "vi": "Chị gái tôi muốn xác nhận đặt chỗ."
+      },
+      { "en": "My sister wants to log in again.", "vi": "Chị gái tôi muốn đăng nhập lại." },
+      { "en": "My sister wants to work as a team.", "vi": "Chị gái tôi muốn làm việc theo nhóm." },
+      {
+        "en": "My sister wants to talk to the manager.",
+        "vi": "Chị gái tôi muốn nói chuyện với quản lý."
+      },
+      { "en": "My sister wants to go for a walk.", "vi": "Chị gái tôi muốn đi dạo." },
+      { "en": "My sister wants to invest wisely.", "vi": "Chị gái tôi muốn đầu tư khôn ngoan." },
+      {
+        "en": "My sister wants to check the details.",
+        "vi": "Chị gái tôi muốn kiểm tra chi tiết."
+      },
+      { "en": "My sister wants to understand the lesson.", "vi": "Chị gái tôi muốn hiểu bài học." },
+      { "en": "My sister wants to pack my bags.", "vi": "Chị gái tôi muốn xếp hành lý." },
+      { "en": "My sister wants to check my email.", "vi": "Chị gái tôi muốn kiểm tra email." },
+      {
+        "en": "My sister wants to improve my skills.",
+        "vi": "Chị gái tôi muốn cải thiện kỹ năng."
+      },
+      { "en": "My sister wants to help the team.", "vi": "Chị gái tôi muốn giúp đỡ nhóm." },
+      { "en": "My sister wants to reach the goal.", "vi": "Chị gái tôi muốn đạt mục tiêu." },
+      {
+        "en": "My sister wants to review the document.",
+        "vi": "Chị gái tôi muốn xem lại tài liệu."
+      },
+      {
+        "en": "My sister wants to double-check everything.",
+        "vi": "Chị gái tôi muốn kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "My sister wants to try harder next time.",
+        "vi": "Chị gái tôi muốn cố gắng hơn lần sau."
+      },
+      { "en": "My sister wants to get a degree.", "vi": "Chị gái tôi muốn lấy bằng." },
+      { "en": "My sister wants to take a rest.", "vi": "Chị gái tôi muốn nghỉ ngơi." },
+      { "en": "My sister wants to watch the game.", "vi": "Chị gái tôi muốn xem trận đấu." },
+      {
+        "en": "My sister wants to manage the schedule.",
+        "vi": "Chị gái tôi muốn quản lý lịch trình."
+      },
+      {
+        "en": "My sister wants to practice every day.",
+        "vi": "Chị gái tôi muốn luyện tập mỗi ngày."
+      },
+      { "en": "My sister wants to go on vacation.", "vi": "Chị gái tôi muốn đi nghỉ mát." },
+      { "en": "My sister wants to cut expenses.", "vi": "Chị gái tôi muốn cắt giảm chi tiêu." },
+      {
+        "en": "My sister wants to reply to the message.",
+        "vi": "Chị gái tôi muốn trả lời tin nhắn."
+      },
+      { "en": "My sister wants to speak English.", "vi": "Chị gái tôi muốn nói tiếng Anh." },
+      { "en": "My sister wants to pay off the loan.", "vi": "Chị gái tôi muốn trả hết khoản vay." },
+      { "en": "My sister wants to make a decision.", "vi": "Chị gái tôi muốn đưa ra quyết định." },
+      { "en": "My sister wants to think it over.", "vi": "Chị gái tôi muốn suy nghĩ kỹ." },
+      { "en": "My sister wants to take it easy.", "vi": "Chị gái tôi muốn thư giãn." },
+      { "en": "My sister wants to be on time.", "vi": "Chị gái tôi muốn đến đúng giờ." },
+      { "en": "My sister wants to move forward.", "vi": "Chị gái tôi muốn tiến về phía trước." },
+      {
+        "en": "My sister wants to help a neighbor.",
+        "vi": "Chị gái tôi muốn giúp một người hàng xóm."
+      },
+      { "en": "My sister wants to ask a question.", "vi": "Chị gái tôi muốn hỏi một câu." },
+      { "en": "My sister wants to pay the bill.", "vi": "Chị gái tôi muốn thanh toán hóa đơn." },
+      { "en": "My sister wants to keep learning.", "vi": "Chị gái tôi muốn tiếp tục học hỏi." },
+      { "en": "My sister wants to make new friends.", "vi": "Chị gái tôi muốn kết bạn mới." },
+      { "en": "My sister wants to copy the link.", "vi": "Chị gái tôi muốn sao chép liên kết." },
+      { "en": "My sister wants to start over.", "vi": "Chị gái tôi muốn bắt đầu lại." },
+      { "en": "My sister wants to write it down.", "vi": "Chị gái tôi muốn ghi nó lại." },
+      { "en": "My sister wants to lose weight.", "vi": "Chị gái tôi muốn giảm cân." },
+      { "en": "My sister wants to speak clearly.", "vi": "Chị gái tôi muốn nói rõ ràng." },
+      { "en": "My sister wants to close the window.", "vi": "Chị gái tôi muốn đóng cửa sổ." },
+      { "en": "My sister wants to play sports.", "vi": "Chị gái tôi muốn chơi thể thao." },
+      { "en": "My sister wants to tell the truth.", "vi": "Chị gái tôi muốn nói sự thật." },
+      { "en": "My sister wants to ride a bike.", "vi": "Chị gái tôi muốn đạp xe." },
+      { "en": "My sister wants to delete the file.", "vi": "Chị gái tôi muốn xóa tệp." },
+      { "en": "My sister wants to back up the data.", "vi": "Chị gái tôi muốn sao lưu dữ liệu." },
+      {
+        "en": "My sister wants to volunteer on weekends.",
+        "vi": "Chị gái tôi muốn tình nguyện cuối tuần."
+      },
+      { "en": "My sister wants to cancel the order.", "vi": "Chị gái tôi muốn hủy đơn hàng." },
+      { "en": "My sister wants to cheer for the team.", "vi": "Chị gái tôi muốn cổ vũ cho đội." },
+      {
+        "en": "My sister wants to attend the workshop.",
+        "vi": "Chị gái tôi muốn tham dự buổi hội thảo."
+      },
+      { "en": "My sister wants to visit the doctor.", "vi": "Chị gái tôi muốn đi khám bác sĩ." },
+      {
+        "en": "My sister wants to exercise every day.",
+        "vi": "Chị gái tôi muốn tập thể dục mỗi ngày."
+      },
+      { "en": "My sister wants to attend the class.", "vi": "Chị gái tôi muốn tham gia lớp học." },
+      {
+        "en": "My sister wants to invite some friends.",
+        "vi": "Chị gái tôi muốn mời vài người bạn."
+      },
+      { "en": "My sister wants to meet the deadline.", "vi": "Chị gái tôi muốn kịp thời hạn." },
+      { "en": "My sister wants to buy a new phone.", "vi": "Chị gái tôi muốn mua điện thoại mới." },
+      {
+        "en": "My sister wants to test the feature.",
+        "vi": "Chị gái tôi muốn kiểm thử tính năng."
+      },
+      { "en": "My sister wants to finish on time.", "vi": "Chị gái tôi muốn hoàn thành đúng hạn." },
+      { "en": "My sister wants to print the document.", "vi": "Chị gái tôi muốn in tài liệu." },
+      { "en": "My sister wants to launch the product.", "vi": "Chị gái tôi muốn ra mắt sản phẩm." },
+      {
+        "en": "My sister wants to restart the computer.",
+        "vi": "Chị gái tôi muốn khởi động lại máy tính."
+      },
+      { "en": "My sister wants to study abroad.", "vi": "Chị gái tôi muốn du học." },
+      {
+        "en": "My sister wants to fill out the form.",
+        "vi": "Chị gái tôi muốn điền vào biểu mẫu."
+      },
+      { "en": "My sister wants to rate the service.", "vi": "Chị gái tôi muốn đánh giá dịch vụ." },
+      { "en": "My sister wants to win the contract.", "vi": "Chị gái tôi muốn giành hợp đồng." },
+      {
+        "en": "My sister wants to travel abroad.",
+        "vi": "Chị gái tôi muốn đi du lịch nước ngoài."
+      },
+      { "en": "My sister wants to think positive.", "vi": "Chị gái tôi muốn suy nghĩ tích cực." },
+      {
+        "en": "My sister wants to grow the business.",
+        "vi": "Chị gái tôi muốn phát triển kinh doanh."
+      },
+      { "en": "My sister wants to get a promotion.", "vi": "Chị gái tôi muốn được thăng chức." }
+    ]
+  },
+  {
+    "starter": "My sister needs to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "My sister needs to explain the situation.",
+        "vi": "Chị gái tôi cần giải thích tình huống."
+      },
+      { "en": "My sister needs to reach the goal.", "vi": "Chị gái tôi cần đạt mục tiêu." },
+      {
+        "en": "My sister needs to drink more water.",
+        "vi": "Chị gái tôi cần uống nhiều nước hơn."
+      },
+      { "en": "My sister needs to ask a question.", "vi": "Chị gái tôi cần hỏi một câu." },
+      { "en": "My sister needs to stay organized.", "vi": "Chị gái tôi cần giữ ngăn nắp." },
+      { "en": "My sister needs to save money.", "vi": "Chị gái tôi cần tiết kiệm tiền." },
+      { "en": "My sister needs to wait a moment.", "vi": "Chị gái tôi cần chờ một chút." },
+      { "en": "My sister needs to lower the cost.", "vi": "Chị gái tôi cần giảm chi phí." },
+      {
+        "en": "My sister needs to plan a trip.",
+        "vi": "Chị gái tôi cần lên kế hoạch một chuyến đi."
+      },
+      { "en": "My sister needs to keep learning.", "vi": "Chị gái tôi cần tiếp tục học hỏi." },
+      { "en": "My sister needs to do the laundry.", "vi": "Chị gái tôi cần giặt đồ." },
+      { "en": "My sister needs to charge the phone.", "vi": "Chị gái tôi cần sạc điện thoại." },
+      { "en": "My sister needs to relax at home.", "vi": "Chị gái tôi cần thư giãn ở nhà." },
+      { "en": "My sister needs to share my opinion.", "vi": "Chị gái tôi cần chia sẻ ý kiến." },
+      { "en": "My sister needs to rate the service.", "vi": "Chị gái tôi cần đánh giá dịch vụ." },
+      { "en": "My sister needs to call back later.", "vi": "Chị gái tôi cần gọi lại sau." },
+      { "en": "My sister needs to listen carefully.", "vi": "Chị gái tôi cần lắng nghe cẩn thận." },
+      {
+        "en": "My sister needs to enjoy the weekend.",
+        "vi": "Chị gái tôi cần tận hưởng cuối tuần."
+      },
+      { "en": "My sister needs to go for a walk.", "vi": "Chị gái tôi cần đi dạo." },
+      { "en": "My sister needs to lock the door.", "vi": "Chị gái tôi cần khóa cửa." },
+      { "en": "My sister needs to get a degree.", "vi": "Chị gái tôi cần lấy bằng." },
+      { "en": "My sister needs to reset the password.", "vi": "Chị gái tôi cần đặt lại mật khẩu." },
+      { "en": "My sister needs to cheer for the team.", "vi": "Chị gái tôi cần cổ vũ cho đội." },
+      { "en": "My sister needs to take a course.", "vi": "Chị gái tôi cần tham gia một khóa học." },
+      { "en": "My sister needs to breathe deeply.", "vi": "Chị gái tôi cần hít thở sâu." },
+      { "en": "My sister needs to hire new staff.", "vi": "Chị gái tôi cần tuyển nhân viên mới." },
+      { "en": "My sister needs to think positive.", "vi": "Chị gái tôi cần suy nghĩ tích cực." },
+      { "en": "My sister needs to say sorry.", "vi": "Chị gái tôi cần nói lời xin lỗi." },
+      {
+        "en": "My sister needs to celebrate together.",
+        "vi": "Chị gái tôi cần ăn mừng cùng nhau."
+      },
+      { "en": "My sister needs to wake up early.", "vi": "Chị gái tôi cần dậy sớm." },
+      {
+        "en": "My sister needs to drink less coffee.",
+        "vi": "Chị gái tôi cần uống ít cà phê hơn."
+      },
+      { "en": "My sister needs to take a break.", "vi": "Chị gái tôi cần nghỉ giải lao." },
+      { "en": "My sister needs to never give up.", "vi": "Chị gái tôi cần không bao giờ bỏ cuộc." },
+      { "en": "My sister needs to listen to music.", "vi": "Chị gái tôi cần nghe nhạc." },
+      { "en": "My sister needs to cook breakfast.", "vi": "Chị gái tôi cần nấu bữa sáng." },
+      {
+        "en": "My sister needs to review the document.",
+        "vi": "Chị gái tôi cần xem lại tài liệu."
+      },
+      { "en": "My sister needs to think it over.", "vi": "Chị gái tôi cần suy nghĩ kỹ." },
+      { "en": "My sister needs to win the contract.", "vi": "Chị gái tôi cần giành hợp đồng." },
+      { "en": "My sister needs to report the bug.", "vi": "Chị gái tôi cần báo lỗi." },
+      { "en": "My sister needs to calm down.", "vi": "Chị gái tôi cần bình tĩnh lại." },
+      { "en": "My sister needs to remember the password.", "vi": "Chị gái tôi cần nhớ mật khẩu." },
+      { "en": "My sister needs to order food.", "vi": "Chị gái tôi cần gọi đồ ăn." },
+      { "en": "My sister needs to take the exam.", "vi": "Chị gái tôi cần làm bài thi." },
+      { "en": "My sister needs to rent a car.", "vi": "Chị gái tôi cần thuê xe." },
+      { "en": "My sister needs to take a rest.", "vi": "Chị gái tôi cần nghỉ ngơi." },
+      { "en": "My sister needs to learn English.", "vi": "Chị gái tôi cần học tiếng Anh." },
+      { "en": "My sister needs to call a friend.", "vi": "Chị gái tôi cần gọi cho một người bạn." },
+      { "en": "My sister needs to improve my skills.", "vi": "Chị gái tôi cần cải thiện kỹ năng." },
+      { "en": "My sister needs to raise the price.", "vi": "Chị gái tôi cần tăng giá." },
+      { "en": "My sister needs to fill out the form.", "vi": "Chị gái tôi cần điền vào biểu mẫu." },
+      {
+        "en": "My sister needs to start a new project.",
+        "vi": "Chị gái tôi cần bắt đầu một dự án mới."
+      },
+      { "en": "My sister needs to delete the file.", "vi": "Chị gái tôi cần xóa tệp." },
+      { "en": "My sister needs to invest wisely.", "vi": "Chị gái tôi cần đầu tư khôn ngoan." },
+      { "en": "My sister needs to cut the budget.", "vi": "Chị gái tôi cần cắt giảm ngân sách." },
+      { "en": "My sister needs to plan ahead.", "vi": "Chị gái tôi cần lên kế hoạch trước." },
+      { "en": "My sister needs to keep in touch.", "vi": "Chị gái tôi cần giữ liên lạc." },
+      { "en": "My sister needs to download the file.", "vi": "Chị gái tôi cần tải tệp xuống." },
+      {
+        "en": "My sister needs to update the software.",
+        "vi": "Chị gái tôi cần cập nhật phần mềm."
+      },
+      { "en": "My sister needs to lose weight.", "vi": "Chị gái tôi cần giảm cân." },
+      { "en": "My sister needs to take a day off.", "vi": "Chị gái tôi cần xin nghỉ một ngày." },
+      { "en": "My sister needs to make a reservation.", "vi": "Chị gái tôi cần đặt chỗ trước." },
+      { "en": "My sister needs to fix the problem.", "vi": "Chị gái tôi cần sửa vấn đề." },
+      { "en": "My sister needs to make new friends.", "vi": "Chị gái tôi cần kết bạn mới." },
+      { "en": "My sister needs to cook dinner.", "vi": "Chị gái tôi cần nấu bữa tối." },
+      { "en": "My sister needs to sign the contract.", "vi": "Chị gái tôi cần ký hợp đồng." },
+      { "en": "My sister needs to study abroad.", "vi": "Chị gái tôi cần du học." },
+      { "en": "My sister needs to ask for a raise.", "vi": "Chị gái tôi cần xin tăng lương." },
+      { "en": "My sister needs to work harder.", "vi": "Chị gái tôi cần làm việc chăm chỉ hơn." },
+      { "en": "My sister needs to train the team.", "vi": "Chị gái tôi cần đào tạo nhóm." },
+      { "en": "My sister needs to sleep early.", "vi": "Chị gái tôi cần ngủ sớm." },
+      { "en": "My sister needs to water the plants.", "vi": "Chị gái tôi cần tưới cây." },
+      {
+        "en": "My sister needs to help a neighbor.",
+        "vi": "Chị gái tôi cần giúp một người hàng xóm."
+      },
+      { "en": "My sister needs to try again.", "vi": "Chị gái tôi cần thử lại." },
+      {
+        "en": "My sister needs to volunteer on weekends.",
+        "vi": "Chị gái tôi cần tình nguyện cuối tuần."
+      },
+      { "en": "My sister needs to pay off the loan.", "vi": "Chị gái tôi cần trả hết khoản vay." },
+      { "en": "My sister needs to change the plan.", "vi": "Chị gái tôi cần thay đổi kế hoạch." },
+      {
+        "en": "My sister needs to cook for everyone.",
+        "vi": "Chị gái tôi cần nấu ăn cho mọi người."
+      },
+      {
+        "en": "My sister needs to donate to charity.",
+        "vi": "Chị gái tôi cần quyên góp từ thiện."
+      },
+      { "en": "My sister needs to understand the lesson.", "vi": "Chị gái tôi cần hiểu bài học." },
+      { "en": "My sister needs to read the news.", "vi": "Chị gái tôi cần đọc tin tức." },
+      { "en": "My sister needs to change careers.", "vi": "Chị gái tôi cần chuyển nghề." },
+      { "en": "My sister needs to open a business.", "vi": "Chị gái tôi cần mở một doanh nghiệp." },
+      { "en": "My sister needs to set a goal.", "vi": "Chị gái tôi cần đặt một mục tiêu." },
+      { "en": "My sister needs to write a report.", "vi": "Chị gái tôi cần viết một báo cáo." },
+      { "en": "My sister needs to take medicine.", "vi": "Chị gái tôi cần uống thuốc." },
+      { "en": "My sister needs to lead the project.", "vi": "Chị gái tôi cần dẫn dắt dự án." },
+      {
+        "en": "My sister needs to apply for the position.",
+        "vi": "Chị gái tôi cần nộp đơn cho vị trí."
+      },
+      { "en": "My sister needs to wash the dishes.", "vi": "Chị gái tôi cần rửa bát." },
+      { "en": "My sister needs to speak English.", "vi": "Chị gái tôi cần nói tiếng Anh." },
+      { "en": "My sister needs to arrive on time.", "vi": "Chị gái tôi cần đến đúng giờ." },
+      { "en": "My sister needs to keep a promise.", "vi": "Chị gái tôi cần giữ lời hứa." },
+      { "en": "My sister needs to ask for help.", "vi": "Chị gái tôi cần nhờ giúp đỡ." },
+      { "en": "My sister needs to log in again.", "vi": "Chị gái tôi cần đăng nhập lại." },
+      { "en": "My sister needs to cancel the order.", "vi": "Chị gái tôi cần hủy đơn hàng." },
+      {
+        "en": "My sister needs to negotiate the terms.",
+        "vi": "Chị gái tôi cần thương lượng điều khoản."
+      },
+      { "en": "My sister needs to take a photo.", "vi": "Chị gái tôi cần chụp một bức ảnh." },
+      { "en": "My sister needs to take it easy.", "vi": "Chị gái tôi cần thư giãn." },
+      { "en": "My sister needs to stay up late.", "vi": "Chị gái tôi cần thức khuya." },
+      {
+        "en": "My sister needs to finish the report.",
+        "vi": "Chị gái tôi cần hoàn thành báo cáo."
+      },
+      { "en": "My sister needs to confirm the booking.", "vi": "Chị gái tôi cần xác nhận đặt chỗ." }
+    ]
+  },
+  {
+    "starter": "My sister would like to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "My sister would like to relax at home.", "vi": "Chị gái tôi muốn thư giãn ở nhà." },
+      {
+        "en": "My sister would like to move forward.",
+        "vi": "Chị gái tôi muốn tiến về phía trước."
+      },
+      {
+        "en": "My sister would like to fill out the form.",
+        "vi": "Chị gái tôi muốn điền vào biểu mẫu."
+      },
+      {
+        "en": "My sister would like to learn something new.",
+        "vi": "Chị gái tôi muốn học điều gì đó mới."
+      },
+      {
+        "en": "My sister would like to cut expenses.",
+        "vi": "Chị gái tôi muốn cắt giảm chi tiêu."
+      },
+      {
+        "en": "My sister would like to copy the link.",
+        "vi": "Chị gái tôi muốn sao chép liên kết."
+      },
+      {
+        "en": "My sister would like to practice every day.",
+        "vi": "Chị gái tôi muốn luyện tập mỗi ngày."
+      },
+      { "en": "My sister would like to close the window.", "vi": "Chị gái tôi muốn đóng cửa sổ." },
+      {
+        "en": "My sister would like to work harder.",
+        "vi": "Chị gái tôi muốn làm việc chăm chỉ hơn."
+      },
+      { "en": "My sister would like to send the email.", "vi": "Chị gái tôi muốn gửi email." },
+      {
+        "en": "My sister would like to never give up.",
+        "vi": "Chị gái tôi muốn không bao giờ bỏ cuộc."
+      },
+      { "en": "My sister would like to meditate daily.", "vi": "Chị gái tôi muốn thiền mỗi ngày." },
+      { "en": "My sister would like to help the team.", "vi": "Chị gái tôi muốn giúp đỡ nhóm." },
+      {
+        "en": "My sister would like to try harder next time.",
+        "vi": "Chị gái tôi muốn cố gắng hơn lần sau."
+      },
+      { "en": "My sister would like to visit my family.", "vi": "Chị gái tôi muốn thăm gia đình." },
+      { "en": "My sister would like to turn off the light.", "vi": "Chị gái tôi muốn tắt đèn." },
+      { "en": "My sister would like to cook dinner.", "vi": "Chị gái tôi muốn nấu bữa tối." },
+      {
+        "en": "My sister would like to ask for a raise.",
+        "vi": "Chị gái tôi muốn xin tăng lương."
+      },
+      { "en": "My sister would like to pack my bags.", "vi": "Chị gái tôi muốn xếp hành lý." },
+      { "en": "My sister would like to make a plan.", "vi": "Chị gái tôi muốn lập một kế hoạch." },
+      { "en": "My sister would like to leave early.", "vi": "Chị gái tôi muốn về sớm." },
+      { "en": "My sister would like to save money.", "vi": "Chị gái tôi muốn tiết kiệm tiền." },
+      { "en": "My sister would like to book a ticket.", "vi": "Chị gái tôi muốn đặt vé." },
+      { "en": "My sister would like to take the bus.", "vi": "Chị gái tôi muốn đi xe buýt." },
+      { "en": "My sister would like to give it a try.", "vi": "Chị gái tôi muốn thử một lần." },
+      {
+        "en": "My sister would like to answer the phone.",
+        "vi": "Chị gái tôi muốn trả lời điện thoại."
+      },
+      {
+        "en": "My sister would like to open a savings account.",
+        "vi": "Chị gái tôi muốn mở tài khoản tiết kiệm."
+      },
+      { "en": "My sister would like to set an alarm.", "vi": "Chị gái tôi muốn đặt báo thức." },
+      { "en": "My sister would like to fix the problem.", "vi": "Chị gái tôi muốn sửa vấn đề." },
+      { "en": "My sister would like to go for a walk.", "vi": "Chị gái tôi muốn đi dạo." },
+      { "en": "My sister would like to miss the flight.", "vi": "Chị gái tôi muốn lỡ chuyến bay." },
+      {
+        "en": "My sister would like to attend the workshop.",
+        "vi": "Chị gái tôi muốn tham dự buổi hội thảo."
+      },
+      {
+        "en": "My sister would like to rate the service.",
+        "vi": "Chị gái tôi muốn đánh giá dịch vụ."
+      },
+      { "en": "My sister would like to take a break.", "vi": "Chị gái tôi muốn nghỉ giải lao." },
+      {
+        "en": "My sister would like to remember the password.",
+        "vi": "Chị gái tôi muốn nhớ mật khẩu."
+      },
+      {
+        "en": "My sister would like to hire new staff.",
+        "vi": "Chị gái tôi muốn tuyển nhân viên mới."
+      },
+      { "en": "My sister would like to make tea.", "vi": "Chị gái tôi muốn pha trà." },
+      {
+        "en": "My sister would like to buy a new phone.",
+        "vi": "Chị gái tôi muốn mua điện thoại mới."
+      },
+      {
+        "en": "My sister would like to explain the situation.",
+        "vi": "Chị gái tôi muốn giải thích tình huống."
+      },
+      {
+        "en": "My sister would like to follow the rules.",
+        "vi": "Chị gái tôi muốn tuân theo quy tắc."
+      },
+      { "en": "My sister would like to set a goal.", "vi": "Chị gái tôi muốn đặt một mục tiêu." },
+      {
+        "en": "My sister would like to solve this issue.",
+        "vi": "Chị gái tôi muốn giải quyết vấn đề này."
+      },
+      {
+        "en": "My sister would like to back up the data.",
+        "vi": "Chị gái tôi muốn sao lưu dữ liệu."
+      },
+      {
+        "en": "My sister would like to review the document.",
+        "vi": "Chị gái tôi muốn xem lại tài liệu."
+      },
+      { "en": "My sister would like to keep a diary.", "vi": "Chị gái tôi muốn viết nhật ký." },
+      {
+        "en": "My sister would like to finish on time.",
+        "vi": "Chị gái tôi muốn hoàn thành đúng hạn."
+      },
+      { "en": "My sister would like to take it easy.", "vi": "Chị gái tôi muốn thư giãn." },
+      { "en": "My sister would like to breathe deeply.", "vi": "Chị gái tôi muốn hít thở sâu." },
+      { "en": "My sister would like to find a job.", "vi": "Chị gái tôi muốn tìm việc làm." },
+      { "en": "My sister would like to drive to work.", "vi": "Chị gái tôi muốn lái xe đi làm." },
+      { "en": "My sister would like to cancel the order.", "vi": "Chị gái tôi muốn hủy đơn hàng." },
+      {
+        "en": "My sister would like to get some rest.",
+        "vi": "Chị gái tôi muốn nghỉ ngơi một chút."
+      },
+      {
+        "en": "My sister would like to change the plan.",
+        "vi": "Chị gái tôi muốn thay đổi kế hoạch."
+      },
+      {
+        "en": "My sister would like to share my opinion.",
+        "vi": "Chị gái tôi muốn chia sẻ ý kiến."
+      },
+      { "en": "My sister would like to write it down.", "vi": "Chị gái tôi muốn ghi nó lại." },
+      {
+        "en": "My sister would like to update the software.",
+        "vi": "Chị gái tôi muốn cập nhật phần mềm."
+      },
+      {
+        "en": "My sister would like to print the document.",
+        "vi": "Chị gái tôi muốn in tài liệu."
+      },
+      {
+        "en": "My sister would like to finish the report.",
+        "vi": "Chị gái tôi muốn hoàn thành báo cáo."
+      },
+      {
+        "en": "My sister would like to double-check everything.",
+        "vi": "Chị gái tôi muốn kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "My sister would like to enjoy the weekend.",
+        "vi": "Chị gái tôi muốn tận hưởng cuối tuần."
+      },
+      { "en": "My sister would like to lose weight.", "vi": "Chị gái tôi muốn giảm cân." },
+      { "en": "My sister would like to call back later.", "vi": "Chị gái tôi muốn gọi lại sau." },
+      {
+        "en": "My sister would like to manage the schedule.",
+        "vi": "Chị gái tôi muốn quản lý lịch trình."
+      },
+      {
+        "en": "My sister would like to invest wisely.",
+        "vi": "Chị gái tôi muốn đầu tư khôn ngoan."
+      },
+      {
+        "en": "My sister would like to apply for the position.",
+        "vi": "Chị gái tôi muốn nộp đơn cho vị trí."
+      },
+      { "en": "My sister would like to get a degree.", "vi": "Chị gái tôi muốn lấy bằng." },
+      { "en": "My sister would like to water the plants.", "vi": "Chị gái tôi muốn tưới cây." },
+      {
+        "en": "My sister would like to listen carefully.",
+        "vi": "Chị gái tôi muốn lắng nghe cẩn thận."
+      },
+      { "en": "My sister would like to speak clearly.", "vi": "Chị gái tôi muốn nói rõ ràng." },
+      {
+        "en": "My sister would like to download the file.",
+        "vi": "Chị gái tôi muốn tải tệp xuống."
+      },
+      { "en": "My sister would like to listen to music.", "vi": "Chị gái tôi muốn nghe nhạc." },
+      {
+        "en": "My sister would like to attend the class.",
+        "vi": "Chị gái tôi muốn tham gia lớp học."
+      },
+      { "en": "My sister would like to take notes.", "vi": "Chị gái tôi muốn ghi chép." },
+      { "en": "My sister would like to clean the house.", "vi": "Chị gái tôi muốn dọn nhà." },
+      { "en": "My sister would like to learn English.", "vi": "Chị gái tôi muốn học tiếng Anh." },
+      { "en": "My sister would like to pass the exam.", "vi": "Chị gái tôi muốn đậu kỳ thi." },
+      {
+        "en": "My sister would like to pay off the loan.",
+        "vi": "Chị gái tôi muốn trả hết khoản vay."
+      },
+      { "en": "My sister would like to split the bill.", "vi": "Chị gái tôi muốn chia hóa đơn." },
+      { "en": "My sister would like to report the bug.", "vi": "Chị gái tôi muốn báo lỗi." },
+      { "en": "My sister would like to take a rest.", "vi": "Chị gái tôi muốn nghỉ ngơi." },
+      { "en": "My sister would like to lock the door.", "vi": "Chị gái tôi muốn khóa cửa." },
+      { "en": "My sister would like to plan ahead.", "vi": "Chị gái tôi muốn lên kế hoạch trước." },
+      { "en": "My sister would like to make new friends.", "vi": "Chị gái tôi muốn kết bạn mới." },
+      { "en": "My sister would like to do the laundry.", "vi": "Chị gái tôi muốn giặt đồ." },
+      { "en": "My sister would like to lower the cost.", "vi": "Chị gái tôi muốn giảm chi phí." },
+      {
+        "en": "My sister would like to visit the doctor.",
+        "vi": "Chị gái tôi muốn đi khám bác sĩ."
+      },
+      { "en": "My sister would like to study abroad.", "vi": "Chị gái tôi muốn du học." },
+      { "en": "My sister would like to watch a movie.", "vi": "Chị gái tôi muốn xem phim." },
+      {
+        "en": "My sister would like to win the contract.",
+        "vi": "Chị gái tôi muốn giành hợp đồng."
+      },
+      {
+        "en": "My sister would like to leave a comment.",
+        "vi": "Chị gái tôi muốn để lại bình luận."
+      },
+      {
+        "en": "My sister would like to meet new people.",
+        "vi": "Chị gái tôi muốn gặp gỡ người mới."
+      },
+      {
+        "en": "My sister would like to check the details.",
+        "vi": "Chị gái tôi muốn kiểm tra chi tiết."
+      },
+      { "en": "My sister would like to submit the form.", "vi": "Chị gái tôi muốn nộp biểu mẫu." },
+      {
+        "en": "My sister would like to cut the budget.",
+        "vi": "Chị gái tôi muốn cắt giảm ngân sách."
+      },
+      {
+        "en": "My sister would like to launch the product.",
+        "vi": "Chị gái tôi muốn ra mắt sản phẩm."
+      },
+      {
+        "en": "My sister would like to donate to charity.",
+        "vi": "Chị gái tôi muốn quyên góp từ thiện."
+      },
+      {
+        "en": "My sister would like to double-check the numbers.",
+        "vi": "Chị gái tôi muốn kiểm tra lại các con số."
+      },
+      {
+        "en": "My sister would like to pay the bill.",
+        "vi": "Chị gái tôi muốn thanh toán hóa đơn."
+      },
+      { "en": "My sister would like to go home.", "vi": "Chị gái tôi muốn về nhà." },
+      { "en": "My sister would like to speak English.", "vi": "Chị gái tôi muốn nói tiếng Anh." }
+    ]
+  },
+  {
+    "starter": "My sister loves to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "My sister loves to throw a party.", "vi": "Chị gái tôi thích tổ chức tiệc." },
+      { "en": "My sister loves to lose weight.", "vi": "Chị gái tôi thích giảm cân." },
+      { "en": "My sister loves to speak English.", "vi": "Chị gái tôi thích nói tiếng Anh." },
+      {
+        "en": "My sister loves to reply to the message.",
+        "vi": "Chị gái tôi thích trả lời tin nhắn."
+      },
+      {
+        "en": "My sister loves to call a friend.",
+        "vi": "Chị gái tôi thích gọi cho một người bạn."
+      },
+      { "en": "My sister loves to calm down.", "vi": "Chị gái tôi thích bình tĩnh lại." },
+      { "en": "My sister loves to order food.", "vi": "Chị gái tôi thích gọi đồ ăn." },
+      { "en": "My sister loves to quit smoking.", "vi": "Chị gái tôi thích bỏ thuốc lá." },
+      {
+        "en": "My sister loves to invite some friends.",
+        "vi": "Chị gái tôi thích mời vài người bạn."
+      },
+      {
+        "en": "My sister loves to fill out the form.",
+        "vi": "Chị gái tôi thích điền vào biểu mẫu."
+      },
+      { "en": "My sister loves to learn English.", "vi": "Chị gái tôi thích học tiếng Anh." },
+      { "en": "My sister loves to split the bill.", "vi": "Chị gái tôi thích chia hóa đơn." },
+      { "en": "My sister loves to download the file.", "vi": "Chị gái tôi thích tải tệp xuống." },
+      {
+        "en": "My sister loves to update the software.",
+        "vi": "Chị gái tôi thích cập nhật phần mềm."
+      },
+      { "en": "My sister loves to walk the dog.", "vi": "Chị gái tôi thích dắt chó đi dạo." },
+      { "en": "My sister loves to ask more questions.", "vi": "Chị gái tôi thích hỏi nhiều hơn." },
+      {
+        "en": "My sister loves to explain the situation.",
+        "vi": "Chị gái tôi thích giải thích tình huống."
+      },
+      {
+        "en": "My sister loves to listen carefully.",
+        "vi": "Chị gái tôi thích lắng nghe cẩn thận."
+      },
+      { "en": "My sister loves to play sports.", "vi": "Chị gái tôi thích chơi thể thao." },
+      { "en": "My sister loves to set an alarm.", "vi": "Chị gái tôi thích đặt báo thức." },
+      { "en": "My sister loves to pay the bill.", "vi": "Chị gái tôi thích thanh toán hóa đơn." },
+      {
+        "en": "My sister loves to check the details.",
+        "vi": "Chị gái tôi thích kiểm tra chi tiết."
+      },
+      { "en": "My sister loves to start over.", "vi": "Chị gái tôi thích bắt đầu lại." },
+      { "en": "My sister loves to say goodbye.", "vi": "Chị gái tôi thích nói lời tạm biệt." },
+      { "en": "My sister loves to plan ahead.", "vi": "Chị gái tôi thích lên kế hoạch trước." },
+      {
+        "en": "My sister loves to solve this issue.",
+        "vi": "Chị gái tôi thích giải quyết vấn đề này."
+      },
+      {
+        "en": "My sister loves to remember the password.",
+        "vi": "Chị gái tôi thích nhớ mật khẩu."
+      },
+      { "en": "My sister loves to reach the goal.", "vi": "Chị gái tôi thích đạt mục tiêu." },
+      { "en": "My sister loves to thank everyone.", "vi": "Chị gái tôi thích cảm ơn mọi người." },
+      { "en": "My sister loves to join a club.", "vi": "Chị gái tôi thích tham gia câu lạc bộ." },
+      { "en": "My sister loves to relax at home.", "vi": "Chị gái tôi thích thư giãn ở nhà." },
+      { "en": "My sister loves to make a reservation.", "vi": "Chị gái tôi thích đặt chỗ trước." },
+      { "en": "My sister loves to cancel the order.", "vi": "Chị gái tôi thích hủy đơn hàng." },
+      { "en": "My sister loves to take a rest.", "vi": "Chị gái tôi thích nghỉ ngơi." },
+      { "en": "My sister loves to take a photo.", "vi": "Chị gái tôi thích chụp một bức ảnh." },
+      {
+        "en": "My sister loves to cook for everyone.",
+        "vi": "Chị gái tôi thích nấu ăn cho mọi người."
+      },
+      { "en": "My sister loves to get a promotion.", "vi": "Chị gái tôi thích được thăng chức." },
+      { "en": "My sister loves to help the team.", "vi": "Chị gái tôi thích giúp đỡ nhóm." },
+      { "en": "My sister loves to make tea.", "vi": "Chị gái tôi thích pha trà." },
+      { "en": "My sister loves to ask for help.", "vi": "Chị gái tôi thích nhờ giúp đỡ." },
+      { "en": "My sister loves to make a plan.", "vi": "Chị gái tôi thích lập một kế hoạch." },
+      { "en": "My sister loves to say sorry.", "vi": "Chị gái tôi thích nói lời xin lỗi." },
+      { "en": "My sister loves to install the app.", "vi": "Chị gái tôi thích cài đặt ứng dụng." },
+      { "en": "My sister loves to stay home.", "vi": "Chị gái tôi thích ở nhà." },
+      { "en": "My sister loves to rent a car.", "vi": "Chị gái tôi thích thuê xe." },
+      { "en": "My sister loves to get some rest.", "vi": "Chị gái tôi thích nghỉ ngơi một chút." },
+      {
+        "en": "My sister loves to drink less coffee.",
+        "vi": "Chị gái tôi thích uống ít cà phê hơn."
+      },
+      {
+        "en": "My sister loves to practice every day.",
+        "vi": "Chị gái tôi thích luyện tập mỗi ngày."
+      },
+      { "en": "My sister loves to keep in touch.", "vi": "Chị gái tôi thích giữ liên lạc." },
+      { "en": "My sister loves to pack my bags.", "vi": "Chị gái tôi thích xếp hành lý." },
+      { "en": "My sister loves to take medicine.", "vi": "Chị gái tôi thích uống thuốc." },
+      { "en": "My sister loves to make a decision.", "vi": "Chị gái tôi thích đưa ra quyết định." },
+      { "en": "My sister loves to give feedback.", "vi": "Chị gái tôi thích góp ý." },
+      {
+        "en": "My sister loves to buy a new phone.",
+        "vi": "Chị gái tôi thích mua điện thoại mới."
+      },
+      { "en": "My sister loves to copy the link.", "vi": "Chị gái tôi thích sao chép liên kết." },
+      { "en": "My sister loves to take the bus.", "vi": "Chị gái tôi thích đi xe buýt." },
+      {
+        "en": "My sister loves to manage the schedule.",
+        "vi": "Chị gái tôi thích quản lý lịch trình."
+      },
+      { "en": "My sister loves to think it over.", "vi": "Chị gái tôi thích suy nghĩ kỹ." },
+      { "en": "My sister loves to arrive on time.", "vi": "Chị gái tôi thích đến đúng giờ." },
+      {
+        "en": "My sister loves to confirm the booking.",
+        "vi": "Chị gái tôi thích xác nhận đặt chỗ."
+      },
+      { "en": "My sister loves to share my opinion.", "vi": "Chị gái tôi thích chia sẻ ý kiến." },
+      { "en": "My sister loves to win the contract.", "vi": "Chị gái tôi thích giành hợp đồng." },
+      {
+        "en": "My sister loves to learn something new.",
+        "vi": "Chị gái tôi thích học điều gì đó mới."
+      },
+      { "en": "My sister loves to cut expenses.", "vi": "Chị gái tôi thích cắt giảm chi tiêu." },
+      { "en": "My sister loves to wash the dishes.", "vi": "Chị gái tôi thích rửa bát." },
+      { "en": "My sister loves to call back later.", "vi": "Chị gái tôi thích gọi lại sau." },
+      { "en": "My sister loves to set a goal.", "vi": "Chị gái tôi thích đặt một mục tiêu." },
+      {
+        "en": "My sister loves to drink more water.",
+        "vi": "Chị gái tôi thích uống nhiều nước hơn."
+      },
+      { "en": "My sister loves to work harder.", "vi": "Chị gái tôi thích làm việc chăm chỉ hơn." },
+      { "en": "My sister loves to visit the doctor.", "vi": "Chị gái tôi thích đi khám bác sĩ." },
+      {
+        "en": "My sister loves to test the feature.",
+        "vi": "Chị gái tôi thích kiểm thử tính năng."
+      },
+      { "en": "My sister loves to print the document.", "vi": "Chị gái tôi thích in tài liệu." },
+      { "en": "My sister loves to sign the contract.", "vi": "Chị gái tôi thích ký hợp đồng." },
+      { "en": "My sister loves to watch a movie.", "vi": "Chị gái tôi thích xem phim." },
+      {
+        "en": "My sister loves to join the meeting.",
+        "vi": "Chị gái tôi thích tham gia cuộc họp."
+      },
+      {
+        "en": "My sister loves to grow the business.",
+        "vi": "Chị gái tôi thích phát triển kinh doanh."
+      },
+      { "en": "My sister loves to take a chance.", "vi": "Chị gái tôi thích nắm lấy cơ hội." },
+      { "en": "My sister loves to think positive.", "vi": "Chị gái tôi thích suy nghĩ tích cực." },
+      { "en": "My sister loves to turn off the light.", "vi": "Chị gái tôi thích tắt đèn." },
+      { "en": "My sister loves to change careers.", "vi": "Chị gái tôi thích chuyển nghề." },
+      { "en": "My sister loves to book a hotel.", "vi": "Chị gái tôi thích đặt khách sạn." },
+      { "en": "My sister loves to wait a moment.", "vi": "Chị gái tôi thích chờ một chút." },
+      {
+        "en": "My sister loves to try harder next time.",
+        "vi": "Chị gái tôi thích cố gắng hơn lần sau."
+      },
+      {
+        "en": "My sister loves to help a neighbor.",
+        "vi": "Chị gái tôi thích giúp một người hàng xóm."
+      },
+      {
+        "en": "My sister loves to enjoy the weekend.",
+        "vi": "Chị gái tôi thích tận hưởng cuối tuần."
+      },
+      {
+        "en": "My sister loves to prepare the presentation.",
+        "vi": "Chị gái tôi thích chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "My sister loves to reset the password.",
+        "vi": "Chị gái tôi thích đặt lại mật khẩu."
+      },
+      { "en": "My sister loves to report the bug.", "vi": "Chị gái tôi thích báo lỗi." },
+      { "en": "My sister loves to scan the receipt.", "vi": "Chị gái tôi thích quét hóa đơn." },
+      { "en": "My sister loves to sign up today.", "vi": "Chị gái tôi thích đăng ký hôm nay." },
+      { "en": "My sister loves to meet the deadline.", "vi": "Chị gái tôi thích kịp thời hạn." },
+      { "en": "My sister loves to leave early.", "vi": "Chị gái tôi thích về sớm." },
+      { "en": "My sister loves to get a degree.", "vi": "Chị gái tôi thích lấy bằng." },
+      { "en": "My sister loves to submit the form.", "vi": "Chị gái tôi thích nộp biểu mẫu." },
+      { "en": "My sister loves to leave a comment.", "vi": "Chị gái tôi thích để lại bình luận." },
+      { "en": "My sister loves to ask a question.", "vi": "Chị gái tôi thích hỏi một câu." },
+      { "en": "My sister loves to sleep early.", "vi": "Chị gái tôi thích ngủ sớm." },
+      { "en": "My sister loves to raise the price.", "vi": "Chị gái tôi thích tăng giá." },
+      {
+        "en": "My sister loves to improve my skills.",
+        "vi": "Chị gái tôi thích cải thiện kỹ năng."
+      },
+      { "en": "My sister loves to invest wisely.", "vi": "Chị gái tôi thích đầu tư khôn ngoan." }
+    ]
+  },
+  {
+    "starter": "My sister can",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "My sister can watch the game.", "vi": "Chị gái tôi có thể xem trận đấu." },
+      { "en": "My sister can stay home.", "vi": "Chị gái tôi có thể ở nhà." },
+      { "en": "My sister can set an alarm.", "vi": "Chị gái tôi có thể đặt báo thức." },
+      { "en": "My sister can take notes.", "vi": "Chị gái tôi có thể ghi chép." },
+      { "en": "My sister can invest wisely.", "vi": "Chị gái tôi có thể đầu tư khôn ngoan." },
+      {
+        "en": "My sister can explain the situation.",
+        "vi": "Chị gái tôi có thể giải thích tình huống."
+      },
+      {
+        "en": "My sister can double-check the numbers.",
+        "vi": "Chị gái tôi có thể kiểm tra lại các con số."
+      },
+      { "en": "My sister can keep in touch.", "vi": "Chị gái tôi có thể giữ liên lạc." },
+      { "en": "My sister can pack my bags.", "vi": "Chị gái tôi có thể xếp hành lý." },
+      { "en": "My sister can make a plan.", "vi": "Chị gái tôi có thể lập một kế hoạch." },
+      {
+        "en": "My sister can cook for everyone.",
+        "vi": "Chị gái tôi có thể nấu ăn cho mọi người."
+      },
+      { "en": "My sister can rate the service.", "vi": "Chị gái tôi có thể đánh giá dịch vụ." },
+      { "en": "My sister can start over.", "vi": "Chị gái tôi có thể bắt đầu lại." },
+      { "en": "My sister can try again.", "vi": "Chị gái tôi có thể thử lại." },
+      {
+        "en": "My sister can exercise every day.",
+        "vi": "Chị gái tôi có thể tập thể dục mỗi ngày."
+      },
+      { "en": "My sister can print the document.", "vi": "Chị gái tôi có thể in tài liệu." },
+      { "en": "My sister can understand the lesson.", "vi": "Chị gái tôi có thể hiểu bài học." },
+      {
+        "en": "My sister can negotiate the terms.",
+        "vi": "Chị gái tôi có thể thương lượng điều khoản."
+      },
+      { "en": "My sister can change the plan.", "vi": "Chị gái tôi có thể thay đổi kế hoạch." },
+      { "en": "My sister can check the details.", "vi": "Chị gái tôi có thể kiểm tra chi tiết." },
+      { "en": "My sister can raise the price.", "vi": "Chị gái tôi có thể tăng giá." },
+      { "en": "My sister can watch a movie.", "vi": "Chị gái tôi có thể xem phim." },
+      { "en": "My sister can answer the phone.", "vi": "Chị gái tôi có thể trả lời điện thoại." },
+      { "en": "My sister can get a promotion.", "vi": "Chị gái tôi có thể được thăng chức." },
+      { "en": "My sister can meditate daily.", "vi": "Chị gái tôi có thể thiền mỗi ngày." },
+      { "en": "My sister can take a photo.", "vi": "Chị gái tôi có thể chụp một bức ảnh." },
+      { "en": "My sister can stay up late.", "vi": "Chị gái tôi có thể thức khuya." },
+      { "en": "My sister can take the bus.", "vi": "Chị gái tôi có thể đi xe buýt." },
+      { "en": "My sister can schedule a meeting.", "vi": "Chị gái tôi có thể sắp xếp cuộc họp." },
+      { "en": "My sister can meet new people.", "vi": "Chị gái tôi có thể gặp gỡ người mới." },
+      { "en": "My sister can keep a promise.", "vi": "Chị gái tôi có thể giữ lời hứa." },
+      { "en": "My sister can ask for a raise.", "vi": "Chị gái tôi có thể xin tăng lương." },
+      { "en": "My sister can say sorry.", "vi": "Chị gái tôi có thể nói lời xin lỗi." },
+      { "en": "My sister can go on vacation.", "vi": "Chị gái tôi có thể đi nghỉ mát." },
+      { "en": "My sister can make new friends.", "vi": "Chị gái tôi có thể kết bạn mới." },
+      {
+        "en": "My sister can talk to the manager.",
+        "vi": "Chị gái tôi có thể nói chuyện với quản lý."
+      },
+      { "en": "My sister can launch the product.", "vi": "Chị gái tôi có thể ra mắt sản phẩm." },
+      { "en": "My sister can join the meeting.", "vi": "Chị gái tôi có thể tham gia cuộc họp." },
+      {
+        "en": "My sister can manage the schedule.",
+        "vi": "Chị gái tôi có thể quản lý lịch trình."
+      },
+      { "en": "My sister can visit my family.", "vi": "Chị gái tôi có thể thăm gia đình." },
+      { "en": "My sister can wake up early.", "vi": "Chị gái tôi có thể dậy sớm." },
+      { "en": "My sister can install the app.", "vi": "Chị gái tôi có thể cài đặt ứng dụng." },
+      { "en": "My sister can take the exam.", "vi": "Chị gái tôi có thể làm bài thi." },
+      { "en": "My sister can donate to charity.", "vi": "Chị gái tôi có thể quyên góp từ thiện." },
+      { "en": "My sister can copy the link.", "vi": "Chị gái tôi có thể sao chép liên kết." },
+      {
+        "en": "My sister can volunteer on weekends.",
+        "vi": "Chị gái tôi có thể tình nguyện cuối tuần."
+      },
+      { "en": "My sister can work harder.", "vi": "Chị gái tôi có thể làm việc chăm chỉ hơn." },
+      { "en": "My sister can ask a question.", "vi": "Chị gái tôi có thể hỏi một câu." },
+      { "en": "My sister can offer support.", "vi": "Chị gái tôi có thể đề nghị hỗ trợ." },
+      { "en": "My sister can update the software.", "vi": "Chị gái tôi có thể cập nhật phần mềm." },
+      {
+        "en": "My sister can plan a trip.",
+        "vi": "Chị gái tôi có thể lên kế hoạch một chuyến đi."
+      },
+      { "en": "My sister can do the laundry.", "vi": "Chị gái tôi có thể giặt đồ." },
+      { "en": "My sister can finish on time.", "vi": "Chị gái tôi có thể hoàn thành đúng hạn." },
+      { "en": "My sister can get a degree.", "vi": "Chị gái tôi có thể lấy bằng." },
+      { "en": "My sister can cut the budget.", "vi": "Chị gái tôi có thể cắt giảm ngân sách." },
+      { "en": "My sister can give it a try.", "vi": "Chị gái tôi có thể thử một lần." },
+      { "en": "My sister can drive to work.", "vi": "Chị gái tôi có thể lái xe đi làm." },
+      { "en": "My sister can sign up today.", "vi": "Chị gái tôi có thể đăng ký hôm nay." },
+      { "en": "My sister can lower the cost.", "vi": "Chị gái tôi có thể giảm chi phí." },
+      { "en": "My sister can arrive on time.", "vi": "Chị gái tôi có thể đến đúng giờ." },
+      { "en": "My sister can read more books.", "vi": "Chị gái tôi có thể đọc thêm sách." },
+      { "en": "My sister can celebrate together.", "vi": "Chị gái tôi có thể ăn mừng cùng nhau." },
+      { "en": "My sister can book a hotel.", "vi": "Chị gái tôi có thể đặt khách sạn." },
+      { "en": "My sister can listen to music.", "vi": "Chị gái tôi có thể nghe nhạc." },
+      { "en": "My sister can support each other.", "vi": "Chị gái tôi có thể hỗ trợ lẫn nhau." },
+      { "en": "My sister can charge the phone.", "vi": "Chị gái tôi có thể sạc điện thoại." },
+      { "en": "My sister can take a rest.", "vi": "Chị gái tôi có thể nghỉ ngơi." },
+      { "en": "My sister can pay the bill.", "vi": "Chị gái tôi có thể thanh toán hóa đơn." },
+      { "en": "My sister can take medicine.", "vi": "Chị gái tôi có thể uống thuốc." },
+      { "en": "My sister can order food.", "vi": "Chị gái tôi có thể gọi đồ ăn." },
+      { "en": "My sister can relax at home.", "vi": "Chị gái tôi có thể thư giãn ở nhà." },
+      { "en": "My sister can breathe deeply.", "vi": "Chị gái tôi có thể hít thở sâu." },
+      { "en": "My sister can find a job.", "vi": "Chị gái tôi có thể tìm việc làm." },
+      { "en": "My sister can leave a comment.", "vi": "Chị gái tôi có thể để lại bình luận." },
+      { "en": "My sister can win the contract.", "vi": "Chị gái tôi có thể giành hợp đồng." },
+      {
+        "en": "My sister can apply for the position.",
+        "vi": "Chị gái tôi có thể nộp đơn cho vị trí."
+      },
+      { "en": "My sister can water the plants.", "vi": "Chị gái tôi có thể tưới cây." },
+      { "en": "My sister can attend the class.", "vi": "Chị gái tôi có thể tham gia lớp học." },
+      {
+        "en": "My sister can register for the course.",
+        "vi": "Chị gái tôi có thể đăng ký khóa học."
+      },
+      {
+        "en": "My sister can help a neighbor.",
+        "vi": "Chị gái tôi có thể giúp một người hàng xóm."
+      },
+      { "en": "My sister can enjoy the weekend.", "vi": "Chị gái tôi có thể tận hưởng cuối tuần." },
+      { "en": "My sister can invite some friends.", "vi": "Chị gái tôi có thể mời vài người bạn." },
+      { "en": "My sister can stay organized.", "vi": "Chị gái tôi có thể giữ ngăn nắp." },
+      { "en": "My sister can thank everyone.", "vi": "Chị gái tôi có thể cảm ơn mọi người." },
+      { "en": "My sister can submit the form.", "vi": "Chị gái tôi có thể nộp biểu mẫu." },
+      {
+        "en": "My sister can double-check everything.",
+        "vi": "Chị gái tôi có thể kiểm tra lại mọi thứ."
+      },
+      { "en": "My sister can book a ticket.", "vi": "Chị gái tôi có thể đặt vé." },
+      { "en": "My sister can clean the house.", "vi": "Chị gái tôi có thể dọn nhà." },
+      { "en": "My sister can drink less coffee.", "vi": "Chị gái tôi có thể uống ít cà phê hơn." },
+      { "en": "My sister can fix the problem.", "vi": "Chị gái tôi có thể sửa vấn đề." },
+      {
+        "en": "My sister can restart the computer.",
+        "vi": "Chị gái tôi có thể khởi động lại máy tính."
+      },
+      { "en": "My sister can keep a diary.", "vi": "Chị gái tôi có thể viết nhật ký." },
+      { "en": "My sister can drink more water.", "vi": "Chị gái tôi có thể uống nhiều nước hơn." },
+      { "en": "My sister can work as a team.", "vi": "Chị gái tôi có thể làm việc theo nhóm." },
+      { "en": "My sister can check my email.", "vi": "Chị gái tôi có thể kiểm tra email." },
+      {
+        "en": "My sister can prepare the presentation.",
+        "vi": "Chị gái tôi có thể chuẩn bị bài thuyết trình."
+      },
+      { "en": "My sister can rent a car.", "vi": "Chị gái tôi có thể thuê xe." },
+      { "en": "My sister can share the post.", "vi": "Chị gái tôi có thể chia sẻ bài viết." },
+      { "en": "My sister can lock the door.", "vi": "Chị gái tôi có thể khóa cửa." },
+      { "en": "My sister can catch the train.", "vi": "Chị gái tôi có thể bắt chuyến tàu." }
+    ]
+  }
+]

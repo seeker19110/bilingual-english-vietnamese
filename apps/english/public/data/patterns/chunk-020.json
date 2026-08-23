@@ -1,0 +1,1764 @@
+[
+  {
+    "starter": "The manager is",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The manager is disappointed.", "vi": "Người quản lý thất vọng." },
+      { "en": "The manager is sick.", "vi": "Người quản lý ốm." },
+      { "en": "The manager is tired.", "vi": "Người quản lý mệt." },
+      { "en": "The manager is optimistic.", "vi": "Người quản lý lạc quan." },
+      { "en": "The manager is on the right track.", "vi": "Người quản lý đi đúng hướng." },
+      { "en": "The manager is encouraged.", "vi": "Người quản lý được động viên." },
+      { "en": "The manager is organized.", "vi": "Người quản lý ngăn nắp." },
+      { "en": "The manager is calm and collected.", "vi": "Người quản lý bình tĩnh và điềm đạm." },
+      { "en": "The manager is reliable.", "vi": "Người quản lý đáng tin cậy." },
+      { "en": "The manager is lonely.", "vi": "Người quản lý cô đơn." },
+      { "en": "The manager is available tomorrow.", "vi": "Người quản lý rảnh vào ngày mai." },
+      { "en": "The manager is angry.", "vi": "Người quản lý tức giận." },
+      { "en": "The manager is better than yesterday.", "vi": "Người quản lý tốt hơn hôm qua." },
+      { "en": "The manager is a bit overwhelmed.", "vi": "Người quản lý hơi quá tải." },
+      { "en": "The manager is available after lunch.", "vi": "Người quản lý rảnh sau bữa trưa." },
+      { "en": "The manager is afraid of failing.", "vi": "Người quản lý sợ thất bại." },
+      { "en": "The manager is comfortable.", "vi": "Người quản lý thoải mái." },
+      { "en": "The manager is patient.", "vi": "Người quản lý kiên nhẫn." },
+      { "en": "The manager is so excited.", "vi": "Người quản lý rất hào hứng." },
+      { "en": "The manager is truly impressed.", "vi": "Người quản lý thực sự ấn tượng." },
+      { "en": "The manager is surprised.", "vi": "Người quản lý ngạc nhiên." },
+      { "en": "The manager is completely lost.", "vi": "Người quản lý hoàn toàn lạc lối." },
+      { "en": "The manager is sad to leave.", "vi": "Người quản lý buồn khi phải đi." },
+      { "en": "The manager is slightly worried.", "vi": "Người quản lý hơi lo." },
+      { "en": "The manager is from Vietnam.", "vi": "Người quản lý đến từ Việt Nam." },
+      { "en": "The manager is eager to learn.", "vi": "Người quản lý háo hức học hỏi." },
+      { "en": "The manager is interested.", "vi": "Người quản lý quan tâm." },
+      { "en": "The manager is absolutely sure.", "vi": "Người quản lý chắc chắn tuyệt đối." },
+      { "en": "The manager is wide awake.", "vi": "Người quản lý tỉnh táo hẳn." },
+      { "en": "The manager is out of energy.", "vi": "Người quản lý hết năng lượng." },
+      { "en": "The manager is calm and ready.", "vi": "Người quản lý bình tĩnh và sẵn sàng." },
+      { "en": "The manager is full of ideas.", "vi": "Người quản lý đầy ý tưởng." },
+      { "en": "The manager is thankful.", "vi": "Người quản lý biết ơn." },
+      { "en": "The manager is in a hurry.", "vi": "Người quản lý đang vội." },
+      { "en": "The manager is extremely tired.", "vi": "Người quản lý cực kỳ mệt." },
+      { "en": "The manager is inspired.", "vi": "Người quản lý được truyền cảm hứng." },
+      { "en": "The manager is proud of the result.", "vi": "Người quản lý tự hào về kết quả." },
+      { "en": "The manager is good at English.", "vi": "Người quản lý giỏi tiếng Anh." },
+      {
+        "en": "The manager is hopeful about the future.",
+        "vi": "Người quản lý hy vọng về tương lai."
+      },
+      { "en": "The manager is peaceful.", "vi": "Người quản lý yên bình." },
+      { "en": "The manager is glad it worked.", "vi": "Người quản lý vui vì nó hiệu quả." },
+      { "en": "The manager is busy until noon.", "vi": "Người quản lý bận đến trưa." },
+      { "en": "The manager is proud and grateful.", "vi": "Người quản lý tự hào và biết ơn." },
+      { "en": "The manager is short on time.", "vi": "Người quản lý thiếu thời gian." },
+      { "en": "The manager is out for lunch.", "vi": "Người quản lý ra ngoài ăn trưa." },
+      { "en": "The manager is used to it.", "vi": "Người quản lý đã quen với nó." },
+      { "en": "The manager is almost done.", "vi": "Người quản lý gần xong." },
+      { "en": "The manager is amazed.", "vi": "Người quản lý kinh ngạc." },
+      { "en": "The manager is ready.", "vi": "Người quản lý sẵn sàng." },
+      { "en": "The manager is out of ideas.", "vi": "Người quản lý hết ý tưởng." },
+      { "en": "The manager is proud of the team.", "vi": "Người quản lý tự hào về đội." },
+      { "en": "The manager is on a break.", "vi": "Người quản lý đang nghỉ giải lao." },
+      { "en": "The manager is passionate.", "vi": "Người quản lý đầy đam mê." },
+      { "en": "The manager is satisfied.", "vi": "Người quản lý hài lòng." },
+      { "en": "The manager is thirsty.", "vi": "Người quản lý khát." },
+      { "en": "The manager is happy for you.", "vi": "Người quản lý mừng cho bạn." },
+      { "en": "The manager is energetic.", "vi": "Người quản lý tràn đầy năng lượng." },
+      { "en": "The manager is motivated.", "vi": "Người quản lý có động lực." },
+      { "en": "The manager is back at the office.", "vi": "Người quản lý đã trở lại văn phòng." },
+      {
+        "en": "The manager is hopeful for the best.",
+        "vi": "Người quản lý hy vọng điều tốt nhất."
+      },
+      { "en": "The manager is busy but okay.", "vi": "Người quản lý bận nhưng ổn." },
+      { "en": "The manager is ready to go.", "vi": "Người quản lý sẵn sàng đi." },
+      { "en": "The manager is cheerful.", "vi": "Người quản lý vui vẻ." },
+      { "en": "The manager is stronger than before.", "vi": "Người quản lý mạnh mẽ hơn trước." },
+      { "en": "The manager is hopeful.", "vi": "Người quản lý tràn đầy hy vọng." },
+      { "en": "The manager is refreshed.", "vi": "Người quản lý sảng khoái." },
+      { "en": "The manager is behind schedule.", "vi": "Người quản lý chậm tiến độ." },
+      { "en": "The manager is new to this.", "vi": "Người quản lý mới với việc này." },
+      {
+        "en": "The manager is confident about the result.",
+        "vi": "Người quản lý tự tin về kết quả."
+      },
+      { "en": "The manager is alert.", "vi": "Người quản lý tỉnh táo." },
+      {
+        "en": "The manager is nervous about the interview.",
+        "vi": "Người quản lý hồi hộp về buổi phỏng vấn."
+      },
+      { "en": "The manager is hungry.", "vi": "Người quản lý đói." },
+      { "en": "The manager is glad to be here.", "vi": "Người quản lý vui khi được ở đây." },
+      { "en": "The manager is honest.", "vi": "Người quản lý trung thực." },
+      {
+        "en": "The manager is nervous but excited.",
+        "vi": "Người quản lý hồi hộp nhưng hào hứng."
+      },
+      { "en": "The manager is right on time.", "vi": "Người quản lý đúng giờ." },
+      { "en": "The manager is done with work.", "vi": "Người quản lý xong việc." },
+      { "en": "The manager is tired but happy.", "vi": "Người quản lý mệt nhưng vui." },
+      {
+        "en": "The manager is ready for the challenge.",
+        "vi": "Người quản lý sẵn sàng cho thử thách."
+      },
+      { "en": "The manager is glad you came.", "vi": "Người quản lý vui vì bạn đã đến." },
+      { "en": "The manager is on the phone.", "vi": "Người quản lý đang nghe điện thoại." },
+      {
+        "en": "The manager is proud of the progress.",
+        "vi": "Người quản lý tự hào về sự tiến bộ."
+      },
+      { "en": "The manager is serious about this.", "vi": "Người quản lý nghiêm túc về việc này." },
+      { "en": "The manager is upset.", "vi": "Người quản lý buồn bực." },
+      { "en": "The manager is more than happy.", "vi": "Người quản lý hơn cả vui." },
+      {
+        "en": "The manager is committed to the plan.",
+        "vi": "Người quản lý cam kết với kế hoạch."
+      },
+      { "en": "The manager is quite confident.", "vi": "Người quản lý khá tự tin." },
+      { "en": "The manager is thoughtful.", "vi": "Người quản lý chu đáo." },
+      { "en": "The manager is ready to start.", "vi": "Người quản lý sẵn sàng bắt đầu." },
+      { "en": "The manager is super hungry.", "vi": "Người quản lý đói lắm." },
+      { "en": "The manager is running late.", "vi": "Người quản lý bị trễ." },
+      { "en": "The manager is a bit nervous.", "vi": "Người quản lý hơi hồi hộp." },
+      { "en": "The manager is stuck in traffic.", "vi": "Người quản lý kẹt xe." },
+      { "en": "The manager is confident.", "vi": "Người quản lý tự tin." },
+      {
+        "en": "The manager is happy with the result.",
+        "vi": "Người quản lý hài lòng với kết quả."
+      },
+      { "en": "The manager is proud of everyone.", "vi": "Người quản lý tự hào về mọi người." },
+      { "en": "The manager is done for today.", "vi": "Người quản lý xong việc cho hôm nay." },
+      { "en": "The manager is excited for tomorrow.", "vi": "Người quản lý háo hức cho ngày mai." },
+      { "en": "The manager is responsible.", "vi": "Người quản lý có trách nhiệm." },
+      { "en": "The manager is sure.", "vi": "Người quản lý chắc chắn." }
+    ]
+  },
+  {
+    "starter": "The manager was",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The manager was enthusiastic.", "vi": "Người quản lý đã nhiệt tình." },
+      {
+        "en": "The manager was excited for tomorrow.",
+        "vi": "Người quản lý đã háo hức cho ngày mai."
+      },
+      {
+        "en": "The manager was grateful for your help.",
+        "vi": "Người quản lý đã biết ơn sự giúp đỡ của bạn."
+      },
+      { "en": "The manager was curious.", "vi": "Người quản lý đã tò mò." },
+      { "en": "The manager was behind schedule.", "vi": "Người quản lý đã chậm tiến độ." },
+      { "en": "The manager was perfectly fine.", "vi": "Người quản lý đã hoàn toàn ổn." },
+      { "en": "The manager was ambitious.", "vi": "Người quản lý đã tham vọng." },
+      { "en": "The manager was open to feedback.", "vi": "Người quản lý đã cởi mở với góp ý." },
+      { "en": "The manager was honest.", "vi": "Người quản lý đã trung thực." },
+      { "en": "The manager was right on time.", "vi": "Người quản lý đã đúng giờ." },
+      {
+        "en": "The manager was nervous but excited.",
+        "vi": "Người quản lý đã hồi hộp nhưng hào hứng."
+      },
+      { "en": "The manager was late.", "vi": "Người quản lý đã muộn." },
+      { "en": "The manager was tired but happy.", "vi": "Người quản lý đã mệt nhưng vui." },
+      { "en": "The manager was humble.", "vi": "Người quản lý đã khiêm tốn." },
+      { "en": "The manager was dedicated.", "vi": "Người quản lý đã tận tâm." },
+      { "en": "The manager was a bit nervous.", "vi": "Người quản lý đã hơi hồi hộp." },
+      { "en": "The manager was glad it worked.", "vi": "Người quản lý đã vui vì nó hiệu quả." },
+      {
+        "en": "The manager was proud of the progress.",
+        "vi": "Người quản lý đã tự hào về sự tiến bộ."
+      },
+      { "en": "The manager was lucky.", "vi": "Người quản lý đã may mắn." },
+      { "en": "The manager was serious.", "vi": "Người quản lý đã nghiêm túc." },
+      { "en": "The manager was confident.", "vi": "Người quản lý đã tự tin." },
+      { "en": "The manager was passionate.", "vi": "Người quản lý đã đầy đam mê." },
+      { "en": "The manager was creative.", "vi": "Người quản lý đã sáng tạo." },
+      {
+        "en": "The manager was worried about the exam.",
+        "vi": "Người quản lý đã lo lắng về kỳ thi."
+      },
+      {
+        "en": "The manager was ready for the weekend.",
+        "vi": "Người quản lý đã sẵn sàng cho cuối tuần."
+      },
+      { "en": "The manager was proud and grateful.", "vi": "Người quản lý đã tự hào và biết ơn." },
+      { "en": "The manager was on a break.", "vi": "Người quản lý đã đang nghỉ giải lao." },
+      { "en": "The manager was surprisingly calm.", "vi": "Người quản lý đã bình tĩnh đến lạ." },
+      {
+        "en": "The manager was back at the office.",
+        "vi": "Người quản lý đã đã trở lại văn phòng."
+      },
+      { "en": "The manager was flexible.", "vi": "Người quản lý đã linh hoạt." },
+      { "en": "The manager was glad to help.", "vi": "Người quản lý đã vui được giúp đỡ." },
+      { "en": "The manager was a bit overwhelmed.", "vi": "Người quản lý đã hơi quá tải." },
+      { "en": "The manager was refreshed.", "vi": "Người quản lý đã sảng khoái." },
+      {
+        "en": "The manager was ready for anything.",
+        "vi": "Người quản lý đã sẵn sàng cho mọi thứ."
+      },
+      { "en": "The manager was satisfied.", "vi": "Người quản lý đã hài lòng." },
+      { "en": "The manager was working from home.", "vi": "Người quản lý đã làm việc tại nhà." },
+      { "en": "The manager was a little tired.", "vi": "Người quản lý đã hơi mệt." },
+      { "en": "The manager was happy for you.", "vi": "Người quản lý đã mừng cho bạn." },
+      { "en": "The manager was happy to see you.", "vi": "Người quản lý đã vui khi gặp bạn." },
+      { "en": "The manager was reliable.", "vi": "Người quản lý đã đáng tin cậy." },
+      { "en": "The manager was upset.", "vi": "Người quản lý đã buồn bực." },
+      {
+        "en": "The manager was thankful for everything.",
+        "vi": "Người quản lý đã biết ơn vì tất cả."
+      },
+      { "en": "The manager was amazed.", "vi": "Người quản lý đã kinh ngạc." },
+      { "en": "The manager was absolutely sure.", "vi": "Người quản lý đã chắc chắn tuyệt đối." },
+      { "en": "The manager was from Vietnam.", "vi": "Người quản lý đã đến từ Việt Nam." },
+      {
+        "en": "The manager was interested in the offer.",
+        "vi": "Người quản lý đã quan tâm đến lời đề nghị."
+      },
+      { "en": "The manager was delighted.", "vi": "Người quản lý đã vui sướng." },
+      { "en": "The manager was out of practice.", "vi": "Người quản lý đã lâu rồi không luyện." },
+      { "en": "The manager was friendly.", "vi": "Người quản lý đã thân thiện." },
+      { "en": "The manager was thirsty.", "vi": "Người quản lý đã khát." },
+      { "en": "The manager was lonely.", "vi": "Người quản lý đã cô đơn." },
+      {
+        "en": "The manager was confident in the team.",
+        "vi": "Người quản lý đã tin tưởng vào nhóm."
+      },
+      {
+        "en": "The manager was ready for the challenge.",
+        "vi": "Người quản lý đã sẵn sàng cho thử thách."
+      },
+      { "en": "The manager was willing to help.", "vi": "Người quản lý đã sẵn lòng giúp." },
+      { "en": "The manager was ahead of schedule.", "vi": "Người quản lý đã sớm hơn dự kiến." },
+      { "en": "The manager was short on time.", "vi": "Người quản lý đã thiếu thời gian." },
+      { "en": "The manager was ready to go.", "vi": "Người quản lý đã sẵn sàng đi." },
+      { "en": "The manager was more than happy.", "vi": "Người quản lý đã hơn cả vui." },
+      { "en": "The manager was exhausted.", "vi": "Người quản lý đã kiệt sức." },
+      { "en": "The manager was relaxed.", "vi": "Người quản lý đã thư giãn." },
+      { "en": "The manager was nervous.", "vi": "Người quản lý đã hồi hộp." },
+      { "en": "The manager was busy but okay.", "vi": "Người quản lý đã bận nhưng ổn." },
+      { "en": "The manager was afraid of failing.", "vi": "Người quản lý đã sợ thất bại." },
+      { "en": "The manager was low on battery.", "vi": "Người quản lý đã sắp hết pin." },
+      { "en": "The manager was sick.", "vi": "Người quản lý đã ốm." },
+      { "en": "The manager was peaceful.", "vi": "Người quản lý đã yên bình." },
+      { "en": "The manager was used to it.", "vi": "Người quản lý đã đã quen với nó." },
+      { "en": "The manager was interested.", "vi": "Người quản lý đã quan tâm." },
+      { "en": "The manager was free all day.", "vi": "Người quản lý đã rảnh cả ngày." },
+      { "en": "The manager was almost there.", "vi": "Người quản lý đã sắp đến nơi." },
+      { "en": "The manager was curious about it.", "vi": "Người quản lý đã tò mò về nó." },
+      { "en": "The manager was bored.", "vi": "Người quản lý đã chán." },
+      { "en": "The manager was comfortable.", "vi": "Người quản lý đã thoải mái." },
+      { "en": "The manager was tired.", "vi": "Người quản lý đã mệt." },
+      { "en": "The manager was impressed.", "vi": "Người quản lý đã ấn tượng." },
+      {
+        "en": "The manager was proud of my work.",
+        "vi": "Người quản lý đã tự hào về công việc của mình."
+      },
+      { "en": "The manager was almost done.", "vi": "Người quản lý đã gần xong." },
+      { "en": "The manager was out of energy.", "vi": "Người quản lý đã hết năng lượng." },
+      {
+        "en": "The manager was hopeful about the future.",
+        "vi": "Người quản lý đã hy vọng về tương lai."
+      },
+      { "en": "The manager was confused.", "vi": "Người quản lý đã bối rối." },
+      { "en": "The manager was stressed.", "vi": "Người quản lý đã căng thẳng." },
+      { "en": "The manager was encouraged.", "vi": "Người quản lý đã được động viên." },
+      { "en": "The manager was surprised.", "vi": "Người quản lý đã ngạc nhiên." },
+      { "en": "The manager was glad you came.", "vi": "Người quản lý đã vui vì bạn đã đến." },
+      { "en": "The manager was hard to please.", "vi": "Người quản lý đã khó chiều." },
+      { "en": "The manager was on my way.", "vi": "Người quản lý đã đang trên đường." },
+      { "en": "The manager was determined.", "vi": "Người quản lý đã quyết tâm." },
+      { "en": "The manager was ready.", "vi": "Người quản lý đã sẵn sàng." },
+      {
+        "en": "The manager was available after lunch.",
+        "vi": "Người quản lý đã rảnh sau bữa trưa."
+      },
+      { "en": "The manager was slightly worried.", "vi": "Người quản lý đã hơi lo." },
+      { "en": "The manager was new to this.", "vi": "Người quản lý đã mới với việc này." },
+      { "en": "The manager was responsible.", "vi": "Người quản lý đã có trách nhiệm." },
+      {
+        "en": "The manager was satisfied with the service.",
+        "vi": "Người quản lý đã hài lòng với dịch vụ."
+      },
+      { "en": "The manager was happy to help.", "vi": "Người quản lý đã sẵn lòng giúp đỡ." },
+      { "en": "The manager was under pressure.", "vi": "Người quản lý đã dưới áp lực." },
+      { "en": "The manager was calm and ready.", "vi": "Người quản lý đã bình tĩnh và sẵn sàng." },
+      { "en": "The manager was free right now.", "vi": "Người quản lý đã rảnh ngay bây giờ." },
+      { "en": "The manager was grateful.", "vi": "Người quản lý đã biết ơn." },
+      { "en": "The manager was glad to be here.", "vi": "Người quản lý đã vui khi được ở đây." },
+      { "en": "The manager was hungry.", "vi": "Người quản lý đã đói." }
+    ]
+  },
+  {
+    "starter": "The manager has",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The manager has a lot to learn.", "vi": "Người quản lý có nhiều điều phải học." },
+      {
+        "en": "The manager has a meaningful goal.",
+        "vi": "Người quản lý có một mục tiêu ý nghĩa."
+      },
+      { "en": "The manager has a calendar reminder.", "vi": "Người quản lý có một lời nhắc lịch." },
+      {
+        "en": "The manager has a supportive family.",
+        "vi": "Người quản lý có một gia đình ủng hộ."
+      },
+      {
+        "en": "The manager has a simple explanation.",
+        "vi": "Người quản lý có một lời giải thích đơn giản."
+      },
+      { "en": "The manager has two children.", "vi": "Người quản lý có hai đứa con." },
+      { "en": "The manager has a good movie.", "vi": "Người quản lý có một bộ phim hay." },
+      { "en": "The manager has a new contract.", "vi": "Người quản lý có một hợp đồng mới." },
+      {
+        "en": "The manager has a part-time job.",
+        "vi": "Người quản lý có một công việc bán thời gian."
+      },
+      { "en": "The manager has a problem.", "vi": "Người quản lý có một vấn đề." },
+      {
+        "en": "The manager has a comfortable home.",
+        "vi": "Người quản lý có một ngôi nhà thoải mái."
+      },
+      {
+        "en": "The manager has a meeting at 3 PM.",
+        "vi": "Người quản lý có một cuộc họp lúc 3 giờ chiều."
+      },
+      { "en": "The manager has high expectations.", "vi": "Người quản lý có kỳ vọng cao." },
+      {
+        "en": "The manager has a clear schedule today.",
+        "vi": "Người quản lý có một lịch trình trống hôm nay."
+      },
+      {
+        "en": "The manager has a marketing strategy.",
+        "vi": "Người quản lý có một chiến lược tiếp thị."
+      },
+      { "en": "The manager has a beautiful view.", "vi": "Người quản lý có một khung cảnh đẹp." },
+      { "en": "The manager has a brilliant idea.", "vi": "Người quản lý có một ý tưởng xuất sắc." },
+      {
+        "en": "The manager has a dinner reservation.",
+        "vi": "Người quản lý có một chỗ đặt bữa tối."
+      },
+      {
+        "en": "The manager has a phone call to make.",
+        "vi": "Người quản lý có một cuộc gọi cần thực hiện."
+      },
+      { "en": "The manager has a happy ending.", "vi": "Người quản lý có một cái kết có hậu." },
+      {
+        "en": "The manager has a to-do list.",
+        "vi": "Người quản lý có một danh sách việc cần làm."
+      },
+      {
+        "en": "The manager has a strong resume.",
+        "vi": "Người quản lý có một bản lý lịch ấn tượng."
+      },
+      { "en": "The manager has a kind gesture.", "vi": "Người quản lý có một cử chỉ tử tế." },
+      {
+        "en": "The manager has a wonderful weekend.",
+        "vi": "Người quản lý có một cuối tuần tuyệt vời."
+      },
+      { "en": "The manager has a short break.", "vi": "Người quản lý có một khoảng nghỉ ngắn." },
+      { "en": "The manager has a workout plan.", "vi": "Người quản lý có một kế hoạch tập luyện." },
+      {
+        "en": "The manager has a bright future.",
+        "vi": "Người quản lý có một tương lai tươi sáng."
+      },
+      { "en": "The manager has an idea.", "vi": "Người quản lý có một ý tưởng." },
+      { "en": "The manager has health insurance.", "vi": "Người quản lý có bảo hiểm sức khỏe." },
+      { "en": "The manager has a lot of work.", "vi": "Người quản lý có rất nhiều việc." },
+      {
+        "en": "The manager has a loyal customer.",
+        "vi": "Người quản lý có một khách hàng trung thành."
+      },
+      { "en": "The manager has a helpful tip.", "vi": "Người quản lý có một mẹo hữu ích." },
+      { "en": "The manager has an email to send.", "vi": "Người quản lý có một email cần gửi." },
+      { "en": "The manager has a strong mindset.", "vi": "Người quản lý có một tư duy mạnh mẽ." },
+      { "en": "The manager has a different view.", "vi": "Người quản lý có một góc nhìn khác." },
+      {
+        "en": "The manager has a lot of responsibility.",
+        "vi": "Người quản lý có nhiều trách nhiệm."
+      },
+      { "en": "The manager has a cup of coffee.", "vi": "Người quản lý có một tách cà phê." },
+      { "en": "The manager has a detailed plan.", "vi": "Người quản lý có một kế hoạch chi tiết." },
+      {
+        "en": "The manager has a notebook and pen.",
+        "vi": "Người quản lý có một quyển sổ và bút."
+      },
+      {
+        "en": "The manager has a big presentation.",
+        "vi": "Người quản lý có một bài thuyết trình lớn."
+      },
+      { "en": "The manager has a packed calendar.", "vi": "Người quản lý có một lịch kín." },
+      {
+        "en": "The manager has a clear answer.",
+        "vi": "Người quản lý có một câu trả lời rõ ràng."
+      },
+      { "en": "The manager has a meeting.", "vi": "Người quản lý có một cuộc họp." },
+      {
+        "en": "The manager has a question for you.",
+        "vi": "Người quản lý có một câu hỏi cho bạn."
+      },
+      { "en": "The manager has a big surprise.", "vi": "Người quản lý có một bất ngờ lớn." },
+      { "en": "The manager has a return ticket.", "vi": "Người quản lý có một vé khứ hồi." },
+      {
+        "en": "The manager has a morning routine.",
+        "vi": "Người quản lý có một thói quen buổi sáng."
+      },
+      { "en": "The manager has a pay raise.", "vi": "Người quản lý có một đợt tăng lương." },
+      {
+        "en": "The manager has a busy schedule.",
+        "vi": "Người quản lý có một lịch trình bận rộn."
+      },
+      {
+        "en": "The manager has a daily routine.",
+        "vi": "Người quản lý có một thói quen hằng ngày."
+      },
+      { "en": "The manager has a side income.", "vi": "Người quản lý có một nguồn thu phụ." },
+      { "en": "The manager has a clear deadline.", "vi": "Người quản lý có một thời hạn rõ ràng." },
+      { "en": "The manager has a lot to do.", "vi": "Người quản lý có nhiều việc phải làm." },
+      {
+        "en": "The manager has a job interview.",
+        "vi": "Người quản lý có một buổi phỏng vấn việc làm."
+      },
+      { "en": "The manager has enough time.", "vi": "Người quản lý có đủ thời gian." },
+      {
+        "en": "The manager has a final decision.",
+        "vi": "Người quản lý có một quyết định cuối cùng."
+      },
+      {
+        "en": "The manager has a lot of experience.",
+        "vi": "Người quản lý có rất nhiều kinh nghiệm."
+      },
+      {
+        "en": "The manager has a supportive friend.",
+        "vi": "Người quản lý có một người bạn biết động viên."
+      },
+      { "en": "The manager has a headache.", "vi": "Người quản lý có một cơn đau đầu." },
+      {
+        "en": "The manager has a strong team spirit.",
+        "vi": "Người quản lý có một tinh thần đồng đội mạnh mẽ."
+      },
+      { "en": "The manager has a favor to ask.", "vi": "Người quản lý có một việc muốn nhờ." },
+      { "en": "The manager has a water bottle.", "vi": "Người quản lý có một bình nước." },
+      { "en": "The manager has a side project.", "vi": "Người quản lý có một dự án phụ." },
+      { "en": "The manager has a fresh start.", "vi": "Người quản lý có một khởi đầu mới." },
+      { "en": "The manager has a reservation.", "vi": "Người quản lý có một chỗ đặt trước." },
+      {
+        "en": "The manager has a table by the window.",
+        "vi": "Người quản lý có một bàn cạnh cửa sổ."
+      },
+      {
+        "en": "The manager has a long weekend.",
+        "vi": "Người quản lý có một kỳ nghỉ cuối tuần dài."
+      },
+      { "en": "The manager has a backup plan.", "vi": "Người quản lý có một kế hoạch dự phòng." },
+      {
+        "en": "The manager has a reliable laptop.",
+        "vi": "Người quản lý có một chiếc laptop đáng tin cậy."
+      },
+      {
+        "en": "The manager has a flexible schedule.",
+        "vi": "Người quản lý có một lịch trình linh hoạt."
+      },
+      {
+        "en": "The manager has a busy week ahead.",
+        "vi": "Người quản lý có một tuần bận rộn phía trước."
+      },
+      {
+        "en": "The manager has a question about the schedule.",
+        "vi": "Người quản lý có một câu hỏi về lịch trình."
+      },
+      { "en": "The manager has a good habit.", "vi": "Người quản lý có một thói quen tốt." },
+      {
+        "en": "The manager has a fresh perspective.",
+        "vi": "Người quản lý có một góc nhìn mới mẻ."
+      },
+      {
+        "en": "The manager has a strong connection.",
+        "vi": "Người quản lý có một kết nối bền chặt."
+      },
+      {
+        "en": "The manager has a playlist for work.",
+        "vi": "Người quản lý có một danh sách nhạc để làm việc."
+      },
+      { "en": "The manager has a small family.", "vi": "Người quản lý có một gia đình nhỏ." },
+      { "en": "The manager has a concern.", "vi": "Người quản lý có một mối lo ngại." },
+      {
+        "en": "The manager has a pending task.",
+        "vi": "Người quản lý có một nhiệm vụ còn dang dở."
+      },
+      { "en": "The manager has a busy morning.", "vi": "Người quản lý có một buổi sáng bận rộn." },
+      { "en": "The manager has a request.", "vi": "Người quản lý có một yêu cầu." },
+      { "en": "The manager has a home-cooked meal.", "vi": "Người quản lý có một bữa ăn tự nấu." },
+      {
+        "en": "The manager has a deadline tomorrow.",
+        "vi": "Người quản lý có một thời hạn vào ngày mai."
+      },
+      { "en": "The manager has an account here.", "vi": "Người quản lý có một tài khoản ở đây." },
+      {
+        "en": "The manager has a doctor's appointment.",
+        "vi": "Người quản lý có một cuộc hẹn với bác sĩ."
+      },
+      { "en": "The manager has a shopping list.", "vi": "Người quản lý có một danh sách mua sắm." },
+      { "en": "The manager has a realistic goal.", "vi": "Người quản lý có một mục tiêu thực tế." },
+      {
+        "en": "The manager has a report to finish.",
+        "vi": "Người quản lý có một báo cáo cần hoàn thành."
+      },
+      { "en": "The manager has bad news.", "vi": "Người quản lý có tin xấu." },
+      { "en": "The manager has a spare room.", "vi": "Người quản lý có một phòng trống." },
+      { "en": "The manager has a chance to win.", "vi": "Người quản lý có một cơ hội để thắng." },
+      {
+        "en": "The manager has a big decision to make.",
+        "vi": "Người quản lý có một quyết định lớn phải đưa ra."
+      },
+      {
+        "en": "The manager has a great mentor.",
+        "vi": "Người quản lý có một người cố vấn tuyệt vời."
+      },
+      { "en": "The manager has a gym membership.", "vi": "Người quản lý có một thẻ tập gym." },
+      { "en": "The manager has a discount.", "vi": "Người quản lý có một ưu đãi giảm giá." },
+      {
+        "en": "The manager has a fast internet connection.",
+        "vi": "Người quản lý có một kết nối internet nhanh."
+      },
+      {
+        "en": "The manager has a startup plan.",
+        "vi": "Người quản lý có một kế hoạch khởi nghiệp."
+      },
+      {
+        "en": "The manager has a hotel booking.",
+        "vi": "Người quản lý có một đặt phòng khách sạn."
+      },
+      { "en": "The manager has a rainy afternoon.", "vi": "Người quản lý có một buổi chiều mưa." },
+      { "en": "The manager has a lovely garden.", "vi": "Người quản lý có một khu vườn đáng yêu." }
+    ]
+  },
+  {
+    "starter": "The manager wants to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The manager wants to plan a trip.",
+        "vi": "Người quản lý muốn lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "The manager wants to move forward.",
+        "vi": "Người quản lý muốn tiến về phía trước."
+      },
+      {
+        "en": "The manager wants to check the details.",
+        "vi": "Người quản lý muốn kiểm tra chi tiết."
+      },
+      { "en": "The manager wants to keep a promise.", "vi": "Người quản lý muốn giữ lời hứa." },
+      { "en": "The manager wants to listen to music.", "vi": "Người quản lý muốn nghe nhạc." },
+      { "en": "The manager wants to report the bug.", "vi": "Người quản lý muốn báo lỗi." },
+      {
+        "en": "The manager wants to take a day off.",
+        "vi": "Người quản lý muốn xin nghỉ một ngày."
+      },
+      { "en": "The manager wants to eat healthy.", "vi": "Người quản lý muốn ăn uống lành mạnh." },
+      {
+        "en": "The manager wants to buy a new phone.",
+        "vi": "Người quản lý muốn mua điện thoại mới."
+      },
+      {
+        "en": "The manager wants to exercise every day.",
+        "vi": "Người quản lý muốn tập thể dục mỗi ngày."
+      },
+      { "en": "The manager wants to cook breakfast.", "vi": "Người quản lý muốn nấu bữa sáng." },
+      {
+        "en": "The manager wants to explain the situation.",
+        "vi": "Người quản lý muốn giải thích tình huống."
+      },
+      {
+        "en": "The manager wants to start a new project.",
+        "vi": "Người quản lý muốn bắt đầu một dự án mới."
+      },
+      {
+        "en": "The manager wants to share the post.",
+        "vi": "Người quản lý muốn chia sẻ bài viết."
+      },
+      {
+        "en": "The manager wants to drink less coffee.",
+        "vi": "Người quản lý muốn uống ít cà phê hơn."
+      },
+      { "en": "The manager wants to take a break.", "vi": "Người quản lý muốn nghỉ giải lao." },
+      { "en": "The manager wants to go on vacation.", "vi": "Người quản lý muốn đi nghỉ mát." },
+      { "en": "The manager wants to help the team.", "vi": "Người quản lý muốn giúp đỡ nhóm." },
+      { "en": "The manager wants to keep a diary.", "vi": "Người quản lý muốn viết nhật ký." },
+      {
+        "en": "The manager wants to get a promotion.",
+        "vi": "Người quản lý muốn được thăng chức."
+      },
+      {
+        "en": "The manager wants to schedule a meeting.",
+        "vi": "Người quản lý muốn sắp xếp cuộc họp."
+      },
+      { "en": "The manager wants to wake up early.", "vi": "Người quản lý muốn dậy sớm." },
+      { "en": "The manager wants to cancel the order.", "vi": "Người quản lý muốn hủy đơn hàng." },
+      { "en": "The manager wants to offer support.", "vi": "Người quản lý muốn đề nghị hỗ trợ." },
+      {
+        "en": "The manager wants to write a report.",
+        "vi": "Người quản lý muốn viết một báo cáo."
+      },
+      { "en": "The manager wants to save money.", "vi": "Người quản lý muốn tiết kiệm tiền." },
+      { "en": "The manager wants to write it down.", "vi": "Người quản lý muốn ghi nó lại." },
+      {
+        "en": "The manager wants to travel abroad.",
+        "vi": "Người quản lý muốn đi du lịch nước ngoài."
+      },
+      {
+        "en": "The manager wants to test the feature.",
+        "vi": "Người quản lý muốn kiểm thử tính năng."
+      },
+      {
+        "en": "The manager wants to cheer for the team.",
+        "vi": "Người quản lý muốn cổ vũ cho đội."
+      },
+      {
+        "en": "The manager wants to join the meeting.",
+        "vi": "Người quản lý muốn tham gia cuộc họp."
+      },
+      { "en": "The manager wants to book a hotel.", "vi": "Người quản lý muốn đặt khách sạn." },
+      { "en": "The manager wants to think it over.", "vi": "Người quản lý muốn suy nghĩ kỹ." },
+      {
+        "en": "The manager wants to practice every day.",
+        "vi": "Người quản lý muốn luyện tập mỗi ngày."
+      },
+      { "en": "The manager wants to cook dinner.", "vi": "Người quản lý muốn nấu bữa tối." },
+      {
+        "en": "The manager wants to prepare the presentation.",
+        "vi": "Người quản lý muốn chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The manager wants to save for the future.",
+        "vi": "Người quản lý muốn tiết kiệm cho tương lai."
+      },
+      { "en": "The manager wants to be on time.", "vi": "Người quản lý muốn đến đúng giờ." },
+      {
+        "en": "The manager wants to restart the computer.",
+        "vi": "Người quản lý muốn khởi động lại máy tính."
+      },
+      {
+        "en": "The manager wants to negotiate the terms.",
+        "vi": "Người quản lý muốn thương lượng điều khoản."
+      },
+      { "en": "The manager wants to say sorry.", "vi": "Người quản lý muốn nói lời xin lỗi." },
+      {
+        "en": "The manager wants to ask more questions.",
+        "vi": "Người quản lý muốn hỏi nhiều hơn."
+      },
+      {
+        "en": "The manager wants to cut the budget.",
+        "vi": "Người quản lý muốn cắt giảm ngân sách."
+      },
+      { "en": "The manager wants to try again.", "vi": "Người quản lý muốn thử lại." },
+      { "en": "The manager wants to keep in touch.", "vi": "Người quản lý muốn giữ liên lạc." },
+      { "en": "The manager wants to print the document.", "vi": "Người quản lý muốn in tài liệu." },
+      {
+        "en": "The manager wants to attend the workshop.",
+        "vi": "Người quản lý muốn tham dự buổi hội thảo."
+      },
+      {
+        "en": "The manager wants to talk to the manager.",
+        "vi": "Người quản lý muốn nói chuyện với quản lý."
+      },
+      {
+        "en": "The manager wants to remember the password.",
+        "vi": "Người quản lý muốn nhớ mật khẩu."
+      },
+      {
+        "en": "The manager wants to visit the doctor.",
+        "vi": "Người quản lý muốn đi khám bác sĩ."
+      },
+      { "en": "The manager wants to speak clearly.", "vi": "Người quản lý muốn nói rõ ràng." },
+      {
+        "en": "The manager wants to pay the bill.",
+        "vi": "Người quản lý muốn thanh toán hóa đơn."
+      },
+      { "en": "The manager wants to log in again.", "vi": "Người quản lý muốn đăng nhập lại." },
+      { "en": "The manager wants to book a ticket.", "vi": "Người quản lý muốn đặt vé." },
+      { "en": "The manager wants to keep learning.", "vi": "Người quản lý muốn tiếp tục học hỏi." },
+      { "en": "The manager wants to rent a car.", "vi": "Người quản lý muốn thuê xe." },
+      {
+        "en": "The manager wants to enjoy the weekend.",
+        "vi": "Người quản lý muốn tận hưởng cuối tuần."
+      },
+      {
+        "en": "The manager wants to invest wisely.",
+        "vi": "Người quản lý muốn đầu tư khôn ngoan."
+      },
+      { "en": "The manager wants to take the exam.", "vi": "Người quản lý muốn làm bài thi." },
+      {
+        "en": "The manager wants to copy the link.",
+        "vi": "Người quản lý muốn sao chép liên kết."
+      },
+      {
+        "en": "The manager wants to pay off the loan.",
+        "vi": "Người quản lý muốn trả hết khoản vay."
+      },
+      {
+        "en": "The manager wants to win the contract.",
+        "vi": "Người quản lý muốn giành hợp đồng."
+      },
+      {
+        "en": "The manager wants to celebrate together.",
+        "vi": "Người quản lý muốn ăn mừng cùng nhau."
+      },
+      {
+        "en": "The manager wants to volunteer on weekends.",
+        "vi": "Người quản lý muốn tình nguyện cuối tuần."
+      },
+      { "en": "The manager wants to set a goal.", "vi": "Người quản lý muốn đặt một mục tiêu." },
+      {
+        "en": "The manager wants to register for the course.",
+        "vi": "Người quản lý muốn đăng ký khóa học."
+      },
+      { "en": "The manager wants to meditate daily.", "vi": "Người quản lý muốn thiền mỗi ngày." },
+      {
+        "en": "The manager wants to cook for everyone.",
+        "vi": "Người quản lý muốn nấu ăn cho mọi người."
+      },
+      { "en": "The manager wants to quit smoking.", "vi": "Người quản lý muốn bỏ thuốc lá." },
+      {
+        "en": "The manager wants to finish the report.",
+        "vi": "Người quản lý muốn hoàn thành báo cáo."
+      },
+      { "en": "The manager wants to take a rest.", "vi": "Người quản lý muốn nghỉ ngơi." },
+      {
+        "en": "The manager wants to finish on time.",
+        "vi": "Người quản lý muốn hoàn thành đúng hạn."
+      },
+      {
+        "en": "The manager wants to invite some friends.",
+        "vi": "Người quản lý muốn mời vài người bạn."
+      },
+      { "en": "The manager wants to tell the truth.", "vi": "Người quản lý muốn nói sự thật." },
+      { "en": "The manager wants to study abroad.", "vi": "Người quản lý muốn du học." },
+      { "en": "The manager wants to make tea.", "vi": "Người quản lý muốn pha trà." },
+      {
+        "en": "The manager wants to double-check everything.",
+        "vi": "Người quản lý muốn kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "The manager wants to donate to charity.",
+        "vi": "Người quản lý muốn quyên góp từ thiện."
+      },
+      {
+        "en": "The manager wants to charge the phone.",
+        "vi": "Người quản lý muốn sạc điện thoại."
+      },
+      {
+        "en": "The manager wants to learn something new.",
+        "vi": "Người quản lý muốn học điều gì đó mới."
+      },
+      { "en": "The manager wants to take a chance.", "vi": "Người quản lý muốn nắm lấy cơ hội." },
+      { "en": "The manager wants to play sports.", "vi": "Người quản lý muốn chơi thể thao." },
+      {
+        "en": "The manager wants to make a reservation.",
+        "vi": "Người quản lý muốn đặt chỗ trước."
+      },
+      {
+        "en": "The manager wants to listen carefully.",
+        "vi": "Người quản lý muốn lắng nghe cẩn thận."
+      },
+      {
+        "en": "The manager wants to help a neighbor.",
+        "vi": "Người quản lý muốn giúp một người hàng xóm."
+      },
+      { "en": "The manager wants to catch the train.", "vi": "Người quản lý muốn bắt chuyến tàu." },
+      {
+        "en": "The manager wants to call a friend.",
+        "vi": "Người quản lý muốn gọi cho một người bạn."
+      },
+      { "en": "The manager wants to visit my family.", "vi": "Người quản lý muốn thăm gia đình." },
+      { "en": "The manager wants to water the plants.", "vi": "Người quản lý muốn tưới cây." },
+      { "en": "The manager wants to ask for help.", "vi": "Người quản lý muốn nhờ giúp đỡ." },
+      { "en": "The manager wants to lead the project.", "vi": "Người quản lý muốn dẫn dắt dự án." },
+      { "en": "The manager wants to make new friends.", "vi": "Người quản lý muốn kết bạn mới." },
+      { "en": "The manager wants to take the bus.", "vi": "Người quản lý muốn đi xe buýt." },
+      {
+        "en": "The manager wants to leave a comment.",
+        "vi": "Người quản lý muốn để lại bình luận."
+      },
+      { "en": "The manager wants to split the bill.", "vi": "Người quản lý muốn chia hóa đơn." },
+      { "en": "The manager wants to ask for a raise.", "vi": "Người quản lý muốn xin tăng lương." },
+      { "en": "The manager wants to wash the dishes.", "vi": "Người quản lý muốn rửa bát." },
+      { "en": "The manager wants to sign up today.", "vi": "Người quản lý muốn đăng ký hôm nay." },
+      {
+        "en": "The manager wants to reset the password.",
+        "vi": "Người quản lý muốn đặt lại mật khẩu."
+      },
+      { "en": "The manager wants to watch the game.", "vi": "Người quản lý muốn xem trận đấu." }
+    ]
+  },
+  {
+    "starter": "The manager needs to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The manager needs to hire new staff.",
+        "vi": "Người quản lý cần tuyển nhân viên mới."
+      },
+      { "en": "The manager needs to scan the receipt.", "vi": "Người quản lý cần quét hóa đơn." },
+      { "en": "The manager needs to clean the house.", "vi": "Người quản lý cần dọn nhà." },
+      {
+        "en": "The manager needs to volunteer on weekends.",
+        "vi": "Người quản lý cần tình nguyện cuối tuần."
+      },
+      { "en": "The manager needs to relax at home.", "vi": "Người quản lý cần thư giãn ở nhà." },
+      { "en": "The manager needs to send the email.", "vi": "Người quản lý cần gửi email." },
+      {
+        "en": "The manager needs to install the app.",
+        "vi": "Người quản lý cần cài đặt ứng dụng."
+      },
+      { "en": "The manager needs to speak English.", "vi": "Người quản lý cần nói tiếng Anh." },
+      { "en": "The manager needs to keep a promise.", "vi": "Người quản lý cần giữ lời hứa." },
+      { "en": "The manager needs to read more books.", "vi": "Người quản lý cần đọc thêm sách." },
+      {
+        "en": "The manager needs to work harder.",
+        "vi": "Người quản lý cần làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The manager needs to celebrate together.",
+        "vi": "Người quản lý cần ăn mừng cùng nhau."
+      },
+      { "en": "The manager needs to sign the contract.", "vi": "Người quản lý cần ký hợp đồng." },
+      {
+        "en": "The manager needs to ask more questions.",
+        "vi": "Người quản lý cần hỏi nhiều hơn."
+      },
+      {
+        "en": "The manager needs to launch the product.",
+        "vi": "Người quản lý cần ra mắt sản phẩm."
+      },
+      { "en": "The manager needs to write it down.", "vi": "Người quản lý cần ghi nó lại." },
+      {
+        "en": "The manager needs to apply for the position.",
+        "vi": "Người quản lý cần nộp đơn cho vị trí."
+      },
+      { "en": "The manager needs to water the plants.", "vi": "Người quản lý cần tưới cây." },
+      { "en": "The manager needs to say goodbye.", "vi": "Người quản lý cần nói lời tạm biệt." },
+      {
+        "en": "The manager needs to take a course.",
+        "vi": "Người quản lý cần tham gia một khóa học."
+      },
+      { "en": "The manager needs to check my email.", "vi": "Người quản lý cần kiểm tra email." },
+      { "en": "The manager needs to offer support.", "vi": "Người quản lý cần đề nghị hỗ trợ." },
+      { "en": "The manager needs to share the post.", "vi": "Người quản lý cần chia sẻ bài viết." },
+      { "en": "The manager needs to ask a question.", "vi": "Người quản lý cần hỏi một câu." },
+      { "en": "The manager needs to rent a car.", "vi": "Người quản lý cần thuê xe." },
+      { "en": "The manager needs to move forward.", "vi": "Người quản lý cần tiến về phía trước." },
+      { "en": "The manager needs to win the contract.", "vi": "Người quản lý cần giành hợp đồng." },
+      { "en": "The manager needs to submit the form.", "vi": "Người quản lý cần nộp biểu mẫu." },
+      { "en": "The manager needs to copy the link.", "vi": "Người quản lý cần sao chép liên kết." },
+      { "en": "The manager needs to leave early.", "vi": "Người quản lý cần về sớm." },
+      { "en": "The manager needs to give it a try.", "vi": "Người quản lý cần thử một lần." },
+      { "en": "The manager needs to invest wisely.", "vi": "Người quản lý cần đầu tư khôn ngoan." },
+      {
+        "en": "The manager needs to cheer for the team.",
+        "vi": "Người quản lý cần cổ vũ cho đội."
+      },
+      { "en": "The manager needs to arrive on time.", "vi": "Người quản lý cần đến đúng giờ." },
+      {
+        "en": "The manager needs to finish the report.",
+        "vi": "Người quản lý cần hoàn thành báo cáo."
+      },
+      { "en": "The manager needs to walk the dog.", "vi": "Người quản lý cần dắt chó đi dạo." },
+      {
+        "en": "The manager needs to open a savings account.",
+        "vi": "Người quản lý cần mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "The manager needs to get some rest.",
+        "vi": "Người quản lý cần nghỉ ngơi một chút."
+      },
+      {
+        "en": "The manager needs to think positive.",
+        "vi": "Người quản lý cần suy nghĩ tích cực."
+      },
+      { "en": "The manager needs to call back later.", "vi": "Người quản lý cần gọi lại sau." },
+      { "en": "The manager needs to meditate daily.", "vi": "Người quản lý cần thiền mỗi ngày." },
+      { "en": "The manager needs to take a rest.", "vi": "Người quản lý cần nghỉ ngơi." },
+      { "en": "The manager needs to take the exam.", "vi": "Người quản lý cần làm bài thi." },
+      { "en": "The manager needs to share my opinion.", "vi": "Người quản lý cần chia sẻ ý kiến." },
+      { "en": "The manager needs to keep in touch.", "vi": "Người quản lý cần giữ liên lạc." },
+      { "en": "The manager needs to get a degree.", "vi": "Người quản lý cần lấy bằng." },
+      { "en": "The manager needs to reach the goal.", "vi": "Người quản lý cần đạt mục tiêu." },
+      {
+        "en": "The manager needs to plan a trip.",
+        "vi": "Người quản lý cần lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "The manager needs to try harder next time.",
+        "vi": "Người quản lý cần cố gắng hơn lần sau."
+      },
+      { "en": "The manager needs to print the document.", "vi": "Người quản lý cần in tài liệu." },
+      {
+        "en": "The manager needs to confirm the booking.",
+        "vi": "Người quản lý cần xác nhận đặt chỗ."
+      },
+      {
+        "en": "The manager needs to schedule a meeting.",
+        "vi": "Người quản lý cần sắp xếp cuộc họp."
+      },
+      { "en": "The manager needs to pack my bags.", "vi": "Người quản lý cần xếp hành lý." },
+      {
+        "en": "The manager needs to manage the schedule.",
+        "vi": "Người quản lý cần quản lý lịch trình."
+      },
+      { "en": "The manager needs to cut expenses.", "vi": "Người quản lý cần cắt giảm chi tiêu." },
+      { "en": "The manager needs to set a goal.", "vi": "Người quản lý cần đặt một mục tiêu." },
+      { "en": "The manager needs to join a club.", "vi": "Người quản lý cần tham gia câu lạc bộ." },
+      { "en": "The manager needs to pay the bill.", "vi": "Người quản lý cần thanh toán hóa đơn." },
+      {
+        "en": "The manager needs to remember the password.",
+        "vi": "Người quản lý cần nhớ mật khẩu."
+      },
+      { "en": "The manager needs to change careers.", "vi": "Người quản lý cần chuyển nghề." },
+      { "en": "The manager needs to delete the file.", "vi": "Người quản lý cần xóa tệp." },
+      { "en": "The manager needs to breathe deeply.", "vi": "Người quản lý cần hít thở sâu." },
+      { "en": "The manager needs to ask for a raise.", "vi": "Người quản lý cần xin tăng lương." },
+      {
+        "en": "The manager needs to listen carefully.",
+        "vi": "Người quản lý cần lắng nghe cẩn thận."
+      },
+      { "en": "The manager needs to think it over.", "vi": "Người quản lý cần suy nghĩ kỹ." },
+      { "en": "The manager needs to take a chance.", "vi": "Người quản lý cần nắm lấy cơ hội." },
+      { "en": "The manager needs to book a hotel.", "vi": "Người quản lý cần đặt khách sạn." },
+      { "en": "The manager needs to eat healthy.", "vi": "Người quản lý cần ăn uống lành mạnh." },
+      { "en": "The manager needs to buy groceries.", "vi": "Người quản lý cần mua thực phẩm." },
+      {
+        "en": "The manager needs to travel abroad.",
+        "vi": "Người quản lý cần đi du lịch nước ngoài."
+      },
+      { "en": "The manager needs to give feedback.", "vi": "Người quản lý cần góp ý." },
+      { "en": "The manager needs to lead the project.", "vi": "Người quản lý cần dẫn dắt dự án." },
+      { "en": "The manager needs to take medicine.", "vi": "Người quản lý cần uống thuốc." },
+      { "en": "The manager needs to download the file.", "vi": "Người quản lý cần tải tệp xuống." },
+      { "en": "The manager needs to learn to swim.", "vi": "Người quản lý cần học bơi." },
+      { "en": "The manager needs to visit the doctor.", "vi": "Người quản lý cần đi khám bác sĩ." },
+      { "en": "The manager needs to throw a party.", "vi": "Người quản lý cần tổ chức tiệc." },
+      { "en": "The manager needs to learn English.", "vi": "Người quản lý cần học tiếng Anh." },
+      { "en": "The manager needs to order food.", "vi": "Người quản lý cần gọi đồ ăn." },
+      { "en": "The manager needs to try again.", "vi": "Người quản lý cần thử lại." },
+      {
+        "en": "The manager needs to restart the computer.",
+        "vi": "Người quản lý cần khởi động lại máy tính."
+      },
+      {
+        "en": "The manager needs to cut the budget.",
+        "vi": "Người quản lý cần cắt giảm ngân sách."
+      },
+      {
+        "en": "The manager needs to fill out the form.",
+        "vi": "Người quản lý cần điền vào biểu mẫu."
+      },
+      { "en": "The manager needs to tell the truth.", "vi": "Người quản lý cần nói sự thật." },
+      { "en": "The manager needs to charge the phone.", "vi": "Người quản lý cần sạc điện thoại." },
+      {
+        "en": "The manager needs to call a friend.",
+        "vi": "Người quản lý cần gọi cho một người bạn."
+      },
+      { "en": "The manager needs to read the news.", "vi": "Người quản lý cần đọc tin tức." },
+      {
+        "en": "The manager needs to talk to the manager.",
+        "vi": "Người quản lý cần nói chuyện với quản lý."
+      },
+      {
+        "en": "The manager needs to work as a team.",
+        "vi": "Người quản lý cần làm việc theo nhóm."
+      },
+      {
+        "en": "The manager needs to test the feature.",
+        "vi": "Người quản lý cần kiểm thử tính năng."
+      },
+      { "en": "The manager needs to meet the deadline.", "vi": "Người quản lý cần kịp thời hạn." },
+      { "en": "The manager needs to stay focused.", "vi": "Người quản lý cần giữ tập trung." },
+      { "en": "The manager needs to lower the cost.", "vi": "Người quản lý cần giảm chi phí." },
+      {
+        "en": "The manager needs to negotiate the terms.",
+        "vi": "Người quản lý cần thương lượng điều khoản."
+      },
+      { "en": "The manager needs to take a photo.", "vi": "Người quản lý cần chụp một bức ảnh." },
+      {
+        "en": "The manager needs to leave a comment.",
+        "vi": "Người quản lý cần để lại bình luận."
+      },
+      { "en": "The manager needs to cook dinner.", "vi": "Người quản lý cần nấu bữa tối." },
+      {
+        "en": "The manager needs to review the document.",
+        "vi": "Người quản lý cần xem lại tài liệu."
+      },
+      { "en": "The manager needs to ride a bike.", "vi": "Người quản lý cần đạp xe." },
+      {
+        "en": "The manager needs to make a decision.",
+        "vi": "Người quản lý cần đưa ra quyết định."
+      }
+    ]
+  },
+  {
+    "starter": "The manager would like to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The manager would like to wait a moment.",
+        "vi": "Người quản lý muốn chờ một chút."
+      },
+      {
+        "en": "The manager would like to travel abroad.",
+        "vi": "Người quản lý muốn đi du lịch nước ngoài."
+      },
+      {
+        "en": "The manager would like to hire new staff.",
+        "vi": "Người quản lý muốn tuyển nhân viên mới."
+      },
+      {
+        "en": "The manager would like to learn something new.",
+        "vi": "Người quản lý muốn học điều gì đó mới."
+      },
+      {
+        "en": "The manager would like to ask a question.",
+        "vi": "Người quản lý muốn hỏi một câu."
+      },
+      {
+        "en": "The manager would like to throw a party.",
+        "vi": "Người quản lý muốn tổ chức tiệc."
+      },
+      { "en": "The manager would like to quit smoking.", "vi": "Người quản lý muốn bỏ thuốc lá." },
+      { "en": "The manager would like to sleep early.", "vi": "Người quản lý muốn ngủ sớm." },
+      {
+        "en": "The manager would like to close the deal.",
+        "vi": "Người quản lý muốn chốt thỏa thuận."
+      },
+      {
+        "en": "The manager would like to never give up.",
+        "vi": "Người quản lý muốn không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The manager would like to tell the truth.",
+        "vi": "Người quản lý muốn nói sự thật."
+      },
+      {
+        "en": "The manager would like to join a club.",
+        "vi": "Người quản lý muốn tham gia câu lạc bộ."
+      },
+      {
+        "en": "The manager would like to meet the deadline.",
+        "vi": "Người quản lý muốn kịp thời hạn."
+      },
+      {
+        "en": "The manager would like to copy the link.",
+        "vi": "Người quản lý muốn sao chép liên kết."
+      },
+      { "en": "The manager would like to water the plants.", "vi": "Người quản lý muốn tưới cây." },
+      {
+        "en": "The manager would like to ask more questions.",
+        "vi": "Người quản lý muốn hỏi nhiều hơn."
+      },
+      {
+        "en": "The manager would like to support each other.",
+        "vi": "Người quản lý muốn hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The manager would like to relax at home.",
+        "vi": "Người quản lý muốn thư giãn ở nhà."
+      },
+      {
+        "en": "The manager would like to get some rest.",
+        "vi": "Người quản lý muốn nghỉ ngơi một chút."
+      },
+      {
+        "en": "The manager would like to meet new people.",
+        "vi": "Người quản lý muốn gặp gỡ người mới."
+      },
+      {
+        "en": "The manager would like to register for the course.",
+        "vi": "Người quản lý muốn đăng ký khóa học."
+      },
+      {
+        "en": "The manager would like to schedule a meeting.",
+        "vi": "Người quản lý muốn sắp xếp cuộc họp."
+      },
+      {
+        "en": "The manager would like to split the bill.",
+        "vi": "Người quản lý muốn chia hóa đơn."
+      },
+      { "en": "The manager would like to listen to music.", "vi": "Người quản lý muốn nghe nhạc." },
+      {
+        "en": "The manager would like to volunteer on weekends.",
+        "vi": "Người quản lý muốn tình nguyện cuối tuần."
+      },
+      { "en": "The manager would like to find a job.", "vi": "Người quản lý muốn tìm việc làm." },
+      { "en": "The manager would like to be on time.", "vi": "Người quản lý muốn đến đúng giờ." },
+      { "en": "The manager would like to pack my bags.", "vi": "Người quản lý muốn xếp hành lý." },
+      {
+        "en": "The manager would like to pay the bill.",
+        "vi": "Người quản lý muốn thanh toán hóa đơn."
+      },
+      { "en": "The manager would like to take the exam.", "vi": "Người quản lý muốn làm bài thi." },
+      {
+        "en": "The manager would like to test the feature.",
+        "vi": "Người quản lý muốn kiểm thử tính năng."
+      },
+      { "en": "The manager would like to take medicine.", "vi": "Người quản lý muốn uống thuốc." },
+      {
+        "en": "The manager would like to stay focused.",
+        "vi": "Người quản lý muốn giữ tập trung."
+      },
+      {
+        "en": "The manager would like to review the document.",
+        "vi": "Người quản lý muốn xem lại tài liệu."
+      },
+      {
+        "en": "The manager would like to pay off the loan.",
+        "vi": "Người quản lý muốn trả hết khoản vay."
+      },
+      { "en": "The manager would like to make tea.", "vi": "Người quản lý muốn pha trà." },
+      {
+        "en": "The manager would like to cut the budget.",
+        "vi": "Người quản lý muốn cắt giảm ngân sách."
+      },
+      {
+        "en": "The manager would like to launch the product.",
+        "vi": "Người quản lý muốn ra mắt sản phẩm."
+      },
+      {
+        "en": "The manager would like to share the post.",
+        "vi": "Người quản lý muốn chia sẻ bài viết."
+      },
+      {
+        "en": "The manager would like to reply to the message.",
+        "vi": "Người quản lý muốn trả lời tin nhắn."
+      },
+      {
+        "en": "The manager would like to cut expenses.",
+        "vi": "Người quản lý muốn cắt giảm chi tiêu."
+      },
+      {
+        "en": "The manager would like to solve this issue.",
+        "vi": "Người quản lý muốn giải quyết vấn đề này."
+      },
+      {
+        "en": "The manager would like to enjoy the weekend.",
+        "vi": "Người quản lý muốn tận hưởng cuối tuần."
+      },
+      { "en": "The manager would like to stay up late.", "vi": "Người quản lý muốn thức khuya." },
+      {
+        "en": "The manager would like to take a day off.",
+        "vi": "Người quản lý muốn xin nghỉ một ngày."
+      },
+      {
+        "en": "The manager would like to change careers.",
+        "vi": "Người quản lý muốn chuyển nghề."
+      },
+      {
+        "en": "The manager would like to turn off the light.",
+        "vi": "Người quản lý muốn tắt đèn."
+      },
+      { "en": "The manager would like to pass the exam.", "vi": "Người quản lý muốn đậu kỳ thi." },
+      { "en": "The manager would like to take notes.", "vi": "Người quản lý muốn ghi chép." },
+      { "en": "The manager would like to speak clearly.", "vi": "Người quản lý muốn nói rõ ràng." },
+      { "en": "The manager would like to keep a diary.", "vi": "Người quản lý muốn viết nhật ký." },
+      {
+        "en": "The manager would like to lower the cost.",
+        "vi": "Người quản lý muốn giảm chi phí."
+      },
+      {
+        "en": "The manager would like to keep in touch.",
+        "vi": "Người quản lý muốn giữ liên lạc."
+      },
+      {
+        "en": "The manager would like to take a photo.",
+        "vi": "Người quản lý muốn chụp một bức ảnh."
+      },
+      {
+        "en": "The manager would like to drink more water.",
+        "vi": "Người quản lý muốn uống nhiều nước hơn."
+      },
+      {
+        "en": "The manager would like to eat healthy.",
+        "vi": "Người quản lý muốn ăn uống lành mạnh."
+      },
+      {
+        "en": "The manager would like to visit my family.",
+        "vi": "Người quản lý muốn thăm gia đình."
+      },
+      {
+        "en": "The manager would like to plan a trip.",
+        "vi": "Người quản lý muốn lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "The manager would like to double-check everything.",
+        "vi": "Người quản lý muốn kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "The manager would like to drink less coffee.",
+        "vi": "Người quản lý muốn uống ít cà phê hơn."
+      },
+      {
+        "en": "The manager would like to answer the phone.",
+        "vi": "Người quản lý muốn trả lời điện thoại."
+      },
+      {
+        "en": "The manager would like to walk the dog.",
+        "vi": "Người quản lý muốn dắt chó đi dạo."
+      },
+      {
+        "en": "The manager would like to buy a new phone.",
+        "vi": "Người quản lý muốn mua điện thoại mới."
+      },
+      { "en": "The manager would like to take it easy.", "vi": "Người quản lý muốn thư giãn." },
+      {
+        "en": "The manager would like to log in again.",
+        "vi": "Người quản lý muốn đăng nhập lại."
+      },
+      {
+        "en": "The manager would like to open a savings account.",
+        "vi": "Người quản lý muốn mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "The manager would like to invite some friends.",
+        "vi": "Người quản lý muốn mời vài người bạn."
+      },
+      {
+        "en": "The manager would like to remember the password.",
+        "vi": "Người quản lý muốn nhớ mật khẩu."
+      },
+      {
+        "en": "The manager would like to restart the computer.",
+        "vi": "Người quản lý muốn khởi động lại máy tính."
+      },
+      {
+        "en": "The manager would like to cheer for the team.",
+        "vi": "Người quản lý muốn cổ vũ cho đội."
+      },
+      {
+        "en": "The manager would like to train the team.",
+        "vi": "Người quản lý muốn đào tạo nhóm."
+      },
+      {
+        "en": "The manager would like to cook for everyone.",
+        "vi": "Người quản lý muốn nấu ăn cho mọi người."
+      },
+      { "en": "The manager would like to try again.", "vi": "Người quản lý muốn thử lại." },
+      {
+        "en": "The manager would like to reset the password.",
+        "vi": "Người quản lý muốn đặt lại mật khẩu."
+      },
+      {
+        "en": "The manager would like to drive to work.",
+        "vi": "Người quản lý muốn lái xe đi làm."
+      },
+      { "en": "The manager would like to calm down.", "vi": "Người quản lý muốn bình tĩnh lại." },
+      {
+        "en": "The manager would like to set a goal.",
+        "vi": "Người quản lý muốn đặt một mục tiêu."
+      },
+      {
+        "en": "The manager would like to reach the goal.",
+        "vi": "Người quản lý muốn đạt mục tiêu."
+      },
+      {
+        "en": "The manager would like to attend the workshop.",
+        "vi": "Người quản lý muốn tham dự buổi hội thảo."
+      },
+      {
+        "en": "The manager would like to learn English.",
+        "vi": "Người quản lý muốn học tiếng Anh."
+      },
+      {
+        "en": "The manager would like to thank everyone.",
+        "vi": "Người quản lý muốn cảm ơn mọi người."
+      },
+      {
+        "en": "The manager would like to follow the rules.",
+        "vi": "Người quản lý muốn tuân theo quy tắc."
+      },
+      {
+        "en": "The manager would like to scan the receipt.",
+        "vi": "Người quản lý muốn quét hóa đơn."
+      },
+      { "en": "The manager would like to raise the price.", "vi": "Người quản lý muốn tăng giá." },
+      {
+        "en": "The manager would like to back up the data.",
+        "vi": "Người quản lý muốn sao lưu dữ liệu."
+      },
+      {
+        "en": "The manager would like to try harder next time.",
+        "vi": "Người quản lý muốn cố gắng hơn lần sau."
+      },
+      { "en": "The manager would like to clean the house.", "vi": "Người quản lý muốn dọn nhà." },
+      {
+        "en": "The manager would like to check the details.",
+        "vi": "Người quản lý muốn kiểm tra chi tiết."
+      },
+      {
+        "en": "The manager would like to make new friends.",
+        "vi": "Người quản lý muốn kết bạn mới."
+      },
+      { "en": "The manager would like to study abroad.", "vi": "Người quản lý muốn du học." },
+      {
+        "en": "The manager would like to get a promotion.",
+        "vi": "Người quản lý muốn được thăng chức."
+      },
+      {
+        "en": "The manager would like to cook breakfast.",
+        "vi": "Người quản lý muốn nấu bữa sáng."
+      },
+      { "en": "The manager would like to take the bus.", "vi": "Người quản lý muốn đi xe buýt." },
+      {
+        "en": "The manager would like to take a chance.",
+        "vi": "Người quản lý muốn nắm lấy cơ hội."
+      },
+      {
+        "en": "The manager would like to lead the project.",
+        "vi": "Người quản lý muốn dẫn dắt dự án."
+      },
+      { "en": "The manager would like to watch a movie.", "vi": "Người quản lý muốn xem phim." },
+      {
+        "en": "The manager would like to speak English.",
+        "vi": "Người quản lý muốn nói tiếng Anh."
+      },
+      {
+        "en": "The manager would like to cancel the order.",
+        "vi": "Người quản lý muốn hủy đơn hàng."
+      },
+      { "en": "The manager would like to say sorry.", "vi": "Người quản lý muốn nói lời xin lỗi." },
+      { "en": "The manager would like to cook dinner.", "vi": "Người quản lý muốn nấu bữa tối." }
+    ]
+  },
+  {
+    "starter": "The manager loves to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The manager loves to get a promotion.",
+        "vi": "Người quản lý thích được thăng chức."
+      },
+      { "en": "The manager loves to go on vacation.", "vi": "Người quản lý thích đi nghỉ mát." },
+      { "en": "The manager loves to stay up late.", "vi": "Người quản lý thích thức khuya." },
+      {
+        "en": "The manager loves to hire new staff.",
+        "vi": "Người quản lý thích tuyển nhân viên mới."
+      },
+      {
+        "en": "The manager loves to charge the phone.",
+        "vi": "Người quản lý thích sạc điện thoại."
+      },
+      { "en": "The manager loves to ride a bike.", "vi": "Người quản lý thích đạp xe." },
+      { "en": "The manager loves to write it down.", "vi": "Người quản lý thích ghi nó lại." },
+      {
+        "en": "The manager loves to join the meeting.",
+        "vi": "Người quản lý thích tham gia cuộc họp."
+      },
+      { "en": "The manager loves to breathe deeply.", "vi": "Người quản lý thích hít thở sâu." },
+      { "en": "The manager loves to help the team.", "vi": "Người quản lý thích giúp đỡ nhóm." },
+      {
+        "en": "The manager loves to open a savings account.",
+        "vi": "Người quản lý thích mở tài khoản tiết kiệm."
+      },
+      { "en": "The manager loves to lose weight.", "vi": "Người quản lý thích giảm cân." },
+      {
+        "en": "The manager loves to drink less coffee.",
+        "vi": "Người quản lý thích uống ít cà phê hơn."
+      },
+      { "en": "The manager loves to take a rest.", "vi": "Người quản lý thích nghỉ ngơi." },
+      {
+        "en": "The manager loves to win the contract.",
+        "vi": "Người quản lý thích giành hợp đồng."
+      },
+      {
+        "en": "The manager loves to close the deal.",
+        "vi": "Người quản lý thích chốt thỏa thuận."
+      },
+      { "en": "The manager loves to give feedback.", "vi": "Người quản lý thích góp ý." },
+      { "en": "The manager loves to give it a try.", "vi": "Người quản lý thích thử một lần." },
+      {
+        "en": "The manager loves to print the document.",
+        "vi": "Người quản lý thích in tài liệu."
+      },
+      { "en": "The manager loves to check my email.", "vi": "Người quản lý thích kiểm tra email." },
+      {
+        "en": "The manager loves to volunteer on weekends.",
+        "vi": "Người quản lý thích tình nguyện cuối tuần."
+      },
+      {
+        "en": "The manager loves to install the app.",
+        "vi": "Người quản lý thích cài đặt ứng dụng."
+      },
+      { "en": "The manager loves to take notes.", "vi": "Người quản lý thích ghi chép." },
+      { "en": "The manager loves to book a hotel.", "vi": "Người quản lý thích đặt khách sạn." },
+      { "en": "The manager loves to meditate daily.", "vi": "Người quản lý thích thiền mỗi ngày." },
+      { "en": "The manager loves to sign up today.", "vi": "Người quản lý thích đăng ký hôm nay." },
+      { "en": "The manager loves to think it over.", "vi": "Người quản lý thích suy nghĩ kỹ." },
+      { "en": "The manager loves to walk the dog.", "vi": "Người quản lý thích dắt chó đi dạo." },
+      { "en": "The manager loves to speak English.", "vi": "Người quản lý thích nói tiếng Anh." },
+      { "en": "The manager loves to make a plan.", "vi": "Người quản lý thích lập một kế hoạch." },
+      { "en": "The manager loves to set an alarm.", "vi": "Người quản lý thích đặt báo thức." },
+      {
+        "en": "The manager loves to take a day off.",
+        "vi": "Người quản lý thích xin nghỉ một ngày."
+      },
+      {
+        "en": "The manager loves to plan a trip.",
+        "vi": "Người quản lý thích lên kế hoạch một chuyến đi."
+      },
+      { "en": "The manager loves to pass the exam.", "vi": "Người quản lý thích đậu kỳ thi." },
+      {
+        "en": "The manager loves to finish on time.",
+        "vi": "Người quản lý thích hoàn thành đúng hạn."
+      },
+      {
+        "en": "The manager loves to rate the service.",
+        "vi": "Người quản lý thích đánh giá dịch vụ."
+      },
+      {
+        "en": "The manager loves to meet new people.",
+        "vi": "Người quản lý thích gặp gỡ người mới."
+      },
+      {
+        "en": "The manager loves to register for the course.",
+        "vi": "Người quản lý thích đăng ký khóa học."
+      },
+      {
+        "en": "The manager loves to enjoy the weekend.",
+        "vi": "Người quản lý thích tận hưởng cuối tuần."
+      },
+      { "en": "The manager loves to take the bus.", "vi": "Người quản lý thích đi xe buýt." },
+      { "en": "The manager loves to rent a car.", "vi": "Người quản lý thích thuê xe." },
+      {
+        "en": "The manager loves to share my opinion.",
+        "vi": "Người quản lý thích chia sẻ ý kiến."
+      },
+      {
+        "en": "The manager loves to cut expenses.",
+        "vi": "Người quản lý thích cắt giảm chi tiêu."
+      },
+      { "en": "The manager loves to throw a party.", "vi": "Người quản lý thích tổ chức tiệc." },
+      {
+        "en": "The manager loves to remember the password.",
+        "vi": "Người quản lý thích nhớ mật khẩu."
+      },
+      {
+        "en": "The manager loves to pay off the loan.",
+        "vi": "Người quản lý thích trả hết khoản vay."
+      },
+      { "en": "The manager loves to take it easy.", "vi": "Người quản lý thích thư giãn." },
+      { "en": "The manager loves to go home.", "vi": "Người quản lý thích về nhà." },
+      {
+        "en": "The manager loves to start a new project.",
+        "vi": "Người quản lý thích bắt đầu một dự án mới."
+      },
+      { "en": "The manager loves to cancel the order.", "vi": "Người quản lý thích hủy đơn hàng." },
+      { "en": "The manager loves to train the team.", "vi": "Người quản lý thích đào tạo nhóm." },
+      { "en": "The manager loves to pack my bags.", "vi": "Người quản lý thích xếp hành lý." },
+      {
+        "en": "The manager loves to work harder.",
+        "vi": "Người quản lý thích làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The manager loves to make a decision.",
+        "vi": "Người quản lý thích đưa ra quyết định."
+      },
+      {
+        "en": "The manager loves to talk to the manager.",
+        "vi": "Người quản lý thích nói chuyện với quản lý."
+      },
+      { "en": "The manager loves to tell the truth.", "vi": "Người quản lý thích nói sự thật." },
+      { "en": "The manager loves to close the window.", "vi": "Người quản lý thích đóng cửa sổ." },
+      { "en": "The manager loves to play sports.", "vi": "Người quản lý thích chơi thể thao." },
+      { "en": "The manager loves to wait a moment.", "vi": "Người quản lý thích chờ một chút." },
+      {
+        "en": "The manager loves to change the plan.",
+        "vi": "Người quản lý thích thay đổi kế hoạch."
+      },
+      { "en": "The manager loves to set a goal.", "vi": "Người quản lý thích đặt một mục tiêu." },
+      {
+        "en": "The manager loves to manage the schedule.",
+        "vi": "Người quản lý thích quản lý lịch trình."
+      },
+      { "en": "The manager loves to change careers.", "vi": "Người quản lý thích chuyển nghề." },
+      { "en": "The manager loves to study abroad.", "vi": "Người quản lý thích du học." },
+      {
+        "en": "The manager loves to check the details.",
+        "vi": "Người quản lý thích kiểm tra chi tiết."
+      },
+      { "en": "The manager loves to call back later.", "vi": "Người quản lý thích gọi lại sau." },
+      { "en": "The manager loves to lower the cost.", "vi": "Người quản lý thích giảm chi phí." },
+      { "en": "The manager loves to get a degree.", "vi": "Người quản lý thích lấy bằng." },
+      {
+        "en": "The manager loves to update the software.",
+        "vi": "Người quản lý thích cập nhật phần mềm."
+      },
+      { "en": "The manager loves to raise the price.", "vi": "Người quản lý thích tăng giá." },
+      { "en": "The manager loves to take a photo.", "vi": "Người quản lý thích chụp một bức ảnh." },
+      { "en": "The manager loves to eat healthy.", "vi": "Người quản lý thích ăn uống lành mạnh." },
+      { "en": "The manager loves to go for a walk.", "vi": "Người quản lý thích đi dạo." },
+      { "en": "The manager loves to split the bill.", "vi": "Người quản lý thích chia hóa đơn." },
+      {
+        "en": "The manager loves to travel abroad.",
+        "vi": "Người quản lý thích đi du lịch nước ngoài."
+      },
+      {
+        "en": "The manager loves to reply to the message.",
+        "vi": "Người quản lý thích trả lời tin nhắn."
+      },
+      { "en": "The manager loves to stay home.", "vi": "Người quản lý thích ở nhà." },
+      {
+        "en": "The manager loves to prepare the presentation.",
+        "vi": "Người quản lý thích chuẩn bị bài thuyết trình."
+      },
+      { "en": "The manager loves to arrive on time.", "vi": "Người quản lý thích đến đúng giờ." },
+      {
+        "en": "The manager loves to move forward.",
+        "vi": "Người quản lý thích tiến về phía trước."
+      },
+      { "en": "The manager loves to quit smoking.", "vi": "Người quản lý thích bỏ thuốc lá." },
+      {
+        "en": "The manager loves to schedule a meeting.",
+        "vi": "Người quản lý thích sắp xếp cuộc họp."
+      },
+      {
+        "en": "The manager loves to write a report.",
+        "vi": "Người quản lý thích viết một báo cáo."
+      },
+      {
+        "en": "The manager loves to explain the situation.",
+        "vi": "Người quản lý thích giải thích tình huống."
+      },
+      { "en": "The manager loves to buy groceries.", "vi": "Người quản lý thích mua thực phẩm." },
+      {
+        "en": "The manager loves to double-check everything.",
+        "vi": "Người quản lý thích kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "The manager loves to catch the train.",
+        "vi": "Người quản lý thích bắt chuyến tàu."
+      },
+      { "en": "The manager loves to learn English.", "vi": "Người quản lý thích học tiếng Anh." },
+      {
+        "en": "The manager loves to improve my skills.",
+        "vi": "Người quản lý thích cải thiện kỹ năng."
+      },
+      { "en": "The manager loves to book a ticket.", "vi": "Người quản lý thích đặt vé." },
+      {
+        "en": "The manager loves to open a business.",
+        "vi": "Người quản lý thích mở một doanh nghiệp."
+      },
+      { "en": "The manager loves to ask a question.", "vi": "Người quản lý thích hỏi một câu." },
+      {
+        "en": "The manager loves to double-check the numbers.",
+        "vi": "Người quản lý thích kiểm tra lại các con số."
+      },
+      { "en": "The manager loves to offer support.", "vi": "Người quản lý thích đề nghị hỗ trợ." },
+      { "en": "The manager loves to keep a promise.", "vi": "Người quản lý thích giữ lời hứa." },
+      {
+        "en": "The manager loves to review the document.",
+        "vi": "Người quản lý thích xem lại tài liệu."
+      },
+      {
+        "en": "The manager loves to solve this issue.",
+        "vi": "Người quản lý thích giải quyết vấn đề này."
+      },
+      {
+        "en": "The manager loves to get some rest.",
+        "vi": "Người quản lý thích nghỉ ngơi một chút."
+      },
+      { "en": "The manager loves to water the plants.", "vi": "Người quản lý thích tưới cây." },
+      { "en": "The manager loves to take a break.", "vi": "Người quản lý thích nghỉ giải lao." }
+    ]
+  },
+  {
+    "starter": "The manager can",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The manager can take medicine.", "vi": "Người quản lý có thể uống thuốc." },
+      { "en": "The manager can download the file.", "vi": "Người quản lý có thể tải tệp xuống." },
+      { "en": "The manager can split the bill.", "vi": "Người quản lý có thể chia hóa đơn." },
+      { "en": "The manager can say sorry.", "vi": "Người quản lý có thể nói lời xin lỗi." },
+      { "en": "The manager can set an alarm.", "vi": "Người quản lý có thể đặt báo thức." },
+      {
+        "en": "The manager can open a savings account.",
+        "vi": "Người quản lý có thể mở tài khoản tiết kiệm."
+      },
+      { "en": "The manager can try again.", "vi": "Người quản lý có thể thử lại." },
+      { "en": "The manager can do the laundry.", "vi": "Người quản lý có thể giặt đồ." },
+      { "en": "The manager can meditate daily.", "vi": "Người quản lý có thể thiền mỗi ngày." },
+      { "en": "The manager can make a reservation.", "vi": "Người quản lý có thể đặt chỗ trước." },
+      { "en": "The manager can watch the game.", "vi": "Người quản lý có thể xem trận đấu." },
+      { "en": "The manager can miss the flight.", "vi": "Người quản lý có thể lỡ chuyến bay." },
+      { "en": "The manager can print the document.", "vi": "Người quản lý có thể in tài liệu." },
+      { "en": "The manager can pass the exam.", "vi": "Người quản lý có thể đậu kỳ thi." },
+      {
+        "en": "The manager can solve this issue.",
+        "vi": "Người quản lý có thể giải quyết vấn đề này."
+      },
+      {
+        "en": "The manager can finish the report.",
+        "vi": "Người quản lý có thể hoàn thành báo cáo."
+      },
+      { "en": "The manager can lose weight.", "vi": "Người quản lý có thể giảm cân." },
+      { "en": "The manager can join a club.", "vi": "Người quản lý có thể tham gia câu lạc bộ." },
+      { "en": "The manager can get a promotion.", "vi": "Người quản lý có thể được thăng chức." },
+      { "en": "The manager can give feedback.", "vi": "Người quản lý có thể góp ý." },
+      { "en": "The manager can say goodbye.", "vi": "Người quản lý có thể nói lời tạm biệt." },
+      { "en": "The manager can cook breakfast.", "vi": "Người quản lý có thể nấu bữa sáng." },
+      { "en": "The manager can thank everyone.", "vi": "Người quản lý có thể cảm ơn mọi người." },
+      { "en": "The manager can close the deal.", "vi": "Người quản lý có thể chốt thỏa thuận." },
+      {
+        "en": "The manager can apply for the position.",
+        "vi": "Người quản lý có thể nộp đơn cho vị trí."
+      },
+      {
+        "en": "The manager can fill out the form.",
+        "vi": "Người quản lý có thể điền vào biểu mẫu."
+      },
+      { "en": "The manager can copy the link.", "vi": "Người quản lý có thể sao chép liên kết." },
+      { "en": "The manager can cook dinner.", "vi": "Người quản lý có thể nấu bữa tối." },
+      { "en": "The manager can install the app.", "vi": "Người quản lý có thể cài đặt ứng dụng." },
+      {
+        "en": "The manager can restart the computer.",
+        "vi": "Người quản lý có thể khởi động lại máy tính."
+      },
+      { "en": "The manager can find a job.", "vi": "Người quản lý có thể tìm việc làm." },
+      { "en": "The manager can share my opinion.", "vi": "Người quản lý có thể chia sẻ ý kiến." },
+      { "en": "The manager can study abroad.", "vi": "Người quản lý có thể du học." },
+      { "en": "The manager can get a degree.", "vi": "Người quản lý có thể lấy bằng." },
+      { "en": "The manager can take notes.", "vi": "Người quản lý có thể ghi chép." },
+      { "en": "The manager can keep learning.", "vi": "Người quản lý có thể tiếp tục học hỏi." },
+      { "en": "The manager can lock the door.", "vi": "Người quản lý có thể khóa cửa." },
+      {
+        "en": "The manager can update the software.",
+        "vi": "Người quản lý có thể cập nhật phần mềm."
+      },
+      {
+        "en": "The manager can schedule a meeting.",
+        "vi": "Người quản lý có thể sắp xếp cuộc họp."
+      },
+      { "en": "The manager can drive to work.", "vi": "Người quản lý có thể lái xe đi làm." },
+      { "en": "The manager can take the bus.", "vi": "Người quản lý có thể đi xe buýt." },
+      {
+        "en": "The manager can cook for everyone.",
+        "vi": "Người quản lý có thể nấu ăn cho mọi người."
+      },
+      { "en": "The manager can visit the doctor.", "vi": "Người quản lý có thể đi khám bác sĩ." },
+      { "en": "The manager can walk the dog.", "vi": "Người quản lý có thể dắt chó đi dạo." },
+      { "en": "The manager can leave early.", "vi": "Người quản lý có thể về sớm." },
+      { "en": "The manager can sign the contract.", "vi": "Người quản lý có thể ký hợp đồng." },
+      {
+        "en": "The manager can save for the future.",
+        "vi": "Người quản lý có thể tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The manager can try harder next time.",
+        "vi": "Người quản lý có thể cố gắng hơn lần sau."
+      },
+      {
+        "en": "The manager can negotiate the terms.",
+        "vi": "Người quản lý có thể thương lượng điều khoản."
+      },
+      { "en": "The manager can work as a team.", "vi": "Người quản lý có thể làm việc theo nhóm." },
+      { "en": "The manager can keep a promise.", "vi": "Người quản lý có thể giữ lời hứa." },
+      { "en": "The manager can wash the dishes.", "vi": "Người quản lý có thể rửa bát." },
+      { "en": "The manager can quit smoking.", "vi": "Người quản lý có thể bỏ thuốc lá." },
+      { "en": "The manager can invest wisely.", "vi": "Người quản lý có thể đầu tư khôn ngoan." },
+      { "en": "The manager can check my email.", "vi": "Người quản lý có thể kiểm tra email." },
+      {
+        "en": "The manager can drink more water.",
+        "vi": "Người quản lý có thể uống nhiều nước hơn."
+      },
+      {
+        "en": "The manager can volunteer on weekends.",
+        "vi": "Người quản lý có thể tình nguyện cuối tuần."
+      },
+      { "en": "The manager can take it easy.", "vi": "Người quản lý có thể thư giãn." },
+      { "en": "The manager can stay up late.", "vi": "Người quản lý có thể thức khuya." },
+      {
+        "en": "The manager can manage the schedule.",
+        "vi": "Người quản lý có thể quản lý lịch trình."
+      },
+      { "en": "The manager can stay home.", "vi": "Người quản lý có thể ở nhà." },
+      { "en": "The manager can buy groceries.", "vi": "Người quản lý có thể mua thực phẩm." },
+      { "en": "The manager can give it a try.", "vi": "Người quản lý có thể thử một lần." },
+      { "en": "The manager can think positive.", "vi": "Người quản lý có thể suy nghĩ tích cực." },
+      { "en": "The manager can pack my bags.", "vi": "Người quản lý có thể xếp hành lý." },
+      { "en": "The manager can move forward.", "vi": "Người quản lý có thể tiến về phía trước." },
+      {
+        "en": "The manager can join the meeting.",
+        "vi": "Người quản lý có thể tham gia cuộc họp."
+      },
+      { "en": "The manager can offer support.", "vi": "Người quản lý có thể đề nghị hỗ trợ." },
+      { "en": "The manager can raise the price.", "vi": "Người quản lý có thể tăng giá." },
+      {
+        "en": "The manager can drink less coffee.",
+        "vi": "Người quản lý có thể uống ít cà phê hơn."
+      },
+      { "en": "The manager can keep in touch.", "vi": "Người quản lý có thể giữ liên lạc." },
+      {
+        "en": "The manager can follow the rules.",
+        "vi": "Người quản lý có thể tuân theo quy tắc."
+      },
+      { "en": "The manager can back up the data.", "vi": "Người quản lý có thể sao lưu dữ liệu." },
+      {
+        "en": "The manager can grow the business.",
+        "vi": "Người quản lý có thể phát triển kinh doanh."
+      },
+      {
+        "en": "The manager can double-check the numbers.",
+        "vi": "Người quản lý có thể kiểm tra lại các con số."
+      },
+      {
+        "en": "The manager can reply to the message.",
+        "vi": "Người quản lý có thể trả lời tin nhắn."
+      },
+      { "en": "The manager can scan the receipt.", "vi": "Người quản lý có thể quét hóa đơn." },
+      {
+        "en": "The manager can check the details.",
+        "vi": "Người quản lý có thể kiểm tra chi tiết."
+      },
+      { "en": "The manager can go home.", "vi": "Người quản lý có thể về nhà." },
+      {
+        "en": "The manager can attend the workshop.",
+        "vi": "Người quản lý có thể tham dự buổi hội thảo."
+      },
+      { "en": "The manager can make tea.", "vi": "Người quản lý có thể pha trà." },
+      { "en": "The manager can get some rest.", "vi": "Người quản lý có thể nghỉ ngơi một chút." },
+      {
+        "en": "The manager can confirm the booking.",
+        "vi": "Người quản lý có thể xác nhận đặt chỗ."
+      },
+      { "en": "The manager can learn to swim.", "vi": "Người quản lý có thể học bơi." },
+      { "en": "The manager can stay organized.", "vi": "Người quản lý có thể giữ ngăn nắp." },
+      {
+        "en": "The manager can talk to the manager.",
+        "vi": "Người quản lý có thể nói chuyện với quản lý."
+      },
+      { "en": "The manager can write a report.", "vi": "Người quản lý có thể viết một báo cáo." },
+      {
+        "en": "The manager can test the feature.",
+        "vi": "Người quản lý có thể kiểm thử tính năng."
+      },
+      { "en": "The manager can wait a moment.", "vi": "Người quản lý có thể chờ một chút." },
+      { "en": "The manager can charge the phone.", "vi": "Người quản lý có thể sạc điện thoại." },
+      { "en": "The manager can learn English.", "vi": "Người quản lý có thể học tiếng Anh." },
+      { "en": "The manager can cut the budget.", "vi": "Người quản lý có thể cắt giảm ngân sách." },
+      { "en": "The manager can pay the bill.", "vi": "Người quản lý có thể thanh toán hóa đơn." },
+      { "en": "The manager can take a photo.", "vi": "Người quản lý có thể chụp một bức ảnh." },
+      { "en": "The manager can reach the goal.", "vi": "Người quản lý có thể đạt mục tiêu." },
+      { "en": "The manager can work harder.", "vi": "Người quản lý có thể làm việc chăm chỉ hơn." },
+      {
+        "en": "The manager can prepare the presentation.",
+        "vi": "Người quản lý có thể chuẩn bị bài thuyết trình."
+      },
+      { "en": "The manager can cheer for the team.", "vi": "Người quản lý có thể cổ vũ cho đội." },
+      { "en": "The manager can send the email.", "vi": "Người quản lý có thể gửi email." },
+      { "en": "The manager can plan ahead.", "vi": "Người quản lý có thể lên kế hoạch trước." }
+    ]
+  }
+]

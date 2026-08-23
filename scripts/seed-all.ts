@@ -433,7 +433,7 @@ function loadPatternTasks(): PatternTask[] {
 
   // ── Ưu tiên 3 & 5: lesson turns — giọng đúng per nhân vật ─────────────────
   // Giống Lessons.tsx: voiceA = giới tính A; voiceB = variant2 nếu cùng giới, giọng kia nếu khác
-  const lessonDir = path.join(PROJECT_ROOT, 'public/data/lessons')
+  const lessonDir = path.join(PROJECT_ROOT, 'apps/english/public/data/lessons')
   const lessonFiles = fs
     .readdirSync(lessonDir)
     .filter((f) => /^chunk-\d+\.json$/.test(f))
@@ -538,7 +538,7 @@ function loadPatternTasks(): PatternTask[] {
   //     (chậm hơn 1 chút) ở lần người dùng THỰC SỰ bấm nghe (cache-on-demand qua /api/tts).
   //     Chưa chạy rank:patterns lần nào (seed-index.json chưa tồn tại) → fallback seed ĐỦ
   //     100 câu/chủ thể như trước (an toàn, không vỡ hành vi cũ).
-  const patternDir = path.join(PROJECT_ROOT, 'public/data/patterns')
+  const patternDir = path.join(PROJECT_ROOT, 'apps/english/public/data/patterns')
   const patternSeedIndex = loadPatternSeedIndex(patternDir)
   if (!patternSeedIndex) {
     console.warn(
@@ -568,7 +568,7 @@ function loadPatternTasks(): PatternTask[] {
 
   // ── Ưu tiên 7: Truyện cổ tích/ngụ ngôn (trang /stories, /stories/:id) ─────────
   // Dùng giọng Gemini chuyên dụng theo từng thể loại (STORY_KIND_VOICE).
-  const storyDir = path.join(PROJECT_ROOT, 'public/data/stories')
+  const storyDir = path.join(PROJECT_ROOT, 'apps/english/public/data/stories')
   if (fs.existsSync(storyDir)) {
     const storyFiles = fs
       .readdirSync(storyDir)
@@ -609,7 +609,7 @@ function loadPatternTasks(): PatternTask[] {
 function loadFullPatternTasks(): PatternTask[] {
   const tasks: PatternTask[] = []
   const seen = new Set<string>()
-  const patternDir = path.join(PROJECT_ROOT, 'public/data/patterns')
+  const patternDir = path.join(PROJECT_ROOT, 'apps/english/public/data/patterns')
   for (const subject of loadSubjectsInDisplayOrder(patternDir)) {
     for (const { en, vi } of subject.sentences) {
       for (const { text: rawText, lang } of [
@@ -662,7 +662,7 @@ function loadPronTasks(wordsFile?: string): PronTask[] {
     )
   } else {
     // Đọc từ public/data/dictionary/chunk-*.json
-    const dir = path.join(PROJECT_ROOT, 'public/data/dictionary')
+    const dir = path.join(PROJECT_ROOT, 'apps/english/public/data/dictionary')
     const files = fs
       .readdirSync(dir)
       .filter((f) => /^chunk-\d+\.json$/.test(f))

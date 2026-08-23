@@ -117,7 +117,7 @@ function collectTasks(): Task[] {
   // Chỉ 2 giọng female/male (trang Cụm từ không phát female2/male2) và theo thứ tự
   // hiển thị (I am, You are, He is... trước) — xem scripts/_lib/patternOrder.ts.
   for (const subject of loadSubjectsInDisplayOrder(
-    path.join(PROJECT_ROOT, 'public/data/patterns'),
+    path.join(PROJECT_ROOT, 'apps/english/public/data/patterns'),
   )) {
     for (const { en, vi } of subject.sentences) {
       add(en, 'en-US', PREF_VOICE_IDS)

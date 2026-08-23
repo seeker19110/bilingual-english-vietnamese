@@ -53,7 +53,7 @@ git --no-pager log -1 --oneline
 
 echo "── [3/7] Dọn build & dữ liệu CŨ (tránh sót, vd lessons 1000 bài cũ) ──"
 rm -rf dist                              # dist gitignore → xoá tay để build lại sạch
-git clean -fd public/data || true        # bỏ file rác không-theo-dõi trong public/data
+git clean -fd apps/english/public/data || true  # bỏ file rác không-theo-dõi (public/ đã dời vào apps/english ở PR-S2)
 
 echo "── [4/7] Cài dependencies (npm ci) ─────────────"
 npm ci || npm install                    # npm ci: cài đúng lockfile; lỗi → fallback install

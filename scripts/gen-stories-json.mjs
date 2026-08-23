@@ -16,7 +16,7 @@ import { dirname, join, basename } from 'node:path'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const RAW_DIR = join(__dirname, '..', 'apps', 'english', 'src', 'data', 'stories', 'raw')
-const OUT_DIR = join(__dirname, '..', 'public', 'data', 'stories')
+const OUT_DIR = join(__dirname, '..', 'apps', 'english', 'public', 'data', 'stories')
 
 // Phải khớp STORY_KINDS ở apps/english/src/data/stories/index.ts (file .mjs không import type được).
 const VALID_KINDS = ['fairy-tale', 'fable', 'vn-folk', 'myth', 'humor', 'children']

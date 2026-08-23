@@ -28,8 +28,8 @@ import type { DictEntry } from '../apps/english/src/types.ts'
 import { wordKey, buildLevelGroups } from './lib/vocabTopics.ts'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const DICT_DIR = path.join(ROOT, 'public/data/dictionary')
-const CURRICULUM_JSON = path.join(ROOT, 'public/data/curriculum.json')
+const DICT_DIR = path.join(ROOT, 'apps/english/public/data/dictionary')
+const CURRICULUM_JSON = path.join(ROOT, 'apps/english/public/data/curriculum.json')
 const OUT = path.join(ROOT, 'apps/english/src/data/cefrA1B2ExtraVocab.json')
 
 const WORDS_PER_CIRCLE = 20 // = DAILY_GOAL (src/lib/curriculum.ts), khớp cỡ vòng nền tảng A1–B2

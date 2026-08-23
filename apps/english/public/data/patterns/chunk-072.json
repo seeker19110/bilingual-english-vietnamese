@@ -1,0 +1,1713 @@
+[
+  {
+    "starter": "The visitor is planning to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The visitor is planning to plan a trip.",
+        "vi": "Người ghé thăm đang định lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "The visitor is planning to stay up late.",
+        "vi": "Người ghé thăm đang định thức khuya."
+      },
+      {
+        "en": "The visitor is planning to travel abroad.",
+        "vi": "Người ghé thăm đang định đi du lịch nước ngoài."
+      },
+      {
+        "en": "The visitor is planning to submit the form.",
+        "vi": "Người ghé thăm đang định nộp biểu mẫu."
+      },
+      {
+        "en": "The visitor is planning to learn English.",
+        "vi": "Người ghé thăm đang định học tiếng Anh."
+      },
+      {
+        "en": "The visitor is planning to scan the receipt.",
+        "vi": "Người ghé thăm đang định quét hóa đơn."
+      },
+      {
+        "en": "The visitor is planning to eat healthy.",
+        "vi": "Người ghé thăm đang định ăn uống lành mạnh."
+      },
+      {
+        "en": "The visitor is planning to celebrate together.",
+        "vi": "Người ghé thăm đang định ăn mừng cùng nhau."
+      },
+      {
+        "en": "The visitor is planning to save money.",
+        "vi": "Người ghé thăm đang định tiết kiệm tiền."
+      },
+      {
+        "en": "The visitor is planning to ask for a raise.",
+        "vi": "Người ghé thăm đang định xin tăng lương."
+      },
+      {
+        "en": "The visitor is planning to think positive.",
+        "vi": "Người ghé thăm đang định suy nghĩ tích cực."
+      },
+      {
+        "en": "The visitor is planning to call a friend.",
+        "vi": "Người ghé thăm đang định gọi cho một người bạn."
+      },
+      { "en": "The visitor is planning to ride a bike.", "vi": "Người ghé thăm đang định đạp xe." },
+      {
+        "en": "The visitor is planning to order food.",
+        "vi": "Người ghé thăm đang định gọi đồ ăn."
+      },
+      {
+        "en": "The visitor is planning to make a plan.",
+        "vi": "Người ghé thăm đang định lập một kế hoạch."
+      },
+      {
+        "en": "The visitor is planning to update the software.",
+        "vi": "Người ghé thăm đang định cập nhật phần mềm."
+      },
+      {
+        "en": "The visitor is planning to change the plan.",
+        "vi": "Người ghé thăm đang định thay đổi kế hoạch."
+      },
+      {
+        "en": "The visitor is planning to make new friends.",
+        "vi": "Người ghé thăm đang định kết bạn mới."
+      },
+      {
+        "en": "The visitor is planning to buy groceries.",
+        "vi": "Người ghé thăm đang định mua thực phẩm."
+      },
+      {
+        "en": "The visitor is planning to go for a walk.",
+        "vi": "Người ghé thăm đang định đi dạo."
+      },
+      { "en": "The visitor is planning to try again.", "vi": "Người ghé thăm đang định thử lại." },
+      {
+        "en": "The visitor is planning to copy the link.",
+        "vi": "Người ghé thăm đang định sao chép liên kết."
+      },
+      { "en": "The visitor is planning to leave early.", "vi": "Người ghé thăm đang định về sớm." },
+      {
+        "en": "The visitor is planning to meet the deadline.",
+        "vi": "Người ghé thăm đang định kịp thời hạn."
+      },
+      {
+        "en": "The visitor is planning to take a photo.",
+        "vi": "Người ghé thăm đang định chụp một bức ảnh."
+      },
+      {
+        "en": "The visitor is planning to reach the goal.",
+        "vi": "Người ghé thăm đang định đạt mục tiêu."
+      },
+      {
+        "en": "The visitor is planning to catch the train.",
+        "vi": "Người ghé thăm đang định bắt chuyến tàu."
+      },
+      {
+        "en": "The visitor is planning to take a chance.",
+        "vi": "Người ghé thăm đang định nắm lấy cơ hội."
+      },
+      {
+        "en": "The visitor is planning to watch a movie.",
+        "vi": "Người ghé thăm đang định xem phim."
+      },
+      {
+        "en": "The visitor is planning to ask more questions.",
+        "vi": "Người ghé thăm đang định hỏi nhiều hơn."
+      },
+      {
+        "en": "The visitor is planning to move forward.",
+        "vi": "Người ghé thăm đang định tiến về phía trước."
+      },
+      {
+        "en": "The visitor is planning to train the team.",
+        "vi": "Người ghé thăm đang định đào tạo nhóm."
+      },
+      {
+        "en": "The visitor is planning to reset the password.",
+        "vi": "Người ghé thăm đang định đặt lại mật khẩu."
+      },
+      {
+        "en": "The visitor is planning to win the contract.",
+        "vi": "Người ghé thăm đang định giành hợp đồng."
+      },
+      {
+        "en": "The visitor is planning to raise the price.",
+        "vi": "Người ghé thăm đang định tăng giá."
+      },
+      {
+        "en": "The visitor is planning to review the document.",
+        "vi": "Người ghé thăm đang định xem lại tài liệu."
+      },
+      {
+        "en": "The visitor is planning to explain the situation.",
+        "vi": "Người ghé thăm đang định giải thích tình huống."
+      },
+      {
+        "en": "The visitor is planning to change careers.",
+        "vi": "Người ghé thăm đang định chuyển nghề."
+      },
+      {
+        "en": "The visitor is planning to hire new staff.",
+        "vi": "Người ghé thăm đang định tuyển nhân viên mới."
+      },
+      {
+        "en": "The visitor is planning to read the news.",
+        "vi": "Người ghé thăm đang định đọc tin tức."
+      },
+      {
+        "en": "The visitor is planning to ask a question.",
+        "vi": "Người ghé thăm đang định hỏi một câu."
+      },
+      { "en": "The visitor is planning to stay home.", "vi": "Người ghé thăm đang định ở nhà." },
+      {
+        "en": "The visitor is planning to listen to music.",
+        "vi": "Người ghé thăm đang định nghe nhạc."
+      },
+      {
+        "en": "The visitor is planning to download the file.",
+        "vi": "Người ghé thăm đang định tải tệp xuống."
+      },
+      {
+        "en": "The visitor is planning to talk to the manager.",
+        "vi": "Người ghé thăm đang định nói chuyện với quản lý."
+      },
+      {
+        "en": "The visitor is planning to join the meeting.",
+        "vi": "Người ghé thăm đang định tham gia cuộc họp."
+      },
+      {
+        "en": "The visitor is planning to lead the project.",
+        "vi": "Người ghé thăm đang định dẫn dắt dự án."
+      },
+      {
+        "en": "The visitor is planning to plan ahead.",
+        "vi": "Người ghé thăm đang định lên kế hoạch trước."
+      },
+      {
+        "en": "The visitor is planning to take the exam.",
+        "vi": "Người ghé thăm đang định làm bài thi."
+      },
+      {
+        "en": "The visitor is planning to finish the report.",
+        "vi": "Người ghé thăm đang định hoàn thành báo cáo."
+      },
+      {
+        "en": "The visitor is planning to follow the rules.",
+        "vi": "Người ghé thăm đang định tuân theo quy tắc."
+      },
+      {
+        "en": "The visitor is planning to listen carefully.",
+        "vi": "Người ghé thăm đang định lắng nghe cẩn thận."
+      },
+      {
+        "en": "The visitor is planning to make a reservation.",
+        "vi": "Người ghé thăm đang định đặt chỗ trước."
+      },
+      {
+        "en": "The visitor is planning to invest wisely.",
+        "vi": "Người ghé thăm đang định đầu tư khôn ngoan."
+      },
+      {
+        "en": "The visitor is planning to ask for help.",
+        "vi": "Người ghé thăm đang định nhờ giúp đỡ."
+      },
+      { "en": "The visitor is planning to rent a car.", "vi": "Người ghé thăm đang định thuê xe." },
+      {
+        "en": "The visitor is planning to go on vacation.",
+        "vi": "Người ghé thăm đang định đi nghỉ mát."
+      },
+      {
+        "en": "The visitor is planning to set a goal.",
+        "vi": "Người ghé thăm đang định đặt một mục tiêu."
+      },
+      {
+        "en": "The visitor is planning to solve this issue.",
+        "vi": "Người ghé thăm đang định giải quyết vấn đề này."
+      },
+      {
+        "en": "The visitor is planning to keep learning.",
+        "vi": "Người ghé thăm đang định tiếp tục học hỏi."
+      },
+      {
+        "en": "The visitor is planning to pay off the loan.",
+        "vi": "Người ghé thăm đang định trả hết khoản vay."
+      },
+      {
+        "en": "The visitor is planning to play sports.",
+        "vi": "Người ghé thăm đang định chơi thể thao."
+      },
+      {
+        "en": "The visitor is planning to open a savings account.",
+        "vi": "Người ghé thăm đang định mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "The visitor is planning to check the details.",
+        "vi": "Người ghé thăm đang định kiểm tra chi tiết."
+      },
+      {
+        "en": "The visitor is planning to visit my family.",
+        "vi": "Người ghé thăm đang định thăm gia đình."
+      },
+      {
+        "en": "The visitor is planning to never give up.",
+        "vi": "Người ghé thăm đang định không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The visitor is planning to thank everyone.",
+        "vi": "Người ghé thăm đang định cảm ơn mọi người."
+      },
+      {
+        "en": "The visitor is planning to miss the flight.",
+        "vi": "Người ghé thăm đang định lỡ chuyến bay."
+      },
+      {
+        "en": "The visitor is planning to give feedback.",
+        "vi": "Người ghé thăm đang định góp ý."
+      },
+      {
+        "en": "The visitor is planning to help the team.",
+        "vi": "Người ghé thăm đang định giúp đỡ nhóm."
+      },
+      {
+        "en": "The visitor is planning to start a new project.",
+        "vi": "Người ghé thăm đang định bắt đầu một dự án mới."
+      },
+      {
+        "en": "The visitor is planning to visit the doctor.",
+        "vi": "Người ghé thăm đang định đi khám bác sĩ."
+      },
+      {
+        "en": "The visitor is planning to improve my skills.",
+        "vi": "Người ghé thăm đang định cải thiện kỹ năng."
+      },
+      {
+        "en": "The visitor is planning to schedule a meeting.",
+        "vi": "Người ghé thăm đang định sắp xếp cuộc họp."
+      },
+      { "en": "The visitor is planning to make tea.", "vi": "Người ghé thăm đang định pha trà." },
+      {
+        "en": "The visitor is planning to reply to the message.",
+        "vi": "Người ghé thăm đang định trả lời tin nhắn."
+      },
+      {
+        "en": "The visitor is planning to keep a diary.",
+        "vi": "Người ghé thăm đang định viết nhật ký."
+      },
+      {
+        "en": "The visitor is planning to attend the class.",
+        "vi": "Người ghé thăm đang định tham gia lớp học."
+      },
+      {
+        "en": "The visitor is planning to drink more water.",
+        "vi": "Người ghé thăm đang định uống nhiều nước hơn."
+      },
+      {
+        "en": "The visitor is planning to take a course.",
+        "vi": "Người ghé thăm đang định tham gia một khóa học."
+      },
+      {
+        "en": "The visitor is planning to throw a party.",
+        "vi": "Người ghé thăm đang định tổ chức tiệc."
+      },
+      {
+        "en": "The visitor is planning to drink less coffee.",
+        "vi": "Người ghé thăm đang định uống ít cà phê hơn."
+      },
+      {
+        "en": "The visitor is planning to take medicine.",
+        "vi": "Người ghé thăm đang định uống thuốc."
+      },
+      {
+        "en": "The visitor is planning to stay focused.",
+        "vi": "Người ghé thăm đang định giữ tập trung."
+      },
+      {
+        "en": "The visitor is planning to delete the file.",
+        "vi": "Người ghé thăm đang định xóa tệp."
+      },
+      {
+        "en": "The visitor is planning to say sorry.",
+        "vi": "Người ghé thăm đang định nói lời xin lỗi."
+      },
+      {
+        "en": "The visitor is planning to close the window.",
+        "vi": "Người ghé thăm đang định đóng cửa sổ."
+      },
+      {
+        "en": "The visitor is planning to cook for everyone.",
+        "vi": "Người ghé thăm đang định nấu ăn cho mọi người."
+      },
+      {
+        "en": "The visitor is planning to send the email.",
+        "vi": "Người ghé thăm đang định gửi email."
+      },
+      {
+        "en": "The visitor is planning to set an alarm.",
+        "vi": "Người ghé thăm đang định đặt báo thức."
+      },
+      {
+        "en": "The visitor is planning to save for the future.",
+        "vi": "Người ghé thăm đang định tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The visitor is planning to speak English.",
+        "vi": "Người ghé thăm đang định nói tiếng Anh."
+      },
+      {
+        "en": "The visitor is planning to remember the password.",
+        "vi": "Người ghé thăm đang định nhớ mật khẩu."
+      },
+      {
+        "en": "The visitor is planning to learn something new.",
+        "vi": "Người ghé thăm đang định học điều gì đó mới."
+      },
+      {
+        "en": "The visitor is planning to manage the schedule.",
+        "vi": "Người ghé thăm đang định quản lý lịch trình."
+      },
+      {
+        "en": "The visitor is planning to help a neighbor.",
+        "vi": "Người ghé thăm đang định giúp một người hàng xóm."
+      },
+      {
+        "en": "The visitor is planning to make a decision.",
+        "vi": "Người ghé thăm đang định đưa ra quyết định."
+      },
+      {
+        "en": "The visitor is planning to leave a comment.",
+        "vi": "Người ghé thăm đang định để lại bình luận."
+      },
+      {
+        "en": "The visitor is planning to sign up today.",
+        "vi": "Người ghé thăm đang định đăng ký hôm nay."
+      },
+      {
+        "en": "The visitor is planning to wash the dishes.",
+        "vi": "Người ghé thăm đang định rửa bát."
+      }
+    ]
+  },
+  {
+    "starter": "The visitor used to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The visitor used to improve my skills.",
+        "vi": "Người ghé thăm từng cải thiện kỹ năng."
+      },
+      { "en": "The visitor used to take it easy.", "vi": "Người ghé thăm từng thư giãn." },
+      {
+        "en": "The visitor used to move forward.",
+        "vi": "Người ghé thăm từng tiến về phía trước."
+      },
+      { "en": "The visitor used to find a job.", "vi": "Người ghé thăm từng tìm việc làm." },
+      { "en": "The visitor used to catch the train.", "vi": "Người ghé thăm từng bắt chuyến tàu." },
+      {
+        "en": "The visitor used to help a neighbor.",
+        "vi": "Người ghé thăm từng giúp một người hàng xóm."
+      },
+      { "en": "The visitor used to call back later.", "vi": "Người ghé thăm từng gọi lại sau." },
+      {
+        "en": "The visitor used to attend the class.",
+        "vi": "Người ghé thăm từng tham gia lớp học."
+      },
+      {
+        "en": "The visitor used to open a business.",
+        "vi": "Người ghé thăm từng mở một doanh nghiệp."
+      },
+      { "en": "The visitor used to print the document.", "vi": "Người ghé thăm từng in tài liệu." },
+      { "en": "The visitor used to stay up late.", "vi": "Người ghé thăm từng thức khuya." },
+      {
+        "en": "The visitor used to prepare the presentation.",
+        "vi": "Người ghé thăm từng chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The visitor used to charge the phone.",
+        "vi": "Người ghé thăm từng sạc điện thoại."
+      },
+      { "en": "The visitor used to report the bug.", "vi": "Người ghé thăm từng báo lỗi." },
+      { "en": "The visitor used to raise the price.", "vi": "Người ghé thăm từng tăng giá." },
+      { "en": "The visitor used to lead the project.", "vi": "Người ghé thăm từng dẫn dắt dự án." },
+      { "en": "The visitor used to study abroad.", "vi": "Người ghé thăm từng du học." },
+      { "en": "The visitor used to try again.", "vi": "Người ghé thăm từng thử lại." },
+      {
+        "en": "The visitor used to cheer for the team.",
+        "vi": "Người ghé thăm từng cổ vũ cho đội."
+      },
+      { "en": "The visitor used to change careers.", "vi": "Người ghé thăm từng chuyển nghề." },
+      { "en": "The visitor used to read more books.", "vi": "Người ghé thăm từng đọc thêm sách." },
+      { "en": "The visitor used to make new friends.", "vi": "Người ghé thăm từng kết bạn mới." },
+      {
+        "en": "The visitor used to change the plan.",
+        "vi": "Người ghé thăm từng thay đổi kế hoạch."
+      },
+      {
+        "en": "The visitor used to make a decision.",
+        "vi": "Người ghé thăm từng đưa ra quyết định."
+      },
+      { "en": "The visitor used to keep learning.", "vi": "Người ghé thăm từng tiếp tục học hỏi." },
+      { "en": "The visitor used to stay focused.", "vi": "Người ghé thăm từng giữ tập trung." },
+      { "en": "The visitor used to think it over.", "vi": "Người ghé thăm từng suy nghĩ kỹ." },
+      {
+        "en": "The visitor used to support each other.",
+        "vi": "Người ghé thăm từng hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The visitor used to leave a comment.",
+        "vi": "Người ghé thăm từng để lại bình luận."
+      },
+      {
+        "en": "The visitor used to remember the password.",
+        "vi": "Người ghé thăm từng nhớ mật khẩu."
+      },
+      { "en": "The visitor used to speak clearly.", "vi": "Người ghé thăm từng nói rõ ràng." },
+      {
+        "en": "The visitor used to explain the situation.",
+        "vi": "Người ghé thăm từng giải thích tình huống."
+      },
+      {
+        "en": "The visitor used to call a friend.",
+        "vi": "Người ghé thăm từng gọi cho một người bạn."
+      },
+      {
+        "en": "The visitor used to double-check everything.",
+        "vi": "Người ghé thăm từng kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "The visitor used to schedule a meeting.",
+        "vi": "Người ghé thăm từng sắp xếp cuộc họp."
+      },
+      { "en": "The visitor used to clean the house.", "vi": "Người ghé thăm từng dọn nhà." },
+      {
+        "en": "The visitor used to volunteer on weekends.",
+        "vi": "Người ghé thăm từng tình nguyện cuối tuần."
+      },
+      {
+        "en": "The visitor used to register for the course.",
+        "vi": "Người ghé thăm từng đăng ký khóa học."
+      },
+      { "en": "The visitor used to take a break.", "vi": "Người ghé thăm từng nghỉ giải lao." },
+      { "en": "The visitor used to walk the dog.", "vi": "Người ghé thăm từng dắt chó đi dạo." },
+      {
+        "en": "The visitor used to apply for the position.",
+        "vi": "Người ghé thăm từng nộp đơn cho vị trí."
+      },
+      {
+        "en": "The visitor used to cut the budget.",
+        "vi": "Người ghé thăm từng cắt giảm ngân sách."
+      },
+      { "en": "The visitor used to watch the game.", "vi": "Người ghé thăm từng xem trận đấu." },
+      { "en": "The visitor used to reach the goal.", "vi": "Người ghé thăm từng đạt mục tiêu." },
+      { "en": "The visitor used to sleep early.", "vi": "Người ghé thăm từng ngủ sớm." },
+      {
+        "en": "The visitor used to talk to the manager.",
+        "vi": "Người ghé thăm từng nói chuyện với quản lý."
+      },
+      { "en": "The visitor used to do the laundry.", "vi": "Người ghé thăm từng giặt đồ." },
+      { "en": "The visitor used to ask a question.", "vi": "Người ghé thăm từng hỏi một câu." },
+      { "en": "The visitor used to offer support.", "vi": "Người ghé thăm từng đề nghị hỗ trợ." },
+      { "en": "The visitor used to make a plan.", "vi": "Người ghé thăm từng lập một kế hoạch." },
+      { "en": "The visitor used to arrive on time.", "vi": "Người ghé thăm từng đến đúng giờ." },
+      {
+        "en": "The visitor used to ask more questions.",
+        "vi": "Người ghé thăm từng hỏi nhiều hơn."
+      },
+      { "en": "The visitor used to log in again.", "vi": "Người ghé thăm từng đăng nhập lại." },
+      {
+        "en": "The visitor used to cook for everyone.",
+        "vi": "Người ghé thăm từng nấu ăn cho mọi người."
+      },
+      {
+        "en": "The visitor used to double-check the numbers.",
+        "vi": "Người ghé thăm từng kiểm tra lại các con số."
+      },
+      {
+        "en": "The visitor used to join a club.",
+        "vi": "Người ghé thăm từng tham gia câu lạc bộ."
+      },
+      { "en": "The visitor used to watch a movie.", "vi": "Người ghé thăm từng xem phim." },
+      { "en": "The visitor used to go on vacation.", "vi": "Người ghé thăm từng đi nghỉ mát." },
+      {
+        "en": "The visitor used to grow the business.",
+        "vi": "Người ghé thăm từng phát triển kinh doanh."
+      },
+      { "en": "The visitor used to take the exam.", "vi": "Người ghé thăm từng làm bài thi." },
+      {
+        "en": "The visitor used to check the details.",
+        "vi": "Người ghé thăm từng kiểm tra chi tiết."
+      },
+      {
+        "en": "The visitor used to never give up.",
+        "vi": "Người ghé thăm từng không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The visitor used to visit the doctor.",
+        "vi": "Người ghé thăm từng đi khám bác sĩ."
+      },
+      {
+        "en": "The visitor used to share my opinion.",
+        "vi": "Người ghé thăm từng chia sẻ ý kiến."
+      },
+      { "en": "The visitor used to submit the form.", "vi": "Người ghé thăm từng nộp biểu mẫu." },
+      { "en": "The visitor used to cook breakfast.", "vi": "Người ghé thăm từng nấu bữa sáng." },
+      {
+        "en": "The visitor used to celebrate together.",
+        "vi": "Người ghé thăm từng ăn mừng cùng nhau."
+      },
+      {
+        "en": "The visitor used to travel abroad.",
+        "vi": "Người ghé thăm từng đi du lịch nước ngoài."
+      },
+      {
+        "en": "The visitor used to buy a new phone.",
+        "vi": "Người ghé thăm từng mua điện thoại mới."
+      },
+      { "en": "The visitor used to ask for help.", "vi": "Người ghé thăm từng nhờ giúp đỡ." },
+      { "en": "The visitor used to keep a promise.", "vi": "Người ghé thăm từng giữ lời hứa." },
+      {
+        "en": "The visitor used to negotiate the terms.",
+        "vi": "Người ghé thăm từng thương lượng điều khoản."
+      },
+      {
+        "en": "The visitor used to learn something new.",
+        "vi": "Người ghé thăm từng học điều gì đó mới."
+      },
+      {
+        "en": "The visitor used to follow the rules.",
+        "vi": "Người ghé thăm từng tuân theo quy tắc."
+      },
+      {
+        "en": "The visitor used to launch the product.",
+        "vi": "Người ghé thăm từng ra mắt sản phẩm."
+      },
+      {
+        "en": "The visitor used to write a report.",
+        "vi": "Người ghé thăm từng viết một báo cáo."
+      },
+      {
+        "en": "The visitor used to make a reservation.",
+        "vi": "Người ghé thăm từng đặt chỗ trước."
+      },
+      {
+        "en": "The visitor used to finish on time.",
+        "vi": "Người ghé thăm từng hoàn thành đúng hạn."
+      },
+      { "en": "The visitor used to breathe deeply.", "vi": "Người ghé thăm từng hít thở sâu." },
+      { "en": "The visitor used to miss the flight.", "vi": "Người ghé thăm từng lỡ chuyến bay." },
+      { "en": "The visitor used to speak English.", "vi": "Người ghé thăm từng nói tiếng Anh." },
+      { "en": "The visitor used to split the bill.", "vi": "Người ghé thăm từng chia hóa đơn." },
+      { "en": "The visitor used to close the window.", "vi": "Người ghé thăm từng đóng cửa sổ." },
+      {
+        "en": "The visitor used to drink more water.",
+        "vi": "Người ghé thăm từng uống nhiều nước hơn."
+      },
+      { "en": "The visitor used to ride a bike.", "vi": "Người ghé thăm từng đạp xe." },
+      {
+        "en": "The visitor used to reply to the message.",
+        "vi": "Người ghé thăm từng trả lời tin nhắn."
+      },
+      {
+        "en": "The visitor used to test the feature.",
+        "vi": "Người ghé thăm từng kiểm thử tính năng."
+      },
+      {
+        "en": "The visitor used to confirm the booking.",
+        "vi": "Người ghé thăm từng xác nhận đặt chỗ."
+      },
+      { "en": "The visitor used to sign up today.", "vi": "Người ghé thăm từng đăng ký hôm nay." },
+      {
+        "en": "The visitor used to get a promotion.",
+        "vi": "Người ghé thăm từng được thăng chức."
+      },
+      {
+        "en": "The visitor used to share the post.",
+        "vi": "Người ghé thăm từng chia sẻ bài viết."
+      },
+      {
+        "en": "The visitor used to manage the schedule.",
+        "vi": "Người ghé thăm từng quản lý lịch trình."
+      },
+      { "en": "The visitor used to help the team.", "vi": "Người ghé thăm từng giúp đỡ nhóm." },
+      { "en": "The visitor used to cut expenses.", "vi": "Người ghé thăm từng cắt giảm chi tiêu." },
+      { "en": "The visitor used to go home.", "vi": "Người ghé thăm từng về nhà." },
+      {
+        "en": "The visitor used to meet new people.",
+        "vi": "Người ghé thăm từng gặp gỡ người mới."
+      },
+      { "en": "The visitor used to fix the problem.", "vi": "Người ghé thăm từng sửa vấn đề." },
+      { "en": "The visitor used to tell the truth.", "vi": "Người ghé thăm từng nói sự thật." },
+      {
+        "en": "The visitor used to plan a trip.",
+        "vi": "Người ghé thăm từng lên kế hoạch một chuyến đi."
+      },
+      { "en": "The visitor used to rent a car.", "vi": "Người ghé thăm từng thuê xe." }
+    ]
+  },
+  {
+    "starter": "The visitor doesn't",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The visitor doesn't enjoy the weekend.",
+        "vi": "Người ghé thăm không tận hưởng cuối tuần."
+      },
+      {
+        "en": "The visitor doesn't join a club.",
+        "vi": "Người ghé thăm không tham gia câu lạc bộ."
+      },
+      {
+        "en": "The visitor doesn't understand the lesson.",
+        "vi": "Người ghé thăm không hiểu bài học."
+      },
+      { "en": "The visitor doesn't meditate daily.", "vi": "Người ghé thăm không thiền mỗi ngày." },
+      { "en": "The visitor doesn't log in again.", "vi": "Người ghé thăm không đăng nhập lại." },
+      { "en": "The visitor doesn't drive to work.", "vi": "Người ghé thăm không lái xe đi làm." },
+      { "en": "The visitor doesn't cook breakfast.", "vi": "Người ghé thăm không nấu bữa sáng." },
+      { "en": "The visitor doesn't buy groceries.", "vi": "Người ghé thăm không mua thực phẩm." },
+      {
+        "en": "The visitor doesn't visit the doctor.",
+        "vi": "Người ghé thăm không đi khám bác sĩ."
+      },
+      { "en": "The visitor doesn't clean the house.", "vi": "Người ghé thăm không dọn nhà." },
+      {
+        "en": "The visitor doesn't remember the password.",
+        "vi": "Người ghé thăm không nhớ mật khẩu."
+      },
+      {
+        "en": "The visitor doesn't listen carefully.",
+        "vi": "Người ghé thăm không lắng nghe cẩn thận."
+      },
+      { "en": "The visitor doesn't go on vacation.", "vi": "Người ghé thăm không đi nghỉ mát." },
+      { "en": "The visitor doesn't make tea.", "vi": "Người ghé thăm không pha trà." },
+      { "en": "The visitor doesn't set a goal.", "vi": "Người ghé thăm không đặt một mục tiêu." },
+      { "en": "The visitor doesn't throw a party.", "vi": "Người ghé thăm không tổ chức tiệc." },
+      {
+        "en": "The visitor doesn't practice every day.",
+        "vi": "Người ghé thăm không luyện tập mỗi ngày."
+      },
+      { "en": "The visitor doesn't change careers.", "vi": "Người ghé thăm không chuyển nghề." },
+      { "en": "The visitor doesn't give feedback.", "vi": "Người ghé thăm không góp ý." },
+      { "en": "The visitor doesn't reach the goal.", "vi": "Người ghé thăm không đạt mục tiêu." },
+      { "en": "The visitor doesn't read the news.", "vi": "Người ghé thăm không đọc tin tức." },
+      {
+        "en": "The visitor doesn't move forward.",
+        "vi": "Người ghé thăm không tiến về phía trước."
+      },
+      { "en": "The visitor doesn't write it down.", "vi": "Người ghé thăm không ghi nó lại." },
+      {
+        "en": "The visitor doesn't reply to the message.",
+        "vi": "Người ghé thăm không trả lời tin nhắn."
+      },
+      {
+        "en": "The visitor doesn't take a course.",
+        "vi": "Người ghé thăm không tham gia một khóa học."
+      },
+      {
+        "en": "The visitor doesn't celebrate together.",
+        "vi": "Người ghé thăm không ăn mừng cùng nhau."
+      },
+      {
+        "en": "The visitor doesn't take a day off.",
+        "vi": "Người ghé thăm không xin nghỉ một ngày."
+      },
+      { "en": "The visitor doesn't report the bug.", "vi": "Người ghé thăm không báo lỗi." },
+      {
+        "en": "The visitor doesn't grow the business.",
+        "vi": "Người ghé thăm không phát triển kinh doanh."
+      },
+      { "en": "The visitor doesn't keep in touch.", "vi": "Người ghé thăm không giữ liên lạc." },
+      {
+        "en": "The visitor doesn't call a friend.",
+        "vi": "Người ghé thăm không gọi cho một người bạn."
+      },
+      {
+        "en": "The visitor doesn't work harder.",
+        "vi": "Người ghé thăm không làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The visitor doesn't close the deal.",
+        "vi": "Người ghé thăm không chốt thỏa thuận."
+      },
+      {
+        "en": "The visitor doesn't share my opinion.",
+        "vi": "Người ghé thăm không chia sẻ ý kiến."
+      },
+      { "en": "The visitor doesn't take a photo.", "vi": "Người ghé thăm không chụp một bức ảnh." },
+      {
+        "en": "The visitor doesn't open a business.",
+        "vi": "Người ghé thăm không mở một doanh nghiệp."
+      },
+      { "en": "The visitor doesn't walk the dog.", "vi": "Người ghé thăm không dắt chó đi dạo." },
+      {
+        "en": "The visitor doesn't solve this issue.",
+        "vi": "Người ghé thăm không giải quyết vấn đề này."
+      },
+      { "en": "The visitor doesn't take the exam.", "vi": "Người ghé thăm không làm bài thi." },
+      { "en": "The visitor doesn't tell the truth.", "vi": "Người ghé thăm không nói sự thật." },
+      { "en": "The visitor doesn't take notes.", "vi": "Người ghé thăm không ghi chép." },
+      {
+        "en": "The visitor doesn't explain the situation.",
+        "vi": "Người ghé thăm không giải thích tình huống."
+      },
+      {
+        "en": "The visitor doesn't confirm the booking.",
+        "vi": "Người ghé thăm không xác nhận đặt chỗ."
+      },
+      { "en": "The visitor doesn't take a break.", "vi": "Người ghé thăm không nghỉ giải lao." },
+      {
+        "en": "The visitor doesn't prepare the presentation.",
+        "vi": "Người ghé thăm không chuẩn bị bài thuyết trình."
+      },
+      { "en": "The visitor doesn't book a hotel.", "vi": "Người ghé thăm không đặt khách sạn." },
+      { "en": "The visitor doesn't wake up early.", "vi": "Người ghé thăm không dậy sớm." },
+      {
+        "en": "The visitor doesn't donate to charity.",
+        "vi": "Người ghé thăm không quyên góp từ thiện."
+      },
+      { "en": "The visitor doesn't split the bill.", "vi": "Người ghé thăm không chia hóa đơn." },
+      { "en": "The visitor doesn't wash the dishes.", "vi": "Người ghé thăm không rửa bát." },
+      {
+        "en": "The visitor doesn't ask more questions.",
+        "vi": "Người ghé thăm không hỏi nhiều hơn."
+      },
+      { "en": "The visitor doesn't check my email.", "vi": "Người ghé thăm không kiểm tra email." },
+      { "en": "The visitor doesn't learn English.", "vi": "Người ghé thăm không học tiếng Anh." },
+      { "en": "The visitor doesn't speak clearly.", "vi": "Người ghé thăm không nói rõ ràng." },
+      { "en": "The visitor doesn't go home.", "vi": "Người ghé thăm không về nhà." },
+      { "en": "The visitor doesn't ride a bike.", "vi": "Người ghé thăm không đạp xe." },
+      { "en": "The visitor doesn't stay focused.", "vi": "Người ghé thăm không giữ tập trung." },
+      { "en": "The visitor doesn't water the plants.", "vi": "Người ghé thăm không tưới cây." },
+      {
+        "en": "The visitor doesn't get some rest.",
+        "vi": "Người ghé thăm không nghỉ ngơi một chút."
+      },
+      {
+        "en": "The visitor doesn't pay the bill.",
+        "vi": "Người ghé thăm không thanh toán hóa đơn."
+      },
+      { "en": "The visitor doesn't think it over.", "vi": "Người ghé thăm không suy nghĩ kỹ." },
+      { "en": "The visitor doesn't ask a question.", "vi": "Người ghé thăm không hỏi một câu." },
+      {
+        "en": "The visitor doesn't join the meeting.",
+        "vi": "Người ghé thăm không tham gia cuộc họp."
+      },
+      { "en": "The visitor doesn't find a job.", "vi": "Người ghé thăm không tìm việc làm." },
+      {
+        "en": "The visitor doesn't review the document.",
+        "vi": "Người ghé thăm không xem lại tài liệu."
+      },
+      {
+        "en": "The visitor doesn't apply for the position.",
+        "vi": "Người ghé thăm không nộp đơn cho vị trí."
+      },
+      { "en": "The visitor doesn't pass the exam.", "vi": "Người ghé thăm không đậu kỳ thi." },
+      { "en": "The visitor doesn't do the laundry.", "vi": "Người ghé thăm không giặt đồ." },
+      {
+        "en": "The visitor doesn't support each other.",
+        "vi": "Người ghé thăm không hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The visitor doesn't cheer for the team.",
+        "vi": "Người ghé thăm không cổ vũ cho đội."
+      },
+      { "en": "The visitor doesn't take a chance.", "vi": "Người ghé thăm không nắm lấy cơ hội." },
+      { "en": "The visitor doesn't sleep early.", "vi": "Người ghé thăm không ngủ sớm." },
+      { "en": "The visitor doesn't say sorry.", "vi": "Người ghé thăm không nói lời xin lỗi." },
+      {
+        "en": "The visitor doesn't talk to the manager.",
+        "vi": "Người ghé thăm không nói chuyện với quản lý."
+      },
+      {
+        "en": "The visitor doesn't hire new staff.",
+        "vi": "Người ghé thăm không tuyển nhân viên mới."
+      },
+      { "en": "The visitor doesn't take medicine.", "vi": "Người ghé thăm không uống thuốc." },
+      { "en": "The visitor doesn't take it easy.", "vi": "Người ghé thăm không thư giãn." },
+      { "en": "The visitor doesn't make new friends.", "vi": "Người ghé thăm không kết bạn mới." },
+      {
+        "en": "The visitor doesn't drink more water.",
+        "vi": "Người ghé thăm không uống nhiều nước hơn."
+      },
+      {
+        "en": "The visitor doesn't thank everyone.",
+        "vi": "Người ghé thăm không cảm ơn mọi người."
+      },
+      {
+        "en": "The visitor doesn't drink less coffee.",
+        "vi": "Người ghé thăm không uống ít cà phê hơn."
+      },
+      {
+        "en": "The visitor doesn't work as a team.",
+        "vi": "Người ghé thăm không làm việc theo nhóm."
+      },
+      { "en": "The visitor doesn't relax at home.", "vi": "Người ghé thăm không thư giãn ở nhà." },
+      {
+        "en": "The visitor doesn't cut expenses.",
+        "vi": "Người ghé thăm không cắt giảm chi tiêu."
+      },
+      { "en": "The visitor doesn't eat healthy.", "vi": "Người ghé thăm không ăn uống lành mạnh." },
+      {
+        "en": "The visitor doesn't invite some friends.",
+        "vi": "Người ghé thăm không mời vài người bạn."
+      },
+      { "en": "The visitor doesn't call back later.", "vi": "Người ghé thăm không gọi lại sau." },
+      {
+        "en": "The visitor doesn't download the file.",
+        "vi": "Người ghé thăm không tải tệp xuống."
+      },
+      { "en": "The visitor doesn't watch a movie.", "vi": "Người ghé thăm không xem phim." },
+      {
+        "en": "The visitor doesn't answer the phone.",
+        "vi": "Người ghé thăm không trả lời điện thoại."
+      },
+      {
+        "en": "The visitor doesn't attend the workshop.",
+        "vi": "Người ghé thăm không tham dự buổi hội thảo."
+      },
+      {
+        "en": "The visitor doesn't buy a new phone.",
+        "vi": "Người ghé thăm không mua điện thoại mới."
+      },
+      { "en": "The visitor doesn't watch the game.", "vi": "Người ghé thăm không xem trận đấu." },
+      { "en": "The visitor doesn't visit my family.", "vi": "Người ghé thăm không thăm gia đình." },
+      {
+        "en": "The visitor doesn't try harder next time.",
+        "vi": "Người ghé thăm không cố gắng hơn lần sau."
+      },
+      {
+        "en": "The visitor doesn't meet new people.",
+        "vi": "Người ghé thăm không gặp gỡ người mới."
+      },
+      {
+        "en": "The visitor doesn't make a reservation.",
+        "vi": "Người ghé thăm không đặt chỗ trước."
+      },
+      { "en": "The visitor doesn't ask for help.", "vi": "Người ghé thăm không nhờ giúp đỡ." },
+      { "en": "The visitor doesn't sign the contract.", "vi": "Người ghé thăm không ký hợp đồng." },
+      { "en": "The visitor doesn't turn off the light.", "vi": "Người ghé thăm không tắt đèn." }
+    ]
+  },
+  {
+    "starter": "The visitor didn't",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The visitor didn't take a rest.", "vi": "Người ghé thăm đã không nghỉ ngơi." },
+      {
+        "en": "The visitor didn't exercise every day.",
+        "vi": "Người ghé thăm đã không tập thể dục mỗi ngày."
+      },
+      { "en": "The visitor didn't take the bus.", "vi": "Người ghé thăm đã không đi xe buýt." },
+      {
+        "en": "The visitor didn't learn something new.",
+        "vi": "Người ghé thăm đã không học điều gì đó mới."
+      },
+      { "en": "The visitor didn't help the team.", "vi": "Người ghé thăm đã không giúp đỡ nhóm." },
+      { "en": "The visitor didn't cook breakfast.", "vi": "Người ghé thăm đã không nấu bữa sáng." },
+      {
+        "en": "The visitor didn't download the file.",
+        "vi": "Người ghé thăm đã không tải tệp xuống."
+      },
+      {
+        "en": "The visitor didn't launch the product.",
+        "vi": "Người ghé thăm đã không ra mắt sản phẩm."
+      },
+      { "en": "The visitor didn't try again.", "vi": "Người ghé thăm đã không thử lại." },
+      { "en": "The visitor didn't study abroad.", "vi": "Người ghé thăm đã không du học." },
+      { "en": "The visitor didn't quit smoking.", "vi": "Người ghé thăm đã không bỏ thuốc lá." },
+      { "en": "The visitor didn't delete the file.", "vi": "Người ghé thăm đã không xóa tệp." },
+      { "en": "The visitor didn't fix the problem.", "vi": "Người ghé thăm đã không sửa vấn đề." },
+      {
+        "en": "The visitor didn't rate the service.",
+        "vi": "Người ghé thăm đã không đánh giá dịch vụ."
+      },
+      {
+        "en": "The visitor didn't remember the password.",
+        "vi": "Người ghé thăm đã không nhớ mật khẩu."
+      },
+      { "en": "The visitor didn't find a job.", "vi": "Người ghé thăm đã không tìm việc làm." },
+      { "en": "The visitor didn't lock the door.", "vi": "Người ghé thăm đã không khóa cửa." },
+      { "en": "The visitor didn't stay up late.", "vi": "Người ghé thăm đã không thức khuya." },
+      {
+        "en": "The visitor didn't submit the form.",
+        "vi": "Người ghé thăm đã không nộp biểu mẫu."
+      },
+      { "en": "The visitor didn't make tea.", "vi": "Người ghé thăm đã không pha trà." },
+      { "en": "The visitor didn't go on vacation.", "vi": "Người ghé thăm đã không đi nghỉ mát." },
+      {
+        "en": "The visitor didn't change the plan.",
+        "vi": "Người ghé thăm đã không thay đổi kế hoạch."
+      },
+      {
+        "en": "The visitor didn't invite some friends.",
+        "vi": "Người ghé thăm đã không mời vài người bạn."
+      },
+      {
+        "en": "The visitor didn't prepare the presentation.",
+        "vi": "Người ghé thăm đã không chuẩn bị bài thuyết trình."
+      },
+      { "en": "The visitor didn't wake up early.", "vi": "Người ghé thăm đã không dậy sớm." },
+      {
+        "en": "The visitor didn't double-check the numbers.",
+        "vi": "Người ghé thăm đã không kiểm tra lại các con số."
+      },
+      {
+        "en": "The visitor didn't check the details.",
+        "vi": "Người ghé thăm đã không kiểm tra chi tiết."
+      },
+      { "en": "The visitor didn't order food.", "vi": "Người ghé thăm đã không gọi đồ ăn." },
+      {
+        "en": "The visitor didn't pay off the loan.",
+        "vi": "Người ghé thăm đã không trả hết khoản vay."
+      },
+      {
+        "en": "The visitor didn't manage the schedule.",
+        "vi": "Người ghé thăm đã không quản lý lịch trình."
+      },
+      {
+        "en": "The visitor didn't hire new staff.",
+        "vi": "Người ghé thăm đã không tuyển nhân viên mới."
+      },
+      { "en": "The visitor didn't train the team.", "vi": "Người ghé thăm đã không đào tạo nhóm." },
+      {
+        "en": "The visitor didn't double-check everything.",
+        "vi": "Người ghé thăm đã không kiểm tra lại mọi thứ."
+      },
+      { "en": "The visitor didn't lose weight.", "vi": "Người ghé thăm đã không giảm cân." },
+      {
+        "en": "The visitor didn't close the deal.",
+        "vi": "Người ghé thăm đã không chốt thỏa thuận."
+      },
+      {
+        "en": "The visitor didn't sign up today.",
+        "vi": "Người ghé thăm đã không đăng ký hôm nay."
+      },
+      { "en": "The visitor didn't wait a moment.", "vi": "Người ghé thăm đã không chờ một chút." },
+      { "en": "The visitor didn't raise the price.", "vi": "Người ghé thăm đã không tăng giá." },
+      {
+        "en": "The visitor didn't celebrate together.",
+        "vi": "Người ghé thăm đã không ăn mừng cùng nhau."
+      },
+      {
+        "en": "The visitor didn't join a club.",
+        "vi": "Người ghé thăm đã không tham gia câu lạc bộ."
+      },
+      {
+        "en": "The visitor didn't cancel the order.",
+        "vi": "Người ghé thăm đã không hủy đơn hàng."
+      },
+      { "en": "The visitor didn't learn English.", "vi": "Người ghé thăm đã không học tiếng Anh." },
+      {
+        "en": "The visitor didn't donate to charity.",
+        "vi": "Người ghé thăm đã không quyên góp từ thiện."
+      },
+      { "en": "The visitor didn't send the email.", "vi": "Người ghé thăm đã không gửi email." },
+      {
+        "en": "The visitor didn't sign the contract.",
+        "vi": "Người ghé thăm đã không ký hợp đồng."
+      },
+      {
+        "en": "The visitor didn't meet new people.",
+        "vi": "Người ghé thăm đã không gặp gỡ người mới."
+      },
+      {
+        "en": "The visitor didn't drink more water.",
+        "vi": "Người ghé thăm đã không uống nhiều nước hơn."
+      },
+      { "en": "The visitor didn't set an alarm.", "vi": "Người ghé thăm đã không đặt báo thức." },
+      {
+        "en": "The visitor didn't scan the receipt.",
+        "vi": "Người ghé thăm đã không quét hóa đơn."
+      },
+      {
+        "en": "The visitor didn't buy a new phone.",
+        "vi": "Người ghé thăm đã không mua điện thoại mới."
+      },
+      {
+        "en": "The visitor didn't never give up.",
+        "vi": "Người ghé thăm đã không không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The visitor didn't check my email.",
+        "vi": "Người ghé thăm đã không kiểm tra email."
+      },
+      {
+        "en": "The visitor didn't plan a trip.",
+        "vi": "Người ghé thăm đã không lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "The visitor didn't register for the course.",
+        "vi": "Người ghé thăm đã không đăng ký khóa học."
+      },
+      { "en": "The visitor didn't say sorry.", "vi": "Người ghé thăm đã không nói lời xin lỗi." },
+      {
+        "en": "The visitor didn't work as a team.",
+        "vi": "Người ghé thăm đã không làm việc theo nhóm."
+      },
+      {
+        "en": "The visitor didn't invest wisely.",
+        "vi": "Người ghé thăm đã không đầu tư khôn ngoan."
+      },
+      { "en": "The visitor didn't listen to music.", "vi": "Người ghé thăm đã không nghe nhạc." },
+      { "en": "The visitor didn't give it a try.", "vi": "Người ghé thăm đã không thử một lần." },
+      { "en": "The visitor didn't split the bill.", "vi": "Người ghé thăm đã không chia hóa đơn." },
+      {
+        "en": "The visitor didn't negotiate the terms.",
+        "vi": "Người ghé thăm đã không thương lượng điều khoản."
+      },
+      {
+        "en": "The visitor didn't make a reservation.",
+        "vi": "Người ghé thăm đã không đặt chỗ trước."
+      },
+      {
+        "en": "The visitor didn't open a business.",
+        "vi": "Người ghé thăm đã không mở một doanh nghiệp."
+      },
+      { "en": "The visitor didn't sleep early.", "vi": "Người ghé thăm đã không ngủ sớm." },
+      {
+        "en": "The visitor didn't try harder next time.",
+        "vi": "Người ghé thăm đã không cố gắng hơn lần sau."
+      },
+      {
+        "en": "The visitor didn't follow the rules.",
+        "vi": "Người ghé thăm đã không tuân theo quy tắc."
+      },
+      { "en": "The visitor didn't keep in touch.", "vi": "Người ghé thăm đã không giữ liên lạc." },
+      {
+        "en": "The visitor didn't grow the business.",
+        "vi": "Người ghé thăm đã không phát triển kinh doanh."
+      },
+      {
+        "en": "The visitor didn't attend the workshop.",
+        "vi": "Người ghé thăm đã không tham dự buổi hội thảo."
+      },
+      { "en": "The visitor didn't get a degree.", "vi": "Người ghé thăm đã không lấy bằng." },
+      {
+        "en": "The visitor didn't lead the project.",
+        "vi": "Người ghé thăm đã không dẫn dắt dự án."
+      },
+      {
+        "en": "The visitor didn't make a plan.",
+        "vi": "Người ghé thăm đã không lập một kế hoạch."
+      },
+      { "en": "The visitor didn't learn to swim.", "vi": "Người ghé thăm đã không học bơi." },
+      { "en": "The visitor didn't wash the dishes.", "vi": "Người ghé thăm đã không rửa bát." },
+      { "en": "The visitor didn't rent a car.", "vi": "Người ghé thăm đã không thuê xe." },
+      { "en": "The visitor didn't write it down.", "vi": "Người ghé thăm đã không ghi nó lại." },
+      {
+        "en": "The visitor didn't visit my family.",
+        "vi": "Người ghé thăm đã không thăm gia đình."
+      },
+      {
+        "en": "The visitor didn't confirm the booking.",
+        "vi": "Người ghé thăm đã không xác nhận đặt chỗ."
+      },
+      { "en": "The visitor didn't go home.", "vi": "Người ghé thăm đã không về nhà." },
+      { "en": "The visitor didn't ride a bike.", "vi": "Người ghé thăm đã không đạp xe." },
+      { "en": "The visitor didn't give feedback.", "vi": "Người ghé thăm đã không góp ý." },
+      {
+        "en": "The visitor didn't thank everyone.",
+        "vi": "Người ghé thăm đã không cảm ơn mọi người."
+      },
+      { "en": "The visitor didn't take the exam.", "vi": "Người ghé thăm đã không làm bài thi." },
+      {
+        "en": "The visitor didn't read more books.",
+        "vi": "Người ghé thăm đã không đọc thêm sách."
+      },
+      {
+        "en": "The visitor didn't win the contract.",
+        "vi": "Người ghé thăm đã không giành hợp đồng."
+      },
+      {
+        "en": "The visitor didn't back up the data.",
+        "vi": "Người ghé thăm đã không sao lưu dữ liệu."
+      },
+      {
+        "en": "The visitor didn't say goodbye.",
+        "vi": "Người ghé thăm đã không nói lời tạm biệt."
+      },
+      {
+        "en": "The visitor didn't help a neighbor.",
+        "vi": "Người ghé thăm đã không giúp một người hàng xóm."
+      },
+      { "en": "The visitor didn't walk the dog.", "vi": "Người ghé thăm đã không dắt chó đi dạo." },
+      {
+        "en": "The visitor didn't understand the lesson.",
+        "vi": "Người ghé thăm đã không hiểu bài học."
+      },
+      {
+        "en": "The visitor didn't think positive.",
+        "vi": "Người ghé thăm đã không suy nghĩ tích cực."
+      },
+      {
+        "en": "The visitor didn't test the feature.",
+        "vi": "Người ghé thăm đã không kiểm thử tính năng."
+      },
+      { "en": "The visitor didn't reach the goal.", "vi": "Người ghé thăm đã không đạt mục tiêu." },
+      {
+        "en": "The visitor didn't take a course.",
+        "vi": "Người ghé thăm đã không tham gia một khóa học."
+      },
+      {
+        "en": "The visitor didn't solve this issue.",
+        "vi": "Người ghé thăm đã không giải quyết vấn đề này."
+      },
+      { "en": "The visitor didn't ask a question.", "vi": "Người ghé thăm đã không hỏi một câu." },
+      {
+        "en": "The visitor didn't open a savings account.",
+        "vi": "Người ghé thăm đã không mở tài khoản tiết kiệm."
+      },
+      { "en": "The visitor didn't clean the house.", "vi": "Người ghé thăm đã không dọn nhà." },
+      {
+        "en": "The visitor didn't ask for a raise.",
+        "vi": "Người ghé thăm đã không xin tăng lương."
+      },
+      { "en": "The visitor didn't relax at home.", "vi": "Người ghé thăm đã không thư giãn ở nhà." }
+    ]
+  },
+  {
+    "starter": "The guest is",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The guest is sorry for the delay.", "vi": "Khách mời xin lỗi vì sự chậm trễ." },
+      { "en": "The guest is open to feedback.", "vi": "Khách mời cởi mở với góp ý." },
+      { "en": "The guest is enthusiastic.", "vi": "Khách mời nhiệt tình." },
+      { "en": "The guest is alert.", "vi": "Khách mời tỉnh táo." },
+      { "en": "The guest is inspired.", "vi": "Khách mời được truyền cảm hứng." },
+      { "en": "The guest is curious about it.", "vi": "Khách mời tò mò về nó." },
+      { "en": "The guest is happy.", "vi": "Khách mời vui." },
+      { "en": "The guest is almost there.", "vi": "Khách mời sắp đến nơi." },
+      { "en": "The guest is honest.", "vi": "Khách mời trung thực." },
+      { "en": "The guest is late.", "vi": "Khách mời muộn." },
+      { "en": "The guest is extremely tired.", "vi": "Khách mời cực kỳ mệt." },
+      { "en": "The guest is done for today.", "vi": "Khách mời xong việc cho hôm nay." },
+      { "en": "The guest is encouraged.", "vi": "Khách mời được động viên." },
+      { "en": "The guest is thankful.", "vi": "Khách mời biết ơn." },
+      { "en": "The guest is very motivated.", "vi": "Khách mời rất có động lực." },
+      { "en": "The guest is a bit nervous.", "vi": "Khách mời hơi hồi hộp." },
+      { "en": "The guest is so excited.", "vi": "Khách mời rất hào hứng." },
+      { "en": "The guest is glad to help.", "vi": "Khách mời vui được giúp đỡ." },
+      { "en": "The guest is upset.", "vi": "Khách mời buồn bực." },
+      { "en": "The guest is content.", "vi": "Khách mời mãn nguyện." },
+      { "en": "The guest is humble.", "vi": "Khách mời khiêm tốn." },
+      { "en": "The guest is happy to be back.", "vi": "Khách mời vui khi trở lại." },
+      { "en": "The guest is sad to leave.", "vi": "Khách mời buồn khi phải đi." },
+      { "en": "The guest is bored.", "vi": "Khách mời chán." },
+      { "en": "The guest is organized.", "vi": "Khách mời ngăn nắp." },
+      { "en": "The guest is more than happy.", "vi": "Khách mời hơn cả vui." },
+      { "en": "The guest is full of energy.", "vi": "Khách mời tràn đầy năng lượng." },
+      { "en": "The guest is sure.", "vi": "Khách mời chắc chắn." },
+      { "en": "The guest is proud of the result.", "vi": "Khách mời tự hào về kết quả." },
+      { "en": "The guest is cautious.", "vi": "Khách mời thận trọng." },
+      { "en": "The guest is totally lost.", "vi": "Khách mời hoàn toàn lạc lối." },
+      { "en": "The guest is under pressure.", "vi": "Khách mời dưới áp lực." },
+      { "en": "The guest is angry.", "vi": "Khách mời tức giận." },
+      { "en": "The guest is generous.", "vi": "Khách mời rộng lượng." },
+      { "en": "The guest is wide awake.", "vi": "Khách mời tỉnh táo hẳn." },
+      { "en": "The guest is out for lunch.", "vi": "Khách mời ra ngoài ăn trưa." },
+      { "en": "The guest is in a meeting.", "vi": "Khách mời đang họp." },
+      { "en": "The guest is eager to learn.", "vi": "Khách mời háo hức học hỏi." },
+      { "en": "The guest is motivated.", "vi": "Khách mời có động lực." },
+      { "en": "The guest is friendly.", "vi": "Khách mời thân thiện." },
+      { "en": "The guest is really proud.", "vi": "Khách mời thực sự tự hào." },
+      { "en": "The guest is happy to see you.", "vi": "Khách mời vui khi gặp bạn." },
+      { "en": "The guest is delighted.", "vi": "Khách mời vui sướng." },
+      { "en": "The guest is proud.", "vi": "Khách mời tự hào." },
+      { "en": "The guest is on my way.", "vi": "Khách mời đang trên đường." },
+      { "en": "The guest is quick to respond.", "vi": "Khách mời phản hồi nhanh." },
+      { "en": "The guest is careful.", "vi": "Khách mời cẩn thận." },
+      { "en": "The guest is disappointed.", "vi": "Khách mời thất vọng." },
+      { "en": "The guest is relaxed.", "vi": "Khách mời thư giãn." },
+      { "en": "The guest is close to the goal.", "vi": "Khách mời gần đạt mục tiêu." },
+      { "en": "The guest is comfortable.", "vi": "Khách mời thoải mái." },
+      { "en": "The guest is worried about the exam.", "vi": "Khách mời lo lắng về kỳ thi." },
+      { "en": "The guest is completely lost.", "vi": "Khách mời hoàn toàn lạc lối." },
+      { "en": "The guest is scared.", "vi": "Khách mời sợ hãi." },
+      { "en": "The guest is new to this.", "vi": "Khách mời mới với việc này." },
+      { "en": "The guest is flexible.", "vi": "Khách mời linh hoạt." },
+      { "en": "The guest is satisfied with the service.", "vi": "Khách mời hài lòng với dịch vụ." },
+      { "en": "The guest is used to it.", "vi": "Khách mời đã quen với nó." },
+      { "en": "The guest is cautiously optimistic.", "vi": "Khách mời lạc quan thận trọng." },
+      { "en": "The guest is curious.", "vi": "Khách mời tò mò." },
+      { "en": "The guest is busy but okay.", "vi": "Khách mời bận nhưng ổn." },
+      { "en": "The guest is excited.", "vi": "Khách mời hào hứng." },
+      { "en": "The guest is better than yesterday.", "vi": "Khách mời tốt hơn hôm qua." },
+      { "en": "The guest is on the phone.", "vi": "Khách mời đang nghe điện thoại." },
+      { "en": "The guest is happy to help.", "vi": "Khách mời sẵn lòng giúp đỡ." },
+      { "en": "The guest is confused.", "vi": "Khách mời bối rối." },
+      { "en": "The guest is serious about this.", "vi": "Khách mời nghiêm túc về việc này." },
+      { "en": "The guest is out of energy.", "vi": "Khách mời hết năng lượng." },
+      { "en": "The guest is serious.", "vi": "Khách mời nghiêm túc." },
+      { "en": "The guest is available after lunch.", "vi": "Khách mời rảnh sau bữa trưa." },
+      { "en": "The guest is amazed.", "vi": "Khách mời kinh ngạc." },
+      { "en": "The guest is super hungry.", "vi": "Khách mời đói lắm." },
+      { "en": "The guest is surprised.", "vi": "Khách mời ngạc nhiên." },
+      { "en": "The guest is in a good mood.", "vi": "Khách mời đang vui vẻ." },
+      { "en": "The guest is running late.", "vi": "Khách mời bị trễ." },
+      { "en": "The guest is on the right track.", "vi": "Khách mời đi đúng hướng." },
+      { "en": "The guest is stuck in traffic.", "vi": "Khách mời kẹt xe." },
+      { "en": "The guest is happy for you.", "vi": "Khách mời mừng cho bạn." },
+      { "en": "The guest is joyful.", "vi": "Khách mời hân hoan." },
+      { "en": "The guest is lonely.", "vi": "Khách mời cô đơn." },
+      { "en": "The guest is thoughtful.", "vi": "Khách mời chu đáo." },
+      { "en": "The guest is calm and collected.", "vi": "Khách mời bình tĩnh và điềm đạm." },
+      {
+        "en": "The guest is nervous about the interview.",
+        "vi": "Khách mời hồi hộp về buổi phỏng vấn."
+      },
+      { "en": "The guest is free this weekend.", "vi": "Khách mời rảnh cuối tuần này." },
+      { "en": "The guest is ready for anything.", "vi": "Khách mời sẵn sàng cho mọi thứ." },
+      { "en": "The guest is fine.", "vi": "Khách mời ổn." },
+      { "en": "The guest is ready for the weekend.", "vi": "Khách mời sẵn sàng cho cuối tuần." },
+      { "en": "The guest is deeply grateful.", "vi": "Khách mời vô cùng biết ơn." },
+      { "en": "The guest is reliable.", "vi": "Khách mời đáng tin cậy." },
+      { "en": "The guest is optimistic.", "vi": "Khách mời lạc quan." },
+      { "en": "The guest is well-rested.", "vi": "Khách mời được nghỉ ngơi đầy đủ." },
+      { "en": "The guest is surprisingly calm.", "vi": "Khách mời bình tĩnh đến lạ." },
+      { "en": "The guest is absolutely sure.", "vi": "Khách mời chắc chắn tuyệt đối." },
+      { "en": "The guest is short of money.", "vi": "Khách mời thiếu tiền." },
+      { "en": "The guest is tired.", "vi": "Khách mời mệt." },
+      { "en": "The guest is confident.", "vi": "Khách mời tự tin." },
+      { "en": "The guest is nervous.", "vi": "Khách mời hồi hộp." },
+      { "en": "The guest is sleepy.", "vi": "Khách mời buồn ngủ." },
+      { "en": "The guest is patient.", "vi": "Khách mời kiên nhẫn." },
+      { "en": "The guest is grateful.", "vi": "Khách mời biết ơn." }
+    ]
+  },
+  {
+    "starter": "The guest was",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The guest was hungry.", "vi": "Khách mời đã đói." },
+      { "en": "The guest was disappointed.", "vi": "Khách mời đã thất vọng." },
+      { "en": "The guest was friendly.", "vi": "Khách mời đã thân thiện." },
+      {
+        "en": "The guest was ready for the challenge.",
+        "vi": "Khách mời đã sẵn sàng cho thử thách."
+      },
+      { "en": "The guest was out of practice.", "vi": "Khách mời đã lâu rồi không luyện." },
+      { "en": "The guest was working from home.", "vi": "Khách mời đã làm việc tại nhà." },
+      { "en": "The guest was used to it.", "vi": "Khách mời đã đã quen với nó." },
+      { "en": "The guest was serious.", "vi": "Khách mời đã nghiêm túc." },
+      { "en": "The guest was inspired.", "vi": "Khách mời đã được truyền cảm hứng." },
+      { "en": "The guest was very happy.", "vi": "Khách mời đã rất vui." },
+      { "en": "The guest was careful.", "vi": "Khách mời đã cẩn thận." },
+      { "en": "The guest was glad to be here.", "vi": "Khách mời đã vui khi được ở đây." },
+      {
+        "en": "The guest was interested in the offer.",
+        "vi": "Khách mời đã quan tâm đến lời đề nghị."
+      },
+      { "en": "The guest was tired but happy.", "vi": "Khách mời đã mệt nhưng vui." },
+      {
+        "en": "The guest was sure about my decision.",
+        "vi": "Khách mời đã chắc chắn về quyết định của mình."
+      },
+      { "en": "The guest was sleepy.", "vi": "Khách mời đã buồn ngủ." },
+      { "en": "The guest was optimistic.", "vi": "Khách mời đã lạc quan." },
+      { "en": "The guest was happy to see you.", "vi": "Khách mời đã vui khi gặp bạn." },
+      { "en": "The guest was curious.", "vi": "Khách mời đã tò mò." },
+      { "en": "The guest was early.", "vi": "Khách mời đã sớm." },
+      { "en": "The guest was focused.", "vi": "Khách mời đã tập trung." },
+      { "en": "The guest was open to ideas.", "vi": "Khách mời đã cởi mở với ý tưởng." },
+      { "en": "The guest was in a meeting.", "vi": "Khách mời đã đang họp." },
+      { "en": "The guest was good at English.", "vi": "Khách mời đã giỏi tiếng Anh." },
+      { "en": "The guest was nervous.", "vi": "Khách mời đã hồi hộp." },
+      { "en": "The guest was on my way.", "vi": "Khách mời đã đang trên đường." },
+      { "en": "The guest was dedicated.", "vi": "Khách mời đã tận tâm." },
+      { "en": "The guest was considerate.", "vi": "Khách mời đã biết quan tâm." },
+      { "en": "The guest was passionate.", "vi": "Khách mời đã đầy đam mê." },
+      { "en": "The guest was ready to go.", "vi": "Khách mời đã sẵn sàng đi." },
+      { "en": "The guest was impressed.", "vi": "Khách mời đã ấn tượng." },
+      { "en": "The guest was bored.", "vi": "Khách mời đã chán." },
+      { "en": "The guest was relieved.", "vi": "Khách mời đã nhẹ nhõm." },
+      { "en": "The guest was glad to help.", "vi": "Khách mời đã vui được giúp đỡ." },
+      { "en": "The guest was totally focused.", "vi": "Khách mời đã hoàn toàn tập trung." },
+      { "en": "The guest was upset.", "vi": "Khách mời đã buồn bực." },
+      {
+        "en": "The guest was grateful for your help.",
+        "vi": "Khách mời đã biết ơn sự giúp đỡ của bạn."
+      },
+      { "en": "The guest was enthusiastic.", "vi": "Khách mời đã nhiệt tình." },
+      { "en": "The guest was thankful.", "vi": "Khách mời đã biết ơn." },
+      { "en": "The guest was serious about this.", "vi": "Khách mời đã nghiêm túc về việc này." },
+      { "en": "The guest was committed to the plan.", "vi": "Khách mời đã cam kết với kế hoạch." },
+      { "en": "The guest was calm and ready.", "vi": "Khách mời đã bình tĩnh và sẵn sàng." },
+      { "en": "The guest was well-rested.", "vi": "Khách mời đã được nghỉ ngơi đầy đủ." },
+      { "en": "The guest was short on time.", "vi": "Khách mời đã thiếu thời gian." },
+      { "en": "The guest was almost done.", "vi": "Khách mời đã gần xong." },
+      { "en": "The guest was ahead of schedule.", "vi": "Khách mời đã sớm hơn dự kiến." },
+      { "en": "The guest was free this weekend.", "vi": "Khách mời đã rảnh cuối tuần này." },
+      { "en": "The guest was reliable.", "vi": "Khách mời đã đáng tin cậy." },
+      {
+        "en": "The guest was hopeful about the future.",
+        "vi": "Khách mời đã hy vọng về tương lai."
+      },
+      { "en": "The guest was in a hurry.", "vi": "Khách mời đã đang vội." },
+      { "en": "The guest was willing to help.", "vi": "Khách mời đã sẵn lòng giúp." },
+      {
+        "en": "The guest was proud of my work.",
+        "vi": "Khách mời đã tự hào về công việc của mình."
+      },
+      { "en": "The guest was honest.", "vi": "Khách mời đã trung thực." },
+      { "en": "The guest was busy but okay.", "vi": "Khách mời đã bận nhưng ổn." },
+      { "en": "The guest was ambitious.", "vi": "Khách mời đã tham vọng." },
+      { "en": "The guest was angry.", "vi": "Khách mời đã tức giận." },
+      { "en": "The guest was done for today.", "vi": "Khách mời đã xong việc cho hôm nay." },
+      { "en": "The guest was hard to please.", "vi": "Khách mời đã khó chiều." },
+      { "en": "The guest was sorry for the delay.", "vi": "Khách mời đã xin lỗi vì sự chậm trễ." },
+      { "en": "The guest was grateful.", "vi": "Khách mời đã biết ơn." },
+      { "en": "The guest was excited.", "vi": "Khách mời đã hào hứng." },
+      { "en": "The guest was ready.", "vi": "Khách mời đã sẵn sàng." },
+      { "en": "The guest was thankful for today.", "vi": "Khách mời đã biết ơn ngày hôm nay." },
+      { "en": "The guest was on the phone.", "vi": "Khách mời đã đang nghe điện thoại." },
+      { "en": "The guest was right on time.", "vi": "Khách mời đã đúng giờ." },
+      { "en": "The guest was busy until noon.", "vi": "Khách mời đã bận đến trưa." },
+      { "en": "The guest was proud of the team.", "vi": "Khách mời đã tự hào về đội." },
+      { "en": "The guest was super hungry.", "vi": "Khách mời đã đói lắm." },
+      { "en": "The guest was confident in the team.", "vi": "Khách mời đã tin tưởng vào nhóm." },
+      { "en": "The guest was proud.", "vi": "Khách mời đã tự hào." },
+      { "en": "The guest was more than happy.", "vi": "Khách mời đã hơn cả vui." },
+      { "en": "The guest was stronger than before.", "vi": "Khách mời đã mạnh mẽ hơn trước." },
+      { "en": "The guest was confident.", "vi": "Khách mời đã tự tin." },
+      { "en": "The guest was close to the goal.", "vi": "Khách mời đã gần đạt mục tiêu." },
+      { "en": "The guest was worried.", "vi": "Khách mời đã lo lắng." },
+      { "en": "The guest was energetic.", "vi": "Khách mời đã tràn đầy năng lượng." },
+      {
+        "en": "The guest was ready for the weekend.",
+        "vi": "Khách mời đã sẵn sàng cho cuối tuần."
+      },
+      { "en": "The guest was generous.", "vi": "Khách mời đã rộng lượng." },
+      { "en": "The guest was proud of the progress.", "vi": "Khách mời đã tự hào về sự tiến bộ." },
+      { "en": "The guest was totally lost.", "vi": "Khách mời đã hoàn toàn lạc lối." },
+      { "en": "The guest was late.", "vi": "Khách mời đã muộn." },
+      { "en": "The guest was slightly worried.", "vi": "Khách mời đã hơi lo." },
+      { "en": "The guest was worried about the exam.", "vi": "Khách mời đã lo lắng về kỳ thi." },
+      { "en": "The guest was hopeful for the best.", "vi": "Khách mời đã hy vọng điều tốt nhất." },
+      { "en": "The guest was hopeful.", "vi": "Khách mời đã tràn đầy hy vọng." },
+      { "en": "The guest was determined.", "vi": "Khách mời đã quyết tâm." },
+      { "en": "The guest was comfortable.", "vi": "Khách mời đã thoải mái." },
+      { "en": "The guest was thoughtful.", "vi": "Khách mời đã chu đáo." },
+      { "en": "The guest was from Vietnam.", "vi": "Khách mời đã đến từ Việt Nam." },
+      { "en": "The guest was proud of everyone.", "vi": "Khách mời đã tự hào về mọi người." },
+      { "en": "The guest was satisfied.", "vi": "Khách mời đã hài lòng." },
+      { "en": "The guest was okay.", "vi": "Khách mời đã ổn cả." },
+      { "en": "The guest was exhausted.", "vi": "Khách mời đã kiệt sức." },
+      { "en": "The guest was happy with the result.", "vi": "Khách mời đã hài lòng với kết quả." },
+      { "en": "The guest was proud and grateful.", "vi": "Khách mời đã tự hào và biết ơn." },
+      { "en": "The guest was ready for anything.", "vi": "Khách mời đã sẵn sàng cho mọi thứ." },
+      { "en": "The guest was stressed.", "vi": "Khách mời đã căng thẳng." },
+      { "en": "The guest was stuck in traffic.", "vi": "Khách mời đã kẹt xe." },
+      { "en": "The guest was out of ideas.", "vi": "Khách mời đã hết ý tưởng." },
+      { "en": "The guest was amazed.", "vi": "Khách mời đã kinh ngạc." }
+    ]
+  },
+  {
+    "starter": "The guest has",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The guest has a reference letter.", "vi": "Khách mời có một thư giới thiệu." },
+      { "en": "The guest has a car.", "vi": "Khách mời có một chiếc xe hơi." },
+      { "en": "The guest has a travel plan.", "vi": "Khách mời có một kế hoạch du lịch." },
+      {
+        "en": "The guest has a busy week ahead.",
+        "vi": "Khách mời có một tuần bận rộn phía trước."
+      },
+      { "en": "The guest has a major update.", "vi": "Khách mời có một bản cập nhật lớn." },
+      { "en": "The guest has high expectations.", "vi": "Khách mời có kỳ vọng cao." },
+      { "en": "The guest has a great mentor.", "vi": "Khách mời có một người cố vấn tuyệt vời." },
+      { "en": "The guest has a weekend trip.", "vi": "Khách mời có một chuyến đi cuối tuần." },
+      { "en": "The guest has a tight deadline.", "vi": "Khách mời có một thời hạn gấp." },
+      { "en": "The guest has a headache.", "vi": "Khách mời có một cơn đau đầu." },
+      { "en": "The guest has a savings plan.", "vi": "Khách mời có một kế hoạch tiết kiệm." },
+      { "en": "The guest has a comfortable chair.", "vi": "Khách mời có một chiếc ghế thoải mái." },
+      { "en": "The guest has a lot of friends.", "vi": "Khách mời có rất nhiều bạn bè." },
+      { "en": "The guest has a problem.", "vi": "Khách mời có một vấn đề." },
+      { "en": "The guest has a credit card.", "vi": "Khách mời có một thẻ tín dụng." },
+      { "en": "The guest has a balanced diet.", "vi": "Khách mời có một chế độ ăn cân bằng." },
+      { "en": "The guest has a notebook and pen.", "vi": "Khách mời có một quyển sổ và bút." },
+      { "en": "The guest has a loyal customer.", "vi": "Khách mời có một khách hàng trung thành." },
+      {
+        "en": "The guest has a quiet workspace.",
+        "vi": "Khách mời có một không gian làm việc yên tĩnh."
+      },
+      { "en": "The guest has a spare room.", "vi": "Khách mời có một phòng trống." },
+      { "en": "The guest has a doctor nearby.", "vi": "Khách mời có một bác sĩ gần đây." },
+      {
+        "en": "The guest has a clear schedule today.",
+        "vi": "Khách mời có một lịch trình trống hôm nay."
+      },
+      { "en": "The guest has a detailed plan.", "vi": "Khách mời có một kế hoạch chi tiết." },
+      {
+        "en": "The guest has a big decision to make.",
+        "vi": "Khách mời có một quyết định lớn phải đưa ra."
+      },
+      { "en": "The guest has a busy schedule.", "vi": "Khách mời có một lịch trình bận rộn." },
+      {
+        "en": "The guest has a question about the schedule.",
+        "vi": "Khách mời có một câu hỏi về lịch trình."
+      },
+      { "en": "The guest has a strong resume.", "vi": "Khách mời có một bản lý lịch ấn tượng." },
+      { "en": "The guest has a new contract.", "vi": "Khách mời có một hợp đồng mới." },
+      { "en": "The guest has a happy ending.", "vi": "Khách mời có một cái kết có hậu." },
+      { "en": "The guest has a good point.", "vi": "Khách mời có một ý hay." },
+      { "en": "The guest has a water bottle.", "vi": "Khách mời có một bình nước." },
+      { "en": "The guest has health insurance.", "vi": "Khách mời có bảo hiểm sức khỏe." },
+      {
+        "en": "The guest has a report to finish.",
+        "vi": "Khách mời có một báo cáo cần hoàn thành."
+      },
+      { "en": "The guest has a new project.", "vi": "Khách mời có một dự án mới." },
+      { "en": "The guest has a tight schedule.", "vi": "Khách mời có một lịch trình dày đặc." },
+      {
+        "en": "The guest has a marketing strategy.",
+        "vi": "Khách mời có một chiến lược tiếp thị."
+      },
+      { "en": "The guest has a startup plan.", "vi": "Khách mời có một kế hoạch khởi nghiệp." },
+      { "en": "The guest has a calendar reminder.", "vi": "Khách mời có một lời nhắc lịch." },
+      { "en": "The guest has an account here.", "vi": "Khách mời có một tài khoản ở đây." },
+      { "en": "The guest has a packed calendar.", "vi": "Khách mời có một lịch kín." },
+      { "en": "The guest has some experience.", "vi": "Khách mời có một chút kinh nghiệm." },
+      { "en": "The guest has a discount.", "vi": "Khách mời có một ưu đãi giảm giá." },
+      { "en": "The guest has bad news.", "vi": "Khách mời có tin xấu." },
+      { "en": "The guest has a realistic goal.", "vi": "Khách mời có một mục tiêu thực tế." },
+      { "en": "The guest has a hotel booking.", "vi": "Khách mời có một đặt phòng khách sạn." },
+      { "en": "The guest has a healthy lifestyle.", "vi": "Khách mời có một lối sống lành mạnh." },
+      {
+        "en": "The guest has a great idea for the project.",
+        "vi": "Khách mời có một ý tưởng tuyệt cho dự án."
+      },
+      { "en": "The guest has a positive attitude.", "vi": "Khách mời có một thái độ tích cực." },
+      { "en": "The guest has a pet dog.", "vi": "Khách mời có một chú chó cưng." },
+      { "en": "The guest has a lot of work.", "vi": "Khách mời có rất nhiều việc." },
+      { "en": "The guest has a lot of experience.", "vi": "Khách mời có rất nhiều kinh nghiệm." },
+      { "en": "The guest has a pending task.", "vi": "Khách mời có một nhiệm vụ còn dang dở." },
+      { "en": "The guest has a glass of water.", "vi": "Khách mời có một ly nước." },
+      { "en": "The guest has a tight budget.", "vi": "Khách mời có một ngân sách eo hẹp." },
+      {
+        "en": "The guest has a meeting with the client.",
+        "vi": "Khách mời có một cuộc họp với khách hàng."
+      },
+      { "en": "The guest has a comfortable home.", "vi": "Khách mời có một ngôi nhà thoải mái." },
+      { "en": "The guest has an email to send.", "vi": "Khách mời có một email cần gửi." },
+      { "en": "The guest has a fever.", "vi": "Khách mời có bị sốt." },
+      { "en": "The guest has a fresh start.", "vi": "Khách mời có một khởi đầu mới." },
+      {
+        "en": "The guest has a meeting at 3 PM.",
+        "vi": "Khách mời có một cuộc họp lúc 3 giờ chiều."
+      },
+      { "en": "The guest has a positive review.", "vi": "Khách mời có một đánh giá tích cực." },
+      { "en": "The guest has a local guide.", "vi": "Khách mời có một hướng dẫn viên địa phương." },
+      { "en": "The guest has a chance to win.", "vi": "Khách mời có một cơ hội để thắng." },
+      {
+        "en": "The guest has a question about the price.",
+        "vi": "Khách mời có một câu hỏi về giá."
+      },
+      { "en": "The guest has a special offer.", "vi": "Khách mời có một ưu đãi đặc biệt." },
+      { "en": "The guest has an important call.", "vi": "Khách mời có một cuộc gọi quan trọng." },
+      { "en": "The guest has a question for you.", "vi": "Khách mời có một câu hỏi cho bạn." },
+      { "en": "The guest has a new neighbor.", "vi": "Khách mời có một người hàng xóm mới." },
+      {
+        "en": "The guest has a test next week.",
+        "vi": "Khách mời có một bài kiểm tra vào tuần tới."
+      },
+      { "en": "The guest has a shopping list.", "vi": "Khách mời có một danh sách mua sắm." },
+      { "en": "The guest has a return ticket.", "vi": "Khách mời có một vé khứ hồi." },
+      { "en": "The guest has a strong opinion.", "vi": "Khách mời có một quan điểm mạnh mẽ." },
+      {
+        "en": "The guest has a doctor's appointment.",
+        "vi": "Khách mời có một cuộc hẹn với bác sĩ."
+      },
+      { "en": "The guest has a new job.", "vi": "Khách mời có một công việc mới." },
+      { "en": "The guest has a final decision.", "vi": "Khách mời có một quyết định cuối cùng." },
+      { "en": "The guest has a backup plan.", "vi": "Khách mời có một kế hoạch dự phòng." },
+      { "en": "The guest has a home-cooked meal.", "vi": "Khách mời có một bữa ăn tự nấu." },
+      { "en": "The guest has a window seat.", "vi": "Khách mời có một ghế cạnh cửa sổ." },
+      { "en": "The guest has two children.", "vi": "Khách mời có hai đứa con." },
+      { "en": "The guest has a dinner reservation.", "vi": "Khách mời có một chỗ đặt bữa tối." },
+      { "en": "The guest has a wonderful weekend.", "vi": "Khách mời có một cuối tuần tuyệt vời." },
+      { "en": "The guest has a fresh perspective.", "vi": "Khách mời có một góc nhìn mới mẻ." },
+      { "en": "The guest has a complaint.", "vi": "Khách mời có một lời phàn nàn." },
+      { "en": "The guest has a good night's sleep.", "vi": "Khách mời có một giấc ngủ ngon." },
+      { "en": "The guest has a clear answer.", "vi": "Khách mời có một câu trả lời rõ ràng." },
+      { "en": "The guest has a lot on my mind.", "vi": "Khách mời có nhiều điều trong đầu." },
+      { "en": "The guest has good news.", "vi": "Khách mời có tin tốt." },
+      { "en": "The guest has a morning routine.", "vi": "Khách mời có một thói quen buổi sáng." },
+      {
+        "en": "The guest has a reservation for two.",
+        "vi": "Khách mời có một chỗ đặt cho hai người."
+      },
+      { "en": "The guest has a bright future.", "vi": "Khách mời có một tương lai tươi sáng." },
+      { "en": "The guest has a second chance.", "vi": "Khách mời có một cơ hội thứ hai." },
+      { "en": "The guest has a question.", "vi": "Khách mời có một câu hỏi." },
+      {
+        "en": "The guest has a simple explanation.",
+        "vi": "Khách mời có một lời giải thích đơn giản."
+      },
+      { "en": "The guest has a quick lunch.", "vi": "Khách mời có một bữa trưa nhanh." },
+      { "en": "The guest has a small family.", "vi": "Khách mời có một gia đình nhỏ." },
+      { "en": "The guest has a cozy cafe.", "vi": "Khách mời có một quán cà phê ấm cúng." },
+      { "en": "The guest has a big surprise.", "vi": "Khách mời có một bất ngờ lớn." },
+      { "en": "The guest has a standing desk.", "vi": "Khách mời có một bàn đứng." },
+      { "en": "The guest has a driver's license.", "vi": "Khách mời có một bằng lái xe." },
+      { "en": "The guest has a pay raise.", "vi": "Khách mời có một đợt tăng lương." }
+    ]
+  },
+  {
+    "starter": "The guest wants to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The guest wants to copy the link.", "vi": "Khách mời muốn sao chép liên kết." },
+      { "en": "The guest wants to take the bus.", "vi": "Khách mời muốn đi xe buýt." },
+      { "en": "The guest wants to install the app.", "vi": "Khách mời muốn cài đặt ứng dụng." },
+      { "en": "The guest wants to lead the project.", "vi": "Khách mời muốn dẫn dắt dự án." },
+      { "en": "The guest wants to go on vacation.", "vi": "Khách mời muốn đi nghỉ mát." },
+      { "en": "The guest wants to do the laundry.", "vi": "Khách mời muốn giặt đồ." },
+      { "en": "The guest wants to close the window.", "vi": "Khách mời muốn đóng cửa sổ." },
+      { "en": "The guest wants to cancel the order.", "vi": "Khách mời muốn hủy đơn hàng." },
+      {
+        "en": "The guest wants to double-check everything.",
+        "vi": "Khách mời muốn kiểm tra lại mọi thứ."
+      },
+      { "en": "The guest wants to give feedback.", "vi": "Khách mời muốn góp ý." },
+      { "en": "The guest wants to visit the doctor.", "vi": "Khách mời muốn đi khám bác sĩ." },
+      { "en": "The guest wants to charge the phone.", "vi": "Khách mời muốn sạc điện thoại." },
+      { "en": "The guest wants to play sports.", "vi": "Khách mời muốn chơi thể thao." },
+      { "en": "The guest wants to cook breakfast.", "vi": "Khách mời muốn nấu bữa sáng." },
+      { "en": "The guest wants to review the document.", "vi": "Khách mời muốn xem lại tài liệu." },
+      { "en": "The guest wants to call back later.", "vi": "Khách mời muốn gọi lại sau." },
+      { "en": "The guest wants to call a friend.", "vi": "Khách mời muốn gọi cho một người bạn." },
+      { "en": "The guest wants to take a chance.", "vi": "Khách mời muốn nắm lấy cơ hội." },
+      { "en": "The guest wants to split the bill.", "vi": "Khách mời muốn chia hóa đơn." },
+      { "en": "The guest wants to throw a party.", "vi": "Khách mời muốn tổ chức tiệc." },
+      { "en": "The guest wants to plan ahead.", "vi": "Khách mời muốn lên kế hoạch trước." },
+      { "en": "The guest wants to never give up.", "vi": "Khách mời muốn không bao giờ bỏ cuộc." },
+      { "en": "The guest wants to take notes.", "vi": "Khách mời muốn ghi chép." },
+      { "en": "The guest wants to help out.", "vi": "Khách mời muốn giúp đỡ." },
+      {
+        "en": "The guest wants to help a neighbor.",
+        "vi": "Khách mời muốn giúp một người hàng xóm."
+      },
+      { "en": "The guest wants to watch the game.", "vi": "Khách mời muốn xem trận đấu." },
+      {
+        "en": "The guest wants to restart the computer.",
+        "vi": "Khách mời muốn khởi động lại máy tính."
+      },
+      { "en": "The guest wants to take a day off.", "vi": "Khách mời muốn xin nghỉ một ngày." },
+      { "en": "The guest wants to lose weight.", "vi": "Khách mời muốn giảm cân." },
+      { "en": "The guest wants to meet the deadline.", "vi": "Khách mời muốn kịp thời hạn." },
+      {
+        "en": "The guest wants to grow the business.",
+        "vi": "Khách mời muốn phát triển kinh doanh."
+      },
+      { "en": "The guest wants to close the deal.", "vi": "Khách mời muốn chốt thỏa thuận." },
+      { "en": "The guest wants to calm down.", "vi": "Khách mời muốn bình tĩnh lại." },
+      { "en": "The guest wants to take medicine.", "vi": "Khách mời muốn uống thuốc." },
+      { "en": "The guest wants to find a job.", "vi": "Khách mời muốn tìm việc làm." },
+      { "en": "The guest wants to train the team.", "vi": "Khách mời muốn đào tạo nhóm." },
+      { "en": "The guest wants to check my email.", "vi": "Khách mời muốn kiểm tra email." },
+      { "en": "The guest wants to lock the door.", "vi": "Khách mời muốn khóa cửa." },
+      { "en": "The guest wants to pay the bill.", "vi": "Khách mời muốn thanh toán hóa đơn." },
+      { "en": "The guest wants to pass the exam.", "vi": "Khách mời muốn đậu kỳ thi." },
+      {
+        "en": "The guest wants to save for the future.",
+        "vi": "Khách mời muốn tiết kiệm cho tương lai."
+      },
+      { "en": "The guest wants to ask for a raise.", "vi": "Khách mời muốn xin tăng lương." },
+      { "en": "The guest wants to drink more water.", "vi": "Khách mời muốn uống nhiều nước hơn." },
+      { "en": "The guest wants to make new friends.", "vi": "Khách mời muốn kết bạn mới." },
+      { "en": "The guest wants to fill out the form.", "vi": "Khách mời muốn điền vào biểu mẫu." },
+      { "en": "The guest wants to clean the house.", "vi": "Khách mời muốn dọn nhà." },
+      { "en": "The guest wants to reset the password.", "vi": "Khách mời muốn đặt lại mật khẩu." },
+      { "en": "The guest wants to get a degree.", "vi": "Khách mời muốn lấy bằng." },
+      { "en": "The guest wants to cut the budget.", "vi": "Khách mời muốn cắt giảm ngân sách." },
+      { "en": "The guest wants to write it down.", "vi": "Khách mời muốn ghi nó lại." },
+      { "en": "The guest wants to wake up early.", "vi": "Khách mời muốn dậy sớm." },
+      {
+        "en": "The guest wants to volunteer on weekends.",
+        "vi": "Khách mời muốn tình nguyện cuối tuần."
+      },
+      { "en": "The guest wants to move forward.", "vi": "Khách mời muốn tiến về phía trước." },
+      { "en": "The guest wants to cut expenses.", "vi": "Khách mời muốn cắt giảm chi tiêu." },
+      { "en": "The guest wants to thank everyone.", "vi": "Khách mời muốn cảm ơn mọi người." },
+      {
+        "en": "The guest wants to manage the schedule.",
+        "vi": "Khách mời muốn quản lý lịch trình."
+      },
+      { "en": "The guest wants to take a break.", "vi": "Khách mời muốn nghỉ giải lao." },
+      {
+        "en": "The guest wants to cook for everyone.",
+        "vi": "Khách mời muốn nấu ăn cho mọi người."
+      },
+      { "en": "The guest wants to change the plan.", "vi": "Khách mời muốn thay đổi kế hoạch." },
+      { "en": "The guest wants to speak clearly.", "vi": "Khách mời muốn nói rõ ràng." },
+      {
+        "en": "The guest wants to try harder next time.",
+        "vi": "Khách mời muốn cố gắng hơn lần sau."
+      },
+      { "en": "The guest wants to report the bug.", "vi": "Khách mời muốn báo lỗi." },
+      {
+        "en": "The guest wants to solve this issue.",
+        "vi": "Khách mời muốn giải quyết vấn đề này."
+      },
+      { "en": "The guest wants to print the document.", "vi": "Khách mời muốn in tài liệu." },
+      { "en": "The guest wants to write a report.", "vi": "Khách mời muốn viết một báo cáo." },
+      {
+        "en": "The guest wants to update the software.",
+        "vi": "Khách mời muốn cập nhật phần mềm."
+      },
+      { "en": "The guest wants to pay off the loan.", "vi": "Khách mời muốn trả hết khoản vay." },
+      { "en": "The guest wants to ride a bike.", "vi": "Khách mời muốn đạp xe." },
+      { "en": "The guest wants to pack my bags.", "vi": "Khách mời muốn xếp hành lý." },
+      {
+        "en": "The guest wants to register for the course.",
+        "vi": "Khách mời muốn đăng ký khóa học."
+      },
+      { "en": "The guest wants to think positive.", "vi": "Khách mời muốn suy nghĩ tích cực." },
+      { "en": "The guest wants to watch a movie.", "vi": "Khách mời muốn xem phim." },
+      { "en": "The guest wants to make a decision.", "vi": "Khách mời muốn đưa ra quyết định." },
+      { "en": "The guest wants to take a rest.", "vi": "Khách mời muốn nghỉ ngơi." },
+      { "en": "The guest wants to make tea.", "vi": "Khách mời muốn pha trà." },
+      { "en": "The guest wants to make a reservation.", "vi": "Khách mời muốn đặt chỗ trước." },
+      { "en": "The guest wants to book a hotel.", "vi": "Khách mời muốn đặt khách sạn." },
+      { "en": "The guest wants to visit my family.", "vi": "Khách mời muốn thăm gia đình." },
+      {
+        "en": "The guest wants to open a savings account.",
+        "vi": "Khách mời muốn mở tài khoản tiết kiệm."
+      },
+      { "en": "The guest wants to learn English.", "vi": "Khách mời muốn học tiếng Anh." },
+      {
+        "en": "The guest wants to negotiate the terms.",
+        "vi": "Khách mời muốn thương lượng điều khoản."
+      },
+      { "en": "The guest wants to keep in touch.", "vi": "Khách mời muốn giữ liên lạc." },
+      { "en": "The guest wants to wash the dishes.", "vi": "Khách mời muốn rửa bát." },
+      {
+        "en": "The guest wants to start a new project.",
+        "vi": "Khách mời muốn bắt đầu một dự án mới."
+      },
+      { "en": "The guest wants to reach the goal.", "vi": "Khách mời muốn đạt mục tiêu." },
+      { "en": "The guest wants to sleep early.", "vi": "Khách mời muốn ngủ sớm." },
+      { "en": "The guest wants to meditate daily.", "vi": "Khách mời muốn thiền mỗi ngày." },
+      { "en": "The guest wants to launch the product.", "vi": "Khách mời muốn ra mắt sản phẩm." },
+      { "en": "The guest wants to get a promotion.", "vi": "Khách mời muốn được thăng chức." },
+      { "en": "The guest wants to check the details.", "vi": "Khách mời muốn kiểm tra chi tiết." },
+      { "en": "The guest wants to improve my skills.", "vi": "Khách mời muốn cải thiện kỹ năng." },
+      { "en": "The guest wants to catch the train.", "vi": "Khách mời muốn bắt chuyến tàu." },
+      { "en": "The guest wants to finish on time.", "vi": "Khách mời muốn hoàn thành đúng hạn." },
+      { "en": "The guest wants to learn to swim.", "vi": "Khách mời muốn học bơi." },
+      { "en": "The guest wants to set an alarm.", "vi": "Khách mời muốn đặt báo thức." },
+      { "en": "The guest wants to say goodbye.", "vi": "Khách mời muốn nói lời tạm biệt." },
+      { "en": "The guest wants to support each other.", "vi": "Khách mời muốn hỗ trợ lẫn nhau." },
+      { "en": "The guest wants to stay organized.", "vi": "Khách mời muốn giữ ngăn nắp." },
+      { "en": "The guest wants to set a goal.", "vi": "Khách mời muốn đặt một mục tiêu." },
+      { "en": "The guest wants to share my opinion.", "vi": "Khách mời muốn chia sẻ ý kiến." }
+    ]
+  }
+]

@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join, relative } from 'node:path'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
-const DATA_DIR = join(ROOT, 'public', 'data')
+const DATA_DIR = join(ROOT, 'apps', 'english', 'public', 'data')
 const MANIFEST_PATH = join(DATA_DIR, 'manifest.json')
 
 // Duyệt đệ quy mọi file .json trong public/data (BỎ chính manifest.json).
@@ -38,7 +38,9 @@ const files = walk(DATA_DIR)
   .map((full) => {
     const buf = readFileSync(full)
     // path tương đối tính từ public/ → vd "data/dictionary/chunk-000.json"
-    const path = relative(join(ROOT, 'public'), full).split('\\').join('/')
+    const path = relative(join(ROOT, 'apps', 'english', 'public'), full)
+      .split('\\')
+      .join('/')
     return { path, hash: shortHash(buf), size: buf.length }
   })
   .sort((a, b) => a.path.localeCompare(b.path))

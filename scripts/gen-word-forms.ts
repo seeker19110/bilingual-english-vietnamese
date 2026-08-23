@@ -32,7 +32,7 @@ import type { DictEntry } from '../apps/english/src/types.ts'
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DICT_DIR = process.env.DICT_DIR
   ? path.resolve(PROJECT_ROOT, process.env.DICT_DIR)
-  : path.join(PROJECT_ROOT, 'public/data/dictionary')
+  : path.join(PROJECT_ROOT, 'apps/english/public/data/dictionary')
 
 // Mọi "bề mặt" dạng biến thể bất quy tắc đã biết (children, men, went, gone, better…).
 // Entry có word trùng một trong số này thì KHÔNG phải từ gốc → bỏ qua tính forms.

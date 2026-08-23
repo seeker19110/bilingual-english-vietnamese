@@ -1,0 +1,2361 @@
+[
+  {
+    "starter": "The team leader might",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The team leader might wake up early.", "vi": "Trưởng nhóm có thể dậy sớm." },
+      {
+        "en": "The team leader might cut the budget.",
+        "vi": "Trưởng nhóm có thể cắt giảm ngân sách."
+      },
+      { "en": "The team leader might sign up today.", "vi": "Trưởng nhóm có thể đăng ký hôm nay." },
+      { "en": "The team leader might read the news.", "vi": "Trưởng nhóm có thể đọc tin tức." },
+      { "en": "The team leader might get a degree.", "vi": "Trưởng nhóm có thể lấy bằng." },
+      { "en": "The team leader might reach the goal.", "vi": "Trưởng nhóm có thể đạt mục tiêu." },
+      {
+        "en": "The team leader might write a report.",
+        "vi": "Trưởng nhóm có thể viết một báo cáo."
+      },
+      { "en": "The team leader might quit smoking.", "vi": "Trưởng nhóm có thể bỏ thuốc lá." },
+      {
+        "en": "The team leader might get a promotion.",
+        "vi": "Trưởng nhóm có thể được thăng chức."
+      },
+      {
+        "en": "The team leader might schedule a meeting.",
+        "vi": "Trưởng nhóm có thể sắp xếp cuộc họp."
+      },
+      { "en": "The team leader might scan the receipt.", "vi": "Trưởng nhóm có thể quét hóa đơn." },
+      {
+        "en": "The team leader might win the contract.",
+        "vi": "Trưởng nhóm có thể giành hợp đồng."
+      },
+      {
+        "en": "The team leader might launch the product.",
+        "vi": "Trưởng nhóm có thể ra mắt sản phẩm."
+      },
+      { "en": "The team leader might watch a movie.", "vi": "Trưởng nhóm có thể xem phim." },
+      { "en": "The team leader might ask for help.", "vi": "Trưởng nhóm có thể nhờ giúp đỡ." },
+      { "en": "The team leader might go on vacation.", "vi": "Trưởng nhóm có thể đi nghỉ mát." },
+      { "en": "The team leader might cook breakfast.", "vi": "Trưởng nhóm có thể nấu bữa sáng." },
+      { "en": "The team leader might read more books.", "vi": "Trưởng nhóm có thể đọc thêm sách." },
+      {
+        "en": "The team leader might invite some friends.",
+        "vi": "Trưởng nhóm có thể mời vài người bạn."
+      },
+      { "en": "The team leader might speak English.", "vi": "Trưởng nhóm có thể nói tiếng Anh." },
+      {
+        "en": "The team leader might save for the future.",
+        "vi": "Trưởng nhóm có thể tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The team leader might print the document.",
+        "vi": "Trưởng nhóm có thể in tài liệu."
+      },
+      { "en": "The team leader might take medicine.", "vi": "Trưởng nhóm có thể uống thuốc." },
+      { "en": "The team leader might throw a party.", "vi": "Trưởng nhóm có thể tổ chức tiệc." },
+      { "en": "The team leader might raise the price.", "vi": "Trưởng nhóm có thể tăng giá." },
+      { "en": "The team leader might arrive on time.", "vi": "Trưởng nhóm có thể đến đúng giờ." },
+      { "en": "The team leader might write it down.", "vi": "Trưởng nhóm có thể ghi nó lại." },
+      { "en": "The team leader might calm down.", "vi": "Trưởng nhóm có thể bình tĩnh lại." },
+      {
+        "en": "The team leader might prepare the presentation.",
+        "vi": "Trưởng nhóm có thể chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The team leader might apply for the position.",
+        "vi": "Trưởng nhóm có thể nộp đơn cho vị trí."
+      },
+      { "en": "The team leader might listen to music.", "vi": "Trưởng nhóm có thể nghe nhạc." },
+      {
+        "en": "The team leader might share my opinion.",
+        "vi": "Trưởng nhóm có thể chia sẻ ý kiến."
+      },
+      { "en": "The team leader might say goodbye.", "vi": "Trưởng nhóm có thể nói lời tạm biệt." },
+      {
+        "en": "The team leader might grow the business.",
+        "vi": "Trưởng nhóm có thể phát triển kinh doanh."
+      },
+      { "en": "The team leader might stay up late.", "vi": "Trưởng nhóm có thể thức khuya." },
+      { "en": "The team leader might keep a promise.", "vi": "Trưởng nhóm có thể giữ lời hứa." },
+      { "en": "The team leader might learn to swim.", "vi": "Trưởng nhóm có thể học bơi." },
+      {
+        "en": "The team leader might remember the password.",
+        "vi": "Trưởng nhóm có thể nhớ mật khẩu."
+      },
+      {
+        "en": "The team leader might close the deal.",
+        "vi": "Trưởng nhóm có thể chốt thỏa thuận."
+      },
+      {
+        "en": "The team leader might test the feature.",
+        "vi": "Trưởng nhóm có thể kiểm thử tính năng."
+      },
+      { "en": "The team leader might try again.", "vi": "Trưởng nhóm có thể thử lại." },
+      { "en": "The team leader might set an alarm.", "vi": "Trưởng nhóm có thể đặt báo thức." },
+      {
+        "en": "The team leader might think positive.",
+        "vi": "Trưởng nhóm có thể suy nghĩ tích cực."
+      },
+      {
+        "en": "The team leader might donate to charity.",
+        "vi": "Trưởng nhóm có thể quyên góp từ thiện."
+      },
+      { "en": "The team leader might train the team.", "vi": "Trưởng nhóm có thể đào tạo nhóm." },
+      {
+        "en": "The team leader might buy a new phone.",
+        "vi": "Trưởng nhóm có thể mua điện thoại mới."
+      },
+      {
+        "en": "The team leader might answer the phone.",
+        "vi": "Trưởng nhóm có thể trả lời điện thoại."
+      },
+      {
+        "en": "The team leader might start a new project.",
+        "vi": "Trưởng nhóm có thể bắt đầu một dự án mới."
+      },
+      {
+        "en": "The team leader might meet new people.",
+        "vi": "Trưởng nhóm có thể gặp gỡ người mới."
+      },
+      {
+        "en": "The team leader might pay off the loan.",
+        "vi": "Trưởng nhóm có thể trả hết khoản vay."
+      },
+      { "en": "The team leader might breathe deeply.", "vi": "Trưởng nhóm có thể hít thở sâu." },
+      {
+        "en": "The team leader might reset the password.",
+        "vi": "Trưởng nhóm có thể đặt lại mật khẩu."
+      },
+      { "en": "The team leader might miss the flight.", "vi": "Trưởng nhóm có thể lỡ chuyến bay." },
+      { "en": "The team leader might learn English.", "vi": "Trưởng nhóm có thể học tiếng Anh." },
+      { "en": "The team leader might study abroad.", "vi": "Trưởng nhóm có thể du học." },
+      {
+        "en": "The team leader might confirm the booking.",
+        "vi": "Trưởng nhóm có thể xác nhận đặt chỗ."
+      },
+      {
+        "en": "The team leader might try harder next time.",
+        "vi": "Trưởng nhóm có thể cố gắng hơn lần sau."
+      },
+      { "en": "The team leader might make new friends.", "vi": "Trưởng nhóm có thể kết bạn mới." },
+      { "en": "The team leader might start over.", "vi": "Trưởng nhóm có thể bắt đầu lại." },
+      { "en": "The team leader might go for a walk.", "vi": "Trưởng nhóm có thể đi dạo." },
+      {
+        "en": "The team leader might cut expenses.",
+        "vi": "Trưởng nhóm có thể cắt giảm chi tiêu."
+      },
+      { "en": "The team leader might wait a moment.", "vi": "Trưởng nhóm có thể chờ một chút." },
+      { "en": "The team leader might walk the dog.", "vi": "Trưởng nhóm có thể dắt chó đi dạo." },
+      {
+        "en": "The team leader might plan a trip.",
+        "vi": "Trưởng nhóm có thể lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "The team leader might drink more water.",
+        "vi": "Trưởng nhóm có thể uống nhiều nước hơn."
+      },
+      {
+        "en": "The team leader might move forward.",
+        "vi": "Trưởng nhóm có thể tiến về phía trước."
+      },
+      {
+        "en": "The team leader might join a club.",
+        "vi": "Trưởng nhóm có thể tham gia câu lạc bộ."
+      },
+      { "en": "The team leader might cook dinner.", "vi": "Trưởng nhóm có thể nấu bữa tối." },
+      {
+        "en": "The team leader might lead the project.",
+        "vi": "Trưởng nhóm có thể dẫn dắt dự án."
+      },
+      { "en": "The team leader might change careers.", "vi": "Trưởng nhóm có thể chuyển nghề." },
+      { "en": "The team leader might speak clearly.", "vi": "Trưởng nhóm có thể nói rõ ràng." },
+      {
+        "en": "The team leader might listen carefully.",
+        "vi": "Trưởng nhóm có thể lắng nghe cẩn thận."
+      },
+      {
+        "en": "The team leader might pay the bill.",
+        "vi": "Trưởng nhóm có thể thanh toán hóa đơn."
+      },
+      { "en": "The team leader might tell the truth.", "vi": "Trưởng nhóm có thể nói sự thật." },
+      { "en": "The team leader might find a job.", "vi": "Trưởng nhóm có thể tìm việc làm." },
+      { "en": "The team leader might lock the door.", "vi": "Trưởng nhóm có thể khóa cửa." },
+      { "en": "The team leader might take it easy.", "vi": "Trưởng nhóm có thể thư giãn." },
+      { "en": "The team leader might lower the cost.", "vi": "Trưởng nhóm có thể giảm chi phí." },
+      { "en": "The team leader might take a rest.", "vi": "Trưởng nhóm có thể nghỉ ngơi." },
+      { "en": "The team leader might give it a try.", "vi": "Trưởng nhóm có thể thử một lần." },
+      { "en": "The team leader might order food.", "vi": "Trưởng nhóm có thể gọi đồ ăn." },
+      { "en": "The team leader might make a plan.", "vi": "Trưởng nhóm có thể lập một kế hoạch." },
+      { "en": "The team leader might book a ticket.", "vi": "Trưởng nhóm có thể đặt vé." },
+      { "en": "The team leader might make tea.", "vi": "Trưởng nhóm có thể pha trà." },
+      { "en": "The team leader might offer support.", "vi": "Trưởng nhóm có thể đề nghị hỗ trợ." },
+      {
+        "en": "The team leader might cook for everyone.",
+        "vi": "Trưởng nhóm có thể nấu ăn cho mọi người."
+      },
+      { "en": "The team leader might stay organized.", "vi": "Trưởng nhóm có thể giữ ngăn nắp." },
+      {
+        "en": "The team leader might update the software.",
+        "vi": "Trưởng nhóm có thể cập nhật phần mềm."
+      },
+      {
+        "en": "The team leader might volunteer on weekends.",
+        "vi": "Trưởng nhóm có thể tình nguyện cuối tuần."
+      },
+      {
+        "en": "The team leader might ask more questions.",
+        "vi": "Trưởng nhóm có thể hỏi nhiều hơn."
+      },
+      { "en": "The team leader might fix the problem.", "vi": "Trưởng nhóm có thể sửa vấn đề." },
+      { "en": "The team leader might eat healthy.", "vi": "Trưởng nhóm có thể ăn uống lành mạnh." },
+      {
+        "en": "The team leader might drink less coffee.",
+        "vi": "Trưởng nhóm có thể uống ít cà phê hơn."
+      },
+      {
+        "en": "The team leader might travel abroad.",
+        "vi": "Trưởng nhóm có thể đi du lịch nước ngoài."
+      },
+      { "en": "The team leader might take a break.", "vi": "Trưởng nhóm có thể nghỉ giải lao." },
+      {
+        "en": "The team leader might take a course.",
+        "vi": "Trưởng nhóm có thể tham gia một khóa học."
+      },
+      {
+        "en": "The team leader might improve my skills.",
+        "vi": "Trưởng nhóm có thể cải thiện kỹ năng."
+      },
+      {
+        "en": "The team leader might take a day off.",
+        "vi": "Trưởng nhóm có thể xin nghỉ một ngày."
+      },
+      { "en": "The team leader might check my email.", "vi": "Trưởng nhóm có thể kiểm tra email." },
+      { "en": "The team leader might keep in touch.", "vi": "Trưởng nhóm có thể giữ liên lạc." }
+    ]
+  },
+  {
+    "starter": "The team leader has to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The team leader has to get a promotion.",
+        "vi": "Trưởng nhóm phải được thăng chức."
+      },
+      { "en": "The team leader has to submit the form.", "vi": "Trưởng nhóm phải nộp biểu mẫu." },
+      {
+        "en": "The team leader has to change the plan.",
+        "vi": "Trưởng nhóm phải thay đổi kế hoạch."
+      },
+      { "en": "The team leader has to say sorry.", "vi": "Trưởng nhóm phải nói lời xin lỗi." },
+      { "en": "The team leader has to plan ahead.", "vi": "Trưởng nhóm phải lên kế hoạch trước." },
+      { "en": "The team leader has to cut expenses.", "vi": "Trưởng nhóm phải cắt giảm chi tiêu." },
+      {
+        "en": "The team leader has to hire new staff.",
+        "vi": "Trưởng nhóm phải tuyển nhân viên mới."
+      },
+      { "en": "The team leader has to speak clearly.", "vi": "Trưởng nhóm phải nói rõ ràng." },
+      { "en": "The team leader has to sign up today.", "vi": "Trưởng nhóm phải đăng ký hôm nay." },
+      {
+        "en": "The team leader has to make a reservation.",
+        "vi": "Trưởng nhóm phải đặt chỗ trước."
+      },
+      {
+        "en": "The team leader has to join the meeting.",
+        "vi": "Trưởng nhóm phải tham gia cuộc họp."
+      },
+      { "en": "The team leader has to miss the flight.", "vi": "Trưởng nhóm phải lỡ chuyến bay." },
+      { "en": "The team leader has to delete the file.", "vi": "Trưởng nhóm phải xóa tệp." },
+      { "en": "The team leader has to give feedback.", "vi": "Trưởng nhóm phải góp ý." },
+      { "en": "The team leader has to give it a try.", "vi": "Trưởng nhóm phải thử một lần." },
+      {
+        "en": "The team leader has to finish on time.",
+        "vi": "Trưởng nhóm phải hoàn thành đúng hạn."
+      },
+      {
+        "en": "The team leader has to follow the rules.",
+        "vi": "Trưởng nhóm phải tuân theo quy tắc."
+      },
+      {
+        "en": "The team leader has to launch the product.",
+        "vi": "Trưởng nhóm phải ra mắt sản phẩm."
+      },
+      {
+        "en": "The team leader has to ask more questions.",
+        "vi": "Trưởng nhóm phải hỏi nhiều hơn."
+      },
+      { "en": "The team leader has to eat healthy.", "vi": "Trưởng nhóm phải ăn uống lành mạnh." },
+      { "en": "The team leader has to reach the goal.", "vi": "Trưởng nhóm phải đạt mục tiêu." },
+      {
+        "en": "The team leader has to check the details.",
+        "vi": "Trưởng nhóm phải kiểm tra chi tiết."
+      },
+      { "en": "The team leader has to be on time.", "vi": "Trưởng nhóm phải đến đúng giờ." },
+      {
+        "en": "The team leader has to pay off the loan.",
+        "vi": "Trưởng nhóm phải trả hết khoản vay."
+      },
+      {
+        "en": "The team leader has to move forward.",
+        "vi": "Trưởng nhóm phải tiến về phía trước."
+      },
+      {
+        "en": "The team leader has to support each other.",
+        "vi": "Trưởng nhóm phải hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The team leader has to understand the lesson.",
+        "vi": "Trưởng nhóm phải hiểu bài học."
+      },
+      { "en": "The team leader has to wash the dishes.", "vi": "Trưởng nhóm phải rửa bát." },
+      {
+        "en": "The team leader has to pay the bill.",
+        "vi": "Trưởng nhóm phải thanh toán hóa đơn."
+      },
+      { "en": "The team leader has to water the plants.", "vi": "Trưởng nhóm phải tưới cây." },
+      {
+        "en": "The team leader has to write a report.",
+        "vi": "Trưởng nhóm phải viết một báo cáo."
+      },
+      {
+        "en": "The team leader has to learn something new.",
+        "vi": "Trưởng nhóm phải học điều gì đó mới."
+      },
+      { "en": "The team leader has to stay focused.", "vi": "Trưởng nhóm phải giữ tập trung." },
+      { "en": "The team leader has to take a break.", "vi": "Trưởng nhóm phải nghỉ giải lao." },
+      { "en": "The team leader has to sign the contract.", "vi": "Trưởng nhóm phải ký hợp đồng." },
+      { "en": "The team leader has to watch a movie.", "vi": "Trưởng nhóm phải xem phim." },
+      {
+        "en": "The team leader has to attend the class.",
+        "vi": "Trưởng nhóm phải tham gia lớp học."
+      },
+      {
+        "en": "The team leader has to remember the password.",
+        "vi": "Trưởng nhóm phải nhớ mật khẩu."
+      },
+      {
+        "en": "The team leader has to invite some friends.",
+        "vi": "Trưởng nhóm phải mời vài người bạn."
+      },
+      {
+        "en": "The team leader has to listen carefully.",
+        "vi": "Trưởng nhóm phải lắng nghe cẩn thận."
+      },
+      {
+        "en": "The team leader has to finish the report.",
+        "vi": "Trưởng nhóm phải hoàn thành báo cáo."
+      },
+      { "en": "The team leader has to cook dinner.", "vi": "Trưởng nhóm phải nấu bữa tối." },
+      { "en": "The team leader has to learn English.", "vi": "Trưởng nhóm phải học tiếng Anh." },
+      { "en": "The team leader has to scan the receipt.", "vi": "Trưởng nhóm phải quét hóa đơn." },
+      { "en": "The team leader has to ask a question.", "vi": "Trưởng nhóm phải hỏi một câu." },
+      { "en": "The team leader has to meet the deadline.", "vi": "Trưởng nhóm phải kịp thời hạn." },
+      { "en": "The team leader has to lower the cost.", "vi": "Trưởng nhóm phải giảm chi phí." },
+      { "en": "The team leader has to take notes.", "vi": "Trưởng nhóm phải ghi chép." },
+      { "en": "The team leader has to start over.", "vi": "Trưởng nhóm phải bắt đầu lại." },
+      { "en": "The team leader has to speak English.", "vi": "Trưởng nhóm phải nói tiếng Anh." },
+      { "en": "The team leader has to raise the price.", "vi": "Trưởng nhóm phải tăng giá." },
+      { "en": "The team leader has to ride a bike.", "vi": "Trưởng nhóm phải đạp xe." },
+      {
+        "en": "The team leader has to thank everyone.",
+        "vi": "Trưởng nhóm phải cảm ơn mọi người."
+      },
+      {
+        "en": "The team leader has to register for the course.",
+        "vi": "Trưởng nhóm phải đăng ký khóa học."
+      },
+      { "en": "The team leader has to take a photo.", "vi": "Trưởng nhóm phải chụp một bức ảnh." },
+      { "en": "The team leader has to take a chance.", "vi": "Trưởng nhóm phải nắm lấy cơ hội." },
+      {
+        "en": "The team leader has to try harder next time.",
+        "vi": "Trưởng nhóm phải cố gắng hơn lần sau."
+      },
+      { "en": "The team leader has to close the window.", "vi": "Trưởng nhóm phải đóng cửa sổ." },
+      { "en": "The team leader has to learn to swim.", "vi": "Trưởng nhóm phải học bơi." },
+      { "en": "The team leader has to clean the house.", "vi": "Trưởng nhóm phải dọn nhà." },
+      { "en": "The team leader has to split the bill.", "vi": "Trưởng nhóm phải chia hóa đơn." },
+      {
+        "en": "The team leader has to make a decision.",
+        "vi": "Trưởng nhóm phải đưa ra quyết định."
+      },
+      { "en": "The team leader has to catch the train.", "vi": "Trưởng nhóm phải bắt chuyến tàu." },
+      { "en": "The team leader has to take medicine.", "vi": "Trưởng nhóm phải uống thuốc." },
+      { "en": "The team leader has to ask for help.", "vi": "Trưởng nhóm phải nhờ giúp đỡ." },
+      {
+        "en": "The team leader has to rate the service.",
+        "vi": "Trưởng nhóm phải đánh giá dịch vụ."
+      },
+      {
+        "en": "The team leader has to answer the phone.",
+        "vi": "Trưởng nhóm phải trả lời điện thoại."
+      },
+      { "en": "The team leader has to throw a party.", "vi": "Trưởng nhóm phải tổ chức tiệc." },
+      {
+        "en": "The team leader has to charge the phone.",
+        "vi": "Trưởng nhóm phải sạc điện thoại."
+      },
+      {
+        "en": "The team leader has to get some rest.",
+        "vi": "Trưởng nhóm phải nghỉ ngơi một chút."
+      },
+      {
+        "en": "The team leader has to take a day off.",
+        "vi": "Trưởng nhóm phải xin nghỉ một ngày."
+      },
+      {
+        "en": "The team leader has to apply for the position.",
+        "vi": "Trưởng nhóm phải nộp đơn cho vị trí."
+      },
+      { "en": "The team leader has to call back later.", "vi": "Trưởng nhóm phải gọi lại sau." },
+      { "en": "The team leader has to pass the exam.", "vi": "Trưởng nhóm phải đậu kỳ thi." },
+      { "en": "The team leader has to buy groceries.", "vi": "Trưởng nhóm phải mua thực phẩm." },
+      {
+        "en": "The team leader has to cheer for the team.",
+        "vi": "Trưởng nhóm phải cổ vũ cho đội."
+      },
+      { "en": "The team leader has to cancel the order.", "vi": "Trưởng nhóm phải hủy đơn hàng." },
+      {
+        "en": "The team leader has to win the contract.",
+        "vi": "Trưởng nhóm phải giành hợp đồng."
+      },
+      { "en": "The team leader has to take the bus.", "vi": "Trưởng nhóm phải đi xe buýt." },
+      {
+        "en": "The team leader has to double-check the numbers.",
+        "vi": "Trưởng nhóm phải kiểm tra lại các con số."
+      },
+      { "en": "The team leader has to keep a diary.", "vi": "Trưởng nhóm phải viết nhật ký." },
+      { "en": "The team leader has to wait a moment.", "vi": "Trưởng nhóm phải chờ một chút." },
+      { "en": "The team leader has to pack my bags.", "vi": "Trưởng nhóm phải xếp hành lý." },
+      { "en": "The team leader has to go for a walk.", "vi": "Trưởng nhóm phải đi dạo." },
+      {
+        "en": "The team leader has to call a friend.",
+        "vi": "Trưởng nhóm phải gọi cho một người bạn."
+      },
+      {
+        "en": "The team leader has to help a neighbor.",
+        "vi": "Trưởng nhóm phải giúp một người hàng xóm."
+      },
+      {
+        "en": "The team leader has to never give up.",
+        "vi": "Trưởng nhóm phải không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The team leader has to work harder.",
+        "vi": "Trưởng nhóm phải làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The team leader has to open a business.",
+        "vi": "Trưởng nhóm phải mở một doanh nghiệp."
+      },
+      { "en": "The team leader has to make new friends.", "vi": "Trưởng nhóm phải kết bạn mới." },
+      {
+        "en": "The team leader has to explain the situation.",
+        "vi": "Trưởng nhóm phải giải thích tình huống."
+      },
+      {
+        "en": "The team leader has to volunteer on weekends.",
+        "vi": "Trưởng nhóm phải tình nguyện cuối tuần."
+      },
+      { "en": "The team leader has to go home.", "vi": "Trưởng nhóm phải về nhà." },
+      { "en": "The team leader has to save money.", "vi": "Trưởng nhóm phải tiết kiệm tiền." },
+      {
+        "en": "The team leader has to negotiate the terms.",
+        "vi": "Trưởng nhóm phải thương lượng điều khoản."
+      },
+      {
+        "en": "The team leader has to work as a team.",
+        "vi": "Trưởng nhóm phải làm việc theo nhóm."
+      },
+      { "en": "The team leader has to go on vacation.", "vi": "Trưởng nhóm phải đi nghỉ mát." },
+      { "en": "The team leader has to help the team.", "vi": "Trưởng nhóm phải giúp đỡ nhóm." },
+      { "en": "The team leader has to play sports.", "vi": "Trưởng nhóm phải chơi thể thao." },
+      { "en": "The team leader has to try again.", "vi": "Trưởng nhóm phải thử lại." }
+    ]
+  },
+  {
+    "starter": "The team leader is going to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The team leader is going to make a reservation.",
+        "vi": "Trưởng nhóm sắp đặt chỗ trước."
+      },
+      {
+        "en": "The team leader is going to check my email.",
+        "vi": "Trưởng nhóm sắp kiểm tra email."
+      },
+      {
+        "en": "The team leader is going to write a report.",
+        "vi": "Trưởng nhóm sắp viết một báo cáo."
+      },
+      {
+        "en": "The team leader is going to walk the dog.",
+        "vi": "Trưởng nhóm sắp dắt chó đi dạo."
+      },
+      {
+        "en": "The team leader is going to share the post.",
+        "vi": "Trưởng nhóm sắp chia sẻ bài viết."
+      },
+      {
+        "en": "The team leader is going to take a chance.",
+        "vi": "Trưởng nhóm sắp nắm lấy cơ hội."
+      },
+      {
+        "en": "The team leader is going to pay the bill.",
+        "vi": "Trưởng nhóm sắp thanh toán hóa đơn."
+      },
+      { "en": "The team leader is going to throw a party.", "vi": "Trưởng nhóm sắp tổ chức tiệc." },
+      { "en": "The team leader is going to delete the file.", "vi": "Trưởng nhóm sắp xóa tệp." },
+      {
+        "en": "The team leader is going to finish on time.",
+        "vi": "Trưởng nhóm sắp hoàn thành đúng hạn."
+      },
+      {
+        "en": "The team leader is going to lead the project.",
+        "vi": "Trưởng nhóm sắp dẫn dắt dự án."
+      },
+      {
+        "en": "The team leader is going to practice every day.",
+        "vi": "Trưởng nhóm sắp luyện tập mỗi ngày."
+      },
+      {
+        "en": "The team leader is going to take a day off.",
+        "vi": "Trưởng nhóm sắp xin nghỉ một ngày."
+      },
+      {
+        "en": "The team leader is going to join the meeting.",
+        "vi": "Trưởng nhóm sắp tham gia cuộc họp."
+      },
+      { "en": "The team leader is going to raise the price.", "vi": "Trưởng nhóm sắp tăng giá." },
+      {
+        "en": "The team leader is going to talk to the manager.",
+        "vi": "Trưởng nhóm sắp nói chuyện với quản lý."
+      },
+      { "en": "The team leader is going to go home.", "vi": "Trưởng nhóm sắp về nhà." },
+      {
+        "en": "The team leader is going to download the file.",
+        "vi": "Trưởng nhóm sắp tải tệp xuống."
+      },
+      { "en": "The team leader is going to go for a walk.", "vi": "Trưởng nhóm sắp đi dạo." },
+      {
+        "en": "The team leader is going to double-check the numbers.",
+        "vi": "Trưởng nhóm sắp kiểm tra lại các con số."
+      },
+      { "en": "The team leader is going to help the team.", "vi": "Trưởng nhóm sắp giúp đỡ nhóm." },
+      {
+        "en": "The team leader is going to save for the future.",
+        "vi": "Trưởng nhóm sắp tiết kiệm cho tương lai."
+      },
+      { "en": "The team leader is going to breathe deeply.", "vi": "Trưởng nhóm sắp hít thở sâu." },
+      { "en": "The team leader is going to learn to swim.", "vi": "Trưởng nhóm sắp học bơi." },
+      { "en": "The team leader is going to turn off the light.", "vi": "Trưởng nhóm sắp tắt đèn." },
+      {
+        "en": "The team leader is going to grow the business.",
+        "vi": "Trưởng nhóm sắp phát triển kinh doanh."
+      },
+      { "en": "The team leader is going to change careers.", "vi": "Trưởng nhóm sắp chuyển nghề." },
+      {
+        "en": "The team leader is going to help a neighbor.",
+        "vi": "Trưởng nhóm sắp giúp một người hàng xóm."
+      },
+      { "en": "The team leader is going to write it down.", "vi": "Trưởng nhóm sắp ghi nó lại." },
+      {
+        "en": "The team leader is going to meditate daily.",
+        "vi": "Trưởng nhóm sắp thiền mỗi ngày."
+      },
+      {
+        "en": "The team leader is going to sign up today.",
+        "vi": "Trưởng nhóm sắp đăng ký hôm nay."
+      },
+      {
+        "en": "The team leader is going to cancel the order.",
+        "vi": "Trưởng nhóm sắp hủy đơn hàng."
+      },
+      {
+        "en": "The team leader is going to explain the situation.",
+        "vi": "Trưởng nhóm sắp giải thích tình huống."
+      },
+      { "en": "The team leader is going to start over.", "vi": "Trưởng nhóm sắp bắt đầu lại." },
+      {
+        "en": "The team leader is going to work as a team.",
+        "vi": "Trưởng nhóm sắp làm việc theo nhóm."
+      },
+      {
+        "en": "The team leader is going to win the contract.",
+        "vi": "Trưởng nhóm sắp giành hợp đồng."
+      },
+      { "en": "The team leader is going to stay up late.", "vi": "Trưởng nhóm sắp thức khuya." },
+      { "en": "The team leader is going to sleep early.", "vi": "Trưởng nhóm sắp ngủ sớm." },
+      {
+        "en": "The team leader is going to move forward.",
+        "vi": "Trưởng nhóm sắp tiến về phía trước."
+      },
+      {
+        "en": "The team leader is going to cut expenses.",
+        "vi": "Trưởng nhóm sắp cắt giảm chi tiêu."
+      },
+      { "en": "The team leader is going to take notes.", "vi": "Trưởng nhóm sắp ghi chép." },
+      {
+        "en": "The team leader is going to enjoy the weekend.",
+        "vi": "Trưởng nhóm sắp tận hưởng cuối tuần."
+      },
+      {
+        "en": "The team leader is going to share my opinion.",
+        "vi": "Trưởng nhóm sắp chia sẻ ý kiến."
+      },
+      {
+        "en": "The team leader is going to negotiate the terms.",
+        "vi": "Trưởng nhóm sắp thương lượng điều khoản."
+      },
+      { "en": "The team leader is going to log in again.", "vi": "Trưởng nhóm sắp đăng nhập lại." },
+      {
+        "en": "The team leader is going to take a photo.",
+        "vi": "Trưởng nhóm sắp chụp một bức ảnh."
+      },
+      {
+        "en": "The team leader is going to reset the password.",
+        "vi": "Trưởng nhóm sắp đặt lại mật khẩu."
+      },
+      {
+        "en": "The team leader is going to listen carefully.",
+        "vi": "Trưởng nhóm sắp lắng nghe cẩn thận."
+      },
+      {
+        "en": "The team leader is going to train the team.",
+        "vi": "Trưởng nhóm sắp đào tạo nhóm."
+      },
+      {
+        "en": "The team leader is going to cook breakfast.",
+        "vi": "Trưởng nhóm sắp nấu bữa sáng."
+      },
+      { "en": "The team leader is going to do the laundry.", "vi": "Trưởng nhóm sắp giặt đồ." },
+      {
+        "en": "The team leader is going to close the deal.",
+        "vi": "Trưởng nhóm sắp chốt thỏa thuận."
+      },
+      {
+        "en": "The team leader is going to remember the password.",
+        "vi": "Trưởng nhóm sắp nhớ mật khẩu."
+      },
+      {
+        "en": "The team leader is going to drive to work.",
+        "vi": "Trưởng nhóm sắp lái xe đi làm."
+      },
+      { "en": "The team leader is going to report the bug.", "vi": "Trưởng nhóm sắp báo lỗi." },
+      {
+        "en": "The team leader is going to install the app.",
+        "vi": "Trưởng nhóm sắp cài đặt ứng dụng."
+      },
+      { "en": "The team leader is going to pass the exam.", "vi": "Trưởng nhóm sắp đậu kỳ thi." },
+      {
+        "en": "The team leader is going to say goodbye.",
+        "vi": "Trưởng nhóm sắp nói lời tạm biệt."
+      },
+      {
+        "en": "The team leader is going to cheer for the team.",
+        "vi": "Trưởng nhóm sắp cổ vũ cho đội."
+      },
+      {
+        "en": "The team leader is going to check the details.",
+        "vi": "Trưởng nhóm sắp kiểm tra chi tiết."
+      },
+      { "en": "The team leader is going to set an alarm.", "vi": "Trưởng nhóm sắp đặt báo thức." },
+      { "en": "The team leader is going to take a break.", "vi": "Trưởng nhóm sắp nghỉ giải lao." },
+      {
+        "en": "The team leader is going to catch the train.",
+        "vi": "Trưởng nhóm sắp bắt chuyến tàu."
+      },
+      { "en": "The team leader is going to cook dinner.", "vi": "Trưởng nhóm sắp nấu bữa tối." },
+      {
+        "en": "The team leader is going to make a plan.",
+        "vi": "Trưởng nhóm sắp lập một kế hoạch."
+      },
+      {
+        "en": "The team leader is going to start a new project.",
+        "vi": "Trưởng nhóm sắp bắt đầu một dự án mới."
+      },
+      { "en": "The team leader is going to order food.", "vi": "Trưởng nhóm sắp gọi đồ ăn." },
+      {
+        "en": "The team leader is going to close the window.",
+        "vi": "Trưởng nhóm sắp đóng cửa sổ."
+      },
+      {
+        "en": "The team leader is going to change the plan.",
+        "vi": "Trưởng nhóm sắp thay đổi kế hoạch."
+      },
+      {
+        "en": "The team leader is going to arrive on time.",
+        "vi": "Trưởng nhóm sắp đến đúng giờ."
+      },
+      { "en": "The team leader is going to keep a promise.", "vi": "Trưởng nhóm sắp giữ lời hứa." },
+      {
+        "en": "The team leader is going to fill out the form.",
+        "vi": "Trưởng nhóm sắp điền vào biểu mẫu."
+      },
+      { "en": "The team leader is going to take the exam.", "vi": "Trưởng nhóm sắp làm bài thi." },
+      { "en": "The team leader is going to save money.", "vi": "Trưởng nhóm sắp tiết kiệm tiền." },
+      {
+        "en": "The team leader is going to ask more questions.",
+        "vi": "Trưởng nhóm sắp hỏi nhiều hơn."
+      },
+      {
+        "en": "The team leader is going to offer support.",
+        "vi": "Trưởng nhóm sắp đề nghị hỗ trợ."
+      },
+      {
+        "en": "The team leader is going to set a goal.",
+        "vi": "Trưởng nhóm sắp đặt một mục tiêu."
+      },
+      { "en": "The team leader is going to ask for help.", "vi": "Trưởng nhóm sắp nhờ giúp đỡ." },
+      {
+        "en": "The team leader is going to improve my skills.",
+        "vi": "Trưởng nhóm sắp cải thiện kỹ năng."
+      },
+      {
+        "en": "The team leader is going to pay off the loan.",
+        "vi": "Trưởng nhóm sắp trả hết khoản vay."
+      },
+      {
+        "en": "The team leader is going to reach the goal.",
+        "vi": "Trưởng nhóm sắp đạt mục tiêu."
+      },
+      { "en": "The team leader is going to stay focused.", "vi": "Trưởng nhóm sắp giữ tập trung." },
+      { "en": "The team leader is going to stay home.", "vi": "Trưởng nhóm sắp ở nhà." },
+      { "en": "The team leader is going to get a degree.", "vi": "Trưởng nhóm sắp lấy bằng." },
+      { "en": "The team leader is going to think it over.", "vi": "Trưởng nhóm sắp suy nghĩ kỹ." },
+      {
+        "en": "The team leader is going to invest wisely.",
+        "vi": "Trưởng nhóm sắp đầu tư khôn ngoan."
+      },
+      { "en": "The team leader is going to leave early.", "vi": "Trưởng nhóm sắp về sớm." },
+      { "en": "The team leader is going to say sorry.", "vi": "Trưởng nhóm sắp nói lời xin lỗi." },
+      {
+        "en": "The team leader is going to print the document.",
+        "vi": "Trưởng nhóm sắp in tài liệu."
+      },
+      { "en": "The team leader is going to lock the door.", "vi": "Trưởng nhóm sắp khóa cửa." },
+      {
+        "en": "The team leader is going to split the bill.",
+        "vi": "Trưởng nhóm sắp chia hóa đơn."
+      },
+      {
+        "en": "The team leader is going to charge the phone.",
+        "vi": "Trưởng nhóm sắp sạc điện thoại."
+      },
+      { "en": "The team leader is going to ask a question.", "vi": "Trưởng nhóm sắp hỏi một câu." },
+      { "en": "The team leader is going to take it easy.", "vi": "Trưởng nhóm sắp thư giãn." },
+      {
+        "en": "The team leader is going to drink more water.",
+        "vi": "Trưởng nhóm sắp uống nhiều nước hơn."
+      },
+      {
+        "en": "The team leader is going to apply for the position.",
+        "vi": "Trưởng nhóm sắp nộp đơn cho vị trí."
+      },
+      {
+        "en": "The team leader is going to call back later.",
+        "vi": "Trưởng nhóm sắp gọi lại sau."
+      },
+      { "en": "The team leader is going to clean the house.", "vi": "Trưởng nhóm sắp dọn nhà." },
+      { "en": "The team leader is going to play sports.", "vi": "Trưởng nhóm sắp chơi thể thao." },
+      {
+        "en": "The team leader is going to attend the class.",
+        "vi": "Trưởng nhóm sắp tham gia lớp học."
+      }
+    ]
+  },
+  {
+    "starter": "The team leader is trying to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The team leader is trying to ask more questions.",
+        "vi": "Trưởng nhóm đang cố hỏi nhiều hơn."
+      },
+      {
+        "en": "The team leader is trying to improve my skills.",
+        "vi": "Trưởng nhóm đang cố cải thiện kỹ năng."
+      },
+      {
+        "en": "The team leader is trying to meet new people.",
+        "vi": "Trưởng nhóm đang cố gặp gỡ người mới."
+      },
+      {
+        "en": "The team leader is trying to say sorry.",
+        "vi": "Trưởng nhóm đang cố nói lời xin lỗi."
+      },
+      {
+        "en": "The team leader is trying to meditate daily.",
+        "vi": "Trưởng nhóm đang cố thiền mỗi ngày."
+      },
+      { "en": "The team leader is trying to stay home.", "vi": "Trưởng nhóm đang cố ở nhà." },
+      {
+        "en": "The team leader is trying to drink less coffee.",
+        "vi": "Trưởng nhóm đang cố uống ít cà phê hơn."
+      },
+      {
+        "en": "The team leader is trying to pay the bill.",
+        "vi": "Trưởng nhóm đang cố thanh toán hóa đơn."
+      },
+      {
+        "en": "The team leader is trying to keep a promise.",
+        "vi": "Trưởng nhóm đang cố giữ lời hứa."
+      },
+      {
+        "en": "The team leader is trying to pack my bags.",
+        "vi": "Trưởng nhóm đang cố xếp hành lý."
+      },
+      {
+        "en": "The team leader is trying to charge the phone.",
+        "vi": "Trưởng nhóm đang cố sạc điện thoại."
+      },
+      {
+        "en": "The team leader is trying to get a promotion.",
+        "vi": "Trưởng nhóm đang cố được thăng chức."
+      },
+      {
+        "en": "The team leader is trying to close the window.",
+        "vi": "Trưởng nhóm đang cố đóng cửa sổ."
+      },
+      {
+        "en": "The team leader is trying to launch the product.",
+        "vi": "Trưởng nhóm đang cố ra mắt sản phẩm."
+      },
+      {
+        "en": "The team leader is trying to keep in touch.",
+        "vi": "Trưởng nhóm đang cố giữ liên lạc."
+      },
+      {
+        "en": "The team leader is trying to take medicine.",
+        "vi": "Trưởng nhóm đang cố uống thuốc."
+      },
+      {
+        "en": "The team leader is trying to celebrate together.",
+        "vi": "Trưởng nhóm đang cố ăn mừng cùng nhau."
+      },
+      {
+        "en": "The team leader is trying to hire new staff.",
+        "vi": "Trưởng nhóm đang cố tuyển nhân viên mới."
+      },
+      {
+        "en": "The team leader is trying to cut expenses.",
+        "vi": "Trưởng nhóm đang cố cắt giảm chi tiêu."
+      },
+      {
+        "en": "The team leader is trying to say goodbye.",
+        "vi": "Trưởng nhóm đang cố nói lời tạm biệt."
+      },
+      {
+        "en": "The team leader is trying to solve this issue.",
+        "vi": "Trưởng nhóm đang cố giải quyết vấn đề này."
+      },
+      {
+        "en": "The team leader is trying to raise the price.",
+        "vi": "Trưởng nhóm đang cố tăng giá."
+      },
+      {
+        "en": "The team leader is trying to cook dinner.",
+        "vi": "Trưởng nhóm đang cố nấu bữa tối."
+      },
+      {
+        "en": "The team leader is trying to download the file.",
+        "vi": "Trưởng nhóm đang cố tải tệp xuống."
+      },
+      {
+        "en": "The team leader is trying to save for the future.",
+        "vi": "Trưởng nhóm đang cố tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The team leader is trying to relax at home.",
+        "vi": "Trưởng nhóm đang cố thư giãn ở nhà."
+      },
+      {
+        "en": "The team leader is trying to cook breakfast.",
+        "vi": "Trưởng nhóm đang cố nấu bữa sáng."
+      },
+      {
+        "en": "The team leader is trying to start a new project.",
+        "vi": "Trưởng nhóm đang cố bắt đầu một dự án mới."
+      },
+      {
+        "en": "The team leader is trying to work harder.",
+        "vi": "Trưởng nhóm đang cố làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The team leader is trying to win the contract.",
+        "vi": "Trưởng nhóm đang cố giành hợp đồng."
+      },
+      {
+        "en": "The team leader is trying to finish on time.",
+        "vi": "Trưởng nhóm đang cố hoàn thành đúng hạn."
+      },
+      { "en": "The team leader is trying to try again.", "vi": "Trưởng nhóm đang cố thử lại." },
+      {
+        "en": "The team leader is trying to back up the data.",
+        "vi": "Trưởng nhóm đang cố sao lưu dữ liệu."
+      },
+      {
+        "en": "The team leader is trying to invest wisely.",
+        "vi": "Trưởng nhóm đang cố đầu tư khôn ngoan."
+      },
+      {
+        "en": "The team leader is trying to call back later.",
+        "vi": "Trưởng nhóm đang cố gọi lại sau."
+      },
+      {
+        "en": "The team leader is trying to call a friend.",
+        "vi": "Trưởng nhóm đang cố gọi cho một người bạn."
+      },
+      {
+        "en": "The team leader is trying to take the exam.",
+        "vi": "Trưởng nhóm đang cố làm bài thi."
+      },
+      { "en": "The team leader is trying to make tea.", "vi": "Trưởng nhóm đang cố pha trà." },
+      {
+        "en": "The team leader is trying to offer support.",
+        "vi": "Trưởng nhóm đang cố đề nghị hỗ trợ."
+      },
+      {
+        "en": "The team leader is trying to volunteer on weekends.",
+        "vi": "Trưởng nhóm đang cố tình nguyện cuối tuần."
+      },
+      {
+        "en": "The team leader is trying to double-check the numbers.",
+        "vi": "Trưởng nhóm đang cố kiểm tra lại các con số."
+      },
+      {
+        "en": "The team leader is trying to practice every day.",
+        "vi": "Trưởng nhóm đang cố luyện tập mỗi ngày."
+      },
+      {
+        "en": "The team leader is trying to sign up today.",
+        "vi": "Trưởng nhóm đang cố đăng ký hôm nay."
+      },
+      {
+        "en": "The team leader is trying to lower the cost.",
+        "vi": "Trưởng nhóm đang cố giảm chi phí."
+      },
+      {
+        "en": "The team leader is trying to scan the receipt.",
+        "vi": "Trưởng nhóm đang cố quét hóa đơn."
+      },
+      { "en": "The team leader is trying to take notes.", "vi": "Trưởng nhóm đang cố ghi chép." },
+      { "en": "The team leader is trying to order food.", "vi": "Trưởng nhóm đang cố gọi đồ ăn." },
+      {
+        "en": "The team leader is trying to understand the lesson.",
+        "vi": "Trưởng nhóm đang cố hiểu bài học."
+      },
+      {
+        "en": "The team leader is trying to ask for a raise.",
+        "vi": "Trưởng nhóm đang cố xin tăng lương."
+      },
+      {
+        "en": "The team leader is trying to join a club.",
+        "vi": "Trưởng nhóm đang cố tham gia câu lạc bộ."
+      },
+      {
+        "en": "The team leader is trying to submit the form.",
+        "vi": "Trưởng nhóm đang cố nộp biểu mẫu."
+      },
+      {
+        "en": "The team leader is trying to report the bug.",
+        "vi": "Trưởng nhóm đang cố báo lỗi."
+      },
+      {
+        "en": "The team leader is trying to keep a diary.",
+        "vi": "Trưởng nhóm đang cố viết nhật ký."
+      },
+      {
+        "en": "The team leader is trying to set a goal.",
+        "vi": "Trưởng nhóm đang cố đặt một mục tiêu."
+      },
+      {
+        "en": "The team leader is trying to cook for everyone.",
+        "vi": "Trưởng nhóm đang cố nấu ăn cho mọi người."
+      },
+      {
+        "en": "The team leader is trying to reset the password.",
+        "vi": "Trưởng nhóm đang cố đặt lại mật khẩu."
+      },
+      {
+        "en": "The team leader is trying to set an alarm.",
+        "vi": "Trưởng nhóm đang cố đặt báo thức."
+      },
+      {
+        "en": "The team leader is trying to take a break.",
+        "vi": "Trưởng nhóm đang cố nghỉ giải lao."
+      },
+      {
+        "en": "The team leader is trying to follow the rules.",
+        "vi": "Trưởng nhóm đang cố tuân theo quy tắc."
+      },
+      {
+        "en": "The team leader is trying to enjoy the weekend.",
+        "vi": "Trưởng nhóm đang cố tận hưởng cuối tuần."
+      },
+      { "en": "The team leader is trying to give feedback.", "vi": "Trưởng nhóm đang cố góp ý." },
+      {
+        "en": "The team leader is trying to update the software.",
+        "vi": "Trưởng nhóm đang cố cập nhật phần mềm."
+      },
+      {
+        "en": "The team leader is trying to think positive.",
+        "vi": "Trưởng nhóm đang cố suy nghĩ tích cực."
+      },
+      {
+        "en": "The team leader is trying to quit smoking.",
+        "vi": "Trưởng nhóm đang cố bỏ thuốc lá."
+      },
+      { "en": "The team leader is trying to ride a bike.", "vi": "Trưởng nhóm đang cố đạp xe." },
+      {
+        "en": "The team leader is trying to learn something new.",
+        "vi": "Trưởng nhóm đang cố học điều gì đó mới."
+      },
+      { "en": "The team leader is trying to learn to swim.", "vi": "Trưởng nhóm đang cố học bơi." },
+      {
+        "en": "The team leader is trying to reply to the message.",
+        "vi": "Trưởng nhóm đang cố trả lời tin nhắn."
+      },
+      {
+        "en": "The team leader is trying to start over.",
+        "vi": "Trưởng nhóm đang cố bắt đầu lại."
+      },
+      {
+        "en": "The team leader is trying to write it down.",
+        "vi": "Trưởng nhóm đang cố ghi nó lại."
+      },
+      {
+        "en": "The team leader is trying to wait a moment.",
+        "vi": "Trưởng nhóm đang cố chờ một chút."
+      },
+      {
+        "en": "The team leader is trying to be on time.",
+        "vi": "Trưởng nhóm đang cố đến đúng giờ."
+      },
+      { "en": "The team leader is trying to sleep early.", "vi": "Trưởng nhóm đang cố ngủ sớm." },
+      { "en": "The team leader is trying to rent a car.", "vi": "Trưởng nhóm đang cố thuê xe." },
+      {
+        "en": "The team leader is trying to read more books.",
+        "vi": "Trưởng nhóm đang cố đọc thêm sách."
+      },
+      { "en": "The team leader is trying to go home.", "vi": "Trưởng nhóm đang cố về nhà." },
+      {
+        "en": "The team leader is trying to thank everyone.",
+        "vi": "Trưởng nhóm đang cố cảm ơn mọi người."
+      },
+      {
+        "en": "The team leader is trying to think it over.",
+        "vi": "Trưởng nhóm đang cố suy nghĩ kỹ."
+      },
+      {
+        "en": "The team leader is trying to turn off the light.",
+        "vi": "Trưởng nhóm đang cố tắt đèn."
+      },
+      {
+        "en": "The team leader is trying to delete the file.",
+        "vi": "Trưởng nhóm đang cố xóa tệp."
+      },
+      {
+        "en": "The team leader is trying to work as a team.",
+        "vi": "Trưởng nhóm đang cố làm việc theo nhóm."
+      },
+      {
+        "en": "The team leader is trying to make new friends.",
+        "vi": "Trưởng nhóm đang cố kết bạn mới."
+      },
+      {
+        "en": "The team leader is trying to explain the situation.",
+        "vi": "Trưởng nhóm đang cố giải thích tình huống."
+      },
+      {
+        "en": "The team leader is trying to remember the password.",
+        "vi": "Trưởng nhóm đang cố nhớ mật khẩu."
+      },
+      {
+        "en": "The team leader is trying to fix the problem.",
+        "vi": "Trưởng nhóm đang cố sửa vấn đề."
+      },
+      {
+        "en": "The team leader is trying to copy the link.",
+        "vi": "Trưởng nhóm đang cố sao chép liên kết."
+      },
+      {
+        "en": "The team leader is trying to visit the doctor.",
+        "vi": "Trưởng nhóm đang cố đi khám bác sĩ."
+      },
+      {
+        "en": "The team leader is trying to watch the game.",
+        "vi": "Trưởng nhóm đang cố xem trận đấu."
+      },
+      {
+        "en": "The team leader is trying to get some rest.",
+        "vi": "Trưởng nhóm đang cố nghỉ ngơi một chút."
+      },
+      {
+        "en": "The team leader is trying to test the feature.",
+        "vi": "Trưởng nhóm đang cố kiểm thử tính năng."
+      },
+      {
+        "en": "The team leader is trying to plan ahead.",
+        "vi": "Trưởng nhóm đang cố lên kế hoạch trước."
+      },
+      {
+        "en": "The team leader is trying to make a reservation.",
+        "vi": "Trưởng nhóm đang cố đặt chỗ trước."
+      },
+      {
+        "en": "The team leader is trying to read the news.",
+        "vi": "Trưởng nhóm đang cố đọc tin tức."
+      },
+      {
+        "en": "The team leader is trying to talk to the manager.",
+        "vi": "Trưởng nhóm đang cố nói chuyện với quản lý."
+      },
+      {
+        "en": "The team leader is trying to reach the goal.",
+        "vi": "Trưởng nhóm đang cố đạt mục tiêu."
+      },
+      {
+        "en": "The team leader is trying to confirm the booking.",
+        "vi": "Trưởng nhóm đang cố xác nhận đặt chỗ."
+      },
+      {
+        "en": "The team leader is trying to fill out the form.",
+        "vi": "Trưởng nhóm đang cố điền vào biểu mẫu."
+      },
+      { "en": "The team leader is trying to wake up early.", "vi": "Trưởng nhóm đang cố dậy sớm." },
+      { "en": "The team leader is trying to book a ticket.", "vi": "Trưởng nhóm đang cố đặt vé." },
+      {
+        "en": "The team leader is trying to water the plants.",
+        "vi": "Trưởng nhóm đang cố tưới cây."
+      }
+    ]
+  },
+  {
+    "starter": "The team leader is planning to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The team leader is planning to listen to music.",
+        "vi": "Trưởng nhóm đang định nghe nhạc."
+      },
+      {
+        "en": "The team leader is planning to cook breakfast.",
+        "vi": "Trưởng nhóm đang định nấu bữa sáng."
+      },
+      {
+        "en": "The team leader is planning to lock the door.",
+        "vi": "Trưởng nhóm đang định khóa cửa."
+      },
+      {
+        "en": "The team leader is planning to practice every day.",
+        "vi": "Trưởng nhóm đang định luyện tập mỗi ngày."
+      },
+      {
+        "en": "The team leader is planning to win the contract.",
+        "vi": "Trưởng nhóm đang định giành hợp đồng."
+      },
+      {
+        "en": "The team leader is planning to help the team.",
+        "vi": "Trưởng nhóm đang định giúp đỡ nhóm."
+      },
+      {
+        "en": "The team leader is planning to try harder next time.",
+        "vi": "Trưởng nhóm đang định cố gắng hơn lần sau."
+      },
+      {
+        "en": "The team leader is planning to ask for a raise.",
+        "vi": "Trưởng nhóm đang định xin tăng lương."
+      },
+      {
+        "en": "The team leader is planning to help a neighbor.",
+        "vi": "Trưởng nhóm đang định giúp một người hàng xóm."
+      },
+      {
+        "en": "The team leader is planning to cook for everyone.",
+        "vi": "Trưởng nhóm đang định nấu ăn cho mọi người."
+      },
+      {
+        "en": "The team leader is planning to launch the product.",
+        "vi": "Trưởng nhóm đang định ra mắt sản phẩm."
+      },
+      {
+        "en": "The team leader is planning to attend the class.",
+        "vi": "Trưởng nhóm đang định tham gia lớp học."
+      },
+      {
+        "en": "The team leader is planning to sign up today.",
+        "vi": "Trưởng nhóm đang định đăng ký hôm nay."
+      },
+      {
+        "en": "The team leader is planning to drive to work.",
+        "vi": "Trưởng nhóm đang định lái xe đi làm."
+      },
+      { "en": "The team leader is planning to try again.", "vi": "Trưởng nhóm đang định thử lại." },
+      {
+        "en": "The team leader is planning to exercise every day.",
+        "vi": "Trưởng nhóm đang định tập thể dục mỗi ngày."
+      },
+      {
+        "en": "The team leader is planning to learn to swim.",
+        "vi": "Trưởng nhóm đang định học bơi."
+      },
+      {
+        "en": "The team leader is planning to write a report.",
+        "vi": "Trưởng nhóm đang định viết một báo cáo."
+      },
+      {
+        "en": "The team leader is planning to keep a promise.",
+        "vi": "Trưởng nhóm đang định giữ lời hứa."
+      },
+      {
+        "en": "The team leader is planning to leave a comment.",
+        "vi": "Trưởng nhóm đang định để lại bình luận."
+      },
+      {
+        "en": "The team leader is planning to start over.",
+        "vi": "Trưởng nhóm đang định bắt đầu lại."
+      },
+      {
+        "en": "The team leader is planning to lose weight.",
+        "vi": "Trưởng nhóm đang định giảm cân."
+      },
+      {
+        "en": "The team leader is planning to tell the truth.",
+        "vi": "Trưởng nhóm đang định nói sự thật."
+      },
+      {
+        "en": "The team leader is planning to report the bug.",
+        "vi": "Trưởng nhóm đang định báo lỗi."
+      },
+      {
+        "en": "The team leader is planning to grow the business.",
+        "vi": "Trưởng nhóm đang định phát triển kinh doanh."
+      },
+      {
+        "en": "The team leader is planning to catch the train.",
+        "vi": "Trưởng nhóm đang định bắt chuyến tàu."
+      },
+      {
+        "en": "The team leader is planning to back up the data.",
+        "vi": "Trưởng nhóm đang định sao lưu dữ liệu."
+      },
+      {
+        "en": "The team leader is planning to wake up early.",
+        "vi": "Trưởng nhóm đang định dậy sớm."
+      },
+      {
+        "en": "The team leader is planning to check my email.",
+        "vi": "Trưởng nhóm đang định kiểm tra email."
+      },
+      {
+        "en": "The team leader is planning to take the bus.",
+        "vi": "Trưởng nhóm đang định đi xe buýt."
+      },
+      {
+        "en": "The team leader is planning to arrive on time.",
+        "vi": "Trưởng nhóm đang định đến đúng giờ."
+      },
+      {
+        "en": "The team leader is planning to thank everyone.",
+        "vi": "Trưởng nhóm đang định cảm ơn mọi người."
+      },
+      {
+        "en": "The team leader is planning to go for a walk.",
+        "vi": "Trưởng nhóm đang định đi dạo."
+      },
+      {
+        "en": "The team leader is planning to train the team.",
+        "vi": "Trưởng nhóm đang định đào tạo nhóm."
+      },
+      {
+        "en": "The team leader is planning to take a break.",
+        "vi": "Trưởng nhóm đang định nghỉ giải lao."
+      },
+      {
+        "en": "The team leader is planning to pack my bags.",
+        "vi": "Trưởng nhóm đang định xếp hành lý."
+      },
+      {
+        "en": "The team leader is planning to delete the file.",
+        "vi": "Trưởng nhóm đang định xóa tệp."
+      },
+      {
+        "en": "The team leader is planning to sign the contract.",
+        "vi": "Trưởng nhóm đang định ký hợp đồng."
+      },
+      {
+        "en": "The team leader is planning to lower the cost.",
+        "vi": "Trưởng nhóm đang định giảm chi phí."
+      },
+      {
+        "en": "The team leader is planning to take notes.",
+        "vi": "Trưởng nhóm đang định ghi chép."
+      },
+      {
+        "en": "The team leader is planning to move forward.",
+        "vi": "Trưởng nhóm đang định tiến về phía trước."
+      },
+      {
+        "en": "The team leader is planning to do the laundry.",
+        "vi": "Trưởng nhóm đang định giặt đồ."
+      },
+      {
+        "en": "The team leader is planning to call back later.",
+        "vi": "Trưởng nhóm đang định gọi lại sau."
+      },
+      {
+        "en": "The team leader is planning to invite some friends.",
+        "vi": "Trưởng nhóm đang định mời vài người bạn."
+      },
+      { "en": "The team leader is planning to stay home.", "vi": "Trưởng nhóm đang định ở nhà." },
+      {
+        "en": "The team leader is planning to install the app.",
+        "vi": "Trưởng nhóm đang định cài đặt ứng dụng."
+      },
+      { "en": "The team leader is planning to go home.", "vi": "Trưởng nhóm đang định về nhà." },
+      {
+        "en": "The team leader is planning to reset the password.",
+        "vi": "Trưởng nhóm đang định đặt lại mật khẩu."
+      },
+      {
+        "en": "The team leader is planning to make new friends.",
+        "vi": "Trưởng nhóm đang định kết bạn mới."
+      },
+      {
+        "en": "The team leader is planning to go on vacation.",
+        "vi": "Trưởng nhóm đang định đi nghỉ mát."
+      },
+      {
+        "en": "The team leader is planning to miss the flight.",
+        "vi": "Trưởng nhóm đang định lỡ chuyến bay."
+      },
+      {
+        "en": "The team leader is planning to ride a bike.",
+        "vi": "Trưởng nhóm đang định đạp xe."
+      },
+      {
+        "en": "The team leader is planning to book a ticket.",
+        "vi": "Trưởng nhóm đang định đặt vé."
+      },
+      {
+        "en": "The team leader is planning to stay focused.",
+        "vi": "Trưởng nhóm đang định giữ tập trung."
+      },
+      {
+        "en": "The team leader is planning to log in again.",
+        "vi": "Trưởng nhóm đang định đăng nhập lại."
+      },
+      {
+        "en": "The team leader is planning to donate to charity.",
+        "vi": "Trưởng nhóm đang định quyên góp từ thiện."
+      },
+      {
+        "en": "The team leader is planning to read more books.",
+        "vi": "Trưởng nhóm đang định đọc thêm sách."
+      },
+      {
+        "en": "The team leader is planning to remember the password.",
+        "vi": "Trưởng nhóm đang định nhớ mật khẩu."
+      },
+      {
+        "en": "The team leader is planning to visit the doctor.",
+        "vi": "Trưởng nhóm đang định đi khám bác sĩ."
+      },
+      {
+        "en": "The team leader is planning to take a rest.",
+        "vi": "Trưởng nhóm đang định nghỉ ngơi."
+      },
+      {
+        "en": "The team leader is planning to pass the exam.",
+        "vi": "Trưởng nhóm đang định đậu kỳ thi."
+      },
+      {
+        "en": "The team leader is planning to take it easy.",
+        "vi": "Trưởng nhóm đang định thư giãn."
+      },
+      {
+        "en": "The team leader is planning to enjoy the weekend.",
+        "vi": "Trưởng nhóm đang định tận hưởng cuối tuần."
+      },
+      {
+        "en": "The team leader is planning to open a business.",
+        "vi": "Trưởng nhóm đang định mở một doanh nghiệp."
+      },
+      {
+        "en": "The team leader is planning to stay up late.",
+        "vi": "Trưởng nhóm đang định thức khuya."
+      },
+      {
+        "en": "The team leader is planning to travel abroad.",
+        "vi": "Trưởng nhóm đang định đi du lịch nước ngoài."
+      },
+      {
+        "en": "The team leader is planning to improve my skills.",
+        "vi": "Trưởng nhóm đang định cải thiện kỹ năng."
+      },
+      {
+        "en": "The team leader is planning to cancel the order.",
+        "vi": "Trưởng nhóm đang định hủy đơn hàng."
+      },
+      {
+        "en": "The team leader is planning to cheer for the team.",
+        "vi": "Trưởng nhóm đang định cổ vũ cho đội."
+      },
+      {
+        "en": "The team leader is planning to share my opinion.",
+        "vi": "Trưởng nhóm đang định chia sẻ ý kiến."
+      },
+      {
+        "en": "The team leader is planning to write it down.",
+        "vi": "Trưởng nhóm đang định ghi nó lại."
+      },
+      {
+        "en": "The team leader is planning to test the feature.",
+        "vi": "Trưởng nhóm đang định kiểm thử tính năng."
+      },
+      {
+        "en": "The team leader is planning to cut expenses.",
+        "vi": "Trưởng nhóm đang định cắt giảm chi tiêu."
+      },
+      {
+        "en": "The team leader is planning to lead the project.",
+        "vi": "Trưởng nhóm đang định dẫn dắt dự án."
+      },
+      {
+        "en": "The team leader is planning to calm down.",
+        "vi": "Trưởng nhóm đang định bình tĩnh lại."
+      },
+      {
+        "en": "The team leader is planning to prepare the presentation.",
+        "vi": "Trưởng nhóm đang định chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The team leader is planning to drink less coffee.",
+        "vi": "Trưởng nhóm đang định uống ít cà phê hơn."
+      },
+      {
+        "en": "The team leader is planning to watch the game.",
+        "vi": "Trưởng nhóm đang định xem trận đấu."
+      },
+      {
+        "en": "The team leader is planning to turn off the light.",
+        "vi": "Trưởng nhóm đang định tắt đèn."
+      },
+      {
+        "en": "The team leader is planning to answer the phone.",
+        "vi": "Trưởng nhóm đang định trả lời điện thoại."
+      },
+      {
+        "en": "The team leader is planning to join the meeting.",
+        "vi": "Trưởng nhóm đang định tham gia cuộc họp."
+      },
+      {
+        "en": "The team leader is planning to copy the link.",
+        "vi": "Trưởng nhóm đang định sao chép liên kết."
+      },
+      {
+        "en": "The team leader is planning to explain the situation.",
+        "vi": "Trưởng nhóm đang định giải thích tình huống."
+      },
+      {
+        "en": "The team leader is planning to support each other.",
+        "vi": "Trưởng nhóm đang định hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The team leader is planning to apply for the position.",
+        "vi": "Trưởng nhóm đang định nộp đơn cho vị trí."
+      },
+      {
+        "en": "The team leader is planning to play sports.",
+        "vi": "Trưởng nhóm đang định chơi thể thao."
+      },
+      {
+        "en": "The team leader is planning to close the window.",
+        "vi": "Trưởng nhóm đang định đóng cửa sổ."
+      },
+      {
+        "en": "The team leader is planning to rate the service.",
+        "vi": "Trưởng nhóm đang định đánh giá dịch vụ."
+      },
+      {
+        "en": "The team leader is planning to keep in touch.",
+        "vi": "Trưởng nhóm đang định giữ liên lạc."
+      },
+      {
+        "en": "The team leader is planning to start a new project.",
+        "vi": "Trưởng nhóm đang định bắt đầu một dự án mới."
+      },
+      {
+        "en": "The team leader is planning to raise the price.",
+        "vi": "Trưởng nhóm đang định tăng giá."
+      },
+      {
+        "en": "The team leader is planning to breathe deeply.",
+        "vi": "Trưởng nhóm đang định hít thở sâu."
+      },
+      {
+        "en": "The team leader is planning to attend the workshop.",
+        "vi": "Trưởng nhóm đang định tham dự buổi hội thảo."
+      },
+      {
+        "en": "The team leader is planning to open a savings account.",
+        "vi": "Trưởng nhóm đang định mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "The team leader is planning to send the email.",
+        "vi": "Trưởng nhóm đang định gửi email."
+      },
+      {
+        "en": "The team leader is planning to never give up.",
+        "vi": "Trưởng nhóm đang định không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The team leader is planning to share the post.",
+        "vi": "Trưởng nhóm đang định chia sẻ bài viết."
+      },
+      {
+        "en": "The team leader is planning to get some rest.",
+        "vi": "Trưởng nhóm đang định nghỉ ngơi một chút."
+      },
+      {
+        "en": "The team leader is planning to meet the deadline.",
+        "vi": "Trưởng nhóm đang định kịp thời hạn."
+      },
+      {
+        "en": "The team leader is planning to fill out the form.",
+        "vi": "Trưởng nhóm đang định điền vào biểu mẫu."
+      }
+    ]
+  },
+  {
+    "starter": "The team leader used to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The team leader used to move forward.",
+        "vi": "Trưởng nhóm từng tiến về phía trước."
+      },
+      { "en": "The team leader used to wait a moment.", "vi": "Trưởng nhóm từng chờ một chút." },
+      { "en": "The team leader used to go home.", "vi": "Trưởng nhóm từng về nhà." },
+      {
+        "en": "The team leader used to reset the password.",
+        "vi": "Trưởng nhóm từng đặt lại mật khẩu."
+      },
+      { "en": "The team leader used to report the bug.", "vi": "Trưởng nhóm từng báo lỗi." },
+      { "en": "The team leader used to tell the truth.", "vi": "Trưởng nhóm từng nói sự thật." },
+      {
+        "en": "The team leader used to get some rest.",
+        "vi": "Trưởng nhóm từng nghỉ ngơi một chút."
+      },
+      { "en": "The team leader used to take medicine.", "vi": "Trưởng nhóm từng uống thuốc." },
+      {
+        "en": "The team leader used to join the meeting.",
+        "vi": "Trưởng nhóm từng tham gia cuộc họp."
+      },
+      { "en": "The team leader used to reach the goal.", "vi": "Trưởng nhóm từng đạt mục tiêu." },
+      { "en": "The team leader used to take it easy.", "vi": "Trưởng nhóm từng thư giãn." },
+      { "en": "The team leader used to be on time.", "vi": "Trưởng nhóm từng đến đúng giờ." },
+      {
+        "en": "The team leader used to update the software.",
+        "vi": "Trưởng nhóm từng cập nhật phần mềm."
+      },
+      {
+        "en": "The team leader used to visit the doctor.",
+        "vi": "Trưởng nhóm từng đi khám bác sĩ."
+      },
+      {
+        "en": "The team leader used to print the document.",
+        "vi": "Trưởng nhóm từng in tài liệu."
+      },
+      { "en": "The team leader used to save money.", "vi": "Trưởng nhóm từng tiết kiệm tiền." },
+      {
+        "en": "The team leader used to launch the product.",
+        "vi": "Trưởng nhóm từng ra mắt sản phẩm."
+      },
+      { "en": "The team leader used to do the laundry.", "vi": "Trưởng nhóm từng giặt đồ." },
+      {
+        "en": "The team leader used to lead the project.",
+        "vi": "Trưởng nhóm từng dẫn dắt dự án."
+      },
+      {
+        "en": "The team leader used to reply to the message.",
+        "vi": "Trưởng nhóm từng trả lời tin nhắn."
+      },
+      { "en": "The team leader used to lower the cost.", "vi": "Trưởng nhóm từng giảm chi phí." },
+      { "en": "The team leader used to visit my family.", "vi": "Trưởng nhóm từng thăm gia đình." },
+      { "en": "The team leader used to split the bill.", "vi": "Trưởng nhóm từng chia hóa đơn." },
+      {
+        "en": "The team leader used to solve this issue.",
+        "vi": "Trưởng nhóm từng giải quyết vấn đề này."
+      },
+      { "en": "The team leader used to send the email.", "vi": "Trưởng nhóm từng gửi email." },
+      {
+        "en": "The team leader used to cut the budget.",
+        "vi": "Trưởng nhóm từng cắt giảm ngân sách."
+      },
+      { "en": "The team leader used to miss the flight.", "vi": "Trưởng nhóm từng lỡ chuyến bay." },
+      { "en": "The team leader used to say goodbye.", "vi": "Trưởng nhóm từng nói lời tạm biệt." },
+      { "en": "The team leader used to turn off the light.", "vi": "Trưởng nhóm từng tắt đèn." },
+      {
+        "en": "The team leader used to double-check the numbers.",
+        "vi": "Trưởng nhóm từng kiểm tra lại các con số."
+      },
+      {
+        "en": "The team leader used to get a promotion.",
+        "vi": "Trưởng nhóm từng được thăng chức."
+      },
+      {
+        "en": "The team leader used to change the plan.",
+        "vi": "Trưởng nhóm từng thay đổi kế hoạch."
+      },
+      { "en": "The team leader used to throw a party.", "vi": "Trưởng nhóm từng tổ chức tiệc." },
+      {
+        "en": "The team leader used to ask for a raise.",
+        "vi": "Trưởng nhóm từng xin tăng lương."
+      },
+      {
+        "en": "The team leader used to drink less coffee.",
+        "vi": "Trưởng nhóm từng uống ít cà phê hơn."
+      },
+      { "en": "The team leader used to order food.", "vi": "Trưởng nhóm từng gọi đồ ăn." },
+      { "en": "The team leader used to write it down.", "vi": "Trưởng nhóm từng ghi nó lại." },
+      {
+        "en": "The team leader used to help a neighbor.",
+        "vi": "Trưởng nhóm từng giúp một người hàng xóm."
+      },
+      {
+        "en": "The team leader used to ask more questions.",
+        "vi": "Trưởng nhóm từng hỏi nhiều hơn."
+      },
+      {
+        "en": "The team leader used to rate the service.",
+        "vi": "Trưởng nhóm từng đánh giá dịch vụ."
+      },
+      {
+        "en": "The team leader used to finish the report.",
+        "vi": "Trưởng nhóm từng hoàn thành báo cáo."
+      },
+      { "en": "The team leader used to buy groceries.", "vi": "Trưởng nhóm từng mua thực phẩm." },
+      { "en": "The team leader used to plan ahead.", "vi": "Trưởng nhóm từng lên kế hoạch trước." },
+      {
+        "en": "The team leader used to answer the phone.",
+        "vi": "Trưởng nhóm từng trả lời điện thoại."
+      },
+      { "en": "The team leader used to quit smoking.", "vi": "Trưởng nhóm từng bỏ thuốc lá." },
+      {
+        "en": "The team leader used to drink more water.",
+        "vi": "Trưởng nhóm từng uống nhiều nước hơn."
+      },
+      {
+        "en": "The team leader used to meet the deadline.",
+        "vi": "Trưởng nhóm từng kịp thời hạn."
+      },
+      { "en": "The team leader used to stay organized.", "vi": "Trưởng nhóm từng giữ ngăn nắp." },
+      { "en": "The team leader used to keep in touch.", "vi": "Trưởng nhóm từng giữ liên lạc." },
+      { "en": "The team leader used to raise the price.", "vi": "Trưởng nhóm từng tăng giá." },
+      { "en": "The team leader used to submit the form.", "vi": "Trưởng nhóm từng nộp biểu mẫu." },
+      {
+        "en": "The team leader used to restart the computer.",
+        "vi": "Trưởng nhóm từng khởi động lại máy tính."
+      },
+      { "en": "The team leader used to take the bus.", "vi": "Trưởng nhóm từng đi xe buýt." },
+      {
+        "en": "The team leader used to grow the business.",
+        "vi": "Trưởng nhóm từng phát triển kinh doanh."
+      },
+      { "en": "The team leader used to make new friends.", "vi": "Trưởng nhóm từng kết bạn mới." },
+      { "en": "The team leader used to calm down.", "vi": "Trưởng nhóm từng bình tĩnh lại." },
+      {
+        "en": "The team leader used to travel abroad.",
+        "vi": "Trưởng nhóm từng đi du lịch nước ngoài."
+      },
+      {
+        "en": "The team leader used to thank everyone.",
+        "vi": "Trưởng nhóm từng cảm ơn mọi người."
+      },
+      { "en": "The team leader used to book a ticket.", "vi": "Trưởng nhóm từng đặt vé." },
+      {
+        "en": "The team leader used to support each other.",
+        "vi": "Trưởng nhóm từng hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The team leader used to pay off the loan.",
+        "vi": "Trưởng nhóm từng trả hết khoản vay."
+      },
+      {
+        "en": "The team leader used to keep learning.",
+        "vi": "Trưởng nhóm từng tiếp tục học hỏi."
+      },
+      { "en": "The team leader used to go for a walk.", "vi": "Trưởng nhóm từng đi dạo." },
+      { "en": "The team leader used to speak English.", "vi": "Trưởng nhóm từng nói tiếng Anh." },
+      {
+        "en": "The team leader used to volunteer on weekends.",
+        "vi": "Trưởng nhóm từng tình nguyện cuối tuần."
+      },
+      {
+        "en": "The team leader used to open a savings account.",
+        "vi": "Trưởng nhóm từng mở tài khoản tiết kiệm."
+      },
+      { "en": "The team leader used to check my email.", "vi": "Trưởng nhóm từng kiểm tra email." },
+      {
+        "en": "The team leader used to never give up.",
+        "vi": "Trưởng nhóm từng không bao giờ bỏ cuộc."
+      },
+      { "en": "The team leader used to rent a car.", "vi": "Trưởng nhóm từng thuê xe." },
+      {
+        "en": "The team leader used to listen carefully.",
+        "vi": "Trưởng nhóm từng lắng nghe cẩn thận."
+      },
+      {
+        "en": "The team leader used to call a friend.",
+        "vi": "Trưởng nhóm từng gọi cho một người bạn."
+      },
+      {
+        "en": "The team leader used to practice every day.",
+        "vi": "Trưởng nhóm từng luyện tập mỗi ngày."
+      },
+      {
+        "en": "The team leader used to work harder.",
+        "vi": "Trưởng nhóm từng làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The team leader used to improve my skills.",
+        "vi": "Trưởng nhóm từng cải thiện kỹ năng."
+      },
+      { "en": "The team leader used to arrive on time.", "vi": "Trưởng nhóm từng đến đúng giờ." },
+      {
+        "en": "The team leader used to close the deal.",
+        "vi": "Trưởng nhóm từng chốt thỏa thuận."
+      },
+      {
+        "en": "The team leader used to confirm the booking.",
+        "vi": "Trưởng nhóm từng xác nhận đặt chỗ."
+      },
+      { "en": "The team leader used to read the news.", "vi": "Trưởng nhóm từng đọc tin tức." },
+      {
+        "en": "The team leader used to work as a team.",
+        "vi": "Trưởng nhóm từng làm việc theo nhóm."
+      },
+      { "en": "The team leader used to sign up today.", "vi": "Trưởng nhóm từng đăng ký hôm nay." },
+      {
+        "en": "The team leader used to cut expenses.",
+        "vi": "Trưởng nhóm từng cắt giảm chi tiêu."
+      },
+      { "en": "The team leader used to ride a bike.", "vi": "Trưởng nhóm từng đạp xe." },
+      {
+        "en": "The team leader used to learn something new.",
+        "vi": "Trưởng nhóm từng học điều gì đó mới."
+      },
+      { "en": "The team leader used to cancel the order.", "vi": "Trưởng nhóm từng hủy đơn hàng." },
+      { "en": "The team leader used to lose weight.", "vi": "Trưởng nhóm từng giảm cân." },
+      { "en": "The team leader used to find a job.", "vi": "Trưởng nhóm từng tìm việc làm." },
+      {
+        "en": "The team leader used to pay the bill.",
+        "vi": "Trưởng nhóm từng thanh toán hóa đơn."
+      },
+      { "en": "The team leader used to speak clearly.", "vi": "Trưởng nhóm từng nói rõ ràng." },
+      {
+        "en": "The team leader used to win the contract.",
+        "vi": "Trưởng nhóm từng giành hợp đồng."
+      },
+      {
+        "en": "The team leader used to donate to charity.",
+        "vi": "Trưởng nhóm từng quyên góp từ thiện."
+      },
+      {
+        "en": "The team leader used to exercise every day.",
+        "vi": "Trưởng nhóm từng tập thể dục mỗi ngày."
+      },
+      {
+        "en": "The team leader used to cheer for the team.",
+        "vi": "Trưởng nhóm từng cổ vũ cho đội."
+      },
+      {
+        "en": "The team leader used to attend the workshop.",
+        "vi": "Trưởng nhóm từng tham dự buổi hội thảo."
+      },
+      {
+        "en": "The team leader used to charge the phone.",
+        "vi": "Trưởng nhóm từng sạc điện thoại."
+      },
+      { "en": "The team leader used to ask a question.", "vi": "Trưởng nhóm từng hỏi một câu." },
+      {
+        "en": "The team leader used to cook for everyone.",
+        "vi": "Trưởng nhóm từng nấu ăn cho mọi người."
+      },
+      { "en": "The team leader used to offer support.", "vi": "Trưởng nhóm từng đề nghị hỗ trợ." },
+      {
+        "en": "The team leader used to invite some friends.",
+        "vi": "Trưởng nhóm từng mời vài người bạn."
+      },
+      {
+        "en": "The team leader used to follow the rules.",
+        "vi": "Trưởng nhóm từng tuân theo quy tắc."
+      },
+      { "en": "The team leader used to take a break.", "vi": "Trưởng nhóm từng nghỉ giải lao." }
+    ]
+  },
+  {
+    "starter": "The team leader doesn't",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The team leader doesn't attend the class.",
+        "vi": "Trưởng nhóm không tham gia lớp học."
+      },
+      {
+        "en": "The team leader doesn't save for the future.",
+        "vi": "Trưởng nhóm không tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The team leader doesn't visit the doctor.",
+        "vi": "Trưởng nhóm không đi khám bác sĩ."
+      },
+      { "en": "The team leader doesn't rent a car.", "vi": "Trưởng nhóm không thuê xe." },
+      {
+        "en": "The team leader doesn't confirm the booking.",
+        "vi": "Trưởng nhóm không xác nhận đặt chỗ."
+      },
+      { "en": "The team leader doesn't take it easy.", "vi": "Trưởng nhóm không thư giãn." },
+      {
+        "en": "The team leader doesn't check my email.",
+        "vi": "Trưởng nhóm không kiểm tra email."
+      },
+      {
+        "en": "The team leader doesn't double-check everything.",
+        "vi": "Trưởng nhóm không kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "The team leader doesn't grow the business.",
+        "vi": "Trưởng nhóm không phát triển kinh doanh."
+      },
+      {
+        "en": "The team leader doesn't open a savings account.",
+        "vi": "Trưởng nhóm không mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "The team leader doesn't win the contract.",
+        "vi": "Trưởng nhóm không giành hợp đồng."
+      },
+      { "en": "The team leader doesn't make tea.", "vi": "Trưởng nhóm không pha trà." },
+      {
+        "en": "The team leader doesn't restart the computer.",
+        "vi": "Trưởng nhóm không khởi động lại máy tính."
+      },
+      {
+        "en": "The team leader doesn't keep learning.",
+        "vi": "Trưởng nhóm không tiếp tục học hỏi."
+      },
+      { "en": "The team leader doesn't leave early.", "vi": "Trưởng nhóm không về sớm." },
+      { "en": "The team leader doesn't quit smoking.", "vi": "Trưởng nhóm không bỏ thuốc lá." },
+      { "en": "The team leader doesn't give feedback.", "vi": "Trưởng nhóm không góp ý." },
+      { "en": "The team leader doesn't listen to music.", "vi": "Trưởng nhóm không nghe nhạc." },
+      {
+        "en": "The team leader doesn't think positive.",
+        "vi": "Trưởng nhóm không suy nghĩ tích cực."
+      },
+      {
+        "en": "The team leader doesn't miss the flight.",
+        "vi": "Trưởng nhóm không lỡ chuyến bay."
+      },
+      { "en": "The team leader doesn't take the bus.", "vi": "Trưởng nhóm không đi xe buýt." },
+      {
+        "en": "The team leader doesn't sign the contract.",
+        "vi": "Trưởng nhóm không ký hợp đồng."
+      },
+      { "en": "The team leader doesn't take medicine.", "vi": "Trưởng nhóm không uống thuốc." },
+      {
+        "en": "The team leader doesn't donate to charity.",
+        "vi": "Trưởng nhóm không quyên góp từ thiện."
+      },
+      {
+        "en": "The team leader doesn't learn something new.",
+        "vi": "Trưởng nhóm không học điều gì đó mới."
+      },
+      {
+        "en": "The team leader doesn't meet new people.",
+        "vi": "Trưởng nhóm không gặp gỡ người mới."
+      },
+      { "en": "The team leader doesn't be on time.", "vi": "Trưởng nhóm không đến đúng giờ." },
+      {
+        "en": "The team leader doesn't follow the rules.",
+        "vi": "Trưởng nhóm không tuân theo quy tắc."
+      },
+      { "en": "The team leader doesn't think it over.", "vi": "Trưởng nhóm không suy nghĩ kỹ." },
+      { "en": "The team leader doesn't take a chance.", "vi": "Trưởng nhóm không nắm lấy cơ hội." },
+      {
+        "en": "The team leader doesn't visit my family.",
+        "vi": "Trưởng nhóm không thăm gia đình."
+      },
+      { "en": "The team leader doesn't go for a walk.", "vi": "Trưởng nhóm không đi dạo." },
+      {
+        "en": "The team leader doesn't catch the train.",
+        "vi": "Trưởng nhóm không bắt chuyến tàu."
+      },
+      {
+        "en": "The team leader doesn't change the plan.",
+        "vi": "Trưởng nhóm không thay đổi kế hoạch."
+      },
+      { "en": "The team leader doesn't take notes.", "vi": "Trưởng nhóm không ghi chép." },
+      { "en": "The team leader doesn't wash the dishes.", "vi": "Trưởng nhóm không rửa bát." },
+      {
+        "en": "The team leader doesn't leave a comment.",
+        "vi": "Trưởng nhóm không để lại bình luận."
+      },
+      { "en": "The team leader doesn't stay organized.", "vi": "Trưởng nhóm không giữ ngăn nắp." },
+      {
+        "en": "The team leader doesn't buy a new phone.",
+        "vi": "Trưởng nhóm không mua điện thoại mới."
+      },
+      {
+        "en": "The team leader doesn't cancel the order.",
+        "vi": "Trưởng nhóm không hủy đơn hàng."
+      },
+      {
+        "en": "The team leader doesn't drink more water.",
+        "vi": "Trưởng nhóm không uống nhiều nước hơn."
+      },
+      {
+        "en": "The team leader doesn't update the software.",
+        "vi": "Trưởng nhóm không cập nhật phần mềm."
+      },
+      { "en": "The team leader doesn't reach the goal.", "vi": "Trưởng nhóm không đạt mục tiêu." },
+      { "en": "The team leader doesn't tell the truth.", "vi": "Trưởng nhóm không nói sự thật." },
+      { "en": "The team leader doesn't study abroad.", "vi": "Trưởng nhóm không du học." },
+      {
+        "en": "The team leader doesn't print the document.",
+        "vi": "Trưởng nhóm không in tài liệu."
+      },
+      { "en": "The team leader doesn't ask a question.", "vi": "Trưởng nhóm không hỏi một câu." },
+      {
+        "en": "The team leader doesn't double-check the numbers.",
+        "vi": "Trưởng nhóm không kiểm tra lại các con số."
+      },
+      {
+        "en": "The team leader doesn't make a decision.",
+        "vi": "Trưởng nhóm không đưa ra quyết định."
+      },
+      {
+        "en": "The team leader doesn't scan the receipt.",
+        "vi": "Trưởng nhóm không quét hóa đơn."
+      },
+      { "en": "The team leader doesn't pass the exam.", "vi": "Trưởng nhóm không đậu kỳ thi." },
+      {
+        "en": "The team leader doesn't never give up.",
+        "vi": "Trưởng nhóm không không bao giờ bỏ cuộc."
+      },
+      { "en": "The team leader doesn't change careers.", "vi": "Trưởng nhóm không chuyển nghề." },
+      { "en": "The team leader doesn't take the exam.", "vi": "Trưởng nhóm không làm bài thi." },
+      { "en": "The team leader doesn't call back later.", "vi": "Trưởng nhóm không gọi lại sau." },
+      { "en": "The team leader doesn't train the team.", "vi": "Trưởng nhóm không đào tạo nhóm." },
+      { "en": "The team leader doesn't say sorry.", "vi": "Trưởng nhóm không nói lời xin lỗi." },
+      { "en": "The team leader doesn't learn to swim.", "vi": "Trưởng nhóm không học bơi." },
+      {
+        "en": "The team leader doesn't practice every day.",
+        "vi": "Trưởng nhóm không luyện tập mỗi ngày."
+      },
+      {
+        "en": "The team leader doesn't listen carefully.",
+        "vi": "Trưởng nhóm không lắng nghe cẩn thận."
+      },
+      {
+        "en": "The team leader doesn't share the post.",
+        "vi": "Trưởng nhóm không chia sẻ bài viết."
+      },
+      { "en": "The team leader doesn't try again.", "vi": "Trưởng nhóm không thử lại." },
+      {
+        "en": "The team leader doesn't reset the password.",
+        "vi": "Trưởng nhóm không đặt lại mật khẩu."
+      },
+      { "en": "The team leader doesn't throw a party.", "vi": "Trưởng nhóm không tổ chức tiệc." },
+      {
+        "en": "The team leader doesn't reply to the message.",
+        "vi": "Trưởng nhóm không trả lời tin nhắn."
+      },
+      {
+        "en": "The team leader doesn't join a club.",
+        "vi": "Trưởng nhóm không tham gia câu lạc bộ."
+      },
+      { "en": "The team leader doesn't learn English.", "vi": "Trưởng nhóm không học tiếng Anh." },
+      { "en": "The team leader doesn't do the laundry.", "vi": "Trưởng nhóm không giặt đồ." },
+      { "en": "The team leader doesn't save money.", "vi": "Trưởng nhóm không tiết kiệm tiền." },
+      { "en": "The team leader doesn't lock the door.", "vi": "Trưởng nhóm không khóa cửa." },
+      { "en": "The team leader doesn't keep a diary.", "vi": "Trưởng nhóm không viết nhật ký." },
+      { "en": "The team leader doesn't find a job.", "vi": "Trưởng nhóm không tìm việc làm." },
+      { "en": "The team leader doesn't ask for help.", "vi": "Trưởng nhóm không nhờ giúp đỡ." },
+      {
+        "en": "The team leader doesn't register for the course.",
+        "vi": "Trưởng nhóm không đăng ký khóa học."
+      },
+      {
+        "en": "The team leader doesn't support each other.",
+        "vi": "Trưởng nhóm không hỗ trợ lẫn nhau."
+      },
+      { "en": "The team leader doesn't delete the file.", "vi": "Trưởng nhóm không xóa tệp." },
+      {
+        "en": "The team leader doesn't open a business.",
+        "vi": "Trưởng nhóm không mở một doanh nghiệp."
+      },
+      { "en": "The team leader doesn't start over.", "vi": "Trưởng nhóm không bắt đầu lại." },
+      {
+        "en": "The team leader doesn't attend the workshop.",
+        "vi": "Trưởng nhóm không tham dự buổi hội thảo."
+      },
+      {
+        "en": "The team leader doesn't join the meeting.",
+        "vi": "Trưởng nhóm không tham gia cuộc họp."
+      },
+      { "en": "The team leader doesn't watch a movie.", "vi": "Trưởng nhóm không xem phim." },
+      { "en": "The team leader doesn't watch the game.", "vi": "Trưởng nhóm không xem trận đấu." },
+      {
+        "en": "The team leader doesn't celebrate together.",
+        "vi": "Trưởng nhóm không ăn mừng cùng nhau."
+      },
+      {
+        "en": "The team leader doesn't ask for a raise.",
+        "vi": "Trưởng nhóm không xin tăng lương."
+      },
+      {
+        "en": "The team leader doesn't enjoy the weekend.",
+        "vi": "Trưởng nhóm không tận hưởng cuối tuần."
+      },
+      {
+        "en": "The team leader doesn't volunteer on weekends.",
+        "vi": "Trưởng nhóm không tình nguyện cuối tuần."
+      },
+      {
+        "en": "The team leader doesn't rate the service.",
+        "vi": "Trưởng nhóm không đánh giá dịch vụ."
+      },
+      {
+        "en": "The team leader doesn't get a promotion.",
+        "vi": "Trưởng nhóm không được thăng chức."
+      },
+      {
+        "en": "The team leader doesn't close the deal.",
+        "vi": "Trưởng nhóm không chốt thỏa thuận."
+      },
+      { "en": "The team leader doesn't close the window.", "vi": "Trưởng nhóm không đóng cửa sổ." },
+      { "en": "The team leader doesn't speak clearly.", "vi": "Trưởng nhóm không nói rõ ràng." },
+      { "en": "The team leader doesn't submit the form.", "vi": "Trưởng nhóm không nộp biểu mẫu." },
+      { "en": "The team leader doesn't set an alarm.", "vi": "Trưởng nhóm không đặt báo thức." },
+      {
+        "en": "The team leader doesn't plan a trip.",
+        "vi": "Trưởng nhóm không lên kế hoạch một chuyến đi."
+      },
+      { "en": "The team leader doesn't ride a bike.", "vi": "Trưởng nhóm không đạp xe." },
+      { "en": "The team leader doesn't relax at home.", "vi": "Trưởng nhóm không thư giãn ở nhà." },
+      { "en": "The team leader doesn't order food.", "vi": "Trưởng nhóm không gọi đồ ăn." },
+      {
+        "en": "The team leader doesn't launch the product.",
+        "vi": "Trưởng nhóm không ra mắt sản phẩm."
+      },
+      {
+        "en": "The team leader doesn't meet the deadline.",
+        "vi": "Trưởng nhóm không kịp thời hạn."
+      },
+      {
+        "en": "The team leader doesn't back up the data.",
+        "vi": "Trưởng nhóm không sao lưu dữ liệu."
+      }
+    ]
+  },
+  {
+    "starter": "The team leader didn't",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The team leader didn't charge the phone.",
+        "vi": "Trưởng nhóm đã không sạc điện thoại."
+      },
+      {
+        "en": "The team leader didn't grow the business.",
+        "vi": "Trưởng nhóm đã không phát triển kinh doanh."
+      },
+      {
+        "en": "The team leader didn't walk the dog.",
+        "vi": "Trưởng nhóm đã không dắt chó đi dạo."
+      },
+      {
+        "en": "The team leader didn't cut the budget.",
+        "vi": "Trưởng nhóm đã không cắt giảm ngân sách."
+      },
+      { "en": "The team leader didn't lose weight.", "vi": "Trưởng nhóm đã không giảm cân." },
+      { "en": "The team leader didn't book a ticket.", "vi": "Trưởng nhóm đã không đặt vé." },
+      { "en": "The team leader didn't stay home.", "vi": "Trưởng nhóm đã không ở nhà." },
+      {
+        "en": "The team leader didn't cut expenses.",
+        "vi": "Trưởng nhóm đã không cắt giảm chi tiêu."
+      },
+      {
+        "en": "The team leader didn't check the details.",
+        "vi": "Trưởng nhóm đã không kiểm tra chi tiết."
+      },
+      {
+        "en": "The team leader didn't learn English.",
+        "vi": "Trưởng nhóm đã không học tiếng Anh."
+      },
+      {
+        "en": "The team leader didn't close the window.",
+        "vi": "Trưởng nhóm đã không đóng cửa sổ."
+      },
+      { "en": "The team leader didn't delete the file.", "vi": "Trưởng nhóm đã không xóa tệp." },
+      {
+        "en": "The team leader didn't drive to work.",
+        "vi": "Trưởng nhóm đã không lái xe đi làm."
+      },
+      {
+        "en": "The team leader didn't open a business.",
+        "vi": "Trưởng nhóm đã không mở một doanh nghiệp."
+      },
+      {
+        "en": "The team leader didn't close the deal.",
+        "vi": "Trưởng nhóm đã không chốt thỏa thuận."
+      },
+      {
+        "en": "The team leader didn't exercise every day.",
+        "vi": "Trưởng nhóm đã không tập thể dục mỗi ngày."
+      },
+      { "en": "The team leader didn't pack my bags.", "vi": "Trưởng nhóm đã không xếp hành lý." },
+      { "en": "The team leader didn't take notes.", "vi": "Trưởng nhóm đã không ghi chép." },
+      { "en": "The team leader didn't ask a question.", "vi": "Trưởng nhóm đã không hỏi một câu." },
+      { "en": "The team leader didn't keep a diary.", "vi": "Trưởng nhóm đã không viết nhật ký." },
+      { "en": "The team leader didn't ask for help.", "vi": "Trưởng nhóm đã không nhờ giúp đỡ." },
+      {
+        "en": "The team leader didn't cancel the order.",
+        "vi": "Trưởng nhóm đã không hủy đơn hàng."
+      },
+      {
+        "en": "The team leader didn't eat healthy.",
+        "vi": "Trưởng nhóm đã không ăn uống lành mạnh."
+      },
+      {
+        "en": "The team leader didn't make a reservation.",
+        "vi": "Trưởng nhóm đã không đặt chỗ trước."
+      },
+      {
+        "en": "The team leader didn't share my opinion.",
+        "vi": "Trưởng nhóm đã không chia sẻ ý kiến."
+      },
+      {
+        "en": "The team leader didn't start a new project.",
+        "vi": "Trưởng nhóm đã không bắt đầu một dự án mới."
+      },
+      { "en": "The team leader didn't rent a car.", "vi": "Trưởng nhóm đã không thuê xe." },
+      {
+        "en": "The team leader didn't make a decision.",
+        "vi": "Trưởng nhóm đã không đưa ra quyết định."
+      },
+      { "en": "The team leader didn't try again.", "vi": "Trưởng nhóm đã không thử lại." },
+      { "en": "The team leader didn't study abroad.", "vi": "Trưởng nhóm đã không du học." },
+      { "en": "The team leader didn't sleep early.", "vi": "Trưởng nhóm đã không ngủ sớm." },
+      {
+        "en": "The team leader didn't train the team.",
+        "vi": "Trưởng nhóm đã không đào tạo nhóm."
+      },
+      { "en": "The team leader didn't play sports.", "vi": "Trưởng nhóm đã không chơi thể thao." },
+      { "en": "The team leader didn't watch a movie.", "vi": "Trưởng nhóm đã không xem phim." },
+      {
+        "en": "The team leader didn't scan the receipt.",
+        "vi": "Trưởng nhóm đã không quét hóa đơn."
+      },
+      {
+        "en": "The team leader didn't attend the workshop.",
+        "vi": "Trưởng nhóm đã không tham dự buổi hội thảo."
+      },
+      {
+        "en": "The team leader didn't keep learning.",
+        "vi": "Trưởng nhóm đã không tiếp tục học hỏi."
+      },
+      { "en": "The team leader didn't raise the price.", "vi": "Trưởng nhóm đã không tăng giá." },
+      { "en": "The team leader didn't order food.", "vi": "Trưởng nhóm đã không gọi đồ ăn." },
+      {
+        "en": "The team leader didn't save for the future.",
+        "vi": "Trưởng nhóm đã không tiết kiệm cho tương lai."
+      },
+      { "en": "The team leader didn't say sorry.", "vi": "Trưởng nhóm đã không nói lời xin lỗi." },
+      {
+        "en": "The team leader didn't pay off the loan.",
+        "vi": "Trưởng nhóm đã không trả hết khoản vay."
+      },
+      { "en": "The team leader didn't take the exam.", "vi": "Trưởng nhóm đã không làm bài thi." },
+      {
+        "en": "The team leader didn't cook for everyone.",
+        "vi": "Trưởng nhóm đã không nấu ăn cho mọi người."
+      },
+      {
+        "en": "The team leader didn't reply to the message.",
+        "vi": "Trưởng nhóm đã không trả lời tin nhắn."
+      },
+      { "en": "The team leader didn't do the laundry.", "vi": "Trưởng nhóm đã không giặt đồ." },
+      {
+        "en": "The team leader didn't celebrate together.",
+        "vi": "Trưởng nhóm đã không ăn mừng cùng nhau."
+      },
+      { "en": "The team leader didn't take the bus.", "vi": "Trưởng nhóm đã không đi xe buýt." },
+      {
+        "en": "The team leader didn't write a report.",
+        "vi": "Trưởng nhóm đã không viết một báo cáo."
+      },
+      { "en": "The team leader didn't write it down.", "vi": "Trưởng nhóm đã không ghi nó lại." },
+      {
+        "en": "The team leader didn't visit the doctor.",
+        "vi": "Trưởng nhóm đã không đi khám bác sĩ."
+      },
+      { "en": "The team leader didn't read the news.", "vi": "Trưởng nhóm đã không đọc tin tức." },
+      { "en": "The team leader didn't fix the problem.", "vi": "Trưởng nhóm đã không sửa vấn đề." },
+      {
+        "en": "The team leader didn't meet the deadline.",
+        "vi": "Trưởng nhóm đã không kịp thời hạn."
+      },
+      {
+        "en": "The team leader didn't take a photo.",
+        "vi": "Trưởng nhóm đã không chụp một bức ảnh."
+      },
+      {
+        "en": "The team leader didn't get a promotion.",
+        "vi": "Trưởng nhóm đã không được thăng chức."
+      },
+      {
+        "en": "The team leader didn't make new friends.",
+        "vi": "Trưởng nhóm đã không kết bạn mới."
+      },
+      {
+        "en": "The team leader didn't watch the game.",
+        "vi": "Trưởng nhóm đã không xem trận đấu."
+      },
+      {
+        "en": "The team leader didn't call back later.",
+        "vi": "Trưởng nhóm đã không gọi lại sau."
+      },
+      {
+        "en": "The team leader didn't attend the class.",
+        "vi": "Trưởng nhóm đã không tham gia lớp học."
+      },
+      { "en": "The team leader didn't go for a walk.", "vi": "Trưởng nhóm đã không đi dạo." },
+      {
+        "en": "The team leader didn't plan a trip.",
+        "vi": "Trưởng nhóm đã không lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "The team leader didn't prepare the presentation.",
+        "vi": "Trưởng nhóm đã không chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The team leader didn't improve my skills.",
+        "vi": "Trưởng nhóm đã không cải thiện kỹ năng."
+      },
+      {
+        "en": "The team leader didn't copy the link.",
+        "vi": "Trưởng nhóm đã không sao chép liên kết."
+      },
+      {
+        "en": "The team leader didn't invite some friends.",
+        "vi": "Trưởng nhóm đã không mời vài người bạn."
+      },
+      { "en": "The team leader didn't start over.", "vi": "Trưởng nhóm đã không bắt đầu lại." },
+      {
+        "en": "The team leader didn't stay organized.",
+        "vi": "Trưởng nhóm đã không giữ ngăn nắp."
+      },
+      {
+        "en": "The team leader didn't fill out the form.",
+        "vi": "Trưởng nhóm đã không điền vào biểu mẫu."
+      },
+      { "en": "The team leader didn't wait a moment.", "vi": "Trưởng nhóm đã không chờ một chút." },
+      {
+        "en": "The team leader didn't move forward.",
+        "vi": "Trưởng nhóm đã không tiến về phía trước."
+      },
+      { "en": "The team leader didn't take it easy.", "vi": "Trưởng nhóm đã không thư giãn." },
+      {
+        "en": "The team leader didn't never give up.",
+        "vi": "Trưởng nhóm đã không không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The team leader didn't relax at home.",
+        "vi": "Trưởng nhóm đã không thư giãn ở nhà."
+      },
+      {
+        "en": "The team leader didn't hire new staff.",
+        "vi": "Trưởng nhóm đã không tuyển nhân viên mới."
+      },
+      {
+        "en": "The team leader didn't test the feature.",
+        "vi": "Trưởng nhóm đã không kiểm thử tính năng."
+      },
+      { "en": "The team leader didn't think it over.", "vi": "Trưởng nhóm đã không suy nghĩ kỹ." },
+      { "en": "The team leader didn't change careers.", "vi": "Trưởng nhóm đã không chuyển nghề." },
+      {
+        "en": "The team leader didn't call a friend.",
+        "vi": "Trưởng nhóm đã không gọi cho một người bạn."
+      },
+      {
+        "en": "The team leader didn't take a chance.",
+        "vi": "Trưởng nhóm đã không nắm lấy cơ hội."
+      },
+      { "en": "The team leader didn't listen to music.", "vi": "Trưởng nhóm đã không nghe nhạc." },
+      { "en": "The team leader didn't clean the house.", "vi": "Trưởng nhóm đã không dọn nhà." },
+      {
+        "en": "The team leader didn't miss the flight.",
+        "vi": "Trưởng nhóm đã không lỡ chuyến bay."
+      },
+      {
+        "en": "The team leader didn't buy a new phone.",
+        "vi": "Trưởng nhóm đã không mua điện thoại mới."
+      },
+      { "en": "The team leader didn't make tea.", "vi": "Trưởng nhóm đã không pha trà." },
+      {
+        "en": "The team leader didn't confirm the booking.",
+        "vi": "Trưởng nhóm đã không xác nhận đặt chỗ."
+      },
+      { "en": "The team leader didn't ride a bike.", "vi": "Trưởng nhóm đã không đạp xe." },
+      {
+        "en": "The team leader didn't meet new people.",
+        "vi": "Trưởng nhóm đã không gặp gỡ người mới."
+      },
+      { "en": "The team leader didn't keep in touch.", "vi": "Trưởng nhóm đã không giữ liên lạc." },
+      {
+        "en": "The team leader didn't thank everyone.",
+        "vi": "Trưởng nhóm đã không cảm ơn mọi người."
+      },
+      { "en": "The team leader didn't water the plants.", "vi": "Trưởng nhóm đã không tưới cây." },
+      { "en": "The team leader didn't take a rest.", "vi": "Trưởng nhóm đã không nghỉ ngơi." },
+      {
+        "en": "The team leader didn't explain the situation.",
+        "vi": "Trưởng nhóm đã không giải thích tình huống."
+      },
+      {
+        "en": "The team leader didn't invest wisely.",
+        "vi": "Trưởng nhóm đã không đầu tư khôn ngoan."
+      },
+      {
+        "en": "The team leader didn't work as a team.",
+        "vi": "Trưởng nhóm đã không làm việc theo nhóm."
+      },
+      {
+        "en": "The team leader didn't lead the project.",
+        "vi": "Trưởng nhóm đã không dẫn dắt dự án."
+      },
+      {
+        "en": "The team leader didn't pay the bill.",
+        "vi": "Trưởng nhóm đã không thanh toán hóa đơn."
+      },
+      {
+        "en": "The team leader didn't schedule a meeting.",
+        "vi": "Trưởng nhóm đã không sắp xếp cuộc họp."
+      },
+      { "en": "The team leader didn't stay up late.", "vi": "Trưởng nhóm đã không thức khuya." },
+      { "en": "The team leader didn't take medicine.", "vi": "Trưởng nhóm đã không uống thuốc." }
+    ]
+  }
+]

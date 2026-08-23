@@ -1,0 +1,2664 @@
+[
+  {
+    "starter": "The customers are planning to",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      {
+        "en": "The customers are planning to practice every day.",
+        "vi": "Các khách hàng đang định luyện tập mỗi ngày."
+      },
+      {
+        "en": "The customers are planning to join the meeting.",
+        "vi": "Các khách hàng đang định tham gia cuộc họp."
+      },
+      {
+        "en": "The customers are planning to cut the budget.",
+        "vi": "Các khách hàng đang định cắt giảm ngân sách."
+      },
+      {
+        "en": "The customers are planning to buy a new phone.",
+        "vi": "Các khách hàng đang định mua điện thoại mới."
+      },
+      {
+        "en": "The customers are planning to enjoy the weekend.",
+        "vi": "Các khách hàng đang định tận hưởng cuối tuần."
+      },
+      {
+        "en": "The customers are planning to find a job.",
+        "vi": "Các khách hàng đang định tìm việc làm."
+      },
+      {
+        "en": "The customers are planning to thank everyone.",
+        "vi": "Các khách hàng đang định cảm ơn mọi người."
+      },
+      {
+        "en": "The customers are planning to back up the data.",
+        "vi": "Các khách hàng đang định sao lưu dữ liệu."
+      },
+      {
+        "en": "The customers are planning to pack my bags.",
+        "vi": "Các khách hàng đang định xếp hành lý."
+      },
+      {
+        "en": "The customers are planning to save money.",
+        "vi": "Các khách hàng đang định tiết kiệm tiền."
+      },
+      {
+        "en": "The customers are planning to lock the door.",
+        "vi": "Các khách hàng đang định khóa cửa."
+      },
+      {
+        "en": "The customers are planning to change careers.",
+        "vi": "Các khách hàng đang định chuyển nghề."
+      },
+      {
+        "en": "The customers are planning to submit the form.",
+        "vi": "Các khách hàng đang định nộp biểu mẫu."
+      },
+      {
+        "en": "The customers are planning to exercise every day.",
+        "vi": "Các khách hàng đang định tập thể dục mỗi ngày."
+      },
+      {
+        "en": "The customers are planning to keep learning.",
+        "vi": "Các khách hàng đang định tiếp tục học hỏi."
+      },
+      {
+        "en": "The customers are planning to cancel the order.",
+        "vi": "Các khách hàng đang định hủy đơn hàng."
+      },
+      {
+        "en": "The customers are planning to attend the class.",
+        "vi": "Các khách hàng đang định tham gia lớp học."
+      },
+      {
+        "en": "The customers are planning to cheer for the team.",
+        "vi": "Các khách hàng đang định cổ vũ cho đội."
+      },
+      {
+        "en": "The customers are planning to move forward.",
+        "vi": "Các khách hàng đang định tiến về phía trước."
+      },
+      {
+        "en": "The customers are planning to make tea.",
+        "vi": "Các khách hàng đang định pha trà."
+      },
+      {
+        "en": "The customers are planning to speak clearly.",
+        "vi": "Các khách hàng đang định nói rõ ràng."
+      },
+      {
+        "en": "The customers are planning to watch the game.",
+        "vi": "Các khách hàng đang định xem trận đấu."
+      },
+      {
+        "en": "The customers are planning to take medicine.",
+        "vi": "Các khách hàng đang định uống thuốc."
+      },
+      {
+        "en": "The customers are planning to call back later.",
+        "vi": "Các khách hàng đang định gọi lại sau."
+      },
+      {
+        "en": "The customers are planning to cook dinner.",
+        "vi": "Các khách hàng đang định nấu bữa tối."
+      },
+      {
+        "en": "The customers are planning to reply to the message.",
+        "vi": "Các khách hàng đang định trả lời tin nhắn."
+      },
+      {
+        "en": "The customers are planning to go on vacation.",
+        "vi": "Các khách hàng đang định đi nghỉ mát."
+      },
+      {
+        "en": "The customers are planning to breathe deeply.",
+        "vi": "Các khách hàng đang định hít thở sâu."
+      },
+      { "en": "The customers are planning to stay home.", "vi": "Các khách hàng đang định ở nhà." },
+      {
+        "en": "The customers are planning to watch a movie.",
+        "vi": "Các khách hàng đang định xem phim."
+      },
+      {
+        "en": "The customers are planning to grow the business.",
+        "vi": "Các khách hàng đang định phát triển kinh doanh."
+      },
+      {
+        "en": "The customers are planning to test the feature.",
+        "vi": "Các khách hàng đang định kiểm thử tính năng."
+      },
+      {
+        "en": "The customers are planning to improve my skills.",
+        "vi": "Các khách hàng đang định cải thiện kỹ năng."
+      },
+      {
+        "en": "The customers are planning to order food.",
+        "vi": "Các khách hàng đang định gọi đồ ăn."
+      },
+      {
+        "en": "The customers are planning to ask for help.",
+        "vi": "Các khách hàng đang định nhờ giúp đỡ."
+      },
+      {
+        "en": "The customers are planning to reset the password.",
+        "vi": "Các khách hàng đang định đặt lại mật khẩu."
+      },
+      {
+        "en": "The customers are planning to set an alarm.",
+        "vi": "Các khách hàng đang định đặt báo thức."
+      },
+      {
+        "en": "The customers are planning to update the software.",
+        "vi": "Các khách hàng đang định cập nhật phần mềm."
+      },
+      {
+        "en": "The customers are planning to download the file.",
+        "vi": "Các khách hàng đang định tải tệp xuống."
+      },
+      {
+        "en": "The customers are planning to meditate daily.",
+        "vi": "Các khách hàng đang định thiền mỗi ngày."
+      },
+      {
+        "en": "The customers are planning to start over.",
+        "vi": "Các khách hàng đang định bắt đầu lại."
+      },
+      {
+        "en": "The customers are planning to learn English.",
+        "vi": "Các khách hàng đang định học tiếng Anh."
+      },
+      {
+        "en": "The customers are planning to visit the doctor.",
+        "vi": "Các khách hàng đang định đi khám bác sĩ."
+      },
+      {
+        "en": "The customers are planning to eat healthy.",
+        "vi": "Các khách hàng đang định ăn uống lành mạnh."
+      },
+      {
+        "en": "The customers are planning to never give up.",
+        "vi": "Các khách hàng đang định không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The customers are planning to help the team.",
+        "vi": "Các khách hàng đang định giúp đỡ nhóm."
+      },
+      {
+        "en": "The customers are planning to work as a team.",
+        "vi": "Các khách hàng đang định làm việc theo nhóm."
+      },
+      {
+        "en": "The customers are planning to lose weight.",
+        "vi": "Các khách hàng đang định giảm cân."
+      },
+      {
+        "en": "The customers are planning to read more books.",
+        "vi": "Các khách hàng đang định đọc thêm sách."
+      },
+      {
+        "en": "The customers are planning to cut expenses.",
+        "vi": "Các khách hàng đang định cắt giảm chi tiêu."
+      },
+      {
+        "en": "The customers are planning to water the plants.",
+        "vi": "Các khách hàng đang định tưới cây."
+      },
+      {
+        "en": "The customers are planning to do the laundry.",
+        "vi": "Các khách hàng đang định giặt đồ."
+      },
+      {
+        "en": "The customers are planning to lower the cost.",
+        "vi": "Các khách hàng đang định giảm chi phí."
+      },
+      {
+        "en": "The customers are planning to win the contract.",
+        "vi": "Các khách hàng đang định giành hợp đồng."
+      },
+      {
+        "en": "The customers are planning to listen to music.",
+        "vi": "Các khách hàng đang định nghe nhạc."
+      },
+      {
+        "en": "The customers are planning to fix the problem.",
+        "vi": "Các khách hàng đang định sửa vấn đề."
+      },
+      {
+        "en": "The customers are planning to prepare the presentation.",
+        "vi": "Các khách hàng đang định chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The customers are planning to print the document.",
+        "vi": "Các khách hàng đang định in tài liệu."
+      },
+      {
+        "en": "The customers are planning to calm down.",
+        "vi": "Các khách hàng đang định bình tĩnh lại."
+      },
+      {
+        "en": "The customers are planning to attend the workshop.",
+        "vi": "Các khách hàng đang định tham dự buổi hội thảo."
+      },
+      {
+        "en": "The customers are planning to say goodbye.",
+        "vi": "Các khách hàng đang định nói lời tạm biệt."
+      },
+      {
+        "en": "The customers are planning to log in again.",
+        "vi": "Các khách hàng đang định đăng nhập lại."
+      },
+      {
+        "en": "The customers are planning to share the post.",
+        "vi": "Các khách hàng đang định chia sẻ bài viết."
+      },
+      {
+        "en": "The customers are planning to review the document.",
+        "vi": "Các khách hàng đang định xem lại tài liệu."
+      },
+      {
+        "en": "The customers are planning to leave a comment.",
+        "vi": "Các khách hàng đang định để lại bình luận."
+      },
+      {
+        "en": "The customers are planning to write it down.",
+        "vi": "Các khách hàng đang định ghi nó lại."
+      },
+      {
+        "en": "The customers are planning to pass the exam.",
+        "vi": "Các khách hàng đang định đậu kỳ thi."
+      },
+      {
+        "en": "The customers are planning to charge the phone.",
+        "vi": "Các khách hàng đang định sạc điện thoại."
+      },
+      {
+        "en": "The customers are planning to stay up late.",
+        "vi": "Các khách hàng đang định thức khuya."
+      },
+      {
+        "en": "The customers are planning to try harder next time.",
+        "vi": "Các khách hàng đang định cố gắng hơn lần sau."
+      },
+      {
+        "en": "The customers are planning to walk the dog.",
+        "vi": "Các khách hàng đang định dắt chó đi dạo."
+      },
+      {
+        "en": "The customers are planning to make a plan.",
+        "vi": "Các khách hàng đang định lập một kế hoạch."
+      },
+      {
+        "en": "The customers are planning to schedule a meeting.",
+        "vi": "Các khách hàng đang định sắp xếp cuộc họp."
+      },
+      {
+        "en": "The customers are planning to raise the price.",
+        "vi": "Các khách hàng đang định tăng giá."
+      },
+      {
+        "en": "The customers are planning to meet the deadline.",
+        "vi": "Các khách hàng đang định kịp thời hạn."
+      },
+      {
+        "en": "The customers are planning to drink more water.",
+        "vi": "Các khách hàng đang định uống nhiều nước hơn."
+      },
+      {
+        "en": "The customers are planning to wash the dishes.",
+        "vi": "Các khách hàng đang định rửa bát."
+      },
+      {
+        "en": "The customers are planning to send the email.",
+        "vi": "Các khách hàng đang định gửi email."
+      },
+      {
+        "en": "The customers are planning to try again.",
+        "vi": "Các khách hàng đang định thử lại."
+      },
+      {
+        "en": "The customers are planning to get a degree.",
+        "vi": "Các khách hàng đang định lấy bằng."
+      },
+      {
+        "en": "The customers are planning to pay the bill.",
+        "vi": "Các khách hàng đang định thanh toán hóa đơn."
+      },
+      {
+        "en": "The customers are planning to ride a bike.",
+        "vi": "Các khách hàng đang định đạp xe."
+      },
+      {
+        "en": "The customers are planning to ask a question.",
+        "vi": "Các khách hàng đang định hỏi một câu."
+      },
+      {
+        "en": "The customers are planning to call a friend.",
+        "vi": "Các khách hàng đang định gọi cho một người bạn."
+      },
+      {
+        "en": "The customers are planning to double-check everything.",
+        "vi": "Các khách hàng đang định kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "The customers are planning to invest wisely.",
+        "vi": "Các khách hàng đang định đầu tư khôn ngoan."
+      },
+      {
+        "en": "The customers are planning to ask for a raise.",
+        "vi": "Các khách hàng đang định xin tăng lương."
+      },
+      {
+        "en": "The customers are planning to hire new staff.",
+        "vi": "Các khách hàng đang định tuyển nhân viên mới."
+      },
+      {
+        "en": "The customers are planning to take a chance.",
+        "vi": "Các khách hàng đang định nắm lấy cơ hội."
+      },
+      {
+        "en": "The customers are planning to drink less coffee.",
+        "vi": "Các khách hàng đang định uống ít cà phê hơn."
+      },
+      {
+        "en": "The customers are planning to follow the rules.",
+        "vi": "Các khách hàng đang định tuân theo quy tắc."
+      },
+      {
+        "en": "The customers are planning to keep a diary.",
+        "vi": "Các khách hàng đang định viết nhật ký."
+      },
+      {
+        "en": "The customers are planning to talk to the manager.",
+        "vi": "Các khách hàng đang định nói chuyện với quản lý."
+      },
+      {
+        "en": "The customers are planning to make new friends.",
+        "vi": "Các khách hàng đang định kết bạn mới."
+      },
+      {
+        "en": "The customers are planning to learn something new.",
+        "vi": "Các khách hàng đang định học điều gì đó mới."
+      },
+      {
+        "en": "The customers are planning to work harder.",
+        "vi": "Các khách hàng đang định làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The customers are planning to support each other.",
+        "vi": "Các khách hàng đang định hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The customers are planning to set a goal.",
+        "vi": "Các khách hàng đang định đặt một mục tiêu."
+      },
+      {
+        "en": "The customers are planning to ask more questions.",
+        "vi": "Các khách hàng đang định hỏi nhiều hơn."
+      },
+      {
+        "en": "The customers are planning to answer the phone.",
+        "vi": "Các khách hàng đang định trả lời điện thoại."
+      }
+    ]
+  },
+  {
+    "starter": "The customers used to",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      { "en": "The customers used to book a hotel.", "vi": "Các khách hàng từng đặt khách sạn." },
+      { "en": "The customers used to clean the house.", "vi": "Các khách hàng từng dọn nhà." },
+      {
+        "en": "The customers used to change the plan.",
+        "vi": "Các khách hàng từng thay đổi kế hoạch."
+      },
+      { "en": "The customers used to throw a party.", "vi": "Các khách hàng từng tổ chức tiệc." },
+      { "en": "The customers used to keep a promise.", "vi": "Các khách hàng từng giữ lời hứa." },
+      { "en": "The customers used to give feedback.", "vi": "Các khách hàng từng góp ý." },
+      { "en": "The customers used to turn off the light.", "vi": "Các khách hàng từng tắt đèn." },
+      {
+        "en": "The customers used to remember the password.",
+        "vi": "Các khách hàng từng nhớ mật khẩu."
+      },
+      {
+        "en": "The customers used to never give up.",
+        "vi": "Các khách hàng từng không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The customers used to share the post.",
+        "vi": "Các khách hàng từng chia sẻ bài viết."
+      },
+      { "en": "The customers used to watch a movie.", "vi": "Các khách hàng từng xem phim." },
+      {
+        "en": "The customers used to negotiate the terms.",
+        "vi": "Các khách hàng từng thương lượng điều khoản."
+      },
+      { "en": "The customers used to lower the cost.", "vi": "Các khách hàng từng giảm chi phí." },
+      { "en": "The customers used to start over.", "vi": "Các khách hàng từng bắt đầu lại." },
+      { "en": "The customers used to leave early.", "vi": "Các khách hàng từng về sớm." },
+      {
+        "en": "The customers used to lead the project.",
+        "vi": "Các khách hàng từng dẫn dắt dự án."
+      },
+      {
+        "en": "The customers used to install the app.",
+        "vi": "Các khách hàng từng cài đặt ứng dụng."
+      },
+      { "en": "The customers used to train the team.", "vi": "Các khách hàng từng đào tạo nhóm." },
+      { "en": "The customers used to ask a question.", "vi": "Các khách hàng từng hỏi một câu." },
+      {
+        "en": "The customers used to visit my family.",
+        "vi": "Các khách hàng từng thăm gia đình."
+      },
+      { "en": "The customers used to pass the exam.", "vi": "Các khách hàng từng đậu kỳ thi." },
+      { "en": "The customers used to keep a diary.", "vi": "Các khách hàng từng viết nhật ký." },
+      {
+        "en": "The customers used to scan the receipt.",
+        "vi": "Các khách hàng từng quét hóa đơn."
+      },
+      {
+        "en": "The customers used to eat healthy.",
+        "vi": "Các khách hàng từng ăn uống lành mạnh."
+      },
+      {
+        "en": "The customers used to register for the course.",
+        "vi": "Các khách hàng từng đăng ký khóa học."
+      },
+      { "en": "The customers used to learn English.", "vi": "Các khách hàng từng học tiếng Anh." },
+      {
+        "en": "The customers used to join the meeting.",
+        "vi": "Các khách hàng từng tham gia cuộc họp."
+      },
+      {
+        "en": "The customers used to enjoy the weekend.",
+        "vi": "Các khách hàng từng tận hưởng cuối tuần."
+      },
+      {
+        "en": "The customers used to cancel the order.",
+        "vi": "Các khách hàng từng hủy đơn hàng."
+      },
+      {
+        "en": "The customers used to launch the product.",
+        "vi": "Các khách hàng từng ra mắt sản phẩm."
+      },
+      {
+        "en": "The customers used to ask for a raise.",
+        "vi": "Các khách hàng từng xin tăng lương."
+      },
+      {
+        "en": "The customers used to take a photo.",
+        "vi": "Các khách hàng từng chụp một bức ảnh."
+      },
+      {
+        "en": "The customers used to cook for everyone.",
+        "vi": "Các khách hàng từng nấu ăn cho mọi người."
+      },
+      {
+        "en": "The customers used to cut the budget.",
+        "vi": "Các khách hàng từng cắt giảm ngân sách."
+      },
+      {
+        "en": "The customers used to solve this issue.",
+        "vi": "Các khách hàng từng giải quyết vấn đề này."
+      },
+      {
+        "en": "The customers used to double-check the numbers.",
+        "vi": "Các khách hàng từng kiểm tra lại các con số."
+      },
+      {
+        "en": "The customers used to thank everyone.",
+        "vi": "Các khách hàng từng cảm ơn mọi người."
+      },
+      { "en": "The customers used to quit smoking.", "vi": "Các khách hàng từng bỏ thuốc lá." },
+      { "en": "The customers used to read the news.", "vi": "Các khách hàng từng đọc tin tức." },
+      { "en": "The customers used to write it down.", "vi": "Các khách hàng từng ghi nó lại." },
+      {
+        "en": "The customers used to visit the doctor.",
+        "vi": "Các khách hàng từng đi khám bác sĩ."
+      },
+      {
+        "en": "The customers used to sign up today.",
+        "vi": "Các khách hàng từng đăng ký hôm nay."
+      },
+      {
+        "en": "The customers used to pay off the loan.",
+        "vi": "Các khách hàng từng trả hết khoản vay."
+      },
+      {
+        "en": "The customers used to plan ahead.",
+        "vi": "Các khách hàng từng lên kế hoạch trước."
+      },
+      {
+        "en": "The customers used to answer the phone.",
+        "vi": "Các khách hàng từng trả lời điện thoại."
+      },
+      { "en": "The customers used to stay up late.", "vi": "Các khách hàng từng thức khuya." },
+      {
+        "en": "The customers used to move forward.",
+        "vi": "Các khách hàng từng tiến về phía trước."
+      },
+      {
+        "en": "The customers used to take a course.",
+        "vi": "Các khách hàng từng tham gia một khóa học."
+      },
+      {
+        "en": "The customers used to check my email.",
+        "vi": "Các khách hàng từng kiểm tra email."
+      },
+      {
+        "en": "The customers used to open a business.",
+        "vi": "Các khách hàng từng mở một doanh nghiệp."
+      },
+      {
+        "en": "The customers used to reset the password.",
+        "vi": "Các khách hàng từng đặt lại mật khẩu."
+      },
+      {
+        "en": "The customers used to update the software.",
+        "vi": "Các khách hàng từng cập nhật phần mềm."
+      },
+      { "en": "The customers used to breathe deeply.", "vi": "Các khách hàng từng hít thở sâu." },
+      {
+        "en": "The customers used to test the feature.",
+        "vi": "Các khách hàng từng kiểm thử tính năng."
+      },
+      { "en": "The customers used to sleep early.", "vi": "Các khách hàng từng ngủ sớm." },
+      {
+        "en": "The customers used to review the document.",
+        "vi": "Các khách hàng từng xem lại tài liệu."
+      },
+      { "en": "The customers used to take a break.", "vi": "Các khách hàng từng nghỉ giải lao." },
+      { "en": "The customers used to take a rest.", "vi": "Các khách hàng từng nghỉ ngơi." },
+      {
+        "en": "The customers used to work as a team.",
+        "vi": "Các khách hàng từng làm việc theo nhóm."
+      },
+      {
+        "en": "The customers used to reply to the message.",
+        "vi": "Các khách hàng từng trả lời tin nhắn."
+      },
+      {
+        "en": "The customers used to save for the future.",
+        "vi": "Các khách hàng từng tiết kiệm cho tương lai."
+      },
+      { "en": "The customers used to study abroad.", "vi": "Các khách hàng từng du học." },
+      {
+        "en": "The customers used to talk to the manager.",
+        "vi": "Các khách hàng từng nói chuyện với quản lý."
+      },
+      {
+        "en": "The customers used to try harder next time.",
+        "vi": "Các khách hàng từng cố gắng hơn lần sau."
+      },
+      { "en": "The customers used to take medicine.", "vi": "Các khách hàng từng uống thuốc." },
+      { "en": "The customers used to listen to music.", "vi": "Các khách hàng từng nghe nhạc." },
+      {
+        "en": "The customers used to support each other.",
+        "vi": "Các khách hàng từng hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The customers used to manage the schedule.",
+        "vi": "Các khách hàng từng quản lý lịch trình."
+      },
+      { "en": "The customers used to watch the game.", "vi": "Các khách hàng từng xem trận đấu." },
+      { "en": "The customers used to speak English.", "vi": "Các khách hàng từng nói tiếng Anh." },
+      { "en": "The customers used to book a ticket.", "vi": "Các khách hàng từng đặt vé." },
+      { "en": "The customers used to relax at home.", "vi": "Các khách hàng từng thư giãn ở nhà." },
+      {
+        "en": "The customers used to learn something new.",
+        "vi": "Các khách hàng từng học điều gì đó mới."
+      },
+      { "en": "The customers used to give it a try.", "vi": "Các khách hàng từng thử một lần." },
+      { "en": "The customers used to go home.", "vi": "Các khách hàng từng về nhà." },
+      {
+        "en": "The customers used to open a savings account.",
+        "vi": "Các khách hàng từng mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "The customers used to download the file.",
+        "vi": "Các khách hàng từng tải tệp xuống."
+      },
+      { "en": "The customers used to make a plan.", "vi": "Các khách hàng từng lập một kế hoạch." },
+      { "en": "The customers used to try again.", "vi": "Các khách hàng từng thử lại." },
+      {
+        "en": "The customers used to follow the rules.",
+        "vi": "Các khách hàng từng tuân theo quy tắc."
+      },
+      { "en": "The customers used to submit the form.", "vi": "Các khách hàng từng nộp biểu mẫu." },
+      {
+        "en": "The customers used to meet new people.",
+        "vi": "Các khách hàng từng gặp gỡ người mới."
+      },
+      {
+        "en": "The customers used to rate the service.",
+        "vi": "Các khách hàng từng đánh giá dịch vụ."
+      },
+      { "en": "The customers used to make tea.", "vi": "Các khách hàng từng pha trà." },
+      {
+        "en": "The customers used to celebrate together.",
+        "vi": "Các khách hàng từng ăn mừng cùng nhau."
+      },
+      {
+        "en": "The customers used to drink more water.",
+        "vi": "Các khách hàng từng uống nhiều nước hơn."
+      },
+      { "en": "The customers used to split the bill.", "vi": "Các khách hàng từng chia hóa đơn." },
+      { "en": "The customers used to lock the door.", "vi": "Các khách hàng từng khóa cửa." },
+      {
+        "en": "The customers used to catch the train.",
+        "vi": "Các khách hàng từng bắt chuyến tàu."
+      },
+      {
+        "en": "The customers used to leave a comment.",
+        "vi": "Các khách hàng từng để lại bình luận."
+      },
+      { "en": "The customers used to call back later.", "vi": "Các khách hàng từng gọi lại sau." },
+      { "en": "The customers used to find a job.", "vi": "Các khách hàng từng tìm việc làm." },
+      { "en": "The customers used to ride a bike.", "vi": "Các khách hàng từng đạp xe." },
+      {
+        "en": "The customers used to meet the deadline.",
+        "vi": "Các khách hàng từng kịp thời hạn."
+      },
+      {
+        "en": "The customers used to help a neighbor.",
+        "vi": "Các khách hàng từng giúp một người hàng xóm."
+      },
+      {
+        "en": "The customers used to write a report.",
+        "vi": "Các khách hàng từng viết một báo cáo."
+      },
+      { "en": "The customers used to set an alarm.", "vi": "Các khách hàng từng đặt báo thức." },
+      {
+        "en": "The customers used to sign the contract.",
+        "vi": "Các khách hàng từng ký hợp đồng."
+      },
+      { "en": "The customers used to do the laundry.", "vi": "Các khách hàng từng giặt đồ." },
+      { "en": "The customers used to send the email.", "vi": "Các khách hàng từng gửi email." }
+    ]
+  },
+  {
+    "starter": "The customers don't",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      {
+        "en": "The customers don't join a club.",
+        "vi": "Các khách hàng không tham gia câu lạc bộ."
+      },
+      { "en": "The customers don't keep in touch.", "vi": "Các khách hàng không giữ liên lạc." },
+      { "en": "The customers don't make new friends.", "vi": "Các khách hàng không kết bạn mới." },
+      { "en": "The customers don't calm down.", "vi": "Các khách hàng không bình tĩnh lại." },
+      {
+        "en": "The customers don't negotiate the terms.",
+        "vi": "Các khách hàng không thương lượng điều khoản."
+      },
+      {
+        "en": "The customers don't make a reservation.",
+        "vi": "Các khách hàng không đặt chỗ trước."
+      },
+      { "en": "The customers don't try again.", "vi": "Các khách hàng không thử lại." },
+      {
+        "en": "The customers don't take a day off.",
+        "vi": "Các khách hàng không xin nghỉ một ngày."
+      },
+      { "en": "The customers don't report the bug.", "vi": "Các khách hàng không báo lỗi." },
+      { "en": "The customers don't ask a question.", "vi": "Các khách hàng không hỏi một câu." },
+      { "en": "The customers don't watch the game.", "vi": "Các khách hàng không xem trận đấu." },
+      { "en": "The customers don't play sports.", "vi": "Các khách hàng không chơi thể thao." },
+      { "en": "The customers don't listen to music.", "vi": "Các khách hàng không nghe nhạc." },
+      {
+        "en": "The customers don't move forward.",
+        "vi": "Các khách hàng không tiến về phía trước."
+      },
+      {
+        "en": "The customers don't share my opinion.",
+        "vi": "Các khách hàng không chia sẻ ý kiến."
+      },
+      {
+        "en": "The customers don't travel abroad.",
+        "vi": "Các khách hàng không đi du lịch nước ngoài."
+      },
+      {
+        "en": "The customers don't drink less coffee.",
+        "vi": "Các khách hàng không uống ít cà phê hơn."
+      },
+      {
+        "en": "The customers don't explain the situation.",
+        "vi": "Các khách hàng không giải thích tình huống."
+      },
+      {
+        "en": "The customers don't attend the workshop.",
+        "vi": "Các khách hàng không tham dự buổi hội thảo."
+      },
+      { "en": "The customers don't get a degree.", "vi": "Các khách hàng không lấy bằng." },
+      {
+        "en": "The customers don't attend the class.",
+        "vi": "Các khách hàng không tham gia lớp học."
+      },
+      {
+        "en": "The customers don't help a neighbor.",
+        "vi": "Các khách hàng không giúp một người hàng xóm."
+      },
+      { "en": "The customers don't rent a car.", "vi": "Các khách hàng không thuê xe." },
+      {
+        "en": "The customers don't restart the computer.",
+        "vi": "Các khách hàng không khởi động lại máy tính."
+      },
+      { "en": "The customers don't go home.", "vi": "Các khách hàng không về nhà." },
+      {
+        "en": "The customers don't manage the schedule.",
+        "vi": "Các khách hàng không quản lý lịch trình."
+      },
+      { "en": "The customers don't find a job.", "vi": "Các khách hàng không tìm việc làm." },
+      {
+        "en": "The customers don't register for the course.",
+        "vi": "Các khách hàng không đăng ký khóa học."
+      },
+      { "en": "The customers don't stay focused.", "vi": "Các khách hàng không giữ tập trung." },
+      { "en": "The customers don't help out.", "vi": "Các khách hàng không giúp đỡ." },
+      {
+        "en": "The customers don't answer the phone.",
+        "vi": "Các khách hàng không trả lời điện thoại."
+      },
+      { "en": "The customers don't walk the dog.", "vi": "Các khách hàng không dắt chó đi dạo." },
+      {
+        "en": "The customers don't update the software.",
+        "vi": "Các khách hàng không cập nhật phần mềm."
+      },
+      {
+        "en": "The customers don't think positive.",
+        "vi": "Các khách hàng không suy nghĩ tích cực."
+      },
+      { "en": "The customers don't visit my family.", "vi": "Các khách hàng không thăm gia đình." },
+      {
+        "en": "The customers don't buy a new phone.",
+        "vi": "Các khách hàng không mua điện thoại mới."
+      },
+      { "en": "The customers don't change careers.", "vi": "Các khách hàng không chuyển nghề." },
+      { "en": "The customers don't take a photo.", "vi": "Các khách hàng không chụp một bức ảnh." },
+      { "en": "The customers don't read more books.", "vi": "Các khách hàng không đọc thêm sách." },
+      { "en": "The customers don't raise the price.", "vi": "Các khách hàng không tăng giá." },
+      { "en": "The customers don't be on time.", "vi": "Các khách hàng không đến đúng giờ." },
+      {
+        "en": "The customers don't try harder next time.",
+        "vi": "Các khách hàng không cố gắng hơn lần sau."
+      },
+      { "en": "The customers don't ride a bike.", "vi": "Các khách hàng không đạp xe." },
+      { "en": "The customers don't submit the form.", "vi": "Các khách hàng không nộp biểu mẫu." },
+      {
+        "en": "The customers don't follow the rules.",
+        "vi": "Các khách hàng không tuân theo quy tắc."
+      },
+      {
+        "en": "The customers don't leave a comment.",
+        "vi": "Các khách hàng không để lại bình luận."
+      },
+      { "en": "The customers don't clean the house.", "vi": "Các khách hàng không dọn nhà." },
+      {
+        "en": "The customers don't finish on time.",
+        "vi": "Các khách hàng không hoàn thành đúng hạn."
+      },
+      { "en": "The customers don't turn off the light.", "vi": "Các khách hàng không tắt đèn." },
+      { "en": "The customers don't learn to swim.", "vi": "Các khách hàng không học bơi." },
+      { "en": "The customers don't cancel the order.", "vi": "Các khách hàng không hủy đơn hàng." },
+      { "en": "The customers don't wake up early.", "vi": "Các khách hàng không dậy sớm." },
+      { "en": "The customers don't learn English.", "vi": "Các khách hàng không học tiếng Anh." },
+      { "en": "The customers don't think it over.", "vi": "Các khách hàng không suy nghĩ kỹ." },
+      { "en": "The customers don't eat healthy.", "vi": "Các khách hàng không ăn uống lành mạnh." },
+      {
+        "en": "The customers don't close the deal.",
+        "vi": "Các khách hàng không chốt thỏa thuận."
+      },
+      { "en": "The customers don't go for a walk.", "vi": "Các khách hàng không đi dạo." },
+      { "en": "The customers don't sleep early.", "vi": "Các khách hàng không ngủ sớm." },
+      { "en": "The customers don't stay organized.", "vi": "Các khách hàng không giữ ngăn nắp." },
+      {
+        "en": "The customers don't reply to the message.",
+        "vi": "Các khách hàng không trả lời tin nhắn."
+      },
+      {
+        "en": "The customers don't apply for the position.",
+        "vi": "Các khách hàng không nộp đơn cho vị trí."
+      },
+      { "en": "The customers don't order food.", "vi": "Các khách hàng không gọi đồ ăn." },
+      {
+        "en": "The customers don't open a savings account.",
+        "vi": "Các khách hàng không mở tài khoản tiết kiệm."
+      },
+      { "en": "The customers don't lower the cost.", "vi": "Các khách hàng không giảm chi phí." },
+      {
+        "en": "The customers don't invite some friends.",
+        "vi": "Các khách hàng không mời vài người bạn."
+      },
+      {
+        "en": "The customers don't cut the budget.",
+        "vi": "Các khách hàng không cắt giảm ngân sách."
+      },
+      {
+        "en": "The customers don't win the contract.",
+        "vi": "Các khách hàng không giành hợp đồng."
+      },
+      {
+        "en": "The customers don't finish the report.",
+        "vi": "Các khách hàng không hoàn thành báo cáo."
+      },
+      { "en": "The customers don't split the bill.", "vi": "Các khách hàng không chia hóa đơn." },
+      { "en": "The customers don't check my email.", "vi": "Các khách hàng không kiểm tra email." },
+      { "en": "The customers don't make a plan.", "vi": "Các khách hàng không lập một kế hoạch." },
+      {
+        "en": "The customers don't open a business.",
+        "vi": "Các khách hàng không mở một doanh nghiệp."
+      },
+      { "en": "The customers don't set an alarm.", "vi": "Các khách hàng không đặt báo thức." },
+      {
+        "en": "The customers don't ask more questions.",
+        "vi": "Các khách hàng không hỏi nhiều hơn."
+      },
+      { "en": "The customers don't quit smoking.", "vi": "Các khách hàng không bỏ thuốc lá." },
+      { "en": "The customers don't buy groceries.", "vi": "Các khách hàng không mua thực phẩm." },
+      {
+        "en": "The customers don't download the file.",
+        "vi": "Các khách hàng không tải tệp xuống."
+      },
+      {
+        "en": "The customers don't change the plan.",
+        "vi": "Các khách hàng không thay đổi kế hoạch."
+      },
+      { "en": "The customers don't help the team.", "vi": "Các khách hàng không giúp đỡ nhóm." },
+      {
+        "en": "The customers don't review the document.",
+        "vi": "Các khách hàng không xem lại tài liệu."
+      },
+      {
+        "en": "The customers don't never give up.",
+        "vi": "Các khách hàng không không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The customers don't print the document.",
+        "vi": "Các khách hàng không in tài liệu."
+      },
+      { "en": "The customers don't stay home.", "vi": "Các khách hàng không ở nhà." },
+      {
+        "en": "The customers don't enjoy the weekend.",
+        "vi": "Các khách hàng không tận hưởng cuối tuần."
+      },
+      { "en": "The customers don't log in again.", "vi": "Các khách hàng không đăng nhập lại." },
+      {
+        "en": "The customers don't write a report.",
+        "vi": "Các khách hàng không viết một báo cáo."
+      },
+      {
+        "en": "The customers don't plan a trip.",
+        "vi": "Các khách hàng không lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "The customers don't improve my skills.",
+        "vi": "Các khách hàng không cải thiện kỹ năng."
+      },
+      { "en": "The customers don't close the window.", "vi": "Các khách hàng không đóng cửa sổ." },
+      {
+        "en": "The customers don't listen carefully.",
+        "vi": "Các khách hàng không lắng nghe cẩn thận."
+      },
+      {
+        "en": "The customers don't volunteer on weekends.",
+        "vi": "Các khách hàng không tình nguyện cuối tuần."
+      },
+      {
+        "en": "The customers don't take a course.",
+        "vi": "Các khách hàng không tham gia một khóa học."
+      },
+      { "en": "The customers don't speak English.", "vi": "Các khách hàng không nói tiếng Anh." },
+      { "en": "The customers don't give it a try.", "vi": "Các khách hàng không thử một lần." },
+      { "en": "The customers don't go on vacation.", "vi": "Các khách hàng không đi nghỉ mát." },
+      { "en": "The customers don't relax at home.", "vi": "Các khách hàng không thư giãn ở nhà." },
+      { "en": "The customers don't water the plants.", "vi": "Các khách hàng không tưới cây." },
+      {
+        "en": "The customers don't solve this issue.",
+        "vi": "Các khách hàng không giải quyết vấn đề này."
+      },
+      { "en": "The customers don't stay up late.", "vi": "Các khách hàng không thức khuya." },
+      { "en": "The customers don't breathe deeply.", "vi": "Các khách hàng không hít thở sâu." }
+    ]
+  },
+  {
+    "starter": "The customers didn't",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      { "en": "The customers didn't go home.", "vi": "Các khách hàng đã không về nhà." },
+      {
+        "en": "The customers didn't cut expenses.",
+        "vi": "Các khách hàng đã không cắt giảm chi tiêu."
+      },
+      {
+        "en": "The customers didn't log in again.",
+        "vi": "Các khách hàng đã không đăng nhập lại."
+      },
+      {
+        "en": "The customers didn't drink more water.",
+        "vi": "Các khách hàng đã không uống nhiều nước hơn."
+      },
+      {
+        "en": "The customers didn't reset the password.",
+        "vi": "Các khách hàng đã không đặt lại mật khẩu."
+      },
+      {
+        "en": "The customers didn't register for the course.",
+        "vi": "Các khách hàng đã không đăng ký khóa học."
+      },
+      {
+        "en": "The customers didn't stay focused.",
+        "vi": "Các khách hàng đã không giữ tập trung."
+      },
+      { "en": "The customers didn't help out.", "vi": "Các khách hàng đã không giúp đỡ." },
+      {
+        "en": "The customers didn't cancel the order.",
+        "vi": "Các khách hàng đã không hủy đơn hàng."
+      },
+      { "en": "The customers didn't say sorry.", "vi": "Các khách hàng đã không nói lời xin lỗi." },
+      { "en": "The customers didn't find a job.", "vi": "Các khách hàng đã không tìm việc làm." },
+      { "en": "The customers didn't sleep early.", "vi": "Các khách hàng đã không ngủ sớm." },
+      {
+        "en": "The customers didn't listen carefully.",
+        "vi": "Các khách hàng đã không lắng nghe cẩn thận."
+      },
+      {
+        "en": "The customers didn't split the bill.",
+        "vi": "Các khách hàng đã không chia hóa đơn."
+      },
+      { "en": "The customers didn't cook dinner.", "vi": "Các khách hàng đã không nấu bữa tối." },
+      { "en": "The customers didn't learn to swim.", "vi": "Các khách hàng đã không học bơi." },
+      {
+        "en": "The customers didn't negotiate the terms.",
+        "vi": "Các khách hàng đã không thương lượng điều khoản."
+      },
+      { "en": "The customers didn't water the plants.", "vi": "Các khách hàng đã không tưới cây." },
+      {
+        "en": "The customers didn't donate to charity.",
+        "vi": "Các khách hàng đã không quyên góp từ thiện."
+      },
+      {
+        "en": "The customers didn't fix the problem.",
+        "vi": "Các khách hàng đã không sửa vấn đề."
+      },
+      {
+        "en": "The customers didn't attend the workshop.",
+        "vi": "Các khách hàng đã không tham dự buổi hội thảo."
+      },
+      {
+        "en": "The customers didn't make a decision.",
+        "vi": "Các khách hàng đã không đưa ra quyết định."
+      },
+      { "en": "The customers didn't study abroad.", "vi": "Các khách hàng đã không du học." },
+      {
+        "en": "The customers didn't buy groceries.",
+        "vi": "Các khách hàng đã không mua thực phẩm."
+      },
+      {
+        "en": "The customers didn't call back later.",
+        "vi": "Các khách hàng đã không gọi lại sau."
+      },
+      {
+        "en": "The customers didn't open a savings account.",
+        "vi": "Các khách hàng đã không mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "The customers didn't pay the bill.",
+        "vi": "Các khách hàng đã không thanh toán hóa đơn."
+      },
+      { "en": "The customers didn't give it a try.", "vi": "Các khách hàng đã không thử một lần." },
+      { "en": "The customers didn't rent a car.", "vi": "Các khách hàng đã không thuê xe." },
+      {
+        "en": "The customers didn't leave a comment.",
+        "vi": "Các khách hàng đã không để lại bình luận."
+      },
+      { "en": "The customers didn't ask for help.", "vi": "Các khách hàng đã không nhờ giúp đỡ." },
+      {
+        "en": "The customers didn't think positive.",
+        "vi": "Các khách hàng đã không suy nghĩ tích cực."
+      },
+      {
+        "en": "The customers didn't solve this issue.",
+        "vi": "Các khách hàng đã không giải quyết vấn đề này."
+      },
+      {
+        "en": "The customers didn't visit my family.",
+        "vi": "Các khách hàng đã không thăm gia đình."
+      },
+      {
+        "en": "The customers didn't practice every day.",
+        "vi": "Các khách hàng đã không luyện tập mỗi ngày."
+      },
+      {
+        "en": "The customers didn't enjoy the weekend.",
+        "vi": "Các khách hàng đã không tận hưởng cuối tuần."
+      },
+      {
+        "en": "The customers didn't prepare the presentation.",
+        "vi": "Các khách hàng đã không chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The customers didn't cut the budget.",
+        "vi": "Các khách hàng đã không cắt giảm ngân sách."
+      },
+      { "en": "The customers didn't listen to music.", "vi": "Các khách hàng đã không nghe nhạc." },
+      {
+        "en": "The customers didn't go on vacation.",
+        "vi": "Các khách hàng đã không đi nghỉ mát."
+      },
+      {
+        "en": "The customers didn't answer the phone.",
+        "vi": "Các khách hàng đã không trả lời điện thoại."
+      },
+      {
+        "en": "The customers didn't get a promotion.",
+        "vi": "Các khách hàng đã không được thăng chức."
+      },
+      {
+        "en": "The customers didn't work as a team.",
+        "vi": "Các khách hàng đã không làm việc theo nhóm."
+      },
+      {
+        "en": "The customers didn't drive to work.",
+        "vi": "Các khách hàng đã không lái xe đi làm."
+      },
+      {
+        "en": "The customers didn't update the software.",
+        "vi": "Các khách hàng đã không cập nhật phần mềm."
+      },
+      { "en": "The customers didn't make tea.", "vi": "Các khách hàng đã không pha trà." },
+      {
+        "en": "The customers didn't launch the product.",
+        "vi": "Các khách hàng đã không ra mắt sản phẩm."
+      },
+      { "en": "The customers didn't go for a walk.", "vi": "Các khách hàng đã không đi dạo." },
+      { "en": "The customers didn't quit smoking.", "vi": "Các khách hàng đã không bỏ thuốc lá." },
+      { "en": "The customers didn't speak clearly.", "vi": "Các khách hàng đã không nói rõ ràng." },
+      {
+        "en": "The customers didn't fill out the form.",
+        "vi": "Các khách hàng đã không điền vào biểu mẫu."
+      },
+      {
+        "en": "The customers didn't take a day off.",
+        "vi": "Các khách hàng đã không xin nghỉ một ngày."
+      },
+      {
+        "en": "The customers didn't double-check everything.",
+        "vi": "Các khách hàng đã không kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "The customers didn't help the team.",
+        "vi": "Các khách hàng đã không giúp đỡ nhóm."
+      },
+      {
+        "en": "The customers didn't travel abroad.",
+        "vi": "Các khách hàng đã không đi du lịch nước ngoài."
+      },
+      {
+        "en": "The customers didn't charge the phone.",
+        "vi": "Các khách hàng đã không sạc điện thoại."
+      },
+      {
+        "en": "The customers didn't check the details.",
+        "vi": "Các khách hàng đã không kiểm tra chi tiết."
+      },
+      {
+        "en": "The customers didn't set a goal.",
+        "vi": "Các khách hàng đã không đặt một mục tiêu."
+      },
+      { "en": "The customers didn't set an alarm.", "vi": "Các khách hàng đã không đặt báo thức." },
+      {
+        "en": "The customers didn't say goodbye.",
+        "vi": "Các khách hàng đã không nói lời tạm biệt."
+      },
+      {
+        "en": "The customers didn't plan ahead.",
+        "vi": "Các khách hàng đã không lên kế hoạch trước."
+      },
+      {
+        "en": "The customers didn't understand the lesson.",
+        "vi": "Các khách hàng đã không hiểu bài học."
+      },
+      {
+        "en": "The customers didn't drink less coffee.",
+        "vi": "Các khách hàng đã không uống ít cà phê hơn."
+      },
+      {
+        "en": "The customers didn't book a hotel.",
+        "vi": "Các khách hàng đã không đặt khách sạn."
+      },
+      {
+        "en": "The customers didn't turn off the light.",
+        "vi": "Các khách hàng đã không tắt đèn."
+      },
+      {
+        "en": "The customers didn't apply for the position.",
+        "vi": "Các khách hàng đã không nộp đơn cho vị trí."
+      },
+      {
+        "en": "The customers didn't write a report.",
+        "vi": "Các khách hàng đã không viết một báo cáo."
+      },
+      {
+        "en": "The customers didn't lead the project.",
+        "vi": "Các khách hàng đã không dẫn dắt dự án."
+      },
+      { "en": "The customers didn't lose weight.", "vi": "Các khách hàng đã không giảm cân." },
+      {
+        "en": "The customers didn't buy a new phone.",
+        "vi": "Các khách hàng đã không mua điện thoại mới."
+      },
+      {
+        "en": "The customers didn't grow the business.",
+        "vi": "Các khách hàng đã không phát triển kinh doanh."
+      },
+      {
+        "en": "The customers didn't ask more questions.",
+        "vi": "Các khách hàng đã không hỏi nhiều hơn."
+      },
+      {
+        "en": "The customers didn't talk to the manager.",
+        "vi": "Các khách hàng đã không nói chuyện với quản lý."
+      },
+      {
+        "en": "The customers didn't close the deal.",
+        "vi": "Các khách hàng đã không chốt thỏa thuận."
+      },
+      {
+        "en": "The customers didn't make a plan.",
+        "vi": "Các khách hàng đã không lập một kế hoạch."
+      },
+      {
+        "en": "The customers didn't volunteer on weekends.",
+        "vi": "Các khách hàng đã không tình nguyện cuối tuần."
+      },
+      { "en": "The customers didn't clean the house.", "vi": "Các khách hàng đã không dọn nhà." },
+      {
+        "en": "The customers didn't call a friend.",
+        "vi": "Các khách hàng đã không gọi cho một người bạn."
+      },
+      {
+        "en": "The customers didn't work harder.",
+        "vi": "Các khách hàng đã không làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The customers didn't learn English.",
+        "vi": "Các khách hàng đã không học tiếng Anh."
+      },
+      {
+        "en": "The customers didn't sign the contract.",
+        "vi": "Các khách hàng đã không ký hợp đồng."
+      },
+      {
+        "en": "The customers didn't follow the rules.",
+        "vi": "Các khách hàng đã không tuân theo quy tắc."
+      },
+      {
+        "en": "The customers didn't wait a moment.",
+        "vi": "Các khách hàng đã không chờ một chút."
+      },
+      {
+        "en": "The customers didn't support each other.",
+        "vi": "Các khách hàng đã không hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The customers didn't walk the dog.",
+        "vi": "Các khách hàng đã không dắt chó đi dạo."
+      },
+      {
+        "en": "The customers didn't take a photo.",
+        "vi": "Các khách hàng đã không chụp một bức ảnh."
+      },
+      {
+        "en": "The customers didn't confirm the booking.",
+        "vi": "Các khách hàng đã không xác nhận đặt chỗ."
+      },
+      {
+        "en": "The customers didn't make new friends.",
+        "vi": "Các khách hàng đã không kết bạn mới."
+      },
+      {
+        "en": "The customers didn't cook breakfast.",
+        "vi": "Các khách hàng đã không nấu bữa sáng."
+      },
+      {
+        "en": "The customers didn't help a neighbor.",
+        "vi": "Các khách hàng đã không giúp một người hàng xóm."
+      },
+      {
+        "en": "The customers didn't invest wisely.",
+        "vi": "Các khách hàng đã không đầu tư khôn ngoan."
+      },
+      {
+        "en": "The customers didn't invite some friends.",
+        "vi": "Các khách hàng đã không mời vài người bạn."
+      },
+      {
+        "en": "The customers didn't keep in touch.",
+        "vi": "Các khách hàng đã không giữ liên lạc."
+      },
+      { "en": "The customers didn't be on time.", "vi": "Các khách hàng đã không đến đúng giờ." },
+      {
+        "en": "The customers didn't take a break.",
+        "vi": "Các khách hàng đã không nghỉ giải lao."
+      },
+      { "en": "The customers didn't wake up early.", "vi": "Các khách hàng đã không dậy sớm." },
+      {
+        "en": "The customers didn't relax at home.",
+        "vi": "Các khách hàng đã không thư giãn ở nhà."
+      },
+      {
+        "en": "The customers didn't never give up.",
+        "vi": "Các khách hàng đã không không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The customers didn't change the plan.",
+        "vi": "Các khách hàng đã không thay đổi kế hoạch."
+      },
+      {
+        "en": "The customers didn't take a course.",
+        "vi": "Các khách hàng đã không tham gia một khóa học."
+      }
+    ]
+  },
+  {
+    "starter": "The team members are",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      { "en": "The team members are nervous.", "vi": "Các thành viên trong nhóm hồi hộp." },
+      { "en": "The team members are relieved.", "vi": "Các thành viên trong nhóm nhẹ nhõm." },
+      {
+        "en": "The team members are completely lost.",
+        "vi": "Các thành viên trong nhóm hoàn toàn lạc lối."
+      },
+      { "en": "The team members are very happy.", "vi": "Các thành viên trong nhóm rất vui." },
+      {
+        "en": "The team members are thankful for today.",
+        "vi": "Các thành viên trong nhóm biết ơn ngày hôm nay."
+      },
+      { "en": "The team members are hardworking.", "vi": "Các thành viên trong nhóm chăm chỉ." },
+      { "en": "The team members are fine.", "vi": "Các thành viên trong nhóm ổn." },
+      { "en": "The team members are sleepy.", "vi": "Các thành viên trong nhóm buồn ngủ." },
+      {
+        "en": "The team members are ready for anything.",
+        "vi": "Các thành viên trong nhóm sẵn sàng cho mọi thứ."
+      },
+      {
+        "en": "The team members are curious about it.",
+        "vi": "Các thành viên trong nhóm tò mò về nó."
+      },
+      { "en": "The team members are in a meeting.", "vi": "Các thành viên trong nhóm đang họp." },
+      { "en": "The team members are a little tired.", "vi": "Các thành viên trong nhóm hơi mệt." },
+      {
+        "en": "The team members are cautiously optimistic.",
+        "vi": "Các thành viên trong nhóm lạc quan thận trọng."
+      },
+      { "en": "The team members are enthusiastic.", "vi": "Các thành viên trong nhóm nhiệt tình." },
+      {
+        "en": "The team members are excited about the trip.",
+        "vi": "Các thành viên trong nhóm hào hứng về chuyến đi."
+      },
+      { "en": "The team members are quite busy.", "vi": "Các thành viên trong nhóm khá bận." },
+      { "en": "The team members are serious.", "vi": "Các thành viên trong nhóm nghiêm túc." },
+      { "en": "The team members are satisfied.", "vi": "Các thành viên trong nhóm hài lòng." },
+      {
+        "en": "The team members are sorry for the delay.",
+        "vi": "Các thành viên trong nhóm xin lỗi vì sự chậm trễ."
+      },
+      {
+        "en": "The team members are confident about the result.",
+        "vi": "Các thành viên trong nhóm tự tin về kết quả."
+      },
+      {
+        "en": "The team members are fully prepared.",
+        "vi": "Các thành viên trong nhóm chuẩn bị kỹ càng."
+      },
+      {
+        "en": "The team members are full of ideas.",
+        "vi": "Các thành viên trong nhóm đầy ý tưởng."
+      },
+      {
+        "en": "The team members are good at English.",
+        "vi": "Các thành viên trong nhóm giỏi tiếng Anh."
+      },
+      {
+        "en": "The team members are hard to please.",
+        "vi": "Các thành viên trong nhóm khó chiều."
+      },
+      {
+        "en": "The team members are energetic.",
+        "vi": "Các thành viên trong nhóm tràn đầy năng lượng."
+      },
+      {
+        "en": "The team members are considerate.",
+        "vi": "Các thành viên trong nhóm biết quan tâm."
+      },
+      {
+        "en": "The team members are on my way.",
+        "vi": "Các thành viên trong nhóm đang trên đường."
+      },
+      {
+        "en": "The team members are happy for you.",
+        "vi": "Các thành viên trong nhóm mừng cho bạn."
+      },
+      {
+        "en": "The team members are busy until noon.",
+        "vi": "Các thành viên trong nhóm bận đến trưa."
+      },
+      {
+        "en": "The team members are absolutely sure.",
+        "vi": "Các thành viên trong nhóm chắc chắn tuyệt đối."
+      },
+      {
+        "en": "The team members are happy to help.",
+        "vi": "Các thành viên trong nhóm sẵn lòng giúp đỡ."
+      },
+      { "en": "The team members are curious.", "vi": "Các thành viên trong nhóm tò mò." },
+      {
+        "en": "The team members are quite confident.",
+        "vi": "Các thành viên trong nhóm khá tự tin."
+      },
+      {
+        "en": "The team members are stronger than before.",
+        "vi": "Các thành viên trong nhóm mạnh mẽ hơn trước."
+      },
+      {
+        "en": "The team members are sure about my decision.",
+        "vi": "Các thành viên trong nhóm chắc chắn về quyết định của mình."
+      },
+      {
+        "en": "The team members are available tomorrow.",
+        "vi": "Các thành viên trong nhóm rảnh vào ngày mai."
+      },
+      { "en": "The team members are interested.", "vi": "Các thành viên trong nhóm quan tâm." },
+      {
+        "en": "The team members are proud of the progress.",
+        "vi": "Các thành viên trong nhóm tự hào về sự tiến bộ."
+      },
+      { "en": "The team members are content.", "vi": "Các thành viên trong nhóm mãn nguyện." },
+      {
+        "en": "The team members are hopeful again.",
+        "vi": "Các thành viên trong nhóm lại tràn hy vọng."
+      },
+      { "en": "The team members are excited.", "vi": "Các thành viên trong nhóm hào hứng." },
+      {
+        "en": "The team members are happy to see you.",
+        "vi": "Các thành viên trong nhóm vui khi gặp bạn."
+      },
+      { "en": "The team members are creative.", "vi": "Các thành viên trong nhóm sáng tạo." },
+      { "en": "The team members are thoughtful.", "vi": "Các thành viên trong nhóm chu đáo." },
+      {
+        "en": "The team members are easy to talk to.",
+        "vi": "Các thành viên trong nhóm dễ trò chuyện."
+      },
+      { "en": "The team members are stressed.", "vi": "Các thành viên trong nhóm căng thẳng." },
+      {
+        "en": "The team members are thankful for everything.",
+        "vi": "Các thành viên trong nhóm biết ơn vì tất cả."
+      },
+      {
+        "en": "The team members are proud of the result.",
+        "vi": "Các thành viên trong nhóm tự hào về kết quả."
+      },
+      {
+        "en": "The team members are afraid of failing.",
+        "vi": "Các thành viên trong nhóm sợ thất bại."
+      },
+      { "en": "The team members are flexible.", "vi": "Các thành viên trong nhóm linh hoạt." },
+      { "en": "The team members are joyful.", "vi": "Các thành viên trong nhóm hân hoan." },
+      { "en": "The team members are optimistic.", "vi": "Các thành viên trong nhóm lạc quan." },
+      {
+        "en": "The team members are free this weekend.",
+        "vi": "Các thành viên trong nhóm rảnh cuối tuần này."
+      },
+      {
+        "en": "The team members are inspired.",
+        "vi": "Các thành viên trong nhóm được truyền cảm hứng."
+      },
+      {
+        "en": "The team members are full of energy.",
+        "vi": "Các thành viên trong nhóm tràn đầy năng lượng."
+      },
+      {
+        "en": "The team members are quick to respond.",
+        "vi": "Các thành viên trong nhóm phản hồi nhanh."
+      },
+      { "en": "The team members are polite.", "vi": "Các thành viên trong nhóm lịch sự." },
+      {
+        "en": "The team members are busy but okay.",
+        "vi": "Các thành viên trong nhóm bận nhưng ổn."
+      },
+      {
+        "en": "The team members are hopeful for the best.",
+        "vi": "Các thành viên trong nhóm hy vọng điều tốt nhất."
+      },
+      {
+        "en": "The team members are better than yesterday.",
+        "vi": "Các thành viên trong nhóm tốt hơn hôm qua."
+      },
+      { "en": "The team members are dedicated.", "vi": "Các thành viên trong nhóm tận tâm." },
+      {
+        "en": "The team members are hopeful about the future.",
+        "vi": "Các thành viên trong nhóm hy vọng về tương lai."
+      },
+      {
+        "en": "The team members are low on battery.",
+        "vi": "Các thành viên trong nhóm sắp hết pin."
+      },
+      {
+        "en": "The team members are a bit overwhelmed.",
+        "vi": "Các thành viên trong nhóm hơi quá tải."
+      },
+      { "en": "The team members are in a hurry.", "vi": "Các thành viên trong nhóm đang vội." },
+      {
+        "en": "The team members are bad at cooking.",
+        "vi": "Các thành viên trong nhóm dở nấu ăn."
+      },
+      {
+        "en": "The team members are proud of the team.",
+        "vi": "Các thành viên trong nhóm tự hào về đội."
+      },
+      { "en": "The team members are generous.", "vi": "Các thành viên trong nhóm rộng lượng." },
+      { "en": "The team members are impressed.", "vi": "Các thành viên trong nhóm ấn tượng." },
+      { "en": "The team members are passionate.", "vi": "Các thành viên trong nhóm đầy đam mê." },
+      {
+        "en": "The team members are glad to be here.",
+        "vi": "Các thành viên trong nhóm vui khi được ở đây."
+      },
+      {
+        "en": "The team members are a bit nervous.",
+        "vi": "Các thành viên trong nhóm hơi hồi hộp."
+      },
+      {
+        "en": "The team members are nervous about the interview.",
+        "vi": "Các thành viên trong nhóm hồi hộp về buổi phỏng vấn."
+      },
+      {
+        "en": "The team members are done with work.",
+        "vi": "Các thành viên trong nhóm xong việc."
+      },
+      { "en": "The team members are amazed.", "vi": "Các thành viên trong nhóm kinh ngạc." },
+      { "en": "The team members are tired.", "vi": "Các thành viên trong nhóm mệt." },
+      {
+        "en": "The team members are responsible.",
+        "vi": "Các thành viên trong nhóm có trách nhiệm."
+      },
+      {
+        "en": "The team members are perfectly fine.",
+        "vi": "Các thành viên trong nhóm hoàn toàn ổn."
+      },
+      {
+        "en": "The team members are free all day.",
+        "vi": "Các thành viên trong nhóm rảnh cả ngày."
+      },
+      { "en": "The team members are friendly.", "vi": "Các thành viên trong nhóm thân thiện." },
+      { "en": "The team members are running late.", "vi": "Các thành viên trong nhóm bị trễ." },
+      { "en": "The team members are cheerful.", "vi": "Các thành viên trong nhóm vui vẻ." },
+      { "en": "The team members are exhausted.", "vi": "Các thành viên trong nhóm kiệt sức." },
+      {
+        "en": "The team members are free right now.",
+        "vi": "Các thành viên trong nhóm rảnh ngay bây giờ."
+      },
+      { "en": "The team members are super hungry.", "vi": "Các thành viên trong nhóm đói lắm." },
+      {
+        "en": "The team members are almost there.",
+        "vi": "Các thành viên trong nhóm sắp đến nơi."
+      },
+      {
+        "en": "The team members are on the right track.",
+        "vi": "Các thành viên trong nhóm đi đúng hướng."
+      },
+      { "en": "The team members are busy.", "vi": "Các thành viên trong nhóm bận." },
+      {
+        "en": "The team members are glad you came.",
+        "vi": "Các thành viên trong nhóm vui vì bạn đã đến."
+      },
+      { "en": "The team members are confused.", "vi": "Các thành viên trong nhóm bối rối." },
+      {
+        "en": "The team members are close to the goal.",
+        "vi": "Các thành viên trong nhóm gần đạt mục tiêu."
+      },
+      {
+        "en": "The team members are in a good mood.",
+        "vi": "Các thành viên trong nhóm đang vui vẻ."
+      },
+      { "en": "The team members are ready to go.", "vi": "Các thành viên trong nhóm sẵn sàng đi." },
+      { "en": "The team members are early.", "vi": "Các thành viên trong nhóm sớm." },
+      {
+        "en": "The team members are ready to start.",
+        "vi": "Các thành viên trong nhóm sẵn sàng bắt đầu."
+      },
+      {
+        "en": "The team members are very motivated.",
+        "vi": "Các thành viên trong nhóm rất có động lực."
+      },
+      {
+        "en": "The team members are glad to help.",
+        "vi": "Các thành viên trong nhóm vui được giúp đỡ."
+      },
+      { "en": "The team members are new here.", "vi": "Các thành viên trong nhóm mới đến đây." },
+      {
+        "en": "The team members are out of practice.",
+        "vi": "Các thành viên trong nhóm lâu rồi không luyện."
+      },
+      {
+        "en": "The team members are really proud.",
+        "vi": "Các thành viên trong nhóm thực sự tự hào."
+      }
+    ]
+  },
+  {
+    "starter": "The team members were",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      { "en": "The team members were flexible.", "vi": "Các thành viên trong nhóm đã linh hoạt." },
+      { "en": "The team members were confident.", "vi": "Các thành viên trong nhóm đã tự tin." },
+      {
+        "en": "The team members were quite confident.",
+        "vi": "Các thành viên trong nhóm đã khá tự tin."
+      },
+      {
+        "en": "The team members were used to it.",
+        "vi": "Các thành viên trong nhóm đã đã quen với nó."
+      },
+      {
+        "en": "The team members were confident about the result.",
+        "vi": "Các thành viên trong nhóm đã tự tin về kết quả."
+      },
+      {
+        "en": "The team members were encouraged.",
+        "vi": "Các thành viên trong nhóm đã được động viên."
+      },
+      {
+        "en": "The team members were short on time.",
+        "vi": "Các thành viên trong nhóm đã thiếu thời gian."
+      },
+      {
+        "en": "The team members were really proud.",
+        "vi": "Các thành viên trong nhóm đã thực sự tự hào."
+      },
+      { "en": "The team members were cheerful.", "vi": "Các thành viên trong nhóm đã vui vẻ." },
+      { "en": "The team members were busy.", "vi": "Các thành viên trong nhóm đã bận." },
+      {
+        "en": "The team members were ready to go.",
+        "vi": "Các thành viên trong nhóm đã sẵn sàng đi."
+      },
+      {
+        "en": "The team members were ready for the weekend.",
+        "vi": "Các thành viên trong nhóm đã sẵn sàng cho cuối tuần."
+      },
+      { "en": "The team members were sure.", "vi": "Các thành viên trong nhóm đã chắc chắn." },
+      {
+        "en": "The team members were on my way.",
+        "vi": "Các thành viên trong nhóm đã đang trên đường."
+      },
+      { "en": "The team members were angry.", "vi": "Các thành viên trong nhóm đã tức giận." },
+      {
+        "en": "The team members were glad it worked.",
+        "vi": "Các thành viên trong nhóm đã vui vì nó hiệu quả."
+      },
+      {
+        "en": "The team members were stuck in traffic.",
+        "vi": "Các thành viên trong nhóm đã kẹt xe."
+      },
+      { "en": "The team members were running late.", "vi": "Các thành viên trong nhóm đã bị trễ." },
+      { "en": "The team members were creative.", "vi": "Các thành viên trong nhóm đã sáng tạo." },
+      {
+        "en": "The team members were nervous but excited.",
+        "vi": "Các thành viên trong nhóm đã hồi hộp nhưng hào hứng."
+      },
+      { "en": "The team members were quite busy.", "vi": "Các thành viên trong nhóm đã khá bận." },
+      {
+        "en": "The team members were back at the office.",
+        "vi": "Các thành viên trong nhóm đã đã trở lại văn phòng."
+      },
+      {
+        "en": "The team members were energetic.",
+        "vi": "Các thành viên trong nhóm đã tràn đầy năng lượng."
+      },
+      { "en": "The team members were joyful.", "vi": "Các thành viên trong nhóm đã hân hoan." },
+      { "en": "The team members were grateful.", "vi": "Các thành viên trong nhóm đã biết ơn." },
+      {
+        "en": "The team members were committed to the plan.",
+        "vi": "Các thành viên trong nhóm đã cam kết với kế hoạch."
+      },
+      { "en": "The team members were relaxed.", "vi": "Các thành viên trong nhóm đã thư giãn." },
+      {
+        "en": "The team members were a little tired.",
+        "vi": "Các thành viên trong nhóm đã hơi mệt."
+      },
+      {
+        "en": "The team members were satisfied with the service.",
+        "vi": "Các thành viên trong nhóm đã hài lòng với dịch vụ."
+      },
+      {
+        "en": "The team members were new here.",
+        "vi": "Các thành viên trong nhóm đã mới đến đây."
+      },
+      { "en": "The team members were dedicated.", "vi": "Các thành viên trong nhóm đã tận tâm." },
+      {
+        "en": "The team members were under pressure.",
+        "vi": "Các thành viên trong nhóm đã dưới áp lực."
+      },
+      {
+        "en": "The team members were new to this.",
+        "vi": "Các thành viên trong nhóm đã mới với việc này."
+      },
+      { "en": "The team members were in a hurry.", "vi": "Các thành viên trong nhóm đã đang vội." },
+      {
+        "en": "The team members were ready for the challenge.",
+        "vi": "Các thành viên trong nhóm đã sẵn sàng cho thử thách."
+      },
+      {
+        "en": "The team members were totally focused.",
+        "vi": "Các thành viên trong nhóm đã hoàn toàn tập trung."
+      },
+      {
+        "en": "The team members were thankful for today.",
+        "vi": "Các thành viên trong nhóm đã biết ơn ngày hôm nay."
+      },
+      { "en": "The team members were delighted.", "vi": "Các thành viên trong nhóm đã vui sướng." },
+      { "en": "The team members were curious.", "vi": "Các thành viên trong nhóm đã tò mò." },
+      {
+        "en": "The team members were enthusiastic.",
+        "vi": "Các thành viên trong nhóm đã nhiệt tình."
+      },
+      {
+        "en": "The team members were well-rested.",
+        "vi": "Các thành viên trong nhóm đã được nghỉ ngơi đầy đủ."
+      },
+      { "en": "The team members were friendly.", "vi": "Các thành viên trong nhóm đã thân thiện." },
+      { "en": "The team members were honest.", "vi": "Các thành viên trong nhóm đã trung thực." },
+      { "en": "The team members were ambitious.", "vi": "Các thành viên trong nhóm đã tham vọng." },
+      {
+        "en": "The team members were reliable.",
+        "vi": "Các thành viên trong nhóm đã đáng tin cậy."
+      },
+      {
+        "en": "The team members were afraid of failing.",
+        "vi": "Các thành viên trong nhóm đã sợ thất bại."
+      },
+      {
+        "en": "The team members were motivated.",
+        "vi": "Các thành viên trong nhóm đã có động lực."
+      },
+      { "en": "The team members were alert.", "vi": "Các thành viên trong nhóm đã tỉnh táo." },
+      {
+        "en": "The team members were from Vietnam.",
+        "vi": "Các thành viên trong nhóm đã đến từ Việt Nam."
+      },
+      { "en": "The team members were stressed.", "vi": "Các thành viên trong nhóm đã căng thẳng." },
+      { "en": "The team members were happy.", "vi": "Các thành viên trong nhóm đã vui." },
+      {
+        "en": "The team members were disappointed.",
+        "vi": "Các thành viên trong nhóm đã thất vọng."
+      },
+      { "en": "The team members were confused.", "vi": "Các thành viên trong nhóm đã bối rối." },
+      {
+        "en": "The team members were grateful for your help.",
+        "vi": "Các thành viên trong nhóm đã biết ơn sự giúp đỡ của bạn."
+      },
+      {
+        "en": "The team members were serious about this.",
+        "vi": "Các thành viên trong nhóm đã nghiêm túc về việc này."
+      },
+      {
+        "en": "The team members were glad to help.",
+        "vi": "Các thành viên trong nhóm đã vui được giúp đỡ."
+      },
+      {
+        "en": "The team members were interested in the offer.",
+        "vi": "Các thành viên trong nhóm đã quan tâm đến lời đề nghị."
+      },
+      {
+        "en": "The team members were stronger than before.",
+        "vi": "Các thành viên trong nhóm đã mạnh mẽ hơn trước."
+      },
+      {
+        "en": "The team members were happy with the result.",
+        "vi": "Các thành viên trong nhóm đã hài lòng với kết quả."
+      },
+      {
+        "en": "The team members were a bit nervous.",
+        "vi": "Các thành viên trong nhóm đã hơi hồi hộp."
+      },
+      {
+        "en": "The team members were proud of the team.",
+        "vi": "Các thành viên trong nhóm đã tự hào về đội."
+      },
+      {
+        "en": "The team members were hopeful about the future.",
+        "vi": "Các thành viên trong nhóm đã hy vọng về tương lai."
+      },
+      {
+        "en": "The team members were a bit overwhelmed.",
+        "vi": "Các thành viên trong nhóm đã hơi quá tải."
+      },
+      {
+        "en": "The team members were available after lunch.",
+        "vi": "Các thành viên trong nhóm đã rảnh sau bữa trưa."
+      },
+      {
+        "en": "The team members were determined.",
+        "vi": "Các thành viên trong nhóm đã quyết tâm."
+      },
+      {
+        "en": "The team members were sorry for the delay.",
+        "vi": "Các thành viên trong nhóm đã xin lỗi vì sự chậm trễ."
+      },
+      {
+        "en": "The team members were good at English.",
+        "vi": "Các thành viên trong nhóm đã giỏi tiếng Anh."
+      },
+      {
+        "en": "The team members were in a good mood.",
+        "vi": "Các thành viên trong nhóm đã đang vui vẻ."
+      },
+      { "en": "The team members were thirsty.", "vi": "Các thành viên trong nhóm đã khát." },
+      {
+        "en": "The team members were free all day.",
+        "vi": "Các thành viên trong nhóm đã rảnh cả ngày."
+      },
+      {
+        "en": "The team members were in a meeting.",
+        "vi": "Các thành viên trong nhóm đã đang họp."
+      },
+      { "en": "The team members were careful.", "vi": "Các thành viên trong nhóm đã cẩn thận." },
+      {
+        "en": "The team members were totally lost.",
+        "vi": "Các thành viên trong nhóm đã hoàn toàn lạc lối."
+      },
+      {
+        "en": "The team members were low on battery.",
+        "vi": "Các thành viên trong nhóm đã sắp hết pin."
+      },
+      {
+        "en": "The team members were sorry to hear that.",
+        "vi": "Các thành viên trong nhóm đã tiếc khi nghe điều đó."
+      },
+      {
+        "en": "The team members were refreshed.",
+        "vi": "Các thành viên trong nhóm đã sảng khoái."
+      },
+      { "en": "The team members were fine.", "vi": "Các thành viên trong nhóm đã ổn." },
+      {
+        "en": "The team members were full of ideas.",
+        "vi": "Các thành viên trong nhóm đã đầy ý tưởng."
+      },
+      { "en": "The team members were satisfied.", "vi": "Các thành viên trong nhóm đã hài lòng." },
+      { "en": "The team members were okay.", "vi": "Các thành viên trong nhóm đã ổn cả." },
+      {
+        "en": "The team members were proud of the result.",
+        "vi": "Các thành viên trong nhóm đã tự hào về kết quả."
+      },
+      {
+        "en": "The team members were inspired.",
+        "vi": "Các thành viên trong nhóm đã được truyền cảm hứng."
+      },
+      {
+        "en": "The team members were calm and ready.",
+        "vi": "Các thành viên trong nhóm đã bình tĩnh và sẵn sàng."
+      },
+      {
+        "en": "The team members were busy but okay.",
+        "vi": "Các thành viên trong nhóm đã bận nhưng ổn."
+      },
+      {
+        "en": "The team members were nervous about the interview.",
+        "vi": "Các thành viên trong nhóm đã hồi hộp về buổi phỏng vấn."
+      },
+      {
+        "en": "The team members were happy to help.",
+        "vi": "Các thành viên trong nhóm đã sẵn lòng giúp đỡ."
+      },
+      {
+        "en": "The team members were happy to be back.",
+        "vi": "Các thành viên trong nhóm đã vui khi trở lại."
+      },
+      {
+        "en": "The team members were working from home.",
+        "vi": "Các thành viên trong nhóm đã làm việc tại nhà."
+      },
+      {
+        "en": "The team members were hardworking.",
+        "vi": "Các thành viên trong nhóm đã chăm chỉ."
+      },
+      {
+        "en": "The team members were available tomorrow.",
+        "vi": "Các thành viên trong nhóm đã rảnh vào ngày mai."
+      },
+      {
+        "en": "The team members were happy for you.",
+        "vi": "Các thành viên trong nhóm đã mừng cho bạn."
+      },
+      { "en": "The team members were thoughtful.", "vi": "Các thành viên trong nhóm đã chu đáo." },
+      {
+        "en": "The team members were excited for tomorrow.",
+        "vi": "Các thành viên trong nhóm đã háo hức cho ngày mai."
+      },
+      { "en": "The team members were relieved.", "vi": "Các thành viên trong nhóm đã nhẹ nhõm." },
+      {
+        "en": "The team members were sad to leave.",
+        "vi": "Các thành viên trong nhóm đã buồn khi phải đi."
+      },
+      {
+        "en": "The team members were worried about the exam.",
+        "vi": "Các thành viên trong nhóm đã lo lắng về kỳ thi."
+      },
+      { "en": "The team members were amazed.", "vi": "Các thành viên trong nhóm đã kinh ngạc." },
+      {
+        "en": "The team members were busy until noon.",
+        "vi": "Các thành viên trong nhóm đã bận đến trưa."
+      },
+      {
+        "en": "The team members were open to feedback.",
+        "vi": "Các thành viên trong nhóm đã cởi mở với góp ý."
+      },
+      {
+        "en": "The team members were quick to respond.",
+        "vi": "Các thành viên trong nhóm đã phản hồi nhanh."
+      }
+    ]
+  },
+  {
+    "starter": "The team members have",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      { "en": "The team members have a fever.", "vi": "Các thành viên trong nhóm có bị sốt." },
+      {
+        "en": "The team members have a window seat.",
+        "vi": "Các thành viên trong nhóm có một ghế cạnh cửa sổ."
+      },
+      {
+        "en": "The team members have a long weekend.",
+        "vi": "Các thành viên trong nhóm có một kỳ nghỉ cuối tuần dài."
+      },
+      { "en": "The team members have bad news.", "vi": "Các thành viên trong nhóm có tin xấu." },
+      {
+        "en": "The team members have a lot of homework.",
+        "vi": "Các thành viên trong nhóm có rất nhiều bài tập."
+      },
+      {
+        "en": "The team members have a request.",
+        "vi": "Các thành viên trong nhóm có một yêu cầu."
+      },
+      {
+        "en": "The team members have a good night out.",
+        "vi": "Các thành viên trong nhóm có một buổi tối đi chơi vui."
+      },
+      {
+        "en": "The team members have a fresh perspective.",
+        "vi": "Các thành viên trong nhóm có một góc nhìn mới mẻ."
+      },
+      {
+        "en": "The team members have a question about the price.",
+        "vi": "Các thành viên trong nhóm có một câu hỏi về giá."
+      },
+      {
+        "en": "The team members have a clear deadline.",
+        "vi": "Các thành viên trong nhóm có một thời hạn rõ ràng."
+      },
+      {
+        "en": "The team members have a reservation for two.",
+        "vi": "Các thành viên trong nhóm có một chỗ đặt cho hai người."
+      },
+      {
+        "en": "The team members have a lovely garden.",
+        "vi": "Các thành viên trong nhóm có một khu vườn đáng yêu."
+      },
+      {
+        "en": "The team members have a big surprise.",
+        "vi": "Các thành viên trong nhóm có một bất ngờ lớn."
+      },
+      {
+        "en": "The team members have a realistic goal.",
+        "vi": "Các thành viên trong nhóm có một mục tiêu thực tế."
+      },
+      {
+        "en": "The team members have a happy ending.",
+        "vi": "Các thành viên trong nhóm có một cái kết có hậu."
+      },
+      {
+        "en": "The team members have an appointment.",
+        "vi": "Các thành viên trong nhóm có một cuộc hẹn."
+      },
+      {
+        "en": "The team members have a major update.",
+        "vi": "Các thành viên trong nhóm có một bản cập nhật lớn."
+      },
+      {
+        "en": "The team members have a passport ready.",
+        "vi": "Các thành viên trong nhóm có một hộ chiếu sẵn sàng."
+      },
+      {
+        "en": "The team members have an account here.",
+        "vi": "Các thành viên trong nhóm có một tài khoản ở đây."
+      },
+      {
+        "en": "The team members have a complaint.",
+        "vi": "Các thành viên trong nhóm có một lời phàn nàn."
+      },
+      {
+        "en": "The team members have a driver's license.",
+        "vi": "Các thành viên trong nhóm có một bằng lái xe."
+      },
+      {
+        "en": "The team members have a helpful tip.",
+        "vi": "Các thành viên trong nhóm có một mẹo hữu ích."
+      },
+      {
+        "en": "The team members have a flight at noon.",
+        "vi": "Các thành viên trong nhóm có một chuyến bay lúc trưa."
+      },
+      {
+        "en": "The team members have a reservation.",
+        "vi": "Các thành viên trong nhóm có một chỗ đặt trước."
+      },
+      {
+        "en": "The team members have a to-do list.",
+        "vi": "Các thành viên trong nhóm có một danh sách việc cần làm."
+      },
+      {
+        "en": "The team members have a new job.",
+        "vi": "Các thành viên trong nhóm có một công việc mới."
+      },
+      { "en": "The team members have a cold.", "vi": "Các thành viên trong nhóm có bị cảm lạnh." },
+      {
+        "en": "The team members have a clear answer.",
+        "vi": "Các thành viên trong nhóm có một câu trả lời rõ ràng."
+      },
+      {
+        "en": "The team members have a presentation today.",
+        "vi": "Các thành viên trong nhóm có một bài thuyết trình hôm nay."
+      },
+      {
+        "en": "The team members have a new neighbor.",
+        "vi": "Các thành viên trong nhóm có một người hàng xóm mới."
+      },
+      {
+        "en": "The team members have a comfortable chair.",
+        "vi": "Các thành viên trong nhóm có một chiếc ghế thoải mái."
+      },
+      {
+        "en": "The team members have a clear goal.",
+        "vi": "Các thành viên trong nhóm có một mục tiêu rõ ràng."
+      },
+      {
+        "en": "The team members have a rest day.",
+        "vi": "Các thành viên trong nhóm có một ngày nghỉ ngơi."
+      },
+      {
+        "en": "The team members have a reference letter.",
+        "vi": "Các thành viên trong nhóm có một thư giới thiệu."
+      },
+      {
+        "en": "The team members have a daily routine.",
+        "vi": "Các thành viên trong nhóm có một thói quen hằng ngày."
+      },
+      {
+        "en": "The team members have a simple explanation.",
+        "vi": "Các thành viên trong nhóm có một lời giải thích đơn giản."
+      },
+      {
+        "en": "The team members have a strong mindset.",
+        "vi": "Các thành viên trong nhóm có một tư duy mạnh mẽ."
+      },
+      {
+        "en": "The team members have a new hobby.",
+        "vi": "Các thành viên trong nhóm có một sở thích mới."
+      },
+      {
+        "en": "The team members have a kind gesture.",
+        "vi": "Các thành viên trong nhóm có một cử chỉ tử tế."
+      },
+      {
+        "en": "The team members have an email to send.",
+        "vi": "Các thành viên trong nhóm có một email cần gửi."
+      },
+      {
+        "en": "The team members have a lot of experience.",
+        "vi": "Các thành viên trong nhóm có rất nhiều kinh nghiệm."
+      },
+      {
+        "en": "The team members have a positive attitude.",
+        "vi": "Các thành viên trong nhóm có một thái độ tích cực."
+      },
+      {
+        "en": "The team members have a special offer.",
+        "vi": "Các thành viên trong nhóm có một ưu đãi đặc biệt."
+      },
+      {
+        "en": "The team members have a good habit.",
+        "vi": "Các thành viên trong nhóm có một thói quen tốt."
+      },
+      {
+        "en": "The team members have a tight schedule.",
+        "vi": "Các thành viên trong nhóm có một lịch trình dày đặc."
+      },
+      {
+        "en": "The team members have a healthy lifestyle.",
+        "vi": "Các thành viên trong nhóm có một lối sống lành mạnh."
+      },
+      { "en": "The team members have good news.", "vi": "Các thành viên trong nhóm có tin tốt." },
+      {
+        "en": "The team members have a meeting.",
+        "vi": "Các thành viên trong nhóm có một cuộc họp."
+      },
+      {
+        "en": "The team members have a meeting this afternoon.",
+        "vi": "Các thành viên trong nhóm có một cuộc họp chiều nay."
+      },
+      {
+        "en": "The team members have a beautiful view.",
+        "vi": "Các thành viên trong nhóm có một khung cảnh đẹp."
+      },
+      {
+        "en": "The team members have a good reason.",
+        "vi": "Các thành viên trong nhóm có một lý do chính đáng."
+      },
+      {
+        "en": "The team members have a different view.",
+        "vi": "Các thành viên trong nhóm có một góc nhìn khác."
+      },
+      {
+        "en": "The team members have a meeting at 3 PM.",
+        "vi": "Các thành viên trong nhóm có một cuộc họp lúc 3 giờ chiều."
+      },
+      {
+        "en": "The team members have a fair price.",
+        "vi": "Các thành viên trong nhóm có một mức giá hợp lý."
+      },
+      {
+        "en": "The team members have a meeting tomorrow morning.",
+        "vi": "Các thành viên trong nhóm có một cuộc họp sáng mai."
+      },
+      {
+        "en": "The team members have a better option.",
+        "vi": "Các thành viên trong nhóm có một lựa chọn tốt hơn."
+      },
+      {
+        "en": "The team members have a pending task.",
+        "vi": "Các thành viên trong nhóm có một nhiệm vụ còn dang dở."
+      },
+      {
+        "en": "The team members have a question.",
+        "vi": "Các thành viên trong nhóm có một câu hỏi."
+      },
+      {
+        "en": "The team members have a personal trainer.",
+        "vi": "Các thành viên trong nhóm có một huấn luyện viên riêng."
+      },
+      {
+        "en": "The team members have a busy week ahead.",
+        "vi": "Các thành viên trong nhóm có một tuần bận rộn phía trước."
+      },
+      {
+        "en": "The team members have a big decision to make.",
+        "vi": "Các thành viên trong nhóm có một quyết định lớn phải đưa ra."
+      },
+      {
+        "en": "The team members have a job interview.",
+        "vi": "Các thành viên trong nhóm có một buổi phỏng vấn việc làm."
+      },
+      {
+        "en": "The team members have a question about the schedule.",
+        "vi": "Các thành viên trong nhóm có một câu hỏi về lịch trình."
+      },
+      {
+        "en": "The team members have a great mentor.",
+        "vi": "Các thành viên trong nhóm có một người cố vấn tuyệt vời."
+      },
+      {
+        "en": "The team members have a favorite book.",
+        "vi": "Các thành viên trong nhóm có một cuốn sách yêu thích."
+      },
+      {
+        "en": "The team members have a quick question.",
+        "vi": "Các thành viên trong nhóm có một câu hỏi nhanh."
+      },
+      {
+        "en": "The team members have a doctor nearby.",
+        "vi": "Các thành viên trong nhóm có một bác sĩ gần đây."
+      },
+      {
+        "en": "The team members have a suggestion.",
+        "vi": "Các thành viên trong nhóm có một đề xuất."
+      },
+      {
+        "en": "The team members have a warranty.",
+        "vi": "Các thành viên trong nhóm có một chế độ bảo hành."
+      },
+      {
+        "en": "The team members have a local guide.",
+        "vi": "Các thành viên trong nhóm có một hướng dẫn viên địa phương."
+      },
+      {
+        "en": "The team members have a problem.",
+        "vi": "Các thành viên trong nhóm có một vấn đề."
+      },
+      {
+        "en": "The team members have a supportive friend.",
+        "vi": "Các thành viên trong nhóm có một người bạn biết động viên."
+      },
+      {
+        "en": "The team members have a comfortable home.",
+        "vi": "Các thành viên trong nhóm có một ngôi nhà thoải mái."
+      },
+      {
+        "en": "The team members have a savings plan.",
+        "vi": "Các thành viên trong nhóm có một kế hoạch tiết kiệm."
+      },
+      {
+        "en": "The team members have a positive review.",
+        "vi": "Các thành viên trong nhóm có một đánh giá tích cực."
+      },
+      {
+        "en": "The team members have a remote job.",
+        "vi": "Các thành viên trong nhóm có một công việc từ xa."
+      },
+      {
+        "en": "The team members have two children.",
+        "vi": "Các thành viên trong nhóm có hai đứa con."
+      },
+      {
+        "en": "The team members have a side income.",
+        "vi": "Các thành viên trong nhóm có một nguồn thu phụ."
+      },
+      {
+        "en": "The team members have a small family.",
+        "vi": "Các thành viên trong nhóm có một gia đình nhỏ."
+      },
+      {
+        "en": "The team members have a lot to learn.",
+        "vi": "Các thành viên trong nhóm có nhiều điều phải học."
+      },
+      {
+        "en": "The team members have a busy schedule.",
+        "vi": "Các thành viên trong nhóm có một lịch trình bận rộn."
+      },
+      {
+        "en": "The team members have a detailed plan.",
+        "vi": "Các thành viên trong nhóm có một kế hoạch chi tiết."
+      },
+      {
+        "en": "The team members have a car.",
+        "vi": "Các thành viên trong nhóm có một chiếc xe hơi."
+      },
+      {
+        "en": "The team members have enough time.",
+        "vi": "Các thành viên trong nhóm có đủ thời gian."
+      },
+      {
+        "en": "The team members have a busy morning.",
+        "vi": "Các thành viên trong nhóm có một buổi sáng bận rộn."
+      },
+      {
+        "en": "The team members have a weekend trip.",
+        "vi": "Các thành viên trong nhóm có một chuyến đi cuối tuần."
+      },
+      {
+        "en": "The team members have a home-cooked meal.",
+        "vi": "Các thành viên trong nhóm có một bữa ăn tự nấu."
+      },
+      {
+        "en": "The team members have a cozy cafe.",
+        "vi": "Các thành viên trong nhóm có một quán cà phê ấm cúng."
+      },
+      {
+        "en": "The team members have a glass of water.",
+        "vi": "Các thành viên trong nhóm có một ly nước."
+      },
+      {
+        "en": "The team members have a shopping list.",
+        "vi": "Các thành viên trong nhóm có một danh sách mua sắm."
+      },
+      { "en": "The team members have an idea.", "vi": "Các thành viên trong nhóm có một ý tưởng." },
+      {
+        "en": "The team members have high expectations.",
+        "vi": "Các thành viên trong nhóm có kỳ vọng cao."
+      },
+      {
+        "en": "The team members have a lot of work.",
+        "vi": "Các thành viên trong nhóm có rất nhiều việc."
+      },
+      {
+        "en": "The team members have a water bottle.",
+        "vi": "Các thành viên trong nhóm có một bình nước."
+      },
+      {
+        "en": "The team members have a reason to celebrate.",
+        "vi": "Các thành viên trong nhóm có một lý do để ăn mừng."
+      },
+      {
+        "en": "The team members have a favor to ask.",
+        "vi": "Các thành viên trong nhóm có một việc muốn nhờ."
+      },
+      {
+        "en": "The team members have a notebook and pen.",
+        "vi": "Các thành viên trong nhóm có một quyển sổ và bút."
+      },
+      {
+        "en": "The team members have a minor issue.",
+        "vi": "Các thành viên trong nhóm có một vấn đề nhỏ."
+      },
+      {
+        "en": "The team members have a hotel booking.",
+        "vi": "Các thành viên trong nhóm có một đặt phòng khách sạn."
+      },
+      {
+        "en": "The team members have a sore throat.",
+        "vi": "Các thành viên trong nhóm có đau họng."
+      }
+    ]
+  },
+  {
+    "starter": "The team members want to",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      {
+        "en": "The team members want to book a hotel.",
+        "vi": "Các thành viên trong nhóm muốn đặt khách sạn."
+      },
+      {
+        "en": "The team members want to listen carefully.",
+        "vi": "Các thành viên trong nhóm muốn lắng nghe cẩn thận."
+      },
+      {
+        "en": "The team members want to relax at home.",
+        "vi": "Các thành viên trong nhóm muốn thư giãn ở nhà."
+      },
+      {
+        "en": "The team members want to keep learning.",
+        "vi": "Các thành viên trong nhóm muốn tiếp tục học hỏi."
+      },
+      {
+        "en": "The team members want to read more books.",
+        "vi": "Các thành viên trong nhóm muốn đọc thêm sách."
+      },
+      {
+        "en": "The team members want to answer the phone.",
+        "vi": "Các thành viên trong nhóm muốn trả lời điện thoại."
+      },
+      {
+        "en": "The team members want to take a rest.",
+        "vi": "Các thành viên trong nhóm muốn nghỉ ngơi."
+      },
+      {
+        "en": "The team members want to reach the goal.",
+        "vi": "Các thành viên trong nhóm muốn đạt mục tiêu."
+      },
+      {
+        "en": "The team members want to pay off the loan.",
+        "vi": "Các thành viên trong nhóm muốn trả hết khoản vay."
+      },
+      {
+        "en": "The team members want to exercise every day.",
+        "vi": "Các thành viên trong nhóm muốn tập thể dục mỗi ngày."
+      },
+      {
+        "en": "The team members want to cook dinner.",
+        "vi": "Các thành viên trong nhóm muốn nấu bữa tối."
+      },
+      {
+        "en": "The team members want to lower the cost.",
+        "vi": "Các thành viên trong nhóm muốn giảm chi phí."
+      },
+      {
+        "en": "The team members want to double-check the numbers.",
+        "vi": "Các thành viên trong nhóm muốn kiểm tra lại các con số."
+      },
+      {
+        "en": "The team members want to pack my bags.",
+        "vi": "Các thành viên trong nhóm muốn xếp hành lý."
+      },
+      {
+        "en": "The team members want to share my opinion.",
+        "vi": "Các thành viên trong nhóm muốn chia sẻ ý kiến."
+      },
+      {
+        "en": "The team members want to order food.",
+        "vi": "Các thành viên trong nhóm muốn gọi đồ ăn."
+      },
+      {
+        "en": "The team members want to water the plants.",
+        "vi": "Các thành viên trong nhóm muốn tưới cây."
+      },
+      {
+        "en": "The team members want to finish the report.",
+        "vi": "Các thành viên trong nhóm muốn hoàn thành báo cáo."
+      },
+      {
+        "en": "The team members want to scan the receipt.",
+        "vi": "Các thành viên trong nhóm muốn quét hóa đơn."
+      },
+      {
+        "en": "The team members want to take medicine.",
+        "vi": "Các thành viên trong nhóm muốn uống thuốc."
+      },
+      {
+        "en": "The team members want to take a break.",
+        "vi": "Các thành viên trong nhóm muốn nghỉ giải lao."
+      },
+      {
+        "en": "The team members want to take the exam.",
+        "vi": "Các thành viên trong nhóm muốn làm bài thi."
+      },
+      {
+        "en": "The team members want to take a photo.",
+        "vi": "Các thành viên trong nhóm muốn chụp một bức ảnh."
+      },
+      {
+        "en": "The team members want to raise the price.",
+        "vi": "Các thành viên trong nhóm muốn tăng giá."
+      },
+      { "en": "The team members want to go home.", "vi": "Các thành viên trong nhóm muốn về nhà." },
+      {
+        "en": "The team members want to save for the future.",
+        "vi": "Các thành viên trong nhóm muốn tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The team members want to enjoy the weekend.",
+        "vi": "Các thành viên trong nhóm muốn tận hưởng cuối tuần."
+      },
+      {
+        "en": "The team members want to confirm the booking.",
+        "vi": "Các thành viên trong nhóm muốn xác nhận đặt chỗ."
+      },
+      {
+        "en": "The team members want to ask more questions.",
+        "vi": "Các thành viên trong nhóm muốn hỏi nhiều hơn."
+      },
+      {
+        "en": "The team members want to log in again.",
+        "vi": "Các thành viên trong nhóm muốn đăng nhập lại."
+      },
+      {
+        "en": "The team members want to attend the class.",
+        "vi": "Các thành viên trong nhóm muốn tham gia lớp học."
+      },
+      {
+        "en": "The team members want to arrive on time.",
+        "vi": "Các thành viên trong nhóm muốn đến đúng giờ."
+      },
+      {
+        "en": "The team members want to call back later.",
+        "vi": "Các thành viên trong nhóm muốn gọi lại sau."
+      },
+      {
+        "en": "The team members want to cut expenses.",
+        "vi": "Các thành viên trong nhóm muốn cắt giảm chi tiêu."
+      },
+      {
+        "en": "The team members want to close the deal.",
+        "vi": "Các thành viên trong nhóm muốn chốt thỏa thuận."
+      },
+      {
+        "en": "The team members want to print the document.",
+        "vi": "Các thành viên trong nhóm muốn in tài liệu."
+      },
+      {
+        "en": "The team members want to meet the deadline.",
+        "vi": "Các thành viên trong nhóm muốn kịp thời hạn."
+      },
+      {
+        "en": "The team members want to turn off the light.",
+        "vi": "Các thành viên trong nhóm muốn tắt đèn."
+      },
+      {
+        "en": "The team members want to think it over.",
+        "vi": "Các thành viên trong nhóm muốn suy nghĩ kỹ."
+      },
+      {
+        "en": "The team members want to make new friends.",
+        "vi": "Các thành viên trong nhóm muốn kết bạn mới."
+      },
+      {
+        "en": "The team members want to keep a diary.",
+        "vi": "Các thành viên trong nhóm muốn viết nhật ký."
+      },
+      {
+        "en": "The team members want to move forward.",
+        "vi": "Các thành viên trong nhóm muốn tiến về phía trước."
+      },
+      {
+        "en": "The team members want to review the document.",
+        "vi": "Các thành viên trong nhóm muốn xem lại tài liệu."
+      },
+      {
+        "en": "The team members want to start a new project.",
+        "vi": "Các thành viên trong nhóm muốn bắt đầu một dự án mới."
+      },
+      {
+        "en": "The team members want to wash the dishes.",
+        "vi": "Các thành viên trong nhóm muốn rửa bát."
+      },
+      {
+        "en": "The team members want to get a degree.",
+        "vi": "Các thành viên trong nhóm muốn lấy bằng."
+      },
+      {
+        "en": "The team members want to update the software.",
+        "vi": "Các thành viên trong nhóm muốn cập nhật phần mềm."
+      },
+      {
+        "en": "The team members want to go for a walk.",
+        "vi": "Các thành viên trong nhóm muốn đi dạo."
+      },
+      {
+        "en": "The team members want to watch a movie.",
+        "vi": "Các thành viên trong nhóm muốn xem phim."
+      },
+      {
+        "en": "The team members want to thank everyone.",
+        "vi": "Các thành viên trong nhóm muốn cảm ơn mọi người."
+      },
+      {
+        "en": "The team members want to meet new people.",
+        "vi": "Các thành viên trong nhóm muốn gặp gỡ người mới."
+      },
+      {
+        "en": "The team members want to rent a car.",
+        "vi": "Các thành viên trong nhóm muốn thuê xe."
+      },
+      {
+        "en": "The team members want to drink more water.",
+        "vi": "Các thành viên trong nhóm muốn uống nhiều nước hơn."
+      },
+      {
+        "en": "The team members want to report the bug.",
+        "vi": "Các thành viên trong nhóm muốn báo lỗi."
+      },
+      {
+        "en": "The team members want to split the bill.",
+        "vi": "Các thành viên trong nhóm muốn chia hóa đơn."
+      },
+      {
+        "en": "The team members want to plan a trip.",
+        "vi": "Các thành viên trong nhóm muốn lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "The team members want to drive to work.",
+        "vi": "Các thành viên trong nhóm muốn lái xe đi làm."
+      },
+      {
+        "en": "The team members want to wake up early.",
+        "vi": "Các thành viên trong nhóm muốn dậy sớm."
+      },
+      {
+        "en": "The team members want to submit the form.",
+        "vi": "Các thành viên trong nhóm muốn nộp biểu mẫu."
+      },
+      {
+        "en": "The team members want to apply for the position.",
+        "vi": "Các thành viên trong nhóm muốn nộp đơn cho vị trí."
+      },
+      {
+        "en": "The team members want to open a savings account.",
+        "vi": "Các thành viên trong nhóm muốn mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "The team members want to get a promotion.",
+        "vi": "Các thành viên trong nhóm muốn được thăng chức."
+      },
+      {
+        "en": "The team members want to practice every day.",
+        "vi": "Các thành viên trong nhóm muốn luyện tập mỗi ngày."
+      },
+      {
+        "en": "The team members want to finish on time.",
+        "vi": "Các thành viên trong nhóm muốn hoàn thành đúng hạn."
+      },
+      {
+        "en": "The team members want to speak clearly.",
+        "vi": "Các thành viên trong nhóm muốn nói rõ ràng."
+      },
+      {
+        "en": "The team members want to attend the workshop.",
+        "vi": "Các thành viên trong nhóm muốn tham dự buổi hội thảo."
+      },
+      {
+        "en": "The team members want to close the window.",
+        "vi": "Các thành viên trong nhóm muốn đóng cửa sổ."
+      },
+      {
+        "en": "The team members want to say sorry.",
+        "vi": "Các thành viên trong nhóm muốn nói lời xin lỗi."
+      },
+      {
+        "en": "The team members want to get some rest.",
+        "vi": "Các thành viên trong nhóm muốn nghỉ ngơi một chút."
+      },
+      {
+        "en": "The team members want to reply to the message.",
+        "vi": "Các thành viên trong nhóm muốn trả lời tin nhắn."
+      },
+      {
+        "en": "The team members want to leave early.",
+        "vi": "Các thành viên trong nhóm muốn về sớm."
+      },
+      {
+        "en": "The team members want to breathe deeply.",
+        "vi": "Các thành viên trong nhóm muốn hít thở sâu."
+      },
+      {
+        "en": "The team members want to register for the course.",
+        "vi": "Các thành viên trong nhóm muốn đăng ký khóa học."
+      },
+      {
+        "en": "The team members want to launch the product.",
+        "vi": "Các thành viên trong nhóm muốn ra mắt sản phẩm."
+      },
+      {
+        "en": "The team members want to never give up.",
+        "vi": "Các thành viên trong nhóm muốn không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The team members want to help out.",
+        "vi": "Các thành viên trong nhóm muốn giúp đỡ."
+      },
+      {
+        "en": "The team members want to ask for help.",
+        "vi": "Các thành viên trong nhóm muốn nhờ giúp đỡ."
+      },
+      {
+        "en": "The team members want to visit my family.",
+        "vi": "Các thành viên trong nhóm muốn thăm gia đình."
+      },
+      {
+        "en": "The team members want to send the email.",
+        "vi": "Các thành viên trong nhóm muốn gửi email."
+      },
+      {
+        "en": "The team members want to negotiate the terms.",
+        "vi": "Các thành viên trong nhóm muốn thương lượng điều khoản."
+      },
+      {
+        "en": "The team members want to meditate daily.",
+        "vi": "Các thành viên trong nhóm muốn thiền mỗi ngày."
+      },
+      {
+        "en": "The team members want to open a business.",
+        "vi": "Các thành viên trong nhóm muốn mở một doanh nghiệp."
+      },
+      {
+        "en": "The team members want to say goodbye.",
+        "vi": "Các thành viên trong nhóm muốn nói lời tạm biệt."
+      },
+      {
+        "en": "The team members want to restart the computer.",
+        "vi": "Các thành viên trong nhóm muốn khởi động lại máy tính."
+      },
+      {
+        "en": "The team members want to test the feature.",
+        "vi": "Các thành viên trong nhóm muốn kiểm thử tính năng."
+      },
+      {
+        "en": "The team members want to learn English.",
+        "vi": "Các thành viên trong nhóm muốn học tiếng Anh."
+      },
+      {
+        "en": "The team members want to keep a promise.",
+        "vi": "Các thành viên trong nhóm muốn giữ lời hứa."
+      },
+      {
+        "en": "The team members want to double-check everything.",
+        "vi": "Các thành viên trong nhóm muốn kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "The team members want to take a course.",
+        "vi": "Các thành viên trong nhóm muốn tham gia một khóa học."
+      },
+      {
+        "en": "The team members want to think positive.",
+        "vi": "Các thành viên trong nhóm muốn suy nghĩ tích cực."
+      },
+      {
+        "en": "The team members want to take notes.",
+        "vi": "Các thành viên trong nhóm muốn ghi chép."
+      },
+      {
+        "en": "The team members want to share the post.",
+        "vi": "Các thành viên trong nhóm muốn chia sẻ bài viết."
+      },
+      {
+        "en": "The team members want to cook for everyone.",
+        "vi": "Các thành viên trong nhóm muốn nấu ăn cho mọi người."
+      },
+      {
+        "en": "The team members want to drink less coffee.",
+        "vi": "Các thành viên trong nhóm muốn uống ít cà phê hơn."
+      },
+      {
+        "en": "The team members want to sign the contract.",
+        "vi": "Các thành viên trong nhóm muốn ký hợp đồng."
+      },
+      {
+        "en": "The team members want to understand the lesson.",
+        "vi": "Các thành viên trong nhóm muốn hiểu bài học."
+      },
+      {
+        "en": "The team members want to talk to the manager.",
+        "vi": "Các thành viên trong nhóm muốn nói chuyện với quản lý."
+      },
+      {
+        "en": "The team members want to take it easy.",
+        "vi": "Các thành viên trong nhóm muốn thư giãn."
+      },
+      {
+        "en": "The team members want to check my email.",
+        "vi": "Các thành viên trong nhóm muốn kiểm tra email."
+      },
+      {
+        "en": "The team members want to travel abroad.",
+        "vi": "Các thành viên trong nhóm muốn đi du lịch nước ngoài."
+      }
+    ]
+  }
+]

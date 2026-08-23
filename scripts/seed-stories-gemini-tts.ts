@@ -94,7 +94,7 @@ interface Job {
 }
 
 async function main(): Promise<void> {
-  const storyDir = path.join(PROJECT_ROOT, 'public/data/stories')
+  const storyDir = path.join(PROJECT_ROOT, 'apps/english/public/data/stories')
   if (!fs.existsSync(storyDir)) {
     console.error(
       `❌ Chưa có ${storyDir} (chạy \`node scripts/gen-stories-json.mjs\` trước khi seed).`,

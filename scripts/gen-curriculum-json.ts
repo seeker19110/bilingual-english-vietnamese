@@ -18,8 +18,8 @@ import { FOUNDATION } from '../apps/english/src/data/curriculum.ts'
 import type { DictEntry } from '../apps/english/src/types.ts'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const DICT_DIR = path.join(ROOT, 'public/data/dictionary')
-const OUT = path.join(ROOT, 'public/data/curriculum.json')
+const DICT_DIR = path.join(ROOT, 'apps/english/public/data/dictionary')
+const OUT = path.join(ROOT, 'apps/english/public/data/curriculum.json')
 
 // Nạp toàn bộ từ điển → map theo từ (không phân biệt hoa/thường)
 let dict: DictEntry[] = []

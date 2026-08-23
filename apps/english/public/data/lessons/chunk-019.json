@@ -1,0 +1,594 @@
+[
+  {
+    "id": 191,
+    "title": "Mua quần áo thời trang",
+    "situation": "Khách hàng chọn váy dự tiệc tại cửa hàng thời trang.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Mai", "en": "Mai" },
+    "speakerBName": { "vi": "Nhân viên cửa hàng", "en": "Shop assistant" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'm looking for a dress for a party.",
+        "vi": "Chào bạn, tôi đang tìm một chiếc váy để đi dự tiệc."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. What color or style do you prefer?",
+        "vi": "Được ạ. Chị thích màu hay kiểu nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "Something elegant, maybe in dark red.",
+        "vi": "Một cái gì đó thanh lịch, có lẽ màu đỏ đậm."
+      },
+      {
+        "speaker": "B",
+        "en": "We have a lovely one here. What size are you?",
+        "vi": "Bên em có một chiếc rất đẹp. Chị mặc size nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "Medium, usually. Can I try it on?",
+        "vi": "Thường là size M. Tôi thử được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. The fitting room is right over there.",
+        "vi": "Đương nhiên. Phòng thử đồ ngay đằng kia."
+      },
+      {
+        "speaker": "A",
+        "en": "It fits well! Do you have matching shoes?",
+        "vi": "Vừa lắm! Bên em có giày hợp với váy không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, these black heels would go perfectly.",
+        "vi": "Có, đôi giày cao gót đen này hợp hoàn hảo."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll take both. Is there a discount today?",
+        "vi": "Tôi lấy cả hai. Hôm nay có giảm giá không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, ten percent off the whole outfit.",
+        "vi": "Có, giảm mười phần trăm cho cả bộ."
+      }
+    ]
+  },
+  {
+    "id": 192,
+    "title": "Tư vấn phối đồ",
+    "situation": "Một người bạn tư vấn cách phối quần áo.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Phương", "en": "Phuong" },
+    "speakerBName": { "vi": "Đức", "en": "Duc" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Duc, I never know how to match my clothes. Any advice?",
+        "vi": "Đức ơi, mình chẳng biết phối đồ. Có lời khuyên gì không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. Start with a simple rule: pair bright with neutral.",
+        "vi": "Được. Bắt đầu với quy tắc đơn giản: phối màu nổi với màu trung tính."
+      },
+      {
+        "speaker": "A",
+        "en": "So a colorful top with plain jeans?",
+        "vi": "Vậy áo màu sặc sỡ với quần jeans trơn?"
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly. It looks balanced and easy to wear.",
+        "vi": "Chính xác. Trông cân đối và dễ mặc."
+      },
+      { "speaker": "A", "en": "What about shoes?", "vi": "Còn giày thì sao?" },
+      {
+        "speaker": "B",
+        "en": "White sneakers go with almost everything.",
+        "vi": "Giày trắng hợp với gần như mọi thứ."
+      },
+      {
+        "speaker": "A",
+        "en": "Should I add accessories?",
+        "vi": "Mình có nên thêm phụ kiện không?"
+      },
+      {
+        "speaker": "B",
+        "en": "One or two is enough. Don't overdo it.",
+        "vi": "Một hai món là đủ. Đừng lạm dụng."
+      },
+      {
+        "speaker": "A",
+        "en": "That's really helpful. Any tip for work clothes?",
+        "vi": "Hữu ích thật. Có mẹo nào cho đồ công sở không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Stick to neutral colors; they always look professional.",
+        "vi": "Cứ dùng màu trung tính; lúc nào cũng trông chuyên nghiệp."
+      }
+    ]
+  },
+  {
+    "id": 193,
+    "title": "Mua giày sneaker",
+    "situation": "Khách hàng chọn mua một đôi giày sneaker để chạy bộ.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Long", "en": "Long" },
+    "speakerBName": { "vi": "Nhân viên cửa hàng", "en": "Shop assistant" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'm looking for a pair of sneakers for running.",
+        "vi": "Chào chị, tôi đang tìm một đôi sneaker để chạy bộ."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. Do you run on roads or in the gym?",
+        "vi": "Được ạ. Anh chạy ngoài đường hay trong phòng gym?"
+      },
+      {
+        "speaker": "A",
+        "en": "Mostly outdoors, on the street.",
+        "vi": "Chủ yếu ngoài trời, trên đường phố."
+      },
+      {
+        "speaker": "B",
+        "en": "Then you need good cushioning. What's your size?",
+        "vi": "Vậy anh cần đệm tốt. Anh đi size bao nhiêu?"
+      },
+      {
+        "speaker": "A",
+        "en": "Size 42. Do you have this model in blue?",
+        "vi": "Size 42. Mẫu này có màu xanh không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Let me check... Yes, here it is in blue.",
+        "vi": "Để em xem... Có, đây màu xanh ạ."
+      },
+      { "speaker": "A", "en": "Can I try them on?", "vi": "Tôi thử được không?" },
+      {
+        "speaker": "B",
+        "en": "Of course. Walk around to see how they feel.",
+        "vi": "Đương nhiên. Anh đi vài bước xem có thoải mái không."
+      },
+      {
+        "speaker": "A",
+        "en": "They feel great and very light. How much are they?",
+        "vi": "Rất êm và nhẹ. Giá bao nhiêu ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "One million two hundred thousand, with a free pair of socks.",
+        "vi": "Một triệu hai trăm nghìn, tặng kèm một đôi tất."
+      }
+    ]
+  },
+  {
+    "id": 194,
+    "title": "Tìm áo dài truyền thống",
+    "situation": "Khách hàng đặt may một bộ áo dài cho đám cưới.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Lan", "en": "Lan" },
+    "speakerBName": { "vi": "Thợ may", "en": "Tailor" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I'd like to have a traditional ao dai made.",
+        "vi": "Xin chào, tôi muốn may một bộ áo dài truyền thống."
+      },
+      {
+        "speaker": "B",
+        "en": "Wonderful. Is it for a special occasion?",
+        "vi": "Tuyệt vời. Áo cho dịp đặc biệt nào ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, for my cousin's wedding next month.",
+        "vi": "Vâng, cho đám cưới của em họ tôi tháng sau."
+      },
+      {
+        "speaker": "B",
+        "en": "Lovely. What color are you thinking of?",
+        "vi": "Đẹp đấy. Chị nghĩ đến màu nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "A soft pink with simple flower patterns.",
+        "vi": "Màu hồng nhạt với họa tiết hoa đơn giản."
+      },
+      {
+        "speaker": "B",
+        "en": "Great taste. I'll need to take your measurements.",
+        "vi": "Gu đẹp đấy. Tôi cần lấy số đo của chị."
+      },
+      {
+        "speaker": "A",
+        "en": "Sure. How long will it take to make?",
+        "vi": "Vâng. May mất bao lâu ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "About ten days, with one fitting in between.",
+        "vi": "Khoảng mười ngày, có một lần thử đồ ở giữa."
+      },
+      { "speaker": "A", "en": "How much does it cost?", "vi": "Giá bao nhiêu ạ?" },
+      {
+        "speaker": "B",
+        "en": "One million five hundred thousand, including the fabric.",
+        "vi": "Một triệu năm trăm nghìn, đã gồm vải."
+      }
+    ]
+  },
+  {
+    "id": 195,
+    "title": "Mua đồ công sở",
+    "situation": "Khách mua quần áo công sở cho công việc mới.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Hoa", "en": "Hoa" },
+    "speakerBName": { "vi": "Nhân viên cửa hàng", "en": "Shop assistant" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I just got a new office job and need professional clothes.",
+        "vi": "Chào anh, tôi vừa có việc văn phòng mới và cần quần áo công sở."
+      },
+      {
+        "speaker": "B",
+        "en": "Congratulations! Are you looking for shirts, trousers, or both?",
+        "vi": "Chúc mừng chị! Chị tìm áo sơ mi, quần tây, hay cả hai?"
+      },
+      {
+        "speaker": "A",
+        "en": "Both, please. Something neat but comfortable.",
+        "vi": "Cả hai ạ. Đồ gọn gàng nhưng thoải mái."
+      },
+      {
+        "speaker": "B",
+        "en": "These cotton shirts are breathable and easy to iron.",
+        "vi": "Mấy chiếc áo cotton này thoáng và dễ là."
+      },
+      {
+        "speaker": "A",
+        "en": "I like the white and light blue ones.",
+        "vi": "Tôi thích cái màu trắng và xanh nhạt."
+      },
+      {
+        "speaker": "B",
+        "en": "Good choices. They match most trousers.",
+        "vi": "Lựa chọn tốt. Chúng hợp với hầu hết quần tây."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll take both shirts. What about a blazer?",
+        "vi": "Tôi lấy cả hai áo. Còn áo khoác blazer thì sao?"
+      },
+      {
+        "speaker": "B",
+        "en": "A navy blazer would complete the look.",
+        "vi": "Một chiếc blazer xanh navy sẽ hoàn thiện bộ đồ."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. Can I exchange them if the size is wrong?",
+        "vi": "Tuyệt. Nếu size không đúng tôi đổi được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, within seven days with the receipt.",
+        "vi": "Được, trong vòng bảy ngày kèm hóa đơn."
+      }
+    ]
+  },
+  {
+    "id": 196,
+    "title": "Phân loại rác tái chế",
+    "situation": "Hai người hàng xóm bàn về cách phân loại rác tái chế.",
+    "speakerAGender": "male",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Linh", "en": "Linh" },
+    "speakerBName": { "vi": "Khoa", "en": "Khoa" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Khoa, our building started recycling. Do you know the rules?",
+        "vi": "Khoa ơi, tòa nhà mình bắt đầu tái chế rác. Cậu biết quy định không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes. We separate trash into three bins now.",
+        "vi": "Có. Giờ mình chia rác thành ba thùng."
+      },
+      { "speaker": "A", "en": "Which three?", "vi": "Ba loại nào?" },
+      {
+        "speaker": "B",
+        "en": "Recyclables, organic waste, and other trash.",
+        "vi": "Rác tái chế, rác hữu cơ, và rác còn lại."
+      },
+      { "speaker": "A", "en": "What counts as recyclable?", "vi": "Cái gì tính là rác tái chế?" },
+      {
+        "speaker": "B",
+        "en": "Paper, plastic bottles, glass, and metal cans.",
+        "vi": "Giấy, chai nhựa, thủy tinh và lon kim loại."
+      },
+      { "speaker": "A", "en": "Should I wash them first?", "vi": "Mình có cần rửa trước không?" },
+      {
+        "speaker": "B",
+        "en": "Yes, rinse them so they don't smell.",
+        "vi": "Có, tráng qua cho khỏi bốc mùi."
+      },
+      {
+        "speaker": "A",
+        "en": "Got it. Where do the food scraps go?",
+        "vi": "Hiểu rồi. Thức ăn thừa bỏ vào đâu?"
+      },
+      {
+        "speaker": "B",
+        "en": "In the organic bin. They can become compost.",
+        "vi": "Vào thùng hữu cơ. Chúng có thể thành phân bón."
+      }
+    ]
+  },
+  {
+    "id": 197,
+    "title": "Trồng cây xanh tại nhà",
+    "situation": "Một người bạn hướng dẫn cách trồng cây trên ban công.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Sarah", "en": "Sarah" },
+    "speakerBName": { "vi": "Tom", "en": "Tom" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Tom, I want to grow some plants on my balcony. Any advice?",
+        "vi": "Tom, mình muốn trồng vài cây trên ban công. Có lời khuyên gì không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Sure! Start with easy plants like herbs or small flowers.",
+        "vi": "Được! Bắt đầu với cây dễ trồng như rau thơm hoặc hoa nhỏ."
+      },
+      {
+        "speaker": "A",
+        "en": "How much sunlight do they need?",
+        "vi": "Chúng cần bao nhiêu nắng?"
+      },
+      {
+        "speaker": "B",
+        "en": "Most need about four to six hours a day.",
+        "vi": "Phần lớn cần khoảng bốn đến sáu giờ mỗi ngày."
+      },
+      {
+        "speaker": "A",
+        "en": "My balcony faces east. Is that okay?",
+        "vi": "Ban công nhà mình hướng đông. Có ổn không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect. Morning sun is gentle and good for plants.",
+        "vi": "Hoàn hảo. Nắng sáng dịu và tốt cho cây."
+      },
+      {
+        "speaker": "A",
+        "en": "How often should I water them?",
+        "vi": "Mình nên tưới bao lâu một lần?"
+      },
+      {
+        "speaker": "B",
+        "en": "Once a day, but check the soil first so you don't overwater.",
+        "vi": "Mỗi ngày một lần, nhưng kiểm tra đất trước kẻo tưới quá nhiều."
+      },
+      {
+        "speaker": "A",
+        "en": "Thanks! What's a good plant to start with?",
+        "vi": "Cảm ơn! Cây nào hợp để bắt đầu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Basil or mint — they grow fast and smell wonderful.",
+        "vi": "Húng quế hoặc bạc hà — lớn nhanh và thơm lắm."
+      }
+    ]
+  },
+  {
+    "id": 198,
+    "title": "Chăm sóc vườn rau",
+    "situation": "Một người bạn giúp khắc phục vườn rau tại nhà.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Phương", "en": "Phuong" },
+    "speakerBName": { "vi": "Đức", "en": "Duc" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Duc, my home vegetable garden isn't growing well. What's wrong?",
+        "vi": "Đức ơi, vườn rau nhà mình lớn không tốt. Bị sao vậy?"
+      },
+      {
+        "speaker": "B",
+        "en": "Let's see. How often do you water it?",
+        "vi": "Để xem. Cậu tưới bao lâu một lần?"
+      },
+      {
+        "speaker": "A",
+        "en": "Twice a day, morning and evening.",
+        "vi": "Hai lần mỗi ngày, sáng và tối."
+      },
+      {
+        "speaker": "B",
+        "en": "That might be too much. The roots can rot.",
+        "vi": "Có thể nhiều quá. Rễ có thể bị úng."
+      },
+      { "speaker": "A", "en": "Oh, I didn't know that.", "vi": "Ồ, mình không biết điều đó." },
+      {
+        "speaker": "B",
+        "en": "Also, do the plants get enough sunlight?",
+        "vi": "Còn nữa, cây có đủ nắng không?"
+      },
+      {
+        "speaker": "A",
+        "en": "They're in a shady corner, actually.",
+        "vi": "Thật ra chúng ở một góc khá râm."
+      },
+      {
+        "speaker": "B",
+        "en": "Move them to a sunnier spot. Vegetables love light.",
+        "vi": "Chuyển chúng ra chỗ nhiều nắng hơn. Rau ưa sáng lắm."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll try that. Should I add fertilizer?",
+        "vi": "Mình sẽ thử. Có nên bón phân không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, a little natural compost every two weeks helps.",
+        "vi": "Có, một ít phân hữu cơ mỗi hai tuần sẽ giúp ích."
+      }
+    ]
+  },
+  {
+    "id": 199,
+    "title": "Phát triển ứng dụng mobile",
+    "situation": "Hai lập trình viên bàn kế hoạch làm ứng dụng di động.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Emma", "en": "Emma" },
+    "speakerBName": { "vi": "David", "en": "David" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "David, we're building a mobile app. Where should we start?",
+        "vi": "David, bọn mình đang làm một ứng dụng di động. Nên bắt đầu từ đâu?"
+      },
+      {
+        "speaker": "B",
+        "en": "First, let's define what problem the app solves.",
+        "vi": "Trước hết, mình xác định ứng dụng giải quyết vấn đề gì."
+      },
+      {
+        "speaker": "A",
+        "en": "It helps people learn English with short daily lessons.",
+        "vi": "Nó giúp mọi người học tiếng Anh qua các bài ngắn mỗi ngày."
+      },
+      {
+        "speaker": "B",
+        "en": "Great idea. Should we build for Android, iOS, or both?",
+        "vi": "Ý hay. Mình làm cho Android, iOS, hay cả hai?"
+      },
+      {
+        "speaker": "A",
+        "en": "Both, but maybe Android first since it's more popular here.",
+        "vi": "Cả hai, nhưng có lẽ Android trước vì ở đây phổ biến hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Makes sense. Let's design a simple screen flow first.",
+        "vi": "Hợp lý. Mình thiết kế luồng màn hình đơn giản trước đã."
+      },
+      {
+        "speaker": "A",
+        "en": "How long will the first version take?",
+        "vi": "Phiên bản đầu mất bao lâu?"
+      },
+      {
+        "speaker": "B",
+        "en": "With a small team, about three months for a basic version.",
+        "vi": "Với đội nhỏ, khoảng ba tháng cho bản cơ bản."
+      },
+      {
+        "speaker": "A",
+        "en": "Should we test it with real users early?",
+        "vi": "Mình nên cho người dùng thật thử sớm không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Definitely. Early feedback saves a lot of time later.",
+        "vi": "Chắc chắn. Phản hồi sớm tiết kiệm rất nhiều thời gian sau này."
+      }
+    ]
+  },
+  {
+    "id": 200,
+    "title": "Thiết kế UX/UI",
+    "situation": "Nhà thiết kế trình bày bản thiết kế giao diện với quản lý dự án.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Lan", "en": "Lan" },
+    "speakerBName": { "vi": "Nam", "en": "Nam" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "I've prepared the first design for the app's home screen.",
+        "vi": "Em đã làm bản thiết kế đầu tiên cho màn hình chính của ứng dụng."
+      },
+      {
+        "speaker": "B",
+        "en": "Let's take a look. My first impression is that it's clean.",
+        "vi": "Mình xem nào. Ấn tượng đầu tiên là nó gọn gàng."
+      },
+      {
+        "speaker": "A",
+        "en": "Thanks. I tried to keep only the most important buttons.",
+        "vi": "Cảm ơn anh. Em cố giữ lại chỉ những nút quan trọng nhất."
+      },
+      {
+        "speaker": "B",
+        "en": "Good. But the main button could be a bit bigger.",
+        "vi": "Tốt. Nhưng nút chính có thể to hơn một chút."
+      },
+      {
+        "speaker": "A",
+        "en": "You're right. Bigger buttons are easier to tap.",
+        "vi": "Anh nói đúng. Nút to hơn thì dễ bấm hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly. What about the colors?",
+        "vi": "Chính xác. Còn màu sắc thì sao?"
+      },
+      {
+        "speaker": "A",
+        "en": "I used blue for trust and white for simplicity.",
+        "vi": "Em dùng xanh dương cho sự tin cậy và trắng cho sự đơn giản."
+      },
+      {
+        "speaker": "B",
+        "en": "I like it. Make sure the text has enough contrast.",
+        "vi": "Mình thích đấy. Nhớ để chữ đủ độ tương phản nhé."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll check it for readability. Anything else?",
+        "vi": "Em sẽ kiểm tra độ dễ đọc. Còn gì nữa không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Just test it with a few users, then we finalize.",
+        "vi": "Chỉ cần thử với vài người dùng, rồi mình chốt."
+      }
+    ]
+  }
+]

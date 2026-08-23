@@ -7,6 +7,12 @@
 > (2) 7 handler HTTP của `core-billing` + `learningGoalAdapter` phải dời để cắt 3 chu trình
 > phụ thuộc CẤP GÓI; (3) dev (tsx/Vite/Vitest) phân giải `@dhcb` về source qua tsconfig
 > `paths`/alias nên không cần build gói trước khi dev.
+>
+> **PR-S2 CŨNG ĐÃ THỰC THI** (cùng ngày): app english về `apps/english/` đầy đủ
+> (index.html/public/vite/tailwind/postcss/tsconfig/package.json), outDir giữ `dist/` gốc.
+> Khác đặc tả gốc: dùng `vite --config` + `root:` tường minh trong config (không đổi cwd qua
+> `--workspace`) để `.env`/Playwright/npm script gốc giữ nguyên; 2 bẫy Tailwind-theo-cwd đã
+> ghi lại trong PROGRESS.md mục PR-S2.
 
 > Nghiên cứu tiếp nối `de-xuat-nang-cap-cai-to-2026-08-23.md` (mục N4), đi sâu riêng phần
 > **cấu trúc thư mục + workspace**. Đây là đặc tả để duyệt — CHƯA thực thi. Mỗi bước bên dưới

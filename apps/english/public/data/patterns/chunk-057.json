@@ -1,0 +1,1686 @@
+[
+  {
+    "starter": "The coach is planning to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The coach is planning to clean the house.",
+        "vi": "Huấn luyện viên đang định dọn nhà."
+      },
+      {
+        "en": "The coach is planning to solve this issue.",
+        "vi": "Huấn luyện viên đang định giải quyết vấn đề này."
+      },
+      {
+        "en": "The coach is planning to join the meeting.",
+        "vi": "Huấn luyện viên đang định tham gia cuộc họp."
+      },
+      {
+        "en": "The coach is planning to exercise every day.",
+        "vi": "Huấn luyện viên đang định tập thể dục mỗi ngày."
+      },
+      {
+        "en": "The coach is planning to get a degree.",
+        "vi": "Huấn luyện viên đang định lấy bằng."
+      },
+      {
+        "en": "The coach is planning to listen to music.",
+        "vi": "Huấn luyện viên đang định nghe nhạc."
+      },
+      {
+        "en": "The coach is planning to take a course.",
+        "vi": "Huấn luyện viên đang định tham gia một khóa học."
+      },
+      {
+        "en": "The coach is planning to ask more questions.",
+        "vi": "Huấn luyện viên đang định hỏi nhiều hơn."
+      },
+      {
+        "en": "The coach is planning to apply for the position.",
+        "vi": "Huấn luyện viên đang định nộp đơn cho vị trí."
+      },
+      {
+        "en": "The coach is planning to lock the door.",
+        "vi": "Huấn luyện viên đang định khóa cửa."
+      },
+      {
+        "en": "The coach is planning to cut the budget.",
+        "vi": "Huấn luyện viên đang định cắt giảm ngân sách."
+      },
+      {
+        "en": "The coach is planning to call a friend.",
+        "vi": "Huấn luyện viên đang định gọi cho một người bạn."
+      },
+      {
+        "en": "The coach is planning to delete the file.",
+        "vi": "Huấn luyện viên đang định xóa tệp."
+      },
+      {
+        "en": "The coach is planning to change careers.",
+        "vi": "Huấn luyện viên đang định chuyển nghề."
+      },
+      {
+        "en": "The coach is planning to visit my family.",
+        "vi": "Huấn luyện viên đang định thăm gia đình."
+      },
+      {
+        "en": "The coach is planning to thank everyone.",
+        "vi": "Huấn luyện viên đang định cảm ơn mọi người."
+      },
+      {
+        "en": "The coach is planning to catch the train.",
+        "vi": "Huấn luyện viên đang định bắt chuyến tàu."
+      },
+      {
+        "en": "The coach is planning to arrive on time.",
+        "vi": "Huấn luyện viên đang định đến đúng giờ."
+      },
+      {
+        "en": "The coach is planning to give it a try.",
+        "vi": "Huấn luyện viên đang định thử một lần."
+      },
+      {
+        "en": "The coach is planning to talk to the manager.",
+        "vi": "Huấn luyện viên đang định nói chuyện với quản lý."
+      },
+      {
+        "en": "The coach is planning to write it down.",
+        "vi": "Huấn luyện viên đang định ghi nó lại."
+      },
+      {
+        "en": "The coach is planning to play sports.",
+        "vi": "Huấn luyện viên đang định chơi thể thao."
+      },
+      {
+        "en": "The coach is planning to open a savings account.",
+        "vi": "Huấn luyện viên đang định mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "The coach is planning to never give up.",
+        "vi": "Huấn luyện viên đang định không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The coach is planning to drink more water.",
+        "vi": "Huấn luyện viên đang định uống nhiều nước hơn."
+      },
+      { "en": "The coach is planning to leave early.", "vi": "Huấn luyện viên đang định về sớm." },
+      {
+        "en": "The coach is planning to think positive.",
+        "vi": "Huấn luyện viên đang định suy nghĩ tích cực."
+      },
+      {
+        "en": "The coach is planning to scan the receipt.",
+        "vi": "Huấn luyện viên đang định quét hóa đơn."
+      },
+      {
+        "en": "The coach is planning to get some rest.",
+        "vi": "Huấn luyện viên đang định nghỉ ngơi một chút."
+      },
+      {
+        "en": "The coach is planning to manage the schedule.",
+        "vi": "Huấn luyện viên đang định quản lý lịch trình."
+      },
+      {
+        "en": "The coach is planning to travel abroad.",
+        "vi": "Huấn luyện viên đang định đi du lịch nước ngoài."
+      },
+      {
+        "en": "The coach is planning to help the team.",
+        "vi": "Huấn luyện viên đang định giúp đỡ nhóm."
+      },
+      {
+        "en": "The coach is planning to keep a promise.",
+        "vi": "Huấn luyện viên đang định giữ lời hứa."
+      },
+      {
+        "en": "The coach is planning to book a hotel.",
+        "vi": "Huấn luyện viên đang định đặt khách sạn."
+      },
+      {
+        "en": "The coach is planning to keep in touch.",
+        "vi": "Huấn luyện viên đang định giữ liên lạc."
+      },
+      {
+        "en": "The coach is planning to walk the dog.",
+        "vi": "Huấn luyện viên đang định dắt chó đi dạo."
+      },
+      {
+        "en": "The coach is planning to work as a team.",
+        "vi": "Huấn luyện viên đang định làm việc theo nhóm."
+      },
+      {
+        "en": "The coach is planning to log in again.",
+        "vi": "Huấn luyện viên đang định đăng nhập lại."
+      },
+      {
+        "en": "The coach is planning to practice every day.",
+        "vi": "Huấn luyện viên đang định luyện tập mỗi ngày."
+      },
+      {
+        "en": "The coach is planning to check the details.",
+        "vi": "Huấn luyện viên đang định kiểm tra chi tiết."
+      },
+      {
+        "en": "The coach is planning to ask for help.",
+        "vi": "Huấn luyện viên đang định nhờ giúp đỡ."
+      },
+      {
+        "en": "The coach is planning to drink less coffee.",
+        "vi": "Huấn luyện viên đang định uống ít cà phê hơn."
+      },
+      {
+        "en": "The coach is planning to plan ahead.",
+        "vi": "Huấn luyện viên đang định lên kế hoạch trước."
+      },
+      { "en": "The coach is planning to stay home.", "vi": "Huấn luyện viên đang định ở nhà." },
+      {
+        "en": "The coach is planning to attend the workshop.",
+        "vi": "Huấn luyện viên đang định tham dự buổi hội thảo."
+      },
+      {
+        "en": "The coach is planning to order food.",
+        "vi": "Huấn luyện viên đang định gọi đồ ăn."
+      },
+      {
+        "en": "The coach is planning to start over.",
+        "vi": "Huấn luyện viên đang định bắt đầu lại."
+      },
+      {
+        "en": "The coach is planning to charge the phone.",
+        "vi": "Huấn luyện viên đang định sạc điện thoại."
+      },
+      {
+        "en": "The coach is planning to negotiate the terms.",
+        "vi": "Huấn luyện viên đang định thương lượng điều khoản."
+      },
+      { "en": "The coach is planning to make tea.", "vi": "Huấn luyện viên đang định pha trà." },
+      {
+        "en": "The coach is planning to eat healthy.",
+        "vi": "Huấn luyện viên đang định ăn uống lành mạnh."
+      },
+      {
+        "en": "The coach is planning to cancel the order.",
+        "vi": "Huấn luyện viên đang định hủy đơn hàng."
+      },
+      {
+        "en": "The coach is planning to grow the business.",
+        "vi": "Huấn luyện viên đang định phát triển kinh doanh."
+      },
+      {
+        "en": "The coach is planning to reach the goal.",
+        "vi": "Huấn luyện viên đang định đạt mục tiêu."
+      },
+      {
+        "en": "The coach is planning to open a business.",
+        "vi": "Huấn luyện viên đang định mở một doanh nghiệp."
+      },
+      {
+        "en": "The coach is planning to relax at home.",
+        "vi": "Huấn luyện viên đang định thư giãn ở nhà."
+      },
+      {
+        "en": "The coach is planning to explain the situation.",
+        "vi": "Huấn luyện viên đang định giải thích tình huống."
+      },
+      {
+        "en": "The coach is planning to pay off the loan.",
+        "vi": "Huấn luyện viên đang định trả hết khoản vay."
+      },
+      {
+        "en": "The coach is planning to cut expenses.",
+        "vi": "Huấn luyện viên đang định cắt giảm chi tiêu."
+      },
+      {
+        "en": "The coach is planning to register for the course.",
+        "vi": "Huấn luyện viên đang định đăng ký khóa học."
+      },
+      {
+        "en": "The coach is planning to calm down.",
+        "vi": "Huấn luyện viên đang định bình tĩnh lại."
+      },
+      {
+        "en": "The coach is planning to celebrate together.",
+        "vi": "Huấn luyện viên đang định ăn mừng cùng nhau."
+      },
+      {
+        "en": "The coach is planning to attend the class.",
+        "vi": "Huấn luyện viên đang định tham gia lớp học."
+      },
+      {
+        "en": "The coach is planning to make a decision.",
+        "vi": "Huấn luyện viên đang định đưa ra quyết định."
+      },
+      {
+        "en": "The coach is planning to split the bill.",
+        "vi": "Huấn luyện viên đang định chia hóa đơn."
+      },
+      {
+        "en": "The coach is planning to support each other.",
+        "vi": "Huấn luyện viên đang định hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The coach is planning to say goodbye.",
+        "vi": "Huấn luyện viên đang định nói lời tạm biệt."
+      },
+      {
+        "en": "The coach is planning to cook for everyone.",
+        "vi": "Huấn luyện viên đang định nấu ăn cho mọi người."
+      },
+      {
+        "en": "The coach is planning to drive to work.",
+        "vi": "Huấn luyện viên đang định lái xe đi làm."
+      },
+      {
+        "en": "The coach is planning to rate the service.",
+        "vi": "Huấn luyện viên đang định đánh giá dịch vụ."
+      },
+      {
+        "en": "The coach is planning to listen carefully.",
+        "vi": "Huấn luyện viên đang định lắng nghe cẩn thận."
+      },
+      {
+        "en": "The coach is planning to turn off the light.",
+        "vi": "Huấn luyện viên đang định tắt đèn."
+      },
+      {
+        "en": "The coach is planning to finish the report.",
+        "vi": "Huấn luyện viên đang định hoàn thành báo cáo."
+      },
+      {
+        "en": "The coach is planning to ask for a raise.",
+        "vi": "Huấn luyện viên đang định xin tăng lương."
+      },
+      {
+        "en": "The coach is planning to wash the dishes.",
+        "vi": "Huấn luyện viên đang định rửa bát."
+      },
+      {
+        "en": "The coach is planning to think it over.",
+        "vi": "Huấn luyện viên đang định suy nghĩ kỹ."
+      },
+      {
+        "en": "The coach is planning to update the software.",
+        "vi": "Huấn luyện viên đang định cập nhật phần mềm."
+      },
+      {
+        "en": "The coach is planning to speak English.",
+        "vi": "Huấn luyện viên đang định nói tiếng Anh."
+      },
+      {
+        "en": "The coach is planning to learn something new.",
+        "vi": "Huấn luyện viên đang định học điều gì đó mới."
+      },
+      {
+        "en": "The coach is planning to take a break.",
+        "vi": "Huấn luyện viên đang định nghỉ giải lao."
+      },
+      {
+        "en": "The coach is planning to call back later.",
+        "vi": "Huấn luyện viên đang định gọi lại sau."
+      },
+      {
+        "en": "The coach is planning to improve my skills.",
+        "vi": "Huấn luyện viên đang định cải thiện kỹ năng."
+      },
+      {
+        "en": "The coach is planning to learn to swim.",
+        "vi": "Huấn luyện viên đang định học bơi."
+      },
+      {
+        "en": "The coach is planning to do the laundry.",
+        "vi": "Huấn luyện viên đang định giặt đồ."
+      },
+      {
+        "en": "The coach is planning to install the app.",
+        "vi": "Huấn luyện viên đang định cài đặt ứng dụng."
+      },
+      {
+        "en": "The coach is planning to submit the form.",
+        "vi": "Huấn luyện viên đang định nộp biểu mẫu."
+      },
+      {
+        "en": "The coach is planning to say sorry.",
+        "vi": "Huấn luyện viên đang định nói lời xin lỗi."
+      },
+      {
+        "en": "The coach is planning to check my email.",
+        "vi": "Huấn luyện viên đang định kiểm tra email."
+      },
+      { "en": "The coach is planning to try again.", "vi": "Huấn luyện viên đang định thử lại." },
+      {
+        "en": "The coach is planning to back up the data.",
+        "vi": "Huấn luyện viên đang định sao lưu dữ liệu."
+      },
+      {
+        "en": "The coach is planning to go for a walk.",
+        "vi": "Huấn luyện viên đang định đi dạo."
+      },
+      {
+        "en": "The coach is planning to fix the problem.",
+        "vi": "Huấn luyện viên đang định sửa vấn đề."
+      },
+      {
+        "en": "The coach is planning to save money.",
+        "vi": "Huấn luyện viên đang định tiết kiệm tiền."
+      },
+      {
+        "en": "The coach is planning to volunteer on weekends.",
+        "vi": "Huấn luyện viên đang định tình nguyện cuối tuần."
+      },
+      {
+        "en": "The coach is planning to hire new staff.",
+        "vi": "Huấn luyện viên đang định tuyển nhân viên mới."
+      },
+      {
+        "en": "The coach is planning to speak clearly.",
+        "vi": "Huấn luyện viên đang định nói rõ ràng."
+      },
+      {
+        "en": "The coach is planning to close the window.",
+        "vi": "Huấn luyện viên đang định đóng cửa sổ."
+      },
+      {
+        "en": "The coach is planning to cook dinner.",
+        "vi": "Huấn luyện viên đang định nấu bữa tối."
+      },
+      {
+        "en": "The coach is planning to get a promotion.",
+        "vi": "Huấn luyện viên đang định được thăng chức."
+      },
+      { "en": "The coach is planning to book a ticket.", "vi": "Huấn luyện viên đang định đặt vé." }
+    ]
+  },
+  {
+    "starter": "The coach used to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The coach used to quit smoking.", "vi": "Huấn luyện viên từng bỏ thuốc lá." },
+      { "en": "The coach used to delete the file.", "vi": "Huấn luyện viên từng xóa tệp." },
+      { "en": "The coach used to copy the link.", "vi": "Huấn luyện viên từng sao chép liên kết." },
+      { "en": "The coach used to eat healthy.", "vi": "Huấn luyện viên từng ăn uống lành mạnh." },
+      { "en": "The coach used to start over.", "vi": "Huấn luyện viên từng bắt đầu lại." },
+      {
+        "en": "The coach used to understand the lesson.",
+        "vi": "Huấn luyện viên từng hiểu bài học."
+      },
+      { "en": "The coach used to set an alarm.", "vi": "Huấn luyện viên từng đặt báo thức." },
+      { "en": "The coach used to do the laundry.", "vi": "Huấn luyện viên từng giặt đồ." },
+      { "en": "The coach used to ask for help.", "vi": "Huấn luyện viên từng nhờ giúp đỡ." },
+      {
+        "en": "The coach used to try harder next time.",
+        "vi": "Huấn luyện viên từng cố gắng hơn lần sau."
+      },
+      { "en": "The coach used to arrive on time.", "vi": "Huấn luyện viên từng đến đúng giờ." },
+      {
+        "en": "The coach used to cook for everyone.",
+        "vi": "Huấn luyện viên từng nấu ăn cho mọi người."
+      },
+      { "en": "The coach used to walk the dog.", "vi": "Huấn luyện viên từng dắt chó đi dạo." },
+      { "en": "The coach used to help out.", "vi": "Huấn luyện viên từng giúp đỡ." },
+      { "en": "The coach used to wake up early.", "vi": "Huấn luyện viên từng dậy sớm." },
+      {
+        "en": "The coach used to hire new staff.",
+        "vi": "Huấn luyện viên từng tuyển nhân viên mới."
+      },
+      {
+        "en": "The coach used to attend the class.",
+        "vi": "Huấn luyện viên từng tham gia lớp học."
+      },
+      { "en": "The coach used to throw a party.", "vi": "Huấn luyện viên từng tổ chức tiệc." },
+      { "en": "The coach used to rent a car.", "vi": "Huấn luyện viên từng thuê xe." },
+      {
+        "en": "The coach used to remember the password.",
+        "vi": "Huấn luyện viên từng nhớ mật khẩu."
+      },
+      { "en": "The coach used to tell the truth.", "vi": "Huấn luyện viên từng nói sự thật." },
+      { "en": "The coach used to meditate daily.", "vi": "Huấn luyện viên từng thiền mỗi ngày." },
+      { "en": "The coach used to be on time.", "vi": "Huấn luyện viên từng đến đúng giờ." },
+      { "en": "The coach used to sign up today.", "vi": "Huấn luyện viên từng đăng ký hôm nay." },
+      { "en": "The coach used to ask for a raise.", "vi": "Huấn luyện viên từng xin tăng lương." },
+      { "en": "The coach used to study abroad.", "vi": "Huấn luyện viên từng du học." },
+      {
+        "en": "The coach used to answer the phone.",
+        "vi": "Huấn luyện viên từng trả lời điện thoại."
+      },
+      { "en": "The coach used to get a promotion.", "vi": "Huấn luyện viên từng được thăng chức." },
+      { "en": "The coach used to think it over.", "vi": "Huấn luyện viên từng suy nghĩ kỹ." },
+      { "en": "The coach used to invest wisely.", "vi": "Huấn luyện viên từng đầu tư khôn ngoan." },
+      { "en": "The coach used to say goodbye.", "vi": "Huấn luyện viên từng nói lời tạm biệt." },
+      { "en": "The coach used to cut expenses.", "vi": "Huấn luyện viên từng cắt giảm chi tiêu." },
+      {
+        "en": "The coach used to call a friend.",
+        "vi": "Huấn luyện viên từng gọi cho một người bạn."
+      },
+      {
+        "en": "The coach used to change the plan.",
+        "vi": "Huấn luyện viên từng thay đổi kế hoạch."
+      },
+      {
+        "en": "The coach used to open a savings account.",
+        "vi": "Huấn luyện viên từng mở tài khoản tiết kiệm."
+      },
+      { "en": "The coach used to scan the receipt.", "vi": "Huấn luyện viên từng quét hóa đơn." },
+      { "en": "The coach used to win the contract.", "vi": "Huấn luyện viên từng giành hợp đồng." },
+      { "en": "The coach used to train the team.", "vi": "Huấn luyện viên từng đào tạo nhóm." },
+      { "en": "The coach used to say sorry.", "vi": "Huấn luyện viên từng nói lời xin lỗi." },
+      {
+        "en": "The coach used to test the feature.",
+        "vi": "Huấn luyện viên từng kiểm thử tính năng."
+      },
+      {
+        "en": "The coach used to never give up.",
+        "vi": "Huấn luyện viên từng không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The coach used to pay off the loan.",
+        "vi": "Huấn luyện viên từng trả hết khoản vay."
+      },
+      { "en": "The coach used to split the bill.", "vi": "Huấn luyện viên từng chia hóa đơn." },
+      { "en": "The coach used to cook breakfast.", "vi": "Huấn luyện viên từng nấu bữa sáng." },
+      { "en": "The coach used to submit the form.", "vi": "Huấn luyện viên từng nộp biểu mẫu." },
+      { "en": "The coach used to thank everyone.", "vi": "Huấn luyện viên từng cảm ơn mọi người." },
+      { "en": "The coach used to miss the flight.", "vi": "Huấn luyện viên từng lỡ chuyến bay." },
+      { "en": "The coach used to cook dinner.", "vi": "Huấn luyện viên từng nấu bữa tối." },
+      { "en": "The coach used to speak English.", "vi": "Huấn luyện viên từng nói tiếng Anh." },
+      {
+        "en": "The coach used to save for the future.",
+        "vi": "Huấn luyện viên từng tiết kiệm cho tương lai."
+      },
+      { "en": "The coach used to write it down.", "vi": "Huấn luyện viên từng ghi nó lại." },
+      {
+        "en": "The coach used to launch the product.",
+        "vi": "Huấn luyện viên từng ra mắt sản phẩm."
+      },
+      { "en": "The coach used to clean the house.", "vi": "Huấn luyện viên từng dọn nhà." },
+      { "en": "The coach used to pay the bill.", "vi": "Huấn luyện viên từng thanh toán hóa đơn." },
+      { "en": "The coach used to take it easy.", "vi": "Huấn luyện viên từng thư giãn." },
+      {
+        "en": "The coach used to back up the data.",
+        "vi": "Huấn luyện viên từng sao lưu dữ liệu."
+      },
+      {
+        "en": "The coach used to work as a team.",
+        "vi": "Huấn luyện viên từng làm việc theo nhóm."
+      },
+      {
+        "en": "The coach used to update the software.",
+        "vi": "Huấn luyện viên từng cập nhật phần mềm."
+      },
+      {
+        "en": "The coach used to follow the rules.",
+        "vi": "Huấn luyện viên từng tuân theo quy tắc."
+      },
+      { "en": "The coach used to share the post.", "vi": "Huấn luyện viên từng chia sẻ bài viết." },
+      {
+        "en": "The coach used to attend the workshop.",
+        "vi": "Huấn luyện viên từng tham dự buổi hội thảo."
+      },
+      { "en": "The coach used to order food.", "vi": "Huấn luyện viên từng gọi đồ ăn." },
+      { "en": "The coach used to sleep early.", "vi": "Huấn luyện viên từng ngủ sớm." },
+      {
+        "en": "The coach used to enjoy the weekend.",
+        "vi": "Huấn luyện viên từng tận hưởng cuối tuần."
+      },
+      { "en": "The coach used to take a chance.", "vi": "Huấn luyện viên từng nắm lấy cơ hội." },
+      { "en": "The coach used to check my email.", "vi": "Huấn luyện viên từng kiểm tra email." },
+      { "en": "The coach used to take a break.", "vi": "Huấn luyện viên từng nghỉ giải lao." },
+      {
+        "en": "The coach used to cheer for the team.",
+        "vi": "Huấn luyện viên từng cổ vũ cho đội."
+      },
+      { "en": "The coach used to take notes.", "vi": "Huấn luyện viên từng ghi chép." },
+      { "en": "The coach used to plan ahead.", "vi": "Huấn luyện viên từng lên kế hoạch trước." },
+      {
+        "en": "The coach used to reply to the message.",
+        "vi": "Huấn luyện viên từng trả lời tin nhắn."
+      },
+      { "en": "The coach used to report the bug.", "vi": "Huấn luyện viên từng báo lỗi." },
+      { "en": "The coach used to set a goal.", "vi": "Huấn luyện viên từng đặt một mục tiêu." },
+      { "en": "The coach used to buy groceries.", "vi": "Huấn luyện viên từng mua thực phẩm." },
+      { "en": "The coach used to make a plan.", "vi": "Huấn luyện viên từng lập một kế hoạch." },
+      { "en": "The coach used to find a job.", "vi": "Huấn luyện viên từng tìm việc làm." },
+      {
+        "en": "The coach used to drink more water.",
+        "vi": "Huấn luyện viên từng uống nhiều nước hơn."
+      },
+      { "en": "The coach used to raise the price.", "vi": "Huấn luyện viên từng tăng giá." },
+      { "en": "The coach used to pass the exam.", "vi": "Huấn luyện viên từng đậu kỳ thi." },
+      {
+        "en": "The coach used to prepare the presentation.",
+        "vi": "Huấn luyện viên từng chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The coach used to donate to charity.",
+        "vi": "Huấn luyện viên từng quyên góp từ thiện."
+      },
+      {
+        "en": "The coach used to open a business.",
+        "vi": "Huấn luyện viên từng mở một doanh nghiệp."
+      },
+      { "en": "The coach used to visit my family.", "vi": "Huấn luyện viên từng thăm gia đình." },
+      {
+        "en": "The coach used to listen carefully.",
+        "vi": "Huấn luyện viên từng lắng nghe cẩn thận."
+      },
+      { "en": "The coach used to take the exam.", "vi": "Huấn luyện viên từng làm bài thi." },
+      { "en": "The coach used to go on vacation.", "vi": "Huấn luyện viên từng đi nghỉ mát." },
+      { "en": "The coach used to move forward.", "vi": "Huấn luyện viên từng tiến về phía trước." },
+      {
+        "en": "The coach used to rate the service.",
+        "vi": "Huấn luyện viên từng đánh giá dịch vụ."
+      },
+      { "en": "The coach used to leave early.", "vi": "Huấn luyện viên từng về sớm." },
+      { "en": "The coach used to stay focused.", "vi": "Huấn luyện viên từng giữ tập trung." },
+      { "en": "The coach used to reach the goal.", "vi": "Huấn luyện viên từng đạt mục tiêu." },
+      { "en": "The coach used to make new friends.", "vi": "Huấn luyện viên từng kết bạn mới." },
+      { "en": "The coach used to catch the train.", "vi": "Huấn luyện viên từng bắt chuyến tàu." },
+      { "en": "The coach used to relax at home.", "vi": "Huấn luyện viên từng thư giãn ở nhà." },
+      {
+        "en": "The coach used to celebrate together.",
+        "vi": "Huấn luyện viên từng ăn mừng cùng nhau."
+      },
+      { "en": "The coach used to offer support.", "vi": "Huấn luyện viên từng đề nghị hỗ trợ." },
+      { "en": "The coach used to ask a question.", "vi": "Huấn luyện viên từng hỏi một câu." },
+      { "en": "The coach used to take the bus.", "vi": "Huấn luyện viên từng đi xe buýt." },
+      {
+        "en": "The coach used to travel abroad.",
+        "vi": "Huấn luyện viên từng đi du lịch nước ngoài."
+      },
+      { "en": "The coach used to share my opinion.", "vi": "Huấn luyện viên từng chia sẻ ý kiến." }
+    ]
+  },
+  {
+    "starter": "The coach doesn't",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The coach doesn't stay organized.", "vi": "Huấn luyện viên không giữ ngăn nắp." },
+      { "en": "The coach doesn't make tea.", "vi": "Huấn luyện viên không pha trà." },
+      { "en": "The coach doesn't clean the house.", "vi": "Huấn luyện viên không dọn nhà." },
+      {
+        "en": "The coach doesn't understand the lesson.",
+        "vi": "Huấn luyện viên không hiểu bài học."
+      },
+      {
+        "en": "The coach doesn't talk to the manager.",
+        "vi": "Huấn luyện viên không nói chuyện với quản lý."
+      },
+      {
+        "en": "The coach doesn't support each other.",
+        "vi": "Huấn luyện viên không hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The coach doesn't invest wisely.",
+        "vi": "Huấn luyện viên không đầu tư khôn ngoan."
+      },
+      {
+        "en": "The coach doesn't double-check the numbers.",
+        "vi": "Huấn luyện viên không kiểm tra lại các con số."
+      },
+      { "en": "The coach doesn't split the bill.", "vi": "Huấn luyện viên không chia hóa đơn." },
+      { "en": "The coach doesn't close the deal.", "vi": "Huấn luyện viên không chốt thỏa thuận." },
+      { "en": "The coach doesn't go on vacation.", "vi": "Huấn luyện viên không đi nghỉ mát." },
+      {
+        "en": "The coach doesn't start a new project.",
+        "vi": "Huấn luyện viên không bắt đầu một dự án mới."
+      },
+      { "en": "The coach doesn't sign the contract.", "vi": "Huấn luyện viên không ký hợp đồng." },
+      {
+        "en": "The coach doesn't move forward.",
+        "vi": "Huấn luyện viên không tiến về phía trước."
+      },
+      {
+        "en": "The coach doesn't save for the future.",
+        "vi": "Huấn luyện viên không tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The coach doesn't copy the link.",
+        "vi": "Huấn luyện viên không sao chép liên kết."
+      },
+      { "en": "The coach doesn't play sports.", "vi": "Huấn luyện viên không chơi thể thao." },
+      { "en": "The coach doesn't rent a car.", "vi": "Huấn luyện viên không thuê xe." },
+      { "en": "The coach doesn't buy groceries.", "vi": "Huấn luyện viên không mua thực phẩm." },
+      {
+        "en": "The coach doesn't open a business.",
+        "vi": "Huấn luyện viên không mở một doanh nghiệp."
+      },
+      { "en": "The coach doesn't take medicine.", "vi": "Huấn luyện viên không uống thuốc." },
+      { "en": "The coach doesn't fix the problem.", "vi": "Huấn luyện viên không sửa vấn đề." },
+      { "en": "The coach doesn't leave early.", "vi": "Huấn luyện viên không về sớm." },
+      { "en": "The coach doesn't keep a diary.", "vi": "Huấn luyện viên không viết nhật ký." },
+      { "en": "The coach doesn't delete the file.", "vi": "Huấn luyện viên không xóa tệp." },
+      {
+        "en": "The coach doesn't never give up.",
+        "vi": "Huấn luyện viên không không bao giờ bỏ cuộc."
+      },
+      { "en": "The coach doesn't scan the receipt.", "vi": "Huấn luyện viên không quét hóa đơn." },
+      { "en": "The coach doesn't set a goal.", "vi": "Huấn luyện viên không đặt một mục tiêu." },
+      {
+        "en": "The coach doesn't improve my skills.",
+        "vi": "Huấn luyện viên không cải thiện kỹ năng."
+      },
+      { "en": "The coach doesn't ask for a raise.", "vi": "Huấn luyện viên không xin tăng lương." },
+      {
+        "en": "The coach doesn't make a reservation.",
+        "vi": "Huấn luyện viên không đặt chỗ trước."
+      },
+      {
+        "en": "The coach doesn't double-check everything.",
+        "vi": "Huấn luyện viên không kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "The coach doesn't exercise every day.",
+        "vi": "Huấn luyện viên không tập thể dục mỗi ngày."
+      },
+      { "en": "The coach doesn't lose weight.", "vi": "Huấn luyện viên không giảm cân." },
+      {
+        "en": "The coach doesn't install the app.",
+        "vi": "Huấn luyện viên không cài đặt ứng dụng."
+      },
+      { "en": "The coach doesn't give feedback.", "vi": "Huấn luyện viên không góp ý." },
+      { "en": "The coach doesn't wait a moment.", "vi": "Huấn luyện viên không chờ một chút." },
+      {
+        "en": "The coach doesn't drink more water.",
+        "vi": "Huấn luyện viên không uống nhiều nước hơn."
+      },
+      { "en": "The coach doesn't take it easy.", "vi": "Huấn luyện viên không thư giãn." },
+      {
+        "en": "The coach doesn't schedule a meeting.",
+        "vi": "Huấn luyện viên không sắp xếp cuộc họp."
+      },
+      {
+        "en": "The coach doesn't join a club.",
+        "vi": "Huấn luyện viên không tham gia câu lạc bộ."
+      },
+      {
+        "en": "The coach doesn't charge the phone.",
+        "vi": "Huấn luyện viên không sạc điện thoại."
+      },
+      { "en": "The coach doesn't relax at home.", "vi": "Huấn luyện viên không thư giãn ở nhà." },
+      {
+        "en": "The coach doesn't leave a comment.",
+        "vi": "Huấn luyện viên không để lại bình luận."
+      },
+      {
+        "en": "The coach doesn't reset the password.",
+        "vi": "Huấn luyện viên không đặt lại mật khẩu."
+      },
+      {
+        "en": "The coach doesn't work harder.",
+        "vi": "Huấn luyện viên không làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The coach doesn't test the feature.",
+        "vi": "Huấn luyện viên không kiểm thử tính năng."
+      },
+      {
+        "en": "The coach doesn't win the contract.",
+        "vi": "Huấn luyện viên không giành hợp đồng."
+      },
+      {
+        "en": "The coach doesn't get some rest.",
+        "vi": "Huấn luyện viên không nghỉ ngơi một chút."
+      },
+      { "en": "The coach doesn't take notes.", "vi": "Huấn luyện viên không ghi chép." },
+      {
+        "en": "The coach doesn't practice every day.",
+        "vi": "Huấn luyện viên không luyện tập mỗi ngày."
+      },
+      { "en": "The coach doesn't go for a walk.", "vi": "Huấn luyện viên không đi dạo." },
+      {
+        "en": "The coach doesn't fill out the form.",
+        "vi": "Huấn luyện viên không điền vào biểu mẫu."
+      },
+      { "en": "The coach doesn't book a ticket.", "vi": "Huấn luyện viên không đặt vé." },
+      {
+        "en": "The coach doesn't volunteer on weekends.",
+        "vi": "Huấn luyện viên không tình nguyện cuối tuần."
+      },
+      {
+        "en": "The coach doesn't prepare the presentation.",
+        "vi": "Huấn luyện viên không chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The coach doesn't think positive.",
+        "vi": "Huấn luyện viên không suy nghĩ tích cực."
+      },
+      { "en": "The coach doesn't raise the price.", "vi": "Huấn luyện viên không tăng giá." },
+      { "en": "The coach doesn't speak English.", "vi": "Huấn luyện viên không nói tiếng Anh." },
+      {
+        "en": "The coach doesn't share my opinion.",
+        "vi": "Huấn luyện viên không chia sẻ ý kiến."
+      },
+      {
+        "en": "The coach doesn't buy a new phone.",
+        "vi": "Huấn luyện viên không mua điện thoại mới."
+      },
+      {
+        "en": "The coach doesn't drink less coffee.",
+        "vi": "Huấn luyện viên không uống ít cà phê hơn."
+      },
+      { "en": "The coach doesn't report the bug.", "vi": "Huấn luyện viên không báo lỗi." },
+      {
+        "en": "The coach doesn't visit the doctor.",
+        "vi": "Huấn luyện viên không đi khám bác sĩ."
+      },
+      { "en": "The coach doesn't train the team.", "vi": "Huấn luyện viên không đào tạo nhóm." },
+      { "en": "The coach doesn't try again.", "vi": "Huấn luyện viên không thử lại." },
+      { "en": "The coach doesn't wash the dishes.", "vi": "Huấn luyện viên không rửa bát." },
+      {
+        "en": "The coach doesn't finish on time.",
+        "vi": "Huấn luyện viên không hoàn thành đúng hạn."
+      },
+      {
+        "en": "The coach doesn't cheer for the team.",
+        "vi": "Huấn luyện viên không cổ vũ cho đội."
+      },
+      { "en": "The coach doesn't cancel the order.", "vi": "Huấn luyện viên không hủy đơn hàng." },
+      { "en": "The coach doesn't close the window.", "vi": "Huấn luyện viên không đóng cửa sổ." },
+      { "en": "The coach doesn't meet the deadline.", "vi": "Huấn luyện viên không kịp thời hạn." },
+      { "en": "The coach doesn't meditate daily.", "vi": "Huấn luyện viên không thiền mỗi ngày." },
+      {
+        "en": "The coach doesn't apply for the position.",
+        "vi": "Huấn luyện viên không nộp đơn cho vị trí."
+      },
+      { "en": "The coach doesn't go home.", "vi": "Huấn luyện viên không về nhà." },
+      { "en": "The coach doesn't cook dinner.", "vi": "Huấn luyện viên không nấu bữa tối." },
+      {
+        "en": "The coach doesn't check the details.",
+        "vi": "Huấn luyện viên không kiểm tra chi tiết."
+      },
+      { "en": "The coach doesn't take a chance.", "vi": "Huấn luyện viên không nắm lấy cơ hội." },
+      {
+        "en": "The coach doesn't share the post.",
+        "vi": "Huấn luyện viên không chia sẻ bài viết."
+      },
+      { "en": "The coach doesn't lock the door.", "vi": "Huấn luyện viên không khóa cửa." },
+      { "en": "The coach doesn't read more books.", "vi": "Huấn luyện viên không đọc thêm sách." },
+      { "en": "The coach doesn't calm down.", "vi": "Huấn luyện viên không bình tĩnh lại." },
+      {
+        "en": "The coach doesn't try harder next time.",
+        "vi": "Huấn luyện viên không cố gắng hơn lần sau."
+      },
+      { "en": "The coach doesn't write it down.", "vi": "Huấn luyện viên không ghi nó lại." },
+      { "en": "The coach doesn't cook breakfast.", "vi": "Huấn luyện viên không nấu bữa sáng." },
+      { "en": "The coach doesn't stay focused.", "vi": "Huấn luyện viên không giữ tập trung." },
+      {
+        "en": "The coach doesn't work as a team.",
+        "vi": "Huấn luyện viên không làm việc theo nhóm."
+      },
+      {
+        "en": "The coach doesn't finish the report.",
+        "vi": "Huấn luyện viên không hoàn thành báo cáo."
+      },
+      { "en": "The coach doesn't take a break.", "vi": "Huấn luyện viên không nghỉ giải lao." },
+      { "en": "The coach doesn't send the email.", "vi": "Huấn luyện viên không gửi email." },
+      { "en": "The coach doesn't keep a promise.", "vi": "Huấn luyện viên không giữ lời hứa." },
+      { "en": "The coach doesn't learn to swim.", "vi": "Huấn luyện viên không học bơi." },
+      {
+        "en": "The coach doesn't invite some friends.",
+        "vi": "Huấn luyện viên không mời vài người bạn."
+      },
+      { "en": "The coach doesn't help the team.", "vi": "Huấn luyện viên không giúp đỡ nhóm." },
+      {
+        "en": "The coach doesn't open a savings account.",
+        "vi": "Huấn luyện viên không mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "The coach doesn't register for the course.",
+        "vi": "Huấn luyện viên không đăng ký khóa học."
+      },
+      { "en": "The coach doesn't plan ahead.", "vi": "Huấn luyện viên không lên kế hoạch trước." },
+      {
+        "en": "The coach doesn't celebrate together.",
+        "vi": "Huấn luyện viên không ăn mừng cùng nhau."
+      },
+      {
+        "en": "The coach doesn't help a neighbor.",
+        "vi": "Huấn luyện viên không giúp một người hàng xóm."
+      },
+      { "en": "The coach doesn't miss the flight.", "vi": "Huấn luyện viên không lỡ chuyến bay." }
+    ]
+  },
+  {
+    "starter": "The coach didn't",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The coach didn't help a neighbor.",
+        "vi": "Huấn luyện viên đã không giúp một người hàng xóm."
+      },
+      {
+        "en": "The coach didn't double-check everything.",
+        "vi": "Huấn luyện viên đã không kiểm tra lại mọi thứ."
+      },
+      { "en": "The coach didn't give it a try.", "vi": "Huấn luyện viên đã không thử một lần." },
+      { "en": "The coach didn't lower the cost.", "vi": "Huấn luyện viên đã không giảm chi phí." },
+      {
+        "en": "The coach didn't buy a new phone.",
+        "vi": "Huấn luyện viên đã không mua điện thoại mới."
+      },
+      {
+        "en": "The coach didn't hire new staff.",
+        "vi": "Huấn luyện viên đã không tuyển nhân viên mới."
+      },
+      { "en": "The coach didn't watch a movie.", "vi": "Huấn luyện viên đã không xem phim." },
+      { "en": "The coach didn't say goodbye.", "vi": "Huấn luyện viên đã không nói lời tạm biệt." },
+      {
+        "en": "The coach didn't copy the link.",
+        "vi": "Huấn luyện viên đã không sao chép liên kết."
+      },
+      {
+        "en": "The coach didn't think positive.",
+        "vi": "Huấn luyện viên đã không suy nghĩ tích cực."
+      },
+      { "en": "The coach didn't raise the price.", "vi": "Huấn luyện viên đã không tăng giá." },
+      {
+        "en": "The coach didn't change the plan.",
+        "vi": "Huấn luyện viên đã không thay đổi kế hoạch."
+      },
+      { "en": "The coach didn't cook dinner.", "vi": "Huấn luyện viên đã không nấu bữa tối." },
+      {
+        "en": "The coach didn't thank everyone.",
+        "vi": "Huấn luyện viên đã không cảm ơn mọi người."
+      },
+      {
+        "en": "The coach didn't manage the schedule.",
+        "vi": "Huấn luyện viên đã không quản lý lịch trình."
+      },
+      {
+        "en": "The coach didn't back up the data.",
+        "vi": "Huấn luyện viên đã không sao lưu dữ liệu."
+      },
+      {
+        "en": "The coach didn't take a photo.",
+        "vi": "Huấn luyện viên đã không chụp một bức ảnh."
+      },
+      {
+        "en": "The coach didn't cancel the order.",
+        "vi": "Huấn luyện viên đã không hủy đơn hàng."
+      },
+      {
+        "en": "The coach didn't miss the flight.",
+        "vi": "Huấn luyện viên đã không lỡ chuyến bay."
+      },
+      {
+        "en": "The coach didn't donate to charity.",
+        "vi": "Huấn luyện viên đã không quyên góp từ thiện."
+      },
+      {
+        "en": "The coach didn't try harder next time.",
+        "vi": "Huấn luyện viên đã không cố gắng hơn lần sau."
+      },
+      { "en": "The coach didn't set a goal.", "vi": "Huấn luyện viên đã không đặt một mục tiêu." },
+      { "en": "The coach didn't report the bug.", "vi": "Huấn luyện viên đã không báo lỗi." },
+      { "en": "The coach didn't take notes.", "vi": "Huấn luyện viên đã không ghi chép." },
+      {
+        "en": "The coach didn't call a friend.",
+        "vi": "Huấn luyện viên đã không gọi cho một người bạn."
+      },
+      {
+        "en": "The coach didn't finish on time.",
+        "vi": "Huấn luyện viên đã không hoàn thành đúng hạn."
+      },
+      {
+        "en": "The coach didn't save for the future.",
+        "vi": "Huấn luyện viên đã không tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The coach didn't get some rest.",
+        "vi": "Huấn luyện viên đã không nghỉ ngơi một chút."
+      },
+      { "en": "The coach didn't stay up late.", "vi": "Huấn luyện viên đã không thức khuya." },
+      {
+        "en": "The coach didn't listen carefully.",
+        "vi": "Huấn luyện viên đã không lắng nghe cẩn thận."
+      },
+      { "en": "The coach didn't book a ticket.", "vi": "Huấn luyện viên đã không đặt vé." },
+      {
+        "en": "The coach didn't open a business.",
+        "vi": "Huấn luyện viên đã không mở một doanh nghiệp."
+      },
+      { "en": "The coach didn't find a job.", "vi": "Huấn luyện viên đã không tìm việc làm." },
+      { "en": "The coach didn't go home.", "vi": "Huấn luyện viên đã không về nhà." },
+      {
+        "en": "The coach didn't meet the deadline.",
+        "vi": "Huấn luyện viên đã không kịp thời hạn."
+      },
+      {
+        "en": "The coach didn't reset the password.",
+        "vi": "Huấn luyện viên đã không đặt lại mật khẩu."
+      },
+      { "en": "The coach didn't relax at home.", "vi": "Huấn luyện viên đã không thư giãn ở nhà." },
+      {
+        "en": "The coach didn't volunteer on weekends.",
+        "vi": "Huấn luyện viên đã không tình nguyện cuối tuần."
+      },
+      { "en": "The coach didn't play sports.", "vi": "Huấn luyện viên đã không chơi thể thao." },
+      { "en": "The coach didn't do the laundry.", "vi": "Huấn luyện viên đã không giặt đồ." },
+      { "en": "The coach didn't arrive on time.", "vi": "Huấn luyện viên đã không đến đúng giờ." },
+      {
+        "en": "The coach didn't celebrate together.",
+        "vi": "Huấn luyện viên đã không ăn mừng cùng nhau."
+      },
+      {
+        "en": "The coach didn't work harder.",
+        "vi": "Huấn luyện viên đã không làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The coach didn't sign the contract.",
+        "vi": "Huấn luyện viên đã không ký hợp đồng."
+      },
+      {
+        "en": "The coach didn't finish the report.",
+        "vi": "Huấn luyện viên đã không hoàn thành báo cáo."
+      },
+      { "en": "The coach didn't learn to swim.", "vi": "Huấn luyện viên đã không học bơi." },
+      {
+        "en": "The coach didn't confirm the booking.",
+        "vi": "Huấn luyện viên đã không xác nhận đặt chỗ."
+      },
+      {
+        "en": "The coach didn't join the meeting.",
+        "vi": "Huấn luyện viên đã không tham gia cuộc họp."
+      },
+      {
+        "en": "The coach didn't plan a trip.",
+        "vi": "Huấn luyện viên đã không lên kế hoạch một chuyến đi."
+      },
+      { "en": "The coach didn't keep a diary.", "vi": "Huấn luyện viên đã không viết nhật ký." },
+      {
+        "en": "The coach didn't attend the class.",
+        "vi": "Huấn luyện viên đã không tham gia lớp học."
+      },
+      {
+        "en": "The coach didn't ask for a raise.",
+        "vi": "Huấn luyện viên đã không xin tăng lương."
+      },
+      { "en": "The coach didn't be on time.", "vi": "Huấn luyện viên đã không đến đúng giờ." },
+      {
+        "en": "The coach didn't restart the computer.",
+        "vi": "Huấn luyện viên đã không khởi động lại máy tính."
+      },
+      { "en": "The coach didn't stay focused.", "vi": "Huấn luyện viên đã không giữ tập trung." },
+      {
+        "en": "The coach didn't sign up today.",
+        "vi": "Huấn luyện viên đã không đăng ký hôm nay."
+      },
+      {
+        "en": "The coach didn't work as a team.",
+        "vi": "Huấn luyện viên đã không làm việc theo nhóm."
+      },
+      { "en": "The coach didn't make a plan.", "vi": "Huấn luyện viên đã không lập một kế hoạch." },
+      { "en": "The coach didn't give feedback.", "vi": "Huấn luyện viên đã không góp ý." },
+      {
+        "en": "The coach didn't close the deal.",
+        "vi": "Huấn luyện viên đã không chốt thỏa thuận."
+      },
+      {
+        "en": "The coach didn't never give up.",
+        "vi": "Huấn luyện viên đã không không bao giờ bỏ cuộc."
+      },
+      { "en": "The coach didn't listen to music.", "vi": "Huấn luyện viên đã không nghe nhạc." },
+      {
+        "en": "The coach didn't install the app.",
+        "vi": "Huấn luyện viên đã không cài đặt ứng dụng."
+      },
+      {
+        "en": "The coach didn't cook for everyone.",
+        "vi": "Huấn luyện viên đã không nấu ăn cho mọi người."
+      },
+      {
+        "en": "The coach didn't improve my skills.",
+        "vi": "Huấn luyện viên đã không cải thiện kỹ năng."
+      },
+      {
+        "en": "The coach didn't write a report.",
+        "vi": "Huấn luyện viên đã không viết một báo cáo."
+      },
+      { "en": "The coach didn't keep in touch.", "vi": "Huấn luyện viên đã không giữ liên lạc." },
+      {
+        "en": "The coach didn't print the document.",
+        "vi": "Huấn luyện viên đã không in tài liệu."
+      },
+      {
+        "en": "The coach didn't invite some friends.",
+        "vi": "Huấn luyện viên đã không mời vài người bạn."
+      },
+      {
+        "en": "The coach didn't catch the train.",
+        "vi": "Huấn luyện viên đã không bắt chuyến tàu."
+      },
+      { "en": "The coach didn't lock the door.", "vi": "Huấn luyện viên đã không khóa cửa." },
+      { "en": "The coach didn't ride a bike.", "vi": "Huấn luyện viên đã không đạp xe." },
+      { "en": "The coach didn't clean the house.", "vi": "Huấn luyện viên đã không dọn nhà." },
+      {
+        "en": "The coach didn't check the details.",
+        "vi": "Huấn luyện viên đã không kiểm tra chi tiết."
+      },
+      {
+        "en": "The coach didn't keep learning.",
+        "vi": "Huấn luyện viên đã không tiếp tục học hỏi."
+      },
+      {
+        "en": "The coach didn't update the software.",
+        "vi": "Huấn luyện viên đã không cập nhật phần mềm."
+      },
+      {
+        "en": "The coach didn't negotiate the terms.",
+        "vi": "Huấn luyện viên đã không thương lượng điều khoản."
+      },
+      {
+        "en": "The coach didn't visit my family.",
+        "vi": "Huấn luyện viên đã không thăm gia đình."
+      },
+      {
+        "en": "The coach didn't register for the course.",
+        "vi": "Huấn luyện viên đã không đăng ký khóa học."
+      },
+      { "en": "The coach didn't turn off the light.", "vi": "Huấn luyện viên đã không tắt đèn." },
+      { "en": "The coach didn't take a rest.", "vi": "Huấn luyện viên đã không nghỉ ngơi." },
+      { "en": "The coach didn't take the exam.", "vi": "Huấn luyện viên đã không làm bài thi." },
+      { "en": "The coach didn't save money.", "vi": "Huấn luyện viên đã không tiết kiệm tiền." },
+      {
+        "en": "The coach didn't share my opinion.",
+        "vi": "Huấn luyện viên đã không chia sẻ ý kiến."
+      },
+      {
+        "en": "The coach didn't eat healthy.",
+        "vi": "Huấn luyện viên đã không ăn uống lành mạnh."
+      },
+      { "en": "The coach didn't read the news.", "vi": "Huấn luyện viên đã không đọc tin tức." },
+      {
+        "en": "The coach didn't travel abroad.",
+        "vi": "Huấn luyện viên đã không đi du lịch nước ngoài."
+      },
+      {
+        "en": "The coach didn't remember the password.",
+        "vi": "Huấn luyện viên đã không nhớ mật khẩu."
+      },
+      { "en": "The coach didn't change careers.", "vi": "Huấn luyện viên đã không chuyển nghề." },
+      {
+        "en": "The coach didn't cut expenses.",
+        "vi": "Huấn luyện viên đã không cắt giảm chi tiêu."
+      },
+      { "en": "The coach didn't drive to work.", "vi": "Huấn luyện viên đã không lái xe đi làm." },
+      {
+        "en": "The coach didn't cheer for the team.",
+        "vi": "Huấn luyện viên đã không cổ vũ cho đội."
+      },
+      {
+        "en": "The coach didn't reply to the message.",
+        "vi": "Huấn luyện viên đã không trả lời tin nhắn."
+      },
+      {
+        "en": "The coach didn't apply for the position.",
+        "vi": "Huấn luyện viên đã không nộp đơn cho vị trí."
+      },
+      { "en": "The coach didn't quit smoking.", "vi": "Huấn luyện viên đã không bỏ thuốc lá." },
+      { "en": "The coach didn't walk the dog.", "vi": "Huấn luyện viên đã không dắt chó đi dạo." },
+      { "en": "The coach didn't ask a question.", "vi": "Huấn luyện viên đã không hỏi một câu." },
+      {
+        "en": "The coach didn't leave a comment.",
+        "vi": "Huấn luyện viên đã không để lại bình luận."
+      },
+      { "en": "The coach didn't wash the dishes.", "vi": "Huấn luyện viên đã không rửa bát." },
+      {
+        "en": "The coach didn't download the file.",
+        "vi": "Huấn luyện viên đã không tải tệp xuống."
+      }
+    ]
+  },
+  {
+    "starter": "The owner is",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The owner is working from home.", "vi": "Người chủ làm việc tại nhà." },
+      { "en": "The owner is comfortable.", "vi": "Người chủ thoải mái." },
+      { "en": "The owner is grateful.", "vi": "Người chủ biết ơn." },
+      { "en": "The owner is surprised.", "vi": "Người chủ ngạc nhiên." },
+      { "en": "The owner is inspired.", "vi": "Người chủ được truyền cảm hứng." },
+      { "en": "The owner is responsible.", "vi": "Người chủ có trách nhiệm." },
+      { "en": "The owner is thankful for everything.", "vi": "Người chủ biết ơn vì tất cả." },
+      { "en": "The owner is committed to the plan.", "vi": "Người chủ cam kết với kế hoạch." },
+      { "en": "The owner is new here.", "vi": "Người chủ mới đến đây." },
+      { "en": "The owner is determined.", "vi": "Người chủ quyết tâm." },
+      { "en": "The owner is hard to please.", "vi": "Người chủ khó chiều." },
+      { "en": "The owner is confident about the result.", "vi": "Người chủ tự tin về kết quả." },
+      { "en": "The owner is thirsty.", "vi": "Người chủ khát." },
+      { "en": "The owner is proud and grateful.", "vi": "Người chủ tự hào và biết ơn." },
+      { "en": "The owner is short on time.", "vi": "Người chủ thiếu thời gian." },
+      { "en": "The owner is easy to talk to.", "vi": "Người chủ dễ trò chuyện." },
+      { "en": "The owner is happy with the result.", "vi": "Người chủ hài lòng với kết quả." },
+      { "en": "The owner is ready for the weekend.", "vi": "Người chủ sẵn sàng cho cuối tuần." },
+      { "en": "The owner is busy.", "vi": "Người chủ bận." },
+      { "en": "The owner is friendly.", "vi": "Người chủ thân thiện." },
+      { "en": "The owner is serious.", "vi": "Người chủ nghiêm túc." },
+      { "en": "The owner is reliable.", "vi": "Người chủ đáng tin cậy." },
+      { "en": "The owner is satisfied.", "vi": "Người chủ hài lòng." },
+      { "en": "The owner is on my way.", "vi": "Người chủ đang trên đường." },
+      { "en": "The owner is nervous.", "vi": "Người chủ hồi hộp." },
+      { "en": "The owner is slightly worried.", "vi": "Người chủ hơi lo." },
+      { "en": "The owner is optimistic.", "vi": "Người chủ lạc quan." },
+      { "en": "The owner is in a good mood.", "vi": "Người chủ đang vui vẻ." },
+      { "en": "The owner is delighted.", "vi": "Người chủ vui sướng." },
+      { "en": "The owner is peaceful.", "vi": "Người chủ yên bình." },
+      { "en": "The owner is hardworking.", "vi": "Người chủ chăm chỉ." },
+      { "en": "The owner is free all day.", "vi": "Người chủ rảnh cả ngày." },
+      { "en": "The owner is willing to help.", "vi": "Người chủ sẵn lòng giúp." },
+      { "en": "The owner is worried.", "vi": "Người chủ lo lắng." },
+      { "en": "The owner is sad to leave.", "vi": "Người chủ buồn khi phải đi." },
+      { "en": "The owner is upset.", "vi": "Người chủ buồn bực." },
+      { "en": "The owner is satisfied with the service.", "vi": "Người chủ hài lòng với dịch vụ." },
+      { "en": "The owner is happy.", "vi": "Người chủ vui." },
+      { "en": "The owner is proud of the progress.", "vi": "Người chủ tự hào về sự tiến bộ." },
+      { "en": "The owner is confident in the team.", "vi": "Người chủ tin tưởng vào nhóm." },
+      { "en": "The owner is glad it worked.", "vi": "Người chủ vui vì nó hiệu quả." },
+      { "en": "The owner is bad at cooking.", "vi": "Người chủ dở nấu ăn." },
+      { "en": "The owner is bored.", "vi": "Người chủ chán." },
+      { "en": "The owner is out for lunch.", "vi": "Người chủ ra ngoài ăn trưa." },
+      { "en": "The owner is interested.", "vi": "Người chủ quan tâm." },
+      { "en": "The owner is scared.", "vi": "Người chủ sợ hãi." },
+      { "en": "The owner is free this weekend.", "vi": "Người chủ rảnh cuối tuần này." },
+      { "en": "The owner is happy for you.", "vi": "Người chủ mừng cho bạn." },
+      { "en": "The owner is focused.", "vi": "Người chủ tập trung." },
+      { "en": "The owner is a bit nervous.", "vi": "Người chủ hơi hồi hộp." },
+      { "en": "The owner is super hungry.", "vi": "Người chủ đói lắm." },
+      { "en": "The owner is close to the goal.", "vi": "Người chủ gần đạt mục tiêu." },
+      { "en": "The owner is curious.", "vi": "Người chủ tò mò." },
+      { "en": "The owner is nervous but excited.", "vi": "Người chủ hồi hộp nhưng hào hứng." },
+      { "en": "The owner is okay.", "vi": "Người chủ ổn cả." },
+      { "en": "The owner is amazed.", "vi": "Người chủ kinh ngạc." },
+      { "en": "The owner is cautious.", "vi": "Người chủ thận trọng." },
+      { "en": "The owner is out of energy.", "vi": "Người chủ hết năng lượng." },
+      { "en": "The owner is really proud.", "vi": "Người chủ thực sự tự hào." },
+      { "en": "The owner is under pressure.", "vi": "Người chủ dưới áp lực." },
+      { "en": "The owner is cautiously optimistic.", "vi": "Người chủ lạc quan thận trọng." },
+      { "en": "The owner is excited about the trip.", "vi": "Người chủ hào hứng về chuyến đi." },
+      { "en": "The owner is tired.", "vi": "Người chủ mệt." },
+      { "en": "The owner is hungry.", "vi": "Người chủ đói." },
+      { "en": "The owner is honest.", "vi": "Người chủ trung thực." },
+      { "en": "The owner is hopeful.", "vi": "Người chủ tràn đầy hy vọng." },
+      { "en": "The owner is creative.", "vi": "Người chủ sáng tạo." },
+      { "en": "The owner is a little tired.", "vi": "Người chủ hơi mệt." },
+      { "en": "The owner is open to ideas.", "vi": "Người chủ cởi mở với ý tưởng." },
+      { "en": "The owner is tired but happy.", "vi": "Người chủ mệt nhưng vui." },
+      { "en": "The owner is out of ideas.", "vi": "Người chủ hết ý tưởng." },
+      { "en": "The owner is glad to help.", "vi": "Người chủ vui được giúp đỡ." },
+      { "en": "The owner is fully prepared.", "vi": "Người chủ chuẩn bị kỹ càng." },
+      { "en": "The owner is ahead of schedule.", "vi": "Người chủ sớm hơn dự kiến." },
+      { "en": "The owner is serious about this.", "vi": "Người chủ nghiêm túc về việc này." },
+      { "en": "The owner is busy until noon.", "vi": "Người chủ bận đến trưa." },
+      { "en": "The owner is so excited.", "vi": "Người chủ rất hào hứng." },
+      {
+        "en": "The owner is nervous about the interview.",
+        "vi": "Người chủ hồi hộp về buổi phỏng vấn."
+      },
+      { "en": "The owner is quite confident.", "vi": "Người chủ khá tự tin." },
+      { "en": "The owner is flexible.", "vi": "Người chủ linh hoạt." },
+      { "en": "The owner is perfectly fine.", "vi": "Người chủ hoàn toàn ổn." },
+      { "en": "The owner is dedicated.", "vi": "Người chủ tận tâm." },
+      { "en": "The owner is afraid of failing.", "vi": "Người chủ sợ thất bại." },
+      { "en": "The owner is done with work.", "vi": "Người chủ xong việc." },
+      { "en": "The owner is from Vietnam.", "vi": "Người chủ đến từ Việt Nam." },
+      { "en": "The owner is sorry to hear that.", "vi": "Người chủ tiếc khi nghe điều đó." },
+      { "en": "The owner is busy but okay.", "vi": "Người chủ bận nhưng ổn." },
+      {
+        "en": "The owner is sure about my decision.",
+        "vi": "Người chủ chắc chắn về quyết định của mình."
+      },
+      { "en": "The owner is confident.", "vi": "Người chủ tự tin." },
+      { "en": "The owner is well-rested.", "vi": "Người chủ được nghỉ ngơi đầy đủ." },
+      { "en": "The owner is short of money.", "vi": "Người chủ thiếu tiền." },
+      { "en": "The owner is back at the office.", "vi": "Người chủ đã trở lại văn phòng." },
+      { "en": "The owner is ready for anything.", "vi": "Người chủ sẵn sàng cho mọi thứ." },
+      { "en": "The owner is joyful.", "vi": "Người chủ hân hoan." },
+      { "en": "The owner is ready to start.", "vi": "Người chủ sẵn sàng bắt đầu." },
+      { "en": "The owner is hopeful again.", "vi": "Người chủ lại tràn hy vọng." },
+      { "en": "The owner is calm and collected.", "vi": "Người chủ bình tĩnh và điềm đạm." },
+      { "en": "The owner is happy to help.", "vi": "Người chủ sẵn lòng giúp đỡ." },
+      { "en": "The owner is totally focused.", "vi": "Người chủ hoàn toàn tập trung." },
+      { "en": "The owner is available tomorrow.", "vi": "Người chủ rảnh vào ngày mai." }
+    ]
+  },
+  {
+    "starter": "The owner was",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The owner was out of ideas.", "vi": "Người chủ đã hết ý tưởng." },
+      { "en": "The owner was sleepy.", "vi": "Người chủ đã buồn ngủ." },
+      { "en": "The owner was totally focused.", "vi": "Người chủ đã hoàn toàn tập trung." },
+      { "en": "The owner was wide awake.", "vi": "Người chủ đã tỉnh táo hẳn." },
+      { "en": "The owner was a bit overwhelmed.", "vi": "Người chủ đã hơi quá tải." },
+      { "en": "The owner was tired.", "vi": "Người chủ đã mệt." },
+      { "en": "The owner was a little tired.", "vi": "Người chủ đã hơi mệt." },
+      { "en": "The owner was serious.", "vi": "Người chủ đã nghiêm túc." },
+      { "en": "The owner was cautious.", "vi": "Người chủ đã thận trọng." },
+      { "en": "The owner was careful.", "vi": "Người chủ đã cẩn thận." },
+      { "en": "The owner was relaxed.", "vi": "Người chủ đã thư giãn." },
+      { "en": "The owner was sorry to hear that.", "vi": "Người chủ đã tiếc khi nghe điều đó." },
+      { "en": "The owner was open to ideas.", "vi": "Người chủ đã cởi mở với ý tưởng." },
+      { "en": "The owner was confused.", "vi": "Người chủ đã bối rối." },
+      {
+        "en": "The owner was ready for the weekend.",
+        "vi": "Người chủ đã sẵn sàng cho cuối tuần."
+      },
+      { "en": "The owner was hardworking.", "vi": "Người chủ đã chăm chỉ." },
+      {
+        "en": "The owner was hopeful about the future.",
+        "vi": "Người chủ đã hy vọng về tương lai."
+      },
+      { "en": "The owner was ready to go.", "vi": "Người chủ đã sẵn sàng đi." },
+      { "en": "The owner was energetic.", "vi": "Người chủ đã tràn đầy năng lượng." },
+      { "en": "The owner was ambitious.", "vi": "Người chủ đã tham vọng." },
+      { "en": "The owner was new to this.", "vi": "Người chủ đã mới với việc này." },
+      { "en": "The owner was considerate.", "vi": "Người chủ đã biết quan tâm." },
+      { "en": "The owner was excited for tomorrow.", "vi": "Người chủ đã háo hức cho ngày mai." },
+      { "en": "The owner was done for today.", "vi": "Người chủ đã xong việc cho hôm nay." },
+      { "en": "The owner was hungry.", "vi": "Người chủ đã đói." },
+      { "en": "The owner was lonely.", "vi": "Người chủ đã cô đơn." },
+      { "en": "The owner was available after lunch.", "vi": "Người chủ đã rảnh sau bữa trưa." },
+      { "en": "The owner was late.", "vi": "Người chủ đã muộn." },
+      { "en": "The owner was curious about it.", "vi": "Người chủ đã tò mò về nó." },
+      { "en": "The owner was determined.", "vi": "Người chủ đã quyết tâm." },
+      { "en": "The owner was out for lunch.", "vi": "Người chủ đã ra ngoài ăn trưa." },
+      { "en": "The owner was happy to see you.", "vi": "Người chủ đã vui khi gặp bạn." },
+      { "en": "The owner was working from home.", "vi": "Người chủ đã làm việc tại nhà." },
+      { "en": "The owner was a bit nervous.", "vi": "Người chủ đã hơi hồi hộp." },
+      { "en": "The owner was passionate.", "vi": "Người chủ đã đầy đam mê." },
+      { "en": "The owner was close to the goal.", "vi": "Người chủ đã gần đạt mục tiêu." },
+      {
+        "en": "The owner was confident about the result.",
+        "vi": "Người chủ đã tự tin về kết quả."
+      },
+      { "en": "The owner was worried about the exam.", "vi": "Người chủ đã lo lắng về kỳ thi." },
+      { "en": "The owner was bored.", "vi": "Người chủ đã chán." },
+      { "en": "The owner was truly impressed.", "vi": "Người chủ đã thực sự ấn tượng." },
+      { "en": "The owner was interested.", "vi": "Người chủ đã quan tâm." },
+      { "en": "The owner was thankful.", "vi": "Người chủ đã biết ơn." },
+      { "en": "The owner was polite.", "vi": "Người chủ đã lịch sự." },
+      { "en": "The owner was cautiously optimistic.", "vi": "Người chủ đã lạc quan thận trọng." },
+      { "en": "The owner was busy until noon.", "vi": "Người chủ đã bận đến trưa." },
+      { "en": "The owner was dedicated.", "vi": "Người chủ đã tận tâm." },
+      { "en": "The owner was committed to the plan.", "vi": "Người chủ đã cam kết với kế hoạch." },
+      { "en": "The owner was quite confident.", "vi": "Người chủ đã khá tự tin." },
+      { "en": "The owner was out of practice.", "vi": "Người chủ đã lâu rồi không luyện." },
+      {
+        "en": "The owner was satisfied with the service.",
+        "vi": "Người chủ đã hài lòng với dịch vụ."
+      },
+      { "en": "The owner was inspired.", "vi": "Người chủ đã được truyền cảm hứng." },
+      { "en": "The owner was lucky.", "vi": "Người chủ đã may mắn." },
+      { "en": "The owner was thankful for everything.", "vi": "Người chủ đã biết ơn vì tất cả." },
+      { "en": "The owner was good at English.", "vi": "Người chủ đã giỏi tiếng Anh." },
+      { "en": "The owner was hopeful again.", "vi": "Người chủ đã lại tràn hy vọng." },
+      { "en": "The owner was stronger than before.", "vi": "Người chủ đã mạnh mẽ hơn trước." },
+      { "en": "The owner was slightly worried.", "vi": "Người chủ đã hơi lo." },
+      { "en": "The owner was angry.", "vi": "Người chủ đã tức giận." },
+      { "en": "The owner was worried.", "vi": "Người chủ đã lo lắng." },
+      { "en": "The owner was easy to talk to.", "vi": "Người chủ đã dễ trò chuyện." },
+      { "en": "The owner was okay.", "vi": "Người chủ đã ổn cả." },
+      { "en": "The owner was happy with the result.", "vi": "Người chủ đã hài lòng với kết quả." },
+      {
+        "en": "The owner was nervous about the interview.",
+        "vi": "Người chủ đã hồi hộp về buổi phỏng vấn."
+      },
+      { "en": "The owner was grateful.", "vi": "Người chủ đã biết ơn." },
+      { "en": "The owner was reliable.", "vi": "Người chủ đã đáng tin cậy." },
+      { "en": "The owner was generous.", "vi": "Người chủ đã rộng lượng." },
+      { "en": "The owner was friendly.", "vi": "Người chủ đã thân thiện." },
+      { "en": "The owner was proud of the progress.", "vi": "Người chủ đã tự hào về sự tiến bộ." },
+      { "en": "The owner was glad to be here.", "vi": "Người chủ đã vui khi được ở đây." },
+      {
+        "en": "The owner was excited about the trip.",
+        "vi": "Người chủ đã hào hứng về chuyến đi."
+      },
+      { "en": "The owner was full of ideas.", "vi": "Người chủ đã đầy ý tưởng." },
+      {
+        "en": "The owner was ready for the challenge.",
+        "vi": "Người chủ đã sẵn sàng cho thử thách."
+      },
+      { "en": "The owner was flexible.", "vi": "Người chủ đã linh hoạt." },
+      { "en": "The owner was ready for anything.", "vi": "Người chủ đã sẵn sàng cho mọi thứ." },
+      { "en": "The owner was refreshed.", "vi": "Người chủ đã sảng khoái." },
+      { "en": "The owner was relieved.", "vi": "Người chủ đã nhẹ nhõm." },
+      { "en": "The owner was honest.", "vi": "Người chủ đã trung thực." },
+      { "en": "The owner was almost done.", "vi": "Người chủ đã gần xong." },
+      { "en": "The owner was scared.", "vi": "Người chủ đã sợ hãi." },
+      { "en": "The owner was busy.", "vi": "Người chủ đã bận." },
+      { "en": "The owner was available tomorrow.", "vi": "Người chủ đã rảnh vào ngày mai." },
+      { "en": "The owner was in a good mood.", "vi": "Người chủ đã đang vui vẻ." },
+      { "en": "The owner was surprised.", "vi": "Người chủ đã ngạc nhiên." },
+      { "en": "The owner was confident.", "vi": "Người chủ đã tự tin." },
+      { "en": "The owner was really proud.", "vi": "Người chủ đã thực sự tự hào." },
+      { "en": "The owner was short on time.", "vi": "Người chủ đã thiếu thời gian." },
+      { "en": "The owner was totally lost.", "vi": "Người chủ đã hoàn toàn lạc lối." },
+      { "en": "The owner was absolutely sure.", "vi": "Người chủ đã chắc chắn tuyệt đối." },
+      { "en": "The owner was serious about this.", "vi": "Người chủ đã nghiêm túc về việc này." },
+      { "en": "The owner was happy.", "vi": "Người chủ đã vui." },
+      { "en": "The owner was hopeful.", "vi": "Người chủ đã tràn đầy hy vọng." },
+      { "en": "The owner was nervous but excited.", "vi": "Người chủ đã hồi hộp nhưng hào hứng." },
+      { "en": "The owner was glad it worked.", "vi": "Người chủ đã vui vì nó hiệu quả." },
+      { "en": "The owner was confident in the team.", "vi": "Người chủ đã tin tưởng vào nhóm." },
+      { "en": "The owner was on the phone.", "vi": "Người chủ đã đang nghe điện thoại." },
+      { "en": "The owner was proud of everyone.", "vi": "Người chủ đã tự hào về mọi người." },
+      { "en": "The owner was back at the office.", "vi": "Người chủ đã đã trở lại văn phòng." },
+      { "en": "The owner was proud and grateful.", "vi": "Người chủ đã tự hào và biết ơn." },
+      { "en": "The owner was done with work.", "vi": "Người chủ đã xong việc." },
+      { "en": "The owner was on my way.", "vi": "Người chủ đã đang trên đường." }
+    ]
+  },
+  {
+    "starter": "The owner has",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The owner has a deadline tomorrow.",
+        "vi": "Người chủ có một thời hạn vào ngày mai."
+      },
+      { "en": "The owner has a clear goal.", "vi": "Người chủ có một mục tiêu rõ ràng." },
+      { "en": "The owner has a passport ready.", "vi": "Người chủ có một hộ chiếu sẵn sàng." },
+      { "en": "The owner has a credit card.", "vi": "Người chủ có một thẻ tín dụng." },
+      { "en": "The owner has a new hobby.", "vi": "Người chủ có một sở thích mới." },
+      {
+        "en": "The owner has a reliable laptop.",
+        "vi": "Người chủ có một chiếc laptop đáng tin cậy."
+      },
+      { "en": "The owner has a solution.", "vi": "Người chủ có một giải pháp." },
+      { "en": "The owner has a supportive family.", "vi": "Người chủ có một gia đình ủng hộ." },
+      { "en": "The owner has a strong resume.", "vi": "Người chủ có một bản lý lịch ấn tượng." },
+      { "en": "The owner has a lot of homework.", "vi": "Người chủ có rất nhiều bài tập." },
+      {
+        "en": "The owner has a test next week.",
+        "vi": "Người chủ có một bài kiểm tra vào tuần tới."
+      },
+      { "en": "The owner has a different view.", "vi": "Người chủ có một góc nhìn khác." },
+      { "en": "The owner has a comfortable home.", "vi": "Người chủ có một ngôi nhà thoải mái." },
+      { "en": "The owner has a positive review.", "vi": "Người chủ có một đánh giá tích cực." },
+      { "en": "The owner has a reference letter.", "vi": "Người chủ có một thư giới thiệu." },
+      { "en": "The owner has a long day.", "vi": "Người chủ có một ngày dài." },
+      {
+        "en": "The owner has a good relationship with them.",
+        "vi": "Người chủ có một mối quan hệ tốt với họ."
+      },
+      { "en": "The owner has a wonderful weekend.", "vi": "Người chủ có một cuối tuần tuyệt vời." },
+      {
+        "en": "The owner has a supportive friend.",
+        "vi": "Người chủ có một người bạn biết động viên."
+      },
+      { "en": "The owner has a sunny day.", "vi": "Người chủ có một ngày nắng đẹp." },
+      { "en": "The owner has a suggestion.", "vi": "Người chủ có một đề xuất." },
+      { "en": "The owner has a home-cooked meal.", "vi": "Người chủ có một bữa ăn tự nấu." },
+      { "en": "The owner has a discount.", "vi": "Người chủ có một ưu đãi giảm giá." },
+      { "en": "The owner has a quiet evening.", "vi": "Người chủ có một buổi tối yên tĩnh." },
+      { "en": "The owner has a problem.", "vi": "Người chủ có một vấn đề." },
+      {
+        "en": "The owner has a great idea for the project.",
+        "vi": "Người chủ có một ý tưởng tuyệt cho dự án."
+      },
+      { "en": "The owner has a great deal.", "vi": "Người chủ có một món hời." },
+      { "en": "The owner has a busy morning.", "vi": "Người chủ có một buổi sáng bận rộn." },
+      { "en": "The owner has a reason to celebrate.", "vi": "Người chủ có một lý do để ăn mừng." },
+      { "en": "The owner has a strong opinion.", "vi": "Người chủ có một quan điểm mạnh mẽ." },
+      { "en": "The owner has a great opportunity.", "vi": "Người chủ có một cơ hội tuyệt vời." },
+      { "en": "The owner has a new project.", "vi": "Người chủ có một dự án mới." },
+      {
+        "en": "The owner has a doctor's appointment.",
+        "vi": "Người chủ có một cuộc hẹn với bác sĩ."
+      },
+      { "en": "The owner has a pending task.", "vi": "Người chủ có một nhiệm vụ còn dang dở." },
+      { "en": "The owner has a lot of work.", "vi": "Người chủ có rất nhiều việc." },
+      { "en": "The owner has enough time.", "vi": "Người chủ có đủ thời gian." },
+      { "en": "The owner has high expectations.", "vi": "Người chủ có kỳ vọng cao." },
+      { "en": "The owner has a healthy lifestyle.", "vi": "Người chủ có một lối sống lành mạnh." },
+      {
+        "en": "The owner has a meeting tomorrow morning.",
+        "vi": "Người chủ có một cuộc họp sáng mai."
+      },
+      { "en": "The owner has a new phone.", "vi": "Người chủ có một chiếc điện thoại mới." },
+      { "en": "The owner has good news.", "vi": "Người chủ có tin tốt." },
+      { "en": "The owner has a chance to win.", "vi": "Người chủ có một cơ hội để thắng." },
+      { "en": "The owner has a local guide.", "vi": "Người chủ có một hướng dẫn viên địa phương." },
+      {
+        "en": "The owner has a presentation today.",
+        "vi": "Người chủ có một bài thuyết trình hôm nay."
+      },
+      {
+        "en": "The owner has a phone call to make.",
+        "vi": "Người chủ có một cuộc gọi cần thực hiện."
+      },
+      {
+        "en": "The owner has a meeting with the client.",
+        "vi": "Người chủ có một cuộc họp với khách hàng."
+      },
+      { "en": "The owner has a meaningful goal.", "vi": "Người chủ có một mục tiêu ý nghĩa." },
+      { "en": "The owner has an email to send.", "vi": "Người chủ có một email cần gửi." },
+      { "en": "The owner has a driver's license.", "vi": "Người chủ có một bằng lái xe." },
+      { "en": "The owner has a few questions.", "vi": "Người chủ có một vài câu hỏi." },
+      { "en": "The owner has a fever.", "vi": "Người chủ có bị sốt." },
+      { "en": "The owner has a good point.", "vi": "Người chủ có một ý hay." },
+      { "en": "The owner has a morning routine.", "vi": "Người chủ có một thói quen buổi sáng." },
+      {
+        "en": "The owner has a feeling about this.",
+        "vi": "Người chủ có một linh cảm về điều này."
+      },
+      { "en": "The owner has a realistic goal.", "vi": "Người chủ có một mục tiêu thực tế." },
+      { "en": "The owner has a doctor nearby.", "vi": "Người chủ có một bác sĩ gần đây." },
+      { "en": "The owner has a strong mindset.", "vi": "Người chủ có một tư duy mạnh mẽ." },
+      { "en": "The owner has a clear answer.", "vi": "Người chủ có một câu trả lời rõ ràng." },
+      { "en": "The owner has a big presentation.", "vi": "Người chủ có một bài thuyết trình lớn." },
+      { "en": "The owner has an appointment.", "vi": "Người chủ có một cuộc hẹn." },
+      { "en": "The owner has a tight budget.", "vi": "Người chủ có một ngân sách eo hẹp." },
+      { "en": "The owner has a cozy cafe.", "vi": "Người chủ có một quán cà phê ấm cúng." },
+      { "en": "The owner has a backup device.", "vi": "Người chủ có một thiết bị dự phòng." },
+      { "en": "The owner has a weekend trip.", "vi": "Người chủ có một chuyến đi cuối tuần." },
+      { "en": "The owner has some experience.", "vi": "Người chủ có một chút kinh nghiệm." },
+      { "en": "The owner has a window seat.", "vi": "Người chủ có một ghế cạnh cửa sổ." },
+      { "en": "The owner has a favorite book.", "vi": "Người chủ có một cuốn sách yêu thích." },
+      { "en": "The owner has a good night's sleep.", "vi": "Người chủ có một giấc ngủ ngon." },
+      { "en": "The owner has a strong connection.", "vi": "Người chủ có một kết nối bền chặt." },
+      { "en": "The owner has a bright future.", "vi": "Người chủ có một tương lai tươi sáng." },
+      { "en": "The owner has a cup of coffee.", "vi": "Người chủ có một tách cà phê." },
+      { "en": "The owner has a reservation.", "vi": "Người chủ có một chỗ đặt trước." },
+      { "en": "The owner has a headache.", "vi": "Người chủ có một cơn đau đầu." },
+      { "en": "The owner has a quick lunch.", "vi": "Người chủ có một bữa trưa nhanh." },
+      { "en": "The owner has a job interview.", "vi": "Người chủ có một buổi phỏng vấn việc làm." },
+      { "en": "The owner has a concern.", "vi": "Người chủ có một mối lo ngại." },
+      { "en": "The owner has a hotel booking.", "vi": "Người chủ có một đặt phòng khách sạn." },
+      { "en": "The owner has a fair price.", "vi": "Người chủ có một mức giá hợp lý." },
+      { "en": "The owner has a remote job.", "vi": "Người chủ có một công việc từ xa." },
+      {
+        "en": "The owner has a reservation for two.",
+        "vi": "Người chủ có một chỗ đặt cho hai người."
+      },
+      { "en": "The owner has a cold.", "vi": "Người chủ có bị cảm lạnh." },
+      {
+        "en": "The owner has a meeting this afternoon.",
+        "vi": "Người chủ có một cuộc họp chiều nay."
+      },
+      { "en": "The owner has a spare room.", "vi": "Người chủ có một phòng trống." },
+      { "en": "The owner has a part-time job.", "vi": "Người chủ có một công việc bán thời gian." },
+      { "en": "The owner has a new neighbor.", "vi": "Người chủ có một người hàng xóm mới." },
+      { "en": "The owner has an account here.", "vi": "Người chủ có một tài khoản ở đây." },
+      { "en": "The owner has a sore throat.", "vi": "Người chủ có đau họng." },
+      { "en": "The owner has a fresh start.", "vi": "Người chủ có một khởi đầu mới." },
+      { "en": "The owner has a special offer.", "vi": "Người chủ có một ưu đãi đặc biệt." },
+      { "en": "The owner has a table by the window.", "vi": "Người chủ có một bàn cạnh cửa sổ." },
+      { "en": "The owner has a great mentor.", "vi": "Người chủ có một người cố vấn tuyệt vời." },
+      { "en": "The owner has a lovely garden.", "vi": "Người chủ có một khu vườn đáng yêu." },
+      { "en": "The owner has a travel plan.", "vi": "Người chủ có một kế hoạch du lịch." },
+      { "en": "The owner has a standing desk.", "vi": "Người chủ có một bàn đứng." },
+      { "en": "The owner has a return ticket.", "vi": "Người chủ có một vé khứ hồi." },
+      { "en": "The owner has a kind gesture.", "vi": "Người chủ có một cử chỉ tử tế." },
+      { "en": "The owner has a balanced diet.", "vi": "Người chủ có một chế độ ăn cân bằng." },
+      { "en": "The owner has a loyal customer.", "vi": "Người chủ có một khách hàng trung thành." },
+      {
+        "en": "The owner has a report to finish.",
+        "vi": "Người chủ có một báo cáo cần hoàn thành."
+      },
+      { "en": "The owner has a helpful tip.", "vi": "Người chủ có một mẹo hữu ích." }
+    ]
+  },
+  {
+    "starter": "The owner wants to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The owner wants to solve this issue.",
+        "vi": "Người chủ muốn giải quyết vấn đề này."
+      },
+      { "en": "The owner wants to listen carefully.", "vi": "Người chủ muốn lắng nghe cẩn thận." },
+      { "en": "The owner wants to sleep early.", "vi": "Người chủ muốn ngủ sớm." },
+      { "en": "The owner wants to make a reservation.", "vi": "Người chủ muốn đặt chỗ trước." },
+      { "en": "The owner wants to confirm the booking.", "vi": "Người chủ muốn xác nhận đặt chỗ." },
+      { "en": "The owner wants to lower the cost.", "vi": "Người chủ muốn giảm chi phí." },
+      {
+        "en": "The owner wants to volunteer on weekends.",
+        "vi": "Người chủ muốn tình nguyện cuối tuần."
+      },
+      { "en": "The owner wants to finish the report.", "vi": "Người chủ muốn hoàn thành báo cáo." },
+      { "en": "The owner wants to send the email.", "vi": "Người chủ muốn gửi email." },
+      { "en": "The owner wants to test the feature.", "vi": "Người chủ muốn kiểm thử tính năng." },
+      { "en": "The owner wants to give it a try.", "vi": "Người chủ muốn thử một lần." },
+      {
+        "en": "The owner wants to double-check everything.",
+        "vi": "Người chủ muốn kiểm tra lại mọi thứ."
+      },
+      { "en": "The owner wants to do the laundry.", "vi": "Người chủ muốn giặt đồ." },
+      { "en": "The owner wants to change careers.", "vi": "Người chủ muốn chuyển nghề." },
+      { "en": "The owner wants to hire new staff.", "vi": "Người chủ muốn tuyển nhân viên mới." },
+      { "en": "The owner wants to answer the phone.", "vi": "Người chủ muốn trả lời điện thoại." },
+      { "en": "The owner wants to stay up late.", "vi": "Người chủ muốn thức khuya." },
+      { "en": "The owner wants to write it down.", "vi": "Người chủ muốn ghi nó lại." },
+      { "en": "The owner wants to stay organized.", "vi": "Người chủ muốn giữ ngăn nắp." },
+      { "en": "The owner wants to meet the deadline.", "vi": "Người chủ muốn kịp thời hạn." },
+      { "en": "The owner wants to give feedback.", "vi": "Người chủ muốn góp ý." },
+      { "en": "The owner wants to read more books.", "vi": "Người chủ muốn đọc thêm sách." },
+      { "en": "The owner wants to set an alarm.", "vi": "Người chủ muốn đặt báo thức." },
+      { "en": "The owner wants to finish on time.", "vi": "Người chủ muốn hoàn thành đúng hạn." },
+      { "en": "The owner wants to be on time.", "vi": "Người chủ muốn đến đúng giờ." },
+      { "en": "The owner wants to cook breakfast.", "vi": "Người chủ muốn nấu bữa sáng." },
+      {
+        "en": "The owner wants to enjoy the weekend.",
+        "vi": "Người chủ muốn tận hưởng cuối tuần."
+      },
+      {
+        "en": "The owner wants to reply to the message.",
+        "vi": "Người chủ muốn trả lời tin nhắn."
+      },
+      { "en": "The owner wants to join the meeting.", "vi": "Người chủ muốn tham gia cuộc họp." },
+      { "en": "The owner wants to watch the game.", "vi": "Người chủ muốn xem trận đấu." },
+      {
+        "en": "The owner wants to start a new project.",
+        "vi": "Người chủ muốn bắt đầu một dự án mới."
+      },
+      {
+        "en": "The owner wants to manage the schedule.",
+        "vi": "Người chủ muốn quản lý lịch trình."
+      },
+      {
+        "en": "The owner wants to learn something new.",
+        "vi": "Người chủ muốn học điều gì đó mới."
+      },
+      { "en": "The owner wants to keep a diary.", "vi": "Người chủ muốn viết nhật ký." },
+      { "en": "The owner wants to work as a team.", "vi": "Người chủ muốn làm việc theo nhóm." },
+      { "en": "The owner wants to keep a promise.", "vi": "Người chủ muốn giữ lời hứa." },
+      { "en": "The owner wants to cancel the order.", "vi": "Người chủ muốn hủy đơn hàng." },
+      { "en": "The owner wants to water the plants.", "vi": "Người chủ muốn tưới cây." },
+      { "en": "The owner wants to cheer for the team.", "vi": "Người chủ muốn cổ vũ cho đội." },
+      { "en": "The owner wants to take it easy.", "vi": "Người chủ muốn thư giãn." },
+      {
+        "en": "The owner wants to invite some friends.",
+        "vi": "Người chủ muốn mời vài người bạn."
+      },
+      { "en": "The owner wants to visit the doctor.", "vi": "Người chủ muốn đi khám bác sĩ." },
+      { "en": "The owner wants to think it over.", "vi": "Người chủ muốn suy nghĩ kỹ." },
+      {
+        "en": "The owner wants to attend the workshop.",
+        "vi": "Người chủ muốn tham dự buổi hội thảo."
+      },
+      { "en": "The owner wants to rate the service.", "vi": "Người chủ muốn đánh giá dịch vụ." },
+      { "en": "The owner wants to move forward.", "vi": "Người chủ muốn tiến về phía trước." },
+      { "en": "The owner wants to lock the door.", "vi": "Người chủ muốn khóa cửa." },
+      { "en": "The owner wants to reach the goal.", "vi": "Người chủ muốn đạt mục tiêu." },
+      { "en": "The owner wants to follow the rules.", "vi": "Người chủ muốn tuân theo quy tắc." },
+      { "en": "The owner wants to plan ahead.", "vi": "Người chủ muốn lên kế hoạch trước." },
+      { "en": "The owner wants to get a degree.", "vi": "Người chủ muốn lấy bằng." },
+      { "en": "The owner wants to throw a party.", "vi": "Người chủ muốn tổ chức tiệc." },
+      { "en": "The owner wants to breathe deeply.", "vi": "Người chủ muốn hít thở sâu." },
+      { "en": "The owner wants to book a ticket.", "vi": "Người chủ muốn đặt vé." },
+      { "en": "The owner wants to find a job.", "vi": "Người chủ muốn tìm việc làm." },
+      { "en": "The owner wants to split the bill.", "vi": "Người chủ muốn chia hóa đơn." },
+      {
+        "en": "The owner wants to double-check the numbers.",
+        "vi": "Người chủ muốn kiểm tra lại các con số."
+      },
+      { "en": "The owner wants to delete the file.", "vi": "Người chủ muốn xóa tệp." },
+      { "en": "The owner wants to learn to swim.", "vi": "Người chủ muốn học bơi." },
+      { "en": "The owner wants to reset the password.", "vi": "Người chủ muốn đặt lại mật khẩu." },
+      { "en": "The owner wants to close the window.", "vi": "Người chủ muốn đóng cửa sổ." },
+      { "en": "The owner wants to share my opinion.", "vi": "Người chủ muốn chia sẻ ý kiến." },
+      {
+        "en": "The owner wants to grow the business.",
+        "vi": "Người chủ muốn phát triển kinh doanh."
+      },
+      { "en": "The owner wants to download the file.", "vi": "Người chủ muốn tải tệp xuống." },
+      { "en": "The owner wants to support each other.", "vi": "Người chủ muốn hỗ trợ lẫn nhau." },
+      { "en": "The owner wants to catch the train.", "vi": "Người chủ muốn bắt chuyến tàu." },
+      {
+        "en": "The owner wants to update the software.",
+        "vi": "Người chủ muốn cập nhật phần mềm."
+      },
+      { "en": "The owner wants to take a course.", "vi": "Người chủ muốn tham gia một khóa học." },
+      { "en": "The owner wants to set a goal.", "vi": "Người chủ muốn đặt một mục tiêu." },
+      { "en": "The owner wants to take a chance.", "vi": "Người chủ muốn nắm lấy cơ hội." },
+      { "en": "The owner wants to stay home.", "vi": "Người chủ muốn ở nhà." },
+      { "en": "The owner wants to donate to charity.", "vi": "Người chủ muốn quyên góp từ thiện." },
+      { "en": "The owner wants to cut expenses.", "vi": "Người chủ muốn cắt giảm chi tiêu." },
+      { "en": "The owner wants to take a break.", "vi": "Người chủ muốn nghỉ giải lao." },
+      {
+        "en": "The owner wants to practice every day.",
+        "vi": "Người chủ muốn luyện tập mỗi ngày."
+      },
+      { "en": "The owner wants to arrive on time.", "vi": "Người chủ muốn đến đúng giờ." },
+      { "en": "The owner wants to visit my family.", "vi": "Người chủ muốn thăm gia đình." },
+      { "en": "The owner wants to buy groceries.", "vi": "Người chủ muốn mua thực phẩm." },
+      { "en": "The owner wants to check my email.", "vi": "Người chủ muốn kiểm tra email." },
+      {
+        "en": "The owner wants to try harder next time.",
+        "vi": "Người chủ muốn cố gắng hơn lần sau."
+      },
+      { "en": "The owner wants to leave early.", "vi": "Người chủ muốn về sớm." },
+      { "en": "The owner wants to calm down.", "vi": "Người chủ muốn bình tĩnh lại." },
+      { "en": "The owner wants to lose weight.", "vi": "Người chủ muốn giảm cân." },
+      { "en": "The owner wants to open a business.", "vi": "Người chủ muốn mở một doanh nghiệp." },
+      { "en": "The owner wants to check the details.", "vi": "Người chủ muốn kiểm tra chi tiết." },
+      { "en": "The owner wants to help out.", "vi": "Người chủ muốn giúp đỡ." },
+      {
+        "en": "The owner wants to help a neighbor.",
+        "vi": "Người chủ muốn giúp một người hàng xóm."
+      },
+      { "en": "The owner wants to pack my bags.", "vi": "Người chủ muốn xếp hành lý." },
+      { "en": "The owner wants to take the bus.", "vi": "Người chủ muốn đi xe buýt." },
+      { "en": "The owner wants to listen to music.", "vi": "Người chủ muốn nghe nhạc." },
+      { "en": "The owner wants to relax at home.", "vi": "Người chủ muốn thư giãn ở nhà." },
+      { "en": "The owner wants to play sports.", "vi": "Người chủ muốn chơi thể thao." },
+      { "en": "The owner wants to book a hotel.", "vi": "Người chủ muốn đặt khách sạn." },
+      { "en": "The owner wants to close the deal.", "vi": "Người chủ muốn chốt thỏa thuận." },
+      { "en": "The owner wants to lead the project.", "vi": "Người chủ muốn dẫn dắt dự án." },
+      { "en": "The owner wants to never give up.", "vi": "Người chủ muốn không bao giờ bỏ cuộc." },
+      { "en": "The owner wants to wait a moment.", "vi": "Người chủ muốn chờ một chút." },
+      { "en": "The owner wants to work harder.", "vi": "Người chủ muốn làm việc chăm chỉ hơn." },
+      {
+        "en": "The owner wants to talk to the manager.",
+        "vi": "Người chủ muốn nói chuyện với quản lý."
+      },
+      { "en": "The owner wants to keep learning.", "vi": "Người chủ muốn tiếp tục học hỏi." }
+    ]
+  }
+]

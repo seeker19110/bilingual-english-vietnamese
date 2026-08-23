@@ -22,8 +22,8 @@ import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const PATTERN_DIR = path.join(PROJECT_ROOT, 'public/data/patterns')
-const DICT_DIR = path.join(PROJECT_ROOT, 'public/data/dictionary')
+const PATTERN_DIR = path.join(PROJECT_ROOT, 'apps/english/public/data/patterns')
+const DICT_DIR = path.join(PROJECT_ROOT, 'apps/english/public/data/dictionary')
 
 const TOP_N = Number(process.env.TOP_N) || 20
 // Cao hơn freq thật lớn nhất trong từ điển (tối đa quan sát được ~10.000-12.000) — từ không

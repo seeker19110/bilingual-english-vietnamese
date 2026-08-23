@@ -19,8 +19,8 @@ import { CEFR_LEVELS } from '../apps/english/src/data/cefr.ts'
 import { DIALOGUES } from '../apps/english/src/data/dialogues.ts'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const CEFR_OUT = path.join(ROOT, 'public/data/cefr.json')
-const DLG_OUT = path.join(ROOT, 'public/data/dialogues.json')
+const CEFR_OUT = path.join(ROOT, 'apps/english/public/data/cefr.json')
+const DLG_OUT = path.join(ROOT, 'apps/english/public/data/dialogues.json')
 
 // Ghi không khoảng trắng (giống các file data hiện có → manifest hash gọn).
 fs.writeFileSync(CEFR_OUT, JSON.stringify(CEFR_LEVELS))

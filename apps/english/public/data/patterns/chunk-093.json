@@ -1,0 +1,2907 @@
+[
+  {
+    "starter": "My roommate needs to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "My roommate needs to order food.", "vi": "Bạn cùng phòng của tôi cần gọi đồ ăn." },
+      {
+        "en": "My roommate needs to give it a try.",
+        "vi": "Bạn cùng phòng của tôi cần thử một lần."
+      },
+      {
+        "en": "My roommate needs to be on time.",
+        "vi": "Bạn cùng phòng của tôi cần đến đúng giờ."
+      },
+      {
+        "en": "My roommate needs to buy groceries.",
+        "vi": "Bạn cùng phòng của tôi cần mua thực phẩm."
+      },
+      { "en": "My roommate needs to make tea.", "vi": "Bạn cùng phòng của tôi cần pha trà." },
+      { "en": "My roommate needs to study abroad.", "vi": "Bạn cùng phòng của tôi cần du học." },
+      {
+        "en": "My roommate needs to sign up today.",
+        "vi": "Bạn cùng phòng của tôi cần đăng ký hôm nay."
+      },
+      {
+        "en": "My roommate needs to water the plants.",
+        "vi": "Bạn cùng phòng của tôi cần tưới cây."
+      },
+      {
+        "en": "My roommate needs to save for the future.",
+        "vi": "Bạn cùng phòng của tôi cần tiết kiệm cho tương lai."
+      },
+      {
+        "en": "My roommate needs to reach the goal.",
+        "vi": "Bạn cùng phòng của tôi cần đạt mục tiêu."
+      },
+      {
+        "en": "My roommate needs to pay off the loan.",
+        "vi": "Bạn cùng phòng của tôi cần trả hết khoản vay."
+      },
+      {
+        "en": "My roommate needs to drive to work.",
+        "vi": "Bạn cùng phòng của tôi cần lái xe đi làm."
+      },
+      {
+        "en": "My roommate needs to apply for the position.",
+        "vi": "Bạn cùng phòng của tôi cần nộp đơn cho vị trí."
+      },
+      {
+        "en": "My roommate needs to think it over.",
+        "vi": "Bạn cùng phòng của tôi cần suy nghĩ kỹ."
+      },
+      {
+        "en": "My roommate needs to clean the house.",
+        "vi": "Bạn cùng phòng của tôi cần dọn nhà."
+      },
+      {
+        "en": "My roommate needs to help a neighbor.",
+        "vi": "Bạn cùng phòng của tôi cần giúp một người hàng xóm."
+      },
+      {
+        "en": "My roommate needs to hire new staff.",
+        "vi": "Bạn cùng phòng của tôi cần tuyển nhân viên mới."
+      },
+      {
+        "en": "My roommate needs to calm down.",
+        "vi": "Bạn cùng phòng của tôi cần bình tĩnh lại."
+      },
+      {
+        "en": "My roommate needs to set a goal.",
+        "vi": "Bạn cùng phòng của tôi cần đặt một mục tiêu."
+      },
+      {
+        "en": "My roommate needs to relax at home.",
+        "vi": "Bạn cùng phòng của tôi cần thư giãn ở nhà."
+      },
+      {
+        "en": "My roommate needs to drink more water.",
+        "vi": "Bạn cùng phòng của tôi cần uống nhiều nước hơn."
+      },
+      {
+        "en": "My roommate needs to quit smoking.",
+        "vi": "Bạn cùng phòng của tôi cần bỏ thuốc lá."
+      },
+      {
+        "en": "My roommate needs to take the bus.",
+        "vi": "Bạn cùng phòng của tôi cần đi xe buýt."
+      },
+      {
+        "en": "My roommate needs to visit my family.",
+        "vi": "Bạn cùng phòng của tôi cần thăm gia đình."
+      },
+      {
+        "en": "My roommate needs to split the bill.",
+        "vi": "Bạn cùng phòng của tôi cần chia hóa đơn."
+      },
+      {
+        "en": "My roommate needs to open a business.",
+        "vi": "Bạn cùng phòng của tôi cần mở một doanh nghiệp."
+      },
+      { "en": "My roommate needs to sleep early.", "vi": "Bạn cùng phòng của tôi cần ngủ sớm." },
+      {
+        "en": "My roommate needs to write it down.",
+        "vi": "Bạn cùng phòng của tôi cần ghi nó lại."
+      },
+      {
+        "en": "My roommate needs to ask for a raise.",
+        "vi": "Bạn cùng phòng của tôi cần xin tăng lương."
+      },
+      { "en": "My roommate needs to rent a car.", "vi": "Bạn cùng phòng của tôi cần thuê xe." },
+      {
+        "en": "My roommate needs to review the document.",
+        "vi": "Bạn cùng phòng của tôi cần xem lại tài liệu."
+      },
+      {
+        "en": "My roommate needs to support each other.",
+        "vi": "Bạn cùng phòng của tôi cần hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "My roommate needs to say goodbye.",
+        "vi": "Bạn cùng phòng của tôi cần nói lời tạm biệt."
+      },
+      {
+        "en": "My roommate needs to invest wisely.",
+        "vi": "Bạn cùng phòng của tôi cần đầu tư khôn ngoan."
+      },
+      {
+        "en": "My roommate needs to drink less coffee.",
+        "vi": "Bạn cùng phòng của tôi cần uống ít cà phê hơn."
+      },
+      {
+        "en": "My roommate needs to join a club.",
+        "vi": "Bạn cùng phòng của tôi cần tham gia câu lạc bộ."
+      },
+      {
+        "en": "My roommate needs to understand the lesson.",
+        "vi": "Bạn cùng phòng của tôi cần hiểu bài học."
+      },
+      {
+        "en": "My roommate needs to charge the phone.",
+        "vi": "Bạn cùng phòng của tôi cần sạc điện thoại."
+      },
+      {
+        "en": "My roommate needs to install the app.",
+        "vi": "Bạn cùng phòng của tôi cần cài đặt ứng dụng."
+      },
+      {
+        "en": "My roommate needs to attend the workshop.",
+        "vi": "Bạn cùng phòng của tôi cần tham dự buổi hội thảo."
+      },
+      {
+        "en": "My roommate needs to arrive on time.",
+        "vi": "Bạn cùng phòng của tôi cần đến đúng giờ."
+      },
+      {
+        "en": "My roommate needs to help the team.",
+        "vi": "Bạn cùng phòng của tôi cần giúp đỡ nhóm."
+      },
+      {
+        "en": "My roommate needs to launch the product.",
+        "vi": "Bạn cùng phòng của tôi cần ra mắt sản phẩm."
+      },
+      {
+        "en": "My roommate needs to save money.",
+        "vi": "Bạn cùng phòng của tôi cần tiết kiệm tiền."
+      },
+      { "en": "My roommate needs to give feedback.", "vi": "Bạn cùng phòng của tôi cần góp ý." },
+      {
+        "en": "My roommate needs to log in again.",
+        "vi": "Bạn cùng phòng của tôi cần đăng nhập lại."
+      },
+      {
+        "en": "My roommate needs to prepare the presentation.",
+        "vi": "Bạn cùng phòng của tôi cần chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "My roommate needs to walk the dog.",
+        "vi": "Bạn cùng phòng của tôi cần dắt chó đi dạo."
+      },
+      { "en": "My roommate needs to leave early.", "vi": "Bạn cùng phòng của tôi cần về sớm." },
+      {
+        "en": "My roommate needs to cook dinner.",
+        "vi": "Bạn cùng phòng của tôi cần nấu bữa tối."
+      },
+      {
+        "en": "My roommate needs to wash the dishes.",
+        "vi": "Bạn cùng phòng của tôi cần rửa bát."
+      },
+      {
+        "en": "My roommate needs to cheer for the team.",
+        "vi": "Bạn cùng phòng của tôi cần cổ vũ cho đội."
+      },
+      {
+        "en": "My roommate needs to lower the cost.",
+        "vi": "Bạn cùng phòng của tôi cần giảm chi phí."
+      },
+      {
+        "en": "My roommate needs to cook for everyone.",
+        "vi": "Bạn cùng phòng của tôi cần nấu ăn cho mọi người."
+      },
+      {
+        "en": "My roommate needs to read more books.",
+        "vi": "Bạn cùng phòng của tôi cần đọc thêm sách."
+      },
+      {
+        "en": "My roommate needs to move forward.",
+        "vi": "Bạn cùng phòng của tôi cần tiến về phía trước."
+      },
+      {
+        "en": "My roommate needs to cook breakfast.",
+        "vi": "Bạn cùng phòng của tôi cần nấu bữa sáng."
+      },
+      {
+        "en": "My roommate needs to take a day off.",
+        "vi": "Bạn cùng phòng của tôi cần xin nghỉ một ngày."
+      },
+      {
+        "en": "My roommate needs to keep a promise.",
+        "vi": "Bạn cùng phòng của tôi cần giữ lời hứa."
+      },
+      {
+        "en": "My roommate needs to double-check the numbers.",
+        "vi": "Bạn cùng phòng của tôi cần kiểm tra lại các con số."
+      },
+      {
+        "en": "My roommate needs to copy the link.",
+        "vi": "Bạn cùng phòng của tôi cần sao chép liên kết."
+      },
+      {
+        "en": "My roommate needs to try harder next time.",
+        "vi": "Bạn cùng phòng của tôi cần cố gắng hơn lần sau."
+      },
+      {
+        "en": "My roommate needs to stay organized.",
+        "vi": "Bạn cùng phòng của tôi cần giữ ngăn nắp."
+      },
+      {
+        "en": "My roommate needs to meditate daily.",
+        "vi": "Bạn cùng phòng của tôi cần thiền mỗi ngày."
+      },
+      {
+        "en": "My roommate needs to speak clearly.",
+        "vi": "Bạn cùng phòng của tôi cần nói rõ ràng."
+      },
+      {
+        "en": "My roommate needs to double-check everything.",
+        "vi": "Bạn cùng phòng của tôi cần kiểm tra lại mọi thứ."
+      },
+      { "en": "My roommate needs to take a rest.", "vi": "Bạn cùng phòng của tôi cần nghỉ ngơi." },
+      {
+        "en": "My roommate needs to donate to charity.",
+        "vi": "Bạn cùng phòng của tôi cần quyên góp từ thiện."
+      },
+      {
+        "en": "My roommate needs to pay the bill.",
+        "vi": "Bạn cùng phòng của tôi cần thanh toán hóa đơn."
+      },
+      {
+        "en": "My roommate needs to pack my bags.",
+        "vi": "Bạn cùng phòng của tôi cần xếp hành lý."
+      },
+      {
+        "en": "My roommate needs to reset the password.",
+        "vi": "Bạn cùng phòng của tôi cần đặt lại mật khẩu."
+      },
+      {
+        "en": "My roommate needs to read the news.",
+        "vi": "Bạn cùng phòng của tôi cần đọc tin tức."
+      },
+      {
+        "en": "My roommate needs to listen carefully.",
+        "vi": "Bạn cùng phòng của tôi cần lắng nghe cẩn thận."
+      },
+      {
+        "en": "My roommate needs to stay focused.",
+        "vi": "Bạn cùng phòng của tôi cần giữ tập trung."
+      },
+      {
+        "en": "My roommate needs to update the software.",
+        "vi": "Bạn cùng phòng của tôi cần cập nhật phần mềm."
+      },
+      {
+        "en": "My roommate needs to play sports.",
+        "vi": "Bạn cùng phòng của tôi cần chơi thể thao."
+      },
+      {
+        "en": "My roommate needs to learn something new.",
+        "vi": "Bạn cùng phòng của tôi cần học điều gì đó mới."
+      },
+      {
+        "en": "My roommate needs to find a job.",
+        "vi": "Bạn cùng phòng của tôi cần tìm việc làm."
+      },
+      { "en": "My roommate needs to report the bug.", "vi": "Bạn cùng phòng của tôi cần báo lỗi." },
+      {
+        "en": "My roommate needs to train the team.",
+        "vi": "Bạn cùng phòng của tôi cần đào tạo nhóm."
+      },
+      {
+        "en": "My roommate needs to call a friend.",
+        "vi": "Bạn cùng phòng của tôi cần gọi cho một người bạn."
+      },
+      {
+        "en": "My roommate needs to offer support.",
+        "vi": "Bạn cùng phòng của tôi cần đề nghị hỗ trợ."
+      },
+      {
+        "en": "My roommate needs to visit the doctor.",
+        "vi": "Bạn cùng phòng của tôi cần đi khám bác sĩ."
+      },
+      {
+        "en": "My roommate needs to ask for help.",
+        "vi": "Bạn cùng phòng của tôi cần nhờ giúp đỡ."
+      },
+      {
+        "en": "My roommate needs to make a plan.",
+        "vi": "Bạn cùng phòng của tôi cần lập một kế hoạch."
+      },
+      {
+        "en": "My roommate needs to ask more questions.",
+        "vi": "Bạn cùng phòng của tôi cần hỏi nhiều hơn."
+      },
+      {
+        "en": "My roommate needs to miss the flight.",
+        "vi": "Bạn cùng phòng của tôi cần lỡ chuyến bay."
+      },
+      {
+        "en": "My roommate needs to call back later.",
+        "vi": "Bạn cùng phòng của tôi cần gọi lại sau."
+      },
+      {
+        "en": "My roommate needs to download the file.",
+        "vi": "Bạn cùng phòng của tôi cần tải tệp xuống."
+      },
+      {
+        "en": "My roommate needs to buy a new phone.",
+        "vi": "Bạn cùng phòng của tôi cần mua điện thoại mới."
+      },
+      {
+        "en": "My roommate needs to take a photo.",
+        "vi": "Bạn cùng phòng của tôi cần chụp một bức ảnh."
+      },
+      {
+        "en": "My roommate needs to remember the password.",
+        "vi": "Bạn cùng phòng của tôi cần nhớ mật khẩu."
+      },
+      {
+        "en": "My roommate needs to open a savings account.",
+        "vi": "Bạn cùng phòng của tôi cần mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "My roommate needs to turn off the light.",
+        "vi": "Bạn cùng phòng của tôi cần tắt đèn."
+      },
+      { "en": "My roommate needs to lose weight.", "vi": "Bạn cùng phòng của tôi cần giảm cân." },
+      {
+        "en": "My roommate needs to write a report.",
+        "vi": "Bạn cùng phòng của tôi cần viết một báo cáo."
+      },
+      {
+        "en": "My roommate needs to celebrate together.",
+        "vi": "Bạn cùng phòng của tôi cần ăn mừng cùng nhau."
+      },
+      {
+        "en": "My roommate needs to tell the truth.",
+        "vi": "Bạn cùng phòng của tôi cần nói sự thật."
+      },
+      {
+        "en": "My roommate needs to take the exam.",
+        "vi": "Bạn cùng phòng của tôi cần làm bài thi."
+      },
+      {
+        "en": "My roommate needs to go on vacation.",
+        "vi": "Bạn cùng phòng của tôi cần đi nghỉ mát."
+      }
+    ]
+  },
+  {
+    "starter": "My roommate would like to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "My roommate would like to wash the dishes.",
+        "vi": "Bạn cùng phòng của tôi muốn rửa bát."
+      },
+      {
+        "en": "My roommate would like to get a degree.",
+        "vi": "Bạn cùng phòng của tôi muốn lấy bằng."
+      },
+      {
+        "en": "My roommate would like to call a friend.",
+        "vi": "Bạn cùng phòng của tôi muốn gọi cho một người bạn."
+      },
+      {
+        "en": "My roommate would like to catch the train.",
+        "vi": "Bạn cùng phòng của tôi muốn bắt chuyến tàu."
+      },
+      {
+        "en": "My roommate would like to drink more water.",
+        "vi": "Bạn cùng phòng của tôi muốn uống nhiều nước hơn."
+      },
+      {
+        "en": "My roommate would like to rate the service.",
+        "vi": "Bạn cùng phòng của tôi muốn đánh giá dịch vụ."
+      },
+      {
+        "en": "My roommate would like to hire new staff.",
+        "vi": "Bạn cùng phòng của tôi muốn tuyển nhân viên mới."
+      },
+      {
+        "en": "My roommate would like to register for the course.",
+        "vi": "Bạn cùng phòng của tôi muốn đăng ký khóa học."
+      },
+      {
+        "en": "My roommate would like to keep a diary.",
+        "vi": "Bạn cùng phòng của tôi muốn viết nhật ký."
+      },
+      {
+        "en": "My roommate would like to walk the dog.",
+        "vi": "Bạn cùng phòng của tôi muốn dắt chó đi dạo."
+      },
+      {
+        "en": "My roommate would like to ask for a raise.",
+        "vi": "Bạn cùng phòng của tôi muốn xin tăng lương."
+      },
+      {
+        "en": "My roommate would like to call back later.",
+        "vi": "Bạn cùng phòng của tôi muốn gọi lại sau."
+      },
+      {
+        "en": "My roommate would like to volunteer on weekends.",
+        "vi": "Bạn cùng phòng của tôi muốn tình nguyện cuối tuần."
+      },
+      {
+        "en": "My roommate would like to lock the door.",
+        "vi": "Bạn cùng phòng của tôi muốn khóa cửa."
+      },
+      {
+        "en": "My roommate would like to lose weight.",
+        "vi": "Bạn cùng phòng của tôi muốn giảm cân."
+      },
+      {
+        "en": "My roommate would like to keep in touch.",
+        "vi": "Bạn cùng phòng của tôi muốn giữ liên lạc."
+      },
+      {
+        "en": "My roommate would like to manage the schedule.",
+        "vi": "Bạn cùng phòng của tôi muốn quản lý lịch trình."
+      },
+      {
+        "en": "My roommate would like to attend the class.",
+        "vi": "Bạn cùng phòng của tôi muốn tham gia lớp học."
+      },
+      { "en": "My roommate would like to go home.", "vi": "Bạn cùng phòng của tôi muốn về nhà." },
+      {
+        "en": "My roommate would like to take a photo.",
+        "vi": "Bạn cùng phòng của tôi muốn chụp một bức ảnh."
+      },
+      {
+        "en": "My roommate would like to restart the computer.",
+        "vi": "Bạn cùng phòng của tôi muốn khởi động lại máy tính."
+      },
+      {
+        "en": "My roommate would like to play sports.",
+        "vi": "Bạn cùng phòng của tôi muốn chơi thể thao."
+      },
+      {
+        "en": "My roommate would like to ask more questions.",
+        "vi": "Bạn cùng phòng của tôi muốn hỏi nhiều hơn."
+      },
+      {
+        "en": "My roommate would like to take a break.",
+        "vi": "Bạn cùng phòng của tôi muốn nghỉ giải lao."
+      },
+      {
+        "en": "My roommate would like to work as a team.",
+        "vi": "Bạn cùng phòng của tôi muốn làm việc theo nhóm."
+      },
+      {
+        "en": "My roommate would like to answer the phone.",
+        "vi": "Bạn cùng phòng của tôi muốn trả lời điện thoại."
+      },
+      {
+        "en": "My roommate would like to schedule a meeting.",
+        "vi": "Bạn cùng phòng của tôi muốn sắp xếp cuộc họp."
+      },
+      {
+        "en": "My roommate would like to find a job.",
+        "vi": "Bạn cùng phòng của tôi muốn tìm việc làm."
+      },
+      {
+        "en": "My roommate would like to support each other.",
+        "vi": "Bạn cùng phòng của tôi muốn hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "My roommate would like to invite some friends.",
+        "vi": "Bạn cùng phòng của tôi muốn mời vài người bạn."
+      },
+      {
+        "en": "My roommate would like to keep a promise.",
+        "vi": "Bạn cùng phòng của tôi muốn giữ lời hứa."
+      },
+      {
+        "en": "My roommate would like to sign the contract.",
+        "vi": "Bạn cùng phòng của tôi muốn ký hợp đồng."
+      },
+      {
+        "en": "My roommate would like to set an alarm.",
+        "vi": "Bạn cùng phòng của tôi muốn đặt báo thức."
+      },
+      {
+        "en": "My roommate would like to meditate daily.",
+        "vi": "Bạn cùng phòng của tôi muốn thiền mỗi ngày."
+      },
+      {
+        "en": "My roommate would like to meet the deadline.",
+        "vi": "Bạn cùng phòng của tôi muốn kịp thời hạn."
+      },
+      {
+        "en": "My roommate would like to rent a car.",
+        "vi": "Bạn cùng phòng của tôi muốn thuê xe."
+      },
+      {
+        "en": "My roommate would like to reply to the message.",
+        "vi": "Bạn cùng phòng của tôi muốn trả lời tin nhắn."
+      },
+      {
+        "en": "My roommate would like to meet new people.",
+        "vi": "Bạn cùng phòng của tôi muốn gặp gỡ người mới."
+      },
+      {
+        "en": "My roommate would like to practice every day.",
+        "vi": "Bạn cùng phòng của tôi muốn luyện tập mỗi ngày."
+      },
+      {
+        "en": "My roommate would like to take a chance.",
+        "vi": "Bạn cùng phòng của tôi muốn nắm lấy cơ hội."
+      },
+      { "en": "My roommate would like to help out.", "vi": "Bạn cùng phòng của tôi muốn giúp đỡ." },
+      {
+        "en": "My roommate would like to report the bug.",
+        "vi": "Bạn cùng phòng của tôi muốn báo lỗi."
+      },
+      {
+        "en": "My roommate would like to open a business.",
+        "vi": "Bạn cùng phòng của tôi muốn mở một doanh nghiệp."
+      },
+      {
+        "en": "My roommate would like to give it a try.",
+        "vi": "Bạn cùng phòng của tôi muốn thử một lần."
+      },
+      {
+        "en": "My roommate would like to reach the goal.",
+        "vi": "Bạn cùng phòng của tôi muốn đạt mục tiêu."
+      },
+      {
+        "en": "My roommate would like to keep learning.",
+        "vi": "Bạn cùng phòng của tôi muốn tiếp tục học hỏi."
+      },
+      {
+        "en": "My roommate would like to study abroad.",
+        "vi": "Bạn cùng phòng của tôi muốn du học."
+      },
+      {
+        "en": "My roommate would like to think positive.",
+        "vi": "Bạn cùng phòng của tôi muốn suy nghĩ tích cực."
+      },
+      {
+        "en": "My roommate would like to finish on time.",
+        "vi": "Bạn cùng phòng của tôi muốn hoàn thành đúng hạn."
+      },
+      {
+        "en": "My roommate would like to wake up early.",
+        "vi": "Bạn cùng phòng của tôi muốn dậy sớm."
+      },
+      {
+        "en": "My roommate would like to say goodbye.",
+        "vi": "Bạn cùng phòng của tôi muốn nói lời tạm biệt."
+      },
+      {
+        "en": "My roommate would like to clean the house.",
+        "vi": "Bạn cùng phòng của tôi muốn dọn nhà."
+      },
+      {
+        "en": "My roommate would like to grow the business.",
+        "vi": "Bạn cùng phòng của tôi muốn phát triển kinh doanh."
+      },
+      {
+        "en": "My roommate would like to pack my bags.",
+        "vi": "Bạn cùng phòng của tôi muốn xếp hành lý."
+      },
+      {
+        "en": "My roommate would like to sign up today.",
+        "vi": "Bạn cùng phòng của tôi muốn đăng ký hôm nay."
+      },
+      {
+        "en": "My roommate would like to take a day off.",
+        "vi": "Bạn cùng phòng của tôi muốn xin nghỉ một ngày."
+      },
+      {
+        "en": "My roommate would like to explain the situation.",
+        "vi": "Bạn cùng phòng của tôi muốn giải thích tình huống."
+      },
+      {
+        "en": "My roommate would like to ask for help.",
+        "vi": "Bạn cùng phòng của tôi muốn nhờ giúp đỡ."
+      },
+      {
+        "en": "My roommate would like to be on time.",
+        "vi": "Bạn cùng phòng của tôi muốn đến đúng giờ."
+      },
+      {
+        "en": "My roommate would like to try again.",
+        "vi": "Bạn cùng phòng của tôi muốn thử lại."
+      },
+      {
+        "en": "My roommate would like to read more books.",
+        "vi": "Bạn cùng phòng của tôi muốn đọc thêm sách."
+      },
+      {
+        "en": "My roommate would like to set a goal.",
+        "vi": "Bạn cùng phòng của tôi muốn đặt một mục tiêu."
+      },
+      {
+        "en": "My roommate would like to relax at home.",
+        "vi": "Bạn cùng phòng của tôi muốn thư giãn ở nhà."
+      },
+      {
+        "en": "My roommate would like to double-check everything.",
+        "vi": "Bạn cùng phòng của tôi muốn kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "My roommate would like to install the app.",
+        "vi": "Bạn cùng phòng của tôi muốn cài đặt ứng dụng."
+      },
+      {
+        "en": "My roommate would like to book a ticket.",
+        "vi": "Bạn cùng phòng của tôi muốn đặt vé."
+      },
+      {
+        "en": "My roommate would like to fill out the form.",
+        "vi": "Bạn cùng phòng của tôi muốn điền vào biểu mẫu."
+      },
+      {
+        "en": "My roommate would like to start a new project.",
+        "vi": "Bạn cùng phòng của tôi muốn bắt đầu một dự án mới."
+      },
+      {
+        "en": "My roommate would like to train the team.",
+        "vi": "Bạn cùng phòng của tôi muốn đào tạo nhóm."
+      },
+      {
+        "en": "My roommate would like to throw a party.",
+        "vi": "Bạn cùng phòng của tôi muốn tổ chức tiệc."
+      },
+      {
+        "en": "My roommate would like to lead the project.",
+        "vi": "Bạn cùng phòng của tôi muốn dẫn dắt dự án."
+      },
+      {
+        "en": "My roommate would like to drive to work.",
+        "vi": "Bạn cùng phòng của tôi muốn lái xe đi làm."
+      },
+      {
+        "en": "My roommate would like to give feedback.",
+        "vi": "Bạn cùng phòng của tôi muốn góp ý."
+      },
+      {
+        "en": "My roommate would like to order food.",
+        "vi": "Bạn cùng phòng của tôi muốn gọi đồ ăn."
+      },
+      {
+        "en": "My roommate would like to buy a new phone.",
+        "vi": "Bạn cùng phòng của tôi muốn mua điện thoại mới."
+      },
+      {
+        "en": "My roommate would like to do the laundry.",
+        "vi": "Bạn cùng phòng của tôi muốn giặt đồ."
+      },
+      {
+        "en": "My roommate would like to work harder.",
+        "vi": "Bạn cùng phòng của tôi muốn làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "My roommate would like to cook for everyone.",
+        "vi": "Bạn cùng phòng của tôi muốn nấu ăn cho mọi người."
+      },
+      {
+        "en": "My roommate would like to log in again.",
+        "vi": "Bạn cùng phòng của tôi muốn đăng nhập lại."
+      },
+      {
+        "en": "My roommate would like to go on vacation.",
+        "vi": "Bạn cùng phòng của tôi muốn đi nghỉ mát."
+      },
+      {
+        "en": "My roommate would like to make a reservation.",
+        "vi": "Bạn cùng phòng của tôi muốn đặt chỗ trước."
+      },
+      {
+        "en": "My roommate would like to pay the bill.",
+        "vi": "Bạn cùng phòng của tôi muốn thanh toán hóa đơn."
+      },
+      {
+        "en": "My roommate would like to share my opinion.",
+        "vi": "Bạn cùng phòng của tôi muốn chia sẻ ý kiến."
+      },
+      {
+        "en": "My roommate would like to thank everyone.",
+        "vi": "Bạn cùng phòng của tôi muốn cảm ơn mọi người."
+      },
+      {
+        "en": "My roommate would like to win the contract.",
+        "vi": "Bạn cùng phòng của tôi muốn giành hợp đồng."
+      },
+      {
+        "en": "My roommate would like to never give up.",
+        "vi": "Bạn cùng phòng của tôi muốn không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "My roommate would like to stay up late.",
+        "vi": "Bạn cùng phòng của tôi muốn thức khuya."
+      },
+      {
+        "en": "My roommate would like to make a plan.",
+        "vi": "Bạn cùng phòng của tôi muốn lập một kế hoạch."
+      },
+      {
+        "en": "My roommate would like to breathe deeply.",
+        "vi": "Bạn cùng phòng của tôi muốn hít thở sâu."
+      },
+      {
+        "en": "My roommate would like to help a neighbor.",
+        "vi": "Bạn cùng phòng của tôi muốn giúp một người hàng xóm."
+      },
+      {
+        "en": "My roommate would like to speak English.",
+        "vi": "Bạn cùng phòng của tôi muốn nói tiếng Anh."
+      },
+      {
+        "en": "My roommate would like to print the document.",
+        "vi": "Bạn cùng phòng của tôi muốn in tài liệu."
+      },
+      {
+        "en": "My roommate would like to prepare the presentation.",
+        "vi": "Bạn cùng phòng của tôi muốn chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "My roommate would like to watch the game.",
+        "vi": "Bạn cùng phòng của tôi muốn xem trận đấu."
+      },
+      {
+        "en": "My roommate would like to cook dinner.",
+        "vi": "Bạn cùng phòng của tôi muốn nấu bữa tối."
+      },
+      {
+        "en": "My roommate would like to improve my skills.",
+        "vi": "Bạn cùng phòng của tôi muốn cải thiện kỹ năng."
+      },
+      {
+        "en": "My roommate would like to read the news.",
+        "vi": "Bạn cùng phòng của tôi muốn đọc tin tức."
+      },
+      {
+        "en": "My roommate would like to solve this issue.",
+        "vi": "Bạn cùng phòng của tôi muốn giải quyết vấn đề này."
+      },
+      {
+        "en": "My roommate would like to arrive on time.",
+        "vi": "Bạn cùng phòng của tôi muốn đến đúng giờ."
+      },
+      {
+        "en": "My roommate would like to take the bus.",
+        "vi": "Bạn cùng phòng của tôi muốn đi xe buýt."
+      }
+    ]
+  },
+  {
+    "starter": "My roommate loves to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "My roommate loves to join the meeting.",
+        "vi": "Bạn cùng phòng của tôi thích tham gia cuộc họp."
+      },
+      { "en": "My roommate loves to give feedback.", "vi": "Bạn cùng phòng của tôi thích góp ý." },
+      {
+        "en": "My roommate loves to close the deal.",
+        "vi": "Bạn cùng phòng của tôi thích chốt thỏa thuận."
+      },
+      {
+        "en": "My roommate loves to download the file.",
+        "vi": "Bạn cùng phòng của tôi thích tải tệp xuống."
+      },
+      { "en": "My roommate loves to stay home.", "vi": "Bạn cùng phòng của tôi thích ở nhà." },
+      {
+        "en": "My roommate loves to submit the form.",
+        "vi": "Bạn cùng phòng của tôi thích nộp biểu mẫu."
+      },
+      {
+        "en": "My roommate loves to exercise every day.",
+        "vi": "Bạn cùng phòng của tôi thích tập thể dục mỗi ngày."
+      },
+      {
+        "en": "My roommate loves to scan the receipt.",
+        "vi": "Bạn cùng phòng của tôi thích quét hóa đơn."
+      },
+      {
+        "en": "My roommate loves to keep a diary.",
+        "vi": "Bạn cùng phòng của tôi thích viết nhật ký."
+      },
+      {
+        "en": "My roommate loves to plan a trip.",
+        "vi": "Bạn cùng phòng của tôi thích lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "My roommate loves to open a savings account.",
+        "vi": "Bạn cùng phòng của tôi thích mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "My roommate loves to join a club.",
+        "vi": "Bạn cùng phòng của tôi thích tham gia câu lạc bộ."
+      },
+      {
+        "en": "My roommate loves to listen carefully.",
+        "vi": "Bạn cùng phòng của tôi thích lắng nghe cẩn thận."
+      },
+      {
+        "en": "My roommate loves to rate the service.",
+        "vi": "Bạn cùng phòng của tôi thích đánh giá dịch vụ."
+      },
+      {
+        "en": "My roommate loves to train the team.",
+        "vi": "Bạn cùng phòng của tôi thích đào tạo nhóm."
+      },
+      {
+        "en": "My roommate loves to offer support.",
+        "vi": "Bạn cùng phòng của tôi thích đề nghị hỗ trợ."
+      },
+      {
+        "en": "My roommate loves to print the document.",
+        "vi": "Bạn cùng phòng của tôi thích in tài liệu."
+      },
+      {
+        "en": "My roommate loves to lower the cost.",
+        "vi": "Bạn cùng phòng của tôi thích giảm chi phí."
+      },
+      { "en": "My roommate loves to rent a car.", "vi": "Bạn cùng phòng của tôi thích thuê xe." },
+      {
+        "en": "My roommate loves to take a day off.",
+        "vi": "Bạn cùng phòng của tôi thích xin nghỉ một ngày."
+      },
+      {
+        "en": "My roommate loves to go on vacation.",
+        "vi": "Bạn cùng phòng của tôi thích đi nghỉ mát."
+      },
+      {
+        "en": "My roommate loves to thank everyone.",
+        "vi": "Bạn cùng phòng của tôi thích cảm ơn mọi người."
+      },
+      {
+        "en": "My roommate loves to attend the workshop.",
+        "vi": "Bạn cùng phòng của tôi thích tham dự buổi hội thảo."
+      },
+      {
+        "en": "My roommate loves to make a reservation.",
+        "vi": "Bạn cùng phòng của tôi thích đặt chỗ trước."
+      },
+      {
+        "en": "My roommate loves to negotiate the terms.",
+        "vi": "Bạn cùng phòng của tôi thích thương lượng điều khoản."
+      },
+      {
+        "en": "My roommate loves to do the laundry.",
+        "vi": "Bạn cùng phòng của tôi thích giặt đồ."
+      },
+      {
+        "en": "My roommate loves to help the team.",
+        "vi": "Bạn cùng phòng của tôi thích giúp đỡ nhóm."
+      },
+      {
+        "en": "My roommate loves to finish the report.",
+        "vi": "Bạn cùng phòng của tôi thích hoàn thành báo cáo."
+      },
+      {
+        "en": "My roommate loves to find a job.",
+        "vi": "Bạn cùng phòng của tôi thích tìm việc làm."
+      },
+      {
+        "en": "My roommate loves to change careers.",
+        "vi": "Bạn cùng phòng của tôi thích chuyển nghề."
+      },
+      {
+        "en": "My roommate loves to work harder.",
+        "vi": "Bạn cùng phòng của tôi thích làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "My roommate loves to move forward.",
+        "vi": "Bạn cùng phòng của tôi thích tiến về phía trước."
+      },
+      {
+        "en": "My roommate loves to sign the contract.",
+        "vi": "Bạn cùng phòng của tôi thích ký hợp đồng."
+      },
+      {
+        "en": "My roommate loves to read more books.",
+        "vi": "Bạn cùng phòng của tôi thích đọc thêm sách."
+      },
+      {
+        "en": "My roommate loves to launch the product.",
+        "vi": "Bạn cùng phòng của tôi thích ra mắt sản phẩm."
+      },
+      {
+        "en": "My roommate loves to take a photo.",
+        "vi": "Bạn cùng phòng của tôi thích chụp một bức ảnh."
+      },
+      {
+        "en": "My roommate loves to wait a moment.",
+        "vi": "Bạn cùng phòng của tôi thích chờ một chút."
+      },
+      {
+        "en": "My roommate loves to play sports.",
+        "vi": "Bạn cùng phòng của tôi thích chơi thể thao."
+      },
+      {
+        "en": "My roommate loves to support each other.",
+        "vi": "Bạn cùng phòng của tôi thích hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "My roommate loves to fill out the form.",
+        "vi": "Bạn cùng phòng của tôi thích điền vào biểu mẫu."
+      },
+      { "en": "My roommate loves to go for a walk.", "vi": "Bạn cùng phòng của tôi thích đi dạo." },
+      {
+        "en": "My roommate loves to hire new staff.",
+        "vi": "Bạn cùng phòng của tôi thích tuyển nhân viên mới."
+      },
+      { "en": "My roommate loves to book a ticket.", "vi": "Bạn cùng phòng của tôi thích đặt vé." },
+      {
+        "en": "My roommate loves to make a decision.",
+        "vi": "Bạn cùng phòng của tôi thích đưa ra quyết định."
+      },
+      {
+        "en": "My roommate loves to write it down.",
+        "vi": "Bạn cùng phòng của tôi thích ghi nó lại."
+      },
+      {
+        "en": "My roommate loves to quit smoking.",
+        "vi": "Bạn cùng phòng của tôi thích bỏ thuốc lá."
+      },
+      {
+        "en": "My roommate loves to raise the price.",
+        "vi": "Bạn cùng phòng của tôi thích tăng giá."
+      },
+      {
+        "en": "My roommate loves to cook breakfast.",
+        "vi": "Bạn cùng phòng của tôi thích nấu bữa sáng."
+      },
+      {
+        "en": "My roommate loves to reset the password.",
+        "vi": "Bạn cùng phòng của tôi thích đặt lại mật khẩu."
+      },
+      {
+        "en": "My roommate loves to update the software.",
+        "vi": "Bạn cùng phòng của tôi thích cập nhật phần mềm."
+      },
+      { "en": "My roommate loves to try again.", "vi": "Bạn cùng phòng của tôi thích thử lại." },
+      { "en": "My roommate loves to make tea.", "vi": "Bạn cùng phòng của tôi thích pha trà." },
+      {
+        "en": "My roommate loves to talk to the manager.",
+        "vi": "Bạn cùng phòng của tôi thích nói chuyện với quản lý."
+      },
+      {
+        "en": "My roommate loves to cook dinner.",
+        "vi": "Bạn cùng phòng của tôi thích nấu bữa tối."
+      },
+      {
+        "en": "My roommate loves to report the bug.",
+        "vi": "Bạn cùng phòng của tôi thích báo lỗi."
+      },
+      {
+        "en": "My roommate loves to celebrate together.",
+        "vi": "Bạn cùng phòng của tôi thích ăn mừng cùng nhau."
+      },
+      {
+        "en": "My roommate loves to reach the goal.",
+        "vi": "Bạn cùng phòng của tôi thích đạt mục tiêu."
+      },
+      {
+        "en": "My roommate loves to fix the problem.",
+        "vi": "Bạn cùng phòng của tôi thích sửa vấn đề."
+      },
+      {
+        "en": "My roommate loves to take a chance.",
+        "vi": "Bạn cùng phòng của tôi thích nắm lấy cơ hội."
+      },
+      {
+        "en": "My roommate loves to learn English.",
+        "vi": "Bạn cùng phòng của tôi thích học tiếng Anh."
+      },
+      {
+        "en": "My roommate loves to back up the data.",
+        "vi": "Bạn cùng phòng của tôi thích sao lưu dữ liệu."
+      },
+      {
+        "en": "My roommate loves to ask for a raise.",
+        "vi": "Bạn cùng phòng của tôi thích xin tăng lương."
+      },
+      {
+        "en": "My roommate loves to turn off the light.",
+        "vi": "Bạn cùng phòng của tôi thích tắt đèn."
+      },
+      {
+        "en": "My roommate loves to listen to music.",
+        "vi": "Bạn cùng phòng của tôi thích nghe nhạc."
+      },
+      {
+        "en": "My roommate loves to solve this issue.",
+        "vi": "Bạn cùng phòng của tôi thích giải quyết vấn đề này."
+      },
+      {
+        "en": "My roommate loves to drink more water.",
+        "vi": "Bạn cùng phòng của tôi thích uống nhiều nước hơn."
+      },
+      {
+        "en": "My roommate loves to call back later.",
+        "vi": "Bạn cùng phòng của tôi thích gọi lại sau."
+      },
+      {
+        "en": "My roommate loves to invest wisely.",
+        "vi": "Bạn cùng phòng của tôi thích đầu tư khôn ngoan."
+      },
+      {
+        "en": "My roommate loves to never give up.",
+        "vi": "Bạn cùng phòng của tôi thích không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "My roommate loves to cheer for the team.",
+        "vi": "Bạn cùng phòng của tôi thích cổ vũ cho đội."
+      },
+      {
+        "en": "My roommate loves to reply to the message.",
+        "vi": "Bạn cùng phòng của tôi thích trả lời tin nhắn."
+      },
+      {
+        "en": "My roommate loves to confirm the booking.",
+        "vi": "Bạn cùng phòng của tôi thích xác nhận đặt chỗ."
+      },
+      {
+        "en": "My roommate loves to install the app.",
+        "vi": "Bạn cùng phòng của tôi thích cài đặt ứng dụng."
+      },
+      {
+        "en": "My roommate loves to pack my bags.",
+        "vi": "Bạn cùng phòng của tôi thích xếp hành lý."
+      },
+      {
+        "en": "My roommate loves to register for the course.",
+        "vi": "Bạn cùng phòng của tôi thích đăng ký khóa học."
+      },
+      {
+        "en": "My roommate loves to double-check everything.",
+        "vi": "Bạn cùng phòng của tôi thích kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "My roommate loves to drive to work.",
+        "vi": "Bạn cùng phòng của tôi thích lái xe đi làm."
+      },
+      {
+        "en": "My roommate loves to win the contract.",
+        "vi": "Bạn cùng phòng của tôi thích giành hợp đồng."
+      },
+      {
+        "en": "My roommate loves to take a rest.",
+        "vi": "Bạn cùng phòng của tôi thích nghỉ ngơi."
+      },
+      {
+        "en": "My roommate loves to throw a party.",
+        "vi": "Bạn cùng phòng của tôi thích tổ chức tiệc."
+      },
+      {
+        "en": "My roommate loves to learn something new.",
+        "vi": "Bạn cùng phòng của tôi thích học điều gì đó mới."
+      },
+      {
+        "en": "My roommate loves to pass the exam.",
+        "vi": "Bạn cùng phòng của tôi thích đậu kỳ thi."
+      },
+      {
+        "en": "My roommate loves to check the details.",
+        "vi": "Bạn cùng phòng của tôi thích kiểm tra chi tiết."
+      },
+      {
+        "en": "My roommate loves to speak clearly.",
+        "vi": "Bạn cùng phòng của tôi thích nói rõ ràng."
+      },
+      {
+        "en": "My roommate loves to breathe deeply.",
+        "vi": "Bạn cùng phòng của tôi thích hít thở sâu."
+      },
+      {
+        "en": "My roommate loves to work as a team.",
+        "vi": "Bạn cùng phòng của tôi thích làm việc theo nhóm."
+      },
+      {
+        "en": "My roommate loves to book a hotel.",
+        "vi": "Bạn cùng phòng của tôi thích đặt khách sạn."
+      },
+      {
+        "en": "My roommate loves to cut expenses.",
+        "vi": "Bạn cùng phòng của tôi thích cắt giảm chi tiêu."
+      },
+      {
+        "en": "My roommate loves to visit my family.",
+        "vi": "Bạn cùng phòng của tôi thích thăm gia đình."
+      },
+      {
+        "en": "My roommate loves to get some rest.",
+        "vi": "Bạn cùng phòng của tôi thích nghỉ ngơi một chút."
+      },
+      {
+        "en": "My roommate loves to calm down.",
+        "vi": "Bạn cùng phòng của tôi thích bình tĩnh lại."
+      },
+      { "en": "My roommate loves to take notes.", "vi": "Bạn cùng phòng của tôi thích ghi chép." },
+      {
+        "en": "My roommate loves to understand the lesson.",
+        "vi": "Bạn cùng phòng của tôi thích hiểu bài học."
+      },
+      {
+        "en": "My roommate loves to schedule a meeting.",
+        "vi": "Bạn cùng phòng của tôi thích sắp xếp cuộc họp."
+      },
+      {
+        "en": "My roommate loves to take the exam.",
+        "vi": "Bạn cùng phòng của tôi thích làm bài thi."
+      },
+      {
+        "en": "My roommate loves to improve my skills.",
+        "vi": "Bạn cùng phòng của tôi thích cải thiện kỹ năng."
+      },
+      {
+        "en": "My roommate loves to walk the dog.",
+        "vi": "Bạn cùng phòng của tôi thích dắt chó đi dạo."
+      },
+      {
+        "en": "My roommate loves to say goodbye.",
+        "vi": "Bạn cùng phòng của tôi thích nói lời tạm biệt."
+      },
+      {
+        "en": "My roommate loves to meet the deadline.",
+        "vi": "Bạn cùng phòng của tôi thích kịp thời hạn."
+      },
+      { "en": "My roommate loves to leave early.", "vi": "Bạn cùng phòng của tôi thích về sớm." }
+    ]
+  },
+  {
+    "starter": "My roommate can",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "My roommate can pay off the loan.",
+        "vi": "Bạn cùng phòng của tôi có thể trả hết khoản vay."
+      },
+      {
+        "en": "My roommate can make a decision.",
+        "vi": "Bạn cùng phòng của tôi có thể đưa ra quyết định."
+      },
+      { "en": "My roommate can stay home.", "vi": "Bạn cùng phòng của tôi có thể ở nhà." },
+      { "en": "My roommate can calm down.", "vi": "Bạn cùng phòng của tôi có thể bình tĩnh lại." },
+      {
+        "en": "My roommate can follow the rules.",
+        "vi": "Bạn cùng phòng của tôi có thể tuân theo quy tắc."
+      },
+      { "en": "My roommate can sleep early.", "vi": "Bạn cùng phòng của tôi có thể ngủ sớm." },
+      {
+        "en": "My roommate can change the plan.",
+        "vi": "Bạn cùng phòng của tôi có thể thay đổi kế hoạch."
+      },
+      { "en": "My roommate can take the bus.", "vi": "Bạn cùng phòng của tôi có thể đi xe buýt." },
+      {
+        "en": "My roommate can speak English.",
+        "vi": "Bạn cùng phòng của tôi có thể nói tiếng Anh."
+      },
+      {
+        "en": "My roommate can answer the phone.",
+        "vi": "Bạn cùng phòng của tôi có thể trả lời điện thoại."
+      },
+      {
+        "en": "My roommate can meet the deadline.",
+        "vi": "Bạn cùng phòng của tôi có thể kịp thời hạn."
+      },
+      {
+        "en": "My roommate can train the team.",
+        "vi": "Bạn cùng phòng của tôi có thể đào tạo nhóm."
+      },
+      {
+        "en": "My roommate can join the meeting.",
+        "vi": "Bạn cùng phòng của tôi có thể tham gia cuộc họp."
+      },
+      {
+        "en": "My roommate can set a goal.",
+        "vi": "Bạn cùng phòng của tôi có thể đặt một mục tiêu."
+      },
+      {
+        "en": "My roommate can keep a diary.",
+        "vi": "Bạn cùng phòng của tôi có thể viết nhật ký."
+      },
+      {
+        "en": "My roommate can close the deal.",
+        "vi": "Bạn cùng phòng của tôi có thể chốt thỏa thuận."
+      },
+      {
+        "en": "My roommate can share my opinion.",
+        "vi": "Bạn cùng phòng của tôi có thể chia sẻ ý kiến."
+      },
+      {
+        "en": "My roommate can ask a question.",
+        "vi": "Bạn cùng phòng của tôi có thể hỏi một câu."
+      },
+      {
+        "en": "My roommate can donate to charity.",
+        "vi": "Bạn cùng phòng của tôi có thể quyên góp từ thiện."
+      },
+      { "en": "My roommate can lock the door.", "vi": "Bạn cùng phòng của tôi có thể khóa cửa." },
+      {
+        "en": "My roommate can reset the password.",
+        "vi": "Bạn cùng phòng của tôi có thể đặt lại mật khẩu."
+      },
+      { "en": "My roommate can learn to swim.", "vi": "Bạn cùng phòng của tôi có thể học bơi." },
+      {
+        "en": "My roommate can ask more questions.",
+        "vi": "Bạn cùng phòng của tôi có thể hỏi nhiều hơn."
+      },
+      { "en": "My roommate can be on time.", "vi": "Bạn cùng phòng của tôi có thể đến đúng giờ." },
+      {
+        "en": "My roommate can say sorry.",
+        "vi": "Bạn cùng phòng của tôi có thể nói lời xin lỗi."
+      },
+      {
+        "en": "My roommate can confirm the booking.",
+        "vi": "Bạn cùng phòng của tôi có thể xác nhận đặt chỗ."
+      },
+      { "en": "My roommate can give feedback.", "vi": "Bạn cùng phòng của tôi có thể góp ý." },
+      {
+        "en": "My roommate can lower the cost.",
+        "vi": "Bạn cùng phòng của tôi có thể giảm chi phí."
+      },
+      {
+        "en": "My roommate can fill out the form.",
+        "vi": "Bạn cùng phòng của tôi có thể điền vào biểu mẫu."
+      },
+      {
+        "en": "My roommate can make a plan.",
+        "vi": "Bạn cùng phòng của tôi có thể lập một kế hoạch."
+      },
+      {
+        "en": "My roommate can support each other.",
+        "vi": "Bạn cùng phòng của tôi có thể hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "My roommate can cook breakfast.",
+        "vi": "Bạn cùng phòng của tôi có thể nấu bữa sáng."
+      },
+      {
+        "en": "My roommate can listen to music.",
+        "vi": "Bạn cùng phòng của tôi có thể nghe nhạc."
+      },
+      {
+        "en": "My roommate can leave a comment.",
+        "vi": "Bạn cùng phòng của tôi có thể để lại bình luận."
+      },
+      {
+        "en": "My roommate can celebrate together.",
+        "vi": "Bạn cùng phòng của tôi có thể ăn mừng cùng nhau."
+      },
+      {
+        "en": "My roommate can apply for the position.",
+        "vi": "Bạn cùng phòng của tôi có thể nộp đơn cho vị trí."
+      },
+      {
+        "en": "My roommate can copy the link.",
+        "vi": "Bạn cùng phòng của tôi có thể sao chép liên kết."
+      },
+      {
+        "en": "My roommate can check the details.",
+        "vi": "Bạn cùng phòng của tôi có thể kiểm tra chi tiết."
+      },
+      {
+        "en": "My roommate can meet new people.",
+        "vi": "Bạn cùng phòng của tôi có thể gặp gỡ người mới."
+      },
+      {
+        "en": "My roommate can talk to the manager.",
+        "vi": "Bạn cùng phòng của tôi có thể nói chuyện với quản lý."
+      },
+      {
+        "en": "My roommate can move forward.",
+        "vi": "Bạn cùng phòng của tôi có thể tiến về phía trước."
+      },
+      { "en": "My roommate can write it down.", "vi": "Bạn cùng phòng của tôi có thể ghi nó lại." },
+      { "en": "My roommate can send the email.", "vi": "Bạn cùng phòng của tôi có thể gửi email." },
+      {
+        "en": "My roommate can go on vacation.",
+        "vi": "Bạn cùng phòng của tôi có thể đi nghỉ mát."
+      },
+      {
+        "en": "My roommate can get a promotion.",
+        "vi": "Bạn cùng phòng của tôi có thể được thăng chức."
+      },
+      {
+        "en": "My roommate can double-check the numbers.",
+        "vi": "Bạn cùng phòng của tôi có thể kiểm tra lại các con số."
+      },
+      {
+        "en": "My roommate can throw a party.",
+        "vi": "Bạn cùng phòng của tôi có thể tổ chức tiệc."
+      },
+      {
+        "en": "My roommate can listen carefully.",
+        "vi": "Bạn cùng phòng của tôi có thể lắng nghe cẩn thận."
+      },
+      {
+        "en": "My roommate can save for the future.",
+        "vi": "Bạn cùng phòng của tôi có thể tiết kiệm cho tương lai."
+      },
+      {
+        "en": "My roommate can double-check everything.",
+        "vi": "Bạn cùng phòng của tôi có thể kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "My roommate can cut the budget.",
+        "vi": "Bạn cùng phòng của tôi có thể cắt giảm ngân sách."
+      },
+      {
+        "en": "My roommate can take a chance.",
+        "vi": "Bạn cùng phòng của tôi có thể nắm lấy cơ hội."
+      },
+      {
+        "en": "My roommate can drink more water.",
+        "vi": "Bạn cùng phòng của tôi có thể uống nhiều nước hơn."
+      },
+      {
+        "en": "My roommate can log in again.",
+        "vi": "Bạn cùng phòng của tôi có thể đăng nhập lại."
+      },
+      {
+        "en": "My roommate can read the news.",
+        "vi": "Bạn cùng phòng của tôi có thể đọc tin tức."
+      },
+      {
+        "en": "My roommate can open a business.",
+        "vi": "Bạn cùng phòng của tôi có thể mở một doanh nghiệp."
+      },
+      {
+        "en": "My roommate can ask for a raise.",
+        "vi": "Bạn cùng phòng của tôi có thể xin tăng lương."
+      },
+      {
+        "en": "My roommate can learn English.",
+        "vi": "Bạn cùng phòng của tôi có thể học tiếng Anh."
+      },
+      {
+        "en": "My roommate can understand the lesson.",
+        "vi": "Bạn cùng phòng của tôi có thể hiểu bài học."
+      },
+      {
+        "en": "My roommate can negotiate the terms.",
+        "vi": "Bạn cùng phòng của tôi có thể thương lượng điều khoản."
+      },
+      { "en": "My roommate can help out.", "vi": "Bạn cùng phòng của tôi có thể giúp đỡ." },
+      {
+        "en": "My roommate can think positive.",
+        "vi": "Bạn cùng phòng của tôi có thể suy nghĩ tích cực."
+      },
+      {
+        "en": "My roommate can plan ahead.",
+        "vi": "Bạn cùng phòng của tôi có thể lên kế hoạch trước."
+      },
+      {
+        "en": "My roommate can grow the business.",
+        "vi": "Bạn cùng phòng của tôi có thể phát triển kinh doanh."
+      },
+      { "en": "My roommate can do the laundry.", "vi": "Bạn cùng phòng của tôi có thể giặt đồ." },
+      { "en": "My roommate can report the bug.", "vi": "Bạn cùng phòng của tôi có thể báo lỗi." },
+      {
+        "en": "My roommate can attend the class.",
+        "vi": "Bạn cùng phòng của tôi có thể tham gia lớp học."
+      },
+      {
+        "en": "My roommate can invest wisely.",
+        "vi": "Bạn cùng phòng của tôi có thể đầu tư khôn ngoan."
+      },
+      { "en": "My roommate can wash the dishes.", "vi": "Bạn cùng phòng của tôi có thể rửa bát." },
+      {
+        "en": "My roommate can work as a team.",
+        "vi": "Bạn cùng phòng của tôi có thể làm việc theo nhóm."
+      },
+      {
+        "en": "My roommate can install the app.",
+        "vi": "Bạn cùng phòng của tôi có thể cài đặt ứng dụng."
+      },
+      { "en": "My roommate can ask for help.", "vi": "Bạn cùng phòng của tôi có thể nhờ giúp đỡ." },
+      {
+        "en": "My roommate can read more books.",
+        "vi": "Bạn cùng phòng của tôi có thể đọc thêm sách."
+      },
+      {
+        "en": "My roommate can improve my skills.",
+        "vi": "Bạn cùng phòng của tôi có thể cải thiện kỹ năng."
+      },
+      {
+        "en": "My roommate can stay organized.",
+        "vi": "Bạn cùng phòng của tôi có thể giữ ngăn nắp."
+      },
+      {
+        "en": "My roommate can open a savings account.",
+        "vi": "Bạn cùng phòng của tôi có thể mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "My roommate can buy a new phone.",
+        "vi": "Bạn cùng phòng của tôi có thể mua điện thoại mới."
+      },
+      { "en": "My roommate can take medicine.", "vi": "Bạn cùng phòng của tôi có thể uống thuốc." },
+      {
+        "en": "My roommate can test the feature.",
+        "vi": "Bạn cùng phòng của tôi có thể kiểm thử tính năng."
+      },
+      { "en": "My roommate can get a degree.", "vi": "Bạn cùng phòng của tôi có thể lấy bằng." },
+      {
+        "en": "My roommate can cheer for the team.",
+        "vi": "Bạn cùng phòng của tôi có thể cổ vũ cho đội."
+      },
+      {
+        "en": "My roommate can call a friend.",
+        "vi": "Bạn cùng phòng của tôi có thể gọi cho một người bạn."
+      },
+      {
+        "en": "My roommate can manage the schedule.",
+        "vi": "Bạn cùng phòng của tôi có thể quản lý lịch trình."
+      },
+      {
+        "en": "My roommate can update the software.",
+        "vi": "Bạn cùng phòng của tôi có thể cập nhật phần mềm."
+      },
+      {
+        "en": "My roommate can book a hotel.",
+        "vi": "Bạn cùng phòng của tôi có thể đặt khách sạn."
+      },
+      {
+        "en": "My roommate can invite some friends.",
+        "vi": "Bạn cùng phòng của tôi có thể mời vài người bạn."
+      },
+      {
+        "en": "My roommate can meditate daily.",
+        "vi": "Bạn cùng phòng của tôi có thể thiền mỗi ngày."
+      },
+      { "en": "My roommate can try again.", "vi": "Bạn cùng phòng của tôi có thể thử lại." },
+      {
+        "en": "My roommate can keep in touch.",
+        "vi": "Bạn cùng phòng của tôi có thể giữ liên lạc."
+      },
+      { "en": "My roommate can leave early.", "vi": "Bạn cùng phòng của tôi có thể về sớm." },
+      { "en": "My roommate can take it easy.", "vi": "Bạn cùng phòng của tôi có thể thư giãn." },
+      {
+        "en": "My roommate can solve this issue.",
+        "vi": "Bạn cùng phòng của tôi có thể giải quyết vấn đề này."
+      },
+      {
+        "en": "My roommate can take a break.",
+        "vi": "Bạn cùng phòng của tôi có thể nghỉ giải lao."
+      },
+      {
+        "en": "My roommate can cook for everyone.",
+        "vi": "Bạn cùng phòng của tôi có thể nấu ăn cho mọi người."
+      },
+      {
+        "en": "My roommate can never give up.",
+        "vi": "Bạn cùng phòng của tôi có thể không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "My roommate can keep learning.",
+        "vi": "Bạn cùng phòng của tôi có thể tiếp tục học hỏi."
+      },
+      {
+        "en": "My roommate can reach the goal.",
+        "vi": "Bạn cùng phòng của tôi có thể đạt mục tiêu."
+      },
+      {
+        "en": "My roommate can restart the computer.",
+        "vi": "Bạn cùng phòng của tôi có thể khởi động lại máy tính."
+      },
+      {
+        "en": "My roommate can charge the phone.",
+        "vi": "Bạn cùng phòng của tôi có thể sạc điện thoại."
+      },
+      { "en": "My roommate can quit smoking.", "vi": "Bạn cùng phòng của tôi có thể bỏ thuốc lá." }
+    ]
+  },
+  {
+    "starter": "My roommate can't",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "My roommate can't double-check everything.",
+        "vi": "Bạn cùng phòng của tôi không thể kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "My roommate can't lead the project.",
+        "vi": "Bạn cùng phòng của tôi không thể dẫn dắt dự án."
+      },
+      {
+        "en": "My roommate can't double-check the numbers.",
+        "vi": "Bạn cùng phòng của tôi không thể kiểm tra lại các con số."
+      },
+      {
+        "en": "My roommate can't offer support.",
+        "vi": "Bạn cùng phòng của tôi không thể đề nghị hỗ trợ."
+      },
+      {
+        "en": "My roommate can't change the plan.",
+        "vi": "Bạn cùng phòng của tôi không thể thay đổi kế hoạch."
+      },
+      {
+        "en": "My roommate can't think positive.",
+        "vi": "Bạn cùng phòng của tôi không thể suy nghĩ tích cực."
+      },
+      {
+        "en": "My roommate can't manage the schedule.",
+        "vi": "Bạn cùng phòng của tôi không thể quản lý lịch trình."
+      },
+      {
+        "en": "My roommate can't buy groceries.",
+        "vi": "Bạn cùng phòng của tôi không thể mua thực phẩm."
+      },
+      {
+        "en": "My roommate can't say sorry.",
+        "vi": "Bạn cùng phòng của tôi không thể nói lời xin lỗi."
+      },
+      {
+        "en": "My roommate can't keep a diary.",
+        "vi": "Bạn cùng phòng của tôi không thể viết nhật ký."
+      },
+      {
+        "en": "My roommate can't give it a try.",
+        "vi": "Bạn cùng phòng của tôi không thể thử một lần."
+      },
+      { "en": "My roommate can't rent a car.", "vi": "Bạn cùng phòng của tôi không thể thuê xe." },
+      {
+        "en": "My roommate can't play sports.",
+        "vi": "Bạn cùng phòng của tôi không thể chơi thể thao."
+      },
+      {
+        "en": "My roommate can't take the exam.",
+        "vi": "Bạn cùng phòng của tôi không thể làm bài thi."
+      },
+      {
+        "en": "My roommate can't turn off the light.",
+        "vi": "Bạn cùng phòng của tôi không thể tắt đèn."
+      },
+      {
+        "en": "My roommate can't help the team.",
+        "vi": "Bạn cùng phòng của tôi không thể giúp đỡ nhóm."
+      },
+      {
+        "en": "My roommate can't restart the computer.",
+        "vi": "Bạn cùng phòng của tôi không thể khởi động lại máy tính."
+      },
+      {
+        "en": "My roommate can't book a hotel.",
+        "vi": "Bạn cùng phòng của tôi không thể đặt khách sạn."
+      },
+      {
+        "en": "My roommate can't attend the workshop.",
+        "vi": "Bạn cùng phòng của tôi không thể tham dự buổi hội thảo."
+      },
+      {
+        "en": "My roommate can't quit smoking.",
+        "vi": "Bạn cùng phòng của tôi không thể bỏ thuốc lá."
+      },
+      {
+        "en": "My roommate can't cook dinner.",
+        "vi": "Bạn cùng phòng của tôi không thể nấu bữa tối."
+      },
+      {
+        "en": "My roommate can't send the email.",
+        "vi": "Bạn cùng phòng của tôi không thể gửi email."
+      },
+      {
+        "en": "My roommate can't rate the service.",
+        "vi": "Bạn cùng phòng của tôi không thể đánh giá dịch vụ."
+      },
+      {
+        "en": "My roommate can't arrive on time.",
+        "vi": "Bạn cùng phòng của tôi không thể đến đúng giờ."
+      },
+      {
+        "en": "My roommate can't launch the product.",
+        "vi": "Bạn cùng phòng của tôi không thể ra mắt sản phẩm."
+      },
+      {
+        "en": "My roommate can't meditate daily.",
+        "vi": "Bạn cùng phòng của tôi không thể thiền mỗi ngày."
+      },
+      {
+        "en": "My roommate can't think it over.",
+        "vi": "Bạn cùng phòng của tôi không thể suy nghĩ kỹ."
+      },
+      {
+        "en": "My roommate can't stay up late.",
+        "vi": "Bạn cùng phòng của tôi không thể thức khuya."
+      },
+      {
+        "en": "My roommate can't watch the game.",
+        "vi": "Bạn cùng phòng của tôi không thể xem trận đấu."
+      },
+      {
+        "en": "My roommate can't improve my skills.",
+        "vi": "Bạn cùng phòng của tôi không thể cải thiện kỹ năng."
+      },
+      { "en": "My roommate can't ride a bike.", "vi": "Bạn cùng phòng của tôi không thể đạp xe." },
+      {
+        "en": "My roommate can't order food.",
+        "vi": "Bạn cùng phòng của tôi không thể gọi đồ ăn."
+      },
+      {
+        "en": "My roommate can't relax at home.",
+        "vi": "Bạn cùng phòng của tôi không thể thư giãn ở nhà."
+      },
+      {
+        "en": "My roommate can't share my opinion.",
+        "vi": "Bạn cùng phòng của tôi không thể chia sẻ ý kiến."
+      },
+      {
+        "en": "My roommate can't learn something new.",
+        "vi": "Bạn cùng phòng của tôi không thể học điều gì đó mới."
+      },
+      {
+        "en": "My roommate can't enjoy the weekend.",
+        "vi": "Bạn cùng phòng của tôi không thể tận hưởng cuối tuần."
+      },
+      {
+        "en": "My roommate can't ask a question.",
+        "vi": "Bạn cùng phòng của tôi không thể hỏi một câu."
+      },
+      {
+        "en": "My roommate can't drink more water.",
+        "vi": "Bạn cùng phòng của tôi không thể uống nhiều nước hơn."
+      },
+      {
+        "en": "My roommate can't find a job.",
+        "vi": "Bạn cùng phòng của tôi không thể tìm việc làm."
+      },
+      {
+        "en": "My roommate can't take a photo.",
+        "vi": "Bạn cùng phòng của tôi không thể chụp một bức ảnh."
+      },
+      {
+        "en": "My roommate can't set a goal.",
+        "vi": "Bạn cùng phòng của tôi không thể đặt một mục tiêu."
+      },
+      {
+        "en": "My roommate can't support each other.",
+        "vi": "Bạn cùng phòng của tôi không thể hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "My roommate can't cut the budget.",
+        "vi": "Bạn cùng phòng của tôi không thể cắt giảm ngân sách."
+      },
+      {
+        "en": "My roommate can't cheer for the team.",
+        "vi": "Bạn cùng phòng của tôi không thể cổ vũ cho đội."
+      },
+      {
+        "en": "My roommate can't thank everyone.",
+        "vi": "Bạn cùng phòng của tôi không thể cảm ơn mọi người."
+      },
+      {
+        "en": "My roommate can't delete the file.",
+        "vi": "Bạn cùng phòng của tôi không thể xóa tệp."
+      },
+      { "en": "My roommate can't leave early.", "vi": "Bạn cùng phòng của tôi không thể về sớm." },
+      {
+        "en": "My roommate can't update the software.",
+        "vi": "Bạn cùng phòng của tôi không thể cập nhật phần mềm."
+      },
+      {
+        "en": "My roommate can't grow the business.",
+        "vi": "Bạn cùng phòng của tôi không thể phát triển kinh doanh."
+      },
+      {
+        "en": "My roommate can't read more books.",
+        "vi": "Bạn cùng phòng của tôi không thể đọc thêm sách."
+      },
+      {
+        "en": "My roommate can't report the bug.",
+        "vi": "Bạn cùng phòng của tôi không thể báo lỗi."
+      },
+      {
+        "en": "My roommate can't take a course.",
+        "vi": "Bạn cùng phòng của tôi không thể tham gia một khóa học."
+      },
+      {
+        "en": "My roommate can't invest wisely.",
+        "vi": "Bạn cùng phòng của tôi không thể đầu tư khôn ngoan."
+      },
+      {
+        "en": "My roommate can't pass the exam.",
+        "vi": "Bạn cùng phòng của tôi không thể đậu kỳ thi."
+      },
+      {
+        "en": "My roommate can't meet the deadline.",
+        "vi": "Bạn cùng phòng của tôi không thể kịp thời hạn."
+      },
+      {
+        "en": "My roommate can't take a day off.",
+        "vi": "Bạn cùng phòng của tôi không thể xin nghỉ một ngày."
+      },
+      {
+        "en": "My roommate can't keep a promise.",
+        "vi": "Bạn cùng phòng của tôi không thể giữ lời hứa."
+      },
+      {
+        "en": "My roommate can't reply to the message.",
+        "vi": "Bạn cùng phòng của tôi không thể trả lời tin nhắn."
+      },
+      {
+        "en": "My roommate can't tell the truth.",
+        "vi": "Bạn cùng phòng của tôi không thể nói sự thật."
+      },
+      {
+        "en": "My roommate can't cook breakfast.",
+        "vi": "Bạn cùng phòng của tôi không thể nấu bữa sáng."
+      },
+      {
+        "en": "My roommate can't sign up today.",
+        "vi": "Bạn cùng phòng của tôi không thể đăng ký hôm nay."
+      },
+      {
+        "en": "My roommate can't install the app.",
+        "vi": "Bạn cùng phòng của tôi không thể cài đặt ứng dụng."
+      },
+      {
+        "en": "My roommate can't follow the rules.",
+        "vi": "Bạn cùng phòng của tôi không thể tuân theo quy tắc."
+      },
+      {
+        "en": "My roommate can't wake up early.",
+        "vi": "Bạn cùng phòng của tôi không thể dậy sớm."
+      },
+      {
+        "en": "My roommate can't get some rest.",
+        "vi": "Bạn cùng phòng của tôi không thể nghỉ ngơi một chút."
+      },
+      {
+        "en": "My roommate can't buy a new phone.",
+        "vi": "Bạn cùng phòng của tôi không thể mua điện thoại mới."
+      },
+      {
+        "en": "My roommate can't go on vacation.",
+        "vi": "Bạn cùng phòng của tôi không thể đi nghỉ mát."
+      },
+      {
+        "en": "My roommate can't open a savings account.",
+        "vi": "Bạn cùng phòng của tôi không thể mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "My roommate can't meet new people.",
+        "vi": "Bạn cùng phòng của tôi không thể gặp gỡ người mới."
+      },
+      {
+        "en": "My roommate can't copy the link.",
+        "vi": "Bạn cùng phòng của tôi không thể sao chép liên kết."
+      },
+      {
+        "en": "My roommate can't keep learning.",
+        "vi": "Bạn cùng phòng của tôi không thể tiếp tục học hỏi."
+      },
+      { "en": "My roommate can't make tea.", "vi": "Bạn cùng phòng của tôi không thể pha trà." },
+      {
+        "en": "My roommate can't confirm the booking.",
+        "vi": "Bạn cùng phòng của tôi không thể xác nhận đặt chỗ."
+      },
+      {
+        "en": "My roommate can't print the document.",
+        "vi": "Bạn cùng phòng của tôi không thể in tài liệu."
+      },
+      {
+        "en": "My roommate can't schedule a meeting.",
+        "vi": "Bạn cùng phòng của tôi không thể sắp xếp cuộc họp."
+      },
+      {
+        "en": "My roommate can't do the laundry.",
+        "vi": "Bạn cùng phòng của tôi không thể giặt đồ."
+      },
+      {
+        "en": "My roommate can't celebrate together.",
+        "vi": "Bạn cùng phòng của tôi không thể ăn mừng cùng nhau."
+      },
+      {
+        "en": "My roommate can't charge the phone.",
+        "vi": "Bạn cùng phòng của tôi không thể sạc điện thoại."
+      },
+      {
+        "en": "My roommate can't set an alarm.",
+        "vi": "Bạn cùng phòng của tôi không thể đặt báo thức."
+      },
+      {
+        "en": "My roommate can't test the feature.",
+        "vi": "Bạn cùng phòng của tôi không thể kiểm thử tính năng."
+      },
+      {
+        "en": "My roommate can't log in again.",
+        "vi": "Bạn cùng phòng của tôi không thể đăng nhập lại."
+      },
+      {
+        "en": "My roommate can't work harder.",
+        "vi": "Bạn cùng phòng của tôi không thể làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "My roommate can't move forward.",
+        "vi": "Bạn cùng phòng của tôi không thể tiến về phía trước."
+      },
+      {
+        "en": "My roommate can't take a chance.",
+        "vi": "Bạn cùng phòng của tôi không thể nắm lấy cơ hội."
+      },
+      {
+        "en": "My roommate can't make new friends.",
+        "vi": "Bạn cùng phòng của tôi không thể kết bạn mới."
+      },
+      {
+        "en": "My roommate can't solve this issue.",
+        "vi": "Bạn cùng phòng của tôi không thể giải quyết vấn đề này."
+      },
+      {
+        "en": "My roommate can't submit the form.",
+        "vi": "Bạn cùng phòng của tôi không thể nộp biểu mẫu."
+      },
+      {
+        "en": "My roommate can't cook for everyone.",
+        "vi": "Bạn cùng phòng của tôi không thể nấu ăn cho mọi người."
+      },
+      {
+        "en": "My roommate can't win the contract.",
+        "vi": "Bạn cùng phòng của tôi không thể giành hợp đồng."
+      },
+      {
+        "en": "My roommate can't invite some friends.",
+        "vi": "Bạn cùng phòng của tôi không thể mời vài người bạn."
+      },
+      {
+        "en": "My roommate can't split the bill.",
+        "vi": "Bạn cùng phòng của tôi không thể chia hóa đơn."
+      },
+      {
+        "en": "My roommate can't apply for the position.",
+        "vi": "Bạn cùng phòng của tôi không thể nộp đơn cho vị trí."
+      },
+      {
+        "en": "My roommate can't start over.",
+        "vi": "Bạn cùng phòng của tôi không thể bắt đầu lại."
+      },
+      {
+        "en": "My roommate can't finish on time.",
+        "vi": "Bạn cùng phòng của tôi không thể hoàn thành đúng hạn."
+      },
+      {
+        "en": "My roommate can't make a reservation.",
+        "vi": "Bạn cùng phòng của tôi không thể đặt chỗ trước."
+      },
+      {
+        "en": "My roommate can't leave a comment.",
+        "vi": "Bạn cùng phòng của tôi không thể để lại bình luận."
+      },
+      {
+        "en": "My roommate can't breathe deeply.",
+        "vi": "Bạn cùng phòng của tôi không thể hít thở sâu."
+      },
+      {
+        "en": "My roommate can't back up the data.",
+        "vi": "Bạn cùng phòng của tôi không thể sao lưu dữ liệu."
+      },
+      {
+        "en": "My roommate can't cancel the order.",
+        "vi": "Bạn cùng phòng của tôi không thể hủy đơn hàng."
+      },
+      {
+        "en": "My roommate can't answer the phone.",
+        "vi": "Bạn cùng phòng của tôi không thể trả lời điện thoại."
+      }
+    ]
+  },
+  {
+    "starter": "My roommate will",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "My roommate will book a hotel.", "vi": "Bạn cùng phòng của tôi sẽ đặt khách sạn." },
+      { "en": "My roommate will sleep early.", "vi": "Bạn cùng phòng của tôi sẽ ngủ sớm." },
+      { "en": "My roommate will breathe deeply.", "vi": "Bạn cùng phòng của tôi sẽ hít thở sâu." },
+      {
+        "en": "My roommate will change the plan.",
+        "vi": "Bạn cùng phòng của tôi sẽ thay đổi kế hoạch."
+      },
+      { "en": "My roommate will arrive on time.", "vi": "Bạn cùng phòng của tôi sẽ đến đúng giờ." },
+      { "en": "My roommate will keep a promise.", "vi": "Bạn cùng phòng của tôi sẽ giữ lời hứa." },
+      { "en": "My roommate will turn off the light.", "vi": "Bạn cùng phòng của tôi sẽ tắt đèn." },
+      {
+        "en": "My roommate will cancel the order.",
+        "vi": "Bạn cùng phòng của tôi sẽ hủy đơn hàng."
+      },
+      { "en": "My roommate will help the team.", "vi": "Bạn cùng phòng của tôi sẽ giúp đỡ nhóm." },
+      { "en": "My roommate will ride a bike.", "vi": "Bạn cùng phòng của tôi sẽ đạp xe." },
+      { "en": "My roommate will report the bug.", "vi": "Bạn cùng phòng của tôi sẽ báo lỗi." },
+      {
+        "en": "My roommate will attend the workshop.",
+        "vi": "Bạn cùng phòng của tôi sẽ tham dự buổi hội thảo."
+      },
+      {
+        "en": "My roommate will open a savings account.",
+        "vi": "Bạn cùng phòng của tôi sẽ mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "My roommate will cut expenses.",
+        "vi": "Bạn cùng phòng của tôi sẽ cắt giảm chi tiêu."
+      },
+      { "en": "My roommate will pack my bags.", "vi": "Bạn cùng phòng của tôi sẽ xếp hành lý." },
+      { "en": "My roommate will go on vacation.", "vi": "Bạn cùng phòng của tôi sẽ đi nghỉ mát." },
+      {
+        "en": "My roommate will win the contract.",
+        "vi": "Bạn cùng phòng của tôi sẽ giành hợp đồng."
+      },
+      {
+        "en": "My roommate will prepare the presentation.",
+        "vi": "Bạn cùng phòng của tôi sẽ chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "My roommate will never give up.",
+        "vi": "Bạn cùng phòng của tôi sẽ không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "My roommate will rate the service.",
+        "vi": "Bạn cùng phòng của tôi sẽ đánh giá dịch vụ."
+      },
+      {
+        "en": "My roommate will call a friend.",
+        "vi": "Bạn cùng phòng của tôi sẽ gọi cho một người bạn."
+      },
+      {
+        "en": "My roommate will work as a team.",
+        "vi": "Bạn cùng phòng của tôi sẽ làm việc theo nhóm."
+      },
+      { "en": "My roommate will take it easy.", "vi": "Bạn cùng phòng của tôi sẽ thư giãn." },
+      {
+        "en": "My roommate will make a plan.",
+        "vi": "Bạn cùng phòng của tôi sẽ lập một kế hoạch."
+      },
+      {
+        "en": "My roommate will open a business.",
+        "vi": "Bạn cùng phòng của tôi sẽ mở một doanh nghiệp."
+      },
+      {
+        "en": "My roommate will confirm the booking.",
+        "vi": "Bạn cùng phòng của tôi sẽ xác nhận đặt chỗ."
+      },
+      {
+        "en": "My roommate will register for the course.",
+        "vi": "Bạn cùng phòng của tôi sẽ đăng ký khóa học."
+      },
+      { "en": "My roommate will wait a moment.", "vi": "Bạn cùng phòng của tôi sẽ chờ một chút." },
+      { "en": "My roommate will give it a try.", "vi": "Bạn cùng phòng của tôi sẽ thử một lần." },
+      {
+        "en": "My roommate will review the document.",
+        "vi": "Bạn cùng phòng của tôi sẽ xem lại tài liệu."
+      },
+      {
+        "en": "My roommate will say goodbye.",
+        "vi": "Bạn cùng phòng của tôi sẽ nói lời tạm biệt."
+      },
+      { "en": "My roommate will play sports.", "vi": "Bạn cùng phòng của tôi sẽ chơi thể thao." },
+      {
+        "en": "My roommate will thank everyone.",
+        "vi": "Bạn cùng phòng của tôi sẽ cảm ơn mọi người."
+      },
+      {
+        "en": "My roommate will learn something new.",
+        "vi": "Bạn cùng phòng của tôi sẽ học điều gì đó mới."
+      },
+      { "en": "My roommate will cook dinner.", "vi": "Bạn cùng phòng của tôi sẽ nấu bữa tối." },
+      { "en": "My roommate will calm down.", "vi": "Bạn cùng phòng của tôi sẽ bình tĩnh lại." },
+      {
+        "en": "My roommate will eat healthy.",
+        "vi": "Bạn cùng phòng của tôi sẽ ăn uống lành mạnh."
+      },
+      {
+        "en": "My roommate will visit the doctor.",
+        "vi": "Bạn cùng phòng của tôi sẽ đi khám bác sĩ."
+      },
+      {
+        "en": "My roommate will join a club.",
+        "vi": "Bạn cùng phòng của tôi sẽ tham gia câu lạc bộ."
+      },
+      { "en": "My roommate will walk the dog.", "vi": "Bạn cùng phòng của tôi sẽ dắt chó đi dạo." },
+      {
+        "en": "My roommate will apply for the position.",
+        "vi": "Bạn cùng phòng của tôi sẽ nộp đơn cho vị trí."
+      },
+      {
+        "en": "My roommate will restart the computer.",
+        "vi": "Bạn cùng phòng của tôi sẽ khởi động lại máy tính."
+      },
+      {
+        "en": "My roommate will write a report.",
+        "vi": "Bạn cùng phòng của tôi sẽ viết một báo cáo."
+      },
+      { "en": "My roommate will save money.", "vi": "Bạn cùng phòng của tôi sẽ tiết kiệm tiền." },
+      {
+        "en": "My roommate will close the deal.",
+        "vi": "Bạn cùng phòng của tôi sẽ chốt thỏa thuận."
+      },
+      {
+        "en": "My roommate will test the feature.",
+        "vi": "Bạn cùng phòng của tôi sẽ kiểm thử tính năng."
+      },
+      { "en": "My roommate will drive to work.", "vi": "Bạn cùng phòng của tôi sẽ lái xe đi làm." },
+      {
+        "en": "My roommate will make new friends.",
+        "vi": "Bạn cùng phòng của tôi sẽ kết bạn mới."
+      },
+      {
+        "en": "My roommate will get a promotion.",
+        "vi": "Bạn cùng phòng của tôi sẽ được thăng chức."
+      },
+      {
+        "en": "My roommate will back up the data.",
+        "vi": "Bạn cùng phòng của tôi sẽ sao lưu dữ liệu."
+      },
+      { "en": "My roommate will set a goal.", "vi": "Bạn cùng phòng của tôi sẽ đặt một mục tiêu." },
+      {
+        "en": "My roommate will launch the product.",
+        "vi": "Bạn cùng phòng của tôi sẽ ra mắt sản phẩm."
+      },
+      { "en": "My roommate will buy groceries.", "vi": "Bạn cùng phòng của tôi sẽ mua thực phẩm." },
+      {
+        "en": "My roommate will try harder next time.",
+        "vi": "Bạn cùng phòng của tôi sẽ cố gắng hơn lần sau."
+      },
+      {
+        "en": "My roommate will pay off the loan.",
+        "vi": "Bạn cùng phòng của tôi sẽ trả hết khoản vay."
+      },
+      { "en": "My roommate will go for a walk.", "vi": "Bạn cùng phòng của tôi sẽ đi dạo." },
+      { "en": "My roommate will take the bus.", "vi": "Bạn cùng phòng của tôi sẽ đi xe buýt." },
+      { "en": "My roommate will take a rest.", "vi": "Bạn cùng phòng của tôi sẽ nghỉ ngơi." },
+      {
+        "en": "My roommate will offer support.",
+        "vi": "Bạn cùng phòng của tôi sẽ đề nghị hỗ trợ."
+      },
+      {
+        "en": "My roommate will leave a comment.",
+        "vi": "Bạn cùng phòng của tôi sẽ để lại bình luận."
+      },
+      { "en": "My roommate will learn English.", "vi": "Bạn cùng phòng của tôi sẽ học tiếng Anh." },
+      {
+        "en": "My roommate will take a photo.",
+        "vi": "Bạn cùng phòng của tôi sẽ chụp một bức ảnh."
+      },
+      {
+        "en": "My roommate will exercise every day.",
+        "vi": "Bạn cùng phòng của tôi sẽ tập thể dục mỗi ngày."
+      },
+      {
+        "en": "My roommate will schedule a meeting.",
+        "vi": "Bạn cùng phòng của tôi sẽ sắp xếp cuộc họp."
+      },
+      {
+        "en": "My roommate will ask for a raise.",
+        "vi": "Bạn cùng phòng của tôi sẽ xin tăng lương."
+      },
+      { "en": "My roommate will log in again.", "vi": "Bạn cùng phòng của tôi sẽ đăng nhập lại." },
+      {
+        "en": "My roommate will meditate daily.",
+        "vi": "Bạn cùng phòng của tôi sẽ thiền mỗi ngày."
+      },
+      { "en": "My roommate will give feedback.", "vi": "Bạn cùng phòng của tôi sẽ góp ý." },
+      {
+        "en": "My roommate will drink more water.",
+        "vi": "Bạn cùng phòng của tôi sẽ uống nhiều nước hơn."
+      },
+      {
+        "en": "My roommate will negotiate the terms.",
+        "vi": "Bạn cùng phòng của tôi sẽ thương lượng điều khoản."
+      },
+      {
+        "en": "My roommate will improve my skills.",
+        "vi": "Bạn cùng phòng của tôi sẽ cải thiện kỹ năng."
+      },
+      { "en": "My roommate will reach the goal.", "vi": "Bạn cùng phòng của tôi sẽ đạt mục tiêu." },
+      {
+        "en": "My roommate will enjoy the weekend.",
+        "vi": "Bạn cùng phòng của tôi sẽ tận hưởng cuối tuần."
+      },
+      {
+        "en": "My roommate will make a reservation.",
+        "vi": "Bạn cùng phòng của tôi sẽ đặt chỗ trước."
+      },
+      { "en": "My roommate will ask a question.", "vi": "Bạn cùng phòng của tôi sẽ hỏi một câu." },
+      {
+        "en": "My roommate will donate to charity.",
+        "vi": "Bạn cùng phòng của tôi sẽ quyên góp từ thiện."
+      },
+      {
+        "en": "My roommate will miss the flight.",
+        "vi": "Bạn cùng phòng của tôi sẽ lỡ chuyến bay."
+      },
+      { "en": "My roommate will send the email.", "vi": "Bạn cùng phòng của tôi sẽ gửi email." },
+      { "en": "My roommate will raise the price.", "vi": "Bạn cùng phòng của tôi sẽ tăng giá." },
+      {
+        "en": "My roommate will follow the rules.",
+        "vi": "Bạn cùng phòng của tôi sẽ tuân theo quy tắc."
+      },
+      { "en": "My roommate will split the bill.", "vi": "Bạn cùng phòng của tôi sẽ chia hóa đơn." },
+      { "en": "My roommate will throw a party.", "vi": "Bạn cùng phòng của tôi sẽ tổ chức tiệc." },
+      {
+        "en": "My roommate will take a day off.",
+        "vi": "Bạn cùng phòng của tôi sẽ xin nghỉ một ngày."
+      },
+      { "en": "My roommate will say sorry.", "vi": "Bạn cùng phòng của tôi sẽ nói lời xin lỗi." },
+      {
+        "en": "My roommate will get some rest.",
+        "vi": "Bạn cùng phòng của tôi sẽ nghỉ ngơi một chút."
+      },
+      { "en": "My roommate will learn to swim.", "vi": "Bạn cùng phòng của tôi sẽ học bơi." },
+      {
+        "en": "My roommate will visit my family.",
+        "vi": "Bạn cùng phòng của tôi sẽ thăm gia đình."
+      },
+      { "en": "My roommate will make tea.", "vi": "Bạn cùng phòng của tôi sẽ pha trà." },
+      {
+        "en": "My roommate will take a chance.",
+        "vi": "Bạn cùng phòng của tôi sẽ nắm lấy cơ hội."
+      },
+      { "en": "My roommate will lower the cost.", "vi": "Bạn cùng phòng của tôi sẽ giảm chi phí." },
+      { "en": "My roommate will keep a diary.", "vi": "Bạn cùng phòng của tôi sẽ viết nhật ký." },
+      {
+        "en": "My roommate will update the software.",
+        "vi": "Bạn cùng phòng của tôi sẽ cập nhật phần mềm."
+      },
+      { "en": "My roommate will water the plants.", "vi": "Bạn cùng phòng của tôi sẽ tưới cây." },
+      {
+        "en": "My roommate will lead the project.",
+        "vi": "Bạn cùng phòng của tôi sẽ dẫn dắt dự án."
+      },
+      {
+        "en": "My roommate will finish on time.",
+        "vi": "Bạn cùng phòng của tôi sẽ hoàn thành đúng hạn."
+      },
+      {
+        "en": "My roommate will sign up today.",
+        "vi": "Bạn cùng phòng của tôi sẽ đăng ký hôm nay."
+      },
+      {
+        "en": "My roommate will sign the contract.",
+        "vi": "Bạn cùng phòng của tôi sẽ ký hợp đồng."
+      },
+      { "en": "My roommate will delete the file.", "vi": "Bạn cùng phòng của tôi sẽ xóa tệp." },
+      {
+        "en": "My roommate will hire new staff.",
+        "vi": "Bạn cùng phòng của tôi sẽ tuyển nhân viên mới."
+      },
+      { "en": "My roommate will take notes.", "vi": "Bạn cùng phòng của tôi sẽ ghi chép." }
+    ]
+  },
+  {
+    "starter": "My roommate won't",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "My roommate won't solve this issue.",
+        "vi": "Bạn cùng phòng của tôi sẽ không giải quyết vấn đề này."
+      },
+      {
+        "en": "My roommate won't lower the cost.",
+        "vi": "Bạn cùng phòng của tôi sẽ không giảm chi phí."
+      },
+      {
+        "en": "My roommate won't update the software.",
+        "vi": "Bạn cùng phòng của tôi sẽ không cập nhật phần mềm."
+      },
+      {
+        "en": "My roommate won't launch the product.",
+        "vi": "Bạn cùng phòng của tôi sẽ không ra mắt sản phẩm."
+      },
+      {
+        "en": "My roommate won't be on time.",
+        "vi": "Bạn cùng phòng của tôi sẽ không đến đúng giờ."
+      },
+      {
+        "en": "My roommate won't turn off the light.",
+        "vi": "Bạn cùng phòng của tôi sẽ không tắt đèn."
+      },
+      {
+        "en": "My roommate won't cook dinner.",
+        "vi": "Bạn cùng phòng của tôi sẽ không nấu bữa tối."
+      },
+      {
+        "en": "My roommate won't keep a diary.",
+        "vi": "Bạn cùng phòng của tôi sẽ không viết nhật ký."
+      },
+      {
+        "en": "My roommate won't remember the password.",
+        "vi": "Bạn cùng phòng của tôi sẽ không nhớ mật khẩu."
+      },
+      {
+        "en": "My roommate won't plan ahead.",
+        "vi": "Bạn cùng phòng của tôi sẽ không lên kế hoạch trước."
+      },
+      {
+        "en": "My roommate won't schedule a meeting.",
+        "vi": "Bạn cùng phòng của tôi sẽ không sắp xếp cuộc họp."
+      },
+      {
+        "en": "My roommate won't restart the computer.",
+        "vi": "Bạn cùng phòng của tôi sẽ không khởi động lại máy tính."
+      },
+      {
+        "en": "My roommate won't help the team.",
+        "vi": "Bạn cùng phòng của tôi sẽ không giúp đỡ nhóm."
+      },
+      {
+        "en": "My roommate won't take medicine.",
+        "vi": "Bạn cùng phòng của tôi sẽ không uống thuốc."
+      },
+      {
+        "en": "My roommate won't help a neighbor.",
+        "vi": "Bạn cùng phòng của tôi sẽ không giúp một người hàng xóm."
+      },
+      {
+        "en": "My roommate won't report the bug.",
+        "vi": "Bạn cùng phòng của tôi sẽ không báo lỗi."
+      },
+      {
+        "en": "My roommate won't copy the link.",
+        "vi": "Bạn cùng phòng của tôi sẽ không sao chép liên kết."
+      },
+      {
+        "en": "My roommate won't try harder next time.",
+        "vi": "Bạn cùng phòng của tôi sẽ không cố gắng hơn lần sau."
+      },
+      {
+        "en": "My roommate won't take it easy.",
+        "vi": "Bạn cùng phòng của tôi sẽ không thư giãn."
+      },
+      {
+        "en": "My roommate won't grow the business.",
+        "vi": "Bạn cùng phòng của tôi sẽ không phát triển kinh doanh."
+      },
+      {
+        "en": "My roommate won't learn something new.",
+        "vi": "Bạn cùng phòng của tôi sẽ không học điều gì đó mới."
+      },
+      {
+        "en": "My roommate won't watch a movie.",
+        "vi": "Bạn cùng phòng của tôi sẽ không xem phim."
+      },
+      {
+        "en": "My roommate won't reset the password.",
+        "vi": "Bạn cùng phòng của tôi sẽ không đặt lại mật khẩu."
+      },
+      {
+        "en": "My roommate won't pack my bags.",
+        "vi": "Bạn cùng phòng của tôi sẽ không xếp hành lý."
+      },
+      {
+        "en": "My roommate won't throw a party.",
+        "vi": "Bạn cùng phòng của tôi sẽ không tổ chức tiệc."
+      },
+      { "en": "My roommate won't study abroad.", "vi": "Bạn cùng phòng của tôi sẽ không du học." },
+      {
+        "en": "My roommate won't attend the workshop.",
+        "vi": "Bạn cùng phòng của tôi sẽ không tham dự buổi hội thảo."
+      },
+      {
+        "en": "My roommate won't test the feature.",
+        "vi": "Bạn cùng phòng của tôi sẽ không kiểm thử tính năng."
+      },
+      {
+        "en": "My roommate won't take a photo.",
+        "vi": "Bạn cùng phòng của tôi sẽ không chụp một bức ảnh."
+      },
+      {
+        "en": "My roommate won't do the laundry.",
+        "vi": "Bạn cùng phòng của tôi sẽ không giặt đồ."
+      },
+      {
+        "en": "My roommate won't clean the house.",
+        "vi": "Bạn cùng phòng của tôi sẽ không dọn nhà."
+      },
+      {
+        "en": "My roommate won't save money.",
+        "vi": "Bạn cùng phòng của tôi sẽ không tiết kiệm tiền."
+      },
+      {
+        "en": "My roommate won't breathe deeply.",
+        "vi": "Bạn cùng phòng của tôi sẽ không hít thở sâu."
+      },
+      {
+        "en": "My roommate won't listen carefully.",
+        "vi": "Bạn cùng phòng của tôi sẽ không lắng nghe cẩn thận."
+      },
+      {
+        "en": "My roommate won't drive to work.",
+        "vi": "Bạn cùng phòng của tôi sẽ không lái xe đi làm."
+      },
+      {
+        "en": "My roommate won't think positive.",
+        "vi": "Bạn cùng phòng của tôi sẽ không suy nghĩ tích cực."
+      },
+      {
+        "en": "My roommate won't cook for everyone.",
+        "vi": "Bạn cùng phòng của tôi sẽ không nấu ăn cho mọi người."
+      },
+      {
+        "en": "My roommate won't write a report.",
+        "vi": "Bạn cùng phòng của tôi sẽ không viết một báo cáo."
+      },
+      {
+        "en": "My roommate won't meditate daily.",
+        "vi": "Bạn cùng phòng của tôi sẽ không thiền mỗi ngày."
+      },
+      {
+        "en": "My roommate won't wake up early.",
+        "vi": "Bạn cùng phòng của tôi sẽ không dậy sớm."
+      },
+      {
+        "en": "My roommate won't take a rest.",
+        "vi": "Bạn cùng phòng của tôi sẽ không nghỉ ngơi."
+      },
+      {
+        "en": "My roommate won't find a job.",
+        "vi": "Bạn cùng phòng của tôi sẽ không tìm việc làm."
+      },
+      {
+        "en": "My roommate won't go on vacation.",
+        "vi": "Bạn cùng phòng của tôi sẽ không đi nghỉ mát."
+      },
+      {
+        "en": "My roommate won't volunteer on weekends.",
+        "vi": "Bạn cùng phòng của tôi sẽ không tình nguyện cuối tuần."
+      },
+      {
+        "en": "My roommate won't understand the lesson.",
+        "vi": "Bạn cùng phòng của tôi sẽ không hiểu bài học."
+      },
+      {
+        "en": "My roommate won't split the bill.",
+        "vi": "Bạn cùng phòng của tôi sẽ không chia hóa đơn."
+      },
+      {
+        "en": "My roommate won't rate the service.",
+        "vi": "Bạn cùng phòng của tôi sẽ không đánh giá dịch vụ."
+      },
+      {
+        "en": "My roommate won't get a promotion.",
+        "vi": "Bạn cùng phòng của tôi sẽ không được thăng chức."
+      },
+      {
+        "en": "My roommate won't relax at home.",
+        "vi": "Bạn cùng phòng của tôi sẽ không thư giãn ở nhà."
+      },
+      {
+        "en": "My roommate won't take a break.",
+        "vi": "Bạn cùng phòng của tôi sẽ không nghỉ giải lao."
+      },
+      {
+        "en": "My roommate won't talk to the manager.",
+        "vi": "Bạn cùng phòng của tôi sẽ không nói chuyện với quản lý."
+      },
+      { "en": "My roommate won't stay home.", "vi": "Bạn cùng phòng của tôi sẽ không ở nhà." },
+      {
+        "en": "My roommate won't catch the train.",
+        "vi": "Bạn cùng phòng của tôi sẽ không bắt chuyến tàu."
+      },
+      {
+        "en": "My roommate won't buy a new phone.",
+        "vi": "Bạn cùng phòng của tôi sẽ không mua điện thoại mới."
+      },
+      {
+        "en": "My roommate won't stay focused.",
+        "vi": "Bạn cùng phòng của tôi sẽ không giữ tập trung."
+      },
+      {
+        "en": "My roommate won't travel abroad.",
+        "vi": "Bạn cùng phòng của tôi sẽ không đi du lịch nước ngoài."
+      },
+      {
+        "en": "My roommate won't make new friends.",
+        "vi": "Bạn cùng phòng của tôi sẽ không kết bạn mới."
+      },
+      { "en": "My roommate won't rent a car.", "vi": "Bạn cùng phòng của tôi sẽ không thuê xe." },
+      { "en": "My roommate won't go home.", "vi": "Bạn cùng phòng của tôi sẽ không về nhà." },
+      {
+        "en": "My roommate won't wash the dishes.",
+        "vi": "Bạn cùng phòng của tôi sẽ không rửa bát."
+      },
+      {
+        "en": "My roommate won't ask more questions.",
+        "vi": "Bạn cùng phòng của tôi sẽ không hỏi nhiều hơn."
+      },
+      { "en": "My roommate won't ride a bike.", "vi": "Bạn cùng phòng của tôi sẽ không đạp xe." },
+      {
+        "en": "My roommate won't meet the deadline.",
+        "vi": "Bạn cùng phòng của tôi sẽ không kịp thời hạn."
+      },
+      {
+        "en": "My roommate won't fill out the form.",
+        "vi": "Bạn cùng phòng của tôi sẽ không điền vào biểu mẫu."
+      },
+      {
+        "en": "My roommate won't hire new staff.",
+        "vi": "Bạn cùng phòng của tôi sẽ không tuyển nhân viên mới."
+      },
+      {
+        "en": "My roommate won't give it a try.",
+        "vi": "Bạn cùng phòng của tôi sẽ không thử một lần."
+      },
+      {
+        "en": "My roommate won't close the window.",
+        "vi": "Bạn cùng phòng của tôi sẽ không đóng cửa sổ."
+      },
+      {
+        "en": "My roommate won't stay up late.",
+        "vi": "Bạn cùng phòng của tôi sẽ không thức khuya."
+      },
+      {
+        "en": "My roommate won't call back later.",
+        "vi": "Bạn cùng phòng của tôi sẽ không gọi lại sau."
+      },
+      {
+        "en": "My roommate won't thank everyone.",
+        "vi": "Bạn cùng phòng của tôi sẽ không cảm ơn mọi người."
+      },
+      {
+        "en": "My roommate won't improve my skills.",
+        "vi": "Bạn cùng phòng của tôi sẽ không cải thiện kỹ năng."
+      },
+      {
+        "en": "My roommate won't take a day off.",
+        "vi": "Bạn cùng phòng của tôi sẽ không xin nghỉ một ngày."
+      },
+      {
+        "en": "My roommate won't call a friend.",
+        "vi": "Bạn cùng phòng của tôi sẽ không gọi cho một người bạn."
+      },
+      {
+        "en": "My roommate won't answer the phone.",
+        "vi": "Bạn cùng phòng của tôi sẽ không trả lời điện thoại."
+      },
+      {
+        "en": "My roommate won't scan the receipt.",
+        "vi": "Bạn cùng phòng của tôi sẽ không quét hóa đơn."
+      },
+      {
+        "en": "My roommate won't say goodbye.",
+        "vi": "Bạn cùng phòng của tôi sẽ không nói lời tạm biệt."
+      },
+      {
+        "en": "My roommate won't set a goal.",
+        "vi": "Bạn cùng phòng của tôi sẽ không đặt một mục tiêu."
+      },
+      {
+        "en": "My roommate won't finish on time.",
+        "vi": "Bạn cùng phòng của tôi sẽ không hoàn thành đúng hạn."
+      },
+      {
+        "en": "My roommate won't meet new people.",
+        "vi": "Bạn cùng phòng của tôi sẽ không gặp gỡ người mới."
+      },
+      {
+        "en": "My roommate won't pay off the loan.",
+        "vi": "Bạn cùng phòng của tôi sẽ không trả hết khoản vay."
+      },
+      { "en": "My roommate won't try again.", "vi": "Bạn cùng phòng của tôi sẽ không thử lại." },
+      {
+        "en": "My roommate won't cancel the order.",
+        "vi": "Bạn cùng phòng của tôi sẽ không hủy đơn hàng."
+      },
+      {
+        "en": "My roommate won't take the bus.",
+        "vi": "Bạn cùng phòng của tôi sẽ không đi xe buýt."
+      },
+      {
+        "en": "My roommate won't take a course.",
+        "vi": "Bạn cùng phòng của tôi sẽ không tham gia một khóa học."
+      },
+      {
+        "en": "My roommate won't listen to music.",
+        "vi": "Bạn cùng phòng của tôi sẽ không nghe nhạc."
+      },
+      {
+        "en": "My roommate won't quit smoking.",
+        "vi": "Bạn cùng phòng của tôi sẽ không bỏ thuốc lá."
+      },
+      {
+        "en": "My roommate won't watch the game.",
+        "vi": "Bạn cùng phòng của tôi sẽ không xem trận đấu."
+      },
+      {
+        "en": "My roommate won't speak English.",
+        "vi": "Bạn cùng phòng của tôi sẽ không nói tiếng Anh."
+      },
+      {
+        "en": "My roommate won't join the meeting.",
+        "vi": "Bạn cùng phòng của tôi sẽ không tham gia cuộc họp."
+      },
+      { "en": "My roommate won't lose weight.", "vi": "Bạn cùng phòng của tôi sẽ không giảm cân." },
+      {
+        "en": "My roommate won't invite some friends.",
+        "vi": "Bạn cùng phòng của tôi sẽ không mời vài người bạn."
+      },
+      {
+        "en": "My roommate won't lock the door.",
+        "vi": "Bạn cùng phòng của tôi sẽ không khóa cửa."
+      },
+      {
+        "en": "My roommate won't keep in touch.",
+        "vi": "Bạn cùng phòng của tôi sẽ không giữ liên lạc."
+      },
+      {
+        "en": "My roommate won't lead the project.",
+        "vi": "Bạn cùng phòng của tôi sẽ không dẫn dắt dự án."
+      },
+      {
+        "en": "My roommate won't make a reservation.",
+        "vi": "Bạn cùng phòng của tôi sẽ không đặt chỗ trước."
+      },
+      { "en": "My roommate won't sleep early.", "vi": "Bạn cùng phòng của tôi sẽ không ngủ sớm." },
+      {
+        "en": "My roommate won't share the post.",
+        "vi": "Bạn cùng phòng của tôi sẽ không chia sẻ bài viết."
+      },
+      {
+        "en": "My roommate won't get a degree.",
+        "vi": "Bạn cùng phòng của tôi sẽ không lấy bằng."
+      },
+      {
+        "en": "My roommate won't keep learning.",
+        "vi": "Bạn cùng phòng của tôi sẽ không tiếp tục học hỏi."
+      },
+      {
+        "en": "My roommate won't sign up today.",
+        "vi": "Bạn cùng phòng của tôi sẽ không đăng ký hôm nay."
+      }
+    ]
+  },
+  {
+    "starter": "My roommate should",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "My roommate should manage the schedule.",
+        "vi": "Bạn cùng phòng của tôi nên quản lý lịch trình."
+      },
+      {
+        "en": "My roommate should finish the report.",
+        "vi": "Bạn cùng phòng của tôi nên hoàn thành báo cáo."
+      },
+      {
+        "en": "My roommate should support each other.",
+        "vi": "Bạn cùng phòng của tôi nên hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "My roommate should volunteer on weekends.",
+        "vi": "Bạn cùng phòng của tôi nên tình nguyện cuối tuần."
+      },
+      { "en": "My roommate should go for a walk.", "vi": "Bạn cùng phòng của tôi nên đi dạo." },
+      {
+        "en": "My roommate should cut expenses.",
+        "vi": "Bạn cùng phòng của tôi nên cắt giảm chi tiêu."
+      },
+      {
+        "en": "My roommate should get a promotion.",
+        "vi": "Bạn cùng phòng của tôi nên được thăng chức."
+      },
+      { "en": "My roommate should take it easy.", "vi": "Bạn cùng phòng của tôi nên thư giãn." },
+      {
+        "en": "My roommate should sign up today.",
+        "vi": "Bạn cùng phòng của tôi nên đăng ký hôm nay."
+      },
+      {
+        "en": "My roommate should make a decision.",
+        "vi": "Bạn cùng phòng của tôi nên đưa ra quyết định."
+      },
+      { "en": "My roommate should take notes.", "vi": "Bạn cùng phòng của tôi nên ghi chép." },
+      {
+        "en": "My roommate should save money.",
+        "vi": "Bạn cùng phòng của tôi nên tiết kiệm tiền."
+      },
+      {
+        "en": "My roommate should talk to the manager.",
+        "vi": "Bạn cùng phòng của tôi nên nói chuyện với quản lý."
+      },
+      { "en": "My roommate should get a degree.", "vi": "Bạn cùng phòng của tôi nên lấy bằng." },
+      {
+        "en": "My roommate should keep learning.",
+        "vi": "Bạn cùng phòng của tôi nên tiếp tục học hỏi."
+      },
+      {
+        "en": "My roommate should double-check the numbers.",
+        "vi": "Bạn cùng phòng của tôi nên kiểm tra lại các con số."
+      },
+      {
+        "en": "My roommate should apply for the position.",
+        "vi": "Bạn cùng phòng của tôi nên nộp đơn cho vị trí."
+      },
+      { "en": "My roommate should watch a movie.", "vi": "Bạn cùng phòng của tôi nên xem phim." },
+      {
+        "en": "My roommate should cancel the order.",
+        "vi": "Bạn cùng phòng của tôi nên hủy đơn hàng."
+      },
+      {
+        "en": "My roommate should work harder.",
+        "vi": "Bạn cùng phòng của tôi nên làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "My roommate should say goodbye.",
+        "vi": "Bạn cùng phòng của tôi nên nói lời tạm biệt."
+      },
+      {
+        "en": "My roommate should write a report.",
+        "vi": "Bạn cùng phòng của tôi nên viết một báo cáo."
+      },
+      {
+        "en": "My roommate should join a club.",
+        "vi": "Bạn cùng phòng của tôi nên tham gia câu lạc bộ."
+      },
+      {
+        "en": "My roommate should buy groceries.",
+        "vi": "Bạn cùng phòng của tôi nên mua thực phẩm."
+      },
+      { "en": "My roommate should wake up early.", "vi": "Bạn cùng phòng của tôi nên dậy sớm." },
+      {
+        "en": "My roommate should change the plan.",
+        "vi": "Bạn cùng phòng của tôi nên thay đổi kế hoạch."
+      },
+      {
+        "en": "My roommate should take a chance.",
+        "vi": "Bạn cùng phòng của tôi nên nắm lấy cơ hội."
+      },
+      {
+        "en": "My roommate should print the document.",
+        "vi": "Bạn cùng phòng của tôi nên in tài liệu."
+      },
+      {
+        "en": "My roommate should copy the link.",
+        "vi": "Bạn cùng phòng của tôi nên sao chép liên kết."
+      },
+      {
+        "en": "My roommate should cut the budget.",
+        "vi": "Bạn cùng phòng của tôi nên cắt giảm ngân sách."
+      },
+      {
+        "en": "My roommate should give it a try.",
+        "vi": "Bạn cùng phòng của tôi nên thử một lần."
+      },
+      { "en": "My roommate should lock the door.", "vi": "Bạn cùng phòng của tôi nên khóa cửa." },
+      {
+        "en": "My roommate should celebrate together.",
+        "vi": "Bạn cùng phòng của tôi nên ăn mừng cùng nhau."
+      },
+      {
+        "en": "My roommate should download the file.",
+        "vi": "Bạn cùng phòng của tôi nên tải tệp xuống."
+      },
+      {
+        "en": "My roommate should think it over.",
+        "vi": "Bạn cùng phòng của tôi nên suy nghĩ kỹ."
+      },
+      {
+        "en": "My roommate should move forward.",
+        "vi": "Bạn cùng phòng của tôi nên tiến về phía trước."
+      },
+      { "en": "My roommate should make tea.", "vi": "Bạn cùng phòng của tôi nên pha trà." },
+      { "en": "My roommate should stay up late.", "vi": "Bạn cùng phòng của tôi nên thức khuya." },
+      {
+        "en": "My roommate should save for the future.",
+        "vi": "Bạn cùng phòng của tôi nên tiết kiệm cho tương lai."
+      },
+      {
+        "en": "My roommate should fill out the form.",
+        "vi": "Bạn cùng phòng của tôi nên điền vào biểu mẫu."
+      },
+      {
+        "en": "My roommate should plan ahead.",
+        "vi": "Bạn cùng phòng của tôi nên lên kế hoạch trước."
+      },
+      {
+        "en": "My roommate should double-check everything.",
+        "vi": "Bạn cùng phòng của tôi nên kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "My roommate should charge the phone.",
+        "vi": "Bạn cùng phòng của tôi nên sạc điện thoại."
+      },
+      { "en": "My roommate should sleep early.", "vi": "Bạn cùng phòng của tôi nên ngủ sớm." },
+      {
+        "en": "My roommate should take the exam.",
+        "vi": "Bạn cùng phòng của tôi nên làm bài thi."
+      },
+      {
+        "en": "My roommate should test the feature.",
+        "vi": "Bạn cùng phòng của tôi nên kiểm thử tính năng."
+      },
+      {
+        "en": "My roommate should reset the password.",
+        "vi": "Bạn cùng phòng của tôi nên đặt lại mật khẩu."
+      },
+      {
+        "en": "My roommate should miss the flight.",
+        "vi": "Bạn cùng phòng của tôi nên lỡ chuyến bay."
+      },
+      {
+        "en": "My roommate should relax at home.",
+        "vi": "Bạn cùng phòng của tôi nên thư giãn ở nhà."
+      },
+      { "en": "My roommate should study abroad.", "vi": "Bạn cùng phòng của tôi nên du học." },
+      {
+        "en": "My roommate should stay organized.",
+        "vi": "Bạn cùng phòng của tôi nên giữ ngăn nắp."
+      },
+      {
+        "en": "My roommate should check my email.",
+        "vi": "Bạn cùng phòng của tôi nên kiểm tra email."
+      },
+      {
+        "en": "My roommate should speak clearly.",
+        "vi": "Bạn cùng phòng của tôi nên nói rõ ràng."
+      },
+      {
+        "en": "My roommate should arrive on time.",
+        "vi": "Bạn cùng phòng của tôi nên đến đúng giờ."
+      },
+      {
+        "en": "My roommate should ask more questions.",
+        "vi": "Bạn cùng phòng của tôi nên hỏi nhiều hơn."
+      },
+      {
+        "en": "My roommate should finish on time.",
+        "vi": "Bạn cùng phòng của tôi nên hoàn thành đúng hạn."
+      },
+      {
+        "en": "My roommate should listen to music.",
+        "vi": "Bạn cùng phòng của tôi nên nghe nhạc."
+      },
+      { "en": "My roommate should try again.", "vi": "Bạn cùng phòng của tôi nên thử lại." },
+      {
+        "en": "My roommate should reach the goal.",
+        "vi": "Bạn cùng phòng của tôi nên đạt mục tiêu."
+      },
+      {
+        "en": "My roommate should visit my family.",
+        "vi": "Bạn cùng phòng của tôi nên thăm gia đình."
+      },
+      { "en": "My roommate should wash the dishes.", "vi": "Bạn cùng phòng của tôi nên rửa bát." },
+      {
+        "en": "My roommate should solve this issue.",
+        "vi": "Bạn cùng phòng của tôi nên giải quyết vấn đề này."
+      },
+      { "en": "My roommate should help out.", "vi": "Bạn cùng phòng của tôi nên giúp đỡ." },
+      {
+        "en": "My roommate should close the deal.",
+        "vi": "Bạn cùng phòng của tôi nên chốt thỏa thuận."
+      },
+      {
+        "en": "My roommate should catch the train.",
+        "vi": "Bạn cùng phòng của tôi nên bắt chuyến tàu."
+      },
+      { "en": "My roommate should start over.", "vi": "Bạn cùng phòng của tôi nên bắt đầu lại." },
+      { "en": "My roommate should pass the exam.", "vi": "Bạn cùng phòng của tôi nên đậu kỳ thi." },
+      {
+        "en": "My roommate should reply to the message.",
+        "vi": "Bạn cùng phòng của tôi nên trả lời tin nhắn."
+      },
+      {
+        "en": "My roommate should help the team.",
+        "vi": "Bạn cùng phòng của tôi nên giúp đỡ nhóm."
+      },
+      {
+        "en": "My roommate should share my opinion.",
+        "vi": "Bạn cùng phòng của tôi nên chia sẻ ý kiến."
+      },
+      {
+        "en": "My roommate should say sorry.",
+        "vi": "Bạn cùng phòng của tôi nên nói lời xin lỗi."
+      },
+      {
+        "en": "My roommate should pay the bill.",
+        "vi": "Bạn cùng phòng của tôi nên thanh toán hóa đơn."
+      },
+      {
+        "en": "My roommate should pay off the loan.",
+        "vi": "Bạn cùng phòng của tôi nên trả hết khoản vay."
+      },
+      {
+        "en": "My roommate should close the window.",
+        "vi": "Bạn cùng phòng của tôi nên đóng cửa sổ."
+      },
+      {
+        "en": "My roommate should lower the cost.",
+        "vi": "Bạn cùng phòng của tôi nên giảm chi phí."
+      },
+      {
+        "en": "My roommate should throw a party.",
+        "vi": "Bạn cùng phòng của tôi nên tổ chức tiệc."
+      },
+      {
+        "en": "My roommate should keep in touch.",
+        "vi": "Bạn cùng phòng của tôi nên giữ liên lạc."
+      },
+      {
+        "en": "My roommate should watch the game.",
+        "vi": "Bạn cùng phòng của tôi nên xem trận đấu."
+      },
+      {
+        "en": "My roommate should cook for everyone.",
+        "vi": "Bạn cùng phòng của tôi nên nấu ăn cho mọi người."
+      },
+      { "en": "My roommate should learn to swim.", "vi": "Bạn cùng phòng của tôi nên học bơi." },
+      { "en": "My roommate should send the email.", "vi": "Bạn cùng phòng của tôi nên gửi email." },
+      {
+        "en": "My roommate should eat healthy.",
+        "vi": "Bạn cùng phòng của tôi nên ăn uống lành mạnh."
+      },
+      {
+        "en": "My roommate should leave a comment.",
+        "vi": "Bạn cùng phòng của tôi nên để lại bình luận."
+      },
+      {
+        "en": "My roommate should update the software.",
+        "vi": "Bạn cùng phòng của tôi nên cập nhật phần mềm."
+      },
+      {
+        "en": "My roommate should fix the problem.",
+        "vi": "Bạn cùng phòng của tôi nên sửa vấn đề."
+      },
+      {
+        "en": "My roommate should scan the receipt.",
+        "vi": "Bạn cùng phòng của tôi nên quét hóa đơn."
+      },
+      {
+        "en": "My roommate should improve my skills.",
+        "vi": "Bạn cùng phòng của tôi nên cải thiện kỹ năng."
+      },
+      {
+        "en": "My roommate should speak English.",
+        "vi": "Bạn cùng phòng của tôi nên nói tiếng Anh."
+      },
+      {
+        "en": "My roommate should go on vacation.",
+        "vi": "Bạn cùng phòng của tôi nên đi nghỉ mát."
+      },
+      { "en": "My roommate should go home.", "vi": "Bạn cùng phòng của tôi nên về nhà." },
+      {
+        "en": "My roommate should launch the product.",
+        "vi": "Bạn cùng phòng của tôi nên ra mắt sản phẩm."
+      },
+      {
+        "en": "My roommate should grow the business.",
+        "vi": "Bạn cùng phòng của tôi nên phát triển kinh doanh."
+      },
+      {
+        "en": "My roommate should play sports.",
+        "vi": "Bạn cùng phòng của tôi nên chơi thể thao."
+      },
+      {
+        "en": "My roommate should win the contract.",
+        "vi": "Bạn cùng phòng của tôi nên giành hợp đồng."
+      },
+      {
+        "en": "My roommate should water the plants.",
+        "vi": "Bạn cùng phòng của tôi nên tưới cây."
+      },
+      {
+        "en": "My roommate should try harder next time.",
+        "vi": "Bạn cùng phòng của tôi nên cố gắng hơn lần sau."
+      },
+      { "en": "My roommate should calm down.", "vi": "Bạn cùng phòng của tôi nên bình tĩnh lại." },
+      {
+        "en": "My roommate should change careers.",
+        "vi": "Bạn cùng phòng của tôi nên chuyển nghề."
+      },
+      {
+        "en": "My roommate should review the document.",
+        "vi": "Bạn cùng phòng của tôi nên xem lại tài liệu."
+      },
+      { "en": "My roommate should clean the house.", "vi": "Bạn cùng phòng của tôi nên dọn nhà." }
+    ]
+  }
+]
