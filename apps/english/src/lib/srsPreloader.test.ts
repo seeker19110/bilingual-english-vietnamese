@@ -34,7 +34,7 @@ vi.mock('./audioCache', () => ({
   }),
 }))
 
-import { addToSRS } from './srs'
+import { addToSRS, _resetSrsMemCacheForTests } from './srs'
 import { getSrsOfflineAudioStatus, preloadSrsAudio } from './srsPreloader'
 import type { DictEntry } from '../types'
 
@@ -43,6 +43,7 @@ const W = (word: string, ex_en?: string): DictEntry => ({ word, ex_en }) as Dict
 describe('srsPreloader — Pre-downloading audio for SRS offline review', () => {
   beforeEach(() => {
     localStorage.clear()
+    _resetSrsMemCacheForTests()
     vi.clearAllMocks()
     mockVoices.mockReturnValue(['Kore', 'Puck'])
     mockTodayBatch.mockReturnValue([])
