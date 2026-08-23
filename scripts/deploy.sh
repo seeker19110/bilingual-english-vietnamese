@@ -51,8 +51,19 @@ fi
 echo "  → Đang ở commit:"
 git --no-pager log -1 --oneline
 
-echo "── [3/7] Dọn build & dữ liệu CŨ (tránh sót, vd lessons 1000 bài cũ) ──"
-rm -rf dist                              # dist gitignore → xoá tay để build lại sạch
+echo "── [3/7] Dọn dữ liệu CŨ (tránh sót, vd lessons 1000 bài cũ) ──"
+# KHÔNG xoá dist/ ở đây — ĐỪNG THÊM LẠI dòng xoá thư mục dist.
+#
+# [Sự cố 2026-08-23] Dòng `rm -rf dist` từng đứng ngay đây đã gây SẬP WEB VÀI PHÚT MỖI LẦN
+# DEPLOY: nó xoá giao diện ngay từ bước [3], trong khi mãi bước [6] mới build lại — suốt
+# khoảng giữa (cài dependencies + migration + build) app VẪN ONLINE nhưng không còn
+# dist/index.html, nên mọi request vào trang đều hỏng. Log production đúng lúc người dùng
+# không đăng nhập được:
+#   Error: ENOENT: no such file or directory, stat '/var/www/dhcb/dist/index.html'
+#
+# Bỏ đi KHÔNG làm build bẩn hơn: apps/dhcb/vite.config.ts đã đặt `emptyOutDir: true`, tức
+# Vite tự dọn sạch thư mục NGAY TRƯỚC KHI ghi file mới. Cửa sổ chết vì thế co từ vài phút
+# xuống còn đúng lúc Vite ghi (~vài giây).
 git clean -fd apps/dhcb/public/data || true  # bỏ file rác không-theo-dõi (public/ đã dời vào apps/dhcb ở PR-S2)
 
 echo "── [4/7] Cài dependencies (npm ci) ─────────────"
