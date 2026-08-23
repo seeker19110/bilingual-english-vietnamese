@@ -32,6 +32,14 @@ trên máy đích → deploy tự khoá chính nó, không thoát ra được.
 (chủ ý ghi rõ trong chú thích đầu `scripts/deploy.sh`: "thay đổi cục bộ lỡ tay trên VPS bị bỏ"),
 nên `-f` chỉ thực hiện đúng ý định sẵn có sớm hơn một bước.
 
+**Dọn nốt 3 mẫu ignore còn neo vào đường dẫn trước PR-S2** (#631 mới gom `public/data/`):
+`dictionary.backup.json` trong `.gitignore` + `.prettierignore`, và `lessons.json` trong
+`.prettierignore` (`src/data/…` → `apps/dhcb/src/data/…`). Đã rà lại toàn bộ hai file: **không
+còn mẫu nào neo vào đường dẫn cũ** (`grep -E "^(src|public|api|components|lib|data|pages|prompts)/"`
+trả về rỗng). Riêng `lessons.json` chỉ đổi phạm vi kiểm format, KHÔNG đổi nội dung file: nó là
+data blob tĩnh 1,1 MB, chỉ các script one-off đã archive mới ghi vào, nên không có cảnh
+generator ↔ Prettier đá nhau như 130 file truyện.
+
 **Bài học:** mọi cơ chế "ép máy đích khớp origin" phải chịu được cây làm việc bẩn có sẵn — nếu
 không, một file sinh tự động lọt vào Git một lần là đủ khoá đường ống deploy vĩnh viễn.
 
