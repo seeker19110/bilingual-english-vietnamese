@@ -8,7 +8,10 @@ Closes #
 
 ## Research / spec
 
-<!-- BẮT BUỘC với feat: link docs/specs/<yyyy-mm-dd>-<slug>.md đã Approved for implementation. -->
+<!-- BẮT BUỘC với feat: link đặc tả đã Approved for implementation, đặt ở MỘT trong hai nơi:
+       docs/specs/<yyyy-mm-dd>-<slug>.md   — spec theo tính năng
+       docs/research/<slug>.md             — đặc tả/nghiên cứu lộ trình lớn (CLAUDE.md mục 2)
+     Cổng CI `metadata` kiểm file có TỒN TẠI THẬT trong nhánh, không chỉ dò chuỗi. -->
 
 - Spec:
 - Trạng thái duyệt:

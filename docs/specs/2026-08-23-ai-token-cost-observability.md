@@ -145,3 +145,5 @@ chính (người học nhận được câu trả lời) — không bao giờ đ
   nối với nhau. Cân nhắc cho lần sau: hoặc mở rộng regex của cổng để chấp nhận
   `docs/research/`, hoặc quy ước mỗi mục lộ trình khi bắt đầu làm thì tách một spec ở
   `docs/specs/`.
+  **[Cập nhật] ĐÃ XỬ LÝ:** cổng nay chấp nhận CẢ `docs/research/<slug>.md` và kiểm file có
+  tồn tại thật trong nhánh — xem `.github/workflows/pr-policy.yml`.
