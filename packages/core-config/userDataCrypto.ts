@@ -16,6 +16,11 @@
 //      ttsCrypto từng mắc lỗi dùng lại nonce và phải sửa (audit 2026-08-12); ở đây tránh từ đầu.
 //   3. Có sẵn `keyVersion` NGAY TỪ BẢN ĐẦU. Thêm sau thì phải viết lại toàn bộ dữ liệu đã mã hoá.
 //
+// ⚠️ TRẠNG THÁI: module này đang NGỦ — chưa chỗ nào gọi (quyết định 2026-08-23: người dùng ghi nợ
+// việc mã hoá). Lý do hoãn: chưa chốt được CẤT KHOÁ GỐC Ở ĐÂU. Khoá phải nằm khác chỗ với backup
+// DB (cất chung thì mã hoá vô nghĩa), mà mất khoá = mất vĩnh viễn dữ liệu đã mã hoá. Xem
+// PROGRESS.md mục "Nợ kỹ thuật còn mở" để biết điều kiện gỡ nợ và rủi ro đang chấp nhận.
+//
 // Định dạng chuỗi lưu vào DB (tự mô tả, không cần thêm cột nào):
 //     v<keyVersion>:<iv_base64>:<ciphertext_base64>
 // Base64 không chứa ':' nên tách bằng ':' là an toàn.

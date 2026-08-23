@@ -49,8 +49,9 @@ và bảng "mã hoá KHÔNG giải quyết được gì".
    dữ liệu CŨ đắt và rủi ro cao. Thứ tự đề xuất: **S-1 (2FA) → S-3 (mã hoá dữ liệu mới) → dừng
    đánh giá → S-4**.
 
-**Người dùng cần trả lời trước khi làm tiếp:** khoá gốc `USER_DATA_MASTER_KEY` sẽ cất ở đâu? Phải
-khác chỗ với backup DB — cất chung thì mã hoá vô nghĩa, mà mất khoá thì mất trắng không cứu được.
+**➡️ Người dùng chốt (2026-08-23): MÃ HOÁ — GHI NỢ.** Hạ tầng giữ lại (đã có test, đang NGỦ,
+không nối vào dữ liệu nào nên không ảnh hưởng gì đang chạy). Điều kiện gỡ nợ + rủi ro đang chấp
+nhận: xem mục "Nợ kỹ thuật còn mở" đầu danh sách.
 
 ### research: Năng lực cá nhân theo độ tuổi × bậc thành thạo × ngành nghề (2026-08-23)
 
@@ -4539,6 +4540,35 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   - Kết quả người dùng xác nhận: hết treo, hết OOM, tốc độ xoá orphan "cải thiện rất nhanh".
 
 ## Nợ kỹ thuật còn mở
+
+- 🟡 **[2026-08-23] MÃ HOÁ DỮ LIỆU NGƯỜI DÙNG — ghi nợ theo quyết định người dùng.** Hạ tầng
+  **đã dựng xong và có test** (`packages/core-config/userDataCrypto.ts`, 18 test: AES-256-GCM,
+  khoá mỗi người suy ra bằng `HMAC(USER_DATA_MASTER_KEY, user_id)`, chuỗi tự mô tả
+  `v<n>:<iv>:<cipher>`, IV luôn ngẫu nhiên, `keyVersion` sẵn từ bản đầu, `isEncryptedField()` cho
+  phép chuyển đổi dần, `hashLookupValue()` cho cột cần tra cứu). **Nhưng CHƯA nối vào bất kỳ dữ
+  liệu nào** — module hiện đang NGỦ, không chỗ nào gọi, không ảnh hưởng gì đang chạy.
+
+  **Vì sao hoãn:** chưa có câu trả lời cho câu hỏi chặn đường — **cất khoá gốc
+  `USER_DATA_MASTER_KEY` ở đâu?** Khoá phải nằm KHÁC chỗ với backup DB (cất chung thì mã hoá vô
+  nghĩa: ai lấy được backup lấy luôn khoá), mà **mất khoá = mất vĩnh viễn toàn bộ dữ liệu đã mã
+  hoá, không có đường khôi phục**. Bật mã hoá khi chưa chốt chỗ cất khoá là tự tạo rủi ro mất dữ
+  liệu lớn hơn rủi ro nó định phòng.
+
+  **Điều kiện gỡ nợ:** người dùng chốt nơi cất + cách sao lưu khoá gốc. Xong việc đó thì làm theo
+  thứ tự ở `docs/research/dac-ta-ma-hoa-du-lieu-va-2fa-2026-08-23.md` mục 6:
+  **S-3 trước** (mã hoá dữ liệu MỚI — gần như miễn phí vì dữ liệu chưa tồn tại), **S-4 sau và
+  cân nhắc kỹ** (mã hoá dữ liệu CŨ — đụng dữ liệu thật của người dùng đang hoạt động, rủi ro cao).
+
+  **Rủi ro đang chấp nhận trong lúc ghi nợ:** bản dump PostgreSQL và file backup trên Cloudflare R2
+  vẫn là **plaintext** — lộ khoá R2 là lộ dữ liệu người dùng. Đây là lý do món nợ này không nên để
+  quá lâu. Giảm nhẹ tạm thời: siết quyền truy cập khoá R2 và rà lại ai đang giữ nó.
+
+  **Hệ quả cần biết khi làm tiếp tính năng:** hồ sơ năng lực ẩn và câu trả lời tự do (câu 3–4 của
+  luồng người mới) là dữ liệu tầng T2 — theo đặc tả thì phải mã hoá. Nếu làm **C1b-2** (màn 5 câu)
+  trước khi gỡ nợ này, dữ liệu đó sẽ nằm plaintext. Hai lựa chọn khi tới đó: ① chấp nhận plaintext
+  tạm rồi mã hoá sau (module đã sẵn, chỉ cần thêm 1 biến môi trường + viết lại dữ liệu), hoặc
+  ② hoãn C1b-2, làm **S-1 (2FA TOTP)** trước — 2FA độc lập hoàn toàn với mã hoá và không bị chặn
+  bởi câu hỏi khoá gốc.
 
 - 🟢 **[2026-08-21] Đã vá 15 test e2e đỏ trên `main`** (phát hiện khi driving PR #617 tới green —
   commit `fd188ef` "restructure platform hub and dedicated english studio routing" đổi route "/"
