@@ -43,6 +43,12 @@ Ba chế độ:
 - `docs/framework/BO-SUNG-*.md` — chất lượng Nhóm 1/2 (mobile, hiệu năng, a11y, UI/UX, chống lỗi logic), theme, i18n/PWA/Sentry/SEO.
 - `docs/framework/QUY-TRINH-AUDIT.md` — đặc tả quy trình **audit toàn diện** (7 tầng + rà độ phủ test + mẫu báo cáo). **Đọc khi được yêu cầu "rà soát toàn bộ / audit toàn diện".**
 - `docs/framework/AP-DUNG-vao-du-an-co-san.md` — cách áp khung lên dự án có sẵn (đang theo runbook này).
+- `docs/research/dac-ta-nang-luc-ca-nhan-theo-do-tuoi-2026-08-23.md` — **năng lực cá nhân theo
+  độ tuổi × bậc thành thạo × họ ngành nghề** (trụ LIFE + CAREER): 30 năng lực lõi, bảng 8 băng
+  tuổi kèm dấu hiệu đạt + hành động 90 ngày, thang 5 bậc thay "số năm kinh nghiệm", 8 họ nghề,
+  cách chấm/xếp hạng khoảng cách. **Luật bắt buộc: giới tính KHÔNG dùng làm trục kỳ vọng năng
+  lực** — dùng "vai trò chăm sóc & gián đoạn nghề" thay thế (mục 8 của tài liệu). Đọc trước khi
+  làm bất cứ việc gì liên quan hồ sơ năng lực/lộ trình cá nhân.
 - `docs/deploy-vps-ubuntu.md` — hướng dẫn deploy VPS. ADR (quyết định kiến trúc lớn): đặt ở `docs/adr/` khi có.
 - `docs/ke-hoach-khoi-phuc-su-co-server.md` — **quy trình khôi phục khi server sập/gặp sự cố** (chẩn đoán nhanh → kịch bản xử lý → restore backup → post-mortem). Đọc khi có sự cố thật hoặc chuẩn bị runbook. Khác `docs/DEPLOY.md` (deploy + fix nhanh) và `docs/rollback-runbook.md` (rollback cấu hình theo PR cụ thể).
 - `docs/MASTER_SPEC.md` — tầm nhìn kiến trúc Đồng Hành Platform (THAM KHẢO tầm nhìn).

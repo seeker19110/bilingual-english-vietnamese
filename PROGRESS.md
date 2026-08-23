@@ -8,6 +8,38 @@
 
 ## Giai đoạn hiện tại
 
+### research: Năng lực cá nhân theo độ tuổi × bậc thành thạo × ngành nghề (2026-08-23)
+
+**Yêu cầu người dùng:** "nghiên cứu năng lực cá nhân theo các độ tuổi, chia theo giới tính, thâm
+niên các ngành nghề… liệt kê để xác định và hướng dẫn cá nhân ở độ tuổi đó đạt được những năng lực
+và khả năng đó."
+
+**Đã làm:** tài liệu nghiên cứu + đặc tả
+`docs/research/dac-ta-nang-luc-ca-nhan-theo-do-tuoi-2026-08-23.md` (trụ LIFE + CAREER). Nội dung:
+6 khung khoa học nền (Erikson · Havighurst · Super · CHC/Hartshorne–Germine 2015 · Dreyfus ·
+Baltes SOC) đối chiếu WEF Future of Jobs 2025 + OECD PIAAC 2024; **30 năng lực lõi** mã hoá
+`CAP-<nhóm>-<số>` theo 6 nhóm COG/SEL/TEC/PRO/FIN/WEL; **bảng chính 8 băng tuổi** (khớp đúng 8
+`LifeStageType` đã có) × năng lực trọng tâm × dấu hiệu đạt quan sát được × hành động 90 ngày;
+thang 5 bậc thành thạo thay cho "số năm kinh nghiệm"; 8 họ ngành nghề (đỉnh nghề, cửa sổ then
+chốt, rủi ro tự động hoá, nhánh chuyển hướng); công thức chấm + xếp hạng khoảng cách; 4 loại bằng
+chứng; 7 rủi ro; kế hoạch 5 PR (C1→C5).
+
+**3 quyết định thiết kế quan trọng (cần người dùng biết):**
+
+1. **Giới tính KHÔNG dùng làm trục kỳ vọng năng lực.** Bằng chứng: hình phạt làm mẹ giải thích
+   ~80% khoảng cách thu nhập theo giới; chênh lệch bám vào sự kiện sinh con + định kiến tuyển
+   dụng, không bám vào khả năng. Thay bằng biến **"vai trò chăm sóc & gián đoạn nghề"** (tuỳ chọn,
+   mở cho mọi giới) + đo thâm niên bằng **tháng hoạt động nghề**. Giới tính chỉ dùng cho nội dung
+   sức khoẻ (nhóm WEL) — chỗ nó thực sự có ý nghĩa y khoa.
+2. **Thâm niên đo bằng BẬC (Dreyfus B1–B5), không bằng SỐ NĂM** — kèm cờ cảnh báo "đóng băng kinh
+   nghiệm" (≥6 năm nghề mà vẫn B2).
+3. **Tái dùng `LifeStageType` 8 giai đoạn đã có** trong `lifeMilestoneMasteryService.ts` — KHÔNG
+   tạo hệ giai đoạn thứ hai (bài học nợ N3 "hợp nhất hệ trùng").
+
+**Chờ người dùng chốt trước khi viết code (mục 12.2 của tài liệu):** làm tới đâu (C1–C3 nền hay đủ
+C1–C5 có UI) · có hỏi giới tính không · 8 họ nghề đã đủ cho tệp VN chưa (thiếu nông nghiệp, du
+lịch–NHKS, logistics?) · ưu tiên băng tuổi nào trước (đề xuất: 18–38).
+
 ### feat+refactor: N3 — hợp nhất hệ trùng + PvP hết hardcode + ẩn telemetry USD (2026-08-23)
 
 **Bối cảnh:** 3 "việc quyết định lớn" còn lại (đã người dùng duyệt từ kế hoạch 7 PR A→G) +
