@@ -8,46 +8,58 @@
 
 ## Giai đoạn hiện tại
 
-### fix(script): smoke:gemini-live nói rõ lý do thay vì treo 30 giây (2026-08-23)
+### fix(gemini-live): chuyển sang SDK chính thức @google/genai (2026-08-23)
 
-**Chạy thật lần đầu trên VPS (có key mới) cho 3 kết quả:**
+**Chạy thật trên VPS với key mới đã cho câu trả lời dứt điểm — sau 3 vòng thăm dò.**
 
-1. ✅ **Key hợp lệ, Live API đã mở** cho tài khoản — liệt kê được **6 model**:
-   `gemini-2.5-flash-native-audio-latest`, `…-preview-09-2025`, `…-preview-12-2025`,
-   **`gemini-3.1-flash-live-preview`**, `gemini-robotics-er-2-streaming-preview`,
-   `gemini-3.5-live-translate-preview`. Model mặc định tôi đặt trong code
-   (`gemini-3.1-flash-live-preview`) NẰM TRONG danh sách → bản vá model là đúng.
-2. ⚠️ `.env` trên VPS vẫn ghi `GEMINI_LIVE_MODEL=gemini-2.0-flash-exp` (đã ngừng phục vụ
-   31/03/2026) — biến env ĐÈ lên mặc định của code. **Việc tay: sửa dòng này.**
-3. ❌ Script treo 30s rồi báo "nghi endpoint sai" — **suy đoán đó KHÔNG đáng tin**: WebSocket
-   ĐÃ MỞ ĐƯỢC nghĩa là URL/host đúng (sai đường dẫn thì handshake hỏng ngay).
+Vòng 1 (`npm run smoke:gemini-live`): key HỢP LỆ, Live API đã mở, liệt kê được **6 model**
+(có `gemini-3.1-flash-live-preview` đúng như mặc định code đặt). Nhưng phiên Live treo 30s.
 
-**Lỗi thật nằm trong chính script tôi viết:**
+Vòng 2: đổi model (`native-audio` → `live-preview`) — **vẫn treo y hệt** → loại giả thuyết
+"sai loại model".
 
-- Chỉ lắng nghe `setupComplete` + `serverContent`, **không in thông điệp lạ** và **không bắt sự
-  kiện `close`** → khi Google trả khung LỖI giải thích rõ nguyên nhân, script nuốt mất rồi báo
-  "timeout 30s" vô nghĩa, bắt người dùng ngồi đoán.
-- Chọn model bằng cách lấy **phần tử đầu danh sách** → trúng `native-audio` (loại CHỈ trả
-  audio) trong khi gói `setup` xin `responseModalities: ['TEXT']` → nhiều khả năng bị từ chối.
+Vòng 3 (script thăm dò tối giản, in MỌI sự kiện gồm mã đóng kết nối):
 
-**Đã sửa:**
+| Đường dẫn         | Kết quả                                        |
+| ----------------- | ---------------------------------------------- |
+| `v1beta`          | OPEN → `CLOSE 1011 Internal error encountered` |
+| `v1alpha`         | OPEN → `CLOSE 1011 Internal error encountered` |
+| **đường dẫn BỊA** | **`404` ngay, không OPEN**                     |
 
-1. **Bắt sự kiện `close`** — in mã + lý do Google gửi kèm. Đây là thứ biến "timeout bí ẩn"
-   thành câu trả lời.
-2. **In MỌI thông điệp không nhận dạng được** (cắt 400 ký tự).
-3. **Chọn model thông minh**: ưu tiên `GEMINI_LIVE_MODEL` nếu còn dùng được → nếu không, ưu
-   tiên model có `-live-` → cuối cùng mới lấy phần tử đầu.
-4. **Modality theo loại model**: `native-audio` → xin `AUDIO`, còn lại → `TEXT`. Và coi
-   `inlineData` (audio) cũng là phản hồi hợp lệ.
+**Kết luận rút ra:**
 
-**Ghi chú chi phí (người dùng hỏi "bản nào rẻ nhất"):** giữa các model Live giá gần như KHÔNG
-khác nhau — Live API dùng biểu giá audio chung (~$3/1M vào, ~$12/1M ra, số từ nguồn thứ ba,
-chưa xác minh ở trang giá chính thức vì sandbox chặn `ai.google.dev`). Đòn bẩy chi phí thật là
-**có dùng Live hay không**: đường hiện tại (Groq miễn phí + Google TTS cache VĨNH VIỄN trên R2)
-gần như 0đ cho câu lặp lại, còn Live tính tiền từng giây audio và KHÔNG cache được. Khớp với
-Phương án C đã chốt ở `docs/research/dac-ta-gemini-live-2026-08-21.md`.
+1. **Endpoint KHÔNG phải nguyên nhân** — `v1beta` và `v1alpha` hành xử giống hệt. Việc đổi
+   `v1alpha`→`v1beta` ở PR #634 không gây lỗi mà cũng không sửa được gì.
+2. Gói `setup` tối giản (CHỈ `model`, không `generationConfig`) vẫn `1011` → loại luôn giả
+   thuyết sai `responseModalities`.
+3. Lỗi `1011` là Google tự báo lỗi nội bộ sau khi nhận `setup` — chi tiết giao thức mà ta
+   KHÔNG nhìn thấy được từ ngoài. Đúng lúc ngừng đoán.
 
-**Cổng:** typecheck ✅ · lint ✅ · format ✅ · test 4962/4962 ✅.
+**Đính chính một suy luận sai của tôi giữa chừng:** tôi từng khẳng định "WebSocket mở được
+nghĩa là URL đúng", rồi TỰ RÚT LẠI vì nghĩ gateway có thể im lặng. Phép thử đường dẫn bịa
+(`404` ngay) chứng minh **khẳng định GỐC mới đúng** — lần rút lại đó là tự làm nhiễu.
+
+**Quyết định của người dùng: dùng SDK chính thức `@google/genai`.**
+
+**Đã làm (bước 1 — CHỨNG MINH TRƯỚC, PORT SAU):**
+
+1. Thêm `@google/genai@2.18.0` (ghim đúng phiên bản, `npm audit` 0 lỗ hổng). KHÔNG vi phạm
+   luật ghim phiên bản ở CLAUDE.md mục 6 — đó là luật cấm NÂNG React/TS/Tailwind/ESLint,
+   không cấm thêm dependency mới.
+2. **Viết lại `scripts/smoke-gemini-live.ts` bằng SDK** — endpoint/xác thực/khung setup do
+   Google tự lo; callback `onerror`/`onclose` in thẳng lý do (thứ bản tự dựng giấu mất).
+3. **CỐ Ý CHƯA port `packages/core-ai/geminiLiveService.ts`.** Port mù khi chưa biết SDK có
+   chạy nổi trên tài khoản này là đánh cược. Thứ tự đúng: script kiểm chứng trước → biết kết
+   quả → mới viết lại service.
+
+**Bundle client KHÔNG đổi** (JS 120.65/123 kB) — SDK chỉ nằm ở server.
+
+**Cổng:** typecheck ✅ · lint ✅ · format ✅ · test 4962/4962 ✅ · build ✅ · size ✅ ·
+`npm audit --omit=dev` 0 lỗ hổng ✅.
+
+**BƯỚC TIẾP THEO CẦN NGƯỜI DÙNG:** chạy `npm run smoke:gemini-live` trên VPS sau khi deploy.
+Nếu SDK cũng báo lỗi → vấn đề nằm ở tài khoản/model chứ không phải code, và nên đóng nợ này
+lại thay vì đào tiếp. Nếu chạy được → port service sang SDK.
 
 ### feat(security): báo trạng thái Redis ngay lúc khởi động (2026-08-23)
 

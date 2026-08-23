@@ -15,8 +15,7 @@
 // Thoát 0 = chạy được. Thoát 1 = có vấn đề, đọc thông báo để biết sửa ở đâu.
 
 import * as dotenv from 'dotenv'
-import { WebSocket } from 'ws'
-import { DEFAULT_GEMINI_LIVE_WS_URL } from '../packages/core-ai/geminiLiveService.js'
+import { GoogleGenAI, Modality } from '@google/genai'
 
 dotenv.config()
 
@@ -47,96 +46,72 @@ async function listLiveModels(apiKey: string): Promise<string[]> {
     .filter(Boolean)
 }
 
-// ── Bước 2+3: mở phiên thật, chào hỏi một câu ───────────────────────────────
+// ── Bước 2+3: mở phiên thật bằng SDK CHÍNH THỨC ─────────────────────────────
+//
+// [2026-08-23] ĐỔI TỪ WEBSOCKET TỰ DỰNG SANG SDK. Bản tự dựng bắt tay được nhưng Google đóng
+// ngay với `1011 Internal error encountered` ở CẢ v1alpha lẫn v1beta, kể cả khi gói `setup`
+// tối giản (chỉ `model`). Phép thử đường dẫn bịa trả 404 ngay → chứng minh endpoint KHÔNG phải
+// nguyên nhân. Tức lỗi nằm ở chi tiết giao thức mà ta không nhìn thấy được từ ngoài — đúng lúc
+// nên ngừng đoán và dùng thư viện chính chủ (`@google/genai`), nơi endpoint/xác thực/khung
+// setup do Google tự lo.
 function runLiveSession(apiKey: string, model: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    const base = process.env.GEMINI_LIVE_WS_URL || DEFAULT_GEMINI_LIVE_WS_URL
-    const ws = new WebSocket(`${base}?key=${encodeURIComponent(apiKey)}`)
-    let setupDone = false
-
-    const timer = setTimeout(() => {
-      ws.close()
-      reject(
-        new Error(
-          setupDone
-            ? 'Đã setup xong nhưng KHÔNG nhận được phản hồi nào của model trong 30s.'
-            : `Không nhận được setupComplete trong 30s. Nghi endpoint sai — đang dùng:\n   ${base}`,
-        ),
-      )
-    }, TIMEOUT_MS)
-
-    ws.on('open', () => {
-      console.log('   • WebSocket đã mở, gửi gói setup…')
-      ws.send(
-        JSON.stringify({
-          setup: {
-            model: `models/${model}`,
-            // Model 'native-audio' CHỈ trả audio — xin TEXT là bị từ chối.
-            generationConfig: {
-              responseModalities: [/native-audio/.test(model) ? 'AUDIO' : 'TEXT'],
-            },
-          },
-        }),
-      )
-    })
-
-    ws.on('message', (raw) => {
-      let msg: Record<string, unknown>
-      try {
-        msg = JSON.parse(raw.toString())
-      } catch {
-        return
-      }
-
-      if (msg.setupComplete && !setupDone) {
-        setupDone = true
-        console.log('   • ✅ setupComplete — Google chấp nhận model và endpoint')
-        console.log('   • Gửi một lượt text để lấy phản hồi thật…')
-        ws.send(
-          JSON.stringify({
-            clientContent: {
-              turns: [{ role: 'user', parts: [{ text: 'Say hello in one short sentence.' }] }],
-              turnComplete: true,
-            },
-          }),
-        )
-        return
-      }
-
-      const server = msg.serverContent as
-        { modelTurn?: { parts?: Array<{ text?: string }> } } | undefined
-      const text = server?.modelTurn?.parts
-        ?.map((p) => p.text)
-        .filter(Boolean)
-        .join('')
-      if (text) {
-        console.log(`   • ✅ Model trả lời: "${text.trim().slice(0, 120)}"`)
-        clearTimeout(timer)
-        ws.close()
-        resolve()
-      }
-    })
-
-    ws.on('error', (err) => {
+    let done = false
+    const finish = (fn: () => void) => {
+      if (done) return
+      done = true
       clearTimeout(timer)
-      reject(new Error(`Lỗi WebSocket: ${String(err)}`))
-    })
+      fn()
+    }
 
-    // Google thường đóng kết nối kèm MÃ + LÝ DO khi gói setup sai (model không hỗ trợ, sai
-    // modality, payload lỗi…). Không bắt sự kiện này thì mọi lỗi đều biến thành "timeout 30s".
-    ws.on('close', (code, reasonBuf) => {
-      const reason = reasonBuf?.toString() || '(không kèm lý do)'
-      if (!setupDone) {
-        clearTimeout(timer)
-        reject(
-          new Error(
-            `Google ĐÓNG kết nối trước khi setup xong — mã ${code}: ${reason}\n` +
-              `   Model đang thử: ${model}\n` +
-              `   Thường do model không hỗ trợ Live, hoặc responseModalities không hợp với model này.`,
-          ),
-        )
+    const timer = setTimeout(
+      () =>
+        finish(() =>
+          reject(new Error('Không nhận được phản hồi nào trong 30s (SDK không báo lỗi lẫn đóng).')),
+        ),
+      TIMEOUT_MS,
+    )
+
+    void (async () => {
+      try {
+        const ai = new GoogleGenAI({ apiKey })
+        const session = await ai.live.connect({
+          model,
+          config: { responseModalities: [Modality.TEXT] },
+          callbacks: {
+            onopen: () => console.log('   • Phiên Live đã mở (SDK)'),
+            onmessage: (msg) => {
+              const text = msg.serverContent?.modelTurn?.parts
+                ?.map((p) => p.text)
+                .filter(Boolean)
+                .join('')
+              if (text) {
+                console.log(`   • ✅ Model trả lời: "${text.trim().slice(0, 120)}"`)
+                finish(resolve)
+              } else if (msg.setupComplete) {
+                console.log('   • ✅ setupComplete — Google chấp nhận model')
+              }
+            },
+            // Đây chính là thứ bản tự dựng KHÔNG in ra, khiến mọi lỗi thành "timeout bí ẩn".
+            onerror: (e) => finish(() => reject(new Error(`SDK báo lỗi: ${e.message}`))),
+            onclose: (e) =>
+              finish(() =>
+                reject(
+                  new Error(`Google đóng phiên — mã ${e.code}: ${e.reason || '(không lý do)'}`),
+                ),
+              ),
+          },
+        })
+
+        console.log('   • Gửi một lượt text để lấy phản hồi thật…')
+        session.sendClientContent({
+          turns: [{ role: 'user', parts: [{ text: 'Say hello in one short sentence.' }] }],
+          turnComplete: true,
+        })
+      } catch (err) {
+        finish(() => reject(err instanceof Error ? err : new Error(String(err))))
       }
-    })
+    })()
   })
 }
 
