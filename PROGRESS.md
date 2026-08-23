@@ -64,6 +64,38 @@ trong `SupremePrincipleCompliance` đã có, **làm TRƯỚC C1** vì chi phối
 **C6** (đường đỉnh năng khiếu), **C7** (vòng kèm cặp). Thứ tự đề xuất: C0 → C1 → C2b (bảng chẩn
 đoán) → C5 màn chẩn đoán → C2 → C3 → C4 → C6 → C7.
 
+**Bổ sung đợt 3 — 2 tài liệu nữa (cùng ngày):**
+
+- `docs/research/nang-luc-10-18-nen-tang-va-nang-khieu-2026-08-23.md` — đào sâu N1+N2 theo yêu cầu
+  "10–18 tuổi phát triển năng khiếu và năng lực nền tảng: học hành, nghiên cứu, hiểu biết về mọi
+  thứ". Tách rõ **3 trụ khác nhau** (học hành = nạp thứ đã có đáp án · nghiên cứu = tìm câu trả lời
+  chưa ai đưa · hiểu biết rộng = móc để cái mới bám vào). Nội dung: bảng kỹ thuật học theo mức bằng
+  chứng (Dunlosky 2013 — cao: tự kiểm tra + giãn cách; thấp: đọc lại/tô màu; "phong cách học tập"
+  không có cơ sở); **thang nghiên cứu R1–R5** + khuôn dự án 12 tuần; **7 miền tri thức nền** + cơ
+  chế rèn; năng khiếu chia **chế độ MỞ RỘNG 10–14** (thử 8–12 tuần/lĩnh vực, cấm chốt sớm) và
+  **THU HẸP 15–18**; ngân sách 5 giờ/tuần ghép với mùa thi VN; 7 cạm bẫy; bảng "đo bằng gì / KHÔNG
+  đo bằng gì".
+- `docs/research/luong-nguoi-moi-ho-so-nang-luc-an-2026-08-23.md` — thi hành Luật số 1. Kiến trúc
+  **3 lớp** (HỎI → HỒ SƠ ẨN → GỢI Ý), **5 câu ~90 giây** mỗi câu làm hai việc, hồ sơ dày lên bằng
+  **hành vi** chứ không bằng thêm bài kiểm tra, **luật ngôn ngữ cấm/cho phép** (cấm điểm số, thang,
+  "bạn thiếu…", biểu đồ radar trên trang chủ), luật trích lại lời người dùng khi giải thích "vì
+  sao", xử lý trung thực khi người dùng hỏi "bạn có chấm điểm tôi không", 7 **test bất biến chặn
+  CI** (T1: không con số năng lực nào rò lên UI).
+
+**Phát hiện khi đọc code (định hình thiết kế):** `pages/core/Onboarding.tsx` nằm ở `core/` nhưng
+thực chất là onboarding **MÔN TIẾNG ANH** (trình độ CEFR, mục tiêu IELTS/du lịch); chỉ `age_group`
+là dữ liệu cấp nền tảng. Migration `0036_english_user_profile.sql` **đã lường trước** và tạo sẵn
+bảng ngủ `english.user_profile`. ⇒ Onboarding nền tảng phải là **lớp MỚI chạy TRƯỚC**, giữ nguyên
+màn hiện tại làm onboarding môn — thêm **PR C1b** (tách lớp + chuyển `age_group` lên platform,
+hoàn tất bước 0036 để ngỏ; đụng màn onboarding của mọi user đang hoạt động nên cần test kỹ).
+
+**Điểm tôi nói ngược lại yêu cầu (chờ người dùng chốt):** "không hiện cho người dùng biết" — tôi đề
+xuất **ẩn ≠ giấu**: mặc định không bao giờ tự bật ra, không ở màn hình chính, nhưng **xem được khi
+người dùng chủ động hỏi** và **xoá được**. Lý do: niềm tin, dữ liệu suy luận vẫn là dữ liệu cá nhân
+(repo đã có `consentGrant`), nhất quán với Luật 6 của tư thế đồng hành, và phụ huynh trẻ vị thành
+niên chắc chắn sẽ hỏi. Nếu người dùng vẫn muốn ẩn tuyệt đối thì làm theo, nhưng đề nghị giữ tối
+thiểu nút "Xoá dữ liệu đánh giá về tôi".
+
 ### feat+refactor: N3 — hợp nhất hệ trùng + PvP hết hardcode + ẩn telemetry USD (2026-08-23)
 
 **Bối cảnh:** 3 "việc quyết định lớn" còn lại (đã người dùng duyệt từ kế hoạch 7 PR A→G) +

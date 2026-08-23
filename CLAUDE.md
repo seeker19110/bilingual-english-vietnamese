@@ -54,7 +54,13 @@ Ba chế độ:
   `docs/research/dong-hanh-va-phat-trien-nang-khieu-2026-08-23.md` (**tư thế ĐỒNG HÀNH** — 8 luật
   hành xử của Companion theo SDT; **đường ĐỈNH phát triển năng khiếu** tách khỏi đường nền; cơ
   chế đóng góp xã hội). **Luật số 1 của sản phẩm: kết quả chẩn đoán KHÔNG bao giờ là màn hình
-  chính** — nó là công cụ chọn việc, không phải bảng chấm điểm con người.
+  chính** — nó là công cụ chọn việc, không phải bảng chấm điểm con người. Hai tài liệu chuyên sâu
+  kèm theo: `docs/research/nang-luc-10-18-nen-tang-va-nang-khieu-2026-08-23.md` (3 trụ nền tảng
+  học hành · nghiên cứu · hiểu biết rộng cho tuổi 10–18, thang nghiên cứu R1–R5, 7 miền tri thức,
+  chế độ mở rộng 10–14 / thu hẹp 15–18 cho năng khiếu) và
+  `docs/research/luong-nguoi-moi-ho-so-nang-luc-an-2026-08-23.md` (**luồng người mới**: 5 câu hỏi
+  ~90 giây → hồ sơ năng lực ẩn → gợi ý ĐÚNG MỘT việc; **luật ngôn ngữ cấm/cho phép** + 7 test bất
+  biến chặn CI để con số năng lực không rò lên giao diện).
 - `docs/deploy-vps-ubuntu.md` — hướng dẫn deploy VPS. ADR (quyết định kiến trúc lớn): đặt ở `docs/adr/` khi có.
 - `docs/ke-hoach-khoi-phuc-su-co-server.md` — **quy trình khôi phục khi server sập/gặp sự cố** (chẩn đoán nhanh → kịch bản xử lý → restore backup → post-mortem). Đọc khi có sự cố thật hoặc chuẩn bị runbook. Khác `docs/DEPLOY.md` (deploy + fix nhanh) và `docs/rollback-runbook.md` (rollback cấu hình theo PR cụ thể).
 - `docs/MASTER_SPEC.md` — tầm nhìn kiến trúc Đồng Hành Platform (THAM KHẢO tầm nhìn).
