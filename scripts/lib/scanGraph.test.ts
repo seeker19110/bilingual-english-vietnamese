@@ -151,7 +151,9 @@ describe('resolveDhcbAlias — alias workspace @dhcb/*', () => {
     expect(resolveDhcbAlias('react', dhcbRoot)).toBeUndefined()
   })
 
-  it('scanGraph tạo được cạnh import xuyên qua @dhcb/*', () => {
+  // Timeout 30s: scanGraph khởi tạo TS program thật — máy CI lạnh cache có thể vượt 5s mặc
+  // định (đã đỏ CI #625 đúng vì vậy dù local chạy ~1s).
+  it('scanGraph tạo được cạnh import xuyên qua @dhcb/*', { timeout: 30_000 }, () => {
     const scanRoot = mkdtempSync(path.join(tmpdir(), 'codemap-dhcb-scan-'))
     try {
       const write2 = (relativePath: string, content: string): void => {
