@@ -36,7 +36,7 @@ jobs:
             cd /var/www/dhcb
             if [ -n "${GITHUB_TOKEN}" ]; then
               git fetch "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" main --prune --tags
-              git checkout -B main FETCH_HEAD
+              git checkout -f -B main FETCH_HEAD
               git reset --hard FETCH_HEAD
             fi
             GITHUB_TOKEN="${GITHUB_TOKEN}" GITHUB_REPOSITORY="${GITHUB_REPOSITORY}" bash scripts/deploy.sh
