@@ -1,7 +1,7 @@
 // api/life-synthesis.test.ts
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import handler from './life-synthesis.js'
-import * as security from '../packages/core-auth/security.js'
+import * as security from '@dhcb/core-auth/security'
 
 describe('Life Synthesis API Handler (/api/life-synthesis)', () => {
   beforeEach(() => {

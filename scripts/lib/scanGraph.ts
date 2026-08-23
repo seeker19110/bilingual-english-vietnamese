@@ -33,7 +33,7 @@ export function scanGraph({ rootDir, scanRoots, entryPoints = [] }: ScanOptions)
     return scanRoots.some((root) => repoPath === root || repoPath.startsWith(`${root}/`))
   }
 
-  // Quét rộng hơn `include` của tsconfig (vốn chỉ có apps/english/src + packages/core-ui)
+  // Quét rộng hơn `include` của tsconfig (vốn chỉ có apps/dhcb/src + packages/core-ui)
   // để phủ cả api/, scripts/, apps/hub/ và server.ts trong cùng một chương trình.
   const rootNames = scanRoots
     .flatMap((root) => {
@@ -95,14 +95,25 @@ export function scanGraph({ rootDir, scanRoots, entryPoints = [] }: ScanOptions)
         moduleSpecifier = node.moduleSpecifier
       }
       if (moduleSpecifier) {
-        const resolved = ts.resolveModuleName(
-          moduleSpecifier.text,
-          sourceFile.fileName,
-          program.getCompilerOptions(),
-          ts.sys,
-        ).resolvedModule
-        if (resolved && !resolved.isExternalLibraryImport) {
-          const toPath = toRepoPath(resolved.resolvedFileName)
+        // Alias workspace `@dhcb/<ten-goi>/<duong-dan>` chua (va se khong) khai bao trong
+        // tsconfig `paths` -- ts.resolveModuleName khong biet nen phai tu phan giai truoc:
+        // `@dhcb/X/Y` -> `packages/X/Y.ts` (thu `.tsx` neu `.ts` khong ton tai).
+        const dhcbTarget = resolveDhcbAlias(moduleSpecifier.text, rootDir)
+        const resolvedFileName =
+          dhcbTarget ??
+          (() => {
+            const resolved = ts.resolveModuleName(
+              moduleSpecifier!.text,
+              sourceFile.fileName,
+              program.getCompilerOptions(),
+              ts.sys,
+            ).resolvedModule
+            return resolved && !resolved.isExternalLibraryImport
+              ? resolved.resolvedFileName
+              : undefined
+          })()
+        if (resolvedFileName) {
+          const toPath = toRepoPath(resolvedFileName)
           if (isScanned(toPath) && toPath !== fromPath) {
             const key = `${fromPath}\u0000${toPath}`
             if (!seenImports.has(key)) {
@@ -145,6 +156,26 @@ export function scanGraph({ rootDir, scanRoots, entryPoints = [] }: ScanOptions)
 
   files.sort()
   return { files, imports, calls }
+}
+
+/**
+ * Phan giai alias workspace `@dhcb/<ten-goi>/<duong-dan>` -> `packages/<ten-goi>/<duong-dan>.ts`
+ * (thu `.tsx` neu `.ts` khong ton tai). Chua vao tsconfig `paths` vi cac goi @dhcb/* dang duoc
+ * tach dan (xem ADR-0001) -- tu phan giai bang tay o day de codemap theo kip ngay khi co import
+ * moi, khong phai doi cap nhat tsconfig. Tra ve `undefined` neu khong khop dinh dang hoac file
+ * khong ton tai (coi nhu module ngoai, giong module npm binh thuong).
+ */
+export function resolveDhcbAlias(moduleSpecifier: string, rootDir: string): string | undefined {
+  const match = /^@dhcb\/([^/]+)\/(.+)$/.exec(moduleSpecifier)
+  if (!match) return undefined
+  const [, packageName, relativePath] = match
+  if (!packageName || !relativePath) return undefined
+  const base = path.join(rootDir, 'packages', packageName, relativePath)
+  for (const ext of ['.ts', '.tsx']) {
+    const candidate = `${base}${ext}`
+    if (existsSync(candidate)) return candidate
+  }
+  return undefined
 }
 
 /**

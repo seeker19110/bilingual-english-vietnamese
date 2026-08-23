@@ -15,7 +15,7 @@
 //   http://localhost:5173/api/pronunciation?word=apple&voice=male
 // (vite.config.ts đã gắn middleware gọi thẳng handler này, không cần deploy lên Vercel).
 
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   generateAudioFromGoogle,
   generateStudioAudioFromGoogle,
@@ -28,20 +28,20 @@ import {
   VOICE_VERSION,
   type Lang,
   type VoiceId,
-} from './_lib/googleTts.js'
-import { saveAudio, isServableUrl } from '../packages/core-ai/fileStorage.js'
-import { ensureProfileRow } from '../packages/core-auth/authService.js'
-import { clampVoiceToPlan, type AnyVoiceId } from './_lib/voiceAccess.js'
-import { isValidElevenVoice } from '../packages/core-ai/elevenLabsTts.js'
-import { isValidGeminiVoice } from '../packages/core-ai/geminiTts.js'
+} from '@dhcb/core-ai/googleTts'
+import { saveAudio, isServableUrl } from '@dhcb/core-ai/fileStorage'
+import { ensureProfileRow } from '@dhcb/core-auth/authService'
+import { clampVoiceToPlan, type AnyVoiceId } from '@dhcb/core-ai/voiceAccess'
+import { isValidElevenVoice } from '@dhcb/core-ai/elevenLabsTts'
+import { isValidGeminiVoice } from '@dhcb/core-ai/geminiTts'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 // Regex cho phép chữ (mọi ngôn ngữ, gồm chữ CÓ DẤU như sauté/café/naïve và tiếng Việt),
 // dấu phụ tổ hợp, số, dấu cách, gạch nối, dấu nháy (don't), dấu chấm (Mr.), và dấu câu

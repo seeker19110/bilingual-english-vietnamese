@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { ThemeToggle } from './ThemeToggle'
-import { ThemeContext } from './themeContext'
+import { ThemeToggle } from './ThemeToggle.js'
+import { ThemeContext } from './themeContext.js'
 
 describe('ThemeToggle', () => {
   it('khi locked = false → render nút đổi giao diện với nhãn tiếng Việt mặc định', () => {

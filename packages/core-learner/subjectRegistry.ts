@@ -4,8 +4,8 @@ import {
   SubjectManifestSchema,
   SUBJECT_MANIFEST_SCHEMA_VERSION,
   type SubjectManifest,
-} from '../core-contracts/subjectManifest.js'
-import { NotFoundError } from '../core-errors/appError.js'
+} from '@dhcb/core-contracts/subjectManifest'
+import { NotFoundError } from '@dhcb/core-errors/appError'
 
 export const SUPPORTED_SUBJECTS: SubjectManifest[] = [
   SubjectManifestSchema.parse({

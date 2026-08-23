@@ -1,8 +1,8 @@
 // packages/core-work/workService.ts — Service cho Work Domain (V2-15).
 import type { Pool } from 'pg'
 import { randomUUID } from 'node:crypto'
-import { withTransaction } from '../core-db/transaction.js'
-import { NotFoundError } from '../core-errors/appError.js'
+import { withTransaction } from '@dhcb/core-db/transaction'
+import { NotFoundError } from '@dhcb/core-errors/appError'
 import {
   WorkProjectSchema,
   WorkTaskSchema,
@@ -17,7 +17,7 @@ import {
   type WorkTaskPrioritySchema,
   type WorkTaskStatusSchema,
   type WorkDocumentTypeSchema,
-} from '../core-contracts/work.js'
+} from '@dhcb/core-contracts/work'
 import type { z } from 'zod'
 
 export type WorkProjectStatus = z.infer<typeof WorkProjectStatusSchema>

@@ -1,7 +1,7 @@
 // api/debate-arena.test.ts
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import handler from './debate-arena.js'
-import * as security from '../packages/core-auth/security.js'
+import * as security from '@dhcb/core-auth/security'
 
 describe('Debate Arena API Handler (/api/debate-arena)', () => {
   beforeEach(() => {

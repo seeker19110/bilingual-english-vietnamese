@@ -15,7 +15,7 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 import { initSentryServer, captureServerException } from './api/_lib/sentry.js'
-import { warnIfClusterWithoutRedis } from './packages/core-auth/security.js'
+import { warnIfClusterWithoutRedis } from '@dhcb/core-auth/security'
 
 // Bật Sentry (error tracking) — no-op nếu chưa cấu hình SENTRY_DSN (xem api/_lib/sentry.ts).
 initSentryServer()
@@ -24,15 +24,15 @@ initSentryServer()
 // lý do trong warnIfClusterWithoutRedis() (api/_lib/security.ts).
 warnIfClusterWithoutRedis()
 
-import ttsHandler from './packages/core-ai/tts.js'
-import aiHandler from './packages/core-ai/ai.js'
+import ttsHandler from '@dhcb/core-ai/tts'
+import aiHandler from '@dhcb/core-ai/ai'
 import pronunciationHandler from './api/pronunciation.js'
-import sttHandler from './packages/core-ai/stt.js'
+import sttHandler from '@dhcb/core-ai/stt'
 import pushHandler, { sendReminders } from './api/push.js'
 import dictionaryHandler from './api/dictionary.js'
 import leaderboardHandler from './api/leaderboard.js'
 import pronounceAssessHandler from './api/pronounce-assess.js'
-import authHandler from './packages/core-auth/auth.js'
+import authHandler from '@dhcb/core-auth/auth'
 import profileHandler from './api/profile.js'
 import progressHandler from './api/progress.js'
 import usageSummaryHandler from './api/usage-summary.js'
@@ -44,10 +44,10 @@ import adminSettingsHandler from './api/admin-settings.js'
 import appSettingsHandler from './api/app-settings.js'
 import adminGrantPlanHandler from './api/admin-grant-plan.js'
 import adminVipWhitelistHandler from './api/admin-vip-whitelist.js'
-import planFeaturesHandler from './packages/core-billing/plan-features.js'
+import planFeaturesHandler from './api/plan-features.js'
 import adminPlanFeaturesHandler from './api/admin-plan-features.js'
 import adminPricePromoHandler from './api/admin-price-promo.js'
-import planMarketingHandler from './packages/core-billing/plan-marketing.js'
+import planMarketingHandler from './api/plan-marketing.js'
 import adminPlanMarketingHandler from './api/admin-plan-marketing.js'
 import analyticsHandler from './api/analytics.js'
 import analyticsSummaryHandler from './api/analytics-summary.js'
@@ -58,10 +58,10 @@ import questsHandler from './api/quests.js'
 import achievementsHandler from './api/achievements.js'
 import friendsHandler from './api/friends.js'
 import chatHandler from './api/chat.js'
-import { attachChatWebSocketServer } from './packages/core-chat/wsHandler.js'
-import { attachVoiceWebSocketServer } from './packages/core-ai/wsVoiceHandler.js'
-import { attachCoLearningWebSocketServer } from './packages/core-ai/wsCoLearningHandler.js'
-import { attachGeminiLiveWebSocketServer } from './packages/core-ai/wsGeminiLiveHandler.js'
+import { attachChatWebSocketServer } from '@dhcb/core-chat/wsHandler'
+import { attachVoiceWebSocketServer } from '@dhcb/core-ai/wsVoiceHandler'
+import { attachCoLearningWebSocketServer } from '@dhcb/core-ai/wsCoLearningHandler'
+import { attachGeminiLiveWebSocketServer } from '@dhcb/core-ai/wsGeminiLiveHandler'
 import adminAchievementRewardsHandler from './api/admin-achievement-rewards.js'
 import adminPaymentsHandler from './api/admin-payments.js'
 import adminSystemControlHandler from './api/admin-system-control.js'
@@ -69,11 +69,11 @@ import adminTtsCacheHandler from './api/admin-tts-cache.js'
 import adminReservedNamesHandler from './api/admin-reserved-names.js'
 import adminFeedbackHandler from './api/admin-feedback.js'
 import adminFeatureStatusHandler from './api/admin-feature-status.js'
-import planPricesHandler from './packages/core-billing/plan-prices.js'
-import checkoutHandler from './packages/core-billing/checkout.js'
-import paymentWebhookHandler from './packages/core-billing/payment-webhook.js'
-import paymentStatusHandler from './packages/core-billing/payment-status.js'
-import paymentHistoryHandler from './packages/core-billing/payment-history.js'
+import planPricesHandler from './api/plan-prices.js'
+import checkoutHandler from './api/checkout.js'
+import paymentWebhookHandler from './api/payment-webhook.js'
+import paymentStatusHandler from './api/payment-status.js'
+import paymentHistoryHandler from './api/payment-history.js'
 import avatarVisemesHandler from './api/avatar-visemes.js'
 import hubStatsHandler from './api/hub-stats.js'
 import personsHandler from './api/persons.js'
@@ -327,7 +327,6 @@ app.all('/api/health/deep', wrapEdge(healthDeepHandler))
 // Proactive Briefing (V2 Flagship P1) — Morning / Evening personalized proactive briefs.
 app.all('/api/proactive-briefing', wrapEdge(proactiveBriefingHandler))
 // Multimodal Vision Solver (V2 Flagship P1) — STEM & Document OCR solver.
-app.all('/api/vision-solve', wrapEdge(visionSolveHandler))
 // External Integrations (V2 Flagship) — Google Calendar & Notion sync.
 app.all('/api/integrations', wrapEdge(integrationsHandler))
 // Subconscious Cognition & Nightly REM Consolidation (V3 Flagship) — Autonomous cognition & predictive strategy.
@@ -443,6 +442,13 @@ app.use(
   }),
 )
 
+// /api/* không khớp route nào ở trên → JSON 404 rõ ràng. Trước đây rơi xuống catch-all
+// SPA bên dưới, trả index.html 200 — client tưởng thành công, khó debug
+// (vá 2026-08-23, đề xuất N1 mục B6).
+app.all('/api/*', (_req, res) => {
+  res.status(404).json({ error: 'API route không tồn tại' })
+})
+
 // Mọi route client SPA (Toán, Tiếng Anh, Lộ trình, Luyện nói, Đồng Hành, Simulators, v.v.) đều trả index.html đầy đủ
 app.get('*', (_req, res) => {
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
@@ -535,8 +541,16 @@ const server = app.listen(PORT, () => {
   console.log(`✅ English Tutor đang chạy tại http://localhost:${PORT}`)
   console.log(`   NODE_ENV : ${process.env.NODE_ENV || 'production'}`)
   console.log(`   Node.js  : ${process.version}`)
-  startReminderScheduler()
-  startPlanExpiryScheduler()
+  // PM2 cluster: chỉ instance 0 chạy scheduler — trước đây CẢ 3 instance cùng chạy nên
+  // push/email nhắc học gửi 3 lần/người và downgradeExpiredPlans() chạy 3 lần
+  // (vá 2026-08-23, đề xuất N1 mục B5). Chạy ngoài PM2 thì biến không tồn tại → vẫn chạy.
+  const pm2Instance = process.env.NODE_APP_INSTANCE
+  if (pm2Instance === undefined || pm2Instance === '0') {
+    startReminderScheduler()
+    startPlanExpiryScheduler()
+  } else {
+    console.log(`   Scheduler: tắt ở instance ${pm2Instance} (chỉ instance 0 chạy)`)
+  }
   // Báo PM2 là app ĐÃ nhận request được (đi với wait_ready trong ecosystem.config.cjs).
   // Khi reload, PM2 đợi tín hiệu này từ process MỚI rồi mới tắt process CŨ → không có
   // khoảng chết. Chạy ngoài PM2 (npm start tay) thì process.send không tồn tại → bỏ qua.

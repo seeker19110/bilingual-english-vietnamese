@@ -3,7 +3,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => true,
@@ -15,7 +15,7 @@ const claimShareMock = vi.fn()
 const claimStreakMock = vi.fn()
 const claimCefrMock = vi.fn()
 const statusMock = vi.fn()
-vi.mock('./_lib/quests', () => ({
+vi.mock('./_lib/quests.js', () => ({
   claimShareQuest: (userId: string) => claimShareMock(userId),
   claimStreakQuest: (userId: string) => claimStreakMock(userId),
   claimCefrExamQuest: (userId: string, level: string) => claimCefrMock(userId, level),

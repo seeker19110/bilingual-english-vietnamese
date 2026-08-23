@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import * as path from 'node:path'
-import { resolveIntentAndDomain } from '../packages/core-personal/companionRuntime.js'
+import { resolveIntentAndDomain } from '@dhcb/core-personal/companionRuntime'
 
 const SCRIPT_DIR = fileURLToPath(new URL('.', import.meta.url))
 const FIXTURES_PATH = path.join(SCRIPT_DIR, 'eval-v2-routing-fixtures.json')

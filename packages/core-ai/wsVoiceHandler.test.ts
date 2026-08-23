@@ -7,10 +7,10 @@ import {
 } from './wsVoiceHandler.js'
 
 const authState: { user: { userId: string } | null } = { user: null }
-vi.mock('../core-auth/security.js', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   validateAuth: async () => authState.user,
 }))
-vi.mock('../core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   validateAuth: async () => authState.user,
 }))
 

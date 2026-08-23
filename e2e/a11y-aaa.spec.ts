@@ -15,7 +15,7 @@ import { freezeAnimations } from './helpers/axe'
 //
 // Cổng này TUYỆT ĐỐI: 0 vi phạm AAA trên nội dung/tiêu đề, 15 trang × 5 theme.
 // Nợ tương phản cũ (~305 phần tử) đã xử lý xong ngày 2026-08-04 bằng cách chỉnh token
-// --z-300/--z-400 của cả 5 theme (xem apps/english/src/index.css + PROGRESS.md), nên
+// --z-300/--z-400 của cả 5 theme (xem apps/dhcb/src/index.css + PROGRESS.md), nên
 // KHÔNG còn baseline nào — thêm màn hình mới mà rớt 7:1 là fail ngay.
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -87,7 +87,7 @@ for (const theme of THEMES) {
       expect(
         violated,
         `Vi phạm WCAG AAA trên nội dung/tiêu đề ở ${route} theme=${theme} — ` +
-          `chữ nội dung phải đạt tương phản ≥ 7:1 (chỉnh token màu ở apps/english/src/index.css).`,
+          `chữ nội dung phải đạt tương phản ≥ 7:1 (chỉnh token màu ở apps/dhcb/src/index.css).`,
       ).toEqual([])
     })
   }

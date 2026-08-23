@@ -1,10 +1,10 @@
 // api/feedback.test.ts — Kiểm thử endpoint nhận ý kiến đóng góp người dùng.
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 let rateLimitOk = true
 let authUser: { userId: string } | null = { userId: 'u-123' }
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => rateLimitOk,
@@ -13,7 +13,7 @@ vi.mock('../packages/core-auth/security', () => ({
 }))
 
 import handler from './feedback'
-import { getPgPool } from '../packages/core-db/pgPool'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

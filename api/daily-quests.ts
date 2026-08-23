@@ -1,15 +1,12 @@
 // api/daily-quests.ts — REST handler cho Nhiệm Vụ Hàng Ngày & Rương Báu Bí Ẩn (Daily Quests & Streak Vault).
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
 import {
   generateDailyQuests,
   updateQuestProgress,
   claimMysteryChestReward,
-} from '../packages/core-personal/dailyQuestsService.js'
-import {
-  type DailyQuestsState,
-  type QuestCategory,
-} from '../packages/core-contracts/dailyQuests.js'
+} from '@dhcb/core-personal/dailyQuestsService'
+import { type DailyQuestsState, type QuestCategory } from '@dhcb/core-contracts/dailyQuests'
 
 // In-memory store cho trạng thái nhiệm vụ ngày của users
 const userDailyQuestsMap = new Map<string, DailyQuestsState>()
@@ -20,7 +17,12 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const auth = await validateAuth(req)
-  const userId = auth?.userId || 'u-default'
+  // Bắt buộc đăng nhập — trước đây fallback 'u-default' khiến MỌI khách vãng lai dùng chung
+  // một bucket dữ liệu (vá 2026-08-23, đề xuất N1 mục B1).
+  if (!auth) {
+    return jsonResponse({ error: 'Unauthorized' }, 401)
+  }
+  const userId = auth.userId
   const todayStr = new Date().toISOString().slice(0, 10)
 
   const url = new URL(req.url)

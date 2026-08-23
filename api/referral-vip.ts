@@ -1,12 +1,12 @@
 // api/referral-vip.ts — REST handler cho Tiếp thị Liên kết & Giới thiệu Bạn bè VIP (Referral VIP Booster).
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
 import {
   buildReferralDashboard,
   prepareViralCardData,
   getMilestoneDefinitions,
-} from '../packages/core-personal/referralVipService.js'
-import { type RefereeRecord } from '../packages/core-contracts/referralVip.js'
+} from '@dhcb/core-personal/referralVipService'
+import { type RefereeRecord } from '@dhcb/core-contracts/referralVip'
 
 // In-memory mock store cho danh sách bạn bè đã mời của user
 const userRefereesMap = new Map<string, RefereeRecord[]>()
@@ -17,7 +17,12 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const auth = await validateAuth(req)
-  const userId = auth?.userId || 'u-default'
+  // Bắt buộc đăng nhập — trước đây fallback 'u-default' khiến mọi khách vãng lai dùng chung
+  // một bucket referral (vá 2026-08-23, đề xuất N1 mục B1).
+  if (!auth) {
+    return jsonResponse({ error: 'Unauthorized' }, 401)
+  }
+  const userId = auth.userId
   const referralCode = `DHCB-${userId.slice(-4).toUpperCase() || '8888'}`
 
   const url = new URL(req.url)

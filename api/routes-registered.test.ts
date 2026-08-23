@@ -46,10 +46,10 @@ function listApiHandlers(): HandlerEntry[] {
 // `export default async function handler(req: Request)`, KHÔNG phải mọi file trong thư mục
 // (packages/core-ai, packages/core-auth còn chứa nhiều file thư viện không phải route).
 const PACKAGE_HANDLERS: HandlerEntry[] = [
-  { importPath: './packages/core-ai/tts.js', urlPath: '/api/tts' },
-  { importPath: './packages/core-ai/stt.js', urlPath: '/api/stt' },
-  { importPath: './packages/core-ai/ai.js', urlPath: '/api/agent' },
-  { importPath: './packages/core-auth/auth.js', urlPath: '/api/auth' },
+  { importPath: '@dhcb/core-ai/tts', urlPath: '/api/tts' },
+  { importPath: '@dhcb/core-ai/stt', urlPath: '/api/stt' },
+  { importPath: '@dhcb/core-ai/ai', urlPath: '/api/agent' },
+  { importPath: '@dhcb/core-auth/auth', urlPath: '/api/auth' },
 ]
 
 describe('server.ts đăng ký đủ route cho api/ + packages/', () => {

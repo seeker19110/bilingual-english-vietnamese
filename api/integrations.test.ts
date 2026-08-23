@@ -1,7 +1,7 @@
 // api/integrations.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import handler from './integrations.js'
-import * as security from '../packages/core-auth/security.js'
+import * as security from '@dhcb/core-auth/security'
 
 describe('GET/POST /api/integrations', () => {
   beforeEach(() => {

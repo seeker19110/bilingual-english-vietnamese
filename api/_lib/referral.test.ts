@@ -9,10 +9,10 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('../../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
-vi.mock('../../packages/core-auth/security', () => ({ logSecurityEvent: () => {} }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('@dhcb/core-auth/security', () => ({ logSecurityEvent: () => {} }))
 const granted: { calls: { userId: string; days: number }[] } = { calls: [] }
-vi.mock('./planGrant', () => ({
+vi.mock('@dhcb/core-billing/planGrant', () => ({
   grantPlanDays: async (userId: string, _plan: string, days: number) => {
     granted.calls.push({ userId, days })
     return { plan: 'pro', planExpiresAt: new Date() }
@@ -27,7 +27,7 @@ import {
   MAX_REWARDED_REFERRALS,
   REFERRAL_REWARD_DAYS,
 } from './referral'
-import { getPgPool } from '../../packages/core-db/pgPool'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

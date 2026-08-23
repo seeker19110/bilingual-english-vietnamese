@@ -6,7 +6,7 @@ import type {
   ProactiveAgentConfig,
   ProactiveAgentState,
   ProactiveNudge,
-} from '../core-contracts/proactiveAgent.js'
+} from '@dhcb/core-contracts/proactiveAgent'
 
 const defaultConfig: ProactiveAgentConfig = {
   nudgeFrequency: 'balanced',

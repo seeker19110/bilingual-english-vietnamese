@@ -1,11 +1,11 @@
 // api/agent-orchestrator.ts — REST handler cho Autonomous Multi-Agent Orchestrator Studio.
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
-import { orchestrateAutonomousAgentTask } from '../packages/core-personal/agentOrchestratorService.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
+import { orchestrateAutonomousAgentTask } from '@dhcb/core-personal/agentOrchestratorService'
 import type {
   AutonomousAgentRole,
   AgentExecutionSession,
-} from '../packages/core-contracts/agentOrchestrator.js'
+} from '@dhcb/core-contracts/agentOrchestrator'
 
 const sessionsMap = new Map<string, AgentExecutionSession[]>()
 

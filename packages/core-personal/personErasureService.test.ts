@@ -3,7 +3,7 @@
 
 import { describe, it, expect, vi } from 'vitest'
 import { exportPersonData, erasePersonData } from './personErasureService.js'
-import { NotFoundError } from '../core-errors/appError.js'
+import { NotFoundError } from '@dhcb/core-errors/appError'
 
 // ─── Mock pool builder ────────────────────────────────────────────────────────
 

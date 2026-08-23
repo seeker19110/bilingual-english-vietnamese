@@ -4,8 +4,8 @@ import {
   ToolManifestSchema,
   TOOL_MANIFEST_SCHEMA_VERSION,
   type ToolManifest,
-} from '../core-contracts/toolManifest.js'
-import { ValidationError, NotFoundError } from '../core-errors/appError.js'
+} from '@dhcb/core-contracts/toolManifest'
+import { ValidationError, NotFoundError } from '@dhcb/core-errors/appError'
 
 export const REGISTERED_TOOLS: Record<string, ToolManifest> = {
   'learning.update_goal': ToolManifestSchema.parse({

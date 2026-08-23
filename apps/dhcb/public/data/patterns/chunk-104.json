@@ -1,0 +1,1584 @@
+[
+  {
+    "starter": "The children might",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      { "en": "The children might ask more questions.", "vi": "Bọn trẻ có thể hỏi nhiều hơn." },
+      { "en": "The children might wake up early.", "vi": "Bọn trẻ có thể dậy sớm." },
+      { "en": "The children might never give up.", "vi": "Bọn trẻ có thể không bao giờ bỏ cuộc." },
+      {
+        "en": "The children might manage the schedule.",
+        "vi": "Bọn trẻ có thể quản lý lịch trình."
+      },
+      { "en": "The children might plan ahead.", "vi": "Bọn trẻ có thể lên kế hoạch trước." },
+      { "en": "The children might back up the data.", "vi": "Bọn trẻ có thể sao lưu dữ liệu." },
+      { "en": "The children might launch the product.", "vi": "Bọn trẻ có thể ra mắt sản phẩm." },
+      { "en": "The children might make tea.", "vi": "Bọn trẻ có thể pha trà." },
+      { "en": "The children might celebrate together.", "vi": "Bọn trẻ có thể ăn mừng cùng nhau." },
+      { "en": "The children might take medicine.", "vi": "Bọn trẻ có thể uống thuốc." },
+      { "en": "The children might install the app.", "vi": "Bọn trẻ có thể cài đặt ứng dụng." },
+      { "en": "The children might meet the deadline.", "vi": "Bọn trẻ có thể kịp thời hạn." },
+      { "en": "The children might win the contract.", "vi": "Bọn trẻ có thể giành hợp đồng." },
+      { "en": "The children might cut the budget.", "vi": "Bọn trẻ có thể cắt giảm ngân sách." },
+      { "en": "The children might pack my bags.", "vi": "Bọn trẻ có thể xếp hành lý." },
+      {
+        "en": "The children might try harder next time.",
+        "vi": "Bọn trẻ có thể cố gắng hơn lần sau."
+      },
+      { "en": "The children might learn to swim.", "vi": "Bọn trẻ có thể học bơi." },
+      { "en": "The children might sign up today.", "vi": "Bọn trẻ có thể đăng ký hôm nay." },
+      {
+        "en": "The children might prepare the presentation.",
+        "vi": "Bọn trẻ có thể chuẩn bị bài thuyết trình."
+      },
+      { "en": "The children might water the plants.", "vi": "Bọn trẻ có thể tưới cây." },
+      { "en": "The children might get a promotion.", "vi": "Bọn trẻ có thể được thăng chức." },
+      {
+        "en": "The children might learn something new.",
+        "vi": "Bọn trẻ có thể học điều gì đó mới."
+      },
+      { "en": "The children might buy groceries.", "vi": "Bọn trẻ có thể mua thực phẩm." },
+      { "en": "The children might walk the dog.", "vi": "Bọn trẻ có thể dắt chó đi dạo." },
+      { "en": "The children might miss the flight.", "vi": "Bọn trẻ có thể lỡ chuyến bay." },
+      { "en": "The children might set an alarm.", "vi": "Bọn trẻ có thể đặt báo thức." },
+      { "en": "The children might sleep early.", "vi": "Bọn trẻ có thể ngủ sớm." },
+      { "en": "The children might read more books.", "vi": "Bọn trẻ có thể đọc thêm sách." },
+      { "en": "The children might help the team.", "vi": "Bọn trẻ có thể giúp đỡ nhóm." },
+      { "en": "The children might rate the service.", "vi": "Bọn trẻ có thể đánh giá dịch vụ." },
+      { "en": "The children might take the bus.", "vi": "Bọn trẻ có thể đi xe buýt." },
+      { "en": "The children might try again.", "vi": "Bọn trẻ có thể thử lại." },
+      { "en": "The children might say sorry.", "vi": "Bọn trẻ có thể nói lời xin lỗi." },
+      { "en": "The children might listen carefully.", "vi": "Bọn trẻ có thể lắng nghe cẩn thận." },
+      { "en": "The children might finish on time.", "vi": "Bọn trẻ có thể hoàn thành đúng hạn." },
+      {
+        "en": "The children might solve this issue.",
+        "vi": "Bọn trẻ có thể giải quyết vấn đề này."
+      },
+      { "en": "The children might train the team.", "vi": "Bọn trẻ có thể đào tạo nhóm." },
+      { "en": "The children might make a plan.", "vi": "Bọn trẻ có thể lập một kế hoạch." },
+      {
+        "en": "The children might practice every day.",
+        "vi": "Bọn trẻ có thể luyện tập mỗi ngày."
+      },
+      { "en": "The children might send the email.", "vi": "Bọn trẻ có thể gửi email." },
+      { "en": "The children might close the window.", "vi": "Bọn trẻ có thể đóng cửa sổ." },
+      { "en": "The children might charge the phone.", "vi": "Bọn trẻ có thể sạc điện thoại." },
+      { "en": "The children might check the details.", "vi": "Bọn trẻ có thể kiểm tra chi tiết." },
+      { "en": "The children might take a course.", "vi": "Bọn trẻ có thể tham gia một khóa học." },
+      { "en": "The children might play sports.", "vi": "Bọn trẻ có thể chơi thể thao." },
+      { "en": "The children might reset the password.", "vi": "Bọn trẻ có thể đặt lại mật khẩu." },
+      { "en": "The children might take it easy.", "vi": "Bọn trẻ có thể thư giãn." },
+      { "en": "The children might keep learning.", "vi": "Bọn trẻ có thể tiếp tục học hỏi." },
+      { "en": "The children might do the laundry.", "vi": "Bọn trẻ có thể giặt đồ." },
+      { "en": "The children might write it down.", "vi": "Bọn trẻ có thể ghi nó lại." },
+      {
+        "en": "The children might update the software.",
+        "vi": "Bọn trẻ có thể cập nhật phần mềm."
+      },
+      { "en": "The children might visit the doctor.", "vi": "Bọn trẻ có thể đi khám bác sĩ." },
+      {
+        "en": "The children might invite some friends.",
+        "vi": "Bọn trẻ có thể mời vài người bạn."
+      },
+      { "en": "The children might take a photo.", "vi": "Bọn trẻ có thể chụp một bức ảnh." },
+      {
+        "en": "The children might restart the computer.",
+        "vi": "Bọn trẻ có thể khởi động lại máy tính."
+      },
+      {
+        "en": "The children might explain the situation.",
+        "vi": "Bọn trẻ có thể giải thích tình huống."
+      },
+      { "en": "The children might lead the project.", "vi": "Bọn trẻ có thể dẫn dắt dự án." },
+      { "en": "The children might follow the rules.", "vi": "Bọn trẻ có thể tuân theo quy tắc." },
+      { "en": "The children might wash the dishes.", "vi": "Bọn trẻ có thể rửa bát." },
+      { "en": "The children might reach the goal.", "vi": "Bọn trẻ có thể đạt mục tiêu." },
+      { "en": "The children might be on time.", "vi": "Bọn trẻ có thể đến đúng giờ." },
+      { "en": "The children might call a friend.", "vi": "Bọn trẻ có thể gọi cho một người bạn." },
+      { "en": "The children might pay the bill.", "vi": "Bọn trẻ có thể thanh toán hóa đơn." },
+      { "en": "The children might check my email.", "vi": "Bọn trẻ có thể kiểm tra email." },
+      { "en": "The children might throw a party.", "vi": "Bọn trẻ có thể tổ chức tiệc." },
+      {
+        "en": "The children might cook for everyone.",
+        "vi": "Bọn trẻ có thể nấu ăn cho mọi người."
+      },
+      { "en": "The children might fill out the form.", "vi": "Bọn trẻ có thể điền vào biểu mẫu." },
+      { "en": "The children might set a goal.", "vi": "Bọn trẻ có thể đặt một mục tiêu." },
+      { "en": "The children might stay focused.", "vi": "Bọn trẻ có thể giữ tập trung." },
+      { "en": "The children might ride a bike.", "vi": "Bọn trẻ có thể đạp xe." },
+      { "en": "The children might attend the class.", "vi": "Bọn trẻ có thể tham gia lớp học." },
+      { "en": "The children might turn off the light.", "vi": "Bọn trẻ có thể tắt đèn." },
+      { "en": "The children might open a business.", "vi": "Bọn trẻ có thể mở một doanh nghiệp." },
+      { "en": "The children might pass the exam.", "vi": "Bọn trẻ có thể đậu kỳ thi." },
+      { "en": "The children might meditate daily.", "vi": "Bọn trẻ có thể thiền mỗi ngày." },
+      { "en": "The children might test the feature.", "vi": "Bọn trẻ có thể kiểm thử tính năng." },
+      { "en": "The children might take the exam.", "vi": "Bọn trẻ có thể làm bài thi." },
+      { "en": "The children might understand the lesson.", "vi": "Bọn trẻ có thể hiểu bài học." },
+      {
+        "en": "The children might volunteer on weekends.",
+        "vi": "Bọn trẻ có thể tình nguyện cuối tuần."
+      },
+      { "en": "The children might give it a try.", "vi": "Bọn trẻ có thể thử một lần." },
+      { "en": "The children might eat healthy.", "vi": "Bọn trẻ có thể ăn uống lành mạnh." },
+      { "en": "The children might clean the house.", "vi": "Bọn trẻ có thể dọn nhà." },
+      { "en": "The children might keep a diary.", "vi": "Bọn trẻ có thể viết nhật ký." },
+      { "en": "The children might take a chance.", "vi": "Bọn trẻ có thể nắm lấy cơ hội." },
+      { "en": "The children might change careers.", "vi": "Bọn trẻ có thể chuyển nghề." },
+      { "en": "The children might copy the link.", "vi": "Bọn trẻ có thể sao chép liên kết." },
+      { "en": "The children might visit my family.", "vi": "Bọn trẻ có thể thăm gia đình." },
+      { "en": "The children might drink less coffee.", "vi": "Bọn trẻ có thể uống ít cà phê hơn." },
+      { "en": "The children might raise the price.", "vi": "Bọn trẻ có thể tăng giá." },
+      { "en": "The children might relax at home.", "vi": "Bọn trẻ có thể thư giãn ở nhà." },
+      {
+        "en": "The children might talk to the manager.",
+        "vi": "Bọn trẻ có thể nói chuyện với quản lý."
+      },
+      { "en": "The children might study abroad.", "vi": "Bọn trẻ có thể du học." },
+      { "en": "The children might remember the password.", "vi": "Bọn trẻ có thể nhớ mật khẩu." },
+      { "en": "The children might finish the report.", "vi": "Bọn trẻ có thể hoàn thành báo cáo." },
+      { "en": "The children might get some rest.", "vi": "Bọn trẻ có thể nghỉ ngơi một chút." },
+      { "en": "The children might thank everyone.", "vi": "Bọn trẻ có thể cảm ơn mọi người." },
+      { "en": "The children might speak clearly.", "vi": "Bọn trẻ có thể nói rõ ràng." },
+      { "en": "The children might book a hotel.", "vi": "Bọn trẻ có thể đặt khách sạn." },
+      { "en": "The children might breathe deeply.", "vi": "Bọn trẻ có thể hít thở sâu." },
+      { "en": "The children might lock the door.", "vi": "Bọn trẻ có thể khóa cửa." }
+    ]
+  },
+  {
+    "starter": "The children have to",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      { "en": "The children have to move forward.", "vi": "Bọn trẻ phải tiến về phía trước." },
+      { "en": "The children have to say goodbye.", "vi": "Bọn trẻ phải nói lời tạm biệt." },
+      {
+        "en": "The children have to update the software.",
+        "vi": "Bọn trẻ phải cập nhật phần mềm."
+      },
+      { "en": "The children have to reach the goal.", "vi": "Bọn trẻ phải đạt mục tiêu." },
+      { "en": "The children have to reset the password.", "vi": "Bọn trẻ phải đặt lại mật khẩu." },
+      { "en": "The children have to arrive on time.", "vi": "Bọn trẻ phải đến đúng giờ." },
+      { "en": "The children have to eat healthy.", "vi": "Bọn trẻ phải ăn uống lành mạnh." },
+      { "en": "The children have to go for a walk.", "vi": "Bọn trẻ phải đi dạo." },
+      {
+        "en": "The children have to reply to the message.",
+        "vi": "Bọn trẻ phải trả lời tin nhắn."
+      },
+      { "en": "The children have to cook breakfast.", "vi": "Bọn trẻ phải nấu bữa sáng." },
+      { "en": "The children have to take a photo.", "vi": "Bọn trẻ phải chụp một bức ảnh." },
+      { "en": "The children have to remember the password.", "vi": "Bọn trẻ phải nhớ mật khẩu." },
+      { "en": "The children have to meet new people.", "vi": "Bọn trẻ phải gặp gỡ người mới." },
+      { "en": "The children have to download the file.", "vi": "Bọn trẻ phải tải tệp xuống." },
+      { "en": "The children have to improve my skills.", "vi": "Bọn trẻ phải cải thiện kỹ năng." },
+      {
+        "en": "The children have to invite some friends.",
+        "vi": "Bọn trẻ phải mời vài người bạn."
+      },
+      { "en": "The children have to take the exam.", "vi": "Bọn trẻ phải làm bài thi." },
+      { "en": "The children have to do the laundry.", "vi": "Bọn trẻ phải giặt đồ." },
+      { "en": "The children have to take a break.", "vi": "Bọn trẻ phải nghỉ giải lao." },
+      { "en": "The children have to plan ahead.", "vi": "Bọn trẻ phải lên kế hoạch trước." },
+      { "en": "The children have to train the team.", "vi": "Bọn trẻ phải đào tạo nhóm." },
+      { "en": "The children have to charge the phone.", "vi": "Bọn trẻ phải sạc điện thoại." },
+      { "en": "The children have to listen carefully.", "vi": "Bọn trẻ phải lắng nghe cẩn thận." },
+      { "en": "The children have to review the document.", "vi": "Bọn trẻ phải xem lại tài liệu." },
+      { "en": "The children have to scan the receipt.", "vi": "Bọn trẻ phải quét hóa đơn." },
+      { "en": "The children have to pay the bill.", "vi": "Bọn trẻ phải thanh toán hóa đơn." },
+      { "en": "The children have to take notes.", "vi": "Bọn trẻ phải ghi chép." },
+      { "en": "The children have to make new friends.", "vi": "Bọn trẻ phải kết bạn mới." },
+      { "en": "The children have to cut the budget.", "vi": "Bọn trẻ phải cắt giảm ngân sách." },
+      {
+        "en": "The children have to apply for the position.",
+        "vi": "Bọn trẻ phải nộp đơn cho vị trí."
+      },
+      { "en": "The children have to water the plants.", "vi": "Bọn trẻ phải tưới cây." },
+      { "en": "The children have to leave early.", "vi": "Bọn trẻ phải về sớm." },
+      { "en": "The children have to watch the game.", "vi": "Bọn trẻ phải xem trận đấu." },
+      {
+        "en": "The children have to restart the computer.",
+        "vi": "Bọn trẻ phải khởi động lại máy tính."
+      },
+      { "en": "The children have to fix the problem.", "vi": "Bọn trẻ phải sửa vấn đề." },
+      { "en": "The children have to watch a movie.", "vi": "Bọn trẻ phải xem phim." },
+      { "en": "The children have to report the bug.", "vi": "Bọn trẻ phải báo lỗi." },
+      { "en": "The children have to find a job.", "vi": "Bọn trẻ phải tìm việc làm." },
+      {
+        "en": "The children have to double-check everything.",
+        "vi": "Bọn trẻ phải kiểm tra lại mọi thứ."
+      },
+      { "en": "The children have to call a friend.", "vi": "Bọn trẻ phải gọi cho một người bạn." },
+      { "en": "The children have to share my opinion.", "vi": "Bọn trẻ phải chia sẻ ý kiến." },
+      {
+        "en": "The children have to help a neighbor.",
+        "vi": "Bọn trẻ phải giúp một người hàng xóm."
+      },
+      { "en": "The children have to miss the flight.", "vi": "Bọn trẻ phải lỡ chuyến bay." },
+      { "en": "The children have to start over.", "vi": "Bọn trẻ phải bắt đầu lại." },
+      { "en": "The children have to win the contract.", "vi": "Bọn trẻ phải giành hợp đồng." },
+      { "en": "The children have to wake up early.", "vi": "Bọn trẻ phải dậy sớm." },
+      { "en": "The children have to go on vacation.", "vi": "Bọn trẻ phải đi nghỉ mát." },
+      { "en": "The children have to drink more water.", "vi": "Bọn trẻ phải uống nhiều nước hơn." },
+      { "en": "The children have to close the window.", "vi": "Bọn trẻ phải đóng cửa sổ." },
+      { "en": "The children have to clean the house.", "vi": "Bọn trẻ phải dọn nhà." },
+      { "en": "The children have to learn to swim.", "vi": "Bọn trẻ phải học bơi." },
+      { "en": "The children have to stay focused.", "vi": "Bọn trẻ phải giữ tập trung." },
+      { "en": "The children have to take a day off.", "vi": "Bọn trẻ phải xin nghỉ một ngày." },
+      { "en": "The children have to finish on time.", "vi": "Bọn trẻ phải hoàn thành đúng hạn." },
+      { "en": "The children have to write a report.", "vi": "Bọn trẻ phải viết một báo cáo." },
+      { "en": "The children have to relax at home.", "vi": "Bọn trẻ phải thư giãn ở nhà." },
+      { "en": "The children have to never give up.", "vi": "Bọn trẻ phải không bao giờ bỏ cuộc." },
+      { "en": "The children have to attend the class.", "vi": "Bọn trẻ phải tham gia lớp học." },
+      { "en": "The children have to invest wisely.", "vi": "Bọn trẻ phải đầu tư khôn ngoan." },
+      { "en": "The children have to change the plan.", "vi": "Bọn trẻ phải thay đổi kế hoạch." },
+      { "en": "The children have to ask more questions.", "vi": "Bọn trẻ phải hỏi nhiều hơn." },
+      { "en": "The children have to tell the truth.", "vi": "Bọn trẻ phải nói sự thật." },
+      { "en": "The children have to pay off the loan.", "vi": "Bọn trẻ phải trả hết khoản vay." },
+      { "en": "The children have to turn off the light.", "vi": "Bọn trẻ phải tắt đèn." },
+      { "en": "The children have to go home.", "vi": "Bọn trẻ phải về nhà." },
+      { "en": "The children have to catch the train.", "vi": "Bọn trẻ phải bắt chuyến tàu." },
+      { "en": "The children have to take a chance.", "vi": "Bọn trẻ phải nắm lấy cơ hội." },
+      { "en": "The children have to lead the project.", "vi": "Bọn trẻ phải dẫn dắt dự án." },
+      { "en": "The children have to cheer for the team.", "vi": "Bọn trẻ phải cổ vũ cho đội." },
+      {
+        "en": "The children have to attend the workshop.",
+        "vi": "Bọn trẻ phải tham dự buổi hội thảo."
+      },
+      { "en": "The children have to drive to work.", "vi": "Bọn trẻ phải lái xe đi làm." },
+      { "en": "The children have to think positive.", "vi": "Bọn trẻ phải suy nghĩ tích cực." },
+      { "en": "The children have to test the feature.", "vi": "Bọn trẻ phải kiểm thử tính năng." },
+      { "en": "The children have to thank everyone.", "vi": "Bọn trẻ phải cảm ơn mọi người." },
+      { "en": "The children have to share the post.", "vi": "Bọn trẻ phải chia sẻ bài viết." },
+      {
+        "en": "The children have to exercise every day.",
+        "vi": "Bọn trẻ phải tập thể dục mỗi ngày."
+      },
+      { "en": "The children have to print the document.", "vi": "Bọn trẻ phải in tài liệu." },
+      { "en": "The children have to breathe deeply.", "vi": "Bọn trẻ phải hít thở sâu." },
+      { "en": "The children have to work harder.", "vi": "Bọn trẻ phải làm việc chăm chỉ hơn." },
+      { "en": "The children have to give feedback.", "vi": "Bọn trẻ phải góp ý." },
+      { "en": "The children have to raise the price.", "vi": "Bọn trẻ phải tăng giá." },
+      { "en": "The children have to schedule a meeting.", "vi": "Bọn trẻ phải sắp xếp cuộc họp." },
+      { "en": "The children have to play sports.", "vi": "Bọn trẻ phải chơi thể thao." },
+      { "en": "The children have to learn English.", "vi": "Bọn trẻ phải học tiếng Anh." },
+      { "en": "The children have to keep a diary.", "vi": "Bọn trẻ phải viết nhật ký." },
+      { "en": "The children have to keep learning.", "vi": "Bọn trẻ phải tiếp tục học hỏi." },
+      { "en": "The children have to leave a comment.", "vi": "Bọn trẻ phải để lại bình luận." },
+      { "en": "The children have to send the email.", "vi": "Bọn trẻ phải gửi email." },
+      { "en": "The children have to set an alarm.", "vi": "Bọn trẻ phải đặt báo thức." },
+      { "en": "The children have to install the app.", "vi": "Bọn trẻ phải cài đặt ứng dụng." },
+      { "en": "The children have to follow the rules.", "vi": "Bọn trẻ phải tuân theo quy tắc." },
+      { "en": "The children have to copy the link.", "vi": "Bọn trẻ phải sao chép liên kết." },
+      { "en": "The children have to help out.", "vi": "Bọn trẻ phải giúp đỡ." },
+      { "en": "The children have to change careers.", "vi": "Bọn trẻ phải chuyển nghề." },
+      { "en": "The children have to make a plan.", "vi": "Bọn trẻ phải lập một kế hoạch." },
+      {
+        "en": "The children have to register for the course.",
+        "vi": "Bọn trẻ phải đăng ký khóa học."
+      },
+      { "en": "The children have to lower the cost.", "vi": "Bọn trẻ phải giảm chi phí." },
+      { "en": "The children have to think it over.", "vi": "Bọn trẻ phải suy nghĩ kỹ." },
+      { "en": "The children have to back up the data.", "vi": "Bọn trẻ phải sao lưu dữ liệu." },
+      { "en": "The children have to take a course.", "vi": "Bọn trẻ phải tham gia một khóa học." }
+    ]
+  },
+  {
+    "starter": "The children are going to",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      { "en": "The children are going to make a plan.", "vi": "Bọn trẻ sắp lập một kế hoạch." },
+      {
+        "en": "The children are going to cut the budget.",
+        "vi": "Bọn trẻ sắp cắt giảm ngân sách."
+      },
+      { "en": "The children are going to throw a party.", "vi": "Bọn trẻ sắp tổ chức tiệc." },
+      { "en": "The children are going to book a hotel.", "vi": "Bọn trẻ sắp đặt khách sạn." },
+      { "en": "The children are going to be on time.", "vi": "Bọn trẻ sắp đến đúng giờ." },
+      { "en": "The children are going to say sorry.", "vi": "Bọn trẻ sắp nói lời xin lỗi." },
+      {
+        "en": "The children are going to finish on time.",
+        "vi": "Bọn trẻ sắp hoàn thành đúng hạn."
+      },
+      { "en": "The children are going to take notes.", "vi": "Bọn trẻ sắp ghi chép." },
+      {
+        "en": "The children are going to exercise every day.",
+        "vi": "Bọn trẻ sắp tập thể dục mỗi ngày."
+      },
+      { "en": "The children are going to stay organized.", "vi": "Bọn trẻ sắp giữ ngăn nắp." },
+      {
+        "en": "The children are going to take a course.",
+        "vi": "Bọn trẻ sắp tham gia một khóa học."
+      },
+      {
+        "en": "The children are going to launch the product.",
+        "vi": "Bọn trẻ sắp ra mắt sản phẩm."
+      },
+      { "en": "The children are going to move forward.", "vi": "Bọn trẻ sắp tiến về phía trước." },
+      { "en": "The children are going to share my opinion.", "vi": "Bọn trẻ sắp chia sẻ ý kiến." },
+      { "en": "The children are going to take a chance.", "vi": "Bọn trẻ sắp nắm lấy cơ hội." },
+      { "en": "The children are going to think positive.", "vi": "Bọn trẻ sắp suy nghĩ tích cực." },
+      {
+        "en": "The children are going to plan a trip.",
+        "vi": "Bọn trẻ sắp lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "The children are going to start a new project.",
+        "vi": "Bọn trẻ sắp bắt đầu một dự án mới."
+      },
+      { "en": "The children are going to thank everyone.", "vi": "Bọn trẻ sắp cảm ơn mọi người." },
+      {
+        "en": "The children are going to attend the class.",
+        "vi": "Bọn trẻ sắp tham gia lớp học."
+      },
+      { "en": "The children are going to wake up early.", "vi": "Bọn trẻ sắp dậy sớm." },
+      { "en": "The children are going to ask for a raise.", "vi": "Bọn trẻ sắp xin tăng lương." },
+      { "en": "The children are going to cancel the order.", "vi": "Bọn trẻ sắp hủy đơn hàng." },
+      {
+        "en": "The children are going to remember the password.",
+        "vi": "Bọn trẻ sắp nhớ mật khẩu."
+      },
+      { "en": "The children are going to close the window.", "vi": "Bọn trẻ sắp đóng cửa sổ." },
+      { "en": "The children are going to rent a car.", "vi": "Bọn trẻ sắp thuê xe." },
+      {
+        "en": "The children are going to change the plan.",
+        "vi": "Bọn trẻ sắp thay đổi kế hoạch."
+      },
+      { "en": "The children are going to print the document.", "vi": "Bọn trẻ sắp in tài liệu." },
+      {
+        "en": "The children are going to understand the lesson.",
+        "vi": "Bọn trẻ sắp hiểu bài học."
+      },
+      { "en": "The children are going to help the team.", "vi": "Bọn trẻ sắp giúp đỡ nhóm." },
+      { "en": "The children are going to meditate daily.", "vi": "Bọn trẻ sắp thiền mỗi ngày." },
+      { "en": "The children are going to catch the train.", "vi": "Bọn trẻ sắp bắt chuyến tàu." },
+      {
+        "en": "The children are going to reset the password.",
+        "vi": "Bọn trẻ sắp đặt lại mật khẩu."
+      },
+      { "en": "The children are going to ask more questions.", "vi": "Bọn trẻ sắp hỏi nhiều hơn." },
+      {
+        "en": "The children are going to register for the course.",
+        "vi": "Bọn trẻ sắp đăng ký khóa học."
+      },
+      { "en": "The children are going to try again.", "vi": "Bọn trẻ sắp thử lại." },
+      { "en": "The children are going to join a club.", "vi": "Bọn trẻ sắp tham gia câu lạc bộ." },
+      {
+        "en": "The children are going to fill out the form.",
+        "vi": "Bọn trẻ sắp điền vào biểu mẫu."
+      },
+      { "en": "The children are going to pay the bill.", "vi": "Bọn trẻ sắp thanh toán hóa đơn." },
+      {
+        "en": "The children are going to review the document.",
+        "vi": "Bọn trẻ sắp xem lại tài liệu."
+      },
+      { "en": "The children are going to share the post.", "vi": "Bọn trẻ sắp chia sẻ bài viết." },
+      { "en": "The children are going to breathe deeply.", "vi": "Bọn trẻ sắp hít thở sâu." },
+      {
+        "en": "The children are going to travel abroad.",
+        "vi": "Bọn trẻ sắp đi du lịch nước ngoài."
+      },
+      { "en": "The children are going to miss the flight.", "vi": "Bọn trẻ sắp lỡ chuyến bay." },
+      { "en": "The children are going to cook dinner.", "vi": "Bọn trẻ sắp nấu bữa tối." },
+      {
+        "en": "The children are going to work as a team.",
+        "vi": "Bọn trẻ sắp làm việc theo nhóm."
+      },
+      { "en": "The children are going to win the contract.", "vi": "Bọn trẻ sắp giành hợp đồng." },
+      {
+        "en": "The children are going to volunteer on weekends.",
+        "vi": "Bọn trẻ sắp tình nguyện cuối tuần."
+      },
+      { "en": "The children are going to take a day off.", "vi": "Bọn trẻ sắp xin nghỉ một ngày." },
+      { "en": "The children are going to make new friends.", "vi": "Bọn trẻ sắp kết bạn mới." },
+      { "en": "The children are going to book a ticket.", "vi": "Bọn trẻ sắp đặt vé." },
+      { "en": "The children are going to reach the goal.", "vi": "Bọn trẻ sắp đạt mục tiêu." },
+      { "en": "The children are going to back up the data.", "vi": "Bọn trẻ sắp sao lưu dữ liệu." },
+      {
+        "en": "The children are going to listen carefully.",
+        "vi": "Bọn trẻ sắp lắng nghe cẩn thận."
+      },
+      { "en": "The children are going to watch a movie.", "vi": "Bọn trẻ sắp xem phim." },
+      { "en": "The children are going to take a break.", "vi": "Bọn trẻ sắp nghỉ giải lao." },
+      { "en": "The children are going to set an alarm.", "vi": "Bọn trẻ sắp đặt báo thức." },
+      { "en": "The children are going to play sports.", "vi": "Bọn trẻ sắp chơi thể thao." },
+      { "en": "The children are going to help out.", "vi": "Bọn trẻ sắp giúp đỡ." },
+      { "en": "The children are going to delete the file.", "vi": "Bọn trẻ sắp xóa tệp." },
+      {
+        "en": "The children are going to solve this issue.",
+        "vi": "Bọn trẻ sắp giải quyết vấn đề này."
+      },
+      { "en": "The children are going to leave a comment.", "vi": "Bọn trẻ sắp để lại bình luận." },
+      {
+        "en": "The children are going to make a decision.",
+        "vi": "Bọn trẻ sắp đưa ra quyết định."
+      },
+      { "en": "The children are going to split the bill.", "vi": "Bọn trẻ sắp chia hóa đơn." },
+      { "en": "The children are going to quit smoking.", "vi": "Bọn trẻ sắp bỏ thuốc lá." },
+      { "en": "The children are going to study abroad.", "vi": "Bọn trẻ sắp du học." },
+      {
+        "en": "The children are going to confirm the booking.",
+        "vi": "Bọn trẻ sắp xác nhận đặt chỗ."
+      },
+      { "en": "The children are going to listen to music.", "vi": "Bọn trẻ sắp nghe nhạc." },
+      { "en": "The children are going to call back later.", "vi": "Bọn trẻ sắp gọi lại sau." },
+      { "en": "The children are going to stay focused.", "vi": "Bọn trẻ sắp giữ tập trung." },
+      {
+        "en": "The children are going to save for the future.",
+        "vi": "Bọn trẻ sắp tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The children are going to schedule a meeting.",
+        "vi": "Bọn trẻ sắp sắp xếp cuộc họp."
+      },
+      { "en": "The children are going to watch the game.", "vi": "Bọn trẻ sắp xem trận đấu." },
+      { "en": "The children are going to save money.", "vi": "Bọn trẻ sắp tiết kiệm tiền." },
+      { "en": "The children are going to submit the form.", "vi": "Bọn trẻ sắp nộp biểu mẫu." },
+      { "en": "The children are going to change careers.", "vi": "Bọn trẻ sắp chuyển nghề." },
+      {
+        "en": "The children are going to enjoy the weekend.",
+        "vi": "Bọn trẻ sắp tận hưởng cuối tuần."
+      },
+      { "en": "The children are going to report the bug.", "vi": "Bọn trẻ sắp báo lỗi." },
+      { "en": "The children are going to get a degree.", "vi": "Bọn trẻ sắp lấy bằng." },
+      {
+        "en": "The children are going to help a neighbor.",
+        "vi": "Bọn trẻ sắp giúp một người hàng xóm."
+      },
+      { "en": "The children are going to start over.", "vi": "Bọn trẻ sắp bắt đầu lại." },
+      { "en": "The children are going to clean the house.", "vi": "Bọn trẻ sắp dọn nhà." },
+      { "en": "The children are going to give it a try.", "vi": "Bọn trẻ sắp thử một lần." },
+      { "en": "The children are going to lower the cost.", "vi": "Bọn trẻ sắp giảm chi phí." },
+      { "en": "The children are going to copy the link.", "vi": "Bọn trẻ sắp sao chép liên kết." },
+      {
+        "en": "The children are going to check the details.",
+        "vi": "Bọn trẻ sắp kiểm tra chi tiết."
+      },
+      { "en": "The children are going to take the bus.", "vi": "Bọn trẻ sắp đi xe buýt." },
+      { "en": "The children are going to visit the doctor.", "vi": "Bọn trẻ sắp đi khám bác sĩ." },
+      { "en": "The children are going to ride a bike.", "vi": "Bọn trẻ sắp đạp xe." },
+      { "en": "The children are going to log in again.", "vi": "Bọn trẻ sắp đăng nhập lại." },
+      { "en": "The children are going to lead the project.", "vi": "Bọn trẻ sắp dẫn dắt dự án." },
+      {
+        "en": "The children are going to donate to charity.",
+        "vi": "Bọn trẻ sắp quyên góp từ thiện."
+      },
+      { "en": "The children are going to invest wisely.", "vi": "Bọn trẻ sắp đầu tư khôn ngoan." },
+      {
+        "en": "The children are going to call a friend.",
+        "vi": "Bọn trẻ sắp gọi cho một người bạn."
+      },
+      { "en": "The children are going to go for a walk.", "vi": "Bọn trẻ sắp đi dạo." },
+      { "en": "The children are going to calm down.", "vi": "Bọn trẻ sắp bình tĩnh lại." },
+      {
+        "en": "The children are going to grow the business.",
+        "vi": "Bọn trẻ sắp phát triển kinh doanh."
+      },
+      { "en": "The children are going to turn off the light.", "vi": "Bọn trẻ sắp tắt đèn." },
+      { "en": "The children are going to meet the deadline.", "vi": "Bọn trẻ sắp kịp thời hạn." },
+      { "en": "The children are going to read the news.", "vi": "Bọn trẻ sắp đọc tin tức." }
+    ]
+  },
+  {
+    "starter": "The children are trying to",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      {
+        "en": "The children are trying to keep learning.",
+        "vi": "Bọn trẻ đang cố tiếp tục học hỏi."
+      },
+      { "en": "The children are trying to split the bill.", "vi": "Bọn trẻ đang cố chia hóa đơn." },
+      {
+        "en": "The children are trying to support each other.",
+        "vi": "Bọn trẻ đang cố hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The children are trying to lead the project.",
+        "vi": "Bọn trẻ đang cố dẫn dắt dự án."
+      },
+      {
+        "en": "The children are trying to say goodbye.",
+        "vi": "Bọn trẻ đang cố nói lời tạm biệt."
+      },
+      { "en": "The children are trying to cook dinner.", "vi": "Bọn trẻ đang cố nấu bữa tối." },
+      {
+        "en": "The children are trying to plan ahead.",
+        "vi": "Bọn trẻ đang cố lên kế hoạch trước."
+      },
+      {
+        "en": "The children are trying to double-check everything.",
+        "vi": "Bọn trẻ đang cố kiểm tra lại mọi thứ."
+      },
+      { "en": "The children are trying to lock the door.", "vi": "Bọn trẻ đang cố khóa cửa." },
+      {
+        "en": "The children are trying to invest wisely.",
+        "vi": "Bọn trẻ đang cố đầu tư khôn ngoan."
+      },
+      { "en": "The children are trying to throw a party.", "vi": "Bọn trẻ đang cố tổ chức tiệc." },
+      { "en": "The children are trying to take a rest.", "vi": "Bọn trẻ đang cố nghỉ ngơi." },
+      { "en": "The children are trying to stay focused.", "vi": "Bọn trẻ đang cố giữ tập trung." },
+      {
+        "en": "The children are trying to cut the budget.",
+        "vi": "Bọn trẻ đang cố cắt giảm ngân sách."
+      },
+      { "en": "The children are trying to take the bus.", "vi": "Bọn trẻ đang cố đi xe buýt." },
+      {
+        "en": "The children are trying to launch the product.",
+        "vi": "Bọn trẻ đang cố ra mắt sản phẩm."
+      },
+      { "en": "The children are trying to learn English.", "vi": "Bọn trẻ đang cố học tiếng Anh." },
+      { "en": "The children are trying to stay up late.", "vi": "Bọn trẻ đang cố thức khuya." },
+      { "en": "The children are trying to turn off the light.", "vi": "Bọn trẻ đang cố tắt đèn." },
+      {
+        "en": "The children are trying to plan a trip.",
+        "vi": "Bọn trẻ đang cố lên kế hoạch một chuyến đi."
+      },
+      { "en": "The children are trying to make tea.", "vi": "Bọn trẻ đang cố pha trà." },
+      {
+        "en": "The children are trying to ask for a raise.",
+        "vi": "Bọn trẻ đang cố xin tăng lương."
+      },
+      {
+        "en": "The children are trying to practice every day.",
+        "vi": "Bọn trẻ đang cố luyện tập mỗi ngày."
+      },
+      { "en": "The children are trying to help the team.", "vi": "Bọn trẻ đang cố giúp đỡ nhóm." },
+      {
+        "en": "The children are trying to save for the future.",
+        "vi": "Bọn trẻ đang cố tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The children are trying to join the meeting.",
+        "vi": "Bọn trẻ đang cố tham gia cuộc họp."
+      },
+      {
+        "en": "The children are trying to join a club.",
+        "vi": "Bọn trẻ đang cố tham gia câu lạc bộ."
+      },
+      { "en": "The children are trying to speak English.", "vi": "Bọn trẻ đang cố nói tiếng Anh." },
+      { "en": "The children are trying to log in again.", "vi": "Bọn trẻ đang cố đăng nhập lại." },
+      { "en": "The children are trying to book a hotel.", "vi": "Bọn trẻ đang cố đặt khách sạn." },
+      {
+        "en": "The children are trying to read more books.",
+        "vi": "Bọn trẻ đang cố đọc thêm sách."
+      },
+      { "en": "The children are trying to delete the file.", "vi": "Bọn trẻ đang cố xóa tệp." },
+      {
+        "en": "The children are trying to relax at home.",
+        "vi": "Bọn trẻ đang cố thư giãn ở nhà."
+      },
+      {
+        "en": "The children are trying to share my opinion.",
+        "vi": "Bọn trẻ đang cố chia sẻ ý kiến."
+      },
+      {
+        "en": "The children are trying to close the deal.",
+        "vi": "Bọn trẻ đang cố chốt thỏa thuận."
+      },
+      { "en": "The children are trying to walk the dog.", "vi": "Bọn trẻ đang cố dắt chó đi dạo." },
+      {
+        "en": "The children are trying to donate to charity.",
+        "vi": "Bọn trẻ đang cố quyên góp từ thiện."
+      },
+      { "en": "The children are trying to take medicine.", "vi": "Bọn trẻ đang cố uống thuốc." },
+      {
+        "en": "The children are trying to confirm the booking.",
+        "vi": "Bọn trẻ đang cố xác nhận đặt chỗ."
+      },
+      { "en": "The children are trying to lose weight.", "vi": "Bọn trẻ đang cố giảm cân." },
+      {
+        "en": "The children are trying to buy a new phone.",
+        "vi": "Bọn trẻ đang cố mua điện thoại mới."
+      },
+      {
+        "en": "The children are trying to apply for the position.",
+        "vi": "Bọn trẻ đang cố nộp đơn cho vị trí."
+      },
+      { "en": "The children are trying to arrive on time.", "vi": "Bọn trẻ đang cố đến đúng giờ." },
+      {
+        "en": "The children are trying to schedule a meeting.",
+        "vi": "Bọn trẻ đang cố sắp xếp cuộc họp."
+      },
+      { "en": "The children are trying to buy groceries.", "vi": "Bọn trẻ đang cố mua thực phẩm." },
+      {
+        "en": "The children are trying to remember the password.",
+        "vi": "Bọn trẻ đang cố nhớ mật khẩu."
+      },
+      { "en": "The children are trying to set an alarm.", "vi": "Bọn trẻ đang cố đặt báo thức." },
+      {
+        "en": "The children are trying to copy the link.",
+        "vi": "Bọn trẻ đang cố sao chép liên kết."
+      },
+      {
+        "en": "The children are trying to meet new people.",
+        "vi": "Bọn trẻ đang cố gặp gỡ người mới."
+      },
+      { "en": "The children are trying to keep in touch.", "vi": "Bọn trẻ đang cố giữ liên lạc." },
+      { "en": "The children are trying to start over.", "vi": "Bọn trẻ đang cố bắt đầu lại." },
+      {
+        "en": "The children are trying to travel abroad.",
+        "vi": "Bọn trẻ đang cố đi du lịch nước ngoài."
+      },
+      {
+        "en": "The children are trying to eat healthy.",
+        "vi": "Bọn trẻ đang cố ăn uống lành mạnh."
+      },
+      {
+        "en": "The children are trying to move forward.",
+        "vi": "Bọn trẻ đang cố tiến về phía trước."
+      },
+      { "en": "The children are trying to breathe deeply.", "vi": "Bọn trẻ đang cố hít thở sâu." },
+      {
+        "en": "The children are trying to take a photo.",
+        "vi": "Bọn trẻ đang cố chụp một bức ảnh."
+      },
+      {
+        "en": "The children are trying to rate the service.",
+        "vi": "Bọn trẻ đang cố đánh giá dịch vụ."
+      },
+      {
+        "en": "The children are trying to prepare the presentation.",
+        "vi": "Bọn trẻ đang cố chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The children are trying to open a savings account.",
+        "vi": "Bọn trẻ đang cố mở tài khoản tiết kiệm."
+      },
+      { "en": "The children are trying to ask for help.", "vi": "Bọn trẻ đang cố nhờ giúp đỡ." },
+      { "en": "The children are trying to ride a bike.", "vi": "Bọn trẻ đang cố đạp xe." },
+      {
+        "en": "The children are trying to reply to the message.",
+        "vi": "Bọn trẻ đang cố trả lời tin nhắn."
+      },
+      { "en": "The children are trying to keep a promise.", "vi": "Bọn trẻ đang cố giữ lời hứa." },
+      {
+        "en": "The children are trying to make a reservation.",
+        "vi": "Bọn trẻ đang cố đặt chỗ trước."
+      },
+      {
+        "en": "The children are trying to celebrate together.",
+        "vi": "Bọn trẻ đang cố ăn mừng cùng nhau."
+      },
+      {
+        "en": "The children are trying to explain the situation.",
+        "vi": "Bọn trẻ đang cố giải thích tình huống."
+      },
+      {
+        "en": "The children are trying to write a report.",
+        "vi": "Bọn trẻ đang cố viết một báo cáo."
+      },
+      { "en": "The children are trying to clean the house.", "vi": "Bọn trẻ đang cố dọn nhà." },
+      {
+        "en": "The children are trying to check my email.",
+        "vi": "Bọn trẻ đang cố kiểm tra email."
+      },
+      { "en": "The children are trying to say sorry.", "vi": "Bọn trẻ đang cố nói lời xin lỗi." },
+      { "en": "The children are trying to order food.", "vi": "Bọn trẻ đang cố gọi đồ ăn." },
+      {
+        "en": "The children are trying to grow the business.",
+        "vi": "Bọn trẻ đang cố phát triển kinh doanh."
+      },
+      { "en": "The children are trying to raise the price.", "vi": "Bọn trẻ đang cố tăng giá." },
+      {
+        "en": "The children are trying to try harder next time.",
+        "vi": "Bọn trẻ đang cố cố gắng hơn lần sau."
+      },
+      {
+        "en": "The children are trying to finish the report.",
+        "vi": "Bọn trẻ đang cố hoàn thành báo cáo."
+      },
+      {
+        "en": "The children are trying to share the post.",
+        "vi": "Bọn trẻ đang cố chia sẻ bài viết."
+      },
+      { "en": "The children are trying to get a degree.", "vi": "Bọn trẻ đang cố lấy bằng." },
+      {
+        "en": "The children are trying to restart the computer.",
+        "vi": "Bọn trẻ đang cố khởi động lại máy tính."
+      },
+      { "en": "The children are trying to send the email.", "vi": "Bọn trẻ đang cố gửi email." },
+      { "en": "The children are trying to train the team.", "vi": "Bọn trẻ đang cố đào tạo nhóm." },
+      {
+        "en": "The children are trying to volunteer on weekends.",
+        "vi": "Bọn trẻ đang cố tình nguyện cuối tuần."
+      },
+      {
+        "en": "The children are trying to exercise every day.",
+        "vi": "Bọn trẻ đang cố tập thể dục mỗi ngày."
+      },
+      { "en": "The children are trying to wait a moment.", "vi": "Bọn trẻ đang cố chờ một chút." },
+      {
+        "en": "The children are trying to ask more questions.",
+        "vi": "Bọn trẻ đang cố hỏi nhiều hơn."
+      },
+      {
+        "en": "The children are trying to make new friends.",
+        "vi": "Bọn trẻ đang cố kết bạn mới."
+      },
+      {
+        "en": "The children are trying to miss the flight.",
+        "vi": "Bọn trẻ đang cố lỡ chuyến bay."
+      },
+      { "en": "The children are trying to go for a walk.", "vi": "Bọn trẻ đang cố đi dạo." },
+      { "en": "The children are trying to wash the dishes.", "vi": "Bọn trẻ đang cố rửa bát." },
+      {
+        "en": "The children are trying to invite some friends.",
+        "vi": "Bọn trẻ đang cố mời vài người bạn."
+      },
+      { "en": "The children are trying to call back later.", "vi": "Bọn trẻ đang cố gọi lại sau." },
+      {
+        "en": "The children are trying to sign up today.",
+        "vi": "Bọn trẻ đang cố đăng ký hôm nay."
+      },
+      {
+        "en": "The children are trying to submit the form.",
+        "vi": "Bọn trẻ đang cố nộp biểu mẫu."
+      },
+      { "en": "The children are trying to tell the truth.", "vi": "Bọn trẻ đang cố nói sự thật." },
+      { "en": "The children are trying to play sports.", "vi": "Bọn trẻ đang cố chơi thể thao." },
+      {
+        "en": "The children are trying to make a decision.",
+        "vi": "Bọn trẻ đang cố đưa ra quyết định."
+      },
+      {
+        "en": "The children are trying to catch the train.",
+        "vi": "Bọn trẻ đang cố bắt chuyến tàu."
+      },
+      { "en": "The children are trying to rent a car.", "vi": "Bọn trẻ đang cố thuê xe." },
+      {
+        "en": "The children are trying to start a new project.",
+        "vi": "Bọn trẻ đang cố bắt đầu một dự án mới."
+      },
+      {
+        "en": "The children are trying to listen carefully.",
+        "vi": "Bọn trẻ đang cố lắng nghe cẩn thận."
+      },
+      { "en": "The children are trying to take a chance.", "vi": "Bọn trẻ đang cố nắm lấy cơ hội." }
+    ]
+  },
+  {
+    "starter": "The children are planning to",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      {
+        "en": "The children are planning to improve my skills.",
+        "vi": "Bọn trẻ đang định cải thiện kỹ năng."
+      },
+      {
+        "en": "The children are planning to solve this issue.",
+        "vi": "Bọn trẻ đang định giải quyết vấn đề này."
+      },
+      {
+        "en": "The children are planning to open a business.",
+        "vi": "Bọn trẻ đang định mở một doanh nghiệp."
+      },
+      {
+        "en": "The children are planning to check my email.",
+        "vi": "Bọn trẻ đang định kiểm tra email."
+      },
+      {
+        "en": "The children are planning to close the deal.",
+        "vi": "Bọn trẻ đang định chốt thỏa thuận."
+      },
+      {
+        "en": "The children are planning to ask a question.",
+        "vi": "Bọn trẻ đang định hỏi một câu."
+      },
+      {
+        "en": "The children are planning to raise the price.",
+        "vi": "Bọn trẻ đang định tăng giá."
+      },
+      {
+        "en": "The children are planning to take a chance.",
+        "vi": "Bọn trẻ đang định nắm lấy cơ hội."
+      },
+      {
+        "en": "The children are planning to double-check the numbers.",
+        "vi": "Bọn trẻ đang định kiểm tra lại các con số."
+      },
+      {
+        "en": "The children are planning to train the team.",
+        "vi": "Bọn trẻ đang định đào tạo nhóm."
+      },
+      { "en": "The children are planning to help out.", "vi": "Bọn trẻ đang định giúp đỡ." },
+      { "en": "The children are planning to sleep early.", "vi": "Bọn trẻ đang định ngủ sớm." },
+      {
+        "en": "The children are planning to take the exam.",
+        "vi": "Bọn trẻ đang định làm bài thi."
+      },
+      {
+        "en": "The children are planning to test the feature.",
+        "vi": "Bọn trẻ đang định kiểm thử tính năng."
+      },
+      {
+        "en": "The children are planning to split the bill.",
+        "vi": "Bọn trẻ đang định chia hóa đơn."
+      },
+      {
+        "en": "The children are planning to launch the product.",
+        "vi": "Bọn trẻ đang định ra mắt sản phẩm."
+      },
+      {
+        "en": "The children are planning to update the software.",
+        "vi": "Bọn trẻ đang định cập nhật phần mềm."
+      },
+      {
+        "en": "The children are planning to think positive.",
+        "vi": "Bọn trẻ đang định suy nghĩ tích cực."
+      },
+      {
+        "en": "The children are planning to eat healthy.",
+        "vi": "Bọn trẻ đang định ăn uống lành mạnh."
+      },
+      {
+        "en": "The children are planning to submit the form.",
+        "vi": "Bọn trẻ đang định nộp biểu mẫu."
+      },
+      {
+        "en": "The children are planning to explain the situation.",
+        "vi": "Bọn trẻ đang định giải thích tình huống."
+      },
+      { "en": "The children are planning to wash the dishes.", "vi": "Bọn trẻ đang định rửa bát." },
+      {
+        "en": "The children are planning to go on vacation.",
+        "vi": "Bọn trẻ đang định đi nghỉ mát."
+      },
+      {
+        "en": "The children are planning to never give up.",
+        "vi": "Bọn trẻ đang định không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The children are planning to meditate daily.",
+        "vi": "Bọn trẻ đang định thiền mỗi ngày."
+      },
+      { "en": "The children are planning to go home.", "vi": "Bọn trẻ đang định về nhà." },
+      {
+        "en": "The children are planning to answer the phone.",
+        "vi": "Bọn trẻ đang định trả lời điện thoại."
+      },
+      {
+        "en": "The children are planning to volunteer on weekends.",
+        "vi": "Bọn trẻ đang định tình nguyện cuối tuần."
+      },
+      {
+        "en": "The children are planning to visit my family.",
+        "vi": "Bọn trẻ đang định thăm gia đình."
+      },
+      {
+        "en": "The children are planning to drink less coffee.",
+        "vi": "Bọn trẻ đang định uống ít cà phê hơn."
+      },
+      {
+        "en": "The children are planning to breathe deeply.",
+        "vi": "Bọn trẻ đang định hít thở sâu."
+      },
+      {
+        "en": "The children are planning to say sorry.",
+        "vi": "Bọn trẻ đang định nói lời xin lỗi."
+      },
+      {
+        "en": "The children are planning to sign the contract.",
+        "vi": "Bọn trẻ đang định ký hợp đồng."
+      },
+      {
+        "en": "The children are planning to remember the password.",
+        "vi": "Bọn trẻ đang định nhớ mật khẩu."
+      },
+      {
+        "en": "The children are planning to set a goal.",
+        "vi": "Bọn trẻ đang định đặt một mục tiêu."
+      },
+      { "en": "The children are planning to go for a walk.", "vi": "Bọn trẻ đang định đi dạo." },
+      {
+        "en": "The children are planning to write it down.",
+        "vi": "Bọn trẻ đang định ghi nó lại."
+      },
+      {
+        "en": "The children are planning to write a report.",
+        "vi": "Bọn trẻ đang định viết một báo cáo."
+      },
+      {
+        "en": "The children are planning to stay organized.",
+        "vi": "Bọn trẻ đang định giữ ngăn nắp."
+      },
+      { "en": "The children are planning to ride a bike.", "vi": "Bọn trẻ đang định đạp xe." },
+      {
+        "en": "The children are planning to water the plants.",
+        "vi": "Bọn trẻ đang định tưới cây."
+      },
+      {
+        "en": "The children are planning to rate the service.",
+        "vi": "Bọn trẻ đang định đánh giá dịch vụ."
+      },
+      {
+        "en": "The children are planning to apply for the position.",
+        "vi": "Bọn trẻ đang định nộp đơn cho vị trí."
+      },
+      {
+        "en": "The children are planning to listen carefully.",
+        "vi": "Bọn trẻ đang định lắng nghe cẩn thận."
+      },
+      {
+        "en": "The children are planning to walk the dog.",
+        "vi": "Bọn trẻ đang định dắt chó đi dạo."
+      },
+      {
+        "en": "The children are planning to cancel the order.",
+        "vi": "Bọn trẻ đang định hủy đơn hàng."
+      },
+      {
+        "en": "The children are planning to double-check everything.",
+        "vi": "Bọn trẻ đang định kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "The children are planning to cook breakfast.",
+        "vi": "Bọn trẻ đang định nấu bữa sáng."
+      },
+      {
+        "en": "The children are planning to turn off the light.",
+        "vi": "Bọn trẻ đang định tắt đèn."
+      },
+      {
+        "en": "The children are planning to help a neighbor.",
+        "vi": "Bọn trẻ đang định giúp một người hàng xóm."
+      },
+      {
+        "en": "The children are planning to call back later.",
+        "vi": "Bọn trẻ đang định gọi lại sau."
+      },
+      {
+        "en": "The children are planning to copy the link.",
+        "vi": "Bọn trẻ đang định sao chép liên kết."
+      },
+      {
+        "en": "The children are planning to save for the future.",
+        "vi": "Bọn trẻ đang định tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The children are planning to support each other.",
+        "vi": "Bọn trẻ đang định hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The children are planning to reply to the message.",
+        "vi": "Bọn trẻ đang định trả lời tin nhắn."
+      },
+      {
+        "en": "The children are planning to get some rest.",
+        "vi": "Bọn trẻ đang định nghỉ ngơi một chút."
+      },
+      {
+        "en": "The children are planning to start a new project.",
+        "vi": "Bọn trẻ đang định bắt đầu một dự án mới."
+      },
+      { "en": "The children are planning to take it easy.", "vi": "Bọn trẻ đang định thư giãn." },
+      { "en": "The children are planning to wake up early.", "vi": "Bọn trẻ đang định dậy sớm." },
+      { "en": "The children are planning to lock the door.", "vi": "Bọn trẻ đang định khóa cửa." },
+      { "en": "The children are planning to cook dinner.", "vi": "Bọn trẻ đang định nấu bữa tối." },
+      {
+        "en": "The children are planning to cut expenses.",
+        "vi": "Bọn trẻ đang định cắt giảm chi tiêu."
+      },
+      {
+        "en": "The children are planning to grow the business.",
+        "vi": "Bọn trẻ đang định phát triển kinh doanh."
+      },
+      {
+        "en": "The children are planning to keep a diary.",
+        "vi": "Bọn trẻ đang định viết nhật ký."
+      },
+      { "en": "The children are planning to give feedback.", "vi": "Bọn trẻ đang định góp ý." },
+      {
+        "en": "The children are planning to miss the flight.",
+        "vi": "Bọn trẻ đang định lỡ chuyến bay."
+      },
+      {
+        "en": "The children are planning to read more books.",
+        "vi": "Bọn trẻ đang định đọc thêm sách."
+      },
+      {
+        "en": "The children are planning to tell the truth.",
+        "vi": "Bọn trẻ đang định nói sự thật."
+      },
+      {
+        "en": "The children are planning to wait a moment.",
+        "vi": "Bọn trẻ đang định chờ một chút."
+      },
+      {
+        "en": "The children are planning to fix the problem.",
+        "vi": "Bọn trẻ đang định sửa vấn đề."
+      },
+      {
+        "en": "The children are planning to invite some friends.",
+        "vi": "Bọn trẻ đang định mời vài người bạn."
+      },
+      {
+        "en": "The children are planning to give it a try.",
+        "vi": "Bọn trẻ đang định thử một lần."
+      },
+      {
+        "en": "The children are planning to take a day off.",
+        "vi": "Bọn trẻ đang định xin nghỉ một ngày."
+      },
+      {
+        "en": "The children are planning to hire new staff.",
+        "vi": "Bọn trẻ đang định tuyển nhân viên mới."
+      },
+      {
+        "en": "The children are planning to charge the phone.",
+        "vi": "Bọn trẻ đang định sạc điện thoại."
+      },
+      {
+        "en": "The children are planning to share my opinion.",
+        "vi": "Bọn trẻ đang định chia sẻ ý kiến."
+      },
+      {
+        "en": "The children are planning to back up the data.",
+        "vi": "Bọn trẻ đang định sao lưu dữ liệu."
+      },
+      {
+        "en": "The children are planning to offer support.",
+        "vi": "Bọn trẻ đang định đề nghị hỗ trợ."
+      },
+      {
+        "en": "The children are planning to reach the goal.",
+        "vi": "Bọn trẻ đang định đạt mục tiêu."
+      },
+      {
+        "en": "The children are planning to change the plan.",
+        "vi": "Bọn trẻ đang định thay đổi kế hoạch."
+      },
+      {
+        "en": "The children are planning to lower the cost.",
+        "vi": "Bọn trẻ đang định giảm chi phí."
+      },
+      {
+        "en": "The children are planning to get a promotion.",
+        "vi": "Bọn trẻ đang định được thăng chức."
+      },
+      { "en": "The children are planning to study abroad.", "vi": "Bọn trẻ đang định du học." },
+      {
+        "en": "The children are planning to buy groceries.",
+        "vi": "Bọn trẻ đang định mua thực phẩm."
+      },
+      {
+        "en": "The children are planning to keep learning.",
+        "vi": "Bọn trẻ đang định tiếp tục học hỏi."
+      },
+      {
+        "en": "The children are planning to understand the lesson.",
+        "vi": "Bọn trẻ đang định hiểu bài học."
+      },
+      {
+        "en": "The children are planning to plan a trip.",
+        "vi": "Bọn trẻ đang định lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "The children are planning to talk to the manager.",
+        "vi": "Bọn trẻ đang định nói chuyện với quản lý."
+      },
+      {
+        "en": "The children are planning to quit smoking.",
+        "vi": "Bọn trẻ đang định bỏ thuốc lá."
+      },
+      { "en": "The children are planning to lose weight.", "vi": "Bọn trẻ đang định giảm cân." },
+      {
+        "en": "The children are planning to think it over.",
+        "vi": "Bọn trẻ đang định suy nghĩ kỹ."
+      },
+      { "en": "The children are planning to leave early.", "vi": "Bọn trẻ đang định về sớm." },
+      {
+        "en": "The children are planning to attend the workshop.",
+        "vi": "Bọn trẻ đang định tham dự buổi hội thảo."
+      },
+      {
+        "en": "The children are planning to make new friends.",
+        "vi": "Bọn trẻ đang định kết bạn mới."
+      },
+      {
+        "en": "The children are planning to donate to charity.",
+        "vi": "Bọn trẻ đang định quyên góp từ thiện."
+      },
+      {
+        "en": "The children are planning to help the team.",
+        "vi": "Bọn trẻ đang định giúp đỡ nhóm."
+      },
+      {
+        "en": "The children are planning to take a break.",
+        "vi": "Bọn trẻ đang định nghỉ giải lao."
+      },
+      {
+        "en": "The children are planning to sign up today.",
+        "vi": "Bọn trẻ đang định đăng ký hôm nay."
+      },
+      {
+        "en": "The children are planning to cut the budget.",
+        "vi": "Bọn trẻ đang định cắt giảm ngân sách."
+      },
+      {
+        "en": "The children are planning to take a course.",
+        "vi": "Bọn trẻ đang định tham gia một khóa học."
+      }
+    ]
+  },
+  {
+    "starter": "The children used to",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      {
+        "en": "The children used to reply to the message.",
+        "vi": "Bọn trẻ từng trả lời tin nhắn."
+      },
+      { "en": "The children used to go home.", "vi": "Bọn trẻ từng về nhà." },
+      { "en": "The children used to open a business.", "vi": "Bọn trẻ từng mở một doanh nghiệp." },
+      { "en": "The children used to log in again.", "vi": "Bọn trẻ từng đăng nhập lại." },
+      { "en": "The children used to cook dinner.", "vi": "Bọn trẻ từng nấu bữa tối." },
+      { "en": "The children used to find a job.", "vi": "Bọn trẻ từng tìm việc làm." },
+      { "en": "The children used to review the document.", "vi": "Bọn trẻ từng xem lại tài liệu." },
+      { "en": "The children used to launch the product.", "vi": "Bọn trẻ từng ra mắt sản phẩm." },
+      { "en": "The children used to order food.", "vi": "Bọn trẻ từng gọi đồ ăn." },
+      { "en": "The children used to understand the lesson.", "vi": "Bọn trẻ từng hiểu bài học." },
+      { "en": "The children used to join the meeting.", "vi": "Bọn trẻ từng tham gia cuộc họp." },
+      { "en": "The children used to relax at home.", "vi": "Bọn trẻ từng thư giãn ở nhà." },
+      { "en": "The children used to win the contract.", "vi": "Bọn trẻ từng giành hợp đồng." },
+      { "en": "The children used to lead the project.", "vi": "Bọn trẻ từng dẫn dắt dự án." },
+      { "en": "The children used to make tea.", "vi": "Bọn trẻ từng pha trà." },
+      { "en": "The children used to share my opinion.", "vi": "Bọn trẻ từng chia sẻ ý kiến." },
+      { "en": "The children used to submit the form.", "vi": "Bọn trẻ từng nộp biểu mẫu." },
+      { "en": "The children used to finish the report.", "vi": "Bọn trẻ từng hoàn thành báo cáo." },
+      { "en": "The children used to confirm the booking.", "vi": "Bọn trẻ từng xác nhận đặt chỗ." },
+      { "en": "The children used to sleep early.", "vi": "Bọn trẻ từng ngủ sớm." },
+      { "en": "The children used to scan the receipt.", "vi": "Bọn trẻ từng quét hóa đơn." },
+      { "en": "The children used to get some rest.", "vi": "Bọn trẻ từng nghỉ ngơi một chút." },
+      { "en": "The children used to invest wisely.", "vi": "Bọn trẻ từng đầu tư khôn ngoan." },
+      {
+        "en": "The children used to solve this issue.",
+        "vi": "Bọn trẻ từng giải quyết vấn đề này."
+      },
+      { "en": "The children used to ask for a raise.", "vi": "Bọn trẻ từng xin tăng lương." },
+      {
+        "en": "The children used to practice every day.",
+        "vi": "Bọn trẻ từng luyện tập mỗi ngày."
+      },
+      { "en": "The children used to work as a team.", "vi": "Bọn trẻ từng làm việc theo nhóm." },
+      { "en": "The children used to thank everyone.", "vi": "Bọn trẻ từng cảm ơn mọi người." },
+      { "en": "The children used to meditate daily.", "vi": "Bọn trẻ từng thiền mỗi ngày." },
+      { "en": "The children used to reset the password.", "vi": "Bọn trẻ từng đặt lại mật khẩu." },
+      { "en": "The children used to reach the goal.", "vi": "Bọn trẻ từng đạt mục tiêu." },
+      { "en": "The children used to fill out the form.", "vi": "Bọn trẻ từng điền vào biểu mẫu." },
+      { "en": "The children used to change careers.", "vi": "Bọn trẻ từng chuyển nghề." },
+      { "en": "The children used to wake up early.", "vi": "Bọn trẻ từng dậy sớm." },
+      { "en": "The children used to ask for help.", "vi": "Bọn trẻ từng nhờ giúp đỡ." },
+      { "en": "The children used to ask a question.", "vi": "Bọn trẻ từng hỏi một câu." },
+      { "en": "The children used to take a photo.", "vi": "Bọn trẻ từng chụp một bức ảnh." },
+      { "en": "The children used to save money.", "vi": "Bọn trẻ từng tiết kiệm tiền." },
+      { "en": "The children used to change the plan.", "vi": "Bọn trẻ từng thay đổi kế hoạch." },
+      {
+        "en": "The children used to exercise every day.",
+        "vi": "Bọn trẻ từng tập thể dục mỗi ngày."
+      },
+      { "en": "The children used to cut expenses.", "vi": "Bọn trẻ từng cắt giảm chi tiêu." },
+      { "en": "The children used to take a chance.", "vi": "Bọn trẻ từng nắm lấy cơ hội." },
+      { "en": "The children used to keep a promise.", "vi": "Bọn trẻ từng giữ lời hứa." },
+      { "en": "The children used to copy the link.", "vi": "Bọn trẻ từng sao chép liên kết." },
+      {
+        "en": "The children used to save for the future.",
+        "vi": "Bọn trẻ từng tiết kiệm cho tương lai."
+      },
+      { "en": "The children used to report the bug.", "vi": "Bọn trẻ từng báo lỗi." },
+      { "en": "The children used to start over.", "vi": "Bọn trẻ từng bắt đầu lại." },
+      { "en": "The children used to go on vacation.", "vi": "Bọn trẻ từng đi nghỉ mát." },
+      { "en": "The children used to go for a walk.", "vi": "Bọn trẻ từng đi dạo." },
+      { "en": "The children used to visit the doctor.", "vi": "Bọn trẻ từng đi khám bác sĩ." },
+      { "en": "The children used to take it easy.", "vi": "Bọn trẻ từng thư giãn." },
+      { "en": "The children used to support each other.", "vi": "Bọn trẻ từng hỗ trợ lẫn nhau." },
+      { "en": "The children used to say sorry.", "vi": "Bọn trẻ từng nói lời xin lỗi." },
+      { "en": "The children used to drink more water.", "vi": "Bọn trẻ từng uống nhiều nước hơn." },
+      { "en": "The children used to drive to work.", "vi": "Bọn trẻ từng lái xe đi làm." },
+      { "en": "The children used to miss the flight.", "vi": "Bọn trẻ từng lỡ chuyến bay." },
+      { "en": "The children used to meet the deadline.", "vi": "Bọn trẻ từng kịp thời hạn." },
+      { "en": "The children used to lower the cost.", "vi": "Bọn trẻ từng giảm chi phí." },
+      { "en": "The children used to offer support.", "vi": "Bọn trẻ từng đề nghị hỗ trợ." },
+      { "en": "The children used to delete the file.", "vi": "Bọn trẻ từng xóa tệp." },
+      { "en": "The children used to write it down.", "vi": "Bọn trẻ từng ghi nó lại." },
+      {
+        "en": "The children used to apply for the position.",
+        "vi": "Bọn trẻ từng nộp đơn cho vị trí."
+      },
+      { "en": "The children used to read more books.", "vi": "Bọn trẻ từng đọc thêm sách." },
+      { "en": "The children used to pay the bill.", "vi": "Bọn trẻ từng thanh toán hóa đơn." },
+      { "en": "The children used to take the bus.", "vi": "Bọn trẻ từng đi xe buýt." },
+      { "en": "The children used to work harder.", "vi": "Bọn trẻ từng làm việc chăm chỉ hơn." },
+      {
+        "en": "The children used to explain the situation.",
+        "vi": "Bọn trẻ từng giải thích tình huống."
+      },
+      { "en": "The children used to help out.", "vi": "Bọn trẻ từng giúp đỡ." },
+      { "en": "The children used to watch the game.", "vi": "Bọn trẻ từng xem trận đấu." },
+      { "en": "The children used to wash the dishes.", "vi": "Bọn trẻ từng rửa bát." },
+      { "en": "The children used to check my email.", "vi": "Bọn trẻ từng kiểm tra email." },
+      {
+        "en": "The children used to register for the course.",
+        "vi": "Bọn trẻ từng đăng ký khóa học."
+      },
+      { "en": "The children used to make a decision.", "vi": "Bọn trẻ từng đưa ra quyết định." },
+      { "en": "The children used to take a rest.", "vi": "Bọn trẻ từng nghỉ ngơi." },
+      { "en": "The children used to catch the train.", "vi": "Bọn trẻ từng bắt chuyến tàu." },
+      { "en": "The children used to schedule a meeting.", "vi": "Bọn trẻ từng sắp xếp cuộc họp." },
+      { "en": "The children used to finish on time.", "vi": "Bọn trẻ từng hoàn thành đúng hạn." },
+      { "en": "The children used to leave early.", "vi": "Bọn trẻ từng về sớm." },
+      { "en": "The children used to share the post.", "vi": "Bọn trẻ từng chia sẻ bài viết." },
+      { "en": "The children used to meet new people.", "vi": "Bọn trẻ từng gặp gỡ người mới." },
+      { "en": "The children used to throw a party.", "vi": "Bọn trẻ từng tổ chức tiệc." },
+      {
+        "en": "The children used to grow the business.",
+        "vi": "Bọn trẻ từng phát triển kinh doanh."
+      },
+      {
+        "en": "The children used to cook for everyone.",
+        "vi": "Bọn trẻ từng nấu ăn cho mọi người."
+      },
+      { "en": "The children used to give it a try.", "vi": "Bọn trẻ từng thử một lần." },
+      { "en": "The children used to set an alarm.", "vi": "Bọn trẻ từng đặt báo thức." },
+      { "en": "The children used to sign up today.", "vi": "Bọn trẻ từng đăng ký hôm nay." },
+      { "en": "The children used to pass the exam.", "vi": "Bọn trẻ từng đậu kỳ thi." },
+      { "en": "The children used to water the plants.", "vi": "Bọn trẻ từng tưới cây." },
+      { "en": "The children used to be on time.", "vi": "Bọn trẻ từng đến đúng giờ." },
+      { "en": "The children used to ride a bike.", "vi": "Bọn trẻ từng đạp xe." },
+      { "en": "The children used to lose weight.", "vi": "Bọn trẻ từng giảm cân." },
+      { "en": "The children used to stay up late.", "vi": "Bọn trẻ từng thức khuya." },
+      {
+        "en": "The children used to attend the workshop.",
+        "vi": "Bọn trẻ từng tham dự buổi hội thảo."
+      },
+      { "en": "The children used to rate the service.", "vi": "Bọn trẻ từng đánh giá dịch vụ." },
+      { "en": "The children used to travel abroad.", "vi": "Bọn trẻ từng đi du lịch nước ngoài." },
+      { "en": "The children used to walk the dog.", "vi": "Bọn trẻ từng dắt chó đi dạo." },
+      {
+        "en": "The children used to negotiate the terms.",
+        "vi": "Bọn trẻ từng thương lượng điều khoản."
+      },
+      { "en": "The children used to call a friend.", "vi": "Bọn trẻ từng gọi cho một người bạn." },
+      { "en": "The children used to calm down.", "vi": "Bọn trẻ từng bình tĩnh lại." },
+      { "en": "The children used to close the window.", "vi": "Bọn trẻ từng đóng cửa sổ." }
+    ]
+  },
+  {
+    "starter": "The children don't",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      { "en": "The children don't miss the flight.", "vi": "Bọn trẻ không lỡ chuyến bay." },
+      { "en": "The children don't breathe deeply.", "vi": "Bọn trẻ không hít thở sâu." },
+      { "en": "The children don't travel abroad.", "vi": "Bọn trẻ không đi du lịch nước ngoài." },
+      { "en": "The children don't call back later.", "vi": "Bọn trẻ không gọi lại sau." },
+      { "en": "The children don't call a friend.", "vi": "Bọn trẻ không gọi cho một người bạn." },
+      { "en": "The children don't cut the budget.", "vi": "Bọn trẻ không cắt giảm ngân sách." },
+      { "en": "The children don't think it over.", "vi": "Bọn trẻ không suy nghĩ kỹ." },
+      { "en": "The children don't cheer for the team.", "vi": "Bọn trẻ không cổ vũ cho đội." },
+      { "en": "The children don't launch the product.", "vi": "Bọn trẻ không ra mắt sản phẩm." },
+      { "en": "The children don't keep a promise.", "vi": "Bọn trẻ không giữ lời hứa." },
+      { "en": "The children don't raise the price.", "vi": "Bọn trẻ không tăng giá." },
+      { "en": "The children don't order food.", "vi": "Bọn trẻ không gọi đồ ăn." },
+      {
+        "en": "The children don't talk to the manager.",
+        "vi": "Bọn trẻ không nói chuyện với quản lý."
+      },
+      { "en": "The children don't remember the password.", "vi": "Bọn trẻ không nhớ mật khẩu." },
+      { "en": "The children don't ride a bike.", "vi": "Bọn trẻ không đạp xe." },
+      { "en": "The children don't report the bug.", "vi": "Bọn trẻ không báo lỗi." },
+      { "en": "The children don't send the email.", "vi": "Bọn trẻ không gửi email." },
+      {
+        "en": "The children don't open a savings account.",
+        "vi": "Bọn trẻ không mở tài khoản tiết kiệm."
+      },
+      { "en": "The children don't fix the problem.", "vi": "Bọn trẻ không sửa vấn đề." },
+      { "en": "The children don't pass the exam.", "vi": "Bọn trẻ không đậu kỳ thi." },
+      { "en": "The children don't rate the service.", "vi": "Bọn trẻ không đánh giá dịch vụ." },
+      { "en": "The children don't catch the train.", "vi": "Bọn trẻ không bắt chuyến tàu." },
+      { "en": "The children don't work harder.", "vi": "Bọn trẻ không làm việc chăm chỉ hơn." },
+      { "en": "The children don't split the bill.", "vi": "Bọn trẻ không chia hóa đơn." },
+      { "en": "The children don't go for a walk.", "vi": "Bọn trẻ không đi dạo." },
+      { "en": "The children don't download the file.", "vi": "Bọn trẻ không tải tệp xuống." },
+      { "en": "The children don't ask more questions.", "vi": "Bọn trẻ không hỏi nhiều hơn." },
+      { "en": "The children don't help out.", "vi": "Bọn trẻ không giúp đỡ." },
+      { "en": "The children don't start over.", "vi": "Bọn trẻ không bắt đầu lại." },
+      { "en": "The children don't take a course.", "vi": "Bọn trẻ không tham gia một khóa học." },
+      { "en": "The children don't ask a question.", "vi": "Bọn trẻ không hỏi một câu." },
+      { "en": "The children don't eat healthy.", "vi": "Bọn trẻ không ăn uống lành mạnh." },
+      {
+        "en": "The children don't start a new project.",
+        "vi": "Bọn trẻ không bắt đầu một dự án mới."
+      },
+      { "en": "The children don't finish the report.", "vi": "Bọn trẻ không hoàn thành báo cáo." },
+      { "en": "The children don't take a break.", "vi": "Bọn trẻ không nghỉ giải lao." },
+      {
+        "en": "The children don't volunteer on weekends.",
+        "vi": "Bọn trẻ không tình nguyện cuối tuần."
+      },
+      { "en": "The children don't speak clearly.", "vi": "Bọn trẻ không nói rõ ràng." },
+      { "en": "The children don't write a report.", "vi": "Bọn trẻ không viết một báo cáo." },
+      { "en": "The children don't get some rest.", "vi": "Bọn trẻ không nghỉ ngơi một chút." },
+      { "en": "The children don't drink more water.", "vi": "Bọn trẻ không uống nhiều nước hơn." },
+      { "en": "The children don't set an alarm.", "vi": "Bọn trẻ không đặt báo thức." },
+      { "en": "The children don't sign the contract.", "vi": "Bọn trẻ không ký hợp đồng." },
+      { "en": "The children don't hire new staff.", "vi": "Bọn trẻ không tuyển nhân viên mới." },
+      { "en": "The children don't be on time.", "vi": "Bọn trẻ không đến đúng giờ." },
+      { "en": "The children don't buy a new phone.", "vi": "Bọn trẻ không mua điện thoại mới." },
+      { "en": "The children don't read the news.", "vi": "Bọn trẻ không đọc tin tức." },
+      { "en": "The children don't keep a diary.", "vi": "Bọn trẻ không viết nhật ký." },
+      { "en": "The children don't take a day off.", "vi": "Bọn trẻ không xin nghỉ một ngày." },
+      { "en": "The children don't reply to the message.", "vi": "Bọn trẻ không trả lời tin nhắn." },
+      { "en": "The children don't go on vacation.", "vi": "Bọn trẻ không đi nghỉ mát." },
+      { "en": "The children don't make a decision.", "vi": "Bọn trẻ không đưa ra quyết định." },
+      {
+        "en": "The children don't save for the future.",
+        "vi": "Bọn trẻ không tiết kiệm cho tương lai."
+      },
+      { "en": "The children don't meet new people.", "vi": "Bọn trẻ không gặp gỡ người mới." },
+      { "en": "The children don't join a club.", "vi": "Bọn trẻ không tham gia câu lạc bộ." },
+      { "en": "The children don't drink less coffee.", "vi": "Bọn trẻ không uống ít cà phê hơn." },
+      { "en": "The children don't take a photo.", "vi": "Bọn trẻ không chụp một bức ảnh." },
+      { "en": "The children don't donate to charity.", "vi": "Bọn trẻ không quyên góp từ thiện." },
+      { "en": "The children don't pay off the loan.", "vi": "Bọn trẻ không trả hết khoản vay." },
+      { "en": "The children don't work as a team.", "vi": "Bọn trẻ không làm việc theo nhóm." },
+      { "en": "The children don't learn to swim.", "vi": "Bọn trẻ không học bơi." },
+      { "en": "The children don't relax at home.", "vi": "Bọn trẻ không thư giãn ở nhà." },
+      { "en": "The children don't take the bus.", "vi": "Bọn trẻ không đi xe buýt." },
+      { "en": "The children don't open a business.", "vi": "Bọn trẻ không mở một doanh nghiệp." },
+      { "en": "The children don't celebrate together.", "vi": "Bọn trẻ không ăn mừng cùng nhau." },
+      { "en": "The children don't support each other.", "vi": "Bọn trẻ không hỗ trợ lẫn nhau." },
+      {
+        "en": "The children don't help a neighbor.",
+        "vi": "Bọn trẻ không giúp một người hàng xóm."
+      },
+      { "en": "The children don't thank everyone.", "vi": "Bọn trẻ không cảm ơn mọi người." },
+      { "en": "The children don't lock the door.", "vi": "Bọn trẻ không khóa cửa." },
+      { "en": "The children don't listen carefully.", "vi": "Bọn trẻ không lắng nghe cẩn thận." },
+      { "en": "The children don't delete the file.", "vi": "Bọn trẻ không xóa tệp." },
+      { "en": "The children don't watch the game.", "vi": "Bọn trẻ không xem trận đấu." },
+      { "en": "The children don't check my email.", "vi": "Bọn trẻ không kiểm tra email." },
+      { "en": "The children don't get a degree.", "vi": "Bọn trẻ không lấy bằng." },
+      { "en": "The children don't ask for a raise.", "vi": "Bọn trẻ không xin tăng lương." },
+      { "en": "The children don't change careers.", "vi": "Bọn trẻ không chuyển nghề." },
+      { "en": "The children don't study abroad.", "vi": "Bọn trẻ không du học." },
+      { "en": "The children don't move forward.", "vi": "Bọn trẻ không tiến về phía trước." },
+      { "en": "The children don't throw a party.", "vi": "Bọn trẻ không tổ chức tiệc." },
+      { "en": "The children don't think positive.", "vi": "Bọn trẻ không suy nghĩ tích cực." },
+      { "en": "The children don't cancel the order.", "vi": "Bọn trẻ không hủy đơn hàng." },
+      { "en": "The children don't find a job.", "vi": "Bọn trẻ không tìm việc làm." },
+      { "en": "The children don't offer support.", "vi": "Bọn trẻ không đề nghị hỗ trợ." },
+      { "en": "The children don't train the team.", "vi": "Bọn trẻ không đào tạo nhóm." },
+      { "en": "The children don't leave a comment.", "vi": "Bọn trẻ không để lại bình luận." },
+      { "en": "The children don't copy the link.", "vi": "Bọn trẻ không sao chép liên kết." },
+      { "en": "The children don't cut expenses.", "vi": "Bọn trẻ không cắt giảm chi tiêu." },
+      { "en": "The children don't change the plan.", "vi": "Bọn trẻ không thay đổi kế hoạch." },
+      { "en": "The children don't log in again.", "vi": "Bọn trẻ không đăng nhập lại." },
+      { "en": "The children don't drive to work.", "vi": "Bọn trẻ không lái xe đi làm." },
+      { "en": "The children don't get a promotion.", "vi": "Bọn trẻ không được thăng chức." },
+      { "en": "The children don't lower the cost.", "vi": "Bọn trẻ không giảm chi phí." },
+      {
+        "en": "The children don't apply for the position.",
+        "vi": "Bọn trẻ không nộp đơn cho vị trí."
+      },
+      { "en": "The children don't charge the phone.", "vi": "Bọn trẻ không sạc điện thoại." },
+      { "en": "The children don't lead the project.", "vi": "Bọn trẻ không dẫn dắt dự án." },
+      { "en": "The children don't never give up.", "vi": "Bọn trẻ không không bao giờ bỏ cuộc." },
+      { "en": "The children don't stay organized.", "vi": "Bọn trẻ không giữ ngăn nắp." },
+      { "en": "The children don't keep in touch.", "vi": "Bọn trẻ không giữ liên lạc." },
+      { "en": "The children don't arrive on time.", "vi": "Bọn trẻ không đến đúng giờ." },
+      { "en": "The children don't schedule a meeting.", "vi": "Bọn trẻ không sắp xếp cuộc họp." },
+      { "en": "The children don't reach the goal.", "vi": "Bọn trẻ không đạt mục tiêu." }
+    ]
+  },
+  {
+    "starter": "The children didn't",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      { "en": "The children didn't check my email.", "vi": "Bọn trẻ đã không kiểm tra email." },
+      { "en": "The children didn't turn off the light.", "vi": "Bọn trẻ đã không tắt đèn." },
+      { "en": "The children didn't visit my family.", "vi": "Bọn trẻ đã không thăm gia đình." },
+      {
+        "en": "The children didn't drink less coffee.",
+        "vi": "Bọn trẻ đã không uống ít cà phê hơn."
+      },
+      { "en": "The children didn't rate the service.", "vi": "Bọn trẻ đã không đánh giá dịch vụ." },
+      { "en": "The children didn't download the file.", "vi": "Bọn trẻ đã không tải tệp xuống." },
+      {
+        "en": "The children didn't celebrate together.",
+        "vi": "Bọn trẻ đã không ăn mừng cùng nhau."
+      },
+      {
+        "en": "The children didn't volunteer on weekends.",
+        "vi": "Bọn trẻ đã không tình nguyện cuối tuần."
+      },
+      {
+        "en": "The children didn't support each other.",
+        "vi": "Bọn trẻ đã không hỗ trợ lẫn nhau."
+      },
+      { "en": "The children didn't back up the data.", "vi": "Bọn trẻ đã không sao lưu dữ liệu." },
+      {
+        "en": "The children didn't take a course.",
+        "vi": "Bọn trẻ đã không tham gia một khóa học."
+      },
+      { "en": "The children didn't write it down.", "vi": "Bọn trẻ đã không ghi nó lại." },
+      {
+        "en": "The children didn't learn something new.",
+        "vi": "Bọn trẻ đã không học điều gì đó mới."
+      },
+      {
+        "en": "The children didn't test the feature.",
+        "vi": "Bọn trẻ đã không kiểm thử tính năng."
+      },
+      { "en": "The children didn't go home.", "vi": "Bọn trẻ đã không về nhà." },
+      { "en": "The children didn't help out.", "vi": "Bọn trẻ đã không giúp đỡ." },
+      { "en": "The children didn't pay the bill.", "vi": "Bọn trẻ đã không thanh toán hóa đơn." },
+      { "en": "The children didn't save money.", "vi": "Bọn trẻ đã không tiết kiệm tiền." },
+      { "en": "The children didn't reach the goal.", "vi": "Bọn trẻ đã không đạt mục tiêu." },
+      { "en": "The children didn't tell the truth.", "vi": "Bọn trẻ đã không nói sự thật." },
+      { "en": "The children didn't change careers.", "vi": "Bọn trẻ đã không chuyển nghề." },
+      { "en": "The children didn't keep in touch.", "vi": "Bọn trẻ đã không giữ liên lạc." },
+      { "en": "The children didn't call back later.", "vi": "Bọn trẻ đã không gọi lại sau." },
+      { "en": "The children didn't speak clearly.", "vi": "Bọn trẻ đã không nói rõ ràng." },
+      { "en": "The children didn't water the plants.", "vi": "Bọn trẻ đã không tưới cây." },
+      { "en": "The children didn't take a day off.", "vi": "Bọn trẻ đã không xin nghỉ một ngày." },
+      { "en": "The children didn't take a photo.", "vi": "Bọn trẻ đã không chụp một bức ảnh." },
+      {
+        "en": "The children didn't finish on time.",
+        "vi": "Bọn trẻ đã không hoàn thành đúng hạn."
+      },
+      {
+        "en": "The children didn't solve this issue.",
+        "vi": "Bọn trẻ đã không giải quyết vấn đề này."
+      },
+      { "en": "The children didn't go on vacation.", "vi": "Bọn trẻ đã không đi nghỉ mát." },
+      {
+        "en": "The children didn't help a neighbor.",
+        "vi": "Bọn trẻ đã không giúp một người hàng xóm."
+      },
+      {
+        "en": "The children didn't plan a trip.",
+        "vi": "Bọn trẻ đã không lên kế hoạch một chuyến đi."
+      },
+      { "en": "The children didn't quit smoking.", "vi": "Bọn trẻ đã không bỏ thuốc lá." },
+      {
+        "en": "The children didn't enjoy the weekend.",
+        "vi": "Bọn trẻ đã không tận hưởng cuối tuần."
+      },
+      {
+        "en": "The children didn't attend the workshop.",
+        "vi": "Bọn trẻ đã không tham dự buổi hội thảo."
+      },
+      { "en": "The children didn't raise the price.", "vi": "Bọn trẻ đã không tăng giá." },
+      {
+        "en": "The children didn't apply for the position.",
+        "vi": "Bọn trẻ đã không nộp đơn cho vị trí."
+      },
+      { "en": "The children didn't cook dinner.", "vi": "Bọn trẻ đã không nấu bữa tối." },
+      { "en": "The children didn't get a degree.", "vi": "Bọn trẻ đã không lấy bằng." },
+      { "en": "The children didn't sign up today.", "vi": "Bọn trẻ đã không đăng ký hôm nay." },
+      {
+        "en": "The children didn't save for the future.",
+        "vi": "Bọn trẻ đã không tiết kiệm cho tương lai."
+      },
+      { "en": "The children didn't make a plan.", "vi": "Bọn trẻ đã không lập một kế hoạch." },
+      { "en": "The children didn't join a club.", "vi": "Bọn trẻ đã không tham gia câu lạc bộ." },
+      { "en": "The children didn't eat healthy.", "vi": "Bọn trẻ đã không ăn uống lành mạnh." },
+      { "en": "The children didn't send the email.", "vi": "Bọn trẻ đã không gửi email." },
+      { "en": "The children didn't plan ahead.", "vi": "Bọn trẻ đã không lên kế hoạch trước." },
+      { "en": "The children didn't attend the class.", "vi": "Bọn trẻ đã không tham gia lớp học." },
+      {
+        "en": "The children didn't drink more water.",
+        "vi": "Bọn trẻ đã không uống nhiều nước hơn."
+      },
+      { "en": "The children didn't take a break.", "vi": "Bọn trẻ đã không nghỉ giải lao." },
+      { "en": "The children didn't wash the dishes.", "vi": "Bọn trẻ đã không rửa bát." },
+      { "en": "The children didn't watch the game.", "vi": "Bọn trẻ đã không xem trận đấu." },
+      { "en": "The children didn't go for a walk.", "vi": "Bọn trẻ đã không đi dạo." },
+      { "en": "The children didn't help the team.", "vi": "Bọn trẻ đã không giúp đỡ nhóm." },
+      {
+        "en": "The children didn't schedule a meeting.",
+        "vi": "Bọn trẻ đã không sắp xếp cuộc họp."
+      },
+      { "en": "The children didn't make tea.", "vi": "Bọn trẻ đã không pha trà." },
+      { "en": "The children didn't take notes.", "vi": "Bọn trẻ đã không ghi chép." },
+      {
+        "en": "The children didn't talk to the manager.",
+        "vi": "Bọn trẻ đã không nói chuyện với quản lý."
+      },
+      { "en": "The children didn't relax at home.", "vi": "Bọn trẻ đã không thư giãn ở nhà." },
+      {
+        "en": "The children didn't start a new project.",
+        "vi": "Bọn trẻ đã không bắt đầu một dự án mới."
+      },
+      {
+        "en": "The children didn't try harder next time.",
+        "vi": "Bọn trẻ đã không cố gắng hơn lần sau."
+      },
+      { "en": "The children didn't fix the problem.", "vi": "Bọn trẻ đã không sửa vấn đề." },
+      {
+        "en": "The children didn't listen carefully.",
+        "vi": "Bọn trẻ đã không lắng nghe cẩn thận."
+      },
+      { "en": "The children didn't ask more questions.", "vi": "Bọn trẻ đã không hỏi nhiều hơn." },
+      {
+        "en": "The children didn't grow the business.",
+        "vi": "Bọn trẻ đã không phát triển kinh doanh."
+      },
+      { "en": "The children didn't read more books.", "vi": "Bọn trẻ đã không đọc thêm sách." },
+      {
+        "en": "The children didn't buy a new phone.",
+        "vi": "Bọn trẻ đã không mua điện thoại mới."
+      },
+      { "en": "The children didn't take a rest.", "vi": "Bọn trẻ đã không nghỉ ngơi." },
+      { "en": "The children didn't study abroad.", "vi": "Bọn trẻ đã không du học." },
+      { "en": "The children didn't read the news.", "vi": "Bọn trẻ đã không đọc tin tức." },
+      { "en": "The children didn't get a promotion.", "vi": "Bọn trẻ đã không được thăng chức." },
+      { "en": "The children didn't leave early.", "vi": "Bọn trẻ đã không về sớm." },
+      {
+        "en": "The children didn't check the details.",
+        "vi": "Bọn trẻ đã không kiểm tra chi tiết."
+      },
+      { "en": "The children didn't learn to swim.", "vi": "Bọn trẻ đã không học bơi." },
+      { "en": "The children didn't play sports.", "vi": "Bọn trẻ đã không chơi thể thao." },
+      { "en": "The children didn't take medicine.", "vi": "Bọn trẻ đã không uống thuốc." },
+      { "en": "The children didn't keep learning.", "vi": "Bọn trẻ đã không tiếp tục học hỏi." },
+      {
+        "en": "The children didn't register for the course.",
+        "vi": "Bọn trẻ đã không đăng ký khóa học."
+      },
+      {
+        "en": "The children didn't fill out the form.",
+        "vi": "Bọn trẻ đã không điền vào biểu mẫu."
+      },
+      { "en": "The children didn't breathe deeply.", "vi": "Bọn trẻ đã không hít thở sâu." },
+      { "en": "The children didn't cook breakfast.", "vi": "Bọn trẻ đã không nấu bữa sáng." },
+      { "en": "The children didn't keep a diary.", "vi": "Bọn trẻ đã không viết nhật ký." },
+      {
+        "en": "The children didn't update the software.",
+        "vi": "Bọn trẻ đã không cập nhật phần mềm."
+      },
+      { "en": "The children didn't lower the cost.", "vi": "Bọn trẻ đã không giảm chi phí." },
+      { "en": "The children didn't cancel the order.", "vi": "Bọn trẻ đã không hủy đơn hàng." },
+      { "en": "The children didn't clean the house.", "vi": "Bọn trẻ đã không dọn nhà." },
+      { "en": "The children didn't charge the phone.", "vi": "Bọn trẻ đã không sạc điện thoại." },
+      { "en": "The children didn't ride a bike.", "vi": "Bọn trẻ đã không đạp xe." },
+      { "en": "The children didn't drive to work.", "vi": "Bọn trẻ đã không lái xe đi làm." },
+      { "en": "The children didn't take a chance.", "vi": "Bọn trẻ đã không nắm lấy cơ hội." },
+      { "en": "The children didn't write a report.", "vi": "Bọn trẻ đã không viết một báo cáo." },
+      { "en": "The children didn't listen to music.", "vi": "Bọn trẻ đã không nghe nhạc." },
+      { "en": "The children didn't train the team.", "vi": "Bọn trẻ đã không đào tạo nhóm." },
+      { "en": "The children didn't say goodbye.", "vi": "Bọn trẻ đã không nói lời tạm biệt." },
+      { "en": "The children didn't make a reservation.", "vi": "Bọn trẻ đã không đặt chỗ trước." },
+      { "en": "The children didn't sleep early.", "vi": "Bọn trẻ đã không ngủ sớm." },
+      { "en": "The children didn't learn English.", "vi": "Bọn trẻ đã không học tiếng Anh." },
+      { "en": "The children didn't throw a party.", "vi": "Bọn trẻ đã không tổ chức tiệc." },
+      { "en": "The children didn't keep a promise.", "vi": "Bọn trẻ đã không giữ lời hứa." },
+      { "en": "The children didn't split the bill.", "vi": "Bọn trẻ đã không chia hóa đơn." },
+      { "en": "The children didn't meet the deadline.", "vi": "Bọn trẻ đã không kịp thời hạn." }
+    ]
+  }
+]

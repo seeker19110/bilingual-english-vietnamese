@@ -5,13 +5,10 @@ import {
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import {
-  getSubjectManifest,
-  listSupportedSubjects,
-} from '../packages/core-learner/subjectRegistry.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { getSubjectManifest, listSupportedSubjects } from '@dhcb/core-learner/subjectRegistry'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 export default async function handler(req: Request): Promise<Response> {
   const headers = { ...getCorsHeaders(req), ...SECURITY_HEADERS }

@@ -22,7 +22,7 @@ const DOC_ID = '55555555-5555-4555-8555-555555555555'
 const mockQuery = vi.fn()
 const pool = { query: mockQuery } as unknown as Pool
 
-vi.mock('../core-db/transaction.js', () => ({
+vi.mock('@dhcb/core-db/transaction', () => ({
   withTransaction: async (_pool: unknown, cb: (client: { query: typeof mockQuery }) => unknown) =>
     cb({ query: mockQuery }),
 }))

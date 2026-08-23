@@ -1,6 +1,6 @@
 // api/pvp-arena.ts — REST handler cho Đấu Trường Đối Kháng 1v1 PvP & Ghost Matchmaking.
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
 import {
   createPvPMatch,
   finalizePvPMatch,
@@ -8,13 +8,13 @@ import {
   calculatePoints,
   getWeeklyLeaderboard,
   getRankTierFromElo,
-} from '../packages/core-ai/pvpArenaService.js'
+} from '@dhcb/core-ai/pvpArenaService'
 import {
   type PvPMatchState,
   type PvPPlayerProfile,
   type PvPGameMode,
   type PvPRoundAction,
-} from '../packages/core-contracts/pvpArena.js'
+} from '@dhcb/core-contracts/pvpArena'
 
 // In-memory match store
 const activeMatches = new Map<string, PvPMatchState>()
@@ -25,8 +25,13 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   const auth = await validateAuth(req)
-  const userId = auth?.userId || 'guest-learner'
-  const userName = auth?.userId ? 'Learner' : 'Khách Học Viên'
+  // Bắt buộc đăng nhập — trước đây fallback 'guest-learner' khiến mọi khách vãng lai dùng
+  // chung một hồ sơ PvP (vá 2026-08-23, đề xuất N1 mục B1).
+  if (!auth) {
+    return jsonResponse({ error: 'Unauthorized' }, 401)
+  }
+  const userId = auth.userId
+  const userName = 'Learner'
 
   const url = new URL(req.url)
   const action = url.searchParams.get('action')

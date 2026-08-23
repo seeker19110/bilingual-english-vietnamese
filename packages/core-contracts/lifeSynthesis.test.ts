@@ -4,7 +4,7 @@ import {
   PredictiveGoalHorizonSchema,
   StrategicRecommendationSchema,
   type LifeSynthesisReport,
-} from './lifeSynthesis'
+} from './lifeSynthesis.js'
 
 describe('LifeSynthesis Schemas', () => {
   it('validates a valid LifeSynthesisReport', () => {

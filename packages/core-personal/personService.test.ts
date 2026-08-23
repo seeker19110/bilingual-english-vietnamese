@@ -13,7 +13,7 @@ import {
   deleteFact,
   exportPersonData,
 } from './personService.js'
-import { ConflictError, NotFoundError } from '../core-errors/appError.js'
+import { ConflictError, NotFoundError } from '@dhcb/core-errors/appError'
 
 const NOW = new Date('2026-08-16T00:00:00.000Z')
 const PERSON_ID = '11111111-1111-4111-8111-111111111111'

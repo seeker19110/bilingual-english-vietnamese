@@ -16,17 +16,17 @@ import {
   validateAuth,
   validateContentType,
   logSecurityEvent,
-} from '../core-auth/security.js'
-import { checkAndConsumeUsage, refundUsage, type UsageMode } from '../core-billing/usage.js'
-import { callGemini } from '../../api/_lib/geminiApi.js'
+} from '@dhcb/core-auth/security'
+import { checkAndConsumeUsage, refundUsage, type UsageMode } from '@dhcb/core-billing/usage'
+import { callGemini } from './geminiApi.js'
 import { callGroqChatWithKeyPool, callAnthropicChat } from './chatProviders.js'
 import { hasGroqKey } from './groqKeyPool.js'
-import { withConcurrencyLimit } from '../core-db/concurrencyLimiter.js'
-import { createRequestLogger } from '../core-db/logger.js'
-import { createRequestId } from '../core-db/requestId.js'
-import { incrementCounter, recordLatency } from '../core-db/metrics.js'
-import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
-import { validateBody } from '../../api/_lib/validation.js'
+import { withConcurrencyLimit } from '@dhcb/core-db/concurrencyLimiter'
+import { createRequestLogger } from '@dhcb/core-db/logger'
+import { createRequestId } from '@dhcb/core-db/requestId'
+import { incrementCounter, recordLatency } from '@dhcb/core-db/metrics'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { validateBody } from '@dhcb/core-http/validation'
 // Model + guardrail tách sang aiConfig.ts để script eval offline (scripts/eval-tutor.ts)
 // dùng chung đúng một nguồn — đổi model ở đây tự động phản ánh vào bài đánh giá (⑤ T1).
 import { ALLOWED_MODEL, GEMINI_CHAT_MODEL, GROQ_CHAT_MODEL, SYSTEM_GUARDRAIL } from './aiConfig.js'
@@ -260,7 +260,7 @@ export default async function handler(req: Request): Promise<Response> {
         `Groq trả body hỏng (${groqResult.message}) — chuyển sang provider dự phòng (Anthropic/Gemini)`,
       )
     } else {
-      // Chuẩn hoá về đúng format Anthropic mà frontend (apps/english/src/lib/ai.ts) đang đọc:
+      // Chuẩn hoá về đúng format Anthropic mà frontend (apps/dhcb/src/lib/ai.ts) đang đọc:
       // data.content[0].text
       return jsonResponse({ content: [{ type: 'text', text: groqResult.text }] }, 200, allHeaders)
     }

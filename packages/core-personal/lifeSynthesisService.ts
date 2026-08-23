@@ -4,7 +4,7 @@ import type {
   StrategicRecommendation,
   LifeSynthesisReport,
   LifeDomainType,
-} from '../core-contracts/lifeSynthesis.js'
+} from '@dhcb/core-contracts/lifeSynthesis'
 
 export interface LifeSynthesisInput {
   personId: string

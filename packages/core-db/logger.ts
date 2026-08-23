@@ -10,7 +10,7 @@
 // log JSON có cấu trúc. KHÔNG thay Sentry — lỗi cần theo dõi dài hạn vẫn gọi
 // captureServerException() (api/_lib/sentry.ts) riêng, logger này chỉ phục vụ đọc log runtime.
 
-import { redactSecrets } from '../core-config/secrets.js'
+import { redactSecrets } from '@dhcb/core-config/secrets'
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 

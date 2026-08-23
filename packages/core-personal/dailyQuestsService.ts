@@ -3,7 +3,7 @@ import {
   type QuestCategory,
   type DailyQuestItem,
   type DailyQuestsState,
-} from '../core-contracts/dailyQuests.js'
+} from '@dhcb/core-contracts/dailyQuests'
 
 export function generateDailyQuests(
   userId: string,

@@ -8,7 +8,7 @@ import {
   A2AMessageSchema,
   A2ANegotiationResultSchema,
   A2A_PROTOCOL_VERSION,
-} from '../core-contracts/a2aProtocol.js'
+} from '@dhcb/core-contracts/a2aProtocol'
 
 // In-memory active negotiations cache
 const a2aNegotiationCache = new Map<string, A2ANegotiationResult[]>()

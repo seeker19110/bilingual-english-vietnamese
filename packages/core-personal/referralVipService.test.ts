@@ -7,7 +7,7 @@ import {
   buildReferralDashboard,
   prepareViralCardData,
 } from './referralVipService.js'
-import { type RefereeRecord } from '../core-contracts/referralVip.js'
+import { type RefereeRecord } from '@dhcb/core-contracts/referralVip'
 
 describe('referralVipService (Referral VIP & Social Booster Engine)', () => {
   it('returns structured milestone definitions', () => {

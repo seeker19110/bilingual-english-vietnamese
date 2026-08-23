@@ -14,24 +14,20 @@
 // Riêng bảng "top người dùng" có email — cần thiết để liên hệ khi phát hiện lạm dụng, và chỉ
 // admin đọc được.
 
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   validateAuth,
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getUserById } from '../packages/core-auth/authService.js'
-import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
-import { getUnitCostsUsd, getUsdVndRate, estimateCostUsd } from '../packages/core-ai/aiCost.js'
-import {
-  FREE_WEEKLY_CAP,
-  FREE_ROLLING_WINDOW_DAYS,
-  type UsageMode,
-} from '../packages/core-billing/usage.js'
-import { vnDateStr, addDays } from '../packages/core-db/date.js'
+} from '@dhcb/core-auth/security'
+import { getUserById } from '@dhcb/core-auth/authService'
+import { isAdminEmail } from '@dhcb/core-auth/adminAuth'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { getUnitCostsUsd, getUsdVndRate, estimateCostUsd } from '@dhcb/core-ai/aiCost'
+import { FREE_WEEKLY_CAP, FREE_ROLLING_WINDOW_DAYS, type UsageMode } from '@dhcb/core-billing/usage'
+import { vnDateStr, addDays } from '@dhcb/core-db/date'
 
 const DEFAULT_DAYS = 30
 const MAX_DAYS = 180

@@ -3,7 +3,7 @@ import {
   parseAzurePronounceResponse,
   resolveAzurePronounceConfig,
   assessPronunciation,
-} from './azurePronounce'
+} from './azurePronounce.js'
 
 const OLD_KEY = process.env.AZURE_SPEECH_KEY
 const OLD_REGION = process.env.AZURE_SPEECH_REGION

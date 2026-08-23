@@ -4,22 +4,19 @@
 // PATCH /api/admin-feedback body: { id, status, adminNotes? }
 
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   validateAuth,
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getUserById } from '../packages/core-auth/authService.js'
-import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
-import {
-  FeedbackStatusSchema,
-  type UserFeedbackRecord,
-} from '../packages/core-contracts/feedback.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { getUserById } from '@dhcb/core-auth/authService'
+import { isAdminEmail } from '@dhcb/core-auth/adminAuth'
+import { FeedbackStatusSchema, type UserFeedbackRecord } from '@dhcb/core-contracts/feedback'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 export interface TutorFeedbackRow {
   id: string

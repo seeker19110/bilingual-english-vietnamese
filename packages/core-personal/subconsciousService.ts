@@ -7,7 +7,7 @@ import {
   type SubconsciousHypothesis,
   SubconsciousThoughtLogSchema,
   SUBCONSCIOUS_SCHEMA_VERSION,
-} from '../core-contracts/subconscious.js'
+} from '@dhcb/core-contracts/subconscious'
 import { syncCrossDomainLifeGraph } from './crossDomainGraphService.js'
 import { calculateOutcomeCalibration } from './outcomeCalibrationService.js'
 

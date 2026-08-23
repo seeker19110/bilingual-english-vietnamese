@@ -1,23 +1,23 @@
 // api/scenario-holodeck.ts — V3 Scenario Holodeck & Multi-Persona Simulation Endpoint.
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getOrCreatePerson } from '../packages/core-personal/personService.js'
+} from '@dhcb/core-auth/security'
+import { getOrCreatePerson } from '@dhcb/core-personal/personService'
 import {
   listPredefinedScenarios,
   startHolodeckSession,
   getHolodeckSession,
   processHolodeckTurn,
   finalizeHolodeckSession,
-} from '../packages/core-personal/scenarioHolodeckService.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
-import { readJsonBody } from './_lib/validation.js'
+} from '@dhcb/core-personal/scenarioHolodeckService'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { readJsonBody } from '@dhcb/core-http/validation'
 
 export default async function handler(req: Request): Promise<Response> {
   const headers = { ...getCorsHeaders(req), ...SECURITY_HEADERS }

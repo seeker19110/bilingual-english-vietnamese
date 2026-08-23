@@ -1,14 +1,14 @@
 // api/startup.ts — REST API cho Startup Domain (V2-16).
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getOrCreatePerson } from '../packages/core-personal/personService.js'
+} from '@dhcb/core-auth/security'
+import { getOrCreatePerson } from '@dhcb/core-personal/personService'
 import {
   createVenture,
   listVentures,
@@ -20,17 +20,17 @@ import {
   listHypotheses,
   recordEvidence,
   listEvidence,
-} from '../packages/core-startup/startupService.js'
+} from '@dhcb/core-startup/startupService'
 import {
   VentureStageSchema,
   HypothesisTypeSchema,
   HypothesisStatusSchema,
   EvidenceTypeSchema,
   ProblemSeveritySchema,
-} from '../packages/core-contracts/startup.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-contracts/startup'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 const CreateVentureSchema = z
   .object({

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import type { Pool } from 'pg'
-import { ConflictError, NotFoundError, ValidationError } from '../core-errors/appError.js'
+import { ConflictError, NotFoundError, ValidationError } from '@dhcb/core-errors/appError'
 import {
   createEdge,
   createNode,

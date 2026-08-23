@@ -6,7 +6,7 @@
 //
 // Quyết định 2026-07-26: đổi từ "mọi gói đều thành VIP" (không phân biệt) sang "nâng đúng 1
 // bậc" — Free vẫn có giới hạn (bằng Pro) thay vì không giới hạn hoàn toàn trong lúc khuyến mãi.
-import { getAppSettings } from '../core-db/settings.js'
+import { getAppSettings } from '@dhcb/core-db/settings'
 import type { Plan } from './plan.js'
 
 export async function isFullAccessPromoActive(now: Date = new Date()): Promise<boolean> {

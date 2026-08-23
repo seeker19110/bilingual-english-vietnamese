@@ -1,14 +1,17 @@
 // api/action-canvas.ts — REST handler cho Không gian làm việc Tương tác Action Canvas V4.2.
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
+// State đã chuyển sang bảng platform.feature_state (migration 0058, packages/core-db/featureState.ts)
+// — thay cho Map in-memory cấp module, tránh mất dữ liệu/vỡ trong PM2 cluster.
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
 import {
   ActionCanvasState,
   ActionCanvasStateSchema,
   ACTION_CANVAS_VERSION,
-} from '../packages/core-contracts/actionCanvas.js'
-import { ActionCanvasService } from '../packages/core-personal/actionCanvasService.js'
+} from '@dhcb/core-contracts/actionCanvas'
+import { ActionCanvasService } from '@dhcb/core-personal/actionCanvasService'
+import { getFeatureState, setFeatureState } from '@dhcb/core-db/featureState'
 
-const inMemoryCanvasMap = new Map<string, ActionCanvasState>()
+const FEATURE = 'action_canvas'
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
@@ -29,7 +32,7 @@ export default async function handler(req: Request): Promise<Response> {
 
   if (req.method === 'GET') {
     const existing =
-      inMemoryCanvasMap.get(personId) ||
+      (await getFeatureState<ActionCanvasState>(personId, FEATURE)) ||
       ActionCanvasService.synthesizeCrossDomainGoalCanvas({
         canvasId: '11111111-1111-4111-8111-111111111111',
         personId,
@@ -57,12 +60,12 @@ export default async function handler(req: Request): Promise<Response> {
           personId,
           goalPrompt,
         })
-        inMemoryCanvasMap.set(personId, synthesized)
+        await setFeatureState(personId, FEATURE, synthesized)
         return jsonResponse({ success: true, canvas: synthesized }, 200)
       }
 
       if (action === 'auto_layout') {
-        const existing = inMemoryCanvasMap.get(personId)
+        const existing = await getFeatureState<ActionCanvasState>(personId, FEATURE)
         if (!existing) {
           return jsonResponse({ error: 'canvas_not_found' }, 404)
         }
@@ -75,12 +78,12 @@ export default async function handler(req: Request): Promise<Response> {
           nodes: updatedNodes,
           updatedAt: new Date().toISOString(),
         }
-        inMemoryCanvasMap.set(personId, updatedCanvas)
+        await setFeatureState(personId, FEATURE, updatedCanvas)
         return jsonResponse({ success: true, canvas: updatedCanvas }, 200)
       }
 
       if (action === 'export') {
-        const existing = inMemoryCanvasMap.get(personId)
+        const existing = await getFeatureState<ActionCanvasState>(personId, FEATURE)
         if (!existing) {
           return jsonResponse({ error: 'canvas_not_found' }, 404)
         }
@@ -106,7 +109,7 @@ export default async function handler(req: Request): Promise<Response> {
         return jsonResponse({ error: 'invalid_request', details: parseResult.error.format() }, 400)
       }
 
-      inMemoryCanvasMap.set(personId, parseResult.data)
+      await setFeatureState(personId, FEATURE, parseResult.data)
       return jsonResponse({ success: true, canvas: parseResult.data }, 200)
     } catch (err) {
       return jsonResponse({ error: 'Invalid payload', details: String(err) }, 400)

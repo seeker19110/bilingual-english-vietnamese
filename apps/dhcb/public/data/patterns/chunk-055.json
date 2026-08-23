@@ -1,0 +1,1746 @@
+[
+  {
+    "starter": "The coach is",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The coach is responsible.", "vi": "Huấn luyện viên có trách nhiệm." },
+      { "en": "The coach is in a good mood.", "vi": "Huấn luyện viên đang vui vẻ." },
+      {
+        "en": "The coach is satisfied with the service.",
+        "vi": "Huấn luyện viên hài lòng với dịch vụ."
+      },
+      { "en": "The coach is grateful.", "vi": "Huấn luyện viên biết ơn." },
+      { "en": "The coach is a little tired.", "vi": "Huấn luyện viên hơi mệt." },
+      { "en": "The coach is out of practice.", "vi": "Huấn luyện viên lâu rồi không luyện." },
+      { "en": "The coach is cautious.", "vi": "Huấn luyện viên thận trọng." },
+      { "en": "The coach is totally focused.", "vi": "Huấn luyện viên hoàn toàn tập trung." },
+      { "en": "The coach is considerate.", "vi": "Huấn luyện viên biết quan tâm." },
+      { "en": "The coach is angry.", "vi": "Huấn luyện viên tức giận." },
+      { "en": "The coach is delighted.", "vi": "Huấn luyện viên vui sướng." },
+      { "en": "The coach is humble.", "vi": "Huấn luyện viên khiêm tốn." },
+      { "en": "The coach is low on battery.", "vi": "Huấn luyện viên sắp hết pin." },
+      { "en": "The coach is truly impressed.", "vi": "Huấn luyện viên thực sự ấn tượng." },
+      { "en": "The coach is very motivated.", "vi": "Huấn luyện viên rất có động lực." },
+      { "en": "The coach is out of energy.", "vi": "Huấn luyện viên hết năng lượng." },
+      { "en": "The coach is almost done.", "vi": "Huấn luyện viên gần xong." },
+      { "en": "The coach is ahead of schedule.", "vi": "Huấn luyện viên sớm hơn dự kiến." },
+      { "en": "The coach is friendly.", "vi": "Huấn luyện viên thân thiện." },
+      { "en": "The coach is in a meeting.", "vi": "Huấn luyện viên đang họp." },
+      { "en": "The coach is nervous.", "vi": "Huấn luyện viên hồi hộp." },
+      {
+        "en": "The coach is ready for the challenge.",
+        "vi": "Huấn luyện viên sẵn sàng cho thử thách."
+      },
+      { "en": "The coach is full of ideas.", "vi": "Huấn luyện viên đầy ý tưởng." },
+      { "en": "The coach is focused.", "vi": "Huấn luyện viên tập trung." },
+      { "en": "The coach is determined.", "vi": "Huấn luyện viên quyết tâm." },
+      { "en": "The coach is on the phone.", "vi": "Huấn luyện viên đang nghe điện thoại." },
+      { "en": "The coach is sorry to hear that.", "vi": "Huấn luyện viên tiếc khi nghe điều đó." },
+      { "en": "The coach is cheerful.", "vi": "Huấn luyện viên vui vẻ." },
+      { "en": "The coach is lonely.", "vi": "Huấn luyện viên cô đơn." },
+      { "en": "The coach is available tomorrow.", "vi": "Huấn luyện viên rảnh vào ngày mai." },
+      {
+        "en": "The coach is hopeful about the future.",
+        "vi": "Huấn luyện viên hy vọng về tương lai."
+      },
+      { "en": "The coach is proud and grateful.", "vi": "Huấn luyện viên tự hào và biết ơn." },
+      { "en": "The coach is amazed.", "vi": "Huấn luyện viên kinh ngạc." },
+      { "en": "The coach is passionate.", "vi": "Huấn luyện viên đầy đam mê." },
+      { "en": "The coach is stronger than before.", "vi": "Huấn luyện viên mạnh mẽ hơn trước." },
+      { "en": "The coach is behind schedule.", "vi": "Huấn luyện viên chậm tiến độ." },
+      { "en": "The coach is thankful.", "vi": "Huấn luyện viên biết ơn." },
+      { "en": "The coach is proud of the team.", "vi": "Huấn luyện viên tự hào về đội." },
+      { "en": "The coach is serious about this.", "vi": "Huấn luyện viên nghiêm túc về việc này." },
+      { "en": "The coach is ready.", "vi": "Huấn luyện viên sẵn sàng." },
+      { "en": "The coach is stressed.", "vi": "Huấn luyện viên căng thẳng." },
+      { "en": "The coach is out of ideas.", "vi": "Huấn luyện viên hết ý tưởng." },
+      { "en": "The coach is relaxed.", "vi": "Huấn luyện viên thư giãn." },
+      { "en": "The coach is ambitious.", "vi": "Huấn luyện viên tham vọng." },
+      { "en": "The coach is disappointed.", "vi": "Huấn luyện viên thất vọng." },
+      { "en": "The coach is generous.", "vi": "Huấn luyện viên rộng lượng." },
+      { "en": "The coach is busy.", "vi": "Huấn luyện viên bận." },
+      { "en": "The coach is in a hurry.", "vi": "Huấn luyện viên đang vội." },
+      { "en": "The coach is sad to leave.", "vi": "Huấn luyện viên buồn khi phải đi." },
+      { "en": "The coach is glad to help.", "vi": "Huấn luyện viên vui được giúp đỡ." },
+      { "en": "The coach is from Vietnam.", "vi": "Huấn luyện viên đến từ Việt Nam." },
+      {
+        "en": "The coach is hopeful for the best.",
+        "vi": "Huấn luyện viên hy vọng điều tốt nhất."
+      },
+      { "en": "The coach is cautiously optimistic.", "vi": "Huấn luyện viên lạc quan thận trọng." },
+      { "en": "The coach is organized.", "vi": "Huấn luyện viên ngăn nắp." },
+      { "en": "The coach is upset.", "vi": "Huấn luyện viên buồn bực." },
+      { "en": "The coach is free this weekend.", "vi": "Huấn luyện viên rảnh cuối tuần này." },
+      { "en": "The coach is calm and collected.", "vi": "Huấn luyện viên bình tĩnh và điềm đạm." },
+      { "en": "The coach is glad to be here.", "vi": "Huấn luyện viên vui khi được ở đây." },
+      { "en": "The coach is short of money.", "vi": "Huấn luyện viên thiếu tiền." },
+      { "en": "The coach is patient.", "vi": "Huấn luyện viên kiên nhẫn." },
+      { "en": "The coach is proud of everyone.", "vi": "Huấn luyện viên tự hào về mọi người." },
+      { "en": "The coach is sure.", "vi": "Huấn luyện viên chắc chắn." },
+      { "en": "The coach is happy to be back.", "vi": "Huấn luyện viên vui khi trở lại." },
+      { "en": "The coach is sleepy.", "vi": "Huấn luyện viên buồn ngủ." },
+      { "en": "The coach is deeply grateful.", "vi": "Huấn luyện viên vô cùng biết ơn." },
+      { "en": "The coach is happy to see you.", "vi": "Huấn luyện viên vui khi gặp bạn." },
+      { "en": "The coach is quick to respond.", "vi": "Huấn luyện viên phản hồi nhanh." },
+      { "en": "The coach is hardworking.", "vi": "Huấn luyện viên chăm chỉ." },
+      { "en": "The coach is motivated.", "vi": "Huấn luyện viên có động lực." },
+      { "en": "The coach is hopeful again.", "vi": "Huấn luyện viên lại tràn hy vọng." },
+      { "en": "The coach is late.", "vi": "Huấn luyện viên muộn." },
+      { "en": "The coach is thankful for everything.", "vi": "Huấn luyện viên biết ơn vì tất cả." },
+      { "en": "The coach is hungry.", "vi": "Huấn luyện viên đói." },
+      { "en": "The coach is running late.", "vi": "Huấn luyện viên bị trễ." },
+      { "en": "The coach is surprisingly calm.", "vi": "Huấn luyện viên bình tĩnh đến lạ." },
+      { "en": "The coach is new here.", "vi": "Huấn luyện viên mới đến đây." },
+      {
+        "en": "The coach is happy with the result.",
+        "vi": "Huấn luyện viên hài lòng với kết quả."
+      },
+      { "en": "The coach is very happy.", "vi": "Huấn luyện viên rất vui." },
+      { "en": "The coach is on the right track.", "vi": "Huấn luyện viên đi đúng hướng." },
+      { "en": "The coach is worried about the exam.", "vi": "Huấn luyện viên lo lắng về kỳ thi." },
+      { "en": "The coach is done for today.", "vi": "Huấn luyện viên xong việc cho hôm nay." },
+      { "en": "The coach is energetic.", "vi": "Huấn luyện viên tràn đầy năng lượng." },
+      { "en": "The coach is inspired.", "vi": "Huấn luyện viên được truyền cảm hứng." },
+      { "en": "The coach is content.", "vi": "Huấn luyện viên mãn nguyện." },
+      {
+        "en": "The coach is excited about the trip.",
+        "vi": "Huấn luyện viên hào hứng về chuyến đi."
+      },
+      { "en": "The coach is better than yesterday.", "vi": "Huấn luyện viên tốt hơn hôm qua." },
+      { "en": "The coach is eager to learn.", "vi": "Huấn luyện viên háo hức học hỏi." },
+      {
+        "en": "The coach is committed to the plan.",
+        "vi": "Huấn luyện viên cam kết với kế hoạch."
+      },
+      { "en": "The coach is slightly worried.", "vi": "Huấn luyện viên hơi lo." },
+      { "en": "The coach is satisfied.", "vi": "Huấn luyện viên hài lòng." },
+      { "en": "The coach is curious.", "vi": "Huấn luyện viên tò mò." },
+      { "en": "The coach is used to it.", "vi": "Huấn luyện viên đã quen với nó." },
+      {
+        "en": "The coach is sure about my decision.",
+        "vi": "Huấn luyện viên chắc chắn về quyết định của mình."
+      },
+      { "en": "The coach is proud of the result.", "vi": "Huấn luyện viên tự hào về kết quả." },
+      { "en": "The coach is available after lunch.", "vi": "Huấn luyện viên rảnh sau bữa trưa." },
+      { "en": "The coach is flexible.", "vi": "Huấn luyện viên linh hoạt." },
+      { "en": "The coach is confident in the team.", "vi": "Huấn luyện viên tin tưởng vào nhóm." },
+      { "en": "The coach is short on time.", "vi": "Huấn luyện viên thiếu thời gian." },
+      { "en": "The coach is enthusiastic.", "vi": "Huấn luyện viên nhiệt tình." },
+      { "en": "The coach is optimistic.", "vi": "Huấn luyện viên lạc quan." }
+    ]
+  },
+  {
+    "starter": "The coach was",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The coach was extremely tired.", "vi": "Huấn luyện viên đã cực kỳ mệt." },
+      { "en": "The coach was serious.", "vi": "Huấn luyện viên đã nghiêm túc." },
+      { "en": "The coach was new to this.", "vi": "Huấn luyện viên đã mới với việc này." },
+      { "en": "The coach was creative.", "vi": "Huấn luyện viên đã sáng tạo." },
+      { "en": "The coach was out of energy.", "vi": "Huấn luyện viên đã hết năng lượng." },
+      {
+        "en": "The coach was ready for anything.",
+        "vi": "Huấn luyện viên đã sẵn sàng cho mọi thứ."
+      },
+      {
+        "en": "The coach was interested in the offer.",
+        "vi": "Huấn luyện viên đã quan tâm đến lời đề nghị."
+      },
+      { "en": "The coach was bad at cooking.", "vi": "Huấn luyện viên đã dở nấu ăn." },
+      { "en": "The coach was on the right track.", "vi": "Huấn luyện viên đã đi đúng hướng." },
+      { "en": "The coach was on a break.", "vi": "Huấn luyện viên đã đang nghỉ giải lao." },
+      { "en": "The coach was in a meeting.", "vi": "Huấn luyện viên đã đang họp." },
+      { "en": "The coach was honest.", "vi": "Huấn luyện viên đã trung thực." },
+      { "en": "The coach was considerate.", "vi": "Huấn luyện viên đã biết quan tâm." },
+      { "en": "The coach was wide awake.", "vi": "Huấn luyện viên đã tỉnh táo hẳn." },
+      { "en": "The coach was enthusiastic.", "vi": "Huấn luyện viên đã nhiệt tình." },
+      { "en": "The coach was worried.", "vi": "Huấn luyện viên đã lo lắng." },
+      { "en": "The coach was busy but okay.", "vi": "Huấn luyện viên đã bận nhưng ổn." },
+      { "en": "The coach was short on time.", "vi": "Huấn luyện viên đã thiếu thời gian." },
+      { "en": "The coach was amazed.", "vi": "Huấn luyện viên đã kinh ngạc." },
+      { "en": "The coach was stuck in traffic.", "vi": "Huấn luyện viên đã kẹt xe." },
+      {
+        "en": "The coach was committed to the plan.",
+        "vi": "Huấn luyện viên đã cam kết với kế hoạch."
+      },
+      {
+        "en": "The coach was proud of my work.",
+        "vi": "Huấn luyện viên đã tự hào về công việc của mình."
+      },
+      { "en": "The coach was on the phone.", "vi": "Huấn luyện viên đã đang nghe điện thoại." },
+      { "en": "The coach was content.", "vi": "Huấn luyện viên đã mãn nguyện." },
+      { "en": "The coach was fully prepared.", "vi": "Huấn luyện viên đã chuẩn bị kỹ càng." },
+      { "en": "The coach was sure.", "vi": "Huấn luyện viên đã chắc chắn." },
+      { "en": "The coach was almost done.", "vi": "Huấn luyện viên đã gần xong." },
+      { "en": "The coach was calm.", "vi": "Huấn luyện viên đã bình tĩnh." },
+      {
+        "en": "The coach was thankful for everything.",
+        "vi": "Huấn luyện viên đã biết ơn vì tất cả."
+      },
+      { "en": "The coach was polite.", "vi": "Huấn luyện viên đã lịch sự." },
+      { "en": "The coach was running late.", "vi": "Huấn luyện viên đã bị trễ." },
+      { "en": "The coach was tired but happy.", "vi": "Huấn luyện viên đã mệt nhưng vui." },
+      { "en": "The coach was encouraged.", "vi": "Huấn luyện viên đã được động viên." },
+      { "en": "The coach was tired.", "vi": "Huấn luyện viên đã mệt." },
+      { "en": "The coach was hopeful.", "vi": "Huấn luyện viên đã tràn đầy hy vọng." },
+      { "en": "The coach was thankful.", "vi": "Huấn luyện viên đã biết ơn." },
+      { "en": "The coach was proud and grateful.", "vi": "Huấn luyện viên đã tự hào và biết ơn." },
+      { "en": "The coach was patient.", "vi": "Huấn luyện viên đã kiên nhẫn." },
+      { "en": "The coach was hardworking.", "vi": "Huấn luyện viên đã chăm chỉ." },
+      { "en": "The coach was proud of everyone.", "vi": "Huấn luyện viên đã tự hào về mọi người." },
+      { "en": "The coach was sick.", "vi": "Huấn luyện viên đã ốm." },
+      { "en": "The coach was organized.", "vi": "Huấn luyện viên đã ngăn nắp." },
+      { "en": "The coach was humble.", "vi": "Huấn luyện viên đã khiêm tốn." },
+      { "en": "The coach was okay.", "vi": "Huấn luyện viên đã ổn cả." },
+      { "en": "The coach was calm and ready.", "vi": "Huấn luyện viên đã bình tĩnh và sẵn sàng." },
+      { "en": "The coach was happy for you.", "vi": "Huấn luyện viên đã mừng cho bạn." },
+      { "en": "The coach was fine.", "vi": "Huấn luyện viên đã ổn." },
+      {
+        "en": "The coach was back at the office.",
+        "vi": "Huấn luyện viên đã đã trở lại văn phòng."
+      },
+      { "en": "The coach was out for lunch.", "vi": "Huấn luyện viên đã ra ngoài ăn trưa." },
+      { "en": "The coach was happy.", "vi": "Huấn luyện viên đã vui." },
+      { "en": "The coach was lonely.", "vi": "Huấn luyện viên đã cô đơn." },
+      { "en": "The coach was glad to be here.", "vi": "Huấn luyện viên đã vui khi được ở đây." },
+      { "en": "The coach was used to it.", "vi": "Huấn luyện viên đã đã quen với nó." },
+      { "en": "The coach was upset.", "vi": "Huấn luyện viên đã buồn bực." },
+      {
+        "en": "The coach was nervous about the interview.",
+        "vi": "Huấn luyện viên đã hồi hộp về buổi phỏng vấn."
+      },
+      { "en": "The coach was a bit nervous.", "vi": "Huấn luyện viên đã hơi hồi hộp." },
+      { "en": "The coach was well-rested.", "vi": "Huấn luyện viên đã được nghỉ ngơi đầy đủ." },
+      { "en": "The coach was responsible.", "vi": "Huấn luyện viên đã có trách nhiệm." },
+      { "en": "The coach was busy.", "vi": "Huấn luyện viên đã bận." },
+      { "en": "The coach was delighted.", "vi": "Huấn luyện viên đã vui sướng." },
+      { "en": "The coach was glad it worked.", "vi": "Huấn luyện viên đã vui vì nó hiệu quả." },
+      { "en": "The coach was low on battery.", "vi": "Huấn luyện viên đã sắp hết pin." },
+      { "en": "The coach was eager to learn.", "vi": "Huấn luyện viên đã háo hức học hỏi." },
+      {
+        "en": "The coach was nervous but excited.",
+        "vi": "Huấn luyện viên đã hồi hộp nhưng hào hứng."
+      },
+      { "en": "The coach was close to the goal.", "vi": "Huấn luyện viên đã gần đạt mục tiêu." },
+      { "en": "The coach was early.", "vi": "Huấn luyện viên đã sớm." },
+      { "en": "The coach was quite busy.", "vi": "Huấn luyện viên đã khá bận." },
+      { "en": "The coach was working from home.", "vi": "Huấn luyện viên đã làm việc tại nhà." },
+      {
+        "en": "The coach was confident in the team.",
+        "vi": "Huấn luyện viên đã tin tưởng vào nhóm."
+      },
+      { "en": "The coach was surprised.", "vi": "Huấn luyện viên đã ngạc nhiên." },
+      { "en": "The coach was flexible.", "vi": "Huấn luyện viên đã linh hoạt." },
+      { "en": "The coach was nervous.", "vi": "Huấn luyện viên đã hồi hộp." },
+      {
+        "en": "The coach was confident about the result.",
+        "vi": "Huấn luyện viên đã tự tin về kết quả."
+      },
+      { "en": "The coach was out of practice.", "vi": "Huấn luyện viên đã lâu rồi không luyện." },
+      { "en": "The coach was disappointed.", "vi": "Huấn luyện viên đã thất vọng." },
+      { "en": "The coach was short of money.", "vi": "Huấn luyện viên đã thiếu tiền." },
+      { "en": "The coach was full of ideas.", "vi": "Huấn luyện viên đã đầy ý tưởng." },
+      { "en": "The coach was proud of the result.", "vi": "Huấn luyện viên đã tự hào về kết quả." },
+      {
+        "en": "The coach was ready for the challenge.",
+        "vi": "Huấn luyện viên đã sẵn sàng cho thử thách."
+      },
+      { "en": "The coach was bored.", "vi": "Huấn luyện viên đã chán." },
+      { "en": "The coach was scared.", "vi": "Huấn luyện viên đã sợ hãi." },
+      {
+        "en": "The coach was grateful for your help.",
+        "vi": "Huấn luyện viên đã biết ơn sự giúp đỡ của bạn."
+      },
+      { "en": "The coach was new here.", "vi": "Huấn luyện viên đã mới đến đây." },
+      { "en": "The coach was joyful.", "vi": "Huấn luyện viên đã hân hoan." },
+      { "en": "The coach was quite confident.", "vi": "Huấn luyện viên đã khá tự tin." },
+      { "en": "The coach was very motivated.", "vi": "Huấn luyện viên đã rất có động lực." },
+      { "en": "The coach was inspired.", "vi": "Huấn luyện viên đã được truyền cảm hứng." },
+      { "en": "The coach was cautious.", "vi": "Huấn luyện viên đã thận trọng." },
+      { "en": "The coach was done for today.", "vi": "Huấn luyện viên đã xong việc cho hôm nay." },
+      { "en": "The coach was better than yesterday.", "vi": "Huấn luyện viên đã tốt hơn hôm qua." },
+      { "en": "The coach was careful.", "vi": "Huấn luyện viên đã cẩn thận." },
+      { "en": "The coach was under pressure.", "vi": "Huấn luyện viên đã dưới áp lực." },
+      { "en": "The coach was ready to start.", "vi": "Huấn luyện viên đã sẵn sàng bắt đầu." },
+      { "en": "The coach was peaceful.", "vi": "Huấn luyện viên đã yên bình." },
+      { "en": "The coach was absolutely sure.", "vi": "Huấn luyện viên đã chắc chắn tuyệt đối." },
+      { "en": "The coach was full of energy.", "vi": "Huấn luyện viên đã tràn đầy năng lượng." },
+      { "en": "The coach was available tomorrow.", "vi": "Huấn luyện viên đã rảnh vào ngày mai." },
+      {
+        "en": "The coach was excited for tomorrow.",
+        "vi": "Huấn luyện viên đã háo hức cho ngày mai."
+      },
+      { "en": "The coach was out of ideas.", "vi": "Huấn luyện viên đã hết ý tưởng." },
+      {
+        "en": "The coach was sorry to hear that.",
+        "vi": "Huấn luyện viên đã tiếc khi nghe điều đó."
+      }
+    ]
+  },
+  {
+    "starter": "The coach has",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The coach has a rainy afternoon.", "vi": "Huấn luyện viên có một buổi chiều mưa." },
+      { "en": "The coach has a gym membership.", "vi": "Huấn luyện viên có một thẻ tập gym." },
+      {
+        "en": "The coach has a long way to go.",
+        "vi": "Huấn luyện viên có một chặng đường dài phía trước."
+      },
+      {
+        "en": "The coach has a feeling about this.",
+        "vi": "Huấn luyện viên có một linh cảm về điều này."
+      },
+      { "en": "The coach has a plan.", "vi": "Huấn luyện viên có một kế hoạch." },
+      { "en": "The coach has a travel plan.", "vi": "Huấn luyện viên có một kế hoạch du lịch." },
+      { "en": "The coach has a request.", "vi": "Huấn luyện viên có một yêu cầu." },
+      {
+        "en": "The coach has a test next week.",
+        "vi": "Huấn luyện viên có một bài kiểm tra vào tuần tới."
+      },
+      { "en": "The coach has bad news.", "vi": "Huấn luyện viên có tin xấu." },
+      { "en": "The coach has two children.", "vi": "Huấn luyện viên có hai đứa con." },
+      {
+        "en": "The coach has a strong team spirit.",
+        "vi": "Huấn luyện viên có một tinh thần đồng đội mạnh mẽ."
+      },
+      { "en": "The coach has a city map.", "vi": "Huấn luyện viên có một bản đồ thành phố." },
+      { "en": "The coach has a solution.", "vi": "Huấn luyện viên có một giải pháp." },
+      { "en": "The coach has a good point.", "vi": "Huấn luyện viên có một ý hay." },
+      { "en": "The coach has a new project.", "vi": "Huấn luyện viên có một dự án mới." },
+      {
+        "en": "The coach has a clear schedule today.",
+        "vi": "Huấn luyện viên có một lịch trình trống hôm nay."
+      },
+      { "en": "The coach has a special offer.", "vi": "Huấn luyện viên có một ưu đãi đặc biệt." },
+      { "en": "The coach has a car.", "vi": "Huấn luyện viên có một chiếc xe hơi." },
+      {
+        "en": "The coach has a business idea.",
+        "vi": "Huấn luyện viên có một ý tưởng kinh doanh."
+      },
+      { "en": "The coach has a clear goal.", "vi": "Huấn luyện viên có một mục tiêu rõ ràng." },
+      {
+        "en": "The coach has a weekend trip.",
+        "vi": "Huấn luyện viên có một chuyến đi cuối tuần."
+      },
+      { "en": "The coach has an idea.", "vi": "Huấn luyện viên có một ý tưởng." },
+      { "en": "The coach has enough time.", "vi": "Huấn luyện viên có đủ thời gian." },
+      { "en": "The coach has a backup plan.", "vi": "Huấn luyện viên có một kế hoạch dự phòng." },
+      {
+        "en": "The coach has a warm welcome.",
+        "vi": "Huấn luyện viên có một sự chào đón nồng nhiệt."
+      },
+      { "en": "The coach has a new phone.", "vi": "Huấn luyện viên có một chiếc điện thoại mới." },
+      { "en": "The coach has a side income.", "vi": "Huấn luyện viên có một nguồn thu phụ." },
+      { "en": "The coach has a workout plan.", "vi": "Huấn luyện viên có một kế hoạch tập luyện." },
+      {
+        "en": "The coach has a startup plan.",
+        "vi": "Huấn luyện viên có một kế hoạch khởi nghiệp."
+      },
+      {
+        "en": "The coach has a question about the schedule.",
+        "vi": "Huấn luyện viên có một câu hỏi về lịch trình."
+      },
+      { "en": "The coach has a shopping list.", "vi": "Huấn luyện viên có một danh sách mua sắm." },
+      { "en": "The coach has an account here.", "vi": "Huấn luyện viên có một tài khoản ở đây." },
+      { "en": "The coach has a second chance.", "vi": "Huấn luyện viên có một cơ hội thứ hai." },
+      {
+        "en": "The coach has a long conversation.",
+        "vi": "Huấn luyện viên có một cuộc trò chuyện dài."
+      },
+      {
+        "en": "The coach has a good night's sleep.",
+        "vi": "Huấn luyện viên có một giấc ngủ ngon."
+      },
+      {
+        "en": "The coach has a playlist for work.",
+        "vi": "Huấn luyện viên có một danh sách nhạc để làm việc."
+      },
+      { "en": "The coach has a new neighbor.", "vi": "Huấn luyện viên có một người hàng xóm mới." },
+      { "en": "The coach has a lot to do.", "vi": "Huấn luyện viên có nhiều việc phải làm." },
+      { "en": "The coach has a cup of coffee.", "vi": "Huấn luyện viên có một tách cà phê." },
+      { "en": "The coach has a standing desk.", "vi": "Huấn luyện viên có một bàn đứng." },
+      { "en": "The coach has a lot on my mind.", "vi": "Huấn luyện viên có nhiều điều trong đầu." },
+      { "en": "The coach has some experience.", "vi": "Huấn luyện viên có một chút kinh nghiệm." },
+      { "en": "The coach has a good movie.", "vi": "Huấn luyện viên có một bộ phim hay." },
+      { "en": "The coach has a reservation.", "vi": "Huấn luyện viên có một chỗ đặt trước." },
+      {
+        "en": "The coach has a hotel booking.",
+        "vi": "Huấn luyện viên có một đặt phòng khách sạn."
+      },
+      {
+        "en": "The coach has a report to finish.",
+        "vi": "Huấn luyện viên có một báo cáo cần hoàn thành."
+      },
+      {
+        "en": "The coach has a flight at noon.",
+        "vi": "Huấn luyện viên có một chuyến bay lúc trưa."
+      },
+      {
+        "en": "The coach has a quiet workspace.",
+        "vi": "Huấn luyện viên có một không gian làm việc yên tĩnh."
+      },
+      { "en": "The coach has a happy ending.", "vi": "Huấn luyện viên có một cái kết có hậu." },
+      { "en": "The coach has a water bottle.", "vi": "Huấn luyện viên có một bình nước." },
+      { "en": "The coach has a return ticket.", "vi": "Huấn luyện viên có một vé khứ hồi." },
+      {
+        "en": "The coach has a presentation today.",
+        "vi": "Huấn luyện viên có một bài thuyết trình hôm nay."
+      },
+      {
+        "en": "The coach has a fast internet connection.",
+        "vi": "Huấn luyện viên có một kết nối internet nhanh."
+      },
+      { "en": "The coach has a headache.", "vi": "Huấn luyện viên có một cơn đau đầu." },
+      {
+        "en": "The coach has a great mentor.",
+        "vi": "Huấn luyện viên có một người cố vấn tuyệt vời."
+      },
+      { "en": "The coach has a major update.", "vi": "Huấn luyện viên có một bản cập nhật lớn." },
+      { "en": "The coach has a calendar reminder.", "vi": "Huấn luyện viên có một lời nhắc lịch." },
+      { "en": "The coach has a tight deadline.", "vi": "Huấn luyện viên có một thời hạn gấp." },
+      {
+        "en": "The coach has a reservation for two.",
+        "vi": "Huấn luyện viên có một chỗ đặt cho hai người."
+      },
+      { "en": "The coach has a remote job.", "vi": "Huấn luyện viên có một công việc từ xa." },
+      { "en": "The coach has a new contract.", "vi": "Huấn luyện viên có một hợp đồng mới." },
+      { "en": "The coach has a spare room.", "vi": "Huấn luyện viên có một phòng trống." },
+      { "en": "The coach has a concern.", "vi": "Huấn luyện viên có một mối lo ngại." },
+      { "en": "The coach has a pair of headphones.", "vi": "Huấn luyện viên có một cặp tai nghe." },
+      { "en": "The coach has a sunny day.", "vi": "Huấn luyện viên có một ngày nắng đẹp." },
+      { "en": "The coach has a problem.", "vi": "Huấn luyện viên có một vấn đề." },
+      {
+        "en": "The coach has a meaningful goal.",
+        "vi": "Huấn luyện viên có một mục tiêu ý nghĩa."
+      },
+      { "en": "The coach has a lot of homework.", "vi": "Huấn luyện viên có rất nhiều bài tập." },
+      { "en": "The coach has a cozy cafe.", "vi": "Huấn luyện viên có một quán cà phê ấm cúng." },
+      { "en": "The coach has a better option.", "vi": "Huấn luyện viên có một lựa chọn tốt hơn." },
+      { "en": "The coach has a meeting.", "vi": "Huấn luyện viên có một cuộc họp." },
+      { "en": "The coach has high expectations.", "vi": "Huấn luyện viên có kỳ vọng cao." },
+      {
+        "en": "The coach has a phone call to make.",
+        "vi": "Huấn luyện viên có một cuộc gọi cần thực hiện."
+      },
+      { "en": "The coach has a quiet evening.", "vi": "Huấn luyện viên có một buổi tối yên tĩnh." },
+      { "en": "The coach has an email to send.", "vi": "Huấn luyện viên có một email cần gửi." },
+      { "en": "The coach has a brilliant idea.", "vi": "Huấn luyện viên có một ý tưởng xuất sắc." },
+      {
+        "en": "The coach has a meeting with the client.",
+        "vi": "Huấn luyện viên có một cuộc họp với khách hàng."
+      },
+      {
+        "en": "The coach has a question about the price.",
+        "vi": "Huấn luyện viên có một câu hỏi về giá."
+      },
+      { "en": "The coach has a question.", "vi": "Huấn luyện viên có một câu hỏi." },
+      {
+        "en": "The coach has a part-time job.",
+        "vi": "Huấn luyện viên có một công việc bán thời gian."
+      },
+      {
+        "en": "The coach has a regular checkup.",
+        "vi": "Huấn luyện viên có một lần khám định kỳ."
+      },
+      { "en": "The coach has a helpful tip.", "vi": "Huấn luyện viên có một mẹo hữu ích." },
+      {
+        "en": "The coach has a reliable laptop.",
+        "vi": "Huấn luyện viên có một chiếc laptop đáng tin cậy."
+      },
+      {
+        "en": "The coach has a good relationship with them.",
+        "vi": "Huấn luyện viên có một mối quan hệ tốt với họ."
+      },
+      { "en": "The coach has a tight budget.", "vi": "Huấn luyện viên có một ngân sách eo hẹp." },
+      {
+        "en": "The coach has a notebook and pen.",
+        "vi": "Huấn luyện viên có một quyển sổ và bút."
+      },
+      { "en": "The coach has a quick lunch.", "vi": "Huấn luyện viên có một bữa trưa nhanh." },
+      {
+        "en": "The coach has a wonderful weekend.",
+        "vi": "Huấn luyện viên có một cuối tuần tuyệt vời."
+      },
+      { "en": "The coach has a packed calendar.", "vi": "Huấn luyện viên có một lịch kín." },
+      {
+        "en": "The coach has a local guide.",
+        "vi": "Huấn luyện viên có một hướng dẫn viên địa phương."
+      },
+      { "en": "The coach has a home-cooked meal.", "vi": "Huấn luyện viên có một bữa ăn tự nấu." },
+      {
+        "en": "The coach has a pending task.",
+        "vi": "Huấn luyện viên có một nhiệm vụ còn dang dở."
+      },
+      {
+        "en": "The coach has a healthy lifestyle.",
+        "vi": "Huấn luyện viên có một lối sống lành mạnh."
+      },
+      { "en": "The coach has a glass of water.", "vi": "Huấn luyện viên có một ly nước." },
+      {
+        "en": "The coach has a doctor's appointment.",
+        "vi": "Huấn luyện viên có một cuộc hẹn với bác sĩ."
+      },
+      {
+        "en": "The coach has a job interview.",
+        "vi": "Huấn luyện viên có một buổi phỏng vấn việc làm."
+      },
+      {
+        "en": "The coach has a reason to celebrate.",
+        "vi": "Huấn luyện viên có một lý do để ăn mừng."
+      },
+      { "en": "The coach has a doctor nearby.", "vi": "Huấn luyện viên có một bác sĩ gần đây." },
+      {
+        "en": "The coach has a question for you.",
+        "vi": "Huấn luyện viên có một câu hỏi cho bạn."
+      },
+      { "en": "The coach has a great deal.", "vi": "Huấn luyện viên có một món hời." }
+    ]
+  },
+  {
+    "starter": "The coach wants to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The coach wants to print the document.", "vi": "Huấn luyện viên muốn in tài liệu." },
+      {
+        "en": "The coach wants to visit the doctor.",
+        "vi": "Huấn luyện viên muốn đi khám bác sĩ."
+      },
+      { "en": "The coach wants to log in again.", "vi": "Huấn luyện viên muốn đăng nhập lại." },
+      {
+        "en": "The coach wants to enjoy the weekend.",
+        "vi": "Huấn luyện viên muốn tận hưởng cuối tuần."
+      },
+      { "en": "The coach wants to give it a try.", "vi": "Huấn luyện viên muốn thử một lần." },
+      {
+        "en": "The coach wants to support each other.",
+        "vi": "Huấn luyện viên muốn hỗ trợ lẫn nhau."
+      },
+      { "en": "The coach wants to walk the dog.", "vi": "Huấn luyện viên muốn dắt chó đi dạo." },
+      { "en": "The coach wants to stay up late.", "vi": "Huấn luyện viên muốn thức khuya." },
+      { "en": "The coach wants to pack my bags.", "vi": "Huấn luyện viên muốn xếp hành lý." },
+      {
+        "en": "The coach wants to plan a trip.",
+        "vi": "Huấn luyện viên muốn lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "The coach wants to volunteer on weekends.",
+        "vi": "Huấn luyện viên muốn tình nguyện cuối tuần."
+      },
+      { "en": "The coach wants to ride a bike.", "vi": "Huấn luyện viên muốn đạp xe." },
+      {
+        "en": "The coach wants to invite some friends.",
+        "vi": "Huấn luyện viên muốn mời vài người bạn."
+      },
+      { "en": "The coach wants to play sports.", "vi": "Huấn luyện viên muốn chơi thể thao." },
+      { "en": "The coach wants to close the window.", "vi": "Huấn luyện viên muốn đóng cửa sổ." },
+      {
+        "en": "The coach wants to listen carefully.",
+        "vi": "Huấn luyện viên muốn lắng nghe cẩn thận."
+      },
+      { "en": "The coach wants to take a chance.", "vi": "Huấn luyện viên muốn nắm lấy cơ hội." },
+      { "en": "The coach wants to keep in touch.", "vi": "Huấn luyện viên muốn giữ liên lạc." },
+      {
+        "en": "The coach wants to charge the phone.",
+        "vi": "Huấn luyện viên muốn sạc điện thoại."
+      },
+      {
+        "en": "The coach wants to check the details.",
+        "vi": "Huấn luyện viên muốn kiểm tra chi tiết."
+      },
+      {
+        "en": "The coach wants to exercise every day.",
+        "vi": "Huấn luyện viên muốn tập thể dục mỗi ngày."
+      },
+      { "en": "The coach wants to take the exam.", "vi": "Huấn luyện viên muốn làm bài thi." },
+      { "en": "The coach wants to ask for help.", "vi": "Huấn luyện viên muốn nhờ giúp đỡ." },
+      { "en": "The coach wants to do the laundry.", "vi": "Huấn luyện viên muốn giặt đồ." },
+      { "en": "The coach wants to water the plants.", "vi": "Huấn luyện viên muốn tưới cây." },
+      { "en": "The coach wants to ask for a raise.", "vi": "Huấn luyện viên muốn xin tăng lương." },
+      { "en": "The coach wants to go on vacation.", "vi": "Huấn luyện viên muốn đi nghỉ mát." },
+      { "en": "The coach wants to leave early.", "vi": "Huấn luyện viên muốn về sớm." },
+      {
+        "en": "The coach wants to negotiate the terms.",
+        "vi": "Huấn luyện viên muốn thương lượng điều khoản."
+      },
+      {
+        "en": "The coach wants to get some rest.",
+        "vi": "Huấn luyện viên muốn nghỉ ngơi một chút."
+      },
+      {
+        "en": "The coach wants to hire new staff.",
+        "vi": "Huấn luyện viên muốn tuyển nhân viên mới."
+      },
+      { "en": "The coach wants to split the bill.", "vi": "Huấn luyện viên muốn chia hóa đơn." },
+      { "en": "The coach wants to stay focused.", "vi": "Huấn luyện viên muốn giữ tập trung." },
+      {
+        "en": "The coach wants to talk to the manager.",
+        "vi": "Huấn luyện viên muốn nói chuyện với quản lý."
+      },
+      { "en": "The coach wants to read more books.", "vi": "Huấn luyện viên muốn đọc thêm sách." },
+      { "en": "The coach wants to learn English.", "vi": "Huấn luyện viên muốn học tiếng Anh." },
+      { "en": "The coach wants to book a ticket.", "vi": "Huấn luyện viên muốn đặt vé." },
+      {
+        "en": "The coach wants to grow the business.",
+        "vi": "Huấn luyện viên muốn phát triển kinh doanh."
+      },
+      {
+        "en": "The coach wants to thank everyone.",
+        "vi": "Huấn luyện viên muốn cảm ơn mọi người."
+      },
+      {
+        "en": "The coach wants to drink more water.",
+        "vi": "Huấn luyện viên muốn uống nhiều nước hơn."
+      },
+      { "en": "The coach wants to stay home.", "vi": "Huấn luyện viên muốn ở nhà." },
+      { "en": "The coach wants to cancel the order.", "vi": "Huấn luyện viên muốn hủy đơn hàng." },
+      {
+        "en": "The coach wants to travel abroad.",
+        "vi": "Huấn luyện viên muốn đi du lịch nước ngoài."
+      },
+      { "en": "The coach wants to say sorry.", "vi": "Huấn luyện viên muốn nói lời xin lỗi." },
+      { "en": "The coach wants to take a break.", "vi": "Huấn luyện viên muốn nghỉ giải lao." },
+      { "en": "The coach wants to delete the file.", "vi": "Huấn luyện viên muốn xóa tệp." },
+      { "en": "The coach wants to reach the goal.", "vi": "Huấn luyện viên muốn đạt mục tiêu." },
+      { "en": "The coach wants to write it down.", "vi": "Huấn luyện viên muốn ghi nó lại." },
+      { "en": "The coach wants to pass the exam.", "vi": "Huấn luyện viên muốn đậu kỳ thi." },
+      { "en": "The coach wants to relax at home.", "vi": "Huấn luyện viên muốn thư giãn ở nhà." },
+      {
+        "en": "The coach wants to answer the phone.",
+        "vi": "Huấn luyện viên muốn trả lời điện thoại."
+      },
+      {
+        "en": "The coach wants to invest wisely.",
+        "vi": "Huấn luyện viên muốn đầu tư khôn ngoan."
+      },
+      {
+        "en": "The coach wants to ask more questions.",
+        "vi": "Huấn luyện viên muốn hỏi nhiều hơn."
+      },
+      {
+        "en": "The coach wants to write a report.",
+        "vi": "Huấn luyện viên muốn viết một báo cáo."
+      },
+      {
+        "en": "The coach wants to back up the data.",
+        "vi": "Huấn luyện viên muốn sao lưu dữ liệu."
+      },
+      {
+        "en": "The coach wants to cook for everyone.",
+        "vi": "Huấn luyện viên muốn nấu ăn cho mọi người."
+      },
+      {
+        "en": "The coach wants to help a neighbor.",
+        "vi": "Huấn luyện viên muốn giúp một người hàng xóm."
+      },
+      { "en": "The coach wants to visit my family.", "vi": "Huấn luyện viên muốn thăm gia đình." },
+      { "en": "The coach wants to make new friends.", "vi": "Huấn luyện viên muốn kết bạn mới." },
+      { "en": "The coach wants to report the bug.", "vi": "Huấn luyện viên muốn báo lỗi." },
+      {
+        "en": "The coach wants to confirm the booking.",
+        "vi": "Huấn luyện viên muốn xác nhận đặt chỗ."
+      },
+      {
+        "en": "The coach wants to launch the product.",
+        "vi": "Huấn luyện viên muốn ra mắt sản phẩm."
+      },
+      {
+        "en": "The coach wants to cut the budget.",
+        "vi": "Huấn luyện viên muốn cắt giảm ngân sách."
+      },
+      {
+        "en": "The coach wants to change the plan.",
+        "vi": "Huấn luyện viên muốn thay đổi kế hoạch."
+      },
+      { "en": "The coach wants to speak clearly.", "vi": "Huấn luyện viên muốn nói rõ ràng." },
+      { "en": "The coach wants to calm down.", "vi": "Huấn luyện viên muốn bình tĩnh lại." },
+      { "en": "The coach wants to wash the dishes.", "vi": "Huấn luyện viên muốn rửa bát." },
+      {
+        "en": "The coach wants to manage the schedule.",
+        "vi": "Huấn luyện viên muốn quản lý lịch trình."
+      },
+      {
+        "en": "The coach wants to improve my skills.",
+        "vi": "Huấn luyện viên muốn cải thiện kỹ năng."
+      },
+      {
+        "en": "The coach wants to copy the link.",
+        "vi": "Huấn luyện viên muốn sao chép liên kết."
+      },
+      {
+        "en": "The coach wants to cheer for the team.",
+        "vi": "Huấn luyện viên muốn cổ vũ cho đội."
+      },
+      {
+        "en": "The coach wants to work harder.",
+        "vi": "Huấn luyện viên muốn làm việc chăm chỉ hơn."
+      },
+      { "en": "The coach wants to help out.", "vi": "Huấn luyện viên muốn giúp đỡ." },
+      {
+        "en": "The coach wants to restart the computer.",
+        "vi": "Huấn luyện viên muốn khởi động lại máy tính."
+      },
+      { "en": "The coach wants to say goodbye.", "vi": "Huấn luyện viên muốn nói lời tạm biệt." },
+      { "en": "The coach wants to keep a diary.", "vi": "Huấn luyện viên muốn viết nhật ký." },
+      {
+        "en": "The coach wants to schedule a meeting.",
+        "vi": "Huấn luyện viên muốn sắp xếp cuộc họp."
+      },
+      { "en": "The coach wants to drive to work.", "vi": "Huấn luyện viên muốn lái xe đi làm." },
+      { "en": "The coach wants to make tea.", "vi": "Huấn luyện viên muốn pha trà." },
+      { "en": "The coach wants to ask a question.", "vi": "Huấn luyện viên muốn hỏi một câu." },
+      {
+        "en": "The coach wants to get a promotion.",
+        "vi": "Huấn luyện viên muốn được thăng chức."
+      },
+      { "en": "The coach wants to lose weight.", "vi": "Huấn luyện viên muốn giảm cân." },
+      { "en": "The coach wants to train the team.", "vi": "Huấn luyện viên muốn đào tạo nhóm." },
+      {
+        "en": "The coach wants to open a business.",
+        "vi": "Huấn luyện viên muốn mở một doanh nghiệp."
+      },
+      {
+        "en": "The coach wants to never give up.",
+        "vi": "Huấn luyện viên muốn không bao giờ bỏ cuộc."
+      },
+      { "en": "The coach wants to cook dinner.", "vi": "Huấn luyện viên muốn nấu bữa tối." },
+      {
+        "en": "The coach wants to meet new people.",
+        "vi": "Huấn luyện viên muốn gặp gỡ người mới."
+      },
+      { "en": "The coach wants to turn off the light.", "vi": "Huấn luyện viên muốn tắt đèn." },
+      {
+        "en": "The coach wants to apply for the position.",
+        "vi": "Huấn luyện viên muốn nộp đơn cho vị trí."
+      },
+      {
+        "en": "The coach wants to download the file.",
+        "vi": "Huấn luyện viên muốn tải tệp xuống."
+      },
+      {
+        "en": "The coach wants to win the contract.",
+        "vi": "Huấn luyện viên muốn giành hợp đồng."
+      },
+      { "en": "The coach wants to raise the price.", "vi": "Huấn luyện viên muốn tăng giá." },
+      { "en": "The coach wants to plan ahead.", "vi": "Huấn luyện viên muốn lên kế hoạch trước." },
+      {
+        "en": "The coach wants to take a course.",
+        "vi": "Huấn luyện viên muốn tham gia một khóa học."
+      },
+      {
+        "en": "The coach wants to work as a team.",
+        "vi": "Huấn luyện viên muốn làm việc theo nhóm."
+      },
+      { "en": "The coach wants to cook breakfast.", "vi": "Huấn luyện viên muốn nấu bữa sáng." },
+      { "en": "The coach wants to sign up today.", "vi": "Huấn luyện viên muốn đăng ký hôm nay." },
+      {
+        "en": "The coach wants to attend the workshop.",
+        "vi": "Huấn luyện viên muốn tham dự buổi hội thảo."
+      },
+      {
+        "en": "The coach wants to update the software.",
+        "vi": "Huấn luyện viên muốn cập nhật phần mềm."
+      },
+      {
+        "en": "The coach wants to pay off the loan.",
+        "vi": "Huấn luyện viên muốn trả hết khoản vay."
+      }
+    ]
+  },
+  {
+    "starter": "The coach needs to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The coach needs to keep a diary.", "vi": "Huấn luyện viên cần viết nhật ký." },
+      { "en": "The coach needs to read more books.", "vi": "Huấn luyện viên cần đọc thêm sách." },
+      { "en": "The coach needs to lower the cost.", "vi": "Huấn luyện viên cần giảm chi phí." },
+      {
+        "en": "The coach needs to open a business.",
+        "vi": "Huấn luyện viên cần mở một doanh nghiệp."
+      },
+      { "en": "The coach needs to leave early.", "vi": "Huấn luyện viên cần về sớm." },
+      { "en": "The coach needs to make a plan.", "vi": "Huấn luyện viên cần lập một kế hoạch." },
+      { "en": "The coach needs to get a promotion.", "vi": "Huấn luyện viên cần được thăng chức." },
+      { "en": "The coach needs to raise the price.", "vi": "Huấn luyện viên cần tăng giá." },
+      { "en": "The coach needs to meet the deadline.", "vi": "Huấn luyện viên cần kịp thời hạn." },
+      { "en": "The coach needs to reach the goal.", "vi": "Huấn luyện viên cần đạt mục tiêu." },
+      {
+        "en": "The coach needs to learn something new.",
+        "vi": "Huấn luyện viên cần học điều gì đó mới."
+      },
+      { "en": "The coach needs to be on time.", "vi": "Huấn luyện viên cần đến đúng giờ." },
+      { "en": "The coach needs to read the news.", "vi": "Huấn luyện viên cần đọc tin tức." },
+      {
+        "en": "The coach needs to enjoy the weekend.",
+        "vi": "Huấn luyện viên cần tận hưởng cuối tuần."
+      },
+      { "en": "The coach needs to stay focused.", "vi": "Huấn luyện viên cần giữ tập trung." },
+      { "en": "The coach needs to speak clearly.", "vi": "Huấn luyện viên cần nói rõ ràng." },
+      { "en": "The coach needs to invest wisely.", "vi": "Huấn luyện viên cần đầu tư khôn ngoan." },
+      { "en": "The coach needs to plan ahead.", "vi": "Huấn luyện viên cần lên kế hoạch trước." },
+      { "en": "The coach needs to report the bug.", "vi": "Huấn luyện viên cần báo lỗi." },
+      { "en": "The coach needs to watch the game.", "vi": "Huấn luyện viên cần xem trận đấu." },
+      { "en": "The coach needs to book a hotel.", "vi": "Huấn luyện viên cần đặt khách sạn." },
+      {
+        "en": "The coach needs to volunteer on weekends.",
+        "vi": "Huấn luyện viên cần tình nguyện cuối tuần."
+      },
+      { "en": "The coach needs to say goodbye.", "vi": "Huấn luyện viên cần nói lời tạm biệt." },
+      { "en": "The coach needs to take the bus.", "vi": "Huấn luyện viên cần đi xe buýt." },
+      { "en": "The coach needs to breathe deeply.", "vi": "Huấn luyện viên cần hít thở sâu." },
+      { "en": "The coach needs to take medicine.", "vi": "Huấn luyện viên cần uống thuốc." },
+      {
+        "en": "The coach needs to attend the workshop.",
+        "vi": "Huấn luyện viên cần tham dự buổi hội thảo."
+      },
+      {
+        "en": "The coach needs to change the plan.",
+        "vi": "Huấn luyện viên cần thay đổi kế hoạch."
+      },
+      {
+        "en": "The coach needs to grow the business.",
+        "vi": "Huấn luyện viên cần phát triển kinh doanh."
+      },
+      { "en": "The coach needs to arrive on time.", "vi": "Huấn luyện viên cần đến đúng giờ." },
+      { "en": "The coach needs to tell the truth.", "vi": "Huấn luyện viên cần nói sự thật." },
+      { "en": "The coach needs to wait a moment.", "vi": "Huấn luyện viên cần chờ một chút." },
+      {
+        "en": "The coach needs to get some rest.",
+        "vi": "Huấn luyện viên cần nghỉ ngơi một chút."
+      },
+      {
+        "en": "The coach needs to finish on time.",
+        "vi": "Huấn luyện viên cần hoàn thành đúng hạn."
+      },
+      {
+        "en": "The coach needs to take a day off.",
+        "vi": "Huấn luyện viên cần xin nghỉ một ngày."
+      },
+      {
+        "en": "The coach needs to answer the phone.",
+        "vi": "Huấn luyện viên cần trả lời điện thoại."
+      },
+      {
+        "en": "The coach needs to meet new people.",
+        "vi": "Huấn luyện viên cần gặp gỡ người mới."
+      },
+      { "en": "The coach needs to set an alarm.", "vi": "Huấn luyện viên cần đặt báo thức." },
+      {
+        "en": "The coach needs to fill out the form.",
+        "vi": "Huấn luyện viên cần điền vào biểu mẫu."
+      },
+      { "en": "The coach needs to meditate daily.", "vi": "Huấn luyện viên cần thiền mỗi ngày." },
+      {
+        "en": "The coach needs to support each other.",
+        "vi": "Huấn luyện viên cần hỗ trợ lẫn nhau."
+      },
+      { "en": "The coach needs to say sorry.", "vi": "Huấn luyện viên cần nói lời xin lỗi." },
+      { "en": "The coach needs to catch the train.", "vi": "Huấn luyện viên cần bắt chuyến tàu." },
+      {
+        "en": "The coach needs to make a decision.",
+        "vi": "Huấn luyện viên cần đưa ra quyết định."
+      },
+      {
+        "en": "The coach needs to follow the rules.",
+        "vi": "Huấn luyện viên cần tuân theo quy tắc."
+      },
+      {
+        "en": "The coach needs to save for the future.",
+        "vi": "Huấn luyện viên cần tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The coach needs to check the details.",
+        "vi": "Huấn luyện viên cần kiểm tra chi tiết."
+      },
+      { "en": "The coach needs to ask for help.", "vi": "Huấn luyện viên cần nhờ giúp đỡ." },
+      { "en": "The coach needs to keep in touch.", "vi": "Huấn luyện viên cần giữ liên lạc." },
+      { "en": "The coach needs to download the file.", "vi": "Huấn luyện viên cần tải tệp xuống." },
+      { "en": "The coach needs to keep learning.", "vi": "Huấn luyện viên cần tiếp tục học hỏi." },
+      { "en": "The coach needs to lock the door.", "vi": "Huấn luyện viên cần khóa cửa." },
+      { "en": "The coach needs to wash the dishes.", "vi": "Huấn luyện viên cần rửa bát." },
+      {
+        "en": "The coach needs to start a new project.",
+        "vi": "Huấn luyện viên cần bắt đầu một dự án mới."
+      },
+      { "en": "The coach needs to cancel the order.", "vi": "Huấn luyện viên cần hủy đơn hàng." },
+      { "en": "The coach needs to take it easy.", "vi": "Huấn luyện viên cần thư giãn." },
+      {
+        "en": "The coach needs to rate the service.",
+        "vi": "Huấn luyện viên cần đánh giá dịch vụ."
+      },
+      { "en": "The coach needs to scan the receipt.", "vi": "Huấn luyện viên cần quét hóa đơn." },
+      { "en": "The coach needs to do the laundry.", "vi": "Huấn luyện viên cần giặt đồ." },
+      {
+        "en": "The coach needs to remember the password.",
+        "vi": "Huấn luyện viên cần nhớ mật khẩu."
+      },
+      { "en": "The coach needs to thank everyone.", "vi": "Huấn luyện viên cần cảm ơn mọi người." },
+      { "en": "The coach needs to cook breakfast.", "vi": "Huấn luyện viên cần nấu bữa sáng." },
+      {
+        "en": "The coach needs to cut the budget.",
+        "vi": "Huấn luyện viên cần cắt giảm ngân sách."
+      },
+      {
+        "en": "The coach needs to prepare the presentation.",
+        "vi": "Huấn luyện viên cần chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The coach needs to explain the situation.",
+        "vi": "Huấn luyện viên cần giải thích tình huống."
+      },
+      { "en": "The coach needs to call back later.", "vi": "Huấn luyện viên cần gọi lại sau." },
+      {
+        "en": "The coach needs to test the feature.",
+        "vi": "Huấn luyện viên cần kiểm thử tính năng."
+      },
+      { "en": "The coach needs to check my email.", "vi": "Huấn luyện viên cần kiểm tra email." },
+      { "en": "The coach needs to think it over.", "vi": "Huấn luyện viên cần suy nghĩ kỹ." },
+      {
+        "en": "The coach needs to review the document.",
+        "vi": "Huấn luyện viên cần xem lại tài liệu."
+      },
+      {
+        "en": "The coach needs to work as a team.",
+        "vi": "Huấn luyện viên cần làm việc theo nhóm."
+      },
+      {
+        "en": "The coach needs to travel abroad.",
+        "vi": "Huấn luyện viên cần đi du lịch nước ngoài."
+      },
+      { "en": "The coach needs to help the team.", "vi": "Huấn luyện viên cần giúp đỡ nhóm." },
+      { "en": "The coach needs to win the contract.", "vi": "Huấn luyện viên cần giành hợp đồng." },
+      {
+        "en": "The coach needs to take a course.",
+        "vi": "Huấn luyện viên cần tham gia một khóa học."
+      },
+      { "en": "The coach needs to send the email.", "vi": "Huấn luyện viên cần gửi email." },
+      { "en": "The coach needs to charge the phone.", "vi": "Huấn luyện viên cần sạc điện thoại." },
+      { "en": "The coach needs to stay home.", "vi": "Huấn luyện viên cần ở nhà." },
+      {
+        "en": "The coach needs to invite some friends.",
+        "vi": "Huấn luyện viên cần mời vài người bạn."
+      },
+      { "en": "The coach needs to close the window.", "vi": "Huấn luyện viên cần đóng cửa sổ." },
+      { "en": "The coach needs to study abroad.", "vi": "Huấn luyện viên cần du học." },
+      { "en": "The coach needs to write a report.", "vi": "Huấn luyện viên cần viết một báo cáo." },
+      {
+        "en": "The coach needs to reply to the message.",
+        "vi": "Huấn luyện viên cần trả lời tin nhắn."
+      },
+      {
+        "en": "The coach needs to double-check the numbers.",
+        "vi": "Huấn luyện viên cần kiểm tra lại các con số."
+      },
+      {
+        "en": "The coach needs to call a friend.",
+        "vi": "Huấn luyện viên cần gọi cho một người bạn."
+      },
+      { "en": "The coach needs to save money.", "vi": "Huấn luyện viên cần tiết kiệm tiền." },
+      { "en": "The coach needs to buy groceries.", "vi": "Huấn luyện viên cần mua thực phẩm." },
+      { "en": "The coach needs to take a chance.", "vi": "Huấn luyện viên cần nắm lấy cơ hội." },
+      { "en": "The coach needs to write it down.", "vi": "Huấn luyện viên cần ghi nó lại." },
+      { "en": "The coach needs to rent a car.", "vi": "Huấn luyện viên cần thuê xe." },
+      { "en": "The coach needs to take a break.", "vi": "Huấn luyện viên cần nghỉ giải lao." },
+      { "en": "The coach needs to print the document.", "vi": "Huấn luyện viên cần in tài liệu." },
+      { "en": "The coach needs to sleep early.", "vi": "Huấn luyện viên cần ngủ sớm." },
+      {
+        "en": "The coach needs to hire new staff.",
+        "vi": "Huấn luyện viên cần tuyển nhân viên mới."
+      },
+      { "en": "The coach needs to visit the doctor.", "vi": "Huấn luyện viên cần đi khám bác sĩ." },
+      { "en": "The coach needs to visit my family.", "vi": "Huấn luyện viên cần thăm gia đình." },
+      {
+        "en": "The coach needs to attend the class.",
+        "vi": "Huấn luyện viên cần tham gia lớp học."
+      },
+      { "en": "The coach needs to take a photo.", "vi": "Huấn luyện viên cần chụp một bức ảnh." },
+      { "en": "The coach needs to stay organized.", "vi": "Huấn luyện viên cần giữ ngăn nắp." },
+      {
+        "en": "The coach needs to practice every day.",
+        "vi": "Huấn luyện viên cần luyện tập mỗi ngày."
+      }
+    ]
+  },
+  {
+    "starter": "The coach would like to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The coach would like to make a reservation.",
+        "vi": "Huấn luyện viên muốn đặt chỗ trước."
+      },
+      { "en": "The coach would like to take it easy.", "vi": "Huấn luyện viên muốn thư giãn." },
+      {
+        "en": "The coach would like to win the contract.",
+        "vi": "Huấn luyện viên muốn giành hợp đồng."
+      },
+      {
+        "en": "The coach would like to charge the phone.",
+        "vi": "Huấn luyện viên muốn sạc điện thoại."
+      },
+      {
+        "en": "The coach would like to fix the problem.",
+        "vi": "Huấn luyện viên muốn sửa vấn đề."
+      },
+      {
+        "en": "The coach would like to buy groceries.",
+        "vi": "Huấn luyện viên muốn mua thực phẩm."
+      },
+      {
+        "en": "The coach would like to fill out the form.",
+        "vi": "Huấn luyện viên muốn điền vào biểu mẫu."
+      },
+      {
+        "en": "The coach would like to watch the game.",
+        "vi": "Huấn luyện viên muốn xem trận đấu."
+      },
+      {
+        "en": "The coach would like to take a photo.",
+        "vi": "Huấn luyện viên muốn chụp một bức ảnh."
+      },
+      {
+        "en": "The coach would like to exercise every day.",
+        "vi": "Huấn luyện viên muốn tập thể dục mỗi ngày."
+      },
+      {
+        "en": "The coach would like to close the window.",
+        "vi": "Huấn luyện viên muốn đóng cửa sổ."
+      },
+      {
+        "en": "The coach would like to join the meeting.",
+        "vi": "Huấn luyện viên muốn tham gia cuộc họp."
+      },
+      { "en": "The coach would like to do the laundry.", "vi": "Huấn luyện viên muốn giặt đồ." },
+      {
+        "en": "The coach would like to take a day off.",
+        "vi": "Huấn luyện viên muốn xin nghỉ một ngày."
+      },
+      {
+        "en": "The coach would like to close the deal.",
+        "vi": "Huấn luyện viên muốn chốt thỏa thuận."
+      },
+      {
+        "en": "The coach would like to rate the service.",
+        "vi": "Huấn luyện viên muốn đánh giá dịch vụ."
+      },
+      {
+        "en": "The coach would like to catch the train.",
+        "vi": "Huấn luyện viên muốn bắt chuyến tàu."
+      },
+      {
+        "en": "The coach would like to arrive on time.",
+        "vi": "Huấn luyện viên muốn đến đúng giờ."
+      },
+      {
+        "en": "The coach would like to take a course.",
+        "vi": "Huấn luyện viên muốn tham gia một khóa học."
+      },
+      {
+        "en": "The coach would like to remember the password.",
+        "vi": "Huấn luyện viên muốn nhớ mật khẩu."
+      },
+      {
+        "en": "The coach would like to schedule a meeting.",
+        "vi": "Huấn luyện viên muốn sắp xếp cuộc họp."
+      },
+      {
+        "en": "The coach would like to offer support.",
+        "vi": "Huấn luyện viên muốn đề nghị hỗ trợ."
+      },
+      {
+        "en": "The coach would like to drive to work.",
+        "vi": "Huấn luyện viên muốn lái xe đi làm."
+      },
+      {
+        "en": "The coach would like to share my opinion.",
+        "vi": "Huấn luyện viên muốn chia sẻ ý kiến."
+      },
+      {
+        "en": "The coach would like to finish on time.",
+        "vi": "Huấn luyện viên muốn hoàn thành đúng hạn."
+      },
+      {
+        "en": "The coach would like to book a hotel.",
+        "vi": "Huấn luyện viên muốn đặt khách sạn."
+      },
+      {
+        "en": "The coach would like to help a neighbor.",
+        "vi": "Huấn luyện viên muốn giúp một người hàng xóm."
+      },
+      {
+        "en": "The coach would like to pay off the loan.",
+        "vi": "Huấn luyện viên muốn trả hết khoản vay."
+      },
+      {
+        "en": "The coach would like to drink less coffee.",
+        "vi": "Huấn luyện viên muốn uống ít cà phê hơn."
+      },
+      {
+        "en": "The coach would like to keep learning.",
+        "vi": "Huấn luyện viên muốn tiếp tục học hỏi."
+      },
+      {
+        "en": "The coach would like to breathe deeply.",
+        "vi": "Huấn luyện viên muốn hít thở sâu."
+      },
+      {
+        "en": "The coach would like to ask a question.",
+        "vi": "Huấn luyện viên muốn hỏi một câu."
+      },
+      {
+        "en": "The coach would like to prepare the presentation.",
+        "vi": "Huấn luyện viên muốn chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The coach would like to get a promotion.",
+        "vi": "Huấn luyện viên muốn được thăng chức."
+      },
+      {
+        "en": "The coach would like to visit the doctor.",
+        "vi": "Huấn luyện viên muốn đi khám bác sĩ."
+      },
+      {
+        "en": "The coach would like to work harder.",
+        "vi": "Huấn luyện viên muốn làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The coach would like to share the post.",
+        "vi": "Huấn luyện viên muốn chia sẻ bài viết."
+      },
+      {
+        "en": "The coach would like to donate to charity.",
+        "vi": "Huấn luyện viên muốn quyên góp từ thiện."
+      },
+      { "en": "The coach would like to try again.", "vi": "Huấn luyện viên muốn thử lại." },
+      {
+        "en": "The coach would like to scan the receipt.",
+        "vi": "Huấn luyện viên muốn quét hóa đơn."
+      },
+      {
+        "en": "The coach would like to join a club.",
+        "vi": "Huấn luyện viên muốn tham gia câu lạc bộ."
+      },
+      {
+        "en": "The coach would like to never give up.",
+        "vi": "Huấn luyện viên muốn không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The coach would like to say goodbye.",
+        "vi": "Huấn luyện viên muốn nói lời tạm biệt."
+      },
+      {
+        "en": "The coach would like to cut the budget.",
+        "vi": "Huấn luyện viên muốn cắt giảm ngân sách."
+      },
+      {
+        "en": "The coach would like to keep a promise.",
+        "vi": "Huấn luyện viên muốn giữ lời hứa."
+      },
+      { "en": "The coach would like to give it a try.", "vi": "Huấn luyện viên muốn thử một lần." },
+      { "en": "The coach would like to pass the exam.", "vi": "Huấn luyện viên muốn đậu kỳ thi." },
+      { "en": "The coach would like to take a rest.", "vi": "Huấn luyện viên muốn nghỉ ngơi." },
+      {
+        "en": "The coach would like to start a new project.",
+        "vi": "Huấn luyện viên muốn bắt đầu một dự án mới."
+      },
+      {
+        "en": "The coach would like to plan a trip.",
+        "vi": "Huấn luyện viên muốn lên kế hoạch một chuyến đi."
+      },
+      { "en": "The coach would like to play sports.", "vi": "Huấn luyện viên muốn chơi thể thao." },
+      { "en": "The coach would like to take medicine.", "vi": "Huấn luyện viên muốn uống thuốc." },
+      {
+        "en": "The coach would like to celebrate together.",
+        "vi": "Huấn luyện viên muốn ăn mừng cùng nhau."
+      },
+      { "en": "The coach would like to find a job.", "vi": "Huấn luyện viên muốn tìm việc làm." },
+      {
+        "en": "The coach would like to listen carefully.",
+        "vi": "Huấn luyện viên muốn lắng nghe cẩn thận."
+      },
+      { "en": "The coach would like to think it over.", "vi": "Huấn luyện viên muốn suy nghĩ kỹ." },
+      {
+        "en": "The coach would like to reply to the message.",
+        "vi": "Huấn luyện viên muốn trả lời tin nhắn."
+      },
+      { "en": "The coach would like to set an alarm.", "vi": "Huấn luyện viên muốn đặt báo thức." },
+      { "en": "The coach would like to speak clearly.", "vi": "Huấn luyện viên muốn nói rõ ràng." },
+      {
+        "en": "The coach would like to back up the data.",
+        "vi": "Huấn luyện viên muốn sao lưu dữ liệu."
+      },
+      {
+        "en": "The coach would like to enjoy the weekend.",
+        "vi": "Huấn luyện viên muốn tận hưởng cuối tuần."
+      },
+      {
+        "en": "The coach would like to manage the schedule.",
+        "vi": "Huấn luyện viên muốn quản lý lịch trình."
+      },
+      {
+        "en": "The coach would like to cheer for the team.",
+        "vi": "Huấn luyện viên muốn cổ vũ cho đội."
+      },
+      {
+        "en": "The coach would like to turn off the light.",
+        "vi": "Huấn luyện viên muốn tắt đèn."
+      },
+      { "en": "The coach would like to give feedback.", "vi": "Huấn luyện viên muốn góp ý." },
+      { "en": "The coach would like to clean the house.", "vi": "Huấn luyện viên muốn dọn nhà." },
+      { "en": "The coach would like to wash the dishes.", "vi": "Huấn luyện viên muốn rửa bát." },
+      {
+        "en": "The coach would like to grow the business.",
+        "vi": "Huấn luyện viên muốn phát triển kinh doanh."
+      },
+      {
+        "en": "The coach would like to answer the phone.",
+        "vi": "Huấn luyện viên muốn trả lời điện thoại."
+      },
+      { "en": "The coach would like to report the bug.", "vi": "Huấn luyện viên muốn báo lỗi." },
+      {
+        "en": "The coach would like to change careers.",
+        "vi": "Huấn luyện viên muốn chuyển nghề."
+      },
+      {
+        "en": "The coach would like to make a plan.",
+        "vi": "Huấn luyện viên muốn lập một kế hoạch."
+      },
+      {
+        "en": "The coach would like to call a friend.",
+        "vi": "Huấn luyện viên muốn gọi cho một người bạn."
+      },
+      {
+        "en": "The coach would like to call back later.",
+        "vi": "Huấn luyện viên muốn gọi lại sau."
+      },
+      {
+        "en": "The coach would like to restart the computer.",
+        "vi": "Huấn luyện viên muốn khởi động lại máy tính."
+      },
+      {
+        "en": "The coach would like to register for the course.",
+        "vi": "Huấn luyện viên muốn đăng ký khóa học."
+      },
+      { "en": "The coach would like to send the email.", "vi": "Huấn luyện viên muốn gửi email." },
+      {
+        "en": "The coach would like to download the file.",
+        "vi": "Huấn luyện viên muốn tải tệp xuống."
+      },
+      {
+        "en": "The coach would like to split the bill.",
+        "vi": "Huấn luyện viên muốn chia hóa đơn."
+      },
+      {
+        "en": "The coach would like to sign the contract.",
+        "vi": "Huấn luyện viên muốn ký hợp đồng."
+      },
+      { "en": "The coach would like to take the bus.", "vi": "Huấn luyện viên muốn đi xe buýt." },
+      {
+        "en": "The coach would like to reset the password.",
+        "vi": "Huấn luyện viên muốn đặt lại mật khẩu."
+      },
+      {
+        "en": "The coach would like to double-check everything.",
+        "vi": "Huấn luyện viên muốn kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "The coach would like to update the software.",
+        "vi": "Huấn luyện viên muốn cập nhật phần mềm."
+      },
+      {
+        "en": "The coach would like to copy the link.",
+        "vi": "Huấn luyện viên muốn sao chép liên kết."
+      },
+      {
+        "en": "The coach would like to practice every day.",
+        "vi": "Huấn luyện viên muốn luyện tập mỗi ngày."
+      },
+      { "en": "The coach would like to watch a movie.", "vi": "Huấn luyện viên muốn xem phim." },
+      {
+        "en": "The coach would like to lower the cost.",
+        "vi": "Huấn luyện viên muốn giảm chi phí."
+      },
+      { "en": "The coach would like to sleep early.", "vi": "Huấn luyện viên muốn ngủ sớm." },
+      {
+        "en": "The coach would like to make a decision.",
+        "vi": "Huấn luyện viên muốn đưa ra quyết định."
+      },
+      { "en": "The coach would like to read the news.", "vi": "Huấn luyện viên muốn đọc tin tức." },
+      {
+        "en": "The coach would like to check the details.",
+        "vi": "Huấn luyện viên muốn kiểm tra chi tiết."
+      },
+      {
+        "en": "The coach would like to get some rest.",
+        "vi": "Huấn luyện viên muốn nghỉ ngơi một chút."
+      },
+      {
+        "en": "The coach would like to invest wisely.",
+        "vi": "Huấn luyện viên muốn đầu tư khôn ngoan."
+      },
+      {
+        "en": "The coach would like to travel abroad.",
+        "vi": "Huấn luyện viên muốn đi du lịch nước ngoài."
+      },
+      {
+        "en": "The coach would like to cook for everyone.",
+        "vi": "Huấn luyện viên muốn nấu ăn cho mọi người."
+      },
+      {
+        "en": "The coach would like to check my email.",
+        "vi": "Huấn luyện viên muốn kiểm tra email."
+      },
+      {
+        "en": "The coach would like to stay focused.",
+        "vi": "Huấn luyện viên muốn giữ tập trung."
+      },
+      { "en": "The coach would like to start over.", "vi": "Huấn luyện viên muốn bắt đầu lại." },
+      {
+        "en": "The coach would like to change the plan.",
+        "vi": "Huấn luyện viên muốn thay đổi kế hoạch."
+      }
+    ]
+  },
+  {
+    "starter": "The coach loves to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The coach loves to take a break.", "vi": "Huấn luyện viên thích nghỉ giải lao." },
+      { "en": "The coach loves to start over.", "vi": "Huấn luyện viên thích bắt đầu lại." },
+      { "en": "The coach loves to report the bug.", "vi": "Huấn luyện viên thích báo lỗi." },
+      {
+        "en": "The coach loves to visit the doctor.",
+        "vi": "Huấn luyện viên thích đi khám bác sĩ."
+      },
+      {
+        "en": "The coach loves to finish on time.",
+        "vi": "Huấn luyện viên thích hoàn thành đúng hạn."
+      },
+      {
+        "en": "The coach loves to catch the train.",
+        "vi": "Huấn luyện viên thích bắt chuyến tàu."
+      },
+      { "en": "The coach loves to take a photo.", "vi": "Huấn luyện viên thích chụp một bức ảnh." },
+      { "en": "The coach loves to drive to work.", "vi": "Huấn luyện viên thích lái xe đi làm." },
+      { "en": "The coach loves to turn off the light.", "vi": "Huấn luyện viên thích tắt đèn." },
+      { "en": "The coach loves to send the email.", "vi": "Huấn luyện viên thích gửi email." },
+      {
+        "en": "The coach loves to follow the rules.",
+        "vi": "Huấn luyện viên thích tuân theo quy tắc."
+      },
+      {
+        "en": "The coach loves to call a friend.",
+        "vi": "Huấn luyện viên thích gọi cho một người bạn."
+      },
+      { "en": "The coach loves to say goodbye.", "vi": "Huấn luyện viên thích nói lời tạm biệt." },
+      {
+        "en": "The coach loves to donate to charity.",
+        "vi": "Huấn luyện viên thích quyên góp từ thiện."
+      },
+      { "en": "The coach loves to keep a diary.", "vi": "Huấn luyện viên thích viết nhật ký." },
+      { "en": "The coach loves to call back later.", "vi": "Huấn luyện viên thích gọi lại sau." },
+      { "en": "The coach loves to visit my family.", "vi": "Huấn luyện viên thích thăm gia đình." },
+      { "en": "The coach loves to fix the problem.", "vi": "Huấn luyện viên thích sửa vấn đề." },
+      {
+        "en": "The coach loves to confirm the booking.",
+        "vi": "Huấn luyện viên thích xác nhận đặt chỗ."
+      },
+      {
+        "en": "The coach loves to grow the business.",
+        "vi": "Huấn luyện viên thích phát triển kinh doanh."
+      },
+      {
+        "en": "The coach loves to travel abroad.",
+        "vi": "Huấn luyện viên thích đi du lịch nước ngoài."
+      },
+      {
+        "en": "The coach loves to write a report.",
+        "vi": "Huấn luyện viên thích viết một báo cáo."
+      },
+      {
+        "en": "The coach loves to change the plan.",
+        "vi": "Huấn luyện viên thích thay đổi kế hoạch."
+      },
+      { "en": "The coach loves to speak clearly.", "vi": "Huấn luyện viên thích nói rõ ràng." },
+      { "en": "The coach loves to take the bus.", "vi": "Huấn luyện viên thích đi xe buýt." },
+      { "en": "The coach loves to stay home.", "vi": "Huấn luyện viên thích ở nhà." },
+      {
+        "en": "The coach loves to cut expenses.",
+        "vi": "Huấn luyện viên thích cắt giảm chi tiêu."
+      },
+      { "en": "The coach loves to sign the contract.", "vi": "Huấn luyện viên thích ký hợp đồng." },
+      {
+        "en": "The coach loves to never give up.",
+        "vi": "Huấn luyện viên thích không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The coach loves to plan a trip.",
+        "vi": "Huấn luyện viên thích lên kế hoạch một chuyến đi."
+      },
+      { "en": "The coach loves to breathe deeply.", "vi": "Huấn luyện viên thích hít thở sâu." },
+      { "en": "The coach loves to try again.", "vi": "Huấn luyện viên thích thử lại." },
+      { "en": "The coach loves to wake up early.", "vi": "Huấn luyện viên thích dậy sớm." },
+      { "en": "The coach loves to save money.", "vi": "Huấn luyện viên thích tiết kiệm tiền." },
+      {
+        "en": "The coach loves to support each other.",
+        "vi": "Huấn luyện viên thích hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The coach loves to exercise every day.",
+        "vi": "Huấn luyện viên thích tập thể dục mỗi ngày."
+      },
+      {
+        "en": "The coach loves to save for the future.",
+        "vi": "Huấn luyện viên thích tiết kiệm cho tương lai."
+      },
+      { "en": "The coach loves to relax at home.", "vi": "Huấn luyện viên thích thư giãn ở nhà." },
+      { "en": "The coach loves to calm down.", "vi": "Huấn luyện viên thích bình tĩnh lại." },
+      {
+        "en": "The coach loves to charge the phone.",
+        "vi": "Huấn luyện viên thích sạc điện thoại."
+      },
+      { "en": "The coach loves to sign up today.", "vi": "Huấn luyện viên thích đăng ký hôm nay." },
+      { "en": "The coach loves to think it over.", "vi": "Huấn luyện viên thích suy nghĩ kỹ." },
+      { "en": "The coach loves to be on time.", "vi": "Huấn luyện viên thích đến đúng giờ." },
+      { "en": "The coach loves to write it down.", "vi": "Huấn luyện viên thích ghi nó lại." },
+      { "en": "The coach loves to cook dinner.", "vi": "Huấn luyện viên thích nấu bữa tối." },
+      { "en": "The coach loves to ask for help.", "vi": "Huấn luyện viên thích nhờ giúp đỡ." },
+      {
+        "en": "The coach loves to learn something new.",
+        "vi": "Huấn luyện viên thích học điều gì đó mới."
+      },
+      {
+        "en": "The coach loves to invest wisely.",
+        "vi": "Huấn luyện viên thích đầu tư khôn ngoan."
+      },
+      { "en": "The coach loves to give it a try.", "vi": "Huấn luyện viên thích thử một lần." },
+      {
+        "en": "The coach loves to double-check the numbers.",
+        "vi": "Huấn luyện viên thích kiểm tra lại các con số."
+      },
+      {
+        "en": "The coach loves to take a day off.",
+        "vi": "Huấn luyện viên thích xin nghỉ một ngày."
+      },
+      {
+        "en": "The coach loves to solve this issue.",
+        "vi": "Huấn luyện viên thích giải quyết vấn đề này."
+      },
+      {
+        "en": "The coach loves to cut the budget.",
+        "vi": "Huấn luyện viên thích cắt giảm ngân sách."
+      },
+      {
+        "en": "The coach loves to take a course.",
+        "vi": "Huấn luyện viên thích tham gia một khóa học."
+      },
+      { "en": "The coach loves to quit smoking.", "vi": "Huấn luyện viên thích bỏ thuốc lá." },
+      {
+        "en": "The coach loves to copy the link.",
+        "vi": "Huấn luyện viên thích sao chép liên kết."
+      },
+      { "en": "The coach loves to ride a bike.", "vi": "Huấn luyện viên thích đạp xe." },
+      { "en": "The coach loves to listen to music.", "vi": "Huấn luyện viên thích nghe nhạc." },
+      {
+        "en": "The coach loves to reset the password.",
+        "vi": "Huấn luyện viên thích đặt lại mật khẩu."
+      },
+      {
+        "en": "The coach loves to negotiate the terms.",
+        "vi": "Huấn luyện viên thích thương lượng điều khoản."
+      },
+      { "en": "The coach loves to go for a walk.", "vi": "Huấn luyện viên thích đi dạo." },
+      { "en": "The coach loves to give feedback.", "vi": "Huấn luyện viên thích góp ý." },
+      { "en": "The coach loves to get a degree.", "vi": "Huấn luyện viên thích lấy bằng." },
+      { "en": "The coach loves to do the laundry.", "vi": "Huấn luyện viên thích giặt đồ." },
+      {
+        "en": "The coach loves to attend the class.",
+        "vi": "Huấn luyện viên thích tham gia lớp học."
+      },
+      { "en": "The coach loves to book a ticket.", "vi": "Huấn luyện viên thích đặt vé." },
+      {
+        "en": "The coach loves to work harder.",
+        "vi": "Huấn luyện viên thích làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The coach loves to open a business.",
+        "vi": "Huấn luyện viên thích mở một doanh nghiệp."
+      },
+      {
+        "en": "The coach loves to meet the deadline.",
+        "vi": "Huấn luyện viên thích kịp thời hạn."
+      },
+      { "en": "The coach loves to read more books.", "vi": "Huấn luyện viên thích đọc thêm sách." },
+      {
+        "en": "The coach loves to rate the service.",
+        "vi": "Huấn luyện viên thích đánh giá dịch vụ."
+      },
+      {
+        "en": "The coach loves to register for the course.",
+        "vi": "Huấn luyện viên thích đăng ký khóa học."
+      },
+      {
+        "en": "The coach loves to share the post.",
+        "vi": "Huấn luyện viên thích chia sẻ bài viết."
+      },
+      { "en": "The coach loves to raise the price.", "vi": "Huấn luyện viên thích tăng giá." },
+      { "en": "The coach loves to ask a question.", "vi": "Huấn luyện viên thích hỏi một câu." },
+      { "en": "The coach loves to learn English.", "vi": "Huấn luyện viên thích học tiếng Anh." },
+      {
+        "en": "The coach loves to volunteer on weekends.",
+        "vi": "Huấn luyện viên thích tình nguyện cuối tuần."
+      },
+      { "en": "The coach loves to sleep early.", "vi": "Huấn luyện viên thích ngủ sớm." },
+      { "en": "The coach loves to offer support.", "vi": "Huấn luyện viên thích đề nghị hỗ trợ." },
+      {
+        "en": "The coach loves to update the software.",
+        "vi": "Huấn luyện viên thích cập nhật phần mềm."
+      },
+      {
+        "en": "The coach loves to try harder next time.",
+        "vi": "Huấn luyện viên thích cố gắng hơn lần sau."
+      },
+      {
+        "en": "The coach loves to check the details.",
+        "vi": "Huấn luyện viên thích kiểm tra chi tiết."
+      },
+      { "en": "The coach loves to help out.", "vi": "Huấn luyện viên thích giúp đỡ." },
+      { "en": "The coach loves to watch a movie.", "vi": "Huấn luyện viên thích xem phim." },
+      { "en": "The coach loves to take a rest.", "vi": "Huấn luyện viên thích nghỉ ngơi." },
+      {
+        "en": "The coach loves to finish the report.",
+        "vi": "Huấn luyện viên thích hoàn thành báo cáo."
+      },
+      { "en": "The coach loves to log in again.", "vi": "Huấn luyện viên thích đăng nhập lại." },
+      {
+        "en": "The coach loves to think positive.",
+        "vi": "Huấn luyện viên thích suy nghĩ tích cực."
+      },
+      { "en": "The coach loves to set a goal.", "vi": "Huấn luyện viên thích đặt một mục tiêu." },
+      {
+        "en": "The coach loves to pay off the loan.",
+        "vi": "Huấn luyện viên thích trả hết khoản vay."
+      },
+      { "en": "The coach loves to miss the flight.", "vi": "Huấn luyện viên thích lỡ chuyến bay." },
+      {
+        "en": "The coach loves to enjoy the weekend.",
+        "vi": "Huấn luyện viên thích tận hưởng cuối tuần."
+      },
+      { "en": "The coach loves to split the bill.", "vi": "Huấn luyện viên thích chia hóa đơn." },
+      { "en": "The coach loves to train the team.", "vi": "Huấn luyện viên thích đào tạo nhóm." },
+      { "en": "The coach loves to lose weight.", "vi": "Huấn luyện viên thích giảm cân." },
+      { "en": "The coach loves to make new friends.", "vi": "Huấn luyện viên thích kết bạn mới." },
+      { "en": "The coach loves to help the team.", "vi": "Huấn luyện viên thích giúp đỡ nhóm." },
+      {
+        "en": "The coach loves to talk to the manager.",
+        "vi": "Huấn luyện viên thích nói chuyện với quản lý."
+      },
+      { "en": "The coach loves to go home.", "vi": "Huấn luyện viên thích về nhà." },
+      { "en": "The coach loves to watch the game.", "vi": "Huấn luyện viên thích xem trận đấu." }
+    ]
+  },
+  {
+    "starter": "The coach can",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The coach can reach the goal.", "vi": "Huấn luyện viên có thể đạt mục tiêu." },
+      { "en": "The coach can book a ticket.", "vi": "Huấn luyện viên có thể đặt vé." },
+      { "en": "The coach can lead the project.", "vi": "Huấn luyện viên có thể dẫn dắt dự án." },
+      {
+        "en": "The coach can apply for the position.",
+        "vi": "Huấn luyện viên có thể nộp đơn cho vị trí."
+      },
+      { "en": "The coach can change careers.", "vi": "Huấn luyện viên có thể chuyển nghề." },
+      { "en": "The coach can work as a team.", "vi": "Huấn luyện viên có thể làm việc theo nhóm." },
+      {
+        "en": "The coach can start a new project.",
+        "vi": "Huấn luyện viên có thể bắt đầu một dự án mới."
+      },
+      { "en": "The coach can find a job.", "vi": "Huấn luyện viên có thể tìm việc làm." },
+      { "en": "The coach can log in again.", "vi": "Huấn luyện viên có thể đăng nhập lại." },
+      {
+        "en": "The coach can fill out the form.",
+        "vi": "Huấn luyện viên có thể điền vào biểu mẫu."
+      },
+      { "en": "The coach can water the plants.", "vi": "Huấn luyện viên có thể tưới cây." },
+      { "en": "The coach can turn off the light.", "vi": "Huấn luyện viên có thể tắt đèn." },
+      { "en": "The coach can keep a diary.", "vi": "Huấn luyện viên có thể viết nhật ký." },
+      { "en": "The coach can make a decision.", "vi": "Huấn luyện viên có thể đưa ra quyết định." },
+      { "en": "The coach can train the team.", "vi": "Huấn luyện viên có thể đào tạo nhóm." },
+      { "en": "The coach can move forward.", "vi": "Huấn luyện viên có thể tiến về phía trước." },
+      { "en": "The coach can visit the doctor.", "vi": "Huấn luyện viên có thể đi khám bác sĩ." },
+      { "en": "The coach can meet the deadline.", "vi": "Huấn luyện viên có thể kịp thời hạn." },
+      { "en": "The coach can lock the door.", "vi": "Huấn luyện viên có thể khóa cửa." },
+      {
+        "en": "The coach can improve my skills.",
+        "vi": "Huấn luyện viên có thể cải thiện kỹ năng."
+      },
+      {
+        "en": "The coach can understand the lesson.",
+        "vi": "Huấn luyện viên có thể hiểu bài học."
+      },
+      {
+        "en": "The coach can register for the course.",
+        "vi": "Huấn luyện viên có thể đăng ký khóa học."
+      },
+      {
+        "en": "The coach can double-check everything.",
+        "vi": "Huấn luyện viên có thể kiểm tra lại mọi thứ."
+      },
+      { "en": "The coach can pass the exam.", "vi": "Huấn luyện viên có thể đậu kỳ thi." },
+      {
+        "en": "The coach can solve this issue.",
+        "vi": "Huấn luyện viên có thể giải quyết vấn đề này."
+      },
+      {
+        "en": "The coach can call a friend.",
+        "vi": "Huấn luyện viên có thể gọi cho một người bạn."
+      },
+      { "en": "The coach can wait a moment.", "vi": "Huấn luyện viên có thể chờ một chút." },
+      { "en": "The coach can back up the data.", "vi": "Huấn luyện viên có thể sao lưu dữ liệu." },
+      {
+        "en": "The coach can update the software.",
+        "vi": "Huấn luyện viên có thể cập nhật phần mềm."
+      },
+      { "en": "The coach can relax at home.", "vi": "Huấn luyện viên có thể thư giãn ở nhà." },
+      {
+        "en": "The coach can never give up.",
+        "vi": "Huấn luyện viên có thể không bao giờ bỏ cuộc."
+      },
+      { "en": "The coach can change the plan.", "vi": "Huấn luyện viên có thể thay đổi kế hoạch." },
+      { "en": "The coach can miss the flight.", "vi": "Huấn luyện viên có thể lỡ chuyến bay." },
+      { "en": "The coach can sleep early.", "vi": "Huấn luyện viên có thể ngủ sớm." },
+      { "en": "The coach can study abroad.", "vi": "Huấn luyện viên có thể du học." },
+      { "en": "The coach can do the laundry.", "vi": "Huấn luyện viên có thể giặt đồ." },
+      {
+        "en": "The coach can travel abroad.",
+        "vi": "Huấn luyện viên có thể đi du lịch nước ngoài."
+      },
+      { "en": "The coach can read the news.", "vi": "Huấn luyện viên có thể đọc tin tức." },
+      { "en": "The coach can wash the dishes.", "vi": "Huấn luyện viên có thể rửa bát." },
+      { "en": "The coach can take the exam.", "vi": "Huấn luyện viên có thể làm bài thi." },
+      { "en": "The coach can breathe deeply.", "vi": "Huấn luyện viên có thể hít thở sâu." },
+      { "en": "The coach can get a promotion.", "vi": "Huấn luyện viên có thể được thăng chức." },
+      { "en": "The coach can play sports.", "vi": "Huấn luyện viên có thể chơi thể thao." },
+      {
+        "en": "The coach can take a course.",
+        "vi": "Huấn luyện viên có thể tham gia một khóa học."
+      },
+      { "en": "The coach can make a plan.", "vi": "Huấn luyện viên có thể lập một kế hoạch." },
+      { "en": "The coach can ask a question.", "vi": "Huấn luyện viên có thể hỏi một câu." },
+      {
+        "en": "The coach can confirm the booking.",
+        "vi": "Huấn luyện viên có thể xác nhận đặt chỗ."
+      },
+      { "en": "The coach can get a degree.", "vi": "Huấn luyện viên có thể lấy bằng." },
+      {
+        "en": "The coach can launch the product.",
+        "vi": "Huấn luyện viên có thể ra mắt sản phẩm."
+      },
+      {
+        "en": "The coach can negotiate the terms.",
+        "vi": "Huấn luyện viên có thể thương lượng điều khoản."
+      },
+      { "en": "The coach can help the team.", "vi": "Huấn luyện viên có thể giúp đỡ nhóm." },
+      { "en": "The coach can make a reservation.", "vi": "Huấn luyện viên có thể đặt chỗ trước." },
+      { "en": "The coach can take a photo.", "vi": "Huấn luyện viên có thể chụp một bức ảnh." },
+      { "en": "The coach can stay up late.", "vi": "Huấn luyện viên có thể thức khuya." },
+      { "en": "The coach can leave a comment.", "vi": "Huấn luyện viên có thể để lại bình luận." },
+      { "en": "The coach can take a day off.", "vi": "Huấn luyện viên có thể xin nghỉ một ngày." },
+      { "en": "The coach can check my email.", "vi": "Huấn luyện viên có thể kiểm tra email." },
+      {
+        "en": "The coach can test the feature.",
+        "vi": "Huấn luyện viên có thể kiểm thử tính năng."
+      },
+      {
+        "en": "The coach can open a savings account.",
+        "vi": "Huấn luyện viên có thể mở tài khoản tiết kiệm."
+      },
+      { "en": "The coach can lower the cost.", "vi": "Huấn luyện viên có thể giảm chi phí." },
+      { "en": "The coach can take the bus.", "vi": "Huấn luyện viên có thể đi xe buýt." },
+      {
+        "en": "The coach can attend the workshop.",
+        "vi": "Huấn luyện viên có thể tham dự buổi hội thảo."
+      },
+      { "en": "The coach can start over.", "vi": "Huấn luyện viên có thể bắt đầu lại." },
+      { "en": "The coach can watch the game.", "vi": "Huấn luyện viên có thể xem trận đấu." },
+      { "en": "The coach can lose weight.", "vi": "Huấn luyện viên có thể giảm cân." },
+      {
+        "en": "The coach can celebrate together.",
+        "vi": "Huấn luyện viên có thể ăn mừng cùng nhau."
+      },
+      { "en": "The coach can pack my bags.", "vi": "Huấn luyện viên có thể xếp hành lý." },
+      { "en": "The coach can visit my family.", "vi": "Huấn luyện viên có thể thăm gia đình." },
+      { "en": "The coach can plan ahead.", "vi": "Huấn luyện viên có thể lên kế hoạch trước." },
+      { "en": "The coach can meet new people.", "vi": "Huấn luyện viên có thể gặp gỡ người mới." },
+      {
+        "en": "The coach can schedule a meeting.",
+        "vi": "Huấn luyện viên có thể sắp xếp cuộc họp."
+      },
+      { "en": "The coach can make tea.", "vi": "Huấn luyện viên có thể pha trà." },
+      { "en": "The coach can cut expenses.", "vi": "Huấn luyện viên có thể cắt giảm chi tiêu." },
+      {
+        "en": "The coach can prepare the presentation.",
+        "vi": "Huấn luyện viên có thể chuẩn bị bài thuyết trình."
+      },
+      { "en": "The coach can take a rest.", "vi": "Huấn luyện viên có thể nghỉ ngơi." },
+      {
+        "en": "The coach can remember the password.",
+        "vi": "Huấn luyện viên có thể nhớ mật khẩu."
+      },
+      { "en": "The coach can attend the class.", "vi": "Huấn luyện viên có thể tham gia lớp học." },
+      { "en": "The coach can take a chance.", "vi": "Huấn luyện viên có thể nắm lấy cơ hội." },
+      {
+        "en": "The coach can manage the schedule.",
+        "vi": "Huấn luyện viên có thể quản lý lịch trình."
+      },
+      { "en": "The coach can pay the bill.", "vi": "Huấn luyện viên có thể thanh toán hóa đơn." },
+      { "en": "The coach can give feedback.", "vi": "Huấn luyện viên có thể góp ý." },
+      {
+        "en": "The coach can enjoy the weekend.",
+        "vi": "Huấn luyện viên có thể tận hưởng cuối tuần."
+      },
+      { "en": "The coach can charge the phone.", "vi": "Huấn luyện viên có thể sạc điện thoại." },
+      { "en": "The coach can say sorry.", "vi": "Huấn luyện viên có thể nói lời xin lỗi." },
+      { "en": "The coach can invest wisely.", "vi": "Huấn luyện viên có thể đầu tư khôn ngoan." },
+      {
+        "en": "The coach can learn something new.",
+        "vi": "Huấn luyện viên có thể học điều gì đó mới."
+      },
+      { "en": "The coach can calm down.", "vi": "Huấn luyện viên có thể bình tĩnh lại." },
+      {
+        "en": "The coach can buy a new phone.",
+        "vi": "Huấn luyện viên có thể mua điện thoại mới."
+      },
+      { "en": "The coach can fix the problem.", "vi": "Huấn luyện viên có thể sửa vấn đề." },
+      { "en": "The coach can cook breakfast.", "vi": "Huấn luyện viên có thể nấu bữa sáng." },
+      {
+        "en": "The coach can drink more water.",
+        "vi": "Huấn luyện viên có thể uống nhiều nước hơn."
+      },
+      { "en": "The coach can install the app.", "vi": "Huấn luyện viên có thể cài đặt ứng dụng." },
+      {
+        "en": "The coach can support each other.",
+        "vi": "Huấn luyện viên có thể hỗ trợ lẫn nhau."
+      },
+      { "en": "The coach can read more books.", "vi": "Huấn luyện viên có thể đọc thêm sách." },
+      { "en": "The coach can report the bug.", "vi": "Huấn luyện viên có thể báo lỗi." },
+      { "en": "The coach can take it easy.", "vi": "Huấn luyện viên có thể thư giãn." },
+      {
+        "en": "The coach can practice every day.",
+        "vi": "Huấn luyện viên có thể luyện tập mỗi ngày."
+      },
+      { "en": "The coach can cancel the order.", "vi": "Huấn luyện viên có thể hủy đơn hàng." },
+      { "en": "The coach can raise the price.", "vi": "Huấn luyện viên có thể tăng giá." },
+      { "en": "The coach can keep learning.", "vi": "Huấn luyện viên có thể tiếp tục học hỏi." }
+    ]
+  }
+]

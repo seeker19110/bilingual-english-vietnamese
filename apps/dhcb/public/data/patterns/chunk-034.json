@@ -1,0 +1,1923 @@
+[
+  {
+    "starter": "The customer might",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The customer might catch the train.", "vi": "Khách hàng có thể bắt chuyến tàu." },
+      {
+        "en": "The customer might remember the password.",
+        "vi": "Khách hàng có thể nhớ mật khẩu."
+      },
+      { "en": "The customer might wait a moment.", "vi": "Khách hàng có thể chờ một chút." },
+      {
+        "en": "The customer might finish the report.",
+        "vi": "Khách hàng có thể hoàn thành báo cáo."
+      },
+      { "en": "The customer might join a club.", "vi": "Khách hàng có thể tham gia câu lạc bộ." },
+      { "en": "The customer might help out.", "vi": "Khách hàng có thể giúp đỡ." },
+      { "en": "The customer might share the post.", "vi": "Khách hàng có thể chia sẻ bài viết." },
+      { "en": "The customer might leave a comment.", "vi": "Khách hàng có thể để lại bình luận." },
+      {
+        "en": "The customer might check the details.",
+        "vi": "Khách hàng có thể kiểm tra chi tiết."
+      },
+      {
+        "en": "The customer might prepare the presentation.",
+        "vi": "Khách hàng có thể chuẩn bị bài thuyết trình."
+      },
+      { "en": "The customer might cancel the order.", "vi": "Khách hàng có thể hủy đơn hàng." },
+      { "en": "The customer might get some rest.", "vi": "Khách hàng có thể nghỉ ngơi một chút." },
+      { "en": "The customer might play sports.", "vi": "Khách hàng có thể chơi thể thao." },
+      {
+        "en": "The customer might reply to the message.",
+        "vi": "Khách hàng có thể trả lời tin nhắn."
+      },
+      { "en": "The customer might go home.", "vi": "Khách hàng có thể về nhà." },
+      { "en": "The customer might keep learning.", "vi": "Khách hàng có thể tiếp tục học hỏi." },
+      { "en": "The customer might get a promotion.", "vi": "Khách hàng có thể được thăng chức." },
+      { "en": "The customer might download the file.", "vi": "Khách hàng có thể tải tệp xuống." },
+      { "en": "The customer might check my email.", "vi": "Khách hàng có thể kiểm tra email." },
+      { "en": "The customer might miss the flight.", "vi": "Khách hàng có thể lỡ chuyến bay." },
+      { "en": "The customer might watch a movie.", "vi": "Khách hàng có thể xem phim." },
+      { "en": "The customer might ask a question.", "vi": "Khách hàng có thể hỏi một câu." },
+      { "en": "The customer might take medicine.", "vi": "Khách hàng có thể uống thuốc." },
+      {
+        "en": "The customer might support each other.",
+        "vi": "Khách hàng có thể hỗ trợ lẫn nhau."
+      },
+      { "en": "The customer might invest wisely.", "vi": "Khách hàng có thể đầu tư khôn ngoan." },
+      { "en": "The customer might keep a promise.", "vi": "Khách hàng có thể giữ lời hứa." },
+      {
+        "en": "The customer might learn something new.",
+        "vi": "Khách hàng có thể học điều gì đó mới."
+      },
+      {
+        "en": "The customer might answer the phone.",
+        "vi": "Khách hàng có thể trả lời điện thoại."
+      },
+      { "en": "The customer might sign the contract.", "vi": "Khách hàng có thể ký hợp đồng." },
+      { "en": "The customer might lock the door.", "vi": "Khách hàng có thể khóa cửa." },
+      { "en": "The customer might take a photo.", "vi": "Khách hàng có thể chụp một bức ảnh." },
+      { "en": "The customer might take the exam.", "vi": "Khách hàng có thể làm bài thi." },
+      { "en": "The customer might relax at home.", "vi": "Khách hàng có thể thư giãn ở nhà." },
+      {
+        "en": "The customer might understand the lesson.",
+        "vi": "Khách hàng có thể hiểu bài học."
+      },
+      { "en": "The customer might book a hotel.", "vi": "Khách hàng có thể đặt khách sạn." },
+      {
+        "en": "The customer might reset the password.",
+        "vi": "Khách hàng có thể đặt lại mật khẩu."
+      },
+      { "en": "The customer might cut expenses.", "vi": "Khách hàng có thể cắt giảm chi tiêu." },
+      { "en": "The customer might cheer for the team.", "vi": "Khách hàng có thể cổ vũ cho đội." },
+      { "en": "The customer might save money.", "vi": "Khách hàng có thể tiết kiệm tiền." },
+      { "en": "The customer might make a plan.", "vi": "Khách hàng có thể lập một kế hoạch." },
+      { "en": "The customer might stay focused.", "vi": "Khách hàng có thể giữ tập trung." },
+      { "en": "The customer might eat healthy.", "vi": "Khách hàng có thể ăn uống lành mạnh." },
+      { "en": "The customer might call back later.", "vi": "Khách hàng có thể gọi lại sau." },
+      { "en": "The customer might wake up early.", "vi": "Khách hàng có thể dậy sớm." },
+      {
+        "en": "The customer might schedule a meeting.",
+        "vi": "Khách hàng có thể sắp xếp cuộc họp."
+      },
+      { "en": "The customer might log in again.", "vi": "Khách hàng có thể đăng nhập lại." },
+      { "en": "The customer might change careers.", "vi": "Khách hàng có thể chuyển nghề." },
+      {
+        "en": "The customer might restart the computer.",
+        "vi": "Khách hàng có thể khởi động lại máy tính."
+      },
+      { "en": "The customer might work as a team.", "vi": "Khách hàng có thể làm việc theo nhóm." },
+      { "en": "The customer might thank everyone.", "vi": "Khách hàng có thể cảm ơn mọi người." },
+      { "en": "The customer might pack my bags.", "vi": "Khách hàng có thể xếp hành lý." },
+      { "en": "The customer might cook dinner.", "vi": "Khách hàng có thể nấu bữa tối." },
+      {
+        "en": "The customer might register for the course.",
+        "vi": "Khách hàng có thể đăng ký khóa học."
+      },
+      { "en": "The customer might speak clearly.", "vi": "Khách hàng có thể nói rõ ràng." },
+      { "en": "The customer might be on time.", "vi": "Khách hàng có thể đến đúng giờ." },
+      { "en": "The customer might take a rest.", "vi": "Khách hàng có thể nghỉ ngơi." },
+      { "en": "The customer might watch the game.", "vi": "Khách hàng có thể xem trận đấu." },
+      { "en": "The customer might think it over.", "vi": "Khách hàng có thể suy nghĩ kỹ." },
+      { "en": "The customer might take it easy.", "vi": "Khách hàng có thể thư giãn." },
+      {
+        "en": "The customer might travel abroad.",
+        "vi": "Khách hàng có thể đi du lịch nước ngoài."
+      },
+      { "en": "The customer might calm down.", "vi": "Khách hàng có thể bình tĩnh lại." },
+      { "en": "The customer might change the plan.", "vi": "Khách hàng có thể thay đổi kế hoạch." },
+      {
+        "en": "The customer might invite some friends.",
+        "vi": "Khách hàng có thể mời vài người bạn."
+      },
+      {
+        "en": "The customer might drink more water.",
+        "vi": "Khách hàng có thể uống nhiều nước hơn."
+      },
+      { "en": "The customer might work harder.", "vi": "Khách hàng có thể làm việc chăm chỉ hơn." },
+      {
+        "en": "The customer might help a neighbor.",
+        "vi": "Khách hàng có thể giúp một người hàng xóm."
+      },
+      {
+        "en": "The customer might practice every day.",
+        "vi": "Khách hàng có thể luyện tập mỗi ngày."
+      },
+      { "en": "The customer might ask more questions.", "vi": "Khách hàng có thể hỏi nhiều hơn." },
+      { "en": "The customer might stay home.", "vi": "Khách hàng có thể ở nhà." },
+      { "en": "The customer might keep a diary.", "vi": "Khách hàng có thể viết nhật ký." },
+      { "en": "The customer might split the bill.", "vi": "Khách hàng có thể chia hóa đơn." },
+      {
+        "en": "The customer might apply for the position.",
+        "vi": "Khách hàng có thể nộp đơn cho vị trí."
+      },
+      { "en": "The customer might think positive.", "vi": "Khách hàng có thể suy nghĩ tích cực." },
+      {
+        "en": "The customer might manage the schedule.",
+        "vi": "Khách hàng có thể quản lý lịch trình."
+      },
+      {
+        "en": "The customer might save for the future.",
+        "vi": "Khách hàng có thể tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The customer might open a business.",
+        "vi": "Khách hàng có thể mở một doanh nghiệp."
+      },
+      { "en": "The customer might cook breakfast.", "vi": "Khách hàng có thể nấu bữa sáng." },
+      { "en": "The customer might say goodbye.", "vi": "Khách hàng có thể nói lời tạm biệt." },
+      { "en": "The customer might set a goal.", "vi": "Khách hàng có thể đặt một mục tiêu." },
+      {
+        "en": "The customer might celebrate together.",
+        "vi": "Khách hàng có thể ăn mừng cùng nhau."
+      },
+      { "en": "The customer might meet the deadline.", "vi": "Khách hàng có thể kịp thời hạn." },
+      { "en": "The customer might start over.", "vi": "Khách hàng có thể bắt đầu lại." },
+      { "en": "The customer might make a decision.", "vi": "Khách hàng có thể đưa ra quyết định." },
+      { "en": "The customer might read more books.", "vi": "Khách hàng có thể đọc thêm sách." },
+      { "en": "The customer might train the team.", "vi": "Khách hàng có thể đào tạo nhóm." },
+      { "en": "The customer might take a chance.", "vi": "Khách hàng có thể nắm lấy cơ hội." },
+      { "en": "The customer might do the laundry.", "vi": "Khách hàng có thể giặt đồ." },
+      { "en": "The customer might install the app.", "vi": "Khách hàng có thể cài đặt ứng dụng." },
+      { "en": "The customer might set an alarm.", "vi": "Khách hàng có thể đặt báo thức." },
+      { "en": "The customer might fix the problem.", "vi": "Khách hàng có thể sửa vấn đề." },
+      {
+        "en": "The customer might call a friend.",
+        "vi": "Khách hàng có thể gọi cho một người bạn."
+      },
+      {
+        "en": "The customer might join the meeting.",
+        "vi": "Khách hàng có thể tham gia cuộc họp."
+      },
+      {
+        "en": "The customer might drink less coffee.",
+        "vi": "Khách hàng có thể uống ít cà phê hơn."
+      },
+      {
+        "en": "The customer might confirm the booking.",
+        "vi": "Khách hàng có thể xác nhận đặt chỗ."
+      },
+      { "en": "The customer might meet new people.", "vi": "Khách hàng có thể gặp gỡ người mới." },
+      { "en": "The customer might rent a car.", "vi": "Khách hàng có thể thuê xe." },
+      { "en": "The customer might take the bus.", "vi": "Khách hàng có thể đi xe buýt." },
+      { "en": "The customer might arrive on time.", "vi": "Khách hàng có thể đến đúng giờ." },
+      { "en": "The customer might tell the truth.", "vi": "Khách hàng có thể nói sự thật." },
+      { "en": "The customer might attend the class.", "vi": "Khách hàng có thể tham gia lớp học." }
+    ]
+  },
+  {
+    "starter": "The customer has to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The customer has to wait a moment.", "vi": "Khách hàng phải chờ một chút." },
+      { "en": "The customer has to meet new people.", "vi": "Khách hàng phải gặp gỡ người mới." },
+      { "en": "The customer has to arrive on time.", "vi": "Khách hàng phải đến đúng giờ." },
+      { "en": "The customer has to stay organized.", "vi": "Khách hàng phải giữ ngăn nắp." },
+      { "en": "The customer has to meditate daily.", "vi": "Khách hàng phải thiền mỗi ngày." },
+      { "en": "The customer has to set a goal.", "vi": "Khách hàng phải đặt một mục tiêu." },
+      { "en": "The customer has to pack my bags.", "vi": "Khách hàng phải xếp hành lý." },
+      { "en": "The customer has to keep a diary.", "vi": "Khách hàng phải viết nhật ký." },
+      {
+        "en": "The customer has to negotiate the terms.",
+        "vi": "Khách hàng phải thương lượng điều khoản."
+      },
+      { "en": "The customer has to lose weight.", "vi": "Khách hàng phải giảm cân." },
+      { "en": "The customer has to think it over.", "vi": "Khách hàng phải suy nghĩ kỹ." },
+      { "en": "The customer has to ride a bike.", "vi": "Khách hàng phải đạp xe." },
+      { "en": "The customer has to take a break.", "vi": "Khách hàng phải nghỉ giải lao." },
+      { "en": "The customer has to ask a question.", "vi": "Khách hàng phải hỏi một câu." },
+      { "en": "The customer has to stay focused.", "vi": "Khách hàng phải giữ tập trung." },
+      { "en": "The customer has to try again.", "vi": "Khách hàng phải thử lại." },
+      { "en": "The customer has to cheer for the team.", "vi": "Khách hàng phải cổ vũ cho đội." },
+      { "en": "The customer has to read more books.", "vi": "Khách hàng phải đọc thêm sách." },
+      { "en": "The customer has to fix the problem.", "vi": "Khách hàng phải sửa vấn đề." },
+      { "en": "The customer has to reach the goal.", "vi": "Khách hàng phải đạt mục tiêu." },
+      {
+        "en": "The customer has to update the software.",
+        "vi": "Khách hàng phải cập nhật phần mềm."
+      },
+      {
+        "en": "The customer has to check the details.",
+        "vi": "Khách hàng phải kiểm tra chi tiết."
+      },
+      {
+        "en": "The customer has to confirm the booking.",
+        "vi": "Khách hàng phải xác nhận đặt chỗ."
+      },
+      {
+        "en": "The customer has to cook for everyone.",
+        "vi": "Khách hàng phải nấu ăn cho mọi người."
+      },
+      { "en": "The customer has to lower the cost.", "vi": "Khách hàng phải giảm chi phí." },
+      { "en": "The customer has to cook breakfast.", "vi": "Khách hàng phải nấu bữa sáng." },
+      { "en": "The customer has to wash the dishes.", "vi": "Khách hàng phải rửa bát." },
+      { "en": "The customer has to take it easy.", "vi": "Khách hàng phải thư giãn." },
+      { "en": "The customer has to stay home.", "vi": "Khách hàng phải ở nhà." },
+      { "en": "The customer has to calm down.", "vi": "Khách hàng phải bình tĩnh lại." },
+      { "en": "The customer has to make a plan.", "vi": "Khách hàng phải lập một kế hoạch." },
+      { "en": "The customer has to charge the phone.", "vi": "Khách hàng phải sạc điện thoại." },
+      { "en": "The customer has to rent a car.", "vi": "Khách hàng phải thuê xe." },
+      { "en": "The customer has to speak English.", "vi": "Khách hàng phải nói tiếng Anh." },
+      { "en": "The customer has to report the bug.", "vi": "Khách hàng phải báo lỗi." },
+      { "en": "The customer has to close the deal.", "vi": "Khách hàng phải chốt thỏa thuận." },
+      { "en": "The customer has to clean the house.", "vi": "Khách hàng phải dọn nhà." },
+      { "en": "The customer has to drive to work.", "vi": "Khách hàng phải lái xe đi làm." },
+      {
+        "en": "The customer has to drink more water.",
+        "vi": "Khách hàng phải uống nhiều nước hơn."
+      },
+      { "en": "The customer has to think positive.", "vi": "Khách hàng phải suy nghĩ tích cực." },
+      { "en": "The customer has to relax at home.", "vi": "Khách hàng phải thư giãn ở nhà." },
+      { "en": "The customer has to sign up today.", "vi": "Khách hàng phải đăng ký hôm nay." },
+      { "en": "The customer has to raise the price.", "vi": "Khách hàng phải tăng giá." },
+      {
+        "en": "The customer has to never give up.",
+        "vi": "Khách hàng phải không bao giờ bỏ cuộc."
+      },
+      { "en": "The customer has to back up the data.", "vi": "Khách hàng phải sao lưu dữ liệu." },
+      { "en": "The customer has to leave early.", "vi": "Khách hàng phải về sớm." },
+      { "en": "The customer has to scan the receipt.", "vi": "Khách hàng phải quét hóa đơn." },
+      {
+        "en": "The customer has to apply for the position.",
+        "vi": "Khách hàng phải nộp đơn cho vị trí."
+      },
+      { "en": "The customer has to take notes.", "vi": "Khách hàng phải ghi chép." },
+      { "en": "The customer has to share the post.", "vi": "Khách hàng phải chia sẻ bài viết." },
+      { "en": "The customer has to listen to music.", "vi": "Khách hàng phải nghe nhạc." },
+      {
+        "en": "The customer has to travel abroad.",
+        "vi": "Khách hàng phải đi du lịch nước ngoài."
+      },
+      { "en": "The customer has to copy the link.", "vi": "Khách hàng phải sao chép liên kết." },
+      { "en": "The customer has to pass the exam.", "vi": "Khách hàng phải đậu kỳ thi." },
+      { "en": "The customer has to change careers.", "vi": "Khách hàng phải chuyển nghề." },
+      { "en": "The customer has to close the window.", "vi": "Khách hàng phải đóng cửa sổ." },
+      {
+        "en": "The customer has to help a neighbor.",
+        "vi": "Khách hàng phải giúp một người hàng xóm."
+      },
+      { "en": "The customer has to write it down.", "vi": "Khách hàng phải ghi nó lại." },
+      { "en": "The customer has to save money.", "vi": "Khách hàng phải tiết kiệm tiền." },
+      { "en": "The customer has to meet the deadline.", "vi": "Khách hàng phải kịp thời hạn." },
+      { "en": "The customer has to learn English.", "vi": "Khách hàng phải học tiếng Anh." },
+      { "en": "The customer has to get a degree.", "vi": "Khách hàng phải lấy bằng." },
+      { "en": "The customer has to read the news.", "vi": "Khách hàng phải đọc tin tức." },
+      {
+        "en": "The customer has to donate to charity.",
+        "vi": "Khách hàng phải quyên góp từ thiện."
+      },
+      { "en": "The customer has to split the bill.", "vi": "Khách hàng phải chia hóa đơn." },
+      { "en": "The customer has to wake up early.", "vi": "Khách hàng phải dậy sớm." },
+      {
+        "en": "The customer has to reply to the message.",
+        "vi": "Khách hàng phải trả lời tin nhắn."
+      },
+      { "en": "The customer has to breathe deeply.", "vi": "Khách hàng phải hít thở sâu." },
+      { "en": "The customer has to finish on time.", "vi": "Khách hàng phải hoàn thành đúng hạn." },
+      { "en": "The customer has to book a hotel.", "vi": "Khách hàng phải đặt khách sạn." },
+      {
+        "en": "The customer has to open a savings account.",
+        "vi": "Khách hàng phải mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "The customer has to explain the situation.",
+        "vi": "Khách hàng phải giải thích tình huống."
+      },
+      {
+        "en": "The customer has to register for the course.",
+        "vi": "Khách hàng phải đăng ký khóa học."
+      },
+      { "en": "The customer has to water the plants.", "vi": "Khách hàng phải tưới cây." },
+      { "en": "The customer has to attend the class.", "vi": "Khách hàng phải tham gia lớp học." },
+      { "en": "The customer has to hire new staff.", "vi": "Khách hàng phải tuyển nhân viên mới." },
+      { "en": "The customer has to share my opinion.", "vi": "Khách hàng phải chia sẻ ý kiến." },
+      { "en": "The customer has to leave a comment.", "vi": "Khách hàng phải để lại bình luận." },
+      { "en": "The customer has to go for a walk.", "vi": "Khách hàng phải đi dạo." },
+      {
+        "en": "The customer has to grow the business.",
+        "vi": "Khách hàng phải phát triển kinh doanh."
+      },
+      { "en": "The customer has to keep learning.", "vi": "Khách hàng phải tiếp tục học hỏi." },
+      { "en": "The customer has to go home.", "vi": "Khách hàng phải về nhà." },
+      { "en": "The customer has to cook dinner.", "vi": "Khách hàng phải nấu bữa tối." },
+      {
+        "en": "The customer has to manage the schedule.",
+        "vi": "Khách hàng phải quản lý lịch trình."
+      },
+      { "en": "The customer has to write a report.", "vi": "Khách hàng phải viết một báo cáo." },
+      { "en": "The customer has to visit the doctor.", "vi": "Khách hàng phải đi khám bác sĩ." },
+      { "en": "The customer has to be on time.", "vi": "Khách hàng phải đến đúng giờ." },
+      { "en": "The customer has to take medicine.", "vi": "Khách hàng phải uống thuốc." },
+      { "en": "The customer has to take a photo.", "vi": "Khách hàng phải chụp một bức ảnh." },
+      { "en": "The customer has to walk the dog.", "vi": "Khách hàng phải dắt chó đi dạo." },
+      { "en": "The customer has to book a ticket.", "vi": "Khách hàng phải đặt vé." },
+      { "en": "The customer has to print the document.", "vi": "Khách hàng phải in tài liệu." },
+      { "en": "The customer has to launch the product.", "vi": "Khách hàng phải ra mắt sản phẩm." },
+      { "en": "The customer has to sleep early.", "vi": "Khách hàng phải ngủ sớm." },
+      {
+        "en": "The customer has to double-check everything.",
+        "vi": "Khách hàng phải kiểm tra lại mọi thứ."
+      },
+      { "en": "The customer has to join a club.", "vi": "Khách hàng phải tham gia câu lạc bộ." },
+      { "en": "The customer has to pay the bill.", "vi": "Khách hàng phải thanh toán hóa đơn." },
+      { "en": "The customer has to watch the game.", "vi": "Khách hàng phải xem trận đấu." },
+      {
+        "en": "The customer has to finish the report.",
+        "vi": "Khách hàng phải hoàn thành báo cáo."
+      },
+      {
+        "en": "The customer has to enjoy the weekend.",
+        "vi": "Khách hàng phải tận hưởng cuối tuần."
+      }
+    ]
+  },
+  {
+    "starter": "The customer is going to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The customer is going to say sorry.", "vi": "Khách hàng sắp nói lời xin lỗi." },
+      { "en": "The customer is going to relax at home.", "vi": "Khách hàng sắp thư giãn ở nhà." },
+      { "en": "The customer is going to reach the goal.", "vi": "Khách hàng sắp đạt mục tiêu." },
+      {
+        "en": "The customer is going to follow the rules.",
+        "vi": "Khách hàng sắp tuân theo quy tắc."
+      },
+      { "en": "The customer is going to sign the contract.", "vi": "Khách hàng sắp ký hợp đồng." },
+      { "en": "The customer is going to close the window.", "vi": "Khách hàng sắp đóng cửa sổ." },
+      { "en": "The customer is going to speak English.", "vi": "Khách hàng sắp nói tiếng Anh." },
+      { "en": "The customer is going to go for a walk.", "vi": "Khách hàng sắp đi dạo." },
+      { "en": "The customer is going to lock the door.", "vi": "Khách hàng sắp khóa cửa." },
+      { "en": "The customer is going to scan the receipt.", "vi": "Khách hàng sắp quét hóa đơn." },
+      {
+        "en": "The customer is going to get a promotion.",
+        "vi": "Khách hàng sắp được thăng chức."
+      },
+      {
+        "en": "The customer is going to donate to charity.",
+        "vi": "Khách hàng sắp quyên góp từ thiện."
+      },
+      {
+        "en": "The customer is going to answer the phone.",
+        "vi": "Khách hàng sắp trả lời điện thoại."
+      },
+      { "en": "The customer is going to send the email.", "vi": "Khách hàng sắp gửi email." },
+      { "en": "The customer is going to call back later.", "vi": "Khách hàng sắp gọi lại sau." },
+      { "en": "The customer is going to speak clearly.", "vi": "Khách hàng sắp nói rõ ràng." },
+      {
+        "en": "The customer is going to visit the doctor.",
+        "vi": "Khách hàng sắp đi khám bác sĩ."
+      },
+      {
+        "en": "The customer is going to cheer for the team.",
+        "vi": "Khách hàng sắp cổ vũ cho đội."
+      },
+      {
+        "en": "The customer is going to test the feature.",
+        "vi": "Khách hàng sắp kiểm thử tính năng."
+      },
+      { "en": "The customer is going to take it easy.", "vi": "Khách hàng sắp thư giãn." },
+      { "en": "The customer is going to calm down.", "vi": "Khách hàng sắp bình tĩnh lại." },
+      { "en": "The customer is going to set an alarm.", "vi": "Khách hàng sắp đặt báo thức." },
+      {
+        "en": "The customer is going to negotiate the terms.",
+        "vi": "Khách hàng sắp thương lượng điều khoản."
+      },
+      { "en": "The customer is going to clean the house.", "vi": "Khách hàng sắp dọn nhà." },
+      {
+        "en": "The customer is going to attend the class.",
+        "vi": "Khách hàng sắp tham gia lớp học."
+      },
+      { "en": "The customer is going to tell the truth.", "vi": "Khách hàng sắp nói sự thật." },
+      {
+        "en": "The customer is going to drink more water.",
+        "vi": "Khách hàng sắp uống nhiều nước hơn."
+      },
+      {
+        "en": "The customer is going to save for the future.",
+        "vi": "Khách hàng sắp tiết kiệm cho tương lai."
+      },
+      { "en": "The customer is going to think it over.", "vi": "Khách hàng sắp suy nghĩ kỹ." },
+      { "en": "The customer is going to log in again.", "vi": "Khách hàng sắp đăng nhập lại." },
+      { "en": "The customer is going to stay organized.", "vi": "Khách hàng sắp giữ ngăn nắp." },
+      { "en": "The customer is going to water the plants.", "vi": "Khách hàng sắp tưới cây." },
+      { "en": "The customer is going to cook dinner.", "vi": "Khách hàng sắp nấu bữa tối." },
+      { "en": "The customer is going to sleep early.", "vi": "Khách hàng sắp ngủ sớm." },
+      { "en": "The customer is going to lose weight.", "vi": "Khách hàng sắp giảm cân." },
+      { "en": "The customer is going to set a goal.", "vi": "Khách hàng sắp đặt một mục tiêu." },
+      { "en": "The customer is going to order food.", "vi": "Khách hàng sắp gọi đồ ăn." },
+      { "en": "The customer is going to take a rest.", "vi": "Khách hàng sắp nghỉ ngơi." },
+      {
+        "en": "The customer is going to leave a comment.",
+        "vi": "Khách hàng sắp để lại bình luận."
+      },
+      { "en": "The customer is going to read more books.", "vi": "Khách hàng sắp đọc thêm sách." },
+      { "en": "The customer is going to ask a question.", "vi": "Khách hàng sắp hỏi một câu." },
+      { "en": "The customer is going to learn English.", "vi": "Khách hàng sắp học tiếng Anh." },
+      { "en": "The customer is going to wash the dishes.", "vi": "Khách hàng sắp rửa bát." },
+      { "en": "The customer is going to catch the train.", "vi": "Khách hàng sắp bắt chuyến tàu." },
+      { "en": "The customer is going to take the exam.", "vi": "Khách hàng sắp làm bài thi." },
+      { "en": "The customer is going to listen to music.", "vi": "Khách hàng sắp nghe nhạc." },
+      {
+        "en": "The customer is going to share my opinion.",
+        "vi": "Khách hàng sắp chia sẻ ý kiến."
+      },
+      { "en": "The customer is going to learn to swim.", "vi": "Khách hàng sắp học bơi." },
+      { "en": "The customer is going to make tea.", "vi": "Khách hàng sắp pha trà." },
+      { "en": "The customer is going to ride a bike.", "vi": "Khách hàng sắp đạp xe." },
+      {
+        "en": "The customer is going to work as a team.",
+        "vi": "Khách hàng sắp làm việc theo nhóm."
+      },
+      {
+        "en": "The customer is going to win the contract.",
+        "vi": "Khách hàng sắp giành hợp đồng."
+      },
+      { "en": "The customer is going to breathe deeply.", "vi": "Khách hàng sắp hít thở sâu." },
+      { "en": "The customer is going to take a photo.", "vi": "Khách hàng sắp chụp một bức ảnh." },
+      { "en": "The customer is going to miss the flight.", "vi": "Khách hàng sắp lỡ chuyến bay." },
+      {
+        "en": "The customer is going to change the plan.",
+        "vi": "Khách hàng sắp thay đổi kế hoạch."
+      },
+      {
+        "en": "The customer is going to work harder.",
+        "vi": "Khách hàng sắp làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The customer is going to schedule a meeting.",
+        "vi": "Khách hàng sắp sắp xếp cuộc họp."
+      },
+      { "en": "The customer is going to watch a movie.", "vi": "Khách hàng sắp xem phim." },
+      {
+        "en": "The customer is going to fill out the form.",
+        "vi": "Khách hàng sắp điền vào biểu mẫu."
+      },
+      {
+        "en": "The customer is going to enjoy the weekend.",
+        "vi": "Khách hàng sắp tận hưởng cuối tuần."
+      },
+      {
+        "en": "The customer is going to copy the link.",
+        "vi": "Khách hàng sắp sao chép liên kết."
+      },
+      {
+        "en": "The customer is going to solve this issue.",
+        "vi": "Khách hàng sắp giải quyết vấn đề này."
+      },
+      {
+        "en": "The customer is going to invest wisely.",
+        "vi": "Khách hàng sắp đầu tư khôn ngoan."
+      },
+      { "en": "The customer is going to keep in touch.", "vi": "Khách hàng sắp giữ liên lạc." },
+      { "en": "The customer is going to try again.", "vi": "Khách hàng sắp thử lại." },
+      { "en": "The customer is going to throw a party.", "vi": "Khách hàng sắp tổ chức tiệc." },
+      {
+        "en": "The customer is going to back up the data.",
+        "vi": "Khách hàng sắp sao lưu dữ liệu."
+      },
+      { "en": "The customer is going to make a plan.", "vi": "Khách hàng sắp lập một kế hoạch." },
+      { "en": "The customer is going to make new friends.", "vi": "Khách hàng sắp kết bạn mới." },
+      { "en": "The customer is going to plan ahead.", "vi": "Khách hàng sắp lên kế hoạch trước." },
+      {
+        "en": "The customer is going to learn something new.",
+        "vi": "Khách hàng sắp học điều gì đó mới."
+      },
+      { "en": "The customer is going to book a hotel.", "vi": "Khách hàng sắp đặt khách sạn." },
+      { "en": "The customer is going to walk the dog.", "vi": "Khách hàng sắp dắt chó đi dạo." },
+      { "en": "The customer is going to stay focused.", "vi": "Khách hàng sắp giữ tập trung." },
+      { "en": "The customer is going to print the document.", "vi": "Khách hàng sắp in tài liệu." },
+      { "en": "The customer is going to leave early.", "vi": "Khách hàng sắp về sớm." },
+      { "en": "The customer is going to buy groceries.", "vi": "Khách hàng sắp mua thực phẩm." },
+      {
+        "en": "The customer is going to start a new project.",
+        "vi": "Khách hàng sắp bắt đầu một dự án mới."
+      },
+      { "en": "The customer is going to lead the project.", "vi": "Khách hàng sắp dẫn dắt dự án." },
+      { "en": "The customer is going to train the team.", "vi": "Khách hàng sắp đào tạo nhóm." },
+      { "en": "The customer is going to book a ticket.", "vi": "Khách hàng sắp đặt vé." },
+      {
+        "en": "The customer is going to restart the computer.",
+        "vi": "Khách hàng sắp khởi động lại máy tính."
+      },
+      { "en": "The customer is going to split the bill.", "vi": "Khách hàng sắp chia hóa đơn." },
+      {
+        "en": "The customer is going to double-check everything.",
+        "vi": "Khách hàng sắp kiểm tra lại mọi thứ."
+      },
+      { "en": "The customer is going to help the team.", "vi": "Khách hàng sắp giúp đỡ nhóm." },
+      {
+        "en": "The customer is going to manage the schedule.",
+        "vi": "Khách hàng sắp quản lý lịch trình."
+      },
+      {
+        "en": "The customer is going to reply to the message.",
+        "vi": "Khách hàng sắp trả lời tin nhắn."
+      },
+      { "en": "The customer is going to watch the game.", "vi": "Khách hàng sắp xem trận đấu." },
+      {
+        "en": "The customer is going to try harder next time.",
+        "vi": "Khách hàng sắp cố gắng hơn lần sau."
+      },
+      {
+        "en": "The customer is going to celebrate together.",
+        "vi": "Khách hàng sắp ăn mừng cùng nhau."
+      },
+      {
+        "en": "The customer is going to cut the budget.",
+        "vi": "Khách hàng sắp cắt giảm ngân sách."
+      },
+      {
+        "en": "The customer is going to move forward.",
+        "vi": "Khách hàng sắp tiến về phía trước."
+      },
+      { "en": "The customer is going to keep a diary.", "vi": "Khách hàng sắp viết nhật ký." },
+      { "en": "The customer is going to say goodbye.", "vi": "Khách hàng sắp nói lời tạm biệt." },
+      { "en": "The customer is going to lower the cost.", "vi": "Khách hàng sắp giảm chi phí." },
+      { "en": "The customer is going to close the deal.", "vi": "Khách hàng sắp chốt thỏa thuận." },
+      {
+        "en": "The customer is going to double-check the numbers.",
+        "vi": "Khách hàng sắp kiểm tra lại các con số."
+      },
+      { "en": "The customer is going to turn off the light.", "vi": "Khách hàng sắp tắt đèn." },
+      {
+        "en": "The customer is going to take a day off.",
+        "vi": "Khách hàng sắp xin nghỉ một ngày."
+      }
+    ]
+  },
+  {
+    "starter": "The customer is trying to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The customer is trying to learn English.",
+        "vi": "Khách hàng đang cố học tiếng Anh."
+      },
+      {
+        "en": "The customer is trying to cheer for the team.",
+        "vi": "Khách hàng đang cố cổ vũ cho đội."
+      },
+      { "en": "The customer is trying to give feedback.", "vi": "Khách hàng đang cố góp ý." },
+      {
+        "en": "The customer is trying to register for the course.",
+        "vi": "Khách hàng đang cố đăng ký khóa học."
+      },
+      { "en": "The customer is trying to raise the price.", "vi": "Khách hàng đang cố tăng giá." },
+      {
+        "en": "The customer is trying to exercise every day.",
+        "vi": "Khách hàng đang cố tập thể dục mỗi ngày."
+      },
+      {
+        "en": "The customer is trying to help the team.",
+        "vi": "Khách hàng đang cố giúp đỡ nhóm."
+      },
+      {
+        "en": "The customer is trying to visit my family.",
+        "vi": "Khách hàng đang cố thăm gia đình."
+      },
+      {
+        "en": "The customer is trying to win the contract.",
+        "vi": "Khách hàng đang cố giành hợp đồng."
+      },
+      { "en": "The customer is trying to find a job.", "vi": "Khách hàng đang cố tìm việc làm." },
+      {
+        "en": "The customer is trying to invite some friends.",
+        "vi": "Khách hàng đang cố mời vài người bạn."
+      },
+      {
+        "en": "The customer is trying to share the post.",
+        "vi": "Khách hàng đang cố chia sẻ bài viết."
+      },
+      {
+        "en": "The customer is trying to launch the product.",
+        "vi": "Khách hàng đang cố ra mắt sản phẩm."
+      },
+      { "en": "The customer is trying to ask for help.", "vi": "Khách hàng đang cố nhờ giúp đỡ." },
+      {
+        "en": "The customer is trying to take a photo.",
+        "vi": "Khách hàng đang cố chụp một bức ảnh."
+      },
+      {
+        "en": "The customer is trying to meditate daily.",
+        "vi": "Khách hàng đang cố thiền mỗi ngày."
+      },
+      { "en": "The customer is trying to save money.", "vi": "Khách hàng đang cố tiết kiệm tiền." },
+      {
+        "en": "The customer is trying to keep in touch.",
+        "vi": "Khách hàng đang cố giữ liên lạc."
+      },
+      {
+        "en": "The customer is trying to leave a comment.",
+        "vi": "Khách hàng đang cố để lại bình luận."
+      },
+      {
+        "en": "The customer is trying to sign the contract.",
+        "vi": "Khách hàng đang cố ký hợp đồng."
+      },
+      {
+        "en": "The customer is trying to cut expenses.",
+        "vi": "Khách hàng đang cố cắt giảm chi tiêu."
+      },
+      {
+        "en": "The customer is trying to never give up.",
+        "vi": "Khách hàng đang cố không bao giờ bỏ cuộc."
+      },
+      { "en": "The customer is trying to say sorry.", "vi": "Khách hàng đang cố nói lời xin lỗi." },
+      { "en": "The customer is trying to leave early.", "vi": "Khách hàng đang cố về sớm." },
+      {
+        "en": "The customer is trying to charge the phone.",
+        "vi": "Khách hàng đang cố sạc điện thoại."
+      },
+      { "en": "The customer is trying to pass the exam.", "vi": "Khách hàng đang cố đậu kỳ thi." },
+      {
+        "en": "The customer is trying to miss the flight.",
+        "vi": "Khách hàng đang cố lỡ chuyến bay."
+      },
+      {
+        "en": "The customer is trying to join the meeting.",
+        "vi": "Khách hàng đang cố tham gia cuộc họp."
+      },
+      { "en": "The customer is trying to go home.", "vi": "Khách hàng đang cố về nhà." },
+      {
+        "en": "The customer is trying to celebrate together.",
+        "vi": "Khách hàng đang cố ăn mừng cùng nhau."
+      },
+      {
+        "en": "The customer is trying to print the document.",
+        "vi": "Khách hàng đang cố in tài liệu."
+      },
+      {
+        "en": "The customer is trying to volunteer on weekends.",
+        "vi": "Khách hàng đang cố tình nguyện cuối tuần."
+      },
+      { "en": "The customer is trying to take a rest.", "vi": "Khách hàng đang cố nghỉ ngơi." },
+      {
+        "en": "The customer is trying to make a plan.",
+        "vi": "Khách hàng đang cố lập một kế hoạch."
+      },
+      {
+        "en": "The customer is trying to think positive.",
+        "vi": "Khách hàng đang cố suy nghĩ tích cực."
+      },
+      { "en": "The customer is trying to think it over.", "vi": "Khách hàng đang cố suy nghĩ kỹ." },
+      {
+        "en": "The customer is trying to keep learning.",
+        "vi": "Khách hàng đang cố tiếp tục học hỏi."
+      },
+      {
+        "en": "The customer is trying to write a report.",
+        "vi": "Khách hàng đang cố viết một báo cáo."
+      },
+      {
+        "en": "The customer is trying to catch the train.",
+        "vi": "Khách hàng đang cố bắt chuyến tàu."
+      },
+      {
+        "en": "The customer is trying to rate the service.",
+        "vi": "Khách hàng đang cố đánh giá dịch vụ."
+      },
+      {
+        "en": "The customer is trying to help a neighbor.",
+        "vi": "Khách hàng đang cố giúp một người hàng xóm."
+      },
+      { "en": "The customer is trying to read the news.", "vi": "Khách hàng đang cố đọc tin tức." },
+      {
+        "en": "The customer is trying to go on vacation.",
+        "vi": "Khách hàng đang cố đi nghỉ mát."
+      },
+      { "en": "The customer is trying to clean the house.", "vi": "Khách hàng đang cố dọn nhà." },
+      {
+        "en": "The customer is trying to cook for everyone.",
+        "vi": "Khách hàng đang cố nấu ăn cho mọi người."
+      },
+      {
+        "en": "The customer is trying to plan ahead.",
+        "vi": "Khách hàng đang cố lên kế hoạch trước."
+      },
+      {
+        "en": "The customer is trying to walk the dog.",
+        "vi": "Khách hàng đang cố dắt chó đi dạo."
+      },
+      { "en": "The customer is trying to sleep early.", "vi": "Khách hàng đang cố ngủ sớm." },
+      { "en": "The customer is trying to rent a car.", "vi": "Khách hàng đang cố thuê xe." },
+      {
+        "en": "The customer is trying to take a course.",
+        "vi": "Khách hàng đang cố tham gia một khóa học."
+      },
+      {
+        "en": "The customer is trying to watch the game.",
+        "vi": "Khách hàng đang cố xem trận đấu."
+      },
+      {
+        "en": "The customer is trying to breathe deeply.",
+        "vi": "Khách hàng đang cố hít thở sâu."
+      },
+      { "en": "The customer is trying to give it a try.", "vi": "Khách hàng đang cố thử một lần." },
+      {
+        "en": "The customer is trying to drink less coffee.",
+        "vi": "Khách hàng đang cố uống ít cà phê hơn."
+      },
+      {
+        "en": "The customer is trying to call back later.",
+        "vi": "Khách hàng đang cố gọi lại sau."
+      },
+      { "en": "The customer is trying to write it down.", "vi": "Khách hàng đang cố ghi nó lại." },
+      { "en": "The customer is trying to start over.", "vi": "Khách hàng đang cố bắt đầu lại." },
+      {
+        "en": "The customer is trying to drink more water.",
+        "vi": "Khách hàng đang cố uống nhiều nước hơn."
+      },
+      { "en": "The customer is trying to wake up early.", "vi": "Khách hàng đang cố dậy sớm." },
+      {
+        "en": "The customer is trying to double-check the numbers.",
+        "vi": "Khách hàng đang cố kiểm tra lại các con số."
+      },
+      {
+        "en": "The customer is trying to check my email.",
+        "vi": "Khách hàng đang cố kiểm tra email."
+      },
+      { "en": "The customer is trying to keep a diary.", "vi": "Khách hàng đang cố viết nhật ký." },
+      { "en": "The customer is trying to stay home.", "vi": "Khách hàng đang cố ở nhà." },
+      {
+        "en": "The customer is trying to practice every day.",
+        "vi": "Khách hàng đang cố luyện tập mỗi ngày."
+      },
+      {
+        "en": "The customer is trying to improve my skills.",
+        "vi": "Khách hàng đang cố cải thiện kỹ năng."
+      },
+      { "en": "The customer is trying to get a degree.", "vi": "Khách hàng đang cố lấy bằng." },
+      {
+        "en": "The customer is trying to reset the password.",
+        "vi": "Khách hàng đang cố đặt lại mật khẩu."
+      },
+      {
+        "en": "The customer is trying to donate to charity.",
+        "vi": "Khách hàng đang cố quyên góp từ thiện."
+      },
+      {
+        "en": "The customer is trying to stay focused.",
+        "vi": "Khách hàng đang cố giữ tập trung."
+      },
+      { "en": "The customer is trying to set an alarm.", "vi": "Khách hàng đang cố đặt báo thức." },
+      { "en": "The customer is trying to pack my bags.", "vi": "Khách hàng đang cố xếp hành lý." },
+      {
+        "en": "The customer is trying to follow the rules.",
+        "vi": "Khách hàng đang cố tuân theo quy tắc."
+      },
+      {
+        "en": "The customer is trying to scan the receipt.",
+        "vi": "Khách hàng đang cố quét hóa đơn."
+      },
+      {
+        "en": "The customer is trying to wait a moment.",
+        "vi": "Khách hàng đang cố chờ một chút."
+      },
+      {
+        "en": "The customer is trying to prepare the presentation.",
+        "vi": "Khách hàng đang cố chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The customer is trying to answer the phone.",
+        "vi": "Khách hàng đang cố trả lời điện thoại."
+      },
+      { "en": "The customer is trying to take it easy.", "vi": "Khách hàng đang cố thư giãn." },
+      {
+        "en": "The customer is trying to lead the project.",
+        "vi": "Khách hàng đang cố dẫn dắt dự án."
+      },
+      {
+        "en": "The customer is trying to lower the cost.",
+        "vi": "Khách hàng đang cố giảm chi phí."
+      },
+      {
+        "en": "The customer is trying to set a goal.",
+        "vi": "Khách hàng đang cố đặt một mục tiêu."
+      },
+      { "en": "The customer is trying to go for a walk.", "vi": "Khách hàng đang cố đi dạo." },
+      {
+        "en": "The customer is trying to attend the class.",
+        "vi": "Khách hàng đang cố tham gia lớp học."
+      },
+      {
+        "en": "The customer is trying to join a club.",
+        "vi": "Khách hàng đang cố tham gia câu lạc bộ."
+      },
+      {
+        "en": "The customer is trying to ask for a raise.",
+        "vi": "Khách hàng đang cố xin tăng lương."
+      },
+      {
+        "en": "The customer is trying to make new friends.",
+        "vi": "Khách hàng đang cố kết bạn mới."
+      },
+      { "en": "The customer is trying to make tea.", "vi": "Khách hàng đang cố pha trà." },
+      {
+        "en": "The customer is trying to speak English.",
+        "vi": "Khách hàng đang cố nói tiếng Anh."
+      },
+      {
+        "en": "The customer is trying to keep a promise.",
+        "vi": "Khách hàng đang cố giữ lời hứa."
+      },
+      {
+        "en": "The customer is trying to share my opinion.",
+        "vi": "Khách hàng đang cố chia sẻ ý kiến."
+      },
+      {
+        "en": "The customer is trying to explain the situation.",
+        "vi": "Khách hàng đang cố giải thích tình huống."
+      },
+      {
+        "en": "The customer is trying to finish the report.",
+        "vi": "Khách hàng đang cố hoàn thành báo cáo."
+      },
+      {
+        "en": "The customer is trying to tell the truth.",
+        "vi": "Khách hàng đang cố nói sự thật."
+      },
+      {
+        "en": "The customer is trying to thank everyone.",
+        "vi": "Khách hàng đang cố cảm ơn mọi người."
+      },
+      {
+        "en": "The customer is trying to plan a trip.",
+        "vi": "Khách hàng đang cố lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "The customer is trying to train the team.",
+        "vi": "Khách hàng đang cố đào tạo nhóm."
+      },
+      {
+        "en": "The customer is trying to attend the workshop.",
+        "vi": "Khách hàng đang cố tham dự buổi hội thảo."
+      },
+      { "en": "The customer is trying to try again.", "vi": "Khách hàng đang cố thử lại." },
+      { "en": "The customer is trying to calm down.", "vi": "Khách hàng đang cố bình tĩnh lại." },
+      {
+        "en": "The customer is trying to eat healthy.",
+        "vi": "Khách hàng đang cố ăn uống lành mạnh."
+      },
+      { "en": "The customer is trying to listen to music.", "vi": "Khách hàng đang cố nghe nhạc." }
+    ]
+  },
+  {
+    "starter": "The customer is planning to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The customer is planning to cook breakfast.",
+        "vi": "Khách hàng đang định nấu bữa sáng."
+      },
+      {
+        "en": "The customer is planning to breathe deeply.",
+        "vi": "Khách hàng đang định hít thở sâu."
+      },
+      {
+        "en": "The customer is planning to join the meeting.",
+        "vi": "Khách hàng đang định tham gia cuộc họp."
+      },
+      {
+        "en": "The customer is planning to explain the situation.",
+        "vi": "Khách hàng đang định giải thích tình huống."
+      },
+      {
+        "en": "The customer is planning to never give up.",
+        "vi": "Khách hàng đang định không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The customer is planning to answer the phone.",
+        "vi": "Khách hàng đang định trả lời điện thoại."
+      },
+      {
+        "en": "The customer is planning to negotiate the terms.",
+        "vi": "Khách hàng đang định thương lượng điều khoản."
+      },
+      {
+        "en": "The customer is planning to cancel the order.",
+        "vi": "Khách hàng đang định hủy đơn hàng."
+      },
+      {
+        "en": "The customer is planning to cheer for the team.",
+        "vi": "Khách hàng đang định cổ vũ cho đội."
+      },
+      {
+        "en": "The customer is planning to offer support.",
+        "vi": "Khách hàng đang định đề nghị hỗ trợ."
+      },
+      { "en": "The customer is planning to sleep early.", "vi": "Khách hàng đang định ngủ sớm." },
+      {
+        "en": "The customer is planning to visit the doctor.",
+        "vi": "Khách hàng đang định đi khám bác sĩ."
+      },
+      {
+        "en": "The customer is planning to launch the product.",
+        "vi": "Khách hàng đang định ra mắt sản phẩm."
+      },
+      {
+        "en": "The customer is planning to make a plan.",
+        "vi": "Khách hàng đang định lập một kế hoạch."
+      },
+      {
+        "en": "The customer is planning to save for the future.",
+        "vi": "Khách hàng đang định tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The customer is planning to sign the contract.",
+        "vi": "Khách hàng đang định ký hợp đồng."
+      },
+      {
+        "en": "The customer is planning to tell the truth.",
+        "vi": "Khách hàng đang định nói sự thật."
+      },
+      {
+        "en": "The customer is planning to take the bus.",
+        "vi": "Khách hàng đang định đi xe buýt."
+      },
+      {
+        "en": "The customer is planning to celebrate together.",
+        "vi": "Khách hàng đang định ăn mừng cùng nhau."
+      },
+      {
+        "en": "The customer is planning to test the feature.",
+        "vi": "Khách hàng đang định kiểm thử tính năng."
+      },
+      {
+        "en": "The customer is planning to exercise every day.",
+        "vi": "Khách hàng đang định tập thể dục mỗi ngày."
+      },
+      {
+        "en": "The customer is planning to take a course.",
+        "vi": "Khách hàng đang định tham gia một khóa học."
+      },
+      {
+        "en": "The customer is planning to keep a promise.",
+        "vi": "Khách hàng đang định giữ lời hứa."
+      },
+      {
+        "en": "The customer is planning to cook dinner.",
+        "vi": "Khách hàng đang định nấu bữa tối."
+      },
+      {
+        "en": "The customer is planning to apply for the position.",
+        "vi": "Khách hàng đang định nộp đơn cho vị trí."
+      },
+      { "en": "The customer is planning to get a degree.", "vi": "Khách hàng đang định lấy bằng." },
+      {
+        "en": "The customer is planning to quit smoking.",
+        "vi": "Khách hàng đang định bỏ thuốc lá."
+      },
+      {
+        "en": "The customer is planning to miss the flight.",
+        "vi": "Khách hàng đang định lỡ chuyến bay."
+      },
+      {
+        "en": "The customer is planning to buy a new phone.",
+        "vi": "Khách hàng đang định mua điện thoại mới."
+      },
+      {
+        "en": "The customer is planning to share the post.",
+        "vi": "Khách hàng đang định chia sẻ bài viết."
+      },
+      {
+        "en": "The customer is planning to attend the class.",
+        "vi": "Khách hàng đang định tham gia lớp học."
+      },
+      {
+        "en": "The customer is planning to fill out the form.",
+        "vi": "Khách hàng đang định điền vào biểu mẫu."
+      },
+      {
+        "en": "The customer is planning to invite some friends.",
+        "vi": "Khách hàng đang định mời vài người bạn."
+      },
+      {
+        "en": "The customer is planning to try harder next time.",
+        "vi": "Khách hàng đang định cố gắng hơn lần sau."
+      },
+      {
+        "en": "The customer is planning to win the contract.",
+        "vi": "Khách hàng đang định giành hợp đồng."
+      },
+      {
+        "en": "The customer is planning to train the team.",
+        "vi": "Khách hàng đang định đào tạo nhóm."
+      },
+      {
+        "en": "The customer is planning to think it over.",
+        "vi": "Khách hàng đang định suy nghĩ kỹ."
+      },
+      {
+        "en": "The customer is planning to get a promotion.",
+        "vi": "Khách hàng đang định được thăng chức."
+      },
+      {
+        "en": "The customer is planning to ask more questions.",
+        "vi": "Khách hàng đang định hỏi nhiều hơn."
+      },
+      {
+        "en": "The customer is planning to book a hotel.",
+        "vi": "Khách hàng đang định đặt khách sạn."
+      },
+      {
+        "en": "The customer is planning to meditate daily.",
+        "vi": "Khách hàng đang định thiền mỗi ngày."
+      },
+      {
+        "en": "The customer is planning to lock the door.",
+        "vi": "Khách hàng đang định khóa cửa."
+      },
+      {
+        "en": "The customer is planning to send the email.",
+        "vi": "Khách hàng đang định gửi email."
+      },
+      {
+        "en": "The customer is planning to fix the problem.",
+        "vi": "Khách hàng đang định sửa vấn đề."
+      },
+      {
+        "en": "The customer is planning to arrive on time.",
+        "vi": "Khách hàng đang định đến đúng giờ."
+      },
+      {
+        "en": "The customer is planning to support each other.",
+        "vi": "Khách hàng đang định hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The customer is planning to water the plants.",
+        "vi": "Khách hàng đang định tưới cây."
+      },
+      {
+        "en": "The customer is planning to find a job.",
+        "vi": "Khách hàng đang định tìm việc làm."
+      },
+      {
+        "en": "The customer is planning to make new friends.",
+        "vi": "Khách hàng đang định kết bạn mới."
+      },
+      {
+        "en": "The customer is planning to visit my family.",
+        "vi": "Khách hàng đang định thăm gia đình."
+      },
+      {
+        "en": "The customer is planning to call a friend.",
+        "vi": "Khách hàng đang định gọi cho một người bạn."
+      },
+      {
+        "en": "The customer is planning to leave a comment.",
+        "vi": "Khách hàng đang định để lại bình luận."
+      },
+      {
+        "en": "The customer is planning to relax at home.",
+        "vi": "Khách hàng đang định thư giãn ở nhà."
+      },
+      {
+        "en": "The customer is planning to help the team.",
+        "vi": "Khách hàng đang định giúp đỡ nhóm."
+      },
+      {
+        "en": "The customer is planning to do the laundry.",
+        "vi": "Khách hàng đang định giặt đồ."
+      },
+      {
+        "en": "The customer is planning to download the file.",
+        "vi": "Khách hàng đang định tải tệp xuống."
+      },
+      {
+        "en": "The customer is planning to finish the report.",
+        "vi": "Khách hàng đang định hoàn thành báo cáo."
+      },
+      {
+        "en": "The customer is planning to wait a moment.",
+        "vi": "Khách hàng đang định chờ một chút."
+      },
+      {
+        "en": "The customer is planning to change the plan.",
+        "vi": "Khách hàng đang định thay đổi kế hoạch."
+      },
+      {
+        "en": "The customer is planning to pack my bags.",
+        "vi": "Khách hàng đang định xếp hành lý."
+      },
+      {
+        "en": "The customer is planning to pass the exam.",
+        "vi": "Khách hàng đang định đậu kỳ thi."
+      },
+      {
+        "en": "The customer is planning to take the exam.",
+        "vi": "Khách hàng đang định làm bài thi."
+      },
+      {
+        "en": "The customer is planning to read the news.",
+        "vi": "Khách hàng đang định đọc tin tức."
+      },
+      {
+        "en": "The customer is planning to keep a diary.",
+        "vi": "Khách hàng đang định viết nhật ký."
+      },
+      {
+        "en": "The customer is planning to listen carefully.",
+        "vi": "Khách hàng đang định lắng nghe cẩn thận."
+      },
+      {
+        "en": "The customer is planning to help a neighbor.",
+        "vi": "Khách hàng đang định giúp một người hàng xóm."
+      },
+      {
+        "en": "The customer is planning to clean the house.",
+        "vi": "Khách hàng đang định dọn nhà."
+      },
+      {
+        "en": "The customer is planning to follow the rules.",
+        "vi": "Khách hàng đang định tuân theo quy tắc."
+      },
+      {
+        "en": "The customer is planning to move forward.",
+        "vi": "Khách hàng đang định tiến về phía trước."
+      },
+      {
+        "en": "The customer is planning to solve this issue.",
+        "vi": "Khách hàng đang định giải quyết vấn đề này."
+      },
+      { "en": "The customer is planning to rent a car.", "vi": "Khách hàng đang định thuê xe." },
+      {
+        "en": "The customer is planning to get some rest.",
+        "vi": "Khách hàng đang định nghỉ ngơi một chút."
+      },
+      {
+        "en": "The customer is planning to raise the price.",
+        "vi": "Khách hàng đang định tăng giá."
+      },
+      {
+        "en": "The customer is planning to reach the goal.",
+        "vi": "Khách hàng đang định đạt mục tiêu."
+      },
+      {
+        "en": "The customer is planning to volunteer on weekends.",
+        "vi": "Khách hàng đang định tình nguyện cuối tuần."
+      },
+      {
+        "en": "The customer is planning to listen to music.",
+        "vi": "Khách hàng đang định nghe nhạc."
+      },
+      {
+        "en": "The customer is planning to pay the bill.",
+        "vi": "Khách hàng đang định thanh toán hóa đơn."
+      },
+      {
+        "en": "The customer is planning to share my opinion.",
+        "vi": "Khách hàng đang định chia sẻ ý kiến."
+      },
+      {
+        "en": "The customer is planning to stay focused.",
+        "vi": "Khách hàng đang định giữ tập trung."
+      },
+      {
+        "en": "The customer is planning to manage the schedule.",
+        "vi": "Khách hàng đang định quản lý lịch trình."
+      },
+      {
+        "en": "The customer is planning to invest wisely.",
+        "vi": "Khách hàng đang định đầu tư khôn ngoan."
+      },
+      {
+        "en": "The customer is planning to pay off the loan.",
+        "vi": "Khách hàng đang định trả hết khoản vay."
+      },
+      { "en": "The customer is planning to try again.", "vi": "Khách hàng đang định thử lại." },
+      {
+        "en": "The customer is planning to join a club.",
+        "vi": "Khách hàng đang định tham gia câu lạc bộ."
+      },
+      {
+        "en": "The customer is planning to submit the form.",
+        "vi": "Khách hàng đang định nộp biểu mẫu."
+      },
+      {
+        "en": "The customer is planning to speak English.",
+        "vi": "Khách hàng đang định nói tiếng Anh."
+      },
+      {
+        "en": "The customer is planning to plan a trip.",
+        "vi": "Khách hàng đang định lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "The customer is planning to update the software.",
+        "vi": "Khách hàng đang định cập nhật phần mềm."
+      },
+      {
+        "en": "The customer is planning to travel abroad.",
+        "vi": "Khách hàng đang định đi du lịch nước ngoài."
+      },
+      {
+        "en": "The customer is planning to copy the link.",
+        "vi": "Khách hàng đang định sao chép liên kết."
+      },
+      {
+        "en": "The customer is planning to install the app.",
+        "vi": "Khách hàng đang định cài đặt ứng dụng."
+      },
+      {
+        "en": "The customer is planning to learn something new.",
+        "vi": "Khách hàng đang định học điều gì đó mới."
+      },
+      { "en": "The customer is planning to study abroad.", "vi": "Khách hàng đang định du học." },
+      {
+        "en": "The customer is planning to take a break.",
+        "vi": "Khách hàng đang định nghỉ giải lao."
+      },
+      {
+        "en": "The customer is planning to walk the dog.",
+        "vi": "Khách hàng đang định dắt chó đi dạo."
+      },
+      {
+        "en": "The customer is planning to reset the password.",
+        "vi": "Khách hàng đang định đặt lại mật khẩu."
+      },
+      {
+        "en": "The customer is planning to throw a party.",
+        "vi": "Khách hàng đang định tổ chức tiệc."
+      },
+      { "en": "The customer is planning to order food.", "vi": "Khách hàng đang định gọi đồ ăn." },
+      { "en": "The customer is planning to help out.", "vi": "Khách hàng đang định giúp đỡ." },
+      {
+        "en": "The customer is planning to understand the lesson.",
+        "vi": "Khách hàng đang định hiểu bài học."
+      }
+    ]
+  },
+  {
+    "starter": "The customer used to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The customer used to meet new people.", "vi": "Khách hàng từng gặp gỡ người mới." },
+      {
+        "en": "The customer used to talk to the manager.",
+        "vi": "Khách hàng từng nói chuyện với quản lý."
+      },
+      { "en": "The customer used to give feedback.", "vi": "Khách hàng từng góp ý." },
+      { "en": "The customer used to say sorry.", "vi": "Khách hàng từng nói lời xin lỗi." },
+      { "en": "The customer used to calm down.", "vi": "Khách hàng từng bình tĩnh lại." },
+      {
+        "en": "The customer used to open a business.",
+        "vi": "Khách hàng từng mở một doanh nghiệp."
+      },
+      { "en": "The customer used to study abroad.", "vi": "Khách hàng từng du học." },
+      { "en": "The customer used to take the exam.", "vi": "Khách hàng từng làm bài thi." },
+      { "en": "The customer used to get some rest.", "vi": "Khách hàng từng nghỉ ngơi một chút." },
+      { "en": "The customer used to wait a moment.", "vi": "Khách hàng từng chờ một chút." },
+      { "en": "The customer used to work as a team.", "vi": "Khách hàng từng làm việc theo nhóm." },
+      { "en": "The customer used to keep a promise.", "vi": "Khách hàng từng giữ lời hứa." },
+      { "en": "The customer used to arrive on time.", "vi": "Khách hàng từng đến đúng giờ." },
+      {
+        "en": "The customer used to answer the phone.",
+        "vi": "Khách hàng từng trả lời điện thoại."
+      },
+      { "en": "The customer used to fix the problem.", "vi": "Khách hàng từng sửa vấn đề." },
+      { "en": "The customer used to take notes.", "vi": "Khách hàng từng ghi chép." },
+      { "en": "The customer used to copy the link.", "vi": "Khách hàng từng sao chép liên kết." },
+      { "en": "The customer used to turn off the light.", "vi": "Khách hàng từng tắt đèn." },
+      { "en": "The customer used to make a reservation.", "vi": "Khách hàng từng đặt chỗ trước." },
+      { "en": "The customer used to think positive.", "vi": "Khách hàng từng suy nghĩ tích cực." },
+      { "en": "The customer used to sign up today.", "vi": "Khách hàng từng đăng ký hôm nay." },
+      {
+        "en": "The customer used to follow the rules.",
+        "vi": "Khách hàng từng tuân theo quy tắc."
+      },
+      {
+        "en": "The customer used to prepare the presentation.",
+        "vi": "Khách hàng từng chuẩn bị bài thuyết trình."
+      },
+      { "en": "The customer used to speak clearly.", "vi": "Khách hàng từng nói rõ ràng." },
+      {
+        "en": "The customer used to confirm the booking.",
+        "vi": "Khách hàng từng xác nhận đặt chỗ."
+      },
+      {
+        "en": "The customer used to exercise every day.",
+        "vi": "Khách hàng từng tập thể dục mỗi ngày."
+      },
+      { "en": "The customer used to save money.", "vi": "Khách hàng từng tiết kiệm tiền." },
+      { "en": "The customer used to report the bug.", "vi": "Khách hàng từng báo lỗi." },
+      { "en": "The customer used to breathe deeply.", "vi": "Khách hàng từng hít thở sâu." },
+      { "en": "The customer used to play sports.", "vi": "Khách hàng từng chơi thể thao." },
+      { "en": "The customer used to lose weight.", "vi": "Khách hàng từng giảm cân." },
+      { "en": "The customer used to change careers.", "vi": "Khách hàng từng chuyển nghề." },
+      {
+        "en": "The customer used to solve this issue.",
+        "vi": "Khách hàng từng giải quyết vấn đề này."
+      },
+      { "en": "The customer used to rent a car.", "vi": "Khách hàng từng thuê xe." },
+      {
+        "en": "The customer used to enjoy the weekend.",
+        "vi": "Khách hàng từng tận hưởng cuối tuần."
+      },
+      {
+        "en": "The customer used to reply to the message.",
+        "vi": "Khách hàng từng trả lời tin nhắn."
+      },
+      { "en": "The customer used to cook breakfast.", "vi": "Khách hàng từng nấu bữa sáng." },
+      {
+        "en": "The customer used to plan a trip.",
+        "vi": "Khách hàng từng lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "The customer used to buy a new phone.",
+        "vi": "Khách hàng từng mua điện thoại mới."
+      },
+      { "en": "The customer used to leave early.", "vi": "Khách hàng từng về sớm." },
+      {
+        "en": "The customer used to never give up.",
+        "vi": "Khách hàng từng không bao giờ bỏ cuộc."
+      },
+      { "en": "The customer used to take it easy.", "vi": "Khách hàng từng thư giãn." },
+      {
+        "en": "The customer used to restart the computer.",
+        "vi": "Khách hàng từng khởi động lại máy tính."
+      },
+      { "en": "The customer used to share my opinion.", "vi": "Khách hàng từng chia sẻ ý kiến." },
+      { "en": "The customer used to pack my bags.", "vi": "Khách hàng từng xếp hành lý." },
+      { "en": "The customer used to throw a party.", "vi": "Khách hàng từng tổ chức tiệc." },
+      { "en": "The customer used to say goodbye.", "vi": "Khách hàng từng nói lời tạm biệt." },
+      {
+        "en": "The customer used to support each other.",
+        "vi": "Khách hàng từng hỗ trợ lẫn nhau."
+      },
+      { "en": "The customer used to give it a try.", "vi": "Khách hàng từng thử một lần." },
+      { "en": "The customer used to be on time.", "vi": "Khách hàng từng đến đúng giờ." },
+      { "en": "The customer used to order food.", "vi": "Khách hàng từng gọi đồ ăn." },
+      {
+        "en": "The customer used to test the feature.",
+        "vi": "Khách hàng từng kiểm thử tính năng."
+      },
+      { "en": "The customer used to back up the data.", "vi": "Khách hàng từng sao lưu dữ liệu." },
+      {
+        "en": "The customer used to reset the password.",
+        "vi": "Khách hàng từng đặt lại mật khẩu."
+      },
+      { "en": "The customer used to download the file.", "vi": "Khách hàng từng tải tệp xuống." },
+      { "en": "The customer used to make tea.", "vi": "Khách hàng từng pha trà." },
+      { "en": "The customer used to lower the cost.", "vi": "Khách hàng từng giảm chi phí." },
+      {
+        "en": "The customer used to remember the password.",
+        "vi": "Khách hàng từng nhớ mật khẩu."
+      },
+      { "en": "The customer used to visit my family.", "vi": "Khách hàng từng thăm gia đình." },
+      { "en": "The customer used to cheer for the team.", "vi": "Khách hàng từng cổ vũ cho đội." },
+      { "en": "The customer used to sleep early.", "vi": "Khách hàng từng ngủ sớm." },
+      { "en": "The customer used to raise the price.", "vi": "Khách hàng từng tăng giá." },
+      { "en": "The customer used to wake up early.", "vi": "Khách hàng từng dậy sớm." },
+      {
+        "en": "The customer used to pay off the loan.",
+        "vi": "Khách hàng từng trả hết khoản vay."
+      },
+      {
+        "en": "The customer used to check the details.",
+        "vi": "Khách hàng từng kiểm tra chi tiết."
+      },
+      { "en": "The customer used to submit the form.", "vi": "Khách hàng từng nộp biểu mẫu." },
+      { "en": "The customer used to cut the budget.", "vi": "Khách hàng từng cắt giảm ngân sách." },
+      { "en": "The customer used to delete the file.", "vi": "Khách hàng từng xóa tệp." },
+      {
+        "en": "The customer used to understand the lesson.",
+        "vi": "Khách hàng từng hiểu bài học."
+      },
+      { "en": "The customer used to do the laundry.", "vi": "Khách hàng từng giặt đồ." },
+      { "en": "The customer used to ask more questions.", "vi": "Khách hàng từng hỏi nhiều hơn." },
+      {
+        "en": "The customer used to review the document.",
+        "vi": "Khách hàng từng xem lại tài liệu."
+      },
+      {
+        "en": "The customer used to double-check everything.",
+        "vi": "Khách hàng từng kiểm tra lại mọi thứ."
+      },
+      { "en": "The customer used to train the team.", "vi": "Khách hàng từng đào tạo nhóm." },
+      { "en": "The customer used to relax at home.", "vi": "Khách hàng từng thư giãn ở nhà." },
+      {
+        "en": "The customer used to register for the course.",
+        "vi": "Khách hàng từng đăng ký khóa học."
+      },
+      {
+        "en": "The customer used to hire new staff.",
+        "vi": "Khách hàng từng tuyển nhân viên mới."
+      },
+      { "en": "The customer used to take medicine.", "vi": "Khách hàng từng uống thuốc." },
+      { "en": "The customer used to print the document.", "vi": "Khách hàng từng in tài liệu." },
+      { "en": "The customer used to set an alarm.", "vi": "Khách hàng từng đặt báo thức." },
+      { "en": "The customer used to close the window.", "vi": "Khách hàng từng đóng cửa sổ." },
+      { "en": "The customer used to quit smoking.", "vi": "Khách hàng từng bỏ thuốc lá." },
+      {
+        "en": "The customer used to update the software.",
+        "vi": "Khách hàng từng cập nhật phần mềm."
+      },
+      { "en": "The customer used to find a job.", "vi": "Khách hàng từng tìm việc làm." },
+      { "en": "The customer used to set a goal.", "vi": "Khách hàng từng đặt một mục tiêu." },
+      {
+        "en": "The customer used to manage the schedule.",
+        "vi": "Khách hàng từng quản lý lịch trình."
+      },
+      {
+        "en": "The customer used to launch the product.",
+        "vi": "Khách hàng từng ra mắt sản phẩm."
+      },
+      { "en": "The customer used to lead the project.", "vi": "Khách hàng từng dẫn dắt dự án." },
+      { "en": "The customer used to book a ticket.", "vi": "Khách hàng từng đặt vé." },
+      { "en": "The customer used to call back later.", "vi": "Khách hàng từng gọi lại sau." },
+      { "en": "The customer used to think it over.", "vi": "Khách hàng từng suy nghĩ kỹ." },
+      {
+        "en": "The customer used to volunteer on weekends.",
+        "vi": "Khách hàng từng tình nguyện cuối tuần."
+      },
+      { "en": "The customer used to speak English.", "vi": "Khách hàng từng nói tiếng Anh." },
+      { "en": "The customer used to scan the receipt.", "vi": "Khách hàng từng quét hóa đơn." },
+      {
+        "en": "The customer used to negotiate the terms.",
+        "vi": "Khách hàng từng thương lượng điều khoản."
+      },
+      { "en": "The customer used to leave a comment.", "vi": "Khách hàng từng để lại bình luận." },
+      { "en": "The customer used to meditate daily.", "vi": "Khách hàng từng thiền mỗi ngày." },
+      {
+        "en": "The customer used to start a new project.",
+        "vi": "Khách hàng từng bắt đầu một dự án mới."
+      },
+      { "en": "The customer used to watch a movie.", "vi": "Khách hàng từng xem phim." },
+      { "en": "The customer used to go for a walk.", "vi": "Khách hàng từng đi dạo." }
+    ]
+  },
+  {
+    "starter": "The customer doesn't",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The customer doesn't double-check the numbers.",
+        "vi": "Khách hàng không kiểm tra lại các con số."
+      },
+      { "en": "The customer doesn't change careers.", "vi": "Khách hàng không chuyển nghề." },
+      { "en": "The customer doesn't train the team.", "vi": "Khách hàng không đào tạo nhóm." },
+      { "en": "The customer doesn't stay home.", "vi": "Khách hàng không ở nhà." },
+      { "en": "The customer doesn't tell the truth.", "vi": "Khách hàng không nói sự thật." },
+      {
+        "en": "The customer doesn't try harder next time.",
+        "vi": "Khách hàng không cố gắng hơn lần sau."
+      },
+      { "en": "The customer doesn't book a ticket.", "vi": "Khách hàng không đặt vé." },
+      { "en": "The customer doesn't cheer for the team.", "vi": "Khách hàng không cổ vũ cho đội." },
+      { "en": "The customer doesn't offer support.", "vi": "Khách hàng không đề nghị hỗ trợ." },
+      { "en": "The customer doesn't make new friends.", "vi": "Khách hàng không kết bạn mới." },
+      { "en": "The customer doesn't leave early.", "vi": "Khách hàng không về sớm." },
+      { "en": "The customer doesn't study abroad.", "vi": "Khách hàng không du học." },
+      { "en": "The customer doesn't write a report.", "vi": "Khách hàng không viết một báo cáo." },
+      { "en": "The customer doesn't think it over.", "vi": "Khách hàng không suy nghĩ kỹ." },
+      { "en": "The customer doesn't get a promotion.", "vi": "Khách hàng không được thăng chức." },
+      {
+        "en": "The customer doesn't listen carefully.",
+        "vi": "Khách hàng không lắng nghe cẩn thận."
+      },
+      {
+        "en": "The customer doesn't schedule a meeting.",
+        "vi": "Khách hàng không sắp xếp cuộc họp."
+      },
+      { "en": "The customer doesn't share the post.", "vi": "Khách hàng không chia sẻ bài viết." },
+      { "en": "The customer doesn't call back later.", "vi": "Khách hàng không gọi lại sau." },
+      {
+        "en": "The customer doesn't confirm the booking.",
+        "vi": "Khách hàng không xác nhận đặt chỗ."
+      },
+      {
+        "en": "The customer doesn't check the details.",
+        "vi": "Khách hàng không kiểm tra chi tiết."
+      },
+      { "en": "The customer doesn't throw a party.", "vi": "Khách hàng không tổ chức tiệc." },
+      { "en": "The customer doesn't stay organized.", "vi": "Khách hàng không giữ ngăn nắp." },
+      { "en": "The customer doesn't sign up today.", "vi": "Khách hàng không đăng ký hôm nay." },
+      {
+        "en": "The customer doesn't practice every day.",
+        "vi": "Khách hàng không luyện tập mỗi ngày."
+      },
+      {
+        "en": "The customer doesn't never give up.",
+        "vi": "Khách hàng không không bao giờ bỏ cuộc."
+      },
+      { "en": "The customer doesn't report the bug.", "vi": "Khách hàng không báo lỗi." },
+      { "en": "The customer doesn't make a reservation.", "vi": "Khách hàng không đặt chỗ trước." },
+      { "en": "The customer doesn't wake up early.", "vi": "Khách hàng không dậy sớm." },
+      { "en": "The customer doesn't buy groceries.", "vi": "Khách hàng không mua thực phẩm." },
+      {
+        "en": "The customer doesn't negotiate the terms.",
+        "vi": "Khách hàng không thương lượng điều khoản."
+      },
+      {
+        "en": "The customer doesn't learn something new.",
+        "vi": "Khách hàng không học điều gì đó mới."
+      },
+      { "en": "The customer doesn't water the plants.", "vi": "Khách hàng không tưới cây." },
+      {
+        "en": "The customer doesn't work harder.",
+        "vi": "Khách hàng không làm việc chăm chỉ hơn."
+      },
+      { "en": "The customer doesn't lock the door.", "vi": "Khách hàng không khóa cửa." },
+      {
+        "en": "The customer doesn't manage the schedule.",
+        "vi": "Khách hàng không quản lý lịch trình."
+      },
+      {
+        "en": "The customer doesn't hire new staff.",
+        "vi": "Khách hàng không tuyển nhân viên mới."
+      },
+      { "en": "The customer doesn't watch the game.", "vi": "Khách hàng không xem trận đấu." },
+      {
+        "en": "The customer doesn't support each other.",
+        "vi": "Khách hàng không hỗ trợ lẫn nhau."
+      },
+      { "en": "The customer doesn't take a chance.", "vi": "Khách hàng không nắm lấy cơ hội." },
+      { "en": "The customer doesn't scan the receipt.", "vi": "Khách hàng không quét hóa đơn." },
+      {
+        "en": "The customer doesn't take a course.",
+        "vi": "Khách hàng không tham gia một khóa học."
+      },
+      { "en": "The customer doesn't move forward.", "vi": "Khách hàng không tiến về phía trước." },
+      { "en": "The customer doesn't split the bill.", "vi": "Khách hàng không chia hóa đơn." },
+      { "en": "The customer doesn't take a break.", "vi": "Khách hàng không nghỉ giải lao." },
+      { "en": "The customer doesn't take notes.", "vi": "Khách hàng không ghi chép." },
+      {
+        "en": "The customer doesn't start a new project.",
+        "vi": "Khách hàng không bắt đầu một dự án mới."
+      },
+      { "en": "The customer doesn't take the bus.", "vi": "Khách hàng không đi xe buýt." },
+      { "en": "The customer doesn't keep learning.", "vi": "Khách hàng không tiếp tục học hỏi." },
+      {
+        "en": "The customer doesn't test the feature.",
+        "vi": "Khách hàng không kiểm thử tính năng."
+      },
+      {
+        "en": "The customer doesn't make a decision.",
+        "vi": "Khách hàng không đưa ra quyết định."
+      },
+      { "en": "The customer doesn't clean the house.", "vi": "Khách hàng không dọn nhà." },
+      { "en": "The customer doesn't help out.", "vi": "Khách hàng không giúp đỡ." },
+      {
+        "en": "The customer doesn't double-check everything.",
+        "vi": "Khách hàng không kiểm tra lại mọi thứ."
+      },
+      { "en": "The customer doesn't thank everyone.", "vi": "Khách hàng không cảm ơn mọi người." },
+      { "en": "The customer doesn't be on time.", "vi": "Khách hàng không đến đúng giờ." },
+      { "en": "The customer doesn't delete the file.", "vi": "Khách hàng không xóa tệp." },
+      {
+        "en": "The customer doesn't attend the workshop.",
+        "vi": "Khách hàng không tham dự buổi hội thảo."
+      },
+      { "en": "The customer doesn't send the email.", "vi": "Khách hàng không gửi email." },
+      { "en": "The customer doesn't go for a walk.", "vi": "Khách hàng không đi dạo." },
+      { "en": "The customer doesn't stay focused.", "vi": "Khách hàng không giữ tập trung." },
+      {
+        "en": "The customer doesn't donate to charity.",
+        "vi": "Khách hàng không quyên góp từ thiện."
+      },
+      { "en": "The customer doesn't meet new people.", "vi": "Khách hàng không gặp gỡ người mới." },
+      { "en": "The customer doesn't make tea.", "vi": "Khách hàng không pha trà." },
+      {
+        "en": "The customer doesn't restart the computer.",
+        "vi": "Khách hàng không khởi động lại máy tính."
+      },
+      { "en": "The customer doesn't pay the bill.", "vi": "Khách hàng không thanh toán hóa đơn." },
+      { "en": "The customer doesn't take a photo.", "vi": "Khách hàng không chụp một bức ảnh." },
+      { "en": "The customer doesn't think positive.", "vi": "Khách hàng không suy nghĩ tích cực." },
+      { "en": "The customer doesn't arrive on time.", "vi": "Khách hàng không đến đúng giờ." },
+      {
+        "en": "The customer doesn't finish on time.",
+        "vi": "Khách hàng không hoàn thành đúng hạn."
+      },
+      {
+        "en": "The customer doesn't change the plan.",
+        "vi": "Khách hàng không thay đổi kế hoạch."
+      },
+      { "en": "The customer doesn't play sports.", "vi": "Khách hàng không chơi thể thao." },
+      { "en": "The customer doesn't eat healthy.", "vi": "Khách hàng không ăn uống lành mạnh." },
+      {
+        "en": "The customer doesn't drink less coffee.",
+        "vi": "Khách hàng không uống ít cà phê hơn."
+      },
+      {
+        "en": "The customer doesn't plan a trip.",
+        "vi": "Khách hàng không lên kế hoạch một chuyến đi."
+      },
+      { "en": "The customer doesn't take the exam.", "vi": "Khách hàng không làm bài thi." },
+      {
+        "en": "The customer doesn't answer the phone.",
+        "vi": "Khách hàng không trả lời điện thoại."
+      },
+      { "en": "The customer doesn't charge the phone.", "vi": "Khách hàng không sạc điện thoại." },
+      { "en": "The customer doesn't wait a moment.", "vi": "Khách hàng không chờ một chút." },
+      { "en": "The customer doesn't breathe deeply.", "vi": "Khách hàng không hít thở sâu." },
+      { "en": "The customer doesn't learn to swim.", "vi": "Khách hàng không học bơi." },
+      { "en": "The customer doesn't quit smoking.", "vi": "Khách hàng không bỏ thuốc lá." },
+      { "en": "The customer doesn't plan ahead.", "vi": "Khách hàng không lên kế hoạch trước." },
+      { "en": "The customer doesn't give it a try.", "vi": "Khách hàng không thử một lần." },
+      { "en": "The customer doesn't lower the cost.", "vi": "Khách hàng không giảm chi phí." },
+      {
+        "en": "The customer doesn't talk to the manager.",
+        "vi": "Khách hàng không nói chuyện với quản lý."
+      },
+      { "en": "The customer doesn't watch a movie.", "vi": "Khách hàng không xem phim." },
+      { "en": "The customer doesn't go home.", "vi": "Khách hàng không về nhà." },
+      {
+        "en": "The customer doesn't solve this issue.",
+        "vi": "Khách hàng không giải quyết vấn đề này."
+      },
+      { "en": "The customer doesn't go on vacation.", "vi": "Khách hàng không đi nghỉ mát." },
+      { "en": "The customer doesn't leave a comment.", "vi": "Khách hàng không để lại bình luận." },
+      { "en": "The customer doesn't book a hotel.", "vi": "Khách hàng không đặt khách sạn." },
+      {
+        "en": "The customer doesn't register for the course.",
+        "vi": "Khách hàng không đăng ký khóa học."
+      },
+      {
+        "en": "The customer doesn't work as a team.",
+        "vi": "Khách hàng không làm việc theo nhóm."
+      },
+      { "en": "The customer doesn't relax at home.", "vi": "Khách hàng không thư giãn ở nhà." },
+      {
+        "en": "The customer doesn't review the document.",
+        "vi": "Khách hàng không xem lại tài liệu."
+      },
+      { "en": "The customer doesn't write it down.", "vi": "Khách hàng không ghi nó lại." },
+      { "en": "The customer doesn't listen to music.", "vi": "Khách hàng không nghe nhạc." },
+      { "en": "The customer doesn't cook breakfast.", "vi": "Khách hàng không nấu bữa sáng." },
+      { "en": "The customer doesn't win the contract.", "vi": "Khách hàng không giành hợp đồng." }
+    ]
+  },
+  {
+    "starter": "The customer didn't",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The customer didn't stay organized.", "vi": "Khách hàng đã không giữ ngăn nắp." },
+      {
+        "en": "The customer didn't charge the phone.",
+        "vi": "Khách hàng đã không sạc điện thoại."
+      },
+      { "en": "The customer didn't send the email.", "vi": "Khách hàng đã không gửi email." },
+      {
+        "en": "The customer didn't cook for everyone.",
+        "vi": "Khách hàng đã không nấu ăn cho mọi người."
+      },
+      { "en": "The customer didn't catch the train.", "vi": "Khách hàng đã không bắt chuyến tàu." },
+      { "en": "The customer didn't get a degree.", "vi": "Khách hàng đã không lấy bằng." },
+      {
+        "en": "The customer didn't install the app.",
+        "vi": "Khách hàng đã không cài đặt ứng dụng."
+      },
+      {
+        "en": "The customer didn't change the plan.",
+        "vi": "Khách hàng đã không thay đổi kế hoạch."
+      },
+      { "en": "The customer didn't meet the deadline.", "vi": "Khách hàng đã không kịp thời hạn." },
+      { "en": "The customer didn't ask for a raise.", "vi": "Khách hàng đã không xin tăng lương." },
+      { "en": "The customer didn't cook dinner.", "vi": "Khách hàng đã không nấu bữa tối." },
+      {
+        "en": "The customer didn't solve this issue.",
+        "vi": "Khách hàng đã không giải quyết vấn đề này."
+      },
+      {
+        "en": "The customer didn't start a new project.",
+        "vi": "Khách hàng đã không bắt đầu một dự án mới."
+      },
+      {
+        "en": "The customer didn't pay the bill.",
+        "vi": "Khách hàng đã không thanh toán hóa đơn."
+      },
+      { "en": "The customer didn't quit smoking.", "vi": "Khách hàng đã không bỏ thuốc lá." },
+      {
+        "en": "The customer didn't back up the data.",
+        "vi": "Khách hàng đã không sao lưu dữ liệu."
+      },
+      {
+        "en": "The customer didn't learn something new.",
+        "vi": "Khách hàng đã không học điều gì đó mới."
+      },
+      { "en": "The customer didn't scan the receipt.", "vi": "Khách hàng đã không quét hóa đơn." },
+      { "en": "The customer didn't keep a promise.", "vi": "Khách hàng đã không giữ lời hứa." },
+      { "en": "The customer didn't call back later.", "vi": "Khách hàng đã không gọi lại sau." },
+      { "en": "The customer didn't take a photo.", "vi": "Khách hàng đã không chụp một bức ảnh." },
+      {
+        "en": "The customer didn't register for the course.",
+        "vi": "Khách hàng đã không đăng ký khóa học."
+      },
+      {
+        "en": "The customer didn't invest wisely.",
+        "vi": "Khách hàng đã không đầu tư khôn ngoan."
+      },
+      {
+        "en": "The customer didn't take a course.",
+        "vi": "Khách hàng đã không tham gia một khóa học."
+      },
+      { "en": "The customer didn't speak clearly.", "vi": "Khách hàng đã không nói rõ ràng." },
+      {
+        "en": "The customer didn't drink less coffee.",
+        "vi": "Khách hàng đã không uống ít cà phê hơn."
+      },
+      { "en": "The customer didn't sign the contract.", "vi": "Khách hàng đã không ký hợp đồng." },
+      { "en": "The customer didn't make new friends.", "vi": "Khách hàng đã không kết bạn mới." },
+      {
+        "en": "The customer didn't visit the doctor.",
+        "vi": "Khách hàng đã không đi khám bác sĩ."
+      },
+      {
+        "en": "The customer didn't drink more water.",
+        "vi": "Khách hàng đã không uống nhiều nước hơn."
+      },
+      { "en": "The customer didn't raise the price.", "vi": "Khách hàng đã không tăng giá." },
+      {
+        "en": "The customer didn't restart the computer.",
+        "vi": "Khách hàng đã không khởi động lại máy tính."
+      },
+      {
+        "en": "The customer didn't exercise every day.",
+        "vi": "Khách hàng đã không tập thể dục mỗi ngày."
+      },
+      { "en": "The customer didn't miss the flight.", "vi": "Khách hàng đã không lỡ chuyến bay." },
+      { "en": "The customer didn't speak English.", "vi": "Khách hàng đã không nói tiếng Anh." },
+      { "en": "The customer didn't pass the exam.", "vi": "Khách hàng đã không đậu kỳ thi." },
+      {
+        "en": "The customer didn't prepare the presentation.",
+        "vi": "Khách hàng đã không chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The customer didn't move forward.",
+        "vi": "Khách hàng đã không tiến về phía trước."
+      },
+      {
+        "en": "The customer didn't win the contract.",
+        "vi": "Khách hàng đã không giành hợp đồng."
+      },
+      { "en": "The customer didn't read the news.", "vi": "Khách hàng đã không đọc tin tức." },
+      { "en": "The customer didn't wash the dishes.", "vi": "Khách hàng đã không rửa bát." },
+      { "en": "The customer didn't make tea.", "vi": "Khách hàng đã không pha trà." },
+      {
+        "en": "The customer didn't open a business.",
+        "vi": "Khách hàng đã không mở một doanh nghiệp."
+      },
+      {
+        "en": "The customer didn't share my opinion.",
+        "vi": "Khách hàng đã không chia sẻ ý kiến."
+      },
+      { "en": "The customer didn't stay up late.", "vi": "Khách hàng đã không thức khuya." },
+      {
+        "en": "The customer didn't ask more questions.",
+        "vi": "Khách hàng đã không hỏi nhiều hơn."
+      },
+      { "en": "The customer didn't start over.", "vi": "Khách hàng đã không bắt đầu lại." },
+      { "en": "The customer didn't try again.", "vi": "Khách hàng đã không thử lại." },
+      {
+        "en": "The customer didn't answer the phone.",
+        "vi": "Khách hàng đã không trả lời điện thoại."
+      },
+      {
+        "en": "The customer didn't cut the budget.",
+        "vi": "Khách hàng đã không cắt giảm ngân sách."
+      },
+      { "en": "The customer didn't ask a question.", "vi": "Khách hàng đã không hỏi một câu." },
+      {
+        "en": "The customer didn't reset the password.",
+        "vi": "Khách hàng đã không đặt lại mật khẩu."
+      },
+      {
+        "en": "The customer didn't check the details.",
+        "vi": "Khách hàng đã không kiểm tra chi tiết."
+      },
+      { "en": "The customer didn't ride a bike.", "vi": "Khách hàng đã không đạp xe." },
+      { "en": "The customer didn't water the plants.", "vi": "Khách hàng đã không tưới cây." },
+      { "en": "The customer didn't order food.", "vi": "Khách hàng đã không gọi đồ ăn." },
+      { "en": "The customer didn't play sports.", "vi": "Khách hàng đã không chơi thể thao." },
+      { "en": "The customer didn't wait a moment.", "vi": "Khách hàng đã không chờ một chút." },
+      {
+        "en": "The customer didn't reply to the message.",
+        "vi": "Khách hàng đã không trả lời tin nhắn."
+      },
+      {
+        "en": "The customer didn't try harder next time.",
+        "vi": "Khách hàng đã không cố gắng hơn lần sau."
+      },
+      {
+        "en": "The customer didn't improve my skills.",
+        "vi": "Khách hàng đã không cải thiện kỹ năng."
+      },
+      { "en": "The customer didn't study abroad.", "vi": "Khách hàng đã không du học." },
+      { "en": "The customer didn't pack my bags.", "vi": "Khách hàng đã không xếp hành lý." },
+      { "en": "The customer didn't go for a walk.", "vi": "Khách hàng đã không đi dạo." },
+      { "en": "The customer didn't wake up early.", "vi": "Khách hàng đã không dậy sớm." },
+      {
+        "en": "The customer didn't test the feature.",
+        "vi": "Khách hàng đã không kiểm thử tính năng."
+      },
+      {
+        "en": "The customer didn't follow the rules.",
+        "vi": "Khách hàng đã không tuân theo quy tắc."
+      },
+      { "en": "The customer didn't set an alarm.", "vi": "Khách hàng đã không đặt báo thức." },
+      {
+        "en": "The customer didn't copy the link.",
+        "vi": "Khách hàng đã không sao chép liên kết."
+      },
+      {
+        "en": "The customer didn't attend the class.",
+        "vi": "Khách hàng đã không tham gia lớp học."
+      },
+      { "en": "The customer didn't go home.", "vi": "Khách hàng đã không về nhà." },
+      {
+        "en": "The customer didn't support each other.",
+        "vi": "Khách hàng đã không hỗ trợ lẫn nhau."
+      },
+      { "en": "The customer didn't help the team.", "vi": "Khách hàng đã không giúp đỡ nhóm." },
+      { "en": "The customer didn't learn English.", "vi": "Khách hàng đã không học tiếng Anh." },
+      {
+        "en": "The customer didn't think positive.",
+        "vi": "Khách hàng đã không suy nghĩ tích cực."
+      },
+      { "en": "The customer didn't take notes.", "vi": "Khách hàng đã không ghi chép." },
+      { "en": "The customer didn't close the window.", "vi": "Khách hàng đã không đóng cửa sổ." },
+      {
+        "en": "The customer didn't buy a new phone.",
+        "vi": "Khách hàng đã không mua điện thoại mới."
+      },
+      { "en": "The customer didn't breathe deeply.", "vi": "Khách hàng đã không hít thở sâu." },
+      { "en": "The customer didn't turn off the light.", "vi": "Khách hàng đã không tắt đèn." },
+      { "en": "The customer didn't stay focused.", "vi": "Khách hàng đã không giữ tập trung." },
+      {
+        "en": "The customer didn't work harder.",
+        "vi": "Khách hàng đã không làm việc chăm chỉ hơn."
+      },
+      { "en": "The customer didn't take a break.", "vi": "Khách hàng đã không nghỉ giải lao." },
+      { "en": "The customer didn't relax at home.", "vi": "Khách hàng đã không thư giãn ở nhà." },
+      { "en": "The customer didn't save money.", "vi": "Khách hàng đã không tiết kiệm tiền." },
+      { "en": "The customer didn't walk the dog.", "vi": "Khách hàng đã không dắt chó đi dạo." },
+      {
+        "en": "The customer didn't finish the report.",
+        "vi": "Khách hàng đã không hoàn thành báo cáo."
+      },
+      { "en": "The customer didn't tell the truth.", "vi": "Khách hàng đã không nói sự thật." },
+      {
+        "en": "The customer didn't work as a team.",
+        "vi": "Khách hàng đã không làm việc theo nhóm."
+      },
+      {
+        "en": "The customer didn't invite some friends.",
+        "vi": "Khách hàng đã không mời vài người bạn."
+      },
+      { "en": "The customer didn't say sorry.", "vi": "Khách hàng đã không nói lời xin lỗi." },
+      { "en": "The customer didn't lose weight.", "vi": "Khách hàng đã không giảm cân." },
+      { "en": "The customer didn't think it over.", "vi": "Khách hàng đã không suy nghĩ kỹ." },
+      {
+        "en": "The customer didn't launch the product.",
+        "vi": "Khách hàng đã không ra mắt sản phẩm."
+      },
+      {
+        "en": "The customer didn't manage the schedule.",
+        "vi": "Khách hàng đã không quản lý lịch trình."
+      },
+      {
+        "en": "The customer didn't write a report.",
+        "vi": "Khách hàng đã không viết một báo cáo."
+      },
+      {
+        "en": "The customer didn't plan a trip.",
+        "vi": "Khách hàng đã không lên kế hoạch một chuyến đi."
+      },
+      { "en": "The customer didn't cook breakfast.", "vi": "Khách hàng đã không nấu bữa sáng." },
+      {
+        "en": "The customer didn't fill out the form.",
+        "vi": "Khách hàng đã không điền vào biểu mẫu."
+      },
+      { "en": "The customer didn't visit my family.", "vi": "Khách hàng đã không thăm gia đình." }
+    ]
+  }
+]

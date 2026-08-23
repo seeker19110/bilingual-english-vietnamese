@@ -1,36 +1,9 @@
 {
-  "compilerOptions": {
-    "target": "ES2022",
-    "useDefineForClassFields": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "skipLibCheck": true,
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    // Alias CHỈ cho src/ (Vite bundle) — xem chú thích trong vite.config.ts. @core/* trỏ THẬT
-    // vào packages/core-ui/ (từ PR-6); @english/* trỏ vào apps/english/src/*.
-    "baseUrl": ".",
-    "paths": {
-      "@core/*": ["packages/core-ui/*"],
-      "@english/*": ["apps/english/src/*"]
-    }
-  },
-  "include": ["apps/english/src", "packages/core-ui"],
-  "exclude": [
-    "apps/english/src/**/*.test.ts",
-    "apps/english/src/**/*.test.tsx",
-    "apps/english/src/**/*.spec.ts",
-    "packages/core-ui/**/*.test.ts",
-    "packages/core-ui/**/*.test.tsx"
-  ],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  // tsconfig.json gốc — từ PR-S2 chỉ còn là "solution file": KHÔNG chứa project nào.
+  // Vẫn extends tsconfig.base.json để tsx (npm start, scripts/) và editor đọc được paths
+  // @dhcb/@core/@english từ gốc repo. Project thật: apps/dhcb/tsconfig.json,
+  // tsconfig.api.json, tsconfig.server.json, tsconfig.e2e.json, packages/*/tsconfig.json.
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "references": [{ "path": "./apps/dhcb" }, { "path": "./tsconfig.node.json" }]
 }

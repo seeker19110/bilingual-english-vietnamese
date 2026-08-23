@@ -19,8 +19,8 @@ import { randomBytes, createHash } from 'node:crypto'
 import bcrypt from 'bcryptjs'
 import { OAuth2Client } from 'google-auth-library'
 import { createRemoteJWKSet, jwtVerify } from 'jose'
-import { getPgPool } from '../core-db/pgPool.js'
-import { resolvePlan, type Plan } from '../core-billing/plan.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import { resolvePlan, type Plan } from '@dhcb/core-billing/plan'
 
 // Xuất ra để packages/core-auth/sessionCookie.ts đặt đúng Max-Age cho cookie — PHẢI khớp
 // thời hạn session thật lưu ở bảng `sessions` (dưới), không lệch cookie sống lâu hơn session.

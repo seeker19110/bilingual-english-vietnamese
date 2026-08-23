@@ -1,7 +1,7 @@
 // api/vision-solve.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import handler from './vision-solve.js'
-import * as security from '../packages/core-auth/security.js'
+import * as security from '@dhcb/core-auth/security'
 
 describe('POST /api/vision-solve', () => {
   beforeEach(() => {

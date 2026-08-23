@@ -45,8 +45,8 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import cliProgress from 'cli-progress'
-import { callGemini } from '../api/_lib/geminiApi.ts'
-import { fetchWithTimeout } from '../api/_lib/fetchTimeout.ts'
+import { callGemini } from '@dhcb/core-ai/geminiApi'
+import { fetchWithTimeout } from '@dhcb/core-http/fetchTimeout'
 import {
   buildCefrTagPrompt,
   parseCefrTagResponse,
@@ -72,7 +72,7 @@ dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
 const BATCH_SIZE = process.env.BATCH_SIZE ? parseInt(process.env.BATCH_SIZE, 10) : 40
 const DICT_DIR = process.env.DICT_DIR
   ? path.resolve(PROJECT_ROOT, process.env.DICT_DIR)
-  : path.join(PROJECT_ROOT, 'public/data/dictionary')
+  : path.join(PROJECT_ROOT, 'apps/dhcb/public/data/dictionary')
 const CEFRJ_DIR = process.env.CEFRJ_DIR
   ? path.resolve(PROJECT_ROOT, process.env.CEFRJ_DIR)
   : path.join(PROJECT_ROOT, 'data/cefrj')

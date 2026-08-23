@@ -7,7 +7,7 @@ import {
   type PvPRoundAction,
   type PvPMatchState,
   type PvPLeaderboardEntry,
-} from '../core-contracts/pvpArena.js'
+} from '@dhcb/core-contracts/pvpArena'
 
 // Bảng câu hỏi mẫu chất lượng cao phân chia theo chế độ đấu
 const QUESTION_BANK: Record<PvPGameMode, PvPQuestionItem[]> = {

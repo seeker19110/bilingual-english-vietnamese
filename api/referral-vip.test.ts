@@ -2,7 +2,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import handler from './referral-vip.js'
 
-vi.mock('../packages/core-auth/security.js', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   validateAuth: vi.fn().mockResolvedValue({ userId: 'u-vip-999' }),
   getCorsHeaders: vi.fn().mockReturnValue({}),
 }))

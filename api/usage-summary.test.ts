@@ -4,7 +4,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
 let rateLimitOk = true
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => rateLimitOk,
@@ -13,17 +13,17 @@ vi.mock('../packages/core-auth/security', () => ({
 }))
 
 const lookupPlanMock = vi.fn()
-vi.mock('../packages/core-billing/usage.js', () => ({
+vi.mock('@dhcb/core-billing/usage', () => ({
   lookupPlan: (userId: string) => lookupPlanMock(userId),
   FREE_WEEKLY_CAP: 70,
   FREE_ROLLING_WINDOW_DAYS: 7,
   DEFAULT_SUBJECT: 'english',
 }))
 
-vi.mock('../packages/core-db/pgPool.js', () => ({ getPgPool: vi.fn() }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 
 import handler from './usage-summary'
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

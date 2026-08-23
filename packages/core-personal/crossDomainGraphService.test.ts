@@ -11,12 +11,12 @@ const mockQuery = vi.fn()
 const pool = { query: mockQuery } as unknown as Pool
 
 const listCareerGoals = vi.fn()
-vi.mock('../core-career/careerService.js', () => ({
+vi.mock('@dhcb/core-career/careerService', () => ({
   listCareerGoals: (...a: unknown[]) => listCareerGoals(...a),
 }))
 
 const getLearningReadModel = vi.fn()
-vi.mock('../core-learner/learningReadModelService.js', () => ({
+vi.mock('@dhcb/core-learner/learningReadModelService', () => ({
   getLearningReadModel: (...a: unknown[]) => getLearningReadModel(...a),
 }))
 

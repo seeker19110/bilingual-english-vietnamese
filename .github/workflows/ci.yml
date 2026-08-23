@@ -41,6 +41,33 @@ jobs:
       - name: Bundle size budget (size-limit)
         run: npm run size
 
+      # Boot check: server đã biên dịch (dist-server, phân giải @dhcb qua dist từng gói —
+      # phương án B project references) phải KHỞI ĐỘNG được thật và trả /api/health 200.
+      # Bắt lỗi phân giải module lúc runtime mà typecheck không thấy (exports/paths lệch).
+      - name: Boot check server đã biên dịch
+        run: |
+          PORT=3199 NODE_ENV=production \
+          DATABASE_URL="postgres://fake:fake@127.0.0.1:5/fake" \
+          TTS_ENCRYPTION_MASTER_KEY="$(head -c32 /dev/zero | base64)" \
+          node dist-server/server.js &
+          SERVER_PID=$!
+          for i in $(seq 1 20); do
+            sleep 1
+            if curl -sf http://127.0.0.1:3199/api/health > /dev/null; then
+              echo "✅ /api/health OK"; kill $SERVER_PID; exit 0
+            fi
+          done
+          echo "❌ Server không trả /api/health sau 20s"; kill $SERVER_PID || true; exit 1
+
+      # Gate bảo mật dependency: 0 lỗ hổng ở production deps (tiêu chuẩn N5, 2026-08-23).
+      # devDependencies vá qua overrides trong package.json, không chặn ở đây.
+      - name: npm audit (production deps, 0 lỗ hổng)
+        run: npm audit --omit=dev
+
+      # Gate kiến trúc: 0 chu trình import trong toàn repo (tiêu chuẩn N5, 2026-08-23).
+      - name: Chu trình import (codemap cycles = 0)
+        run: npm run codemap -- cycles | grep -q "Không có chu trình import"
+
   e2e:
     runs-on: ubuntu-latest
     steps:

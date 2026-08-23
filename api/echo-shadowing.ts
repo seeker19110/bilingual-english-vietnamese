@@ -1,21 +1,21 @@
 // api/echo-shadowing.ts — V3 Real-Time Echo Shadowing Endpoint.
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getOrCreatePerson } from '../packages/core-personal/personService.js'
+} from '@dhcb/core-auth/security'
+import { getOrCreatePerson } from '@dhcb/core-personal/personService'
 import {
   listShadowingPassages,
   getShadowingPassage,
   evaluateShadowingSession,
-} from '../packages/core-ai/echoShadowingService.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
-import { readJsonBody } from './_lib/validation.js'
+} from '@dhcb/core-ai/echoShadowingService'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { readJsonBody } from '@dhcb/core-http/validation'
 
 export default async function handler(req: Request): Promise<Response> {
   const headers = { ...getCorsHeaders(req), ...SECURITY_HEADERS }

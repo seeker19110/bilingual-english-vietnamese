@@ -2,20 +2,20 @@
 // personId luôn suy từ token xác thực, không nhận từ client.
 import { z } from 'zod'
 import { randomUUID } from 'node:crypto'
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getOrCreatePerson } from '../packages/core-personal/personService.js'
-import { buildContextPackage } from '../packages/core-personal/contextEngine.js'
-import { SensitivitySchema } from '../packages/core-contracts/personalFact.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { getOrCreatePerson } from '@dhcb/core-personal/personService'
+import { buildContextPackage } from '@dhcb/core-personal/contextEngine'
+import { SensitivitySchema } from '@dhcb/core-contracts/personalFact'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 const BuildContextSchema = z
   .object({

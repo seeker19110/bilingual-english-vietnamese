@@ -3,7 +3,7 @@
 
 import type { Server as HttpServer, IncomingMessage } from 'node:http'
 import { WebSocketServer, WebSocket } from 'ws'
-import { validateAuth } from '../core-auth/security.js'
+import { validateAuth } from '@dhcb/core-auth/security'
 import { RealtimeVoiceSession, type VoiceSessionEvent } from './realtimeVoiceService.js'
 
 export const WS_VOICE_PATH = '/ws/voice-companion'

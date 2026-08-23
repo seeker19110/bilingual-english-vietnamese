@@ -1,5 +1,5 @@
 {
-  "{apps/english/src,apps/hub/src,api,packages}/**/*.{ts,tsx}": [
+  "{apps/dhcb/src,apps/hub/src,api,packages}/**/*.{ts,tsx}": [
     "eslint --max-warnings 0",
     "prettier --write"
   ],

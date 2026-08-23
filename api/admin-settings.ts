@@ -7,19 +7,19 @@
 // POST /api/admin-settings   body: { limits: {free:{...},pro:{...},vip:{...}}, promoUntil: string|null }
 
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   validateAuth,
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getUserById } from '../packages/core-auth/authService.js'
-import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
-import { getAppSettings, invalidateSettingsCache } from '../packages/core-db/settings.js'
-import { readJsonBody, validateBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { getUserById } from '@dhcb/core-auth/authService'
+import { isAdminEmail } from '@dhcb/core-auth/adminAuth'
+import { getAppSettings, invalidateSettingsCache } from '@dhcb/core-db/settings'
+import { readJsonBody, validateBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 // Quyết định 2026-07-27: 1 hạn mức TỔNG lượt/ngày cho MỌI tính năng AI cộng lại (không còn
 // chia riêng chat/writing/speaking/stt/pronounce) — xem api/_lib/settings.ts.

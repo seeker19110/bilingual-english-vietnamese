@@ -9,7 +9,7 @@ import path from 'node:path'
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
-import { scanGraph } from './scanGraph'
+import { resolveDhcbAlias, scanGraph } from './scanGraph'
 import type { CodeGraph } from './codemap'
 
 let root: string
@@ -102,6 +102,83 @@ describe('scanGraph — cạnh lời gọi hàm', () => {
           edge.from === 'src/staticImport.ts#callsTarget' && edge.to === 'src/target.ts#target',
       ),
     ).toBe(true)
+  })
+})
+
+describe('resolveDhcbAlias — alias workspace @dhcb/*', () => {
+  let dhcbRoot: string
+
+  beforeAll(() => {
+    dhcbRoot = mkdtempSync(path.join(tmpdir(), 'codemap-dhcb-test-'))
+    writeFileSync(
+      (() => {
+        mkdirSync(path.join(dhcbRoot, 'packages', 'core-db'), { recursive: true })
+        return path.join(dhcbRoot, 'packages', 'core-db', 'pgPool.ts')
+      })(),
+      'export const pool = {}\n',
+      'utf8',
+    )
+    mkdirSync(path.join(dhcbRoot, 'packages', 'core-ai'), { recursive: true })
+    writeFileSync(
+      path.join(dhcbRoot, 'packages', 'core-ai', 'Widget.tsx'),
+      'export const Widget = () => null\n',
+      'utf8',
+    )
+  })
+
+  afterAll(() => {
+    rmSync(dhcbRoot, { recursive: true, force: true })
+  })
+
+  it('phân giải @dhcb/<gói>/<file> sang packages/<gói>/<file>.ts', () => {
+    expect(resolveDhcbAlias('@dhcb/core-db/pgPool', dhcbRoot)).toBe(
+      path.join(dhcbRoot, 'packages', 'core-db', 'pgPool.ts'),
+    )
+  })
+
+  it('thử .tsx nếu .ts không tồn tại', () => {
+    expect(resolveDhcbAlias('@dhcb/core-ai/Widget', dhcbRoot)).toBe(
+      path.join(dhcbRoot, 'packages', 'core-ai', 'Widget.tsx'),
+    )
+  })
+
+  it('trả về undefined nếu file không tồn tại (coi như module ngoài)', () => {
+    expect(resolveDhcbAlias('@dhcb/core-db/khong-ton-tai', dhcbRoot)).toBeUndefined()
+  })
+
+  it('trả về undefined nếu không đúng định dạng @dhcb/<gói>/<file>', () => {
+    expect(resolveDhcbAlias('@dhcb/core-db', dhcbRoot)).toBeUndefined()
+    expect(resolveDhcbAlias('react', dhcbRoot)).toBeUndefined()
+  })
+
+  // Timeout 30s: scanGraph khởi tạo TS program thật — máy CI lạnh cache có thể vượt 5s mặc
+  // định (đã đỏ CI #625 đúng vì vậy dù local chạy ~1s).
+  it('scanGraph tạo được cạnh import xuyên qua @dhcb/*', { timeout: 30_000 }, () => {
+    const scanRoot = mkdtempSync(path.join(tmpdir(), 'codemap-dhcb-scan-'))
+    try {
+      const write2 = (relativePath: string, content: string): void => {
+        const absolute = path.join(scanRoot, relativePath)
+        mkdirSync(path.dirname(absolute), { recursive: true })
+        writeFileSync(absolute, content, 'utf8')
+      }
+      write2('packages/core-db/pgPool.ts', 'export const pool = {}\n')
+      write2(
+        'api/handler.ts',
+        "import { pool } from '@dhcb/core-db/pgPool'\n\nexport const usePool = pool\n",
+      )
+      const dhcbGraph = scanGraph({
+        rootDir: scanRoot,
+        scanRoots: ['api', 'packages'],
+        entryPoints: [],
+      })
+      expect(
+        dhcbGraph.imports.some(
+          (edge) => edge.from === 'api/handler.ts' && edge.to === 'packages/core-db/pgPool.ts',
+        ),
+      ).toBe(true)
+    } finally {
+      rmSync(scanRoot, { recursive: true, force: true })
+    }
   })
 })
 

@@ -4,7 +4,7 @@ import {
   type RefereeRecord,
   type ReferralVipDashboard,
   type ViralShareCardData,
-} from '../core-contracts/referralVip.js'
+} from '@dhcb/core-contracts/referralVip'
 
 export const MILESTONE_TIERS: ReferralMilestoneDefinition[] = [
   {

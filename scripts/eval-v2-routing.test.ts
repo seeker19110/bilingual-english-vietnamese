@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { resolveIntentAndDomain } from '../packages/core-personal/companionRuntime.js'
+import { resolveIntentAndDomain } from '@dhcb/core-personal/companionRuntime'
 
 describe('Eval V2 Routing', () => {
   it('should correctly resolve set_learning_goal', () => {

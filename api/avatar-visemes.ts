@@ -9,19 +9,11 @@
 // Trả về: { wordVisemes: Viseme[][] | null }
 
 import { z } from 'zod'
-import { wordVisemesFromEspeak } from './_lib/espeakPhonemes.js'
-import {
-  validateAuth,
-  checkRateLimit,
-  validateContentType,
-} from '../packages/core-auth/security.js'
-import {
-  getCorsHeaders,
-  SECURITY_HEADERS,
-  logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { readJsonBody, validateBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+import { wordVisemesFromEspeak } from '@dhcb/core-ai/espeakPhonemes'
+import { validateAuth, checkRateLimit, validateContentType } from '@dhcb/core-auth/security'
+import { getCorsHeaders, SECURITY_HEADERS, logSecurityEvent } from '@dhcb/core-auth/security'
+import { readJsonBody, validateBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 // Cùng trần độ dài như /api/tts (api/tts.ts) — không cho câu quá dài đẩy vào tiến trình con.
 const MAX_TEXT_LENGTH = 4000

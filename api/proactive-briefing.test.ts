@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-vi.mock('../packages/core-db/pgPool.js', () => ({ getPgPool: () => ({}) }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: () => ({}) }))
 
 import handler from './proactive-briefing.js'
-import * as security from '../packages/core-auth/security.js'
-import * as personService from '../packages/core-personal/personService.js'
+import * as security from '@dhcb/core-auth/security'
+import * as personService from '@dhcb/core-personal/personService'
 
 describe('GET/POST /api/proactive-briefing', () => {
   beforeEach(() => {

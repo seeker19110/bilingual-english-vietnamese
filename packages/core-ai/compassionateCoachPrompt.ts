@@ -1,8 +1,8 @@
 // packages/core-ai/compassionateCoachPrompt.ts — Prompt Engine cho Bạn Đồng Hành AI Huấn luyện Động lực & Cột mốc Cuộc đời.
 // Tuân thủ 2 Quy ước Tối thượng: TUÂN THỦ PHÁP LUẬT và YÊU THƯƠNG CON NGƯỜI.
 
-import { getLifeStageProfile } from '../core-life/lifeMilestoneMasteryService.js'
-import type { LifeStageType, CapitalCategory } from '../core-contracts/lifeMilestoneMastery.js'
+import { getLifeStageProfile } from '@dhcb/core-life/lifeMilestoneMasteryService'
+import type { LifeStageType, CapitalCategory } from '@dhcb/core-contracts/lifeMilestoneMastery'
 
 export interface CompassionateCoachPromptOptions {
   learnerName?: string

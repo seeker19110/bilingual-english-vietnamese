@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { vnDateStr, addDays, weekStartOf } from './date'
+import { vnDateStr, addDays, weekStartOf } from './date.js'
 
 describe('vnDateStr — ngày theo giờ Việt Nam (UTC+7)', () => {
   it('giờ tối UTC cùng ngày với giờ VN → không đổi ngày', () => {

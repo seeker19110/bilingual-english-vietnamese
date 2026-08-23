@@ -2,11 +2,11 @@
 // Mọi thao tác đọc/ghi room đều TỰ KIỂM thành viên (roomId + userId) — không tin client gửi
 // đúng roomId là đủ quyền, giống nguyên tắc validateAuth() ở CLAUDE.md mục 4.2.
 
-import { getPgPool } from '../core-db/pgPool.js'
-import { withTransaction } from '../core-db/transaction.js'
-import { areFriends } from '../../api/_lib/friends.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import { withTransaction } from '@dhcb/core-db/transaction'
+import { areFriends } from './friends.js'
 import { moderateContent } from './moderator.js'
-import type { ChatMessage, RoomSummary } from '../core-contracts/chat.js'
+import type { ChatMessage, RoomSummary } from '@dhcb/core-contracts/chat'
 
 export type CreateDmRoomResult =
   { ok: true; roomId: string } | { ok: false; reason: 'not_friends' | 'self_chat' }

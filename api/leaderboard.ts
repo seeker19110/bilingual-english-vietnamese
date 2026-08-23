@@ -14,17 +14,17 @@
 // api/_lib/leaderboard.ts. Client KHÔNG gửi điểm lên.
 
 import { z } from 'zod'
-import { getPgPool, getPgReadPool } from '../packages/core-db/pgPool.js'
+import { getPgPool, getPgReadPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
-import { vnDateStr } from '../packages/core-db/date.js'
+} from '@dhcb/core-auth/security'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { vnDateStr } from '@dhcb/core-db/date'
 import {
   currentWeekRange,
   computeWeeklyPoints,

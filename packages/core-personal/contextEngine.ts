@@ -8,8 +8,8 @@ import {
   CONTEXT_PACKAGE_SCHEMA_VERSION,
   type ContextPackage,
   ContextItemSourceSchema,
-} from '../core-contracts/contextPackage.js'
-import type { Sensitivity, PersonalFact } from '../core-contracts/personalFact.js'
+} from '@dhcb/core-contracts/contextPackage'
+import type { Sensitivity, PersonalFact } from '@dhcb/core-contracts/personalFact'
 import { isConsentActive } from './consentService.js'
 import { resolveAuthority } from './policyService.js'
 import { listNodes } from './lifeGraphService.js'

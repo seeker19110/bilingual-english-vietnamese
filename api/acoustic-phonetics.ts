@@ -1,7 +1,7 @@
 // api/acoustic-phonetics.ts — API Endpoint phân tích âm học và tính điểm GOP V4.
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
-import { analyzeAcousticPhonetics } from '../packages/core-ai/acousticPhoneticsService.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
+import { analyzeAcousticPhonetics } from '@dhcb/core-ai/acousticPhoneticsService'
 import { z } from 'zod'
 
 const AcousticRequestSchema = z.object({

@@ -11,7 +11,7 @@ import {
   getDecision,
   listDecisions,
 } from './decisionLedgerService.js'
-import { ConflictError, NotFoundError, ValidationError } from '../core-errors/appError.js'
+import { ConflictError, NotFoundError, ValidationError } from '@dhcb/core-errors/appError'
 
 const PERSON_ID = '11111111-1111-4111-8111-111111111111'
 const DECISION_ID = '22222222-2222-4222-8222-222222222222'
@@ -19,7 +19,7 @@ const DECISION_ID = '22222222-2222-4222-8222-222222222222'
 const mockQuery = vi.fn()
 const mockClient = { query: mockQuery }
 
-vi.mock('../core-db/transaction.js', () => ({
+vi.mock('@dhcb/core-db/transaction', () => ({
   withTransaction: async (_pool: unknown, fn: (client: typeof mockClient) => Promise<unknown>) =>
     fn(mockClient),
 }))

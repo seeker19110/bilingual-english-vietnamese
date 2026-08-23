@@ -1,15 +1,15 @@
 // api/realtime-multimodal.ts — API Gateway quản lý phiên đàm thoại đa phương thức song công V4.
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
 import {
   createMultimodalSession,
   getMultimodalSession,
   removeMultimodalSession,
-} from '../packages/core-ai/realtimeMultimodalService.js'
+} from '@dhcb/core-ai/realtimeMultimodalService'
 import {
   RealtimeSessionConfigSchema,
   REALTIME_MULTIMODAL_VERSION,
-} from '../packages/core-contracts/realtimeMultimodal.js'
+} from '@dhcb/core-contracts/realtimeMultimodal'
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {

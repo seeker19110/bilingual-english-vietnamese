@@ -1,0 +1,13 @@
+{
+  // tsconfig của app english (dời từ tsconfig.json gốc ở PR-S2). Include tính từ file này.
+  "extends": "../../tsconfig.base.json",
+  "include": ["src", "../../packages/core-ui"],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/**/*.spec.ts",
+    "../../packages/core-ui/**/*.test.ts",
+    "../../packages/core-ui/**/*.test.tsx"
+  ],
+  "references": [{ "path": "../../tsconfig.node.json" }]
+}

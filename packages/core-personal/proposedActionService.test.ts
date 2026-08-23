@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import type { Pool } from 'pg'
-import { ConflictError } from '../core-errors/appError.js'
+import { ConflictError } from '@dhcb/core-errors/appError'
 import {
   proposeAction,
   confirmAction,

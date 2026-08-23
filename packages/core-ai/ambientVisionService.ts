@@ -1,11 +1,11 @@
 // packages/core-ai/ambientVisionService.ts — V3 Ambient Vision & Screen Grounding Service.
-import { fetchWithTimeout } from '../../api/_lib/fetchTimeout.js'
+import { fetchWithTimeout } from '@dhcb/core-http/fetchTimeout'
 import {
   type AmbientContextInsight,
   type AppType,
   AmbientContextInsightSchema,
   AMBIENT_SCHEMA_VERSION,
-} from '../core-contracts/ambientContext.js'
+} from '@dhcb/core-contracts/ambientContext'
 
 const AMBIENT_TIMEOUT_MS = 25_000
 

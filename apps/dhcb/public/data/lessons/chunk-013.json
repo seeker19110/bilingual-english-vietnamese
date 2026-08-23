@@ -1,0 +1,614 @@
+[
+  {
+    "id": 131,
+    "title": "Đặt lịch phẫu thuật",
+    "situation": "Hùng đến bệnh viện để đặt lịch một ca phẫu thuật nội soi đầu gối và trao đổi với bác sĩ Mai.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Hùng", "en": "Hùng" },
+    "speakerBName": { "vi": "Mai", "en": "Mai" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good morning, doctor. The specialist said I need surgery on my knee. I'd like to schedule it.",
+        "vi": "Chào bác sĩ. Bác sĩ chuyên khoa nói em cần phẫu thuật đầu gối. Em muốn đặt lịch ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "Good morning. Yes, I have your file here. It's a minor arthroscopic procedure.",
+        "vi": "Chào em. Đúng rồi, hồ sơ của em ở đây. Đây là ca nội soi nhỏ thôi."
+      },
+      {
+        "speaker": "A",
+        "en": "How long does the surgery usually take?",
+        "vi": "Ca mổ thường kéo dài bao lâu ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "About an hour, and you'll stay one night for observation.",
+        "vi": "Khoảng một tiếng, và em sẽ ở lại một đêm để theo dõi."
+      },
+      {
+        "speaker": "A",
+        "en": "Only one night? That's less than I expected.",
+        "vi": "Chỉ một đêm thôi ạ? Ít hơn em tưởng đấy."
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, it's a keyhole procedure, so recovery is faster than open surgery.",
+        "vi": "Đúng vậy, đây là mổ lỗ nhỏ nên hồi phục nhanh hơn mổ hở."
+      },
+      {
+        "speaker": "A",
+        "en": "That's reassuring. When is the earliest available date?",
+        "vi": "Vậy em yên tâm hơn. Lịch sớm nhất là khi nào ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "We have an opening next Thursday morning, or the following Monday.",
+        "vi": "Bên cô còn trống sáng thứ Năm tuần sau, hoặc thứ Hai tuần kế."
+      },
+      {
+        "speaker": "A",
+        "en": "Thursday is too soon for me to arrange work. Let's do the Monday.",
+        "vi": "Thứ Năm thì gấp quá, em chưa sắp xếp công việc kịp. Cho em thứ Hai ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "Monday it is. Please don't eat or drink anything after midnight the night before.",
+        "vi": "Vậy chốt thứ Hai. Em nhớ không ăn uống gì sau nửa đêm hôm trước nhé."
+      }
+    ]
+  },
+  {
+    "id": 132,
+    "title": "Mua thuốc tại hiệu thuốc",
+    "situation": "Lan bị cảm và đến hiệu thuốc nhờ dược sĩ Phúc tư vấn mua thuốc.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Lan", "en": "Lan" },
+    "speakerBName": { "vi": "Phúc", "en": "Phúc" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I have a bad cold. Could you recommend something?",
+        "vi": "Chào anh, em bị cảm nặng. Anh tư vấn giúp em mua gì được không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. What are your main symptoms?",
+        "vi": "Được chứ. Em có những triệu chứng gì là chính?"
+      },
+      {
+        "speaker": "A",
+        "en": "A runny nose, a sore throat, and a slight headache.",
+        "vi": "Em bị chảy nước mũi, đau họng và hơi đau đầu."
+      },
+      { "speaker": "B", "en": "Do you have a fever as well?", "vi": "Em có sốt nữa không?" },
+      {
+        "speaker": "A",
+        "en": "A mild one last night, but it's gone this morning.",
+        "vi": "Tối qua sốt nhẹ, nhưng sáng nay hết rồi ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "Alright. I'd suggest this cold medicine and some throat lozenges.",
+        "vi": "Được rồi. Anh gợi ý em dùng thuốc cảm này và mấy viên ngậm đau họng."
+      },
+      {
+        "speaker": "A",
+        "en": "How often should I take the cold medicine?",
+        "vi": "Thuốc cảm em uống thế nào ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "One tablet twice a day, after meals. Don't take more than that.",
+        "vi": "Mỗi lần một viên, ngày hai lần, sau ăn. Đừng uống quá liều đó."
+      },
+      {
+        "speaker": "A",
+        "en": "Got it. Will it make me drowsy? I have to drive.",
+        "vi": "Em hiểu rồi. Thuốc có gây buồn ngủ không ạ? Em phải lái xe."
+      },
+      {
+        "speaker": "B",
+        "en": "This one is the non-drowsy version, so you'll be fine to drive.",
+        "vi": "Loại này không gây buồn ngủ, nên em lái xe vẫn ổn."
+      }
+    ]
+  },
+  {
+    "id": 133,
+    "title": "Tập thể dục với huấn luyện viên",
+    "situation": "Linh lần đầu đến phòng gym và tập buổi đầu tiên với huấn luyện viên Khoa.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Linh", "en": "Linh" },
+    "speakerBName": { "vi": "Khoa", "en": "Khoa" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, this is my first session. I'm a complete beginner, so please go easy on me.",
+        "vi": "Chào anh, đây là buổi đầu của em. Em mới hoàn toàn nên anh nhẹ tay với em nhé."
+      },
+      {
+        "speaker": "B",
+        "en": "Welcome, Linh! Don't worry, we'll start slow and build up. What's your main goal?",
+        "vi": "Chào Linh! Đừng lo, mình bắt đầu từ từ rồi tăng dần. Mục tiêu chính của em là gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'd like to get fitter and have more energy for work.",
+        "vi": "Em muốn khỏe hơn và có nhiều năng lượng cho công việc."
+      },
+      {
+        "speaker": "B",
+        "en": "Great goal. Do you have any injuries or health issues I should know about?",
+        "vi": "Mục tiêu hay đấy. Em có chấn thương hay vấn đề sức khỏe nào anh cần biết không?"
+      },
+      {
+        "speaker": "A",
+        "en": "My lower back gets sore sometimes if I sit too long.",
+        "vi": "Thỉnh thoảng ngồi lâu là em bị đau thắt lưng."
+      },
+      {
+        "speaker": "B",
+        "en": "Good to know. We'll focus on strengthening your core to support your back.",
+        "vi": "Anh nắm rồi. Mình sẽ tập trung làm khỏe cơ lõi để nâng đỡ cho lưng em."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds helpful. How often should I train each week?",
+        "vi": "Nghe hữu ích đấy. Mỗi tuần em nên tập mấy buổi ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "For a beginner, three times a week is ideal, with rest days in between.",
+        "vi": "Với người mới, ba buổi một tuần là lý tưởng, xen kẽ ngày nghỉ."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay. Should we start with the treadmill today?",
+        "vi": "Vâng. Hôm nay mình bắt đầu với máy chạy bộ ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Let's begin with a five-minute warm-up walk, then some light stretching.",
+        "vi": "Mình khởi động bằng năm phút đi bộ, rồi giãn cơ nhẹ nhàng."
+      }
+    ]
+  },
+  {
+    "id": 134,
+    "title": "Hỏi về bảo hiểm y tế",
+    "situation": "Tâm vừa chuyển sang làm tự do nên đến hỏi nhân viên Hương về các gói bảo hiểm y tế.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Tâm", "en": "Tâm" },
+    "speakerBName": { "vi": "Hương", "en": "Hương" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'd like to learn about your health insurance plans.",
+        "vi": "Chào chị, em muốn tìm hiểu về các gói bảo hiểm y tế bên mình ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure! Are you looking for coverage just for yourself, or for your family too?",
+        "vi": "Được chứ! Em muốn bảo hiểm cho riêng mình, hay cho cả gia đình?"
+      },
+      {
+        "speaker": "A",
+        "en": "For now, just myself. I recently became self-employed.",
+        "vi": "Trước mắt chỉ cho em thôi. Em mới chuyển sang làm tự do."
+      },
+      {
+        "speaker": "B",
+        "en": "I see. Then private health insurance makes a lot of sense for you.",
+        "vi": "Em hiểu rồi. Vậy bảo hiểm y tế tư nhân rất hợp với em đấy."
+      },
+      {
+        "speaker": "A",
+        "en": "What does a basic plan usually cover?",
+        "vi": "Gói cơ bản thường bảo hiểm những gì ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "It covers hospital stays, surgery, and emergency treatment up to a yearly limit.",
+        "vi": "Nó chi trả nằm viện, phẫu thuật và cấp cứu, tới một mức giới hạn mỗi năm."
+      },
+      {
+        "speaker": "A",
+        "en": "Does it cover regular check-ups too?",
+        "vi": "Có chi trả khám sức khỏe định kỳ không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Our standard plan does, including one annual check-up and basic dental care.",
+        "vi": "Gói tiêu chuẩn bên chị có, gồm một lần khám định kỳ mỗi năm và chăm sóc răng cơ bản."
+      },
+      {
+        "speaker": "A",
+        "en": "That's useful. How much would a plan like that cost me?",
+        "vi": "Hữu ích đấy ạ. Một gói như vậy em đóng bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "For your age, around six million dong a year, paid monthly or annually.",
+        "vi": "Với độ tuổi của em, khoảng sáu triệu một năm, đóng theo tháng hoặc theo năm."
+      }
+    ]
+  },
+  {
+    "id": 135,
+    "title": "Thuyết trình nhóm",
+    "situation": "Mai và Sơn là bạn cùng nhóm, lên kế hoạch chia phần cho buổi thuyết trình vào thứ Sáu.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Mai", "en": "Mai" },
+    "speakerBName": { "vi": "Sơn", "en": "Sơn" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Sơn, our presentation is on Friday. Should we plan how to split it?",
+        "vi": "Sơn này, thứ Sáu nhóm mình thuyết trình rồi. Mình bàn cách chia phần nhé?"
+      },
+      {
+        "speaker": "B",
+        "en": "Definitely. How many sections do we have in total?",
+        "vi": "Chắc chắn rồi. Tổng cộng mình có mấy phần?"
+      },
+      {
+        "speaker": "A",
+        "en": "Four: the introduction, the data, the case study, and the conclusion.",
+        "vi": "Bốn phần: mở đầu, số liệu, nghiên cứu tình huống, và kết luận."
+      },
+      {
+        "speaker": "B",
+        "en": "Why don't you take the introduction and the case study? You explain things clearly.",
+        "vi": "Hay cậu nhận phần mở đầu và nghiên cứu tình huống đi? Cậu giải thích rõ ràng lắm."
+      },
+      {
+        "speaker": "A",
+        "en": "Sure, and you can handle the data — you're great with charts.",
+        "vi": "Được, còn cậu lo phần số liệu — cậu làm biểu đồ giỏi mà."
+      },
+      {
+        "speaker": "B",
+        "en": "Works for me. Who'll do the conclusion?",
+        "vi": "Mình ổn. Vậy ai làm phần kết luận?"
+      },
+      {
+        "speaker": "A",
+        "en": "Let's do the conclusion together, so we both end on stage.",
+        "vi": "Phần kết mình làm chung đi, để cả hai cùng đứng chốt trên sân khấu."
+      },
+      {
+        "speaker": "B",
+        "en": "I like that. It looks more united to the audience.",
+        "vi": "Mình thích thế. Nhìn vào khán giả sẽ thấy nhóm gắn kết hơn."
+      },
+      {
+        "speaker": "A",
+        "en": "How long should the whole thing be?",
+        "vi": "Cả bài nên dài bao lâu nhỉ?"
+      },
+      {
+        "speaker": "B",
+        "en": "The teacher said ten minutes, so about two and a half minutes each section.",
+        "vi": "Thầy bảo mười phút, vậy mỗi phần khoảng hai phút rưỡi."
+      }
+    ]
+  },
+  {
+    "id": 136,
+    "title": "Phỏng vấn thực tập",
+    "situation": "Anh Long phỏng vấn Linh cho vị trí thực tập sinh marketing tại công ty.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Long", "en": "Long" },
+    "speakerBName": { "vi": "Linh", "en": "Linh" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good morning, Linh. Thank you for coming in. Please, have a seat.",
+        "vi": "Chào Linh. Cảm ơn em đã đến. Mời em ngồi."
+      },
+      {
+        "speaker": "B",
+        "en": "Good morning. Thank you for the opportunity to interview.",
+        "vi": "Em chào anh. Cảm ơn anh đã cho em cơ hội phỏng vấn ạ."
+      },
+      {
+        "speaker": "A",
+        "en": "Let's start simply — could you tell me a little about yourself?",
+        "vi": "Mình bắt đầu nhẹ nhàng nhé — em giới thiệu đôi chút về bản thân được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. I'm a third-year marketing student, and I love creating social media content.",
+        "vi": "Dạ vâng. Em là sinh viên năm ba ngành marketing, và em rất thích làm nội dung mạng xã hội."
+      },
+      {
+        "speaker": "A",
+        "en": "Nice. Why are you interested in interning at our company?",
+        "vi": "Hay đấy. Vì sao em muốn thực tập ở công ty bọn anh?"
+      },
+      {
+        "speaker": "B",
+        "en": "I admire your brand's creative campaigns, and I want to learn from your team.",
+        "vi": "Em ngưỡng mộ các chiến dịch sáng tạo của thương hiệu, và em muốn học hỏi từ đội ngũ của công ty."
+      },
+      {
+        "speaker": "A",
+        "en": "That's good to hear. What skills do you think you can bring us?",
+        "vi": "Nghe tốt đấy. Em nghĩ mình mang lại được những kỹ năng gì cho bọn anh?"
+      },
+      {
+        "speaker": "B",
+        "en": "I'm good at writing, I edit short videos, and I learn new tools quickly.",
+        "vi": "Em viết tốt, biết dựng video ngắn, và học công cụ mới khá nhanh."
+      },
+      {
+        "speaker": "A",
+        "en": "Can you give an example of a project you're proud of?",
+        "vi": "Em kể một dự án mà em tự hào được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "I ran the social media page for my university club and tripled its followers in a semester.",
+        "vi": "Em quản lý trang mạng xã hội cho câu lạc bộ ở trường và tăng gấp ba lượt theo dõi trong một học kỳ."
+      }
+    ]
+  },
+  {
+    "id": 137,
+    "title": "Hỏi về chương trình trao đổi",
+    "situation": "Hoa đến gặp thầy cố vấn Minh để hỏi về chương trình trao đổi sinh viên năm tới.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Hoa", "en": "Hoa" },
+    "speakerBName": { "vi": "Minh", "en": "Minh" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'd like to ask about the student exchange program for next year.",
+        "vi": "Em chào thầy, em muốn hỏi về chương trình trao đổi sinh viên năm tới ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. Which countries are you most interested in?",
+        "vi": "Được chứ. Em quan tâm tới những nước nào nhất?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'm thinking about Japan or Australia.",
+        "vi": "Em đang nghĩ tới Nhật Bản hoặc Úc ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "Both are popular choices. Are you looking for a semester or a full year abroad?",
+        "vi": "Cả hai đều được nhiều bạn chọn. Em muốn đi một học kỳ hay trọn một năm?"
+      },
+      {
+        "speaker": "A",
+        "en": "A single semester, I think. A full year feels too long for now.",
+        "vi": "Em nghĩ là một học kỳ thôi ạ. Cả năm thì với em bây giờ hơi dài."
+      },
+      {
+        "speaker": "B",
+        "en": "That's a sensible start. What's your current GPA? Some programs have a minimum.",
+        "vi": "Khởi đầu hợp lý. Điểm trung bình của em hiện bao nhiêu? Vài chương trình có mức tối thiểu."
+      },
+      {
+        "speaker": "A",
+        "en": "It's 3.4. Is that high enough?",
+        "vi": "Của em là 3.4. Vậy có đủ cao không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, most of our partner universities require 3.0 or above, so you qualify.",
+        "vi": "Có, hầu hết trường đối tác yêu cầu từ 3.0 trở lên, nên em đủ điều kiện."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a relief. Do I need to speak the local language?",
+        "vi": "Em yên tâm rồi. Em có cần nói được tiếng bản địa không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "For Japan, basic Japanese helps, but many courses are taught in English. Australia is all English.",
+        "vi": "Với Nhật, biết tiếng Nhật cơ bản thì tốt, nhưng nhiều môn dạy bằng tiếng Anh. Úc thì hoàn toàn tiếng Anh."
+      }
+    ]
+  },
+  {
+    "id": 138,
+    "title": "Thảo luận về sách hay",
+    "situation": "Hà và Tâm là bạn thân, cùng trò chuyện về cuốn tiểu thuyết mà Hà đã cho Tâm mượn.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Hà", "en": "Hà" },
+    "speakerBName": { "vi": "Tâm", "en": "Tâm" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Tâm, have you finished that novel I lent you last month?",
+        "vi": "Tâm ơi, cậu đọc xong cuốn tiểu thuyết mình cho mượn tháng trước chưa?"
+      },
+      {
+        "speaker": "B",
+        "en": "I did! I stayed up late to finish the last few chapters.",
+        "vi": "Xong rồi! Mình thức khuya để đọc cho hết mấy chương cuối đấy."
+      },
+      { "speaker": "A", "en": "Really? So you enjoyed it?", "vi": "Thật à? Vậy là cậu thích chứ?" },
+      {
+        "speaker": "B",
+        "en": "I loved it. The main character felt so real, like someone I actually know.",
+        "vi": "Mình mê luôn. Nhân vật chính chân thật ghê, như một người mình quen ngoài đời vậy."
+      },
+      {
+        "speaker": "A",
+        "en": "That's exactly what drew me in too. Which part stood out to you?",
+        "vi": "Đó cũng đúng là điều cuốn hút mình. Đoạn nào để lại ấn tượng nhất với cậu?"
+      },
+      {
+        "speaker": "B",
+        "en": "The scene where she finally forgives her father. It almost made me cry.",
+        "vi": "Cảnh cô ấy cuối cùng tha thứ cho cha. Suýt nữa thì mình khóc."
+      },
+      {
+        "speaker": "A",
+        "en": "Me too! The author writes emotions so honestly.",
+        "vi": "Mình cũng vậy! Tác giả viết về cảm xúc chân thật quá."
+      },
+      {
+        "speaker": "B",
+        "en": "Agreed. Was it based on a true story, do you know?",
+        "vi": "Đúng thế. Cậu có biết truyện này dựa trên chuyện có thật không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Partly, I think. The author grew up in a similar village.",
+        "vi": "Mình nghĩ là một phần. Tác giả lớn lên ở một ngôi làng tương tự."
+      },
+      {
+        "speaker": "B",
+        "en": "That explains why the setting felt so vivid and detailed.",
+        "vi": "Thảo nào bối cảnh sống động và chi tiết đến vậy."
+      }
+    ]
+  },
+  {
+    "id": 139,
+    "title": "Thuê hướng dẫn viên",
+    "situation": "Nam là du khách, liên hệ hướng dẫn viên Lan để thuê dẫn tham quan thành phố hai ngày.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Nam", "en": "Nam" },
+    "speakerBName": { "vi": "Lan", "en": "Lan" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I'm looking for a local guide for two days in the city. Are you available?",
+        "vi": "Chào chị, tôi đang tìm hướng dẫn viên địa phương cho hai ngày trong thành phố. Chị có rảnh không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Hello! Yes, I'm free this weekend. What would you like to see?",
+        "vi": "Chào anh! Có, cuối tuần này tôi rảnh. Anh muốn tham quan những gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "Mainly the historical sites and some authentic local food.",
+        "vi": "Chủ yếu là các di tích lịch sử và một ít món ăn địa phương đúng vị."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect. I can show you the old quarter, the temples, and the best street food stalls.",
+        "vi": "Tuyệt. Tôi có thể đưa anh đi phố cổ, các ngôi đền, và những hàng ăn vỉa hè ngon nhất."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds ideal. How many hours per day do you usually guide?",
+        "vi": "Nghe lý tưởng đấy. Mỗi ngày chị thường dẫn bao nhiêu tiếng?"
+      },
+      {
+        "speaker": "B",
+        "en": "About six hours a day, with breaks. We can adjust the pace to your liking.",
+        "vi": "Khoảng sáu tiếng một ngày, có nghỉ giải lao. Mình điều chỉnh nhịp đi theo ý anh."
+      },
+      {
+        "speaker": "A",
+        "en": "Six hours is good. What's your rate?",
+        "vi": "Sáu tiếng là hợp lý. Giá của chị thế nào ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "It's eight hundred thousand dong a day, not including entrance fees and meals.",
+        "vi": "Tám trăm nghìn một ngày, chưa gồm vé vào cửa và ăn uống."
+      },
+      {
+        "speaker": "A",
+        "en": "That's reasonable. Do you provide transport too?",
+        "vi": "Hợp lý đấy. Chị có lo cả phương tiện không?"
+      },
+      {
+        "speaker": "B",
+        "en": "I can arrange a car with a driver, or we can use taxis — whichever you prefer.",
+        "vi": "Tôi có thể thuê xe có tài xế, hoặc mình đi taxi — tùy anh chọn."
+      }
+    ]
+  },
+  {
+    "id": 140,
+    "title": "Đặt tour du lịch",
+    "situation": "Mai gọi đến công ty du lịch để đặt một tour Đà Lạt cho gia đình và trao đổi với nhân viên Huy.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Mai", "en": "Mai" },
+    "speakerBName": { "vi": "Huy", "en": "Huy" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'd like to book a tour to Da Lat for my family.",
+        "vi": "Chào anh, em muốn đặt một tour Đà Lạt cho gia đình ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "Wonderful choice! How many people will be traveling?",
+        "vi": "Lựa chọn tuyệt vời! Đoàn mình có bao nhiêu người ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Four of us — two adults and two children.",
+        "vi": "Bốn người ạ — hai người lớn và hai bé."
+      },
+      {
+        "speaker": "B",
+        "en": "Got it. How many days are you thinking of?",
+        "vi": "Vâng. Chị dự định đi mấy ngày?"
+      },
+      {
+        "speaker": "A",
+        "en": "A four-day, three-night trip, if possible.",
+        "vi": "Nếu được thì chuyến bốn ngày ba đêm ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "We have a great package for exactly that. Would you like a private or group tour?",
+        "vi": "Bên em có gói đúng như vậy luôn. Chị muốn tour riêng hay tour ghép đoàn?"
+      },
+      {
+        "speaker": "A",
+        "en": "A private tour, so we can go at our own pace.",
+        "vi": "Tour riêng ạ, để nhà em đi theo nhịp của mình."
+      },
+      {
+        "speaker": "B",
+        "en": "Good choice for a family. It includes a private car, a guide, and hotel stays.",
+        "vi": "Lựa chọn hợp với gia đình. Gói gồm xe riêng, hướng dẫn viên và khách sạn."
+      },
+      {
+        "speaker": "A",
+        "en": "Does it include meals as well?",
+        "vi": "Có bao gồm bữa ăn không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Breakfast every day, plus two dinners. Lunches are free for you to explore local food.",
+        "vi": "Bữa sáng hằng ngày, thêm hai bữa tối. Bữa trưa để tự do cho nhà mình khám phá món địa phương."
+      }
+    ]
+  }
+]

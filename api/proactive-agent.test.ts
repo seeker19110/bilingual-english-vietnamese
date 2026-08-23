@@ -1,7 +1,7 @@
 // api/proactive-agent.test.ts
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import handler from './proactive-agent.js'
-import * as security from '../packages/core-auth/security.js'
+import * as security from '@dhcb/core-auth/security'
 
 describe('Proactive Agent API Handler (/api/proactive-agent)', () => {
   beforeEach(() => {

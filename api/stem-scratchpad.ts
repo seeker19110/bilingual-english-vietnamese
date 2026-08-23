@@ -1,10 +1,10 @@
 // api/stem-scratchpad.ts — REST handler cho Platform V5 STEM Interactive Scratchpad.
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
-import { StemScratchpadService } from '../packages/core-ai/stemScratchpadService.js'
-import { StemProblemState, StemSubjectType } from '../packages/core-contracts/stemScratchpad.js'
-import { filterStemQuestions, getStemQuestionById } from '../packages/core-ai/stemQuestionBank.js'
-import type { StemQuestion } from '../packages/core-ai/stemQuestionBank.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
+import { StemScratchpadService } from '@dhcb/core-ai/stemScratchpadService'
+import { StemProblemState, StemSubjectType } from '@dhcb/core-contracts/stemScratchpad'
+import { filterStemQuestions, getStemQuestionById } from '@dhcb/core-ai/stemQuestionBank'
+import type { StemQuestion } from '@dhcb/core-ai/stemQuestionBank'
 
 // In-memory cache cho các bài tập STEM đang làm dở
 const activeProblems = new Map<string, StemProblemState>()

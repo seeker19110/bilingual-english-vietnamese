@@ -1,27 +1,27 @@
 // api/proposed-actions.ts — V2-08 ProposedAction & Tool Manifest API.
 // personId luôn suy từ token xác thực, không nhận từ client.
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getOrCreatePerson } from '../packages/core-personal/personService.js'
+} from '@dhcb/core-auth/security'
+import { getOrCreatePerson } from '@dhcb/core-personal/personService'
 import {
   proposeAction,
   confirmAction,
   rejectAction,
   listProposedActions,
-} from '../packages/core-personal/proposedActionService.js'
-import { listToolManifests } from '../packages/core-personal/toolRegistry.js'
-import { CapabilityRiskLevelSchema } from '../packages/core-contracts/capabilityManifest.js'
-import { ProposedActionStatusSchema } from '../packages/core-contracts/proposedAction.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-personal/proposedActionService'
+import { listToolManifests } from '@dhcb/core-personal/toolRegistry'
+import { CapabilityRiskLevelSchema } from '@dhcb/core-contracts/capabilityManifest'
+import { ProposedActionStatusSchema } from '@dhcb/core-contracts/proposedAction'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 const PostProposalSchema = z
   .object({

@@ -4,7 +4,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const LESSONS_FILE = path.join(__dirname, '../apps/english/src/data/lessons.json')
+const LESSONS_FILE = path.join(__dirname, '../apps/dhcb/src/data/lessons.json')
 const MAX_TURNS = 20
 
 const lessons = JSON.parse(fs.readFileSync(LESSONS_FILE, 'utf8'))

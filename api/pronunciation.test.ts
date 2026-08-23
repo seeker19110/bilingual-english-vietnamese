@@ -2,7 +2,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
 const rateLimitOk = { value: true }
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => rateLimitOk.value,
@@ -13,7 +13,7 @@ vi.mock('../packages/core-auth/security', () => ({
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
 
 const query = vi.fn()
-vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: () => ({ query }) }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: () => ({ query }) }))
 
 const generateAudioFromGoogle = vi.fn()
 const generateStudioAudioFromGoogle = vi.fn()
@@ -26,8 +26,8 @@ const generateStudioAudioFromGoogle = vi.fn()
 // client gửi lên (đều PascalCase) và người dùng chỉ nghe một giọng Web Speech (bug thật, PR #535).
 // Mock tự viết lại logic của chính module bị mock là mock có thể "nói dối"; dùng hàm thật thì
 // không thể lệch được nữa.
-vi.mock('./_lib/googleTts', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('./_lib/googleTts')>()),
+vi.mock('@dhcb/core-ai/googleTts', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@dhcb/core-ai/googleTts')>()),
   generateAudioFromGoogle: (...args: unknown[]) => generateAudioFromGoogle(...args),
   generateStudioAudioFromGoogle: (...args: unknown[]) => generateStudioAudioFromGoogle(...args),
   VOICE_VERSION: 'v3',
@@ -35,22 +35,22 @@ vi.mock('./_lib/googleTts', async (importOriginal) => ({
 
 const saveAudio = vi.fn()
 // isServableUrl dùng bản THẬT — xem ghi chú cùng loại trong packages/core-ai/tts.test.ts.
-vi.mock('../packages/core-ai/fileStorage', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../packages/core-ai/fileStorage')>()),
+vi.mock('@dhcb/core-ai/fileStorage', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@dhcb/core-ai/fileStorage')>()),
   saveAudio: (...args: unknown[]) => saveAudio(...args),
 }))
 
 const ensureProfileRow = vi.fn()
-vi.mock('../packages/core-auth/authService', () => ({
+vi.mock('@dhcb/core-auth/authService', () => ({
   ensureProfileRow: (...args: unknown[]) => ensureProfileRow(...args),
 }))
 
 const clampVoiceToPlan = vi.fn()
-vi.mock('./_lib/voiceAccess', () => ({
+vi.mock('@dhcb/core-ai/voiceAccess', () => ({
   clampVoiceToPlan: (...args: unknown[]) => clampVoiceToPlan(...args),
 }))
 
-vi.mock('../packages/core-ai/elevenLabsTts', () => ({
+vi.mock('@dhcb/core-ai/elevenLabsTts', () => ({
   isValidElevenVoice: () => false,
 }))
 
@@ -201,7 +201,7 @@ describe('/api/pronunciation', () => {
     rateLimitOk.value = true
     // Rate limit thứ 2 (pron-gen) fail — mock checkRateLimit qua module state phức tạp, nên
     // dùng cách đơn giản: override module mock trực tiếp trong test này.
-    const security = await import('../packages/core-auth/security')
+    const security = await import('@dhcb/core-auth/security')
     vi.spyOn(security, 'checkRateLimit').mockImplementation(async () => {
       call++
       return call === 1 // lần 1 (chung) qua, lần 2 (pron-gen) chặn
@@ -273,7 +273,7 @@ describe('/api/pronunciation', () => {
 
   it('lấy pool lỗi (chưa cấu hình DATABASE_URL) → 500', async () => {
     vi.resetModules()
-    vi.doMock('../packages/core-db/pgPool', () => ({
+    vi.doMock('@dhcb/core-db/pgPool', () => ({
       getPgPool: () => {
         throw new Error('DATABASE_URL chưa cấu hình')
       },

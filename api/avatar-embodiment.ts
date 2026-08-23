@@ -1,14 +1,17 @@
 // api/avatar-embodiment.ts — REST handler cho Hien than 3D & Cau hinh Cyber-Tutor V4.
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
+// State da chuyen sang bang platform.feature_state (migration 0058, packages/core-db/featureState.ts)
+// — thay cho Map in-memory cap module, tranh vo trong PM2 cluster.
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
 import {
   AvatarEmbodimentConfig,
   AvatarEmbodimentConfigSchema,
   AVATAR_EMBODIMENT_VERSION,
-} from '../packages/core-contracts/avatarEmbodiment.js'
-import { VisemeMorphingService } from '../packages/core-ai/visemeMorphingService.js'
+} from '@dhcb/core-contracts/avatarEmbodiment'
+import { VisemeMorphingService } from '@dhcb/core-ai/visemeMorphingService'
+import { getFeatureState, setFeatureState } from '@dhcb/core-db/featureState'
 
-const inMemoryConfigStore = new Map<string, AvatarEmbodimentConfig>()
+const FEATURE = 'avatar_embodiment'
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
@@ -26,7 +29,7 @@ export default async function handler(req: Request): Promise<Response> {
   const personId = auth.userId
 
   if (req.method === 'GET') {
-    const existing = inMemoryConfigStore.get(personId) || {
+    const existing = (await getFeatureState<AvatarEmbodimentConfig>(personId, FEATURE)) || {
       personId,
       renderMode: '3d_cyber_avatar',
       quality: 'high',
@@ -70,7 +73,7 @@ export default async function handler(req: Request): Promise<Response> {
         )
       }
 
-      inMemoryConfigStore.set(personId, parseResult.data)
+      await setFeatureState(personId, FEATURE, parseResult.data)
 
       return jsonResponse(
         {

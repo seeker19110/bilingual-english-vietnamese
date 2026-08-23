@@ -8,14 +8,14 @@
 // free_daily_credit giống quests.ts, còn lại đọc thẳng từ learning_progress/writing_submissions/
 // speaking_sessions/challenge_entries) — KHÔNG tin danh sách huy hiệu localStorage gửi lên (client
 // tự tính ở src/lib/achievements.ts chỉ để hiển thị UI ngay, có thể bị sửa). Danh sách id +
-// điều kiện dưới đây PHẢI khớp apps/english/src/data/achievements.ts + lib/achievements.ts —
+// điều kiện dưới đây PHẢI khớp apps/dhcb/src/data/achievements.ts + lib/achievements.ts —
 // không import thẳng module frontend vào backend (giữ tách 2 tầng, giống cách quests.ts đã làm
 // với CEFR_EXAM_LEVELS).
 
-import { getPgPool } from '../../packages/core-db/pgPool.js'
-import { grantPlanDays } from './planGrant.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import { grantPlanDays } from '@dhcb/core-billing/planGrant'
 import { getCurrentStreak } from './quests.js'
-import type { Plan } from '../../packages/core-billing/plan.js'
+import type { Plan } from '@dhcb/core-billing/plan'
 
 export const ACHIEVEMENT_IDS = [
   'streak_7',
@@ -156,7 +156,7 @@ async function computeServerStats(userId: string): Promise<ServerStats> {
   }
 }
 
-// Điều kiện đạt của từng huy hiệu — PHẢI khớp isEarned() ở apps/english/src/lib/achievements.ts
+// Điều kiện đạt của từng huy hiệu — PHẢI khớp isEarned() ở apps/dhcb/src/lib/achievements.ts
 // (bản client chỉ dùng để hiển thị UI ngay, bản này mới là bản QUYẾT ĐỊNH cấp thưởng).
 function isEarned(id: AchievementId, s: ServerStats): boolean {
   switch (id) {

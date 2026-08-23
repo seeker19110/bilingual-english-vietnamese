@@ -1,10 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import * as path from 'node:path'
-import {
-  resolveIntentAndDomain,
-  generatePlan,
-} from '../../packages/core-personal/companionRuntime.js'
+import { resolveIntentAndDomain, generatePlan } from '@dhcb/core-personal/companionRuntime'
 
 const SCRIPT_DIR = fileURLToPath(new URL('.', import.meta.url))
 

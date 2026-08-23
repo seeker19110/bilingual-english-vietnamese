@@ -17,13 +17,13 @@ import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { PDFDocument, rgb, type PDFFont, type PDFPage } from 'pdf-lib'
 import fontkit from '@pdf-lib/fontkit'
-import type { DictEntry } from '../apps/english/src/types.ts'
+import type { DictEntry } from '../apps/dhcb/src/types.ts'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const DICT_DIR = path.join(ROOT, 'public/data/dictionary')
+const DICT_DIR = path.join(ROOT, 'apps/dhcb/public/data/dictionary')
 const FONT_REGULAR = path.join(ROOT, 'scripts/assets/fonts/DejaVuSans.ttf')
 const FONT_BOLD = path.join(ROOT, 'scripts/assets/fonts/DejaVuSans-Bold.ttf')
-const OUT_DIR = path.join(ROOT, 'public/downloads')
+const OUT_DIR = path.join(ROOT, 'apps/dhcb/public/downloads')
 const OUT_FILE = path.join(OUT_DIR, '500-tu-vung-a1-a2.pdf')
 
 const WORD_COUNT = 500

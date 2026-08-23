@@ -11,15 +11,15 @@
 // Chạy trên Node (Express/VPS) vì cần đọc file từ điển — KHÔNG dùng Edge runtime.
 
 import { getAllEntries, type DictEntry } from './_lib/dictionaryData.js'
-import { vnDateStr } from '../packages/core-db/date.js'
+import { vnDateStr } from '@dhcb/core-db/date'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 const MAX_RESULTS = 200
 

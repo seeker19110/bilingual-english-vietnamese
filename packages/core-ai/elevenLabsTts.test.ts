@@ -3,7 +3,11 @@
 // alignment hợp lệ/không hợp lệ.
 
 import { describe, it, expect, afterEach, vi } from 'vitest'
-import { generateAudioFromElevenLabs, isValidElevenVoice, hasElevenLabsKey } from './elevenLabsTts'
+import {
+  generateAudioFromElevenLabs,
+  isValidElevenVoice,
+  hasElevenLabsKey,
+} from './elevenLabsTts.js'
 
 const OLD_KEY = process.env.ELEVENLABS_API_KEY
 

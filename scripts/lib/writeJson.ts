@@ -1,7 +1,7 @@
 // scripts/lib/writeJson.ts — Ghi file JSON SINH TỰ ĐỘNG đúng định dạng Prettier của dự án.
 //
 // VÌ SAO CẦN (audit luồng dữ liệu 2026-08-12): các script sinh dữ liệu trước đây ghi bằng
-// `JSON.stringify(out)` — tức JSON nén một dòng. Nhưng file đích nằm trong `apps/english/src/data/`
+// `JSON.stringify(out)` — tức JSON nén một dòng. Nhưng file đích nằm trong `apps/dhcb/src/data/`
 // nên Prettier (qua lint-staged lúc commit) format lại thành nhiều dòng. Hệ quả: chạy lại script
 // làm `git diff` hiện ~44.000 dòng thay đổi THUẦN ĐỊNH DẠNG, và một thay đổi DỮ LIỆU thật sẽ lẫn
 // mất trong đó — không ai soát nổi. Ghi thẳng ra đúng định dạng Prettier thì chạy lại script mà

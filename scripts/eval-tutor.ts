@@ -24,15 +24,15 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import * as path from 'node:path'
 import * as dotenv from 'dotenv'
-import { chatSystemPrompt, speakingSystemPrompt } from '../apps/english/src/prompts/index.ts'
-import { callGemini } from '../api/_lib/geminiApi.ts'
-import { fetchWithTimeout } from '../api/_lib/fetchTimeout.ts'
+import { chatSystemPrompt, speakingSystemPrompt } from '../apps/dhcb/src/prompts/index.ts'
+import { callGemini } from '@dhcb/core-ai/geminiApi'
+import { fetchWithTimeout } from '@dhcb/core-http/fetchTimeout'
 import {
   ALLOWED_MODEL,
   GEMINI_CHAT_MODEL,
   GROQ_CHAT_MODEL,
   SYSTEM_GUARDRAIL,
-} from '../packages/core-ai/aiConfig.ts'
+} from '@dhcb/core-ai/aiConfig'
 import {
   parseFixtures,
   scoreOne,

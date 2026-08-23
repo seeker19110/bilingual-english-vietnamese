@@ -1,0 +1,562 @@
+[
+  {
+    "id": 251,
+    "title": "Đặt vé máy bay giá rẻ",
+    "situation": "Khách gọi đại lý hỏi đặt vé máy bay giá rẻ.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Khách Lan", "en": "Customer Lan" },
+    "speakerBName": { "vi": "Đại lý Hùng", "en": "Agent Hung" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'm looking for a cheap flight to Hanoi.",
+        "vi": "Chào anh, tôi tìm vé máy bay giá rẻ đi Hà Nội."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. When do you want to travel?",
+        "vi": "Được ạ. Chị muốn bay khi nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "Sometime next month, I'm flexible.",
+        "vi": "Khoảng tháng sau, tôi linh động."
+      },
+      {
+        "speaker": "B",
+        "en": "Flying on weekdays is usually cheaper.",
+        "vi": "Bay vào ngày thường thường rẻ hơn."
+      },
+      {
+        "speaker": "A",
+        "en": "Good to know. What's the lowest price?",
+        "vi": "Hay đấy. Giá thấp nhất là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Around eight hundred thousand one way.",
+        "vi": "Khoảng tám trăm nghìn một chiều."
+      },
+      {
+        "speaker": "A",
+        "en": "That's great. Does it include baggage?",
+        "vi": "Tốt quá. Có gồm hành lý không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Only carry-on. Checked bags cost extra.",
+        "vi": "Chỉ xách tay thôi. Ký gửi tính thêm tiền."
+      },
+      {
+        "speaker": "A",
+        "en": "I see. I'll just bring a carry-on.",
+        "vi": "Tôi hiểu. Tôi mang hành lý xách tay thôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect. I'll book the cheapest weekday flight.",
+        "vi": "Tuyệt. Tôi đặt chuyến ngày thường rẻ nhất nhé."
+      }
+    ]
+  },
+  {
+    "id": 252,
+    "title": "Đổi vé máy bay",
+    "situation": "Khách gọi hãng hàng không để đổi ngày bay.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Khách Nam", "en": "Customer Nam" },
+    "speakerBName": { "vi": "Nhân viên hãng Vy", "en": "Airline staff Vy" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I need to change my flight date.",
+        "vi": "Alô, tôi cần đổi ngày bay."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. Can I have your booking code?",
+        "vi": "Được ạ. Anh cho em mã đặt chỗ được không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, it's X Y Z one two three.",
+        "vi": "Vâng, là X Y Z một hai ba."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you. What's the new date you want?",
+        "vi": "Cảm ơn anh. Anh muốn đổi sang ngày nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "From the tenth to the fifteenth, please.",
+        "vi": "Từ ngày mười sang ngày mười lăm ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "There's a seat available. There's a change fee.",
+        "vi": "Có chỗ trống ạ. Sẽ có phí đổi vé."
+      },
+      { "speaker": "A", "en": "How much is the fee?", "vi": "Phí bao nhiêu vậy?" },
+      {
+        "speaker": "B",
+        "en": "Three hundred thousand, plus any fare difference.",
+        "vi": "Ba trăm nghìn, cộng phần chênh giá vé nếu có."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay, that's fine. Please go ahead.",
+        "vi": "Được, không sao. Em làm giúp tôi nhé."
+      },
+      {
+        "speaker": "B",
+        "en": "Done. I've sent the new ticket to your email.",
+        "vi": "Xong rồi ạ. Em đã gửi vé mới vào email của anh."
+      }
+    ]
+  },
+  {
+    "id": 253,
+    "title": "Hỏi về hành lý xách tay",
+    "situation": "Khách hỏi nhân viên sân bay về quy định hành lý xách tay.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Khách Hoa", "en": "Customer Hoa" },
+    "speakerBName": { "vi": "Nhân viên sân bay Tâm", "en": "Airport staff Tam" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Excuse me, how much carry-on can I bring?",
+        "vi": "Xin lỗi, tôi mang được bao nhiêu hành lý xách tay?"
+      },
+      { "speaker": "B", "en": "One bag up to seven kilograms.", "vi": "Một túi tối đa bảy ký ạ." },
+      {
+        "speaker": "A",
+        "en": "Can I also bring a small handbag?",
+        "vi": "Tôi mang thêm một túi xách nhỏ được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, a small personal item is allowed.",
+        "vi": "Được ạ, một túi cá nhân nhỏ được phép."
+      },
+      {
+        "speaker": "A",
+        "en": "Can I take water through security?",
+        "vi": "Tôi mang nước qua cửa an ninh được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "No liquids over one hundred milliliters.",
+        "vi": "Không được mang chất lỏng quá một trăm mi-li-lít."
+      },
+      { "speaker": "A", "en": "What about my laptop?", "vi": "Còn laptop của tôi thì sao?" },
+      {
+        "speaker": "B",
+        "en": "Take it out separately at the scanner.",
+        "vi": "Chị lấy ra riêng khi qua máy quét."
+      },
+      {
+        "speaker": "A",
+        "en": "Got it. Is my bag the right size?",
+        "vi": "Hiểu rồi. Túi của tôi có đúng kích thước không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Let me check. Yes, it fits the limit.",
+        "vi": "Để tôi xem. Vâng, đúng giới hạn rồi ạ."
+      }
+    ]
+  },
+  {
+    "id": 254,
+    "title": "Check in online",
+    "situation": "Một người hướng dẫn bạn cách làm thủ tục bay trực tuyến.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Hùng", "en": "Hung" },
+    "speakerBName": { "vi": "Mai", "en": "Mai" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Have you checked in for the flight yet?",
+        "vi": "Cậu làm thủ tục bay chưa?"
+      },
+      {
+        "speaker": "B",
+        "en": "Not yet. Can I do it online?",
+        "vi": "Chưa. Mình làm online được không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, it's easy. Open the airline's app.",
+        "vi": "Được, dễ lắm. Mở ứng dụng hãng bay lên."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay, I've opened it. Now what?",
+        "vi": "Rồi, mình mở rồi. Giờ làm gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "Enter your booking code and last name.",
+        "vi": "Nhập mã đặt chỗ và họ của cậu."
+      },
+      {
+        "speaker": "B",
+        "en": "Done. It's showing my flight now.",
+        "vi": "Xong. Nó hiện chuyến bay của mình rồi."
+      },
+      { "speaker": "A", "en": "Great. Now choose your seat.", "vi": "Tốt. Giờ chọn chỗ ngồi." },
+      { "speaker": "B", "en": "I'll pick a window seat.", "vi": "Mình chọn ghế cạnh cửa sổ." },
+      {
+        "speaker": "A",
+        "en": "Perfect. Then save your boarding pass.",
+        "vi": "Tuyệt. Sau đó lưu thẻ lên máy bay lại."
+      },
+      {
+        "speaker": "B",
+        "en": "Got it. That was much faster than I expected.",
+        "vi": "Hiểu rồi. Nhanh hơn mình tưởng nhiều."
+      }
+    ]
+  },
+  {
+    "id": 255,
+    "title": "Chọn chỗ ngồi trên máy bay",
+    "situation": "Khách yêu cầu đổi chỗ ngồi với tiếp viên trên máy bay.",
+    "speakerAGender": "female",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Khách Ngọc", "en": "Passenger Ngoc" },
+    "speakerBName": { "vi": "Tiếp viên Lan", "en": "Attendant Lan" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Excuse me, could I change my seat?",
+        "vi": "Xin lỗi, tôi đổi chỗ ngồi được không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. Is there a problem with your seat?",
+        "vi": "Tất nhiên. Chỗ của chị có vấn đề gì không ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'd prefer to sit by the window.",
+        "vi": "Tôi muốn ngồi cạnh cửa sổ hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Let me check. There's one near the front.",
+        "vi": "Để em xem. Có một chỗ gần phía trước."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds great. Is it free?",
+        "vi": "Hay quá. Có mất phí không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, it's free since the flight isn't full.",
+        "vi": "Không ạ, miễn phí vì chuyến chưa đầy."
+      },
+      {
+        "speaker": "A",
+        "en": "Wonderful. Can I move now?",
+        "vi": "Tuyệt. Tôi chuyển sang luôn được chứ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Please wait until after takeoff.",
+        "vi": "Chị vui lòng chờ sau khi máy bay cất cánh."
+      },
+      {
+        "speaker": "A",
+        "en": "No problem. Thank you so much.",
+        "vi": "Không sao. Cảm ơn chị nhiều."
+      },
+      {
+        "speaker": "B",
+        "en": "You're welcome. Enjoy your flight.",
+        "vi": "Không có gì. Chúc chị chuyến bay vui vẻ."
+      }
+    ]
+  },
+  {
+    "id": 256,
+    "title": "Thuê xe tự lái",
+    "situation": "Khách hỏi thuê một chiếc ô tô tự lái.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Khách Đức", "en": "Customer Duc" },
+    "speakerBName": { "vi": "Nhân viên Thu", "en": "Staff Thu" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'd like to rent a self-drive car.",
+        "vi": "Chào chị, tôi muốn thuê một xe ô tô tự lái."
+      },
+      { "speaker": "B", "en": "Sure. For how many days?", "vi": "Được ạ. Anh thuê mấy ngày?" },
+      {
+        "speaker": "A",
+        "en": "Three days, starting this Friday.",
+        "vi": "Ba ngày, bắt đầu từ thứ Sáu này."
+      },
+      { "speaker": "B", "en": "What kind of car would you like?", "vi": "Anh muốn loại xe nào ạ?" },
+      {
+        "speaker": "A",
+        "en": "A four-seat car is enough for me.",
+        "vi": "Xe bốn chỗ là đủ cho tôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay. That's seven hundred thousand a day.",
+        "vi": "Được ạ. Bảy trăm nghìn một ngày."
+      },
+      { "speaker": "A", "en": "Is fuel included?", "vi": "Có bao gồm xăng không?" },
+      {
+        "speaker": "B",
+        "en": "No, please return it with a full tank.",
+        "vi": "Không ạ, anh trả xe với bình đầy giúp em."
+      },
+      {
+        "speaker": "A",
+        "en": "Understood. Do I need a deposit?",
+        "vi": "Hiểu rồi. Tôi có cần đặt cọc không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, and please show your driver's license.",
+        "vi": "Có ạ, và anh cho em xem bằng lái nhé."
+      }
+    ]
+  },
+  {
+    "id": 257,
+    "title": "Đặt xe Grab",
+    "situation": "Một người hướng dẫn bạn cách đặt xe qua ứng dụng.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Hương", "en": "Huong" },
+    "speakerBName": { "vi": "Tom", "en": "Tom" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Can you help me book a Grab?",
+        "vi": "Cậu giúp mình đặt xe Grab được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. First, type in where you want to go.",
+        "vi": "Được. Đầu tiên, nhập nơi cậu muốn đến."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay, I want to go to the airport.",
+        "vi": "Rồi, mình muốn đi sân bay."
+      },
+      {
+        "speaker": "B",
+        "en": "Now choose a car or a motorbike.",
+        "vi": "Giờ chọn ô tô hoặc xe máy."
+      },
+      { "speaker": "A", "en": "A car, please. I have luggage.", "vi": "Ô tô đi. Mình có hành lý." },
+      {
+        "speaker": "B",
+        "en": "Good. It shows the price before you book.",
+        "vi": "Tốt. Nó hiện giá trước khi cậu đặt."
+      },
+      { "speaker": "A", "en": "How much is it to the airport?", "vi": "Đi sân bay bao nhiêu vậy?" },
+      {
+        "speaker": "B",
+        "en": "About a hundred and fifty thousand.",
+        "vi": "Khoảng một trăm năm mươi nghìn."
+      },
+      {
+        "speaker": "A",
+        "en": "That's reasonable. How do I confirm?",
+        "vi": "Hợp lý đấy. Mình xác nhận thế nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "Just tap the book button. A driver will accept soon.",
+        "vi": "Chỉ cần bấm nút đặt. Tài xế sẽ nhận ngay thôi."
+      }
+    ]
+  },
+  {
+    "id": 258,
+    "title": "Hỏi giờ xe buýt",
+    "situation": "Khách hỏi người dân địa phương về giờ xe buýt.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Khách Phú", "en": "Visitor Phu" },
+    "speakerBName": { "vi": "Người dân Vân", "en": "Local Van" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Excuse me, does the bus to the center stop here?",
+        "vi": "Xin lỗi, xe buýt vào trung tâm có dừng ở đây không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, this is the right bus stop.",
+        "vi": "Có, đây đúng là trạm xe buýt rồi."
+      },
+      {
+        "speaker": "A",
+        "en": "Do you know how often it comes?",
+        "vi": "Chị có biết xe đến bao lâu một chuyến không?"
+      },
+      {
+        "speaker": "B",
+        "en": "About every twenty minutes.",
+        "vi": "Khoảng hai mươi phút một chuyến."
+      },
+      { "speaker": "A", "en": "Which bus number should I take?", "vi": "Tôi nên đi xe số mấy ạ?" },
+      {
+        "speaker": "B",
+        "en": "Take number eight. It goes downtown.",
+        "vi": "Đi số tám. Nó vào trung tâm."
+      },
+      { "speaker": "A", "en": "How much is the fare?", "vi": "Vé bao nhiêu tiền ạ?" },
+      {
+        "speaker": "B",
+        "en": "Seven thousand. Have small change ready.",
+        "vi": "Bảy nghìn. Chuẩn bị sẵn tiền lẻ nhé."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you. How many stops is it?",
+        "vi": "Cảm ơn chị. Đi bao nhiêu trạm ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "About six stops. I'll tell you when to get off.",
+        "vi": "Khoảng sáu trạm. Tôi sẽ báo anh lúc xuống."
+      }
+    ]
+  },
+  {
+    "id": 259,
+    "title": "Đặt vé xe khách",
+    "situation": "Khách gọi điện đặt vé xe khách đường dài.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Khách Mai", "en": "Customer Mai" },
+    "speakerBName": { "vi": "Nhân viên nhà xe Long", "en": "Staff Long" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'd like to book a coach ticket to Da Lat.",
+        "vi": "Chào anh, tôi muốn đặt vé xe khách đi Đà Lạt."
+      },
+      { "speaker": "B", "en": "Sure. For which day?", "vi": "Được ạ. Đi ngày nào?" },
+      {
+        "speaker": "A",
+        "en": "This Saturday, in the evening.",
+        "vi": "Thứ Bảy này, vào buổi tối."
+      },
+      {
+        "speaker": "B",
+        "en": "We have a sleeper bus at nine p m.",
+        "vi": "Bên em có xe giường nằm lúc chín giờ tối."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. How much is one ticket?",
+        "vi": "Tuyệt. Một vé bao nhiêu ạ?"
+      },
+      { "speaker": "B", "en": "Two hundred and fifty thousand.", "vi": "Hai trăm năm mươi nghìn." },
+      {
+        "speaker": "A",
+        "en": "Can I choose a lower bunk?",
+        "vi": "Tôi chọn giường tầng dưới được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I'll reserve a lower bunk for you.",
+        "vi": "Được ạ, em giữ giường tầng dưới cho chị."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. Where does the bus leave from?",
+        "vi": "Tuyệt. Xe khởi hành từ đâu ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "From the eastern bus station. Arrive thirty minutes early.",
+        "vi": "Từ bến xe miền Đông. Chị đến sớm ba mươi phút nhé."
+      }
+    ]
+  },
+  {
+    "id": 260,
+    "title": "Đặt đồ uống đặc biệt",
+    "situation": "Khách gọi một loại đồ uống đặc biệt tại quán cà phê.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Khách Khoa", "en": "Customer Khoa" },
+    "speakerBName": { "vi": "Nhân viên Linh", "en": "Barista Linh" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, what special drinks do you have today?",
+        "vi": "Chào chị, hôm nay có đồ uống đặc biệt gì không?"
+      },
+      {
+        "speaker": "B",
+        "en": "We have a new coconut coffee.",
+        "vi": "Bên em có cà phê cốt dừa mới."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds interesting. Is it sweet?",
+        "vi": "Nghe thú vị đấy. Có ngọt không?"
+      },
+      {
+        "speaker": "B",
+        "en": "A little. We can adjust the sugar for you.",
+        "vi": "Hơi ngọt. Bên em chỉnh đường theo ý anh được."
+      },
+      {
+        "speaker": "A",
+        "en": "Less sugar, please. Is it served cold?",
+        "vi": "Cho ít đường ạ. Nó uống lạnh à?"
+      },
+      { "speaker": "B", "en": "Yes, it's served with ice.", "vi": "Vâng, dùng với đá ạ." },
+      {
+        "speaker": "A",
+        "en": "Great. Can I add an extra shot?",
+        "vi": "Tuyệt. Thêm một shot cà phê được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course, for five thousand more.",
+        "vi": "Tất nhiên, thêm năm nghìn ạ."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. I'll take one, please.",
+        "vi": "Tuyệt. Cho tôi một ly nhé."
+      },
+      {
+        "speaker": "B",
+        "en": "Coming right up. Please wait a moment.",
+        "vi": "Có ngay ạ. Anh chờ một lát."
+      }
+    ]
+  }
+]

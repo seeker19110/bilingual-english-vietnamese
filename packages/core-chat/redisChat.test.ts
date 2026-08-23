@@ -16,7 +16,7 @@ afterEach(() => {
 
 describe('redisChat (fallback — không có REDIS_URL)', () => {
   it('publish/subscribe: subscriber nhận đúng payload đã publish', async () => {
-    const { publish, subscribeChannel } = await import('./redisChat')
+    const { publish, subscribeChannel } = await import('./redisChat.js')
     const received: unknown[] = []
     const unsubscribe = subscribeChannel('chat:user:u1', (payload) => received.push(payload))
 
@@ -29,7 +29,7 @@ describe('redisChat (fallback — không có REDIS_URL)', () => {
   })
 
   it('publish vào channel khác không lọt sang subscriber channel này', async () => {
-    const { publish, subscribeChannel } = await import('./redisChat')
+    const { publish, subscribeChannel } = await import('./redisChat.js')
     const received: unknown[] = []
     subscribeChannel('chat:user:u1', (payload) => received.push(payload))
 
@@ -38,7 +38,7 @@ describe('redisChat (fallback — không có REDIS_URL)', () => {
   })
 
   it('presence: setPresence → isOnline true, clearPresence → isOnline false', async () => {
-    const { setPresence, clearPresence, isOnline } = await import('./redisChat')
+    const { setPresence, clearPresence, isOnline } = await import('./redisChat.js')
     expect(await isOnline('u1')).toBe(false)
     await setPresence('u1')
     expect(await isOnline('u1')).toBe(true)

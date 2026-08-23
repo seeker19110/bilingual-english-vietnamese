@@ -4,7 +4,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
 const rateLimitOk = { value: true }
 const contentTypeOk = { value: true }
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => rateLimitOk.value,
@@ -14,7 +14,7 @@ vi.mock('../packages/core-auth/security', () => ({
 }))
 
 const wordVisemesFromEspeak = vi.fn()
-vi.mock('./_lib/espeakPhonemes', () => ({
+vi.mock('@dhcb/core-ai/espeakPhonemes', () => ({
   wordVisemesFromEspeak: (...args: unknown[]) => wordVisemesFromEspeak(...args),
 }))
 

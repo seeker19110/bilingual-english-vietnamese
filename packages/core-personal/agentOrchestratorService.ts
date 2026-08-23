@@ -3,7 +3,7 @@ import type {
   AgentBudgetGuardrail,
   AgentTaskStep,
   AgentExecutionSession,
-} from '../core-contracts/agentOrchestrator.js'
+} from '@dhcb/core-contracts/agentOrchestrator'
 
 export interface CreateAgentSessionInput {
   personId: string

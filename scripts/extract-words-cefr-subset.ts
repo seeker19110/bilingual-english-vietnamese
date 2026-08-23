@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url'
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DICT_DIR = process.env.DICT_DIR
   ? path.resolve(PROJECT_ROOT, process.env.DICT_DIR)
-  : path.join(PROJECT_ROOT, 'public/data/dictionary')
+  : path.join(PROJECT_ROOT, 'apps/dhcb/public/data/dictionary')
 const OUT_PATH = path.join(PROJECT_ROOT, 'data/words-cefr-dataset/subset.csv')
 
 interface DictEntry {

@@ -10,11 +10,11 @@ import type {
   AudioRoomState,
   AudioRoomMember,
   AudioRoomEvent,
-} from '../core-contracts/audioCoLearningRoom.js'
+} from '@dhcb/core-contracts/audioCoLearningRoom'
 import {
   AudioRoomStateSchema,
   AudioRoomEventSchema,
-} from '../core-contracts/audioCoLearningRoom.js'
+} from '@dhcb/core-contracts/audioCoLearningRoom'
 
 const MAX_ROOMS = 100
 const MAX_MEMBERS_PER_ROOM = 12

@@ -2,10 +2,10 @@
 // nhận rồi/admin tắt thưởng (đây là chỗ đụng tiền thật, giống quests.test.ts).
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('../../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 
 const granted: { calls: { userId: string; plan: string; days: number }[] } = { calls: [] }
-vi.mock('./planGrant', () => ({
+vi.mock('@dhcb/core-billing/planGrant', () => ({
   grantPlanDays: async (userId: string, plan: string, days: number) => {
     granted.calls.push({ userId, plan, days })
     return { plan, planExpiresAt: new Date() }
@@ -13,7 +13,7 @@ vi.mock('./planGrant', () => ({
 }))
 
 const streakMock = vi.fn()
-vi.mock('./quests', () => ({
+vi.mock('./quests.js', () => ({
   getCurrentStreak: (userId: string) => streakMock(userId),
 }))
 
@@ -25,7 +25,7 @@ import {
   invalidateAchievementRewardsCache,
   ACHIEVEMENT_IDS,
 } from './achievementRewards'
-import { getPgPool } from '../../packages/core-db/pgPool'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

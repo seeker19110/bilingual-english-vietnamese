@@ -1,0 +1,1122 @@
+[
+  {
+    "id": 21,
+    "title": "Mua SIM điện thoại",
+    "situation": "Nam đến cửa hàng mua SIM điện thoại và đăng ký gói cước.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Nam", "en": "Nam" },
+    "speakerBName": { "vi": "Nhân viên", "en": "Shop staff" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi there! I just arrived in Vietnam and I need a local SIM card. Can you help me?",
+        "vi": "Xin chào! Tôi vừa đến Việt Nam và cần một SIM nội địa. Bạn giúp tôi được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! Welcome to Vietnam. Are you looking for data only, or calls and data together?",
+        "vi": "Dĩ nhiên! Chào mừng đến Việt Nam. Anh muốn chỉ data, hay cả gọi và data?"
+      },
+      {
+        "speaker": "A",
+        "en": "Mainly data — I use a lot of internet for maps and messaging. But some call minutes would be handy too.",
+        "vi": "Chủ yếu là data — tôi dùng nhiều internet cho bản đồ và nhắn tin. Nhưng vài phút gọi cũng tiện."
+      },
+      {
+        "speaker": "B",
+        "en": "Got it. How long are you staying? That helps me recommend the right package.",
+        "vi": "Hiểu rồi. Anh ở lại bao lâu? Điều đó giúp tôi gợi ý gói phù hợp."
+      },
+      {
+        "speaker": "A",
+        "en": "About a month — I'm here for work and a bit of travelling afterward.",
+        "vi": "Khoảng một tháng — tôi đến đây làm việc và đi du lịch một chút sau đó."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect. We have a thirty-day package with a hundred and twenty gigabytes of data, plus fifty call minutes, for two hundred thousand dong.",
+        "vi": "Hoàn hảo. Chúng tôi có gói ba mươi ngày với một trăm hai mươi gigabyte data, cộng năm mươi phút gọi, giá hai trăm nghìn đồng."
+      },
+      {
+        "speaker": "A",
+        "en": "A hundred and twenty gigabytes — that's a lot! Is that really enough for a whole month?",
+        "vi": "Một trăm hai mươi gigabyte — nhiều thật! Vậy có đủ cho cả tháng không?"
+      },
+      {
+        "speaker": "B",
+        "en": "More than enough for most people. Unless you're streaming video constantly, you won't get close to the limit.",
+        "vi": "Quá đủ cho hầu hết mọi người. Trừ khi anh xem video liên tục, anh sẽ không gần đến giới hạn đâu."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds great. Which network is it on? I've heard Viettel has the best coverage.",
+        "vi": "Nghe tuyệt đó. Đây là mạng nào vậy? Tôi nghe nói Viettel có vùng phủ sóng tốt nhất."
+      },
+      {
+        "speaker": "B",
+        "en": "You heard right — this is a Viettel SIM. They have the strongest coverage, especially if you're travelling to rural areas.",
+        "vi": "Anh nghe đúng — đây là SIM Viettel. Họ có phủ sóng mạnh nhất, đặc biệt nếu anh đi đến vùng nông thôn."
+      },
+      {
+        "speaker": "A",
+        "en": "That's important — I'm planning to visit Sapa and Ha Giang, which are pretty remote.",
+        "vi": "Điều đó quan trọng — tôi định thăm Sapa và Hà Giang, khá xa xôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Then Viettel is definitely the right choice. The coverage in the northern mountains is much better than the others.",
+        "vi": "Vậy thì Viettel chắc chắn là lựa chọn đúng. Phủ sóng ở vùng núi phía Bắc tốt hơn nhiều so với các mạng khác."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. Do I need to register the SIM with my passport?",
+        "vi": "Tuyệt. Tôi có cần đăng ký SIM bằng hộ chiếu không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, it's a legal requirement here. May I see your passport? I'll register it for you right now.",
+        "vi": "Vâng, đó là yêu cầu pháp lý ở đây. Tôi xem hộ chiếu của anh được không? Tôi sẽ đăng ký cho anh ngay bây giờ."
+      },
+      {
+        "speaker": "A",
+        "en": "Here you go. Will the registration take long?",
+        "vi": "Đây ạ. Việc đăng ký có lâu không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Just a few minutes — I scan your passport, take a quick photo, and the SIM activates almost immediately.",
+        "vi": "Chỉ vài phút — tôi quét hộ chiếu, chụp một tấm ảnh nhanh, và SIM kích hoạt gần như ngay lập tức."
+      },
+      {
+        "speaker": "A",
+        "en": "A photo? Of me, you mean?",
+        "vi": "Một tấm ảnh? Ý bạn là của tôi à?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, just a quick photo for the registration record — it's standard procedure for all SIM purchases.",
+        "vi": "Vâng, chỉ một tấm ảnh nhanh cho hồ sơ đăng ký — đó là thủ tục tiêu chuẩn cho mọi giao dịch mua SIM."
+      },
+      {
+        "speaker": "A",
+        "en": "No problem then. Should I look at the camera?",
+        "vi": "Vậy không sao. Tôi nhìn vào máy ảnh nhé?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, just look here and smile. Perfect — got it. Now let me put the SIM into your phone. May I have it?",
+        "vi": "Vâng, nhìn vào đây và cười. Hoàn hảo — xong. Bây giờ để tôi lắp SIM vào điện thoại anh. Cho tôi mượn được không?"
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "title": "Mang điện thoại đi sửa",
+    "situation": "Lan mang điện thoại bị vỡ màn hình đến tiệm sửa chữa.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Lan", "en": "Lan" },
+    "speakerBName": { "vi": "Thợ sửa điện thoại", "en": "Phone technician" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I dropped my phone this morning and the screen is completely cracked. Can you fix it?",
+        "vi": "Chào anh, sáng nay tôi làm rơi điện thoại và màn hình vỡ hết. Anh sửa được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Let me take a look. Ouch — that's a nasty crack. May I see how it's responding?",
+        "vi": "Để tôi xem. Ối — vết nứt khó chịu thật. Tôi xem nó phản hồi thế nào được không?"
+      },
+      {
+        "speaker": "A",
+        "en": "The touch still works in some areas, but the top part of the screen is totally unresponsive.",
+        "vi": "Cảm ứng vẫn hoạt động ở một số chỗ, nhưng phần trên màn hình hoàn toàn không phản hồi."
+      },
+      {
+        "speaker": "B",
+        "en": "I see. What model is this? It looks like an iPhone 13.",
+        "vi": "Tôi hiểu. Đây là model gì? Trông như iPhone 13."
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, it's an iPhone 13. I've only had it for about a year, so I really want to save it.",
+        "vi": "Vâng, là iPhone 13. Tôi mới dùng khoảng một năm, nên tôi thực sự muốn cứu nó."
+      },
+      {
+        "speaker": "B",
+        "en": "A year is nothing — definitely worth repairing. The good news is a screen replacement is very doable.",
+        "vi": "Một năm chẳng là gì — chắc chắn đáng sửa. Tin tốt là thay màn hình hoàn toàn làm được."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a relief. How much would it cost?",
+        "vi": "Thật nhẹ nhõm. Sửa hết bao nhiêu tiền?"
+      },
+      {
+        "speaker": "B",
+        "en": "It depends on the type of screen. We have original Apple screens and high-quality aftermarket ones. The aftermarket is cheaper.",
+        "vi": "Tùy loại màn hình. Chúng tôi có màn hình Apple chính hãng và loại thay thế chất lượng cao. Loại thay thế rẻ hơn."
+      },
+      {
+        "speaker": "A",
+        "en": "What's the price difference between them?",
+        "vi": "Giá hai loại chênh nhau bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "The original Apple screen is about two million eight hundred thousand. The high-quality aftermarket is one million six hundred thousand.",
+        "vi": "Màn hình Apple chính hãng khoảng hai triệu tám trăm nghìn. Loại thay thế chất lượng cao là một triệu sáu trăm nghìn."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a big difference. Is the aftermarket screen noticeably worse?",
+        "vi": "Chênh lệch lớn đấy. Màn hình thay thế có tệ hơn rõ rệt không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Honestly, for everyday use, most people can't tell the difference. The colours and touch are excellent. The main difference is in extreme brightness and longevity.",
+        "vi": "Thành thật mà nói, với việc dùng hàng ngày, hầu hết mọi người không phân biệt được. Màu sắc và cảm ứng rất tốt. Khác biệt chính là ở độ sáng cực đại và độ bền."
+      },
+      {
+        "speaker": "A",
+        "en": "I mostly use it for messaging and photos. I think the aftermarket one is fine for me.",
+        "vi": "Tôi chủ yếu dùng để nhắn tin và chụp ảnh. Tôi nghĩ loại thay thế ổn với tôi."
+      },
+      {
+        "speaker": "B",
+        "en": "That's a sensible choice — you'll save a good amount and still get a great screen. Shall I proceed with that?",
+        "vi": "Đó là lựa chọn hợp lý — anh tiết kiệm được kha khá mà vẫn có màn hình tốt. Tôi tiến hành với loại đó nhé?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, please. How long will the repair take?",
+        "vi": "Vâng, làm ơn. Sửa chữa mất bao lâu?"
+      },
+      {
+        "speaker": "B",
+        "en": "About forty-five minutes to an hour. You can wait here, or come back later — whichever you prefer.",
+        "vi": "Khoảng bốn mươi lăm phút đến một tiếng. Chị có thể chờ ở đây, hoặc quay lại sau — tùy chị."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll wait, if that's okay. I don't want to leave my phone overnight.",
+        "vi": "Tôi sẽ chờ, nếu được. Tôi không muốn để điện thoại qua đêm."
+      },
+      {
+        "speaker": "B",
+        "en": "No problem at all. Before I start, I need to ask — do you have your data backed up, just in case?",
+        "vi": "Không sao cả. Trước khi tôi bắt đầu, tôi cần hỏi — chị có sao lưu dữ liệu chưa, phòng trường hợp?"
+      },
+      {
+        "speaker": "A",
+        "en": "I back up to iCloud automatically, so my photos and contacts should be safe. Is there a risk of losing data?",
+        "vi": "Tôi tự động sao lưu lên iCloud, nên ảnh và danh bạ của tôi an toàn. Có nguy cơ mất dữ liệu không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Screen replacement doesn't usually affect data at all. But it's always good to be safe, and you are. So we're fine to go ahead.",
+        "vi": "Thay màn hình thường không ảnh hưởng đến dữ liệu chút nào. Nhưng cẩn thận luôn tốt, và chị đã làm vậy. Nên mình có thể tiến hành."
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "title": "Đăng ký lớp học tiếng Anh",
+    "situation": "Phương gọi điện đến trung tâm để hỏi về lớp học tiếng Anh và đăng ký.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Phương", "en": "Phuong" },
+    "speakerBName": { "vi": "Nhân viên tư vấn", "en": "Course advisor" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I'm interested in your English courses. Could you tell me what options you have?",
+        "vi": "Xin chào, tôi quan tâm đến các khóa học tiếng Anh của trung tâm. Anh có thể cho tôi biết có những lựa chọn nào không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! We offer general English, IELTS preparation, business English, and conversation classes. What's your main goal?",
+        "vi": "Dĩ nhiên! Chúng tôi có tiếng Anh tổng quát, luyện thi IELTS, tiếng Anh thương mại, và lớp giao tiếp. Mục tiêu chính của chị là gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "I mainly want to improve my speaking. I can read and write okay, but I freeze up when I have to talk.",
+        "vi": "Tôi chủ yếu muốn cải thiện kỹ năng nói. Tôi đọc và viết khá ổn, nhưng tôi cứng họng khi phải nói."
+      },
+      {
+        "speaker": "B",
+        "en": "That's very common! Our conversation classes would be ideal for you. They focus entirely on speaking confidence.",
+        "vi": "Điều đó rất phổ biến! Lớp giao tiếp của chúng tôi sẽ lý tưởng cho chị. Chúng tập trung hoàn toàn vào sự tự tin khi nói."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds perfect. How big are the classes? I don't want a huge group where I never get to speak.",
+        "vi": "Nghe hoàn hảo. Lớp có đông không? Tôi không muốn nhóm quá lớn mà tôi chẳng bao giờ được nói."
+      },
+      {
+        "speaker": "B",
+        "en": "Our conversation classes are capped at eight students, so everyone gets plenty of speaking time.",
+        "vi": "Lớp giao tiếp của chúng tôi giới hạn tám học viên, nên ai cũng có nhiều thời gian nói."
+      },
+      {
+        "speaker": "A",
+        "en": "Eight is a good size. Are the teachers native speakers?",
+        "vi": "Tám là quy mô tốt. Giáo viên có phải người bản ngữ không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, all our conversation teachers are native speakers, mostly from the UK, the US, and Australia. They're all certified too.",
+        "vi": "Vâng, tất cả giáo viên giao tiếp của chúng tôi là người bản ngữ, chủ yếu từ Anh, Mỹ, và Úc. Họ đều có chứng chỉ."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. What level would I be in? I'm not sure how to describe my level.",
+        "vi": "Tuyệt. Tôi sẽ vào lớp trình độ nào? Tôi không chắc cách mô tả trình độ của mình."
+      },
+      {
+        "speaker": "B",
+        "en": "We do a free placement test before you start — it takes about thirty minutes and tells us exactly which level suits you.",
+        "vi": "Chúng tôi làm bài kiểm tra xếp lớp miễn phí trước khi chị bắt đầu — mất khoảng ba mươi phút và cho biết chính xác lớp nào phù hợp."
+      },
+      {
+        "speaker": "A",
+        "en": "A free placement test is helpful. Is it a speaking test or written?",
+        "vi": "Bài kiểm tra xếp lớp miễn phí thì hữu ích. Là kiểm tra nói hay viết?"
+      },
+      {
+        "speaker": "B",
+        "en": "It's both — a short written part and a one-on-one speaking interview, so we can assess your speaking accurately.",
+        "vi": "Cả hai — một phần viết ngắn và một buổi phỏng vấn nói trực tiếp, để chúng tôi đánh giá khả năng nói chính xác."
+      },
+      {
+        "speaker": "A",
+        "en": "That makes sense. How often are the classes, and how long is each one?",
+        "vi": "Hợp lý đó. Lớp học bao lâu một lần, và mỗi buổi dài bao lâu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Twice a week, ninety minutes per session. We have morning, evening, and weekend options.",
+        "vi": "Hai lần một tuần, mỗi buổi chín mươi phút. Chúng tôi có lựa chọn buổi sáng, buổi tối, và cuối tuần."
+      },
+      {
+        "speaker": "A",
+        "en": "Evening classes would suit me best — I work until five-thirty. What evenings are available?",
+        "vi": "Lớp buổi tối sẽ hợp với tôi nhất — tôi làm đến năm giờ rưỡi. Có những buổi tối nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "We have classes on Monday and Wednesday evenings at seven, or Tuesday and Thursday at the same time.",
+        "vi": "Chúng tôi có lớp vào tối thứ Hai và thứ Tư lúc bảy giờ, hoặc thứ Ba và thứ Năm cùng giờ."
+      },
+      {
+        "speaker": "A",
+        "en": "Tuesday and Thursday would work better for me. How much does the course cost?",
+        "vi": "Thứ Ba và thứ Năm sẽ hợp với tôi hơn. Khóa học giá bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "A three-month course, which is twenty-four sessions, is four million eight hundred thousand dong. That works out to two hundred thousand per session.",
+        "vi": "Khóa ba tháng, tức hai mươi bốn buổi, là bốn triệu tám trăm nghìn đồng. Tính ra hai trăm nghìn mỗi buổi."
+      },
+      {
+        "speaker": "A",
+        "en": "That's reasonable for native-speaker classes. Are there any discounts?",
+        "vi": "Hợp lý cho lớp giáo viên bản ngữ. Có giảm giá gì không?"
+      },
+      {
+        "speaker": "B",
+        "en": "If you pay for the full three months upfront, there's a ten percent discount. And if you refer a friend, you both get an extra five percent off.",
+        "vi": "Nếu chị thanh toán đủ ba tháng trước, có giảm mười phần trăm. Và nếu chị giới thiệu bạn, cả hai được giảm thêm năm phần trăm."
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "title": "Ngày đầu đi làm",
+    "situation": "Khánh đi làm ngày đầu tiên và được đồng nghiệp Thu hướng dẫn.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Khánh", "en": "Khanh" },
+    "speakerBName": { "vi": "Thu", "en": "Thu" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'm Khanh — today's my first day. I was told to ask for Thu?",
+        "vi": "Chào chị, em là Khánh — hôm nay là ngày đầu của em. Em được dặn là tìm chị Thu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, that's me! Welcome aboard, Khanh. We've been looking forward to having you join the team.",
+        "vi": "Vâng, là chị đây! Chào mừng em, Khánh. Chúng tôi đã mong chờ em gia nhập đội."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you! I'm a little nervous, to be honest, but really excited to get started.",
+        "vi": "Cảm ơn chị! Thành thật mà nói em hơi lo, nhưng rất háo hức bắt đầu."
+      },
+      {
+        "speaker": "B",
+        "en": "That's completely normal on day one. Don't worry — everyone here is friendly. Let me give you a tour first.",
+        "vi": "Điều đó hoàn toàn bình thường vào ngày đầu. Đừng lo — mọi người ở đây thân thiện lắm. Để chị dẫn em đi tham quan trước."
+      },
+      {
+        "speaker": "A",
+        "en": "That would be great. I barely remember where the entrance was from my interview!",
+        "vi": "Vậy thì tuyệt. Em hầu như không nhớ lối vào ở đâu từ buổi phỏng vấn!"
+      },
+      {
+        "speaker": "B",
+        "en": "Ha, no problem. So this is the main work area — your desk is right here, next to mine. Convenient for questions.",
+        "vi": "Ha, không sao. Đây là khu làm việc chính — bàn của em ngay đây, cạnh bàn chị. Tiện để hỏi han."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, perfect — I'll definitely have plenty of questions. Is the computer already set up for me?",
+        "vi": "Ồ, hoàn hảo — em chắc chắn sẽ có nhiều câu hỏi. Máy tính đã được cài đặt sẵn cho em chưa?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, IT set it up yesterday. Your login details are in this envelope. You'll need to change the password on first login.",
+        "vi": "Rồi, bộ phận IT cài hôm qua. Thông tin đăng nhập của em trong phong bì này. Em cần đổi mật khẩu ở lần đăng nhập đầu."
+      },
+      {
+        "speaker": "A",
+        "en": "Got it. Is there a company email I should check regularly?",
+        "vi": "Hiểu rồi. Có email công ty em cần kiểm tra thường xuyên không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, your work email is set up too. Most of our internal communication happens there and on our chat app, Slack.",
+        "vi": "Có, email công việc của em cũng đã được thiết lập. Hầu hết liên lạc nội bộ diễn ra ở đó và trên app chat Slack."
+      },
+      {
+        "speaker": "A",
+        "en": "I've used Slack before, so that's familiar at least. Where's the restroom and the pantry?",
+        "vi": "Em dùng Slack trước đây rồi, nên ít nhất cũng quen. Nhà vệ sinh và phòng pantry ở đâu ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "The restrooms are down the hall to the left. The pantry's to the right — free coffee, tea, and there's always snacks people share.",
+        "vi": "Nhà vệ sinh ở cuối hành lang bên trái. Pantry ở bên phải — cà phê, trà miễn phí, và luôn có đồ ăn vặt mọi người chia sẻ."
+      },
+      {
+        "speaker": "A",
+        "en": "Free coffee — that's the most important information so far!",
+        "vi": "Cà phê miễn phí — đó là thông tin quan trọng nhất đến giờ!"
+      },
+      {
+        "speaker": "B",
+        "en": "Ha! Spoken like a true office worker. The coffee machine can be tricky though — I'll show you how it works.",
+        "vi": "Ha! Nói đúng kiểu dân văn phòng. Nhưng máy pha cà phê hơi khó dùng — chị sẽ chỉ em cách dùng."
+      },
+      {
+        "speaker": "A",
+        "en": "Please do — I'd hate to break it on my first day! What time does everyone usually take lunch?",
+        "vi": "Làm ơn — em không muốn làm hỏng nó vào ngày đầu! Mọi người thường ăn trưa lúc mấy giờ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Lunch is flexible, but most of us go around noon. There are tons of great food spots nearby — we usually go together.",
+        "vi": "Giờ ăn trưa linh hoạt, nhưng hầu hết bọn chị đi khoảng trưa. Có rất nhiều quán ăn ngon gần đây — bọn chị thường đi cùng nhau."
+      },
+      {
+        "speaker": "A",
+        "en": "That's nice — I'd love to join. It's a good way to get to know everyone.",
+        "vi": "Hay đó — em rất muốn tham gia. Đó là cách tốt để làm quen mọi người."
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly! The team's pretty social. Now, your manager, Mr. Hung, wants to meet you at ten for a quick chat.",
+        "vi": "Đúng vậy! Đội khá hòa đồng. Bây giờ, quản lý của em, anh Hùng, muốn gặp em lúc mười giờ để trò chuyện nhanh."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, okay. Is there anything I should prepare for that meeting?",
+        "vi": "Ồ, vâng. Em có cần chuẩn bị gì cho buổi gặp đó không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Nothing formal — he just wants to welcome you and go over your first-week goals. Very relaxed.",
+        "vi": "Không có gì trang trọng — anh ấy chỉ muốn chào đón em và xem qua mục tiêu tuần đầu. Rất thoải mái."
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "title": "Họp ở công ty",
+    "situation": "Một cuộc họp nhóm ngắn giữa Quân và Mai về tiến độ công việc trong tuần.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Quân", "en": "Quan" },
+    "speakerBName": { "vi": "Mai", "en": "Mai" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Thanks for joining, Mai. Let's keep this quick — I just want to check in on where we are with the campaign.",
+        "vi": "Cảm ơn em đã tham gia, Mai. Mình giữ buổi này ngắn gọn — anh chỉ muốn cập nhật xem tình hình chiến dịch đến đâu rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure, Quan. Overall we're on track, but there are a couple of things I want to flag.",
+        "vi": "Được, anh Quân. Nhìn chung chúng ta đúng tiến độ, nhưng có vài điều em muốn nêu ra."
+      },
+      {
+        "speaker": "A",
+        "en": "Good — let's hear them. Start with the positives, then the concerns.",
+        "vi": "Tốt — nghe nào. Bắt đầu từ điểm tích cực, rồi đến điểm lo ngại."
+      },
+      {
+        "speaker": "B",
+        "en": "On the positive side, the social media content is finished and approved. We're ready to schedule it for next Monday.",
+        "vi": "Về mặt tích cực, nội dung mạng xã hội đã hoàn thành và được duyệt. Chúng ta sẵn sàng lên lịch cho thứ Hai tới."
+      },
+      {
+        "speaker": "A",
+        "en": "That's great news. The design team did a fantastic job — I saw the drafts yesterday.",
+        "vi": "Đó là tin tốt. Đội thiết kế làm rất tuyệt — anh xem bản nháp hôm qua rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "They really did. The video ad is also nearly done — just final edits and it'll be ready by Thursday.",
+        "vi": "Họ làm rất tốt. Quảng cáo video cũng gần xong — chỉ còn chỉnh sửa cuối và sẽ sẵn sàng vào thứ Năm."
+      },
+      {
+        "speaker": "A",
+        "en": "Thursday works, as long as it's ready before the Monday launch. What about the concerns?",
+        "vi": "Thứ Năm được, miễn là nó sẵn sàng trước khi ra mắt vào thứ Hai. Còn điểm lo ngại thì sao?"
+      },
+      {
+        "speaker": "B",
+        "en": "The main concern is the landing page. The developers are behind schedule — they said it might slip to Tuesday.",
+        "vi": "Lo ngại chính là trang đích. Đội lập trình bị chậm tiến độ — họ nói có thể trễ đến thứ Ba."
+      },
+      {
+        "speaker": "A",
+        "en": "Tuesday? That's a problem — the whole campaign drives traffic to that page from Monday.",
+        "vi": "Thứ Ba? Đó là vấn đề — cả chiến dịch dẫn lưu lượng đến trang đó từ thứ Hai."
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly my worry. If the page isn't live, we'd be sending people to a broken link on launch day.",
+        "vi": "Đúng là điều em lo. Nếu trang chưa hoạt động, chúng ta sẽ gửi người dùng đến một liên kết hỏng vào ngày ra mắt."
+      },
+      {
+        "speaker": "A",
+        "en": "That can't happen. Do you know what's causing the delay on their end?",
+        "vi": "Điều đó không thể xảy ra. Em có biết nguyên nhân gây chậm trễ bên họ không?"
+      },
+      {
+        "speaker": "B",
+        "en": "They said the payment integration is more complex than expected. They're testing it but it's taking longer.",
+        "vi": "Họ nói phần tích hợp thanh toán phức tạp hơn dự kiến. Họ đang kiểm thử nhưng mất nhiều thời gian hơn."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay. Is there a way to launch a simpler version of the page first and add payment later?",
+        "vi": "Được. Có cách nào ra mắt phiên bản đơn giản hơn của trang trước và thêm thanh toán sau không?"
+      },
+      {
+        "speaker": "B",
+        "en": "That's a smart idea. We could launch with a sign-up form and 'coming soon' for purchases, then enable payment when it's ready.",
+        "vi": "Đó là ý hay. Chúng ta có thể ra mắt với form đăng ký và 'sắp ra mắt' cho phần mua hàng, rồi bật thanh toán khi sẵn sàng."
+      },
+      {
+        "speaker": "A",
+        "en": "I like that. We capture interest from day one and don't lose the momentum. Can the developers do that by Monday?",
+        "vi": "Anh thích vậy. Chúng ta thu hút sự quan tâm từ ngày đầu mà không mất đà. Đội lập trình có làm được trước thứ Hai không?"
+      },
+      {
+        "speaker": "B",
+        "en": "A simplified version, yes — that's much more achievable. I'll confirm with them right after this meeting.",
+        "vi": "Phiên bản đơn giản hóa, được — cái đó khả thi hơn nhiều. Em sẽ xác nhận với họ ngay sau buổi họp này."
+      },
+      {
+        "speaker": "A",
+        "en": "Perfect. Make it clear it's our priority. We can't afford to push the launch date.",
+        "vi": "Hoàn hảo. Nói rõ đó là ưu tiên của chúng ta. Chúng ta không thể dời ngày ra mắt được."
+      },
+      {
+        "speaker": "B",
+        "en": "Understood. I'll stress that the simplified page is non-negotiable for Monday.",
+        "vi": "Hiểu rồi. Em sẽ nhấn mạnh rằng trang đơn giản hóa là không thể thương lượng cho thứ Hai."
+      },
+      {
+        "speaker": "A",
+        "en": "Good. Now, what about the budget? Are we still within the limit?",
+        "vi": "Tốt. Còn ngân sách thì sao? Chúng ta vẫn trong giới hạn chứ?"
+      },
+      {
+        "speaker": "B",
+        "en": "We're at about eighty percent of the budget, with the video being the biggest cost. We have some room for the ad spend.",
+        "vi": "Chúng ta ở khoảng tám mươi phần trăm ngân sách, với video là chi phí lớn nhất. Chúng ta còn dư chỗ cho chi phí quảng cáo."
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "title": "Xin nghỉ phép",
+    "situation": "Lan xin nghỉ phép với quản lý để về quê giải quyết việc gia đình.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Lan", "en": "Lan" },
+    "speakerBName": { "vi": "Quản lý", "en": "Manager" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Excuse me, Mr. Hung, do you have a few minutes? I'd like to talk about taking some leave.",
+        "vi": "Xin lỗi anh Hùng, anh có vài phút không ạ? Em muốn nói về việc xin nghỉ phép."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course, Lan. Come in, have a seat. What's on your mind?",
+        "vi": "Dĩ nhiên, Lan. Vào đi, ngồi đi. Em có chuyện gì vậy?"
+      },
+      {
+        "speaker": "A",
+        "en": "I need to go back to my hometown for some family matters. My mother isn't well and I need to help arrange things.",
+        "vi": "Em cần về quê để lo việc gia đình. Mẹ em không khỏe và em cần giúp sắp xếp mọi thứ."
+      },
+      {
+        "speaker": "B",
+        "en": "I'm so sorry to hear about your mother. Of course, family comes first. How much time do you think you'll need?",
+        "vi": "Anh rất tiếc khi nghe về mẹ em. Dĩ nhiên, gia đình là trên hết. Em nghĩ em cần bao nhiêu thời gian?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'm hoping for about a week — five working days, if that's possible.",
+        "vi": "Em hy vọng khoảng một tuần — năm ngày làm việc, nếu được."
+      },
+      {
+        "speaker": "B",
+        "en": "That should be fine. Do you have enough annual leave days left, or would some of this be unpaid?",
+        "vi": "Vậy chắc ổn. Em còn đủ ngày phép năm không, hay một phần sẽ là nghỉ không lương?"
+      },
+      {
+        "speaker": "A",
+        "en": "I checked, and I have eight days of annual leave remaining, so five days would be covered.",
+        "vi": "Em đã kiểm tra, và em còn tám ngày phép năm, nên năm ngày sẽ được tính phép."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect, so it's all paid leave. When were you thinking of going?",
+        "vi": "Hoàn hảo, vậy là nghỉ phép có lương hết. Em định đi khi nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'd like to leave this Friday, if possible, and be back the following Friday.",
+        "vi": "Em muốn đi vào thứ Sáu này, nếu được, và quay lại thứ Sáu tuần sau."
+      },
+      {
+        "speaker": "B",
+        "en": "Let me think about the timing with our current projects. You're leading the client report, aren't you?",
+        "vi": "Để anh nghĩ về thời điểm với các dự án hiện tại. Em đang phụ trách báo cáo cho khách hàng phải không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, but I've actually prepared for this. The report is nearly finished — I can complete it before Friday.",
+        "vi": "Vâng, nhưng thực ra em đã chuẩn bị cho việc này. Báo cáo gần xong rồi — em có thể hoàn thành trước thứ Sáu."
+      },
+      {
+        "speaker": "B",
+        "en": "That's very responsible of you. And what about the follow-up tasks while you're away?",
+        "vi": "Em thật có trách nhiệm. Còn các nhiệm vụ tiếp theo trong lúc em vắng mặt thì sao?"
+      },
+      {
+        "speaker": "A",
+        "en": "I've written a handover document for Trang. She knows the project well and is happy to cover for me.",
+        "vi": "Em đã viết tài liệu bàn giao cho Trang. Cô ấy hiểu rõ dự án và vui lòng thay em."
+      },
+      {
+        "speaker": "B",
+        "en": "You've thought of everything. That makes my decision easy. Have you spoken to Trang already?",
+        "vi": "Em đã nghĩ đến mọi thứ. Điều đó khiến quyết định của anh dễ dàng. Em đã nói chuyện với Trang chưa?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, I spoke to her yesterday and she agreed. I just wanted to confirm with you before finalizing anything.",
+        "vi": "Rồi, em nói chuyện với cô ấy hôm qua và cô ấy đồng ý. Em chỉ muốn xác nhận với anh trước khi hoàn tất."
+      },
+      {
+        "speaker": "B",
+        "en": "I appreciate you handling it so professionally, especially during a difficult time. Consider your leave approved.",
+        "vi": "Anh cảm kích em xử lý chuyện này rất chuyên nghiệp, đặc biệt trong thời điểm khó khăn. Coi như đơn nghỉ của em được duyệt."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you so much, Mr. Hung. That's a huge weight off my shoulders.",
+        "vi": "Cảm ơn anh rất nhiều, anh Hùng. Đó là một gánh nặng lớn được trút khỏi vai em."
+      },
+      {
+        "speaker": "B",
+        "en": "Don't mention it. Just submit the leave request in the system so HR has it on record.",
+        "vi": "Đừng khách sáo. Chỉ cần nộp đơn nghỉ phép trong hệ thống để bộ phận nhân sự ghi nhận."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll do that right after this. Should I include the dates and the handover details?",
+        "vi": "Em sẽ làm ngay sau khi xong. Em có nên ghi cả ngày tháng và chi tiết bàn giao không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, include the dates. Attach the handover document too — that way everything is transparent.",
+        "vi": "Có, ghi ngày tháng. Đính kèm cả tài liệu bàn giao nữa — như vậy mọi thứ minh bạch."
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "title": "Phỏng vấn xin việc",
+    "situation": "Một buổi phỏng vấn xin việc giữa ứng viên Hoa và nhà tuyển dụng.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Hoa", "en": "Hoa" },
+    "speakerBName": { "vi": "Nhà tuyển dụng", "en": "Interviewer" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good morning! Thank you for inviting me to interview. I'm Hoa.",
+        "vi": "Chào buổi sáng! Cảm ơn anh đã mời tôi phỏng vấn. Tôi là Hoa."
+      },
+      {
+        "speaker": "B",
+        "en": "Good morning, Hoa. Thanks for coming in. Please, take a seat and make yourself comfortable.",
+        "vi": "Chào buổi sáng, Hoa. Cảm ơn cô đã đến. Mời cô ngồi và cứ thoải mái."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you. I'm a little nervous, but very excited to be here.",
+        "vi": "Cảm ơn anh. Tôi hơi lo một chút, nhưng rất háo hức khi được ở đây."
+      },
+      {
+        "speaker": "B",
+        "en": "That's perfectly natural. Let's start simple — could you tell me a bit about yourself and your background?",
+        "vi": "Điều đó hoàn toàn tự nhiên. Mình bắt đầu đơn giản nhé — cô có thể kể một chút về bản thân và xuất thân của cô không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Of course. I graduated in marketing three years ago and have been working at a digital agency since then, mostly on social media campaigns.",
+        "vi": "Dĩ nhiên. Tôi tốt nghiệp ngành marketing ba năm trước và đã làm việc tại một công ty digital từ đó, chủ yếu về các chiến dịch mạng xã hội."
+      },
+      {
+        "speaker": "B",
+        "en": "Great. What drew you to apply for this position with us?",
+        "vi": "Tuyệt. Điều gì khiến cô ứng tuyển vào vị trí này với chúng tôi?"
+      },
+      {
+        "speaker": "A",
+        "en": "I've followed your company's campaigns for a while — they're creative and data-driven. I want to grow somewhere that values both creativity and results.",
+        "vi": "Tôi đã theo dõi các chiến dịch của công ty một thời gian — chúng sáng tạo và dựa trên dữ liệu. Tôi muốn phát triển ở nơi coi trọng cả sáng tạo lẫn kết quả."
+      },
+      {
+        "speaker": "B",
+        "en": "That's good to hear. Can you give me an example of a campaign you're particularly proud of?",
+        "vi": "Nghe hay đó. Cô có thể cho tôi một ví dụ về chiến dịch mà cô đặc biệt tự hào không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes — last year I led a campaign for a local skincare brand. We increased their online sales by forty percent in three months.",
+        "vi": "Có — năm ngoái tôi dẫn dắt một chiến dịch cho một thương hiệu chăm sóc da nội địa. Chúng tôi tăng doanh số online của họ lên bốn mươi phần trăm trong ba tháng."
+      },
+      {
+        "speaker": "B",
+        "en": "Forty percent is impressive. What do you think was the key to that success?",
+        "vi": "Bốn mươi phần trăm thật ấn tượng. Cô nghĩ điều gì là chìa khóa cho thành công đó?"
+      },
+      {
+        "speaker": "A",
+        "en": "Honestly, it was really understanding the audience. We tested different messages and doubled down on what resonated emotionally.",
+        "vi": "Thành thật mà nói, đó là thực sự hiểu khán giả. Chúng tôi thử nghiệm các thông điệp khác nhau và tập trung vào cái gây cộng hưởng cảm xúc."
+      },
+      {
+        "speaker": "B",
+        "en": "Testing and adapting — exactly the mindset we value. How do you handle a campaign that isn't performing well?",
+        "vi": "Thử nghiệm và điều chỉnh — đúng tư duy chúng tôi coi trọng. Cô xử lý thế nào với một chiến dịch không hoạt động tốt?"
+      },
+      {
+        "speaker": "A",
+        "en": "I look at the data first to find where it's dropping off. Then I'd rather pivot quickly than keep spending on something that isn't working.",
+        "vi": "Tôi xem dữ liệu trước để tìm chỗ nó sụt giảm. Sau đó tôi thà chuyển hướng nhanh còn hơn tiếp tục chi cho thứ không hiệu quả."
+      },
+      {
+        "speaker": "B",
+        "en": "That's a practical approach. Now, this role involves managing a small team. Do you have leadership experience?",
+        "vi": "Đó là cách tiếp cận thực tế. Bây giờ, vai trò này liên quan đến quản lý một đội nhỏ. Cô có kinh nghiệm lãnh đạo không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, I've mentored two junior staff in my current role. I enjoy helping people develop and find their strengths.",
+        "vi": "Có, tôi đã dìu dắt hai nhân viên mới ở vị trí hiện tại. Tôi thích giúp mọi người phát triển và tìm ra điểm mạnh của họ."
+      },
+      {
+        "speaker": "B",
+        "en": "What would you say is your biggest weakness?",
+        "vi": "Cô nghĩ điểm yếu lớn nhất của cô là gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "I tend to be a perfectionist, which sometimes slows me down. I've been learning to set clear deadlines and accept 'good enough' when needed.",
+        "vi": "Tôi có xu hướng cầu toàn, đôi khi làm tôi chậm lại. Tôi đang học cách đặt deadline rõ ràng và chấp nhận mức 'đủ tốt' khi cần."
+      },
+      {
+        "speaker": "B",
+        "en": "That's a thoughtful, honest answer. How do you keep up with the fast pace of digital marketing trends?",
+        "vi": "Đó là câu trả lời sâu sắc và trung thực. Cô làm thế nào để theo kịp nhịp độ nhanh của các xu hướng digital marketing?"
+      },
+      {
+        "speaker": "A",
+        "en": "I follow industry newsletters, take online courses, and I'm part of a few marketing communities. I also just experiment a lot myself.",
+        "vi": "Tôi theo dõi các bản tin ngành, học các khóa online, và tham gia một vài cộng đồng marketing. Tôi cũng tự thử nghiệm nhiều."
+      },
+      {
+        "speaker": "B",
+        "en": "Continuous learning is essential in this field. Where do you see yourself in five years?",
+        "vi": "Học hỏi liên tục là thiết yếu trong lĩnh vực này. Cô thấy mình ở đâu trong năm năm tới?"
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "title": "Thương lượng lương",
+    "situation": "Sau khi nhận được lời mời làm việc, Tùng thương lượng mức lương với nhà tuyển dụng.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Tùng", "en": "Tung" },
+    "speakerBName": { "vi": "Nhà tuyển dụng", "en": "Recruiter" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Thank you so much for the offer. I'm really pleased, and I'd love to discuss the details a little.",
+        "vi": "Cảm ơn chị rất nhiều về lời mời. Tôi thực sự vui mừng, và tôi muốn thảo luận thêm một chút về chi tiết."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course, Tung — we're delighted you're interested. What would you like to discuss?",
+        "vi": "Dĩ nhiên, Tùng — chúng tôi rất vui vì anh quan tâm. Anh muốn thảo luận điều gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "Mainly the salary. The offer is twenty million per month, and I was hoping we could explore some flexibility there.",
+        "vi": "Chủ yếu là lương. Lời mời là hai mươi triệu một tháng, và tôi hy vọng chúng ta có thể tìm hiểu một chút sự linh hoạt ở đó."
+      },
+      {
+        "speaker": "B",
+        "en": "I appreciate you raising it directly. May I ask what figure you had in mind?",
+        "vi": "Tôi trân trọng việc anh nêu trực tiếp. Tôi có thể hỏi anh có con số nào trong đầu không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Based on my experience and the market rate, I was hoping for something closer to twenty-four million.",
+        "vi": "Dựa trên kinh nghiệm của tôi và mức thị trường, tôi hy vọng con số gần hai mươi bốn triệu hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "I see. Can you help me understand what makes you feel that figure is justified?",
+        "vi": "Tôi hiểu. Anh có thể giúp tôi hiểu điều gì khiến anh cảm thấy con số đó hợp lý không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Certainly. I have five years of experience, I'm bringing a portfolio of successful projects, and I can hit the ground running with minimal training.",
+        "vi": "Chắc chắn. Tôi có năm năm kinh nghiệm, tôi mang đến một danh mục các dự án thành công, và tôi có thể bắt tay vào việc ngay với rất ít đào tạo."
+      },
+      {
+        "speaker": "B",
+        "en": "Those are valid points. Your experience is exactly why we made the offer. Let me be transparent about our range.",
+        "vi": "Đó là những điểm hợp lý. Kinh nghiệm của anh chính xác là lý do chúng tôi đưa ra lời mời. Để tôi minh bạch về khoảng lương của chúng tôi."
+      },
+      {
+        "speaker": "A",
+        "en": "I'd appreciate that — transparency helps both of us.",
+        "vi": "Tôi sẽ cảm kích điều đó — sự minh bạch giúp cả hai chúng ta."
+      },
+      {
+        "speaker": "B",
+        "en": "For this role, our budgeted range goes up to twenty-two million. Twenty-four is above what we have approved.",
+        "vi": "Với vai trò này, khoảng ngân sách của chúng tôi lên đến hai mươi hai triệu. Hai mươi bốn là trên mức chúng tôi đã được duyệt."
+      },
+      {
+        "speaker": "A",
+        "en": "I understand. Would twenty-two million be the firm ceiling, or is there room to revisit it after a probation period?",
+        "vi": "Tôi hiểu. Hai mươi hai triệu có phải là trần cứng không, hay có chỗ để xem xét lại sau thời gian thử việc?"
+      },
+      {
+        "speaker": "B",
+        "en": "That's a fair question. We could offer twenty-two now, with a formal salary review after six months based on performance.",
+        "vi": "Đó là câu hỏi công bằng. Chúng tôi có thể đề nghị hai mươi hai bây giờ, với việc xét lại lương chính thức sau sáu tháng dựa trên hiệu suất."
+      },
+      {
+        "speaker": "A",
+        "en": "A six-month review is appealing. Could we put a target in writing — say, a path to twenty-four if I meet certain goals?",
+        "vi": "Việc xét lại sau sáu tháng hấp dẫn đó. Chúng ta có thể ghi rõ mục tiêu bằng văn bản không — ví dụ, lộ trình lên hai mươi bốn nếu tôi đạt một số mục tiêu nhất định?"
+      },
+      {
+        "speaker": "B",
+        "en": "I like that approach — it ties the increase to clear results. Let me check what specific targets we can commit to.",
+        "vi": "Tôi thích cách tiếp cận đó — nó gắn việc tăng lương với kết quả rõ ràng. Để tôi xem những mục tiêu cụ thể nào chúng tôi có thể cam kết."
+      },
+      {
+        "speaker": "A",
+        "en": "That would be ideal. I'm confident in my ability to deliver, so I'm comfortable being measured on results.",
+        "vi": "Vậy thì lý tưởng. Tôi tự tin vào khả năng của mình, nên tôi thoải mái với việc được đánh giá dựa trên kết quả."
+      },
+      {
+        "speaker": "B",
+        "en": "That confidence is reassuring. Besides salary, are there other parts of the package that matter to you?",
+        "vi": "Sự tự tin đó làm tôi yên tâm. Ngoài lương, còn phần nào khác trong gói đãi ngộ quan trọng với anh không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, actually. Flexibility in working arrangements is important — would remote work a couple of days a week be possible?",
+        "vi": "Có, thực ra. Sự linh hoạt trong cách làm việc quan trọng — làm việc từ xa vài ngày một tuần có khả thi không?"
+      },
+      {
+        "speaker": "B",
+        "en": "We do offer hybrid working — up to two days remote per week is standard for this role.",
+        "vi": "Chúng tôi có làm việc kết hợp — tối đa hai ngày từ xa mỗi tuần là tiêu chuẩn cho vai trò này."
+      },
+      {
+        "speaker": "A",
+        "en": "That's great to hear. And what about the annual leave allowance?",
+        "vi": "Nghe tuyệt đó. Còn số ngày phép năm thì sao?"
+      },
+      {
+        "speaker": "B",
+        "en": "You'd get fifteen days of annual leave, plus public holidays, and an extra day for each year of service.",
+        "vi": "Anh sẽ có mười lăm ngày phép năm, cộng các ngày lễ, và thêm một ngày cho mỗi năm làm việc."
+      }
+    ]
+  },
+  {
+    "id": 29,
+    "title": "Viết email công việc",
+    "situation": "Mai và đồng nghiệp Sơn trao đổi qua điện thoại về một email công việc cần gửi gấp.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Mai", "en": "Mai" },
+    "speakerBName": { "vi": "Sơn", "en": "Son" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi Son, sorry to call so late, but I need your help with an email before the client deadline tonight.",
+        "vi": "Chào Sơn, xin lỗi gọi muộn thế này, nhưng tôi cần bạn giúp một email trước hạn chót với khách hàng tối nay."
+      },
+      {
+        "speaker": "B",
+        "en": "No worries, Mai. What's the email about?",
+        "vi": "Không sao đâu, Mai. Email về việc gì vậy?"
+      },
+      {
+        "speaker": "A",
+        "en": "It's the project update for the Tan Phat account. They want a summary of progress and the revised timeline.",
+        "vi": "Đó là cập nhật dự án cho tài khoản Tân Phát. Họ muốn tóm tắt tiến độ và lịch trình đã điều chỉnh."
+      },
+      {
+        "speaker": "B",
+        "en": "Right, that one's important. Have you drafted it already, or are we starting from scratch?",
+        "vi": "Đúng rồi, cái đó quan trọng. Bạn đã soạn nháp chưa, hay mình bắt đầu từ đầu?"
+      },
+      {
+        "speaker": "A",
+        "en": "I've got a rough draft, but I'm not happy with the tone. It feels too casual for this client.",
+        "vi": "Tôi có bản nháp sơ bộ, nhưng tôi không hài lòng với giọng văn. Nó có vẻ quá thân mật cho khách hàng này."
+      },
+      {
+        "speaker": "B",
+        "en": "Tan Phat is quite formal, yes. Can you read me your opening line?",
+        "vi": "Tân Phát khá trang trọng, đúng vậy. Bạn đọc cho tôi câu mở đầu được không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Sure: 'Hi guys, just wanted to give you a quick update on where things are at.'",
+        "vi": "Được: 'Chào mọi người, chỉ muốn cập nhật nhanh cho mọi người về tình hình.'"
+      },
+      {
+        "speaker": "B",
+        "en": "Ha, yes — that's far too casual. For Tan Phat, I'd open with 'Dear Mr. Long and team, I am writing to provide an update on the project's progress.'",
+        "vi": "Ha, đúng — quá thân mật. Với Tân Phát, tôi sẽ mở đầu bằng 'Kính gửi anh Long và đội ngũ, Tôi viết email này để cập nhật về tiến độ dự án.'"
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, that's much better. More respectful and professional. Let me write that down.",
+        "vi": "Ồ, hay hơn nhiều. Lịch sự và chuyên nghiệp hơn. Để tôi ghi lại."
+      },
+      {
+        "speaker": "B",
+        "en": "Then go straight into a clear structure. Maybe three short sections: completed work, current status, and next steps.",
+        "vi": "Sau đó đi thẳng vào cấu trúc rõ ràng. Có lẽ ba phần ngắn: công việc đã hoàn thành, tình trạng hiện tại, và bước tiếp theo."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a good structure. Should I use bullet points or full paragraphs?",
+        "vi": "Cấu trúc tốt đó. Tôi nên dùng gạch đầu dòng hay đoạn văn đầy đủ?"
+      },
+      {
+        "speaker": "B",
+        "en": "For an update like this, bullet points are clearer. Busy clients appreciate being able to scan quickly.",
+        "vi": "Với cập nhật như thế này, gạch đầu dòng rõ ràng hơn. Khách hàng bận rộn thích có thể đọc lướt nhanh."
+      },
+      {
+        "speaker": "A",
+        "en": "Good point. So under 'completed work', I'd list the design phase and the initial testing?",
+        "vi": "Điểm hay. Vậy dưới mục 'công việc đã hoàn thành', tôi sẽ liệt kê giai đoạn thiết kế và kiểm thử ban đầu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly. Keep each point to one line if you can. State the facts clearly without over-explaining.",
+        "vi": "Chính xác. Giữ mỗi điểm trong một dòng nếu có thể. Nêu sự thật rõ ràng mà không giải thích quá nhiều."
+      },
+      {
+        "speaker": "A",
+        "en": "Got it. Now, the tricky part — the timeline has slipped by a week. How do I phrase that without sounding bad?",
+        "vi": "Hiểu rồi. Bây giờ phần khó — lịch trình đã trễ một tuần. Tôi diễn đạt thế nào mà không nghe tệ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Be honest but frame it positively. Something like: 'To ensure the highest quality, we have adjusted the delivery date to the fifteenth.'",
+        "vi": "Trung thực nhưng diễn đạt tích cực. Kiểu như: 'Để đảm bảo chất lượng cao nhất, chúng tôi đã điều chỉnh ngày bàn giao sang ngày mười lăm.'"
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, I like that — it focuses on quality rather than the delay. Should I explain why it slipped?",
+        "vi": "Ồ, tôi thích vậy — nó tập trung vào chất lượng thay vì sự chậm trễ. Tôi có nên giải thích tại sao bị trễ không?"
+      },
+      {
+        "speaker": "B",
+        "en": "A brief reason helps build trust. One sentence is enough — don't make it sound like a list of excuses.",
+        "vi": "Một lý do ngắn gọn giúp xây dựng lòng tin. Một câu là đủ — đừng làm nó nghe như một danh sách lý do biện minh."
+      },
+      {
+        "speaker": "A",
+        "en": "Makes sense. Maybe: 'This adjustment allows additional testing to guarantee a smooth launch.'",
+        "vi": "Hợp lý. Có lẽ: 'Việc điều chỉnh này cho phép kiểm thử thêm để đảm bảo ra mắt suôn sẻ.'"
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect — that's professional and reassuring. Clients respond well to that kind of confidence.",
+        "vi": "Hoàn hảo — chuyên nghiệp và làm yên tâm. Khách hàng phản hồi tốt với loại tự tin đó."
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "title": "Thuyết trình trước nhóm",
+    "situation": "Trước buổi thuyết trình, An trò chuyện với đồng nghiệp Bích để chuẩn bị tâm lý.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "An", "en": "An" },
+    "speakerBName": { "vi": "Bích", "en": "Bich" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Bich, can I talk to you for a second? I'm really nervous about the presentation in an hour.",
+        "vi": "Bích ơi, nói chuyện với mình một chút được không? Mình lo lắm về buổi thuyết trình một tiếng nữa."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! Take a deep breath. You've prepared really well — I've seen your slides.",
+        "vi": "Dĩ nhiên! Hít thở sâu nào. Cậu đã chuẩn bị rất tốt — mình đã xem slide của cậu rồi."
+      },
+      {
+        "speaker": "A",
+        "en": "Thanks. The slides are fine, it's the speaking part. My mind goes blank when everyone's looking at me.",
+        "vi": "Cảm ơn. Slide thì ổn, vấn đề là phần nói. Đầu mình trống rỗng khi mọi người nhìn vào mình."
+      },
+      {
+        "speaker": "B",
+        "en": "That happens to almost everyone. The trick is to not memorize word for word — just know your key points.",
+        "vi": "Điều đó xảy ra với hầu hết mọi người. Mẹo là đừng học thuộc từng từ — chỉ cần nắm các điểm chính."
+      },
+      {
+        "speaker": "A",
+        "en": "That's the problem — I tried to memorize everything, and now I'm scared of forgetting a line.",
+        "vi": "Đó chính là vấn đề — mình cố học thuộc tất cả, và giờ mình sợ quên một câu."
+      },
+      {
+        "speaker": "B",
+        "en": "Ah, that's actually making it harder. If you know the ideas, the words will come naturally. Talk like you're explaining it to me right now.",
+        "vi": "À, điều đó thực ra làm khó hơn. Nếu cậu nắm ý tưởng, từ ngữ sẽ đến tự nhiên. Hãy nói như cậu đang giải thích cho mình ngay bây giờ."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a good way to think about it. It feels easy talking to you, just not to a room full of people.",
+        "vi": "Đó là cách hay để suy nghĩ. Nói chuyện với cậu thì dễ, chỉ là không dễ với một phòng đầy người."
+      },
+      {
+        "speaker": "B",
+        "en": "Then find one or two friendly faces in the room and talk to them, like a conversation. It tricks your brain into relaxing.",
+        "vi": "Vậy thì tìm một hai gương mặt thân thiện trong phòng và nói với họ, như một cuộc trò chuyện. Nó đánh lừa não cậu thư giãn."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll look for you, then! Will you be in the front row?",
+        "vi": "Vậy mình sẽ tìm cậu! Cậu sẽ ngồi hàng đầu chứ?"
+      },
+      {
+        "speaker": "B",
+        "en": "I'll sit right where you can see me, and I'll nod and smile the whole time. You won't be alone up there.",
+        "vi": "Mình sẽ ngồi ngay chỗ cậu thấy được, và mình sẽ gật đầu và cười suốt buổi. Cậu sẽ không cô đơn trên đó đâu."
+      },
+      {
+        "speaker": "A",
+        "en": "That genuinely helps. What if someone asks a question I can't answer though?",
+        "vi": "Điều đó thực sự giúp ích. Nhưng nếu ai đó hỏi câu mình không trả lời được thì sao?"
+      },
+      {
+        "speaker": "B",
+        "en": "It's completely fine to say 'That's a great question — let me look into it and get back to you.' Nobody expects you to know everything.",
+        "vi": "Hoàn toàn ổn khi nói 'Đó là câu hỏi hay — để tôi tìm hiểu và phản hồi lại bạn.' Không ai mong cậu biết tất cả."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, that takes a lot of pressure off. I was terrified of being put on the spot.",
+        "vi": "Ồ, điều đó giảm bớt nhiều áp lực. Mình đã sợ bị hỏi bất ngờ."
+      },
+      {
+        "speaker": "B",
+        "en": "Being honest actually makes you look more credible, not less. Confidence isn't about having all the answers.",
+        "vi": "Trung thực thực ra làm cậu trông đáng tin hơn, chứ không phải kém đi. Tự tin không phải là có tất cả câu trả lời."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a really good reframe. What about my hands — I never know what to do with them.",
+        "vi": "Đó là cách nhìn lại rất hay. Còn tay mình — mình chẳng bao giờ biết làm gì với chúng."
+      },
+      {
+        "speaker": "B",
+        "en": "Use them naturally to point at the slides or emphasize points. If you're not sure, just hold a pen or the clicker.",
+        "vi": "Dùng tay tự nhiên để chỉ vào slide hoặc nhấn mạnh các điểm. Nếu không chắc, cứ cầm một cây bút hoặc cái điều khiển slide."
+      },
+      {
+        "speaker": "A",
+        "en": "Holding the clicker gives me something to do. Good idea. How fast should I speak?",
+        "vi": "Cầm cái điều khiển slide cho mình việc để làm. Ý hay. Mình nên nói nhanh thế nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "Slower than feels natural — when we're nervous, we tend to rush. Pause between points. Pauses make you sound confident.",
+        "vi": "Chậm hơn cảm giác tự nhiên — khi lo lắng, ta có xu hướng nói vội. Dừng lại giữa các điểm. Dừng lại làm cậu nghe tự tin."
+      },
+      {
+        "speaker": "A",
+        "en": "I definitely rush when I'm nervous. I'll try to remember to slow down and breathe.",
+        "vi": "Mình chắc chắn nói vội khi lo lắng. Mình sẽ cố nhớ nói chậm lại và thở."
+      },
+      {
+        "speaker": "B",
+        "en": "And if you do rush or stumble, just keep going. The audience barely notices small slips — they're on your side.",
+        "vi": "Và nếu cậu có nói vội hay vấp, cứ tiếp tục. Khán giả hầu như không để ý những lỗi nhỏ — họ đứng về phía cậu."
+      }
+    ]
+  }
+]

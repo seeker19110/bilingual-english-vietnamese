@@ -1,10 +1,16 @@
 // api/gemini-live.test.ts — Tests cho REST handler gemini-live
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import handler from './gemini-live.js'
-import { _resetGeminiLiveServiceStateForTests } from '../packages/core-ai/geminiLiveService.js'
+import { _resetGeminiLiveServiceStateForTests } from '@dhcb/core-ai/geminiLiveService'
 
 // Mock validateAuth
-vi.mock('../packages/core-auth/security.js', () => ({
+// Handler mới trừ 1 lượt 'speaking' mỗi phiên (vá N1) — mock cho qua, không đụng Postgres
+vi.mock('@dhcb/core-billing/usage', () => ({
+  checkAndConsumeUsage: vi.fn(async () => ({ ok: true, day: '2026-08-23' })),
+  refundUsage: vi.fn(async () => {}),
+}))
+
+vi.mock('@dhcb/core-auth/security', () => ({
   validateAuth: vi.fn(async (req: Request) => {
     const authHeader = req.headers.get('Authorization')
     if (authHeader && authHeader.includes('valid-token')) {
@@ -13,6 +19,9 @@ vi.mock('../packages/core-auth/security.js', () => ({
     return null
   }),
   getCorsHeaders: vi.fn().mockReturnValue({}),
+  // Handler mới thêm rate limit + log (vá N1 2026-08-23) — mock cho qua
+  checkRateLimit: vi.fn(async () => true),
+  logSecurityEvent: vi.fn(),
 }))
 
 describe('api/gemini-live', () => {

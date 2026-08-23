@@ -1,10 +1,10 @@
 // api/co-learning-audio.test.ts — Tests cho REST handler co-learning-audio
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import handler from './co-learning-audio.js'
-import { _resetAudioCoLearningStateForTests } from '../packages/core-ai/audioCoLearningService.js'
+import { _resetAudioCoLearningStateForTests } from '@dhcb/core-ai/audioCoLearningService'
 
 // Mock validateAuth
-vi.mock('../packages/core-auth/security.js', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   validateAuth: vi.fn(async (req: Request) => {
     const authHeader = req.headers.get('Authorization')
     if (authHeader && authHeader.includes('valid-token')) {
@@ -13,6 +13,9 @@ vi.mock('../packages/core-auth/security.js', () => ({
     return null
   }),
   getCorsHeaders: vi.fn().mockReturnValue({}),
+  // Handler mới thêm rate limit + log (vá N1 2026-08-23) — mock cho qua
+  checkRateLimit: vi.fn(async () => true),
+  logSecurityEvent: vi.fn(),
 }))
 
 describe('api/co-learning-audio', () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import type { Pool } from 'pg'
-import { ConflictError, ValidationError } from '../core-errors/appError.js'
+import { ConflictError, ValidationError } from '@dhcb/core-errors/appError'
 import {
   evaluateMemoryCandidate,
   ingestMemory,

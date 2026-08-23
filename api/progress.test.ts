@@ -5,8 +5,8 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: vi.fn(async () => true),
@@ -15,8 +15,8 @@ vi.mock('../packages/core-auth/security', () => ({
 }))
 
 import handler from './progress'
-import { getPgPool } from '../packages/core-db/pgPool'
-import { checkRateLimit, validateAuth } from '../packages/core-auth/security'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import { checkRateLimit, validateAuth } from '@dhcb/core-auth/security'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

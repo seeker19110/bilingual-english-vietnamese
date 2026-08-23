@@ -9,7 +9,7 @@ import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const LESSONS_FILE = path.join(ROOT, 'apps/english/src/data/lessons.json')
+const LESSONS_FILE = path.join(ROOT, 'apps/dhcb/src/data/lessons.json')
 
 // ── Đọc bài đã có ──────────────────────────────────────────────────────────
 let existing = []

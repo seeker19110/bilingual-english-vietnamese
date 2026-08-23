@@ -1,17 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { sendEmailReminders } from './emailReminders.js'
 
-vi.mock('../../packages/core-db/pgPool.js', () => {
+vi.mock('@dhcb/core-db/pgPool', () => {
   const query = vi.fn()
   return { getPgPool: () => ({ query }) }
 })
 
-vi.mock('./mailQuota.js', () => ({
+vi.mock('@dhcb/core-http/mailQuota', () => ({
   sendMailWithQuota: vi.fn(() => Promise.resolve({ status: 'sent', channel: 'primary' })),
 }))
 
-import { getPgPool } from '../../packages/core-db/pgPool.js'
-import { sendMailWithQuota } from './mailQuota.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import { sendMailWithQuota } from '@dhcb/core-http/mailQuota'
 
 describe('sendEmailReminders', () => {
   const queryMock = getPgPool().query as unknown as ReturnType<typeof vi.fn>

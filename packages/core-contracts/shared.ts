@@ -1,7 +1,7 @@
 // packages/core-contracts/shared.ts — Kiểu nguyên tử dùng chung giữa nhiều contract, GHÉP THEO
 // đúng khái niệm đã có thật trong app (không bịa mới) để domain model mới khớp với dữ liệu hiện
 // có, tránh 2 bộ "cấp độ"/"chiều học" song song lệch nhau:
-//   - `Direction` khớp `apps/english/src/types.ts` ('A' = học tiếng Anh, 'B' = học tiếng Việt).
+//   - `Direction` khớp `apps/dhcb/src/types.ts` ('A' = học tiếng Anh, 'B' = học tiếng Việt).
 //   - `CefrLevel` khớp `CefrWordLevel` cùng file (nhãn CEFR gắn cho 12.168 từ trong từ điển).
 
 import { z } from 'zod'

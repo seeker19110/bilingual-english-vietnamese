@@ -9,7 +9,7 @@ import {
   diagnoseMotivationAndBelief,
   createMicroEvidenceLogInMemory,
 } from './lifeMilestoneMasteryService.js'
-import type { LifeStageType } from '../core-contracts/lifeMilestoneMastery.js'
+import type { LifeStageType } from '@dhcb/core-contracts/lifeMilestoneMastery'
 
 const PERSON_ID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'
 

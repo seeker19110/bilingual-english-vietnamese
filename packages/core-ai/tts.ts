@@ -23,7 +23,7 @@
 // Chi tiết suy khoá: xem api/_lib/ttsCrypto.ts.
 
 import { z } from 'zod'
-import { getPgPool } from '../core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   generateAudioFromGoogle,
   generateStudioAudioFromGoogle,
@@ -33,15 +33,15 @@ import {
   VOICE_VERSION,
   type Lang,
   type VoiceId,
-} from '../../api/_lib/googleTts.js'
+} from './googleTts.js'
 import { generateAudioFromElevenLabs, isValidElevenVoice } from './elevenLabsTts.js'
 import { generateAudioFromGemini, isValidGeminiVoice } from './geminiTts.js'
-import { visemeTimelineFromAlignment, type VisemeFrame } from '../../api/_lib/visemeTimeline.js'
-import { ensureProfileRow } from '../core-auth/authService.js'
-import { clampVoiceToPlan, type AnyVoiceId } from '../../api/_lib/voiceAccess.js'
+import { visemeTimelineFromAlignment, type VisemeFrame } from './visemeTimeline.js'
+import { ensureProfileRow } from '@dhcb/core-auth/authService'
+import { clampVoiceToPlan, type AnyVoiceId } from './voiceAccess.js'
 import { saveAudio, isServableUrl } from './fileStorage.js'
 import { recordTtsCacheEvent } from './ttsStats.js'
-import { encryptAudio, getClientKeyMaterial } from '../../api/_lib/ttsCrypto.js'
+import { encryptAudio, getClientKeyMaterial } from './ttsCrypto.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -49,10 +49,10 @@ import {
   validateAuth,
   validateContentType,
   logSecurityEvent,
-} from '../core-auth/security.js'
-import { readJsonBody, validateBody } from '../../api/_lib/validation.js'
-import { withConcurrencyLimit } from '../core-db/concurrencyLimiter.js'
-import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { readJsonBody, validateBody } from '@dhcb/core-http/validation'
+import { withConcurrencyLimit } from '@dhcb/core-db/concurrencyLimiter'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 const VALID_LANGS: Lang[] = ['en-US', 'vi-VN']
 
@@ -311,7 +311,7 @@ export default async function handler(req: Request): Promise<Response> {
         // Giọng THẬT SỰ đã dùng (đã qua clampVoiceToPlan + hạ Studio cho tiếng Việt) — client
         // PHẢI dựa vào đây, không phải giọng nó gửi lên: khác nhau ở chỗ Gemini trả WAV còn
         // các provider khác trả mp3, đoán sai là gắn sai mimeType cho Blob (iOS/Safari không
-        // phát được). Xem blobMimeTypeForVoice() trong apps/english/src/lib/tts.ts.
+        // phát được). Xem blobMimeTypeForVoice() trong apps/dhcb/src/lib/tts.ts.
         voice,
         // null với audio cũ (cache trước migration 0028) hoặc giọng không có timestamp —
         // client tự ước lượng như trước, không phải lỗi.
@@ -441,7 +441,7 @@ export default async function handler(req: Request): Promise<Response> {
     // Giọng Gemini trả WAV thật (không phải mp3 như các provider khác — xem geminiTts.ts),
     // đặt đúng đuôi file cho dễ debug; nội dung đã bị mã hoá nên đuôi file không ảnh hưởng
     // việc phát (client tự khai mimeType đúng khi tạo Blob, xem blobMimeTypeForVoice() phía
-    // apps/english/src/lib/tts.ts).
+    // apps/dhcb/src/lib/tts.ts).
     const ext = isValidGeminiVoice(voice) ? 'wav' : 'mp3'
     const fileName = `${lang}/${voice}/${textHash}.${ext}`
     const origin = req.headers.get('origin') || ''

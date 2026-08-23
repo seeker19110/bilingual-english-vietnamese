@@ -7,7 +7,7 @@ import {
   type PitchContourData,
   type PhoneticAnalysisReport,
   PHONETICS_SCHEMA_VERSION,
-} from '../core-contracts/articulatoryPhonetics.js'
+} from '@dhcb/core-contracts/articulatoryPhonetics'
 
 export const ARTICULATORY_GUIDES: Record<L1PhonemeTarget, ArticulatoryGuide> = {
   TH_VOICELESS: {

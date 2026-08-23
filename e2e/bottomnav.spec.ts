@@ -65,7 +65,7 @@ test.describe('BottomNav (U-5)', () => {
   }) => {
     // QuickActions dời từ /cai-dat sang /tien-do (Dashboard.tsx) — xem PROGRESS.md mục "V2 UI —
     // Multi-Subject Learning..." ("Loại bỏ hoàn toàn các cài đặt học tập vụn vặt khỏi trang cá
-    // nhân"); apps/english/src/pages/EnglishSettings.tsx (/cai-dat) không còn import QuickActions.
+    // nhân"); apps/dhcb/src/pages/EnglishSettings.tsx (/cai-dat) không còn import QuickActions.
     await mockLogin(page, 'vi')
     await page.goto('/tien-do')
     await expect(page.getByText('Chia sẻ')).toBeVisible()

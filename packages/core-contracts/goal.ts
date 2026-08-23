@@ -1,6 +1,6 @@
 // packages/core-contracts/goal.ts — Contract cho "Goal" (Phase 03 Learner OS). Mục tiêu học của
 // 1 learner — hình thức hoá `goal: string` tự do đã có ở `OnboardingData`
-// (apps/english/src/lib/onboarding.ts) thành dữ liệu có kiểm, để engine Diagnostic/Curriculum
+// (apps/dhcb/src/lib/onboarding.ts) thành dữ liệu có kiểm, để engine Diagnostic/Curriculum
 // (Phase 09/17) dùng được thay vì đọc chuỗi tự do.
 
 import { z } from 'zod'

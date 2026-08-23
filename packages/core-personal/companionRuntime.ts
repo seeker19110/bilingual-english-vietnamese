@@ -7,15 +7,15 @@ import type { Pool } from 'pg'
 import { z } from 'zod'
 import { buildContextPackage, type ContextBuildOptions } from './contextEngine.js'
 import { proposeAction, type ProposeActionInput } from './proposedActionService.js'
-import type { ContextPackage } from '../core-contracts/contextPackage.js'
-import type { ProposedAction } from '../core-contracts/proposedAction.js'
+import type { ContextPackage } from '@dhcb/core-contracts/contextPackage'
+import type { ProposedAction } from '@dhcb/core-contracts/proposedAction'
 import {
   getLearningReadModel,
   formatLearningReadModelForContext,
-} from '../core-learner/learningReadModelService.js'
-import { callGroqChatWithKeyPool, callAnthropicChat } from '../core-ai/chatProviders.js'
-import { callGemini } from '../../api/_lib/geminiApi.js'
-import { ALLOWED_MODEL, GEMINI_CHAT_MODEL, GROQ_CHAT_MODEL } from '../core-ai/aiConfig.js'
+} from '@dhcb/core-learner/learningReadModelService'
+import { callGroqChatWithKeyPool, callAnthropicChat } from '@dhcb/core-ai/chatProviders'
+import { callGemini } from '@dhcb/core-ai/geminiApi'
+import { ALLOWED_MODEL, GEMINI_CHAT_MODEL, GROQ_CHAT_MODEL } from '@dhcb/core-ai/aiConfig'
 
 export const COMPANION_SYSTEM_PROMPT =
   'Bạn là Bạn Đồng Hành AI — Người đồng hành trí tuệ, thấu cảm và tận tâm trong nền tảng "Đồng Hành Cùng Bạn".\n\n' +

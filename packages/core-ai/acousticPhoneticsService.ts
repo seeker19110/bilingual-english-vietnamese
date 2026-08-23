@@ -5,7 +5,7 @@ import {
   type PhonemeAcousticScore,
   AcousticPhoneticsReportSchema,
   REALTIME_MULTIMODAL_VERSION,
-} from '../core-contracts/realtimeMultimodal.js'
+} from '@dhcb/core-contracts/realtimeMultimodal'
 
 // Ma trận tra cứu âm vị và các biến thể lỗi thường gặp của người Việt (L1 Interference)
 const L1_MISTAKE_PATTERNS: Record<

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { generateLifeSynthesisReport } from './lifeSynthesisService'
-import { LifeSynthesisReportSchema } from '../core-contracts/lifeSynthesis'
+import { generateLifeSynthesisReport } from './lifeSynthesisService.js'
+import { LifeSynthesisReportSchema } from '@dhcb/core-contracts/lifeSynthesis'
 
 describe('lifeSynthesisService', () => {
   it('generates a valid synthesis report matching schema v5.4.0', () => {

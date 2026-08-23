@@ -6,11 +6,12 @@ import {
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { analyzeAmbientScreenFrame } from '../packages/core-ai/ambientVisionService.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
-import { readJsonBody } from './_lib/validation.js'
+} from '@dhcb/core-auth/security'
+import { analyzeAmbientScreenFrame } from '@dhcb/core-ai/ambientVisionService'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { checkAndConsumeUsage, refundUsage } from '@dhcb/core-billing/usage'
+import { readJsonBody } from '@dhcb/core-http/validation'
 
 const AmbientVisionRequestSchema = z
   .object({
@@ -39,6 +40,14 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: 'Method not allowed' }, 405, headers)
   }
 
+  // Đếm lượt như chế độ 'chat' — endpoint gọi Gemini Vision trả phí, phải chịu hạn mức
+  // Free/Pro như mọi đường AI khác (vá lỗ hổng chi phí 2026-08-23, đề xuất N1 mục B3).
+  const gate = await checkAndConsumeUsage(auth.userId, 'chat')
+  if (!gate.ok) {
+    logSecurityEvent('USAGE_LIMIT', clientIp, { path: '/api/ambient-vision' })
+    return jsonResponse({ error: gate.message }, 429, headers)
+  }
+
   try {
     const rawBody = await readJsonBody(req)
     const parsed = AmbientVisionRequestSchema.parse(rawBody)
@@ -46,6 +55,8 @@ export default async function handler(req: Request): Promise<Response> {
     const insight = await analyzeAmbientScreenFrame(parsed.imageBase64, parsed.focusHint)
     return jsonResponse({ insight }, 200, headers)
   } catch (err) {
+    // Provider lỗi → trả lại lượt vừa trừ
+    refundUsage(auth.userId, 'chat', gate.day).catch(() => {})
     if (isAppError(err)) {
       return jsonResponse(toErrorBody(err), err.status, headers)
     }

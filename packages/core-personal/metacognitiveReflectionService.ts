@@ -5,7 +5,7 @@ import {
   SocraticDailyPrompt,
   MetacognitiveSummary,
   CognitiveBiasType,
-} from '../core-contracts/metacognitiveReflection.js'
+} from '@dhcb/core-contracts/metacognitiveReflection'
 
 export class MetacognitiveReflectionService {
   /**

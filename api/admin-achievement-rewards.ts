@@ -13,16 +13,16 @@ import {
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getUserById } from '../packages/core-auth/authService.js'
-import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
+} from '@dhcb/core-auth/security'
+import { getUserById } from '@dhcb/core-auth/authService'
+import { isAdminEmail } from '@dhcb/core-auth/adminAuth'
 import {
   getAllRewardConfigs,
   upsertRewardConfig,
   ACHIEVEMENT_IDS,
 } from './_lib/achievementRewards.js'
-import { readJsonBody, validateBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+import { readJsonBody, validateBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 const UpdateSchema = z.object({
   achievementId: z.enum(ACHIEVEMENT_IDS),

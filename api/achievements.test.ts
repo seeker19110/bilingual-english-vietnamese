@@ -2,7 +2,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => true,
@@ -12,7 +12,7 @@ vi.mock('../packages/core-auth/security', () => ({
 
 const statusMock = vi.fn()
 const claimMock = vi.fn()
-vi.mock('./_lib/achievementRewards', () => ({
+vi.mock('./_lib/achievementRewards.js', () => ({
   getAchievementsStatus: (userId: string) => statusMock(userId),
   claimAchievementReward: (userId: string, id: string) => claimMock(userId, id),
   ACHIEVEMENT_IDS: ['streak_7', 'vocab_100'],

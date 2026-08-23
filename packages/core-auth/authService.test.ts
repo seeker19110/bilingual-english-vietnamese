@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { getPgPool } from '../core-db/pgPool'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 
 // google-auth-library: mock verifyIdToken để test verifyGoogleIdToken không gọi mạng thật.
 const googleAuth = vi.hoisted(() => ({ verifyIdToken: vi.fn() }))
@@ -32,9 +32,9 @@ import {
   findOrCreateFacebookUser,
   findOrCreateAppleUser,
   findOrCreateMicrosoftUser,
-} from './authService'
+} from './authService.js'
 
-vi.mock('../core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const mockedGetPool = vi.mocked(getPgPool)
 
 function mockPool(queryImpl: (sql: string, params?: unknown[]) => Promise<{ rows: unknown[] }>) {

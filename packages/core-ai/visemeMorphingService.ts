@@ -5,7 +5,7 @@ import {
   Avatar3DState,
   AvatarEmotionType,
   AVATAR_EMBODIMENT_VERSION,
-} from '../core-contracts/avatarEmbodiment.js'
+} from '@dhcb/core-contracts/avatarEmbodiment'
 
 // Ma trận kích thước hình học chuẩn theo từng Viseme Oculus
 export const OCULUS_VISEME_DIMENSIONS: Record<

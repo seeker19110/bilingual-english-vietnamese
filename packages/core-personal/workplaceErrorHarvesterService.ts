@@ -5,7 +5,7 @@ import {
   type AutoSrsCard,
   type HarvestedSourceType,
   WORKPLACE_HARVESTER_SCHEMA_VERSION,
-} from '../core-contracts/workplaceErrorHarvester.js'
+} from '@dhcb/core-contracts/workplaceErrorHarvester'
 
 // Bộ nhớ đệm tạm thời cho các lỗi thu hoạch được và thẻ SRS
 const mistakesStore = new Map<string, HarvestedMistake[]>()

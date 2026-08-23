@@ -1,0 +1,1114 @@
+[
+  {
+    "id": 11,
+    "title": "Trả phòng khách sạn",
+    "situation": "An chuẩn bị trả phòng khách sạn trước khi về.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "An", "en": "An" },
+    "speakerBName": { "vi": "Lễ tân", "en": "Receptionist" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good morning! We're in room 304 and we're checking out today — a little earlier than planned, actually.",
+        "vi": "Chào buổi sáng! Chúng tôi ở phòng 304 và sẽ trả phòng hôm nay — thực ra sớm hơn dự kiến một chút."
+      },
+      {
+        "speaker": "B",
+        "en": "Good morning, Mr. An! We have your checkout scheduled for noon — is everything alright with your stay?",
+        "vi": "Chào buổi sáng, anh An! Chúng tôi ghi nhận anh trả phòng lúc trưa — kỳ lưu trú có ổn không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Everything was wonderful — we just have a longer drive back to Saigon than we expected. We'd like to check out around ten if that's okay.",
+        "vi": "Mọi thứ tuyệt vời — chúng tôi chỉ có chuyến lái xe về Sài Gòn dài hơn dự kiến. Chúng tôi muốn trả phòng khoảng mười giờ nếu được."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course, ten o'clock is perfectly fine. You're already within the late checkout window. Shall I prepare the final bill now?",
+        "vi": "Dĩ nhiên, mười giờ là hoàn toàn ổn. Anh vẫn đang trong khung giờ trả phòng muộn miễn phí. Để tôi chuẩn bị hóa đơn cuối không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes please. Can you also tell me if there are any additional charges I might not be aware of?",
+        "vi": "Vâng làm ơn. Bạn có thể cho tôi biết liệu có thêm khoản phí nào tôi chưa biết không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Let me pull it up. You had the room at four-four hundred thousand, and the spa booking for two at one million. Plus one minibar item — a bottle of water at thirty thousand.",
+        "vi": "Để tôi tìm hiệu. Anh có tiền phòng bốn triệu bốn trăm nghìn, đặt spa cho hai người một triệu. Thêm một món trong minibar — một chai nước ba mươi nghìn."
+      },
+      {
+        "speaker": "A",
+        "en": "Ah yes, the water — my partner grabbed it last night. So the total is five million four hundred and thirty thousand?",
+        "vi": "À phải, chai nước — bạn đời tôi lấy tối qua. Vậy tổng cộng là năm triệu bốn trăm ba mươi nghìn?"
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly right. The card on file has already been charged four-four hundred for the room. The remaining one million thirty thousand is outstanding.",
+        "vi": "Chính xác. Thẻ trong hồ sơ đã được tính bốn triệu bốn trăm cho phòng. Số tiền còn lại một triệu ba mươi nghìn chưa thanh toán."
+      },
+      {
+        "speaker": "A",
+        "en": "I'll pay the balance now by card as well. Same Visa, please.",
+        "vi": "Tôi sẽ thanh toán phần còn lại bằng thẻ ngay bây giờ. Vẫn thẻ Visa đó, làm ơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect. Please tap here... processed. Here is your final receipt with the full breakdown.",
+        "vi": "Tuyệt vời. Vui lòng chạm thẻ vào đây... xong. Đây là biên lai cuối của anh với chi tiết đầy đủ."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you. Can I ask — the spa was fantastic yesterday. Do you have a brochure I can take home?",
+        "vi": "Cảm ơn. Tôi có thể hỏi — spa hôm qua tuyệt vời lắm. Bạn có tờ rơi tôi có thể mang về không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! We can also email you our spa menu and gift voucher options if you'd like.",
+        "vi": "Dĩ nhiên! Chúng tôi cũng có thể gửi email thực đơn spa và tùy chọn phiếu quà tặng nếu anh muốn."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, gift vouchers — that's a great idea. My friend is getting married next month and she loves massages.",
+        "vi": "Ồ, phiếu quà tặng — ý tưởng hay đó. Bạn tôi sẽ kết hôn tháng tới và cô ấy thích massage lắm."
+      },
+      {
+        "speaker": "B",
+        "en": "We have gift vouchers from five hundred thousand dong upwards. They're valid for one year and can be used on any spa service.",
+        "vi": "Chúng tôi có phiếu quà tặng từ năm trăm nghìn đồng trở lên. Có giá trị một năm và có thể dùng cho bất kỳ dịch vụ spa nào."
+      },
+      {
+        "speaker": "A",
+        "en": "Could I get a two-million voucher? That would cover a couple's package.",
+        "vi": "Tôi có thể lấy phiếu hai triệu không? Cái đó sẽ đủ cho gói đôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Absolutely. Shall I personalise it — 'For Trang and Minh' or keep it open?",
+        "vi": "Hoàn toàn được. Anh có muốn cá nhân hóa — 'Dành cho Trang và Minh' hay để trống?"
+      },
+      {
+        "speaker": "A",
+        "en": "Actually keep it open — I want them to be able to choose their own date. How do I pay for it?",
+        "vi": "Thực ra để trống — tôi muốn họ tự chọn ngày. Tôi thanh toán như thế nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "I'll add it to your current bill and charge the same card, or you can pay separately — whichever you prefer.",
+        "vi": "Tôi sẽ thêm vào hóa đơn hiện tại và tính vào cùng thẻ, hoặc anh có thể thanh toán riêng — tùy anh."
+      },
+      {
+        "speaker": "A",
+        "en": "Add it to the bill, please. It'll be a nice memory connected to this trip.",
+        "vi": "Thêm vào hóa đơn đi. Nó sẽ là kỷ niệm đẹp gắn với chuyến đi này."
+      },
+      {
+        "speaker": "B",
+        "en": "What a thoughtful gift! I'll print the voucher right now. Just one more moment.",
+        "vi": "Thật là món quà chu đáo! Tôi sẽ in phiếu ngay. Chỉ một chút nữa."
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "title": "Gọi xe Grab",
+    "situation": "Hùng dùng ứng dụng để gọi xe Grab và nói chuyện với lái xe.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Hùng", "en": "Hung" },
+    "speakerBName": { "vi": "Tài xế Grab", "en": "Grab driver" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I just booked a Grab — I'm Hung, at the corner of Nguyen Hue and Le Loi. Are you close?",
+        "vi": "Xin chào, tôi vừa đặt Grab — tôi là Hùng, ở góc đường Nguyễn Huệ và Lê Lợi. Bạn có gần không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, I can see you on the map — I'm about two minutes away. Just passed the Bitexco Tower. Can you wave so I can spot you?",
+        "vi": "Vâng, tôi thấy anh trên bản đồ — tôi cách khoảng hai phút. Vừa qua Tòa tháp Bitexco. Anh có thể vẫy tay để tôi nhận ra không?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'm waving — blue shirt, I'm standing near the newspaper kiosk.",
+        "vi": "Tôi đang vẫy — áo xanh, tôi đứng gần quầy báo."
+      },
+      {
+        "speaker": "B",
+        "en": "Got you! I'll pull over right... there. Hop in! To Tan Son Nhat airport, right?",
+        "vi": "Thấy anh rồi! Tôi sẽ dừng ngay... đây. Lên xe đi! Đến sân bay Tân Sơn Nhất đúng không?"
+      },
+      {
+        "speaker": "A",
+        "en": "That's right, Terminal 2 — domestic. I have a flight at two-fifteen so I'm not in a huge rush, but I'd like to arrive by one at the latest.",
+        "vi": "Đúng rồi, Nhà ga 2 — nội địa. Tôi có chuyến bay lúc hai giờ mười lăm nên không quá vội, nhưng tôi muốn đến trước một giờ muộn nhất."
+      },
+      {
+        "speaker": "B",
+        "en": "One o'clock is doable. Traffic on Cong Hoa is unpredictable at noon though — I'll take the back route through Hoang Van Thu.",
+        "vi": "Một giờ là được. Nhưng giao thông trên Cộng Hoà khó đoán vào buổi trưa — tôi sẽ đi đường vòng qua Hoàng Văn Thụ."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds smart. You know this city well.",
+        "vi": "Nghe thông minh đó. Bạn biết thành phố này rõ nhỉ."
+      },
+      {
+        "speaker": "B",
+        "en": "Five years driving Grab in Saigon — I know every shortcut! Do you mind if I turn on the aircon stronger? It's quite hot today.",
+        "vi": "Năm năm chạy Grab ở Sài Gòn — tôi biết mọi đường tắt! Anh có phiền nếu tôi mở điều hoà mạnh hơn không? Hôm nay nóng quá."
+      },
+      {
+        "speaker": "A",
+        "en": "Please do — I was just about to ask. It's thirty-six degrees out there today.",
+        "vi": "Làm ơn — tôi cũng vừa định hỏi. Ngoài trời hôm nay ba mươi sáu độ rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "Thirty-six and humid — that's Saigon in May for you! Are you travelling for work or holiday?",
+        "vi": "Ba mươi sáu độ và ẩm — Sài Gòn tháng Năm mà! Anh đi công tác hay du lịch?"
+      },
+      {
+        "speaker": "A",
+        "en": "Work trip to Hanoi — two-day conference on sustainable construction. Not the most exciting topic but important work.",
+        "vi": "Công tác ở Hà Nội — hội nghị hai ngày về xây dựng bền vững. Không phải chủ đề thú vị nhất nhưng là công việc quan trọng."
+      },
+      {
+        "speaker": "B",
+        "en": "Sustainable construction — I actually find that interesting! They're building a lot of green buildings in District 2 now.",
+        "vi": "Xây dựng bền vững — tôi thực sự thấy điều đó thú vị! Họ đang xây nhiều tòa nhà xanh ở Quận 2 bây giờ."
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, the Thu Duc area is booming. Are you from Saigon originally?",
+        "vi": "Đúng, khu vực Thủ Đức đang phát triển mạnh. Bạn có phải người Sài Gòn gốc không?"
+      },
+      {
+        "speaker": "B",
+        "en": "I'm from Binh Duong — came to Saigon ten years ago looking for work. Grab has been great for flexible hours — I can pick my kids up from school.",
+        "vi": "Tôi từ Bình Dương — đến Sài Gòn mười năm trước để tìm việc. Grab rất tốt về giờ giấc linh hoạt — tôi có thể đón con từ trường."
+      },
+      {
+        "speaker": "A",
+        "en": "That flexibility must be valuable with kids. How many children do you have?",
+        "vi": "Sự linh hoạt đó chắc chắn rất có giá trị khi có con. Bạn có mấy đứa con?"
+      },
+      {
+        "speaker": "B",
+        "en": "Two — a son in grade four and a daughter just started kindergarten this year. They keep me very busy!",
+        "vi": "Hai đứa — một trai học lớp bốn và một gái vừa vào mẫu giáo năm nay. Chúng giữ tôi rất bận rộn!"
+      },
+      {
+        "speaker": "A",
+        "en": "Kindergarten — that's a fun age. Very energetic!",
+        "vi": "Mẫu giáo — đó là tuổi vui nhộn. Rất năng động!"
+      },
+      {
+        "speaker": "B",
+        "en": "Non-stop energy! Okay, we're coming up on Hoang Van Thu — the traffic is looking good. I think we'll be there by twelve-forty.",
+        "vi": "Năng lượng không ngừng! Được rồi, chúng ta đang đến Hoàng Văn Thụ — giao thông trông ổn. Tôi nghĩ chúng ta sẽ đến lúc mười hai giờ bốn mươi."
+      },
+      {
+        "speaker": "A",
+        "en": "Twelve-forty is perfect — gives me time to check in and grab a coffee.",
+        "vi": "Mười hai giờ bốn mươi là hoàn hảo — cho tôi thời gian làm thủ tục và uống cà phê."
+      },
+      {
+        "speaker": "B",
+        "en": "Terminal 2 has a Highland Coffee just past security — good coffee, not too expensive by airport standards.",
+        "vi": "Nhà ga 2 có Highland Coffee ngay sau khu vực an ninh — cà phê ngon, không quá đắt theo tiêu chuẩn sân bay."
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "title": "Đi xe buýt",
+    "situation": "Lan hỏi một hành khách trên xe buýt xem xe có đi qua chợ Bến Thành không.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Lan", "en": "Lan" },
+    "speakerBName": { "vi": "Hành khách", "en": "Passenger" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Excuse me — sorry to disturb you. Does this bus go to Ben Thanh Market?",
+        "vi": "Xin lỗi — xin lỗi đã làm phiền bạn. Xe buýt này có đi qua Chợ Bến Thành không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes it does! Are you going there now? It's about four stops away.",
+        "vi": "Có đấy! Bạn đang đến đó bây giờ không? Còn khoảng bốn trạm nữa."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, great! I was worried I'd gotten on the wrong bus. I'm a bit new to the bus system here.",
+        "vi": "Ồ, tốt quá! Tôi lo mình đã lên nhầm xe. Tôi còn khá mới với hệ thống xe buýt ở đây."
+      },
+      {
+        "speaker": "B",
+        "en": "Don't worry — these things happen. Are you new to Ho Chi Minh City?",
+        "vi": "Đừng lo — chuyện đó bình thường. Bạn mới đến Thành phố Hồ Chí Minh không?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'm from Hanoi — moved here three months ago for work. I'm still figuring out the south's bus routes.",
+        "vi": "Tôi từ Hà Nội — chuyển vào đây ba tháng trước vì công việc. Tôi vẫn đang tìm hiểu các tuyến xe buýt miền Nam."
+      },
+      {
+        "speaker": "B",
+        "en": "Ah, north to south — that's a big change! How are you finding Saigon compared to Hanoi?",
+        "vi": "À, từ Bắc vào Nam — đó là thay đổi lớn! Bạn thấy Sài Gòn so với Hà Nội thế nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "Very different! The people here are so direct and friendly. And the food — don't get me started on the food.",
+        "vi": "Rất khác! Người ở đây thẳng thắn và thân thiện lắm. Và đồ ăn — đừng để tôi bắt đầu nói về đồ ăn."
+      },
+      {
+        "speaker": "B",
+        "en": "Ha! Better or worse than Hanoi food?",
+        "vi": "Ha! Ngon hơn hay dở hơn đồ ăn Hà Nội?"
+      },
+      {
+        "speaker": "A",
+        "en": "Different! I miss Hanoi bun cha, but I've become completely addicted to hu tieu down here. And banh mi with the Saigon-style fillings.",
+        "vi": "Khác! Tôi nhớ bún chả Hà Nội, nhưng tôi đã hoàn toàn nghiện hủ tiếu ở đây. Và bánh mì với nhân kiểu Sài Gòn."
+      },
+      {
+        "speaker": "B",
+        "en": "Ha, welcome to the south! The bus system does take some getting used to. Do you use the bus app?",
+        "vi": "Ha, chào mừng vào Nam! Hệ thống xe buýt cần thời gian làm quen. Bạn có dùng app xe buýt không?"
+      },
+      {
+        "speaker": "A",
+        "en": "I just downloaded the Buyt To app but I haven't figured it all out yet.",
+        "vi": "Tôi vừa tải app Buýt Tô nhưng chưa hiểu hết cách dùng."
+      },
+      {
+        "speaker": "B",
+        "en": "That's the right app. Once you know how to set your start and end point, it's very reliable. Shows real-time tracking too.",
+        "vi": "Đó là app đúng. Khi bạn biết cách đặt điểm xuất phát và điểm đến, nó rất đáng tin cậy. Còn hiển thị theo dõi thời gian thực."
+      },
+      {
+        "speaker": "A",
+        "en": "Real-time tracking — that's what I need. Yesterday I missed a bus because I didn't know when it was coming.",
+        "vi": "Theo dõi thời gian thực — đó là thứ tôi cần. Hôm qua tôi lỡ xe vì không biết bao giờ xe đến."
+      },
+      {
+        "speaker": "B",
+        "en": "The frequency varies a lot by route. This Route 1 runs every eight minutes during peak hours — quite reliable.",
+        "vi": "Tần suất chạy xe thay đổi nhiều tùy tuyến. Tuyến 1 này chạy mỗi tám phút trong giờ cao điểm — khá đáng tin cậy."
+      },
+      {
+        "speaker": "A",
+        "en": "Every eight minutes is great. I'm used to the Hanoi buses — they have a different ticketing system though.",
+        "vi": "Tám phút một chuyến là tốt lắm. Tôi quen với xe buýt Hà Nội — nhưng hệ thống vé khác."
+      },
+      {
+        "speaker": "B",
+        "en": "Here you pay the conductor directly — it's six thousand dong for most routes. Or you can buy a monthly pass if you use the bus regularly.",
+        "vi": "Ở đây bạn trả tiền trực tiếp cho phụ xe — sáu nghìn đồng cho hầu hết các tuyến. Hoặc bạn có thể mua vé tháng nếu đi xe buýt thường xuyên."
+      },
+      {
+        "speaker": "A",
+        "en": "Six thousand is so affordable! A monthly pass — how much is that?",
+        "vi": "Sáu nghìn rẻ quá! Vé tháng — bao nhiêu tiền?"
+      },
+      {
+        "speaker": "B",
+        "en": "For one route it's around one hundred thousand a month. If you travel multiple routes, there are combo options up to about two hundred thousand.",
+        "vi": "Cho một tuyến khoảng một trăm nghìn một tháng. Nếu đi nhiều tuyến, có gói kết hợp đến khoảng hai trăm nghìn."
+      },
+      {
+        "speaker": "A",
+        "en": "That's much cheaper than Grab every day. I commute three times a week to the office — maybe a pass makes sense.",
+        "vi": "Rẻ hơn nhiều so với Grab mỗi ngày. Tôi đi làm ba lần một tuần — có lẽ mua vé tháng hợp lý hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Definitely worthwhile if you commute. You can buy the pass at any major bus station or online.",
+        "vi": "Chắc chắn đáng tiền nếu bạn đi thường xuyên. Bạn có thể mua vé tháng ở bất kỳ trạm xe buýt lớn nào hoặc online."
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "title": "Mua vé tàu",
+    "situation": "Phương đến quầy bán vé ga để mua vé tàu đi Đà Nẵng.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Phương", "en": "Phuong" },
+    "speakerBName": { "vi": "Nhân viên bán vé", "en": "Ticket clerk" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello! I'd like to buy a train ticket to Da Nang, please. For this weekend if possible.",
+        "vi": "Xin chào! Tôi muốn mua vé tàu đến Đà Nẵng. Cuối tuần này nếu được."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. Which day — Saturday or Sunday, and morning or evening departure?",
+        "vi": "Dĩ nhiên. Ngày nào — thứ Bảy hay Chủ Nhật, và khởi hành sáng hay tối?"
+      },
+      {
+        "speaker": "A",
+        "en": "Saturday morning ideally. I want to arrive in Da Nang before lunch so I can make the most of the afternoon.",
+        "vi": "Lý tưởng nhất là sáng thứ Bảy. Tôi muốn đến Đà Nẵng trước bữa trưa để tận dụng buổi chiều."
+      },
+      {
+        "speaker": "B",
+        "en": "Saturday morning we have the SE1 at six o'clock — arrives Da Nang at one-thirty p.m. Or the SE3 at six-twenty-two — arrives around two p.m.",
+        "vi": "Sáng thứ Bảy chúng tôi có tàu SE1 lúc sáu giờ — đến Đà Nẵng lúc một giờ rưỡi chiều. Hoặc SE3 lúc sáu giờ hai mươi hai — đến khoảng hai giờ chiều."
+      },
+      {
+        "speaker": "A",
+        "en": "The SE1 at six sounds better — getting there at one-thirty is perfect. How many seats are left?",
+        "vi": "SE1 lúc sáu giờ nghe tốt hơn — đến lúc một giờ rưỡi là hoàn hảo. Còn bao nhiêu ghế?"
+      },
+      {
+        "speaker": "B",
+        "en": "Let me check. For SE1 on Saturday, we have hard seats, soft seats, and sleeper berths. What category are you looking for?",
+        "vi": "Để tôi kiểm tra. Với SE1 thứ Bảy, chúng tôi có ghế cứng, ghế mềm và giường nằm. Anh muốn loại nào?"
+      },
+      {
+        "speaker": "A",
+        "en": "Since it's a morning departure, I don't need a sleeper. A soft seat is fine — I'll nap or read on the way.",
+        "vi": "Vì là chuyến sáng, tôi không cần giường nằm. Ghế mềm là được — tôi sẽ ngủ gật hoặc đọc sách trên đường."
+      },
+      {
+        "speaker": "B",
+        "en": "Soft seat on SE1, Saturday — there are twelve available. Window or aisle preference?",
+        "vi": "Ghế mềm trên SE1, thứ Bảy — còn mười hai chỗ. Thích cạnh cửa sổ hay lối đi?"
+      },
+      {
+        "speaker": "A",
+        "en": "Window, please! I love watching the scenery — especially the stretch along the coast near Hue.",
+        "vi": "Cạnh cửa sổ, làm ơn! Tôi thích ngắm cảnh — đặc biệt đoạn dọc bờ biển gần Huế."
+      },
+      {
+        "speaker": "B",
+        "en": "Great choice — that coastal section is stunning. I have seat 45A available — left side, which gives you the sea view.",
+        "vi": "Lựa chọn tuyệt vời — đoạn bờ biển đó rất tuyệt đẹp. Tôi có ghế 45A — phía trái, cho bạn tầm nhìn ra biển."
+      },
+      {
+        "speaker": "A",
+        "en": "45A with a sea view! That's exactly what I want. How much is it?",
+        "vi": "45A nhìn ra biển! Đó chính xác là thứ tôi muốn. Bao nhiêu tiền?"
+      },
+      {
+        "speaker": "B",
+        "en": "Soft seat on SE1 is three hundred and forty thousand dong.",
+        "vi": "Ghế mềm trên SE1 là ba trăm bốn mươi nghìn đồng."
+      },
+      {
+        "speaker": "A",
+        "en": "That's reasonable. Can I also buy the return ticket now? I'm coming back the following Monday.",
+        "vi": "Hợp lý đó. Tôi có thể mua vé về luôn không? Tôi về vào thứ Hai tuần sau."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. Monday return from Da Nang to here — what time works?",
+        "vi": "Dĩ nhiên. Về từ Đà Nẵng đến đây thứ Hai — mấy giờ thì tiện?"
+      },
+      {
+        "speaker": "A",
+        "en": "Afternoon — I want a full morning in Da Nang before heading back. Maybe after two p.m.?",
+        "vi": "Chiều — tôi muốn có buổi sáng đầy đủ ở Đà Nẵng trước khi về. Khoảng sau hai giờ chiều?"
+      },
+      {
+        "speaker": "B",
+        "en": "The SE6 departs Da Nang at two-forty-five p.m. on Monday — arrives Saigon around nine p.m. Is that okay?",
+        "vi": "Tàu SE6 khởi hành từ Đà Nẵng lúc hai giờ bốn mươi lăm chiều thứ Hai — đến Sài Gòn khoảng chín giờ tối. Được không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Nine p.m. arrival is fine — I don't work Tuesday until ten. What class is available?",
+        "vi": "Đến lúc chín giờ tối ổn — thứ Ba tôi không làm việc đến mười giờ. Còn loại ghế nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "For the return on SE6, I have soft seat and four-berth lower berth available. The sleeper might be more comfortable for a seven-hour overnight stretch.",
+        "vi": "Cho vé về trên SE6, tôi có ghế mềm và giường nằm khoang bốn tầng dưới. Giường nằm có thể thoải mái hơn cho bảy tiếng ban đêm."
+      },
+      {
+        "speaker": "A",
+        "en": "You know what, you're right — seven hours overnight, I'd rather sleep than sit. How much is the lower berth?",
+        "vi": "Bạn nói đúng — bảy tiếng ban đêm, tôi thích ngủ hơn là ngồi. Giường tầng dưới bao nhiêu tiền?"
+      },
+      {
+        "speaker": "B",
+        "en": "Lower berth on SE6 is five hundred and eighty thousand dong. Upper berth is five hundred forty.",
+        "vi": "Giường tầng dưới trên SE6 là năm trăm tám mươi nghìn đồng. Tầng trên là năm trăm bốn mươi."
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "title": "Mở tài khoản ngân hàng",
+    "situation": "Quân đến ngân hàng để mở một tài khoản mới.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Quân", "en": "Quan" },
+    "speakerBName": { "vi": "Giao dịch viên", "en": "Bank teller" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Good morning. I'd like to open a bank account, please. Is this the right counter?",
+        "vi": "Chào buổi sáng. Tôi muốn mở tài khoản ngân hàng. Đây có phải quầy đúng không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Good morning! Yes, you're in the right place. Please take a seat. Have you been a customer with us before?",
+        "vi": "Chào buổi sáng! Vâng, bạn đến đúng chỗ rồi. Vui lòng ngồi xuống. Bạn đã từng là khách hàng của chúng tôi chưa?"
+      },
+      {
+        "speaker": "A",
+        "en": "No, this would be my first account here. I currently bank with Vietcombank but I want to switch to Techcombank because of the better app.",
+        "vi": "Chưa, đây sẽ là tài khoản đầu tiên của tôi ở đây. Hiện tôi đang dùng Vietcombank nhưng tôi muốn chuyển sang Techcombank vì app tốt hơn."
+      },
+      {
+        "speaker": "B",
+        "en": "Great choice! Our app has won several awards for user experience. What type of account are you looking for — savings or current account?",
+        "vi": "Lựa chọn tuyệt vời! App của chúng tôi đã nhận nhiều giải thưởng về trải nghiệm người dùng. Bạn muốn loại tài khoản nào — tiết kiệm hay thanh toán?"
+      },
+      {
+        "speaker": "A",
+        "en": "I want an everyday account for spending and receiving salary — and maybe a linked savings option too.",
+        "vi": "Tôi muốn tài khoản hàng ngày để chi tiêu và nhận lương — và có thể thêm tùy chọn tiết kiệm kết nối."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect — our Go Account covers both. It's a current account with zero monthly fees, and you can open a linked Flex Savings within the same app.",
+        "vi": "Hoàn hảo — tài khoản Go của chúng tôi bao gồm cả hai. Đó là tài khoản thanh toán không có phí hàng tháng, và bạn có thể mở Flex Savings kết nối trong cùng app."
+      },
+      {
+        "speaker": "A",
+        "en": "Zero monthly fees — that's what drew me to Techcombank. What's the interest rate on the savings?",
+        "vi": "Không có phí hàng tháng — đó là điều thu hút tôi đến Techcombank. Lãi suất tiết kiệm là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "Currently three-point-five percent per annum for the Flex Savings. It's flexible — you can withdraw anytime without losing interest on the portion you keep.",
+        "vi": "Hiện tại là ba phẩy năm phần trăm mỗi năm cho Flex Savings. Linh hoạt — bạn có thể rút bất kỳ lúc nào mà không mất lãi trên phần bạn giữ lại."
+      },
+      {
+        "speaker": "A",
+        "en": "Flexible withdrawal without penalty — that's much better than a fixed-term deposit. Can I set up an automatic transfer to savings each month?",
+        "vi": "Rút linh hoạt không bị phạt — tốt hơn nhiều so với tiết kiệm có kỳ hạn. Tôi có thể đặt tự động chuyển sang tiết kiệm mỗi tháng không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Absolutely — it's called Auto Save. You set the amount and date, and it transfers automatically. Very popular with salary earners.",
+        "vi": "Hoàn toàn được — gọi là Auto Save. Bạn đặt số tiền và ngày, nó tự động chuyển. Rất phổ biến với người nhận lương."
+      },
+      {
+        "speaker": "A",
+        "en": "That's exactly what I need. What documents do I need to open the account today?",
+        "vi": "Đó chính xác là thứ tôi cần. Tôi cần giấy tờ gì để mở tài khoản hôm nay?"
+      },
+      {
+        "speaker": "B",
+        "en": "For Vietnamese citizens, just your national ID card and a minimum initial deposit of one hundred thousand dong.",
+        "vi": "Với công dân Việt Nam, chỉ cần thẻ CMND và khoản tiền gửi ban đầu tối thiểu một trăm nghìn đồng."
+      },
+      {
+        "speaker": "A",
+        "en": "That's all? I brought my CCCD card and I can deposit more than the minimum — how much should I put in to start?",
+        "vi": "Chỉ vậy thôi? Tôi mang theo thẻ CCCD và tôi có thể gửi nhiều hơn mức tối thiểu — nên gửi bao nhiêu để bắt đầu?"
+      },
+      {
+        "speaker": "B",
+        "en": "That depends on your needs. If you're planning to move your salary here, just start with the minimum and let salary top it up. No minimum balance to maintain.",
+        "vi": "Điều đó tùy thuộc vào nhu cầu của bạn. Nếu bạn định chuyển lương về đây, chỉ cần bắt đầu với mức tối thiểu và để lương bổ sung. Không có số dư tối thiểu cần duy trì."
+      },
+      {
+        "speaker": "A",
+        "en": "No minimum balance requirement — even better. Let's proceed then. Here's my CCCD.",
+        "vi": "Không yêu cầu số dư tối thiểu — còn tốt hơn nữa. Vậy mình tiến hành nhé. Đây là CCCD của tôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you. I'll scan this now. Can you confirm your full name and date of birth for me?",
+        "vi": "Cảm ơn. Để tôi quét thẻ. Bạn có thể xác nhận tên đầy đủ và ngày tháng năm sinh không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Tran Minh Quan. Date of birth: fifth of March, nineteen ninety-two.",
+        "vi": "Trần Minh Quân. Ngày sinh: mùng năm tháng Ba, năm một chín chín hai."
+      },
+      { "speaker": "B", "en": "Perfect. Current address?", "vi": "Tuyệt vời. Địa chỉ hiện tại?" },
+      {
+        "speaker": "A",
+        "en": "Apartment 12B, Building CT1, Linh Dam, Hoang Mai District, Hanoi.",
+        "vi": "Căn hộ 12B, Tòa nhà CT1, Linh Đàm, Quận Hoàng Mai, Hà Nội."
+      },
+      {
+        "speaker": "B",
+        "en": "Got it. And your phone number and email for the account?",
+        "vi": "Ghi rồi. Số điện thoại và email cho tài khoản?"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "title": "Máy ATM bị lỗi",
+    "situation": "Tuấn gọi lên tổng đài ngân hàng để báo lỗi máy ATM bị trừ tiền nhưng không nhả tiền mặt.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Tuấn", "en": "Tuan" },
+    "speakerBName": { "vi": "Tổng đài viên", "en": "Call agent" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I need to report a problem with an ATM. It charged my account but didn't dispense any cash.",
+        "vi": "Xin chào, tôi cần báo một vấn đề với máy ATM. Nó đã trừ tiền tài khoản của tôi nhưng không nhả tiền mặt."
+      },
+      {
+        "speaker": "B",
+        "en": "I'm sorry to hear that. I'll help you right away. Can I have your full name to start?",
+        "vi": "Tôi rất tiếc khi nghe điều đó. Tôi sẽ giúp anh ngay. Tôi có thể xin tên đầy đủ của anh để bắt đầu không?"
+      },
+      { "speaker": "A", "en": "Yes, it's Le Anh Tuan.", "vi": "Vâng, là Lê Anh Tuấn." },
+      {
+        "speaker": "B",
+        "en": "Thank you, Mr. Tuan. For security, could you confirm the last four digits of your card number?",
+        "vi": "Cảm ơn anh Tuấn. Vì lý do bảo mật, anh có thể xác nhận bốn số cuối của thẻ không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Sure — it's four-eight-two-one.",
+        "vi": "Được — là bốn-tám-hai-một."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect, I've located your account. Can you tell me when and where this happened?",
+        "vi": "Tuyệt vời, tôi đã tìm thấy tài khoản của anh. Anh có thể cho tôi biết việc này xảy ra khi nào và ở đâu không?"
+      },
+      {
+        "speaker": "A",
+        "en": "About twenty minutes ago, at the ATM outside the Coopmart on Quang Trung Street.",
+        "vi": "Khoảng hai mươi phút trước, tại máy ATM bên ngoài Coopmart trên đường Quang Trung."
+      },
+      {
+        "speaker": "B",
+        "en": "And how much were you trying to withdraw?",
+        "vi": "Và anh đang cố rút bao nhiêu tiền?"
+      },
+      {
+        "speaker": "A",
+        "en": "Three million dong. The screen said 'processing', then it went blank and no money came out.",
+        "vi": "Ba triệu đồng. Màn hình hiện 'đang xử lý', rồi tối đen và không có tiền ra."
+      },
+      {
+        "speaker": "B",
+        "en": "I understand. Did you receive an SMS notification about the deduction?",
+        "vi": "Tôi hiểu. Anh có nhận được tin nhắn SMS về việc trừ tiền không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes, that's how I knew. I got a message saying three million was withdrawn, but I'm holding no cash.",
+        "vi": "Có, đó là cách tôi biết. Tôi nhận được tin nhắn nói ba triệu đã được rút, nhưng tôi không cầm đồng nào."
+      },
+      {
+        "speaker": "B",
+        "en": "Thank you for the details. This is what we call a 'failed dispense' — it does happen occasionally. The good news is the money is usually auto-reversed.",
+        "vi": "Cảm ơn anh đã cung cấp chi tiết. Đây là cái chúng tôi gọi là 'lỗi không nhả tiền' — thỉnh thoảng có xảy ra. Tin tốt là tiền thường được tự động hoàn lại."
+      },
+      {
+        "speaker": "A",
+        "en": "Auto-reversed — how long does that take?",
+        "vi": "Tự động hoàn — mất bao lâu vậy?"
+      },
+      {
+        "speaker": "B",
+        "en": "Typically within twenty-four to forty-eight hours. But I'll log a formal complaint now to make sure it's tracked properly.",
+        "vi": "Thường trong hai mươi bốn đến bốn mươi tám giờ. Nhưng tôi sẽ ghi nhận khiếu nại chính thức ngay để đảm bảo nó được theo dõi đúng cách."
+      },
+      {
+        "speaker": "A",
+        "en": "Please do. Forty-eight hours is a long time though — that's a lot of money to be missing.",
+        "vi": "Làm ơn. Nhưng bốn mươi tám giờ là lâu đấy — đó là số tiền lớn bị thiếu."
+      },
+      {
+        "speaker": "B",
+        "en": "I completely understand your concern. Let me check if the ATM's cash count has already been reconciled — sometimes that speeds things up.",
+        "vi": "Tôi hoàn toàn hiểu mối lo của anh. Để tôi kiểm tra xem số tiền của máy ATM đã được đối soát chưa — đôi khi điều đó giúp nhanh hơn."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay, thank you. I appreciate you checking.",
+        "vi": "Được, cảm ơn. Tôi cảm kích vì bạn kiểm tra."
+      },
+      {
+        "speaker": "B",
+        "en": "It looks like that machine is scheduled for reconciliation tomorrow morning. Once the technician confirms the extra cash, your refund will be processed.",
+        "vi": "Có vẻ máy đó được lên lịch đối soát vào sáng mai. Khi kỹ thuật viên xác nhận số tiền dư, khoản hoàn của anh sẽ được xử lý."
+      },
+      {
+        "speaker": "A",
+        "en": "So I should see it back by tomorrow afternoon?",
+        "vi": "Vậy tôi sẽ thấy tiền về vào chiều mai?"
+      },
+      {
+        "speaker": "B",
+        "en": "Most likely, yes — tomorrow afternoon or evening at the latest. You'll get an SMS the moment it's reversed.",
+        "vi": "Khả năng cao là vậy — chiều mai hoặc muộn nhất là tối mai. Anh sẽ nhận SMS ngay khi tiền được hoàn."
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "title": "Tìm phòng trọ",
+    "situation": "Linh gọi điện hỏi thông tin về một phòng trọ đang cho thuê.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Linh", "en": "Linh" },
+    "speakerBName": { "vi": "Chủ nhà", "en": "Landlord" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I'm calling about the room for rent I saw advertised online. Is it still available?",
+        "vi": "Xin chào, tôi gọi về phòng cho thuê tôi thấy quảng cáo trên mạng. Phòng còn không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Hello! Yes, it's still available. Are you looking to move in soon?",
+        "vi": "Xin chào! Vâng, vẫn còn. Cô đang muốn dọn vào sớm không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Ideally by the start of next month. The ad said it's a studio room — could you tell me a bit more about it?",
+        "vi": "Lý tưởng nhất là đầu tháng sau. Quảng cáo nói đó là phòng studio — anh có thể cho tôi biết thêm về nó không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. It's about twenty-five square metres, with a private bathroom, a small kitchenette, and a balcony. It's on the third floor.",
+        "vi": "Dĩ nhiên. Khoảng hai mươi lăm mét vuông, có phòng tắm riêng, một góc bếp nhỏ, và một ban công. Phòng ở tầng ba."
+      },
+      {
+        "speaker": "A",
+        "en": "A balcony — that's nice. Is there a window with good natural light?",
+        "vi": "Có ban công — hay đó. Phòng có cửa sổ với ánh sáng tự nhiên tốt không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, the room faces east, so you get lovely morning sun. It's quite bright until early afternoon.",
+        "vi": "Có, phòng hướng đông, nên cô sẽ có nắng buổi sáng đẹp. Khá sáng cho đến đầu giờ chiều."
+      },
+      {
+        "speaker": "A",
+        "en": "East-facing is perfect for me. What's the monthly rent?",
+        "vi": "Hướng đông là hoàn hảo với tôi. Tiền thuê hàng tháng là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "It's three million five hundred thousand dong per month. That includes water and internet, but electricity is separate.",
+        "vi": "Ba triệu năm trăm nghìn đồng mỗi tháng. Bao gồm nước và internet, nhưng điện tính riêng."
+      },
+      {
+        "speaker": "A",
+        "en": "How much is the electricity usually?",
+        "vi": "Tiền điện thường là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "For one person, it's usually around two hundred to three hundred thousand a month, depending on air conditioning use.",
+        "vi": "Với một người, thường khoảng hai trăm đến ba trăm nghìn một tháng, tùy vào việc dùng điều hòa."
+      },
+      {
+        "speaker": "A",
+        "en": "That's reasonable. Is there a deposit required?",
+        "vi": "Hợp lý đó. Có yêu cầu đặt cọc không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, one month's rent as deposit, refundable when you move out, as long as there's no damage.",
+        "vi": "Có, một tháng tiền thuê làm cọc, hoàn lại khi cô dọn ra, miễn là không có hư hỏng."
+      },
+      {
+        "speaker": "A",
+        "en": "That's standard. Is the room furnished or empty?",
+        "vi": "Đó là tiêu chuẩn. Phòng có nội thất hay trống?"
+      },
+      {
+        "speaker": "B",
+        "en": "It's partly furnished — there's a bed, a wardrobe, a desk, and an air conditioner. You'd need to bring your own kitchen items.",
+        "vi": "Có một phần nội thất — có giường, tủ quần áo, bàn làm việc, và máy điều hòa. Cô cần tự mang đồ bếp."
+      },
+      {
+        "speaker": "A",
+        "en": "That works well — I have my own cooking things. Is there parking for a motorbike?",
+        "vi": "Vậy ổn — tôi có đồ nấu ăn riêng. Có chỗ đậu xe máy không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, there's a secure covered parking area downstairs. It's included in the rent — no extra charge.",
+        "vi": "Có, có khu đậu xe có mái che an toàn ở tầng dưới. Bao gồm trong tiền thuê — không phí thêm."
+      },
+      {
+        "speaker": "A",
+        "en": "Excellent. What's the neighbourhood like? Is it quiet?",
+        "vi": "Tuyệt vời. Khu vực xung quanh thế nào? Có yên tĩnh không?"
+      },
+      {
+        "speaker": "B",
+        "en": "It's a residential area, fairly quiet at night. There's a market two minutes away and several coffee shops nearby.",
+        "vi": "Đó là khu dân cư, khá yên tĩnh vào ban đêm. Có một cái chợ cách hai phút và vài quán cà phê gần đó."
+      },
+      {
+        "speaker": "A",
+        "en": "A market nearby is convenient. How far is it from the city centre?",
+        "vi": "Chợ gần là tiện. Cách trung tâm thành phố bao xa?"
+      },
+      {
+        "speaker": "B",
+        "en": "About fifteen minutes by motorbike. And there's a bus stop just at the end of the street if you prefer public transport.",
+        "vi": "Khoảng mười lăm phút đi xe máy. Và có trạm xe buýt ngay cuối đường nếu cô thích phương tiện công cộng."
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "title": "Nói chuyện với chủ nhà",
+    "situation": "Đức gọi điện báo chủ nhà về vòi nước bị hỏng và hỏi chuyện gia hạn hợp đồng.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Đức", "en": "Duc" },
+    "speakerBName": { "vi": "Chủ nhà", "en": "Landlady" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, it's Duc from apartment 3B. Sorry to bother you — I've got a small problem with the bathroom.",
+        "vi": "Chào chị, em là Đức ở căn 3B. Xin lỗi đã làm phiền — em có một vấn đề nhỏ với phòng tắm."
+      },
+      {
+        "speaker": "B",
+        "en": "Oh, hello Duc! No bother at all. What's going on with the bathroom?",
+        "vi": "Ồ, chào Đức! Không phiền chút nào. Phòng tắm bị sao vậy?"
+      },
+      {
+        "speaker": "A",
+        "en": "The tap above the sink has started leaking. It's dripping constantly, even when fully closed.",
+        "vi": "Vòi nước phía trên bồn rửa bắt đầu rò rỉ. Nó nhỏ giọt liên tục, ngay cả khi đã khóa hết."
+      },
+      {
+        "speaker": "B",
+        "en": "Ah, that's annoying. How long has it been leaking?",
+        "vi": "À, phiền thật. Nó rò rỉ bao lâu rồi?"
+      },
+      {
+        "speaker": "A",
+        "en": "Since yesterday evening. It's getting a bit worse, and I'm worried about wasting water.",
+        "vi": "Từ tối qua. Nó hơi nặng hơn, và em lo lãng phí nước."
+      },
+      {
+        "speaker": "B",
+        "en": "You're right to report it quickly. It's probably just a worn washer — an easy fix. I'll send a plumber over.",
+        "vi": "Em báo nhanh là đúng đó. Có lẽ chỉ là miếng đệm bị mòn — sửa dễ thôi. Chị sẽ cho thợ ống nước đến."
+      },
+      {
+        "speaker": "A",
+        "en": "That would be great. When do you think they could come?",
+        "vi": "Vậy thì tốt quá. Chị nghĩ khi nào thợ có thể đến?"
+      },
+      {
+        "speaker": "B",
+        "en": "I'll call my regular plumber today. He's usually available within a day or two. Are you home in the afternoons?",
+        "vi": "Chị sẽ gọi thợ quen hôm nay. Anh ấy thường rảnh trong một hai ngày. Buổi chiều em có ở nhà không?"
+      },
+      {
+        "speaker": "A",
+        "en": "I work until six, but I'm home most evenings after six-thirty. Weekends I'm free all day.",
+        "vi": "Em làm đến sáu giờ, nhưng em ở nhà hầu hết các buổi tối sau sáu giờ rưỡi. Cuối tuần em rảnh cả ngày."
+      },
+      {
+        "speaker": "B",
+        "en": "Let me see if he can do an evening visit. If not, would Saturday morning work for you?",
+        "vi": "Để chị xem anh ấy có đến buổi tối được không. Nếu không, sáng thứ Bảy có tiện cho em không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Saturday morning would be perfect actually — I'll definitely be home then.",
+        "vi": "Sáng thứ Bảy thực ra sẽ hoàn hảo — chắc chắn em sẽ ở nhà lúc đó."
+      },
+      {
+        "speaker": "B",
+        "en": "Great, I'll aim for Saturday morning and confirm the time with you tonight. In the meantime, you can shut off the valve under the sink to stop the dripping.",
+        "vi": "Tốt, chị sẽ nhắm sáng thứ Bảy và xác nhận giờ với em tối nay. Trong lúc đó, em có thể khóa van dưới bồn rửa để ngừng nhỏ giọt."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, I didn't realize there was a valve there. I'll check for it after we hang up.",
+        "vi": "Ồ, em không biết có van ở đó. Em sẽ kiểm tra sau khi mình gác máy."
+      },
+      {
+        "speaker": "B",
+        "en": "It's usually a small knob underneath. Turn it clockwise to close. That'll save water until the plumber comes.",
+        "vi": "Thường là một núm nhỏ ở bên dưới. Vặn theo chiều kim đồng hồ để khóa. Như vậy sẽ tiết kiệm nước cho đến khi thợ đến."
+      },
+      {
+        "speaker": "A",
+        "en": "Got it, thank you. Actually, while I have you on the phone — I wanted to ask about my contract.",
+        "vi": "Hiểu rồi, cảm ơn chị. Thực ra, nhân lúc đang gọi chị — em muốn hỏi về hợp đồng của em."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! Your contract is up at the end of next month, isn't it?",
+        "vi": "Dĩ nhiên! Hợp đồng của em hết hạn vào cuối tháng sau phải không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Exactly. I really like living here and I'd like to renew for another year if that's possible.",
+        "vi": "Đúng vậy. Em rất thích sống ở đây và em muốn gia hạn thêm một năm nếu được."
+      },
+      {
+        "speaker": "B",
+        "en": "I'd be very happy to renew with you — you've been a wonderful tenant. Always on time with rent and very considerate.",
+        "vi": "Chị rất vui được gia hạn với em — em là một người thuê tuyệt vời. Luôn đúng hạn tiền thuê và rất biết điều."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you, that means a lot. Will the rent stay the same, or are you planning an increase?",
+        "vi": "Cảm ơn chị, điều đó có ý nghĩa lớn. Tiền thuê có giữ nguyên không, hay chị định tăng?"
+      },
+      {
+        "speaker": "B",
+        "en": "To be honest, costs have gone up a little, but for a good tenant like you, I'll keep it the same for another year.",
+        "vi": "Thành thật mà nói, chi phí có tăng một chút, nhưng với người thuê tốt như em, chị sẽ giữ nguyên thêm một năm nữa."
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "title": "Gặp hàng xóm mới",
+    "situation": "Hà vừa dọn đến căn hộ mới và gặp hàng xóm ở hành lang.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Hà", "en": "Ha" },
+    "speakerBName": { "vi": "Hàng xóm", "en": "Neighbour" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Oh, hello! Sorry, I'm trying to get these boxes through the door — I just moved in next door.",
+        "vi": "Ồ, xin chào! Xin lỗi, tôi đang cố đưa mấy cái thùng này qua cửa — tôi vừa dọn vào ngay bên cạnh."
+      },
+      {
+        "speaker": "B",
+        "en": "Welcome to the building! Here, let me hold the door for you. That box looks heavy.",
+        "vi": "Chào mừng đến tòa nhà! Đây, để tôi giữ cửa cho bạn. Cái thùng đó trông nặng đấy."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you so much — it's books, so yes, it's quite heavy! I'm Ha, by the way. Apartment 5C.",
+        "vi": "Cảm ơn bạn rất nhiều — toàn sách, nên đúng là khá nặng! À, tôi là Hà. Căn hộ 5C."
+      },
+      {
+        "speaker": "B",
+        "en": "Nice to meet you, Ha! I'm Long — I'm in 5D, right across from you. So we're neighbours now.",
+        "vi": "Rất vui được gặp bạn, Hà! Tôi là Long — tôi ở 5D, ngay đối diện bạn. Vậy giờ mình là hàng xóm rồi."
+      },
+      {
+        "speaker": "A",
+        "en": "Great to meet you, Long! It's nice to see a friendly face on my first day here.",
+        "vi": "Rất vui được gặp anh, Long! Thật tốt khi thấy một gương mặt thân thiện trong ngày đầu tiên của tôi ở đây."
+      },
+      {
+        "speaker": "B",
+        "en": "Moving day is always stressful! How's it going so far — settling in okay?",
+        "vi": "Ngày dọn nhà luôn căng thẳng! Đến giờ thế nào rồi — ổn định ổn chứ?"
+      },
+      {
+        "speaker": "A",
+        "en": "It's chaos right now, honestly! Boxes everywhere. But I'm excited — this is my first place on my own.",
+        "vi": "Thành thật mà nói, hiện giờ rất hỗn loạn! Thùng khắp nơi. Nhưng tôi háo hức lắm — đây là nơi đầu tiên của riêng tôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Your first place — congratulations! That's a big milestone. Where did you move from?",
+        "vi": "Nơi đầu tiên của bạn — chúc mừng! Đó là cột mốc lớn. Bạn chuyển từ đâu đến?"
+      },
+      {
+        "speaker": "A",
+        "en": "I was living with my parents in District 7. I work near here now, so it made sense to move closer.",
+        "vi": "Tôi sống với bố mẹ ở Quận 7. Giờ tôi làm việc gần đây, nên dọn đến gần là hợp lý."
+      },
+      {
+        "speaker": "B",
+        "en": "Ah, the commute makes a huge difference. What do you do, if you don't mind me asking?",
+        "vi": "À, việc đi lại tạo ra khác biệt lớn. Bạn làm nghề gì, nếu bạn không phiền khi tôi hỏi?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'm a graphic designer at an advertising agency two streets away. What about you?",
+        "vi": "Tôi là nhà thiết kế đồ họa tại một công ty quảng cáo cách hai con phố. Còn anh?"
+      },
+      {
+        "speaker": "B",
+        "en": "I'm a software developer — I work from home most days, so I'm around a lot if you ever need anything.",
+        "vi": "Tôi là lập trình viên phần mềm — tôi làm việc tại nhà hầu hết các ngày, nên tôi ở đây nhiều nếu bạn cần gì."
+      },
+      {
+        "speaker": "A",
+        "en": "That's really good to know, thank you. Is the building quiet generally? I love peace and quiet.",
+        "vi": "Thật tốt khi biết điều đó, cảm ơn anh. Tòa nhà nhìn chung có yên tĩnh không? Tôi thích sự yên bình."
+      },
+      {
+        "speaker": "B",
+        "en": "It's pretty quiet, yes. Most people here are professionals or small families. The walls are thick too, which helps.",
+        "vi": "Khá yên tĩnh, đúng vậy. Hầu hết mọi người ở đây là dân văn phòng hoặc gia đình nhỏ. Tường cũng dày, điều đó giúp ích."
+      },
+      {
+        "speaker": "A",
+        "en": "That's a relief. Are there any building rules I should know about as a newbie?",
+        "vi": "Thật nhẹ nhõm. Có quy định nào của tòa nhà tôi cần biết với tư cách người mới không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Nothing too strict. Trash goes out before eight a.m., recycling on Tuesdays. And the rooftop is open if you ever want some fresh air.",
+        "vi": "Không có gì quá nghiêm ngặt. Rác đổ trước tám giờ sáng, đồ tái chế vào thứ Ba. Và sân thượng mở nếu bạn muốn hít thở không khí trong lành."
+      },
+      {
+        "speaker": "A",
+        "en": "There's a rooftop? I had no idea! Is it nice up there?",
+        "vi": "Có sân thượng à? Tôi không hề biết! Trên đó có đẹp không?"
+      },
+      {
+        "speaker": "B",
+        "en": "It's lovely, especially in the evenings. Great view of the sunset, and a few people grow plants up there.",
+        "vi": "Đẹp lắm, đặc biệt vào buổi tối. Tầm nhìn hoàng hôn tuyệt vời, và vài người trồng cây trên đó."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, I love that idea — I have some plants I want to put somewhere sunny. Maybe I'll join the rooftop gardeners!",
+        "vi": "Ồ, tôi thích ý đó — tôi có vài cây muốn đặt chỗ nào có nắng. Có lẽ tôi sẽ tham gia nhóm trồng cây sân thượng!"
+      },
+      {
+        "speaker": "B",
+        "en": "You definitely should! There's a lady in 4A, Mrs. Tam, who basically runs a mini farm up there. She'd love the company.",
+        "vi": "Bạn chắc chắn nên làm! Có một bác ở 4A, bác Tâm, cơ bản là điều hành một trang trại mini trên đó. Bác ấy sẽ thích có bạn đồng hành."
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "title": "Gọi thợ sửa điện",
+    "situation": "Việt gọi điện cho thợ sửa điện vì ổ điện trong nhà bị chập.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Việt", "en": "Viet" },
+    "speakerBName": { "vi": "Thợ điện", "en": "Electrician" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, is this the electrician service? I have an electrical problem at home that's a bit worrying.",
+        "vi": "Xin chào, đây có phải dịch vụ thợ điện không? Tôi có vấn đề về điện ở nhà hơi đáng lo."
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, this is. What kind of problem are you having?",
+        "vi": "Vâng, đúng rồi. Anh đang gặp vấn đề gì?"
+      },
+      {
+        "speaker": "A",
+        "en": "One of the power sockets in my living room sparked when I plugged in a fan, and now it smells a bit burnt.",
+        "vi": "Một trong những ổ cắm điện ở phòng khách của tôi nẹt lửa khi tôi cắm quạt, và bây giờ có mùi khét nhẹ."
+      },
+      {
+        "speaker": "B",
+        "en": "Okay, that's a safety concern — please don't use that socket at all. Have you turned off the power to that area?",
+        "vi": "Được, đó là vấn đề an toàn — vui lòng đừng dùng ổ cắm đó. Anh đã tắt điện khu vực đó chưa?"
+      },
+      {
+        "speaker": "A",
+        "en": "Not yet. Should I switch off the whole house or just part of it?",
+        "vi": "Chưa. Tôi nên tắt cả nhà hay chỉ một phần?"
+      },
+      {
+        "speaker": "B",
+        "en": "If you have a circuit breaker box, switch off only the breaker for the living room. If you're not sure which one, turn off the main switch to be safe.",
+        "vi": "Nếu anh có hộp cầu dao, chỉ tắt cầu dao cho phòng khách. Nếu không chắc cái nào, tắt công tắc chính cho an toàn."
+      },
+      {
+        "speaker": "A",
+        "en": "Let me check the box... There are labels. I see one that says 'living room'. I've switched it off now.",
+        "vi": "Để tôi kiểm tra hộp... Có nhãn dán. Tôi thấy một cái ghi 'phòng khách'. Tôi đã tắt nó rồi."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect, well done. That socket is now safe. A burnt smell usually means the wiring behind it has overheated.",
+        "vi": "Tuyệt vời, làm tốt lắm. Ổ cắm đó giờ an toàn rồi. Mùi khét thường có nghĩa là dây điện phía sau đã quá nhiệt."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds serious. Is it dangerous to stay in the house?",
+        "vi": "Nghe nghiêm trọng đấy. Ở trong nhà có nguy hiểm không?"
+      },
+      {
+        "speaker": "B",
+        "en": "As long as the breaker is off, you're fine. But it does need fixing soon — overheated wiring can be a fire risk if left.",
+        "vi": "Miễn là cầu dao đã tắt, anh ổn. Nhưng cần sửa sớm — dây điện quá nhiệt có thể gây nguy cơ cháy nếu để lâu."
+      },
+      {
+        "speaker": "A",
+        "en": "That's exactly what I was afraid of. Can you come today?",
+        "vi": "Đó chính xác là điều tôi sợ. Anh có thể đến hôm nay không?"
+      },
+      {
+        "speaker": "B",
+        "en": "I can come this afternoon, around three. Would that work for you?",
+        "vi": "Tôi có thể đến chiều nay, khoảng ba giờ. Như vậy có tiện cho anh không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Three o'clock is perfect. How long do you think the repair will take?",
+        "vi": "Ba giờ là hoàn hảo. Anh nghĩ sửa chữa sẽ mất bao lâu?"
+      },
+      {
+        "speaker": "B",
+        "en": "If it's just the socket and a short section of wiring, about an hour. If the damage runs deeper, it could take longer.",
+        "vi": "Nếu chỉ là ổ cắm và một đoạn dây ngắn, khoảng một tiếng. Nếu hư hỏng sâu hơn, có thể lâu hơn."
+      },
+      {
+        "speaker": "A",
+        "en": "Understood. What's the cost likely to be?",
+        "vi": "Hiểu rồi. Chi phí có thể là bao nhiêu?"
+      },
+      {
+        "speaker": "B",
+        "en": "The call-out and basic socket replacement is around three hundred thousand. If extra wiring is needed, it'll depend on the length — I'll quote you before doing any extra work.",
+        "vi": "Phí đến nhà và thay ổ cắm cơ bản khoảng ba trăm nghìn. Nếu cần thêm dây, sẽ tùy độ dài — tôi sẽ báo giá trước khi làm thêm bất cứ việc gì."
+      },
+      {
+        "speaker": "A",
+        "en": "That's fair — I appreciate you quoting before extra work. Should I do anything to prepare before you arrive?",
+        "vi": "Công bằng đó — tôi cảm kích anh báo giá trước khi làm thêm. Tôi có cần chuẩn bị gì trước khi anh đến không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Just clear the area around the socket so I have room to work. And keep that breaker off until I get there.",
+        "vi": "Chỉ cần dọn trống khu vực quanh ổ cắm để tôi có chỗ làm việc. Và giữ cầu dao đó tắt cho đến khi tôi đến."
+      },
+      {
+        "speaker": "A",
+        "en": "Will do. There's a sofa near it — I'll move that out of the way.",
+        "vi": "Sẽ làm vậy. Có một cái sofa gần đó — tôi sẽ di chuyển nó ra chỗ khác."
+      },
+      {
+        "speaker": "B",
+        "en": "Great. Also, while I'm there, I can check the other sockets and the breaker box to make sure nothing else is at risk.",
+        "vi": "Tốt. Ngoài ra, khi tôi ở đó, tôi có thể kiểm tra các ổ cắm khác và hộp cầu dao để đảm bảo không còn gì nguy cơ."
+      }
+    ]
+  }
+]

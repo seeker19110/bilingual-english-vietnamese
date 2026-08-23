@@ -57,3 +57,7 @@ tai-lieu-sgk/
 
 # Bản đồ code sinh tự động bởi `npm run codemap` — không commit (dựng lại được)
 .codemap/
+
+# Output build của từng gói workspace (tsc -b, phương án B project references)
+packages/*/dist
+*.tsbuildinfo

@@ -2,7 +2,7 @@
 // Gắn vào http.Server tại route /ws/gemini-live, proxy audio song công với xác thực cookie.
 import type { Server as HttpServer, IncomingMessage } from 'node:http'
 import { WebSocketServer, WebSocket } from 'ws'
-import { validateAuth } from '../core-auth/security.js'
+import { validateAuth } from '@dhcb/core-auth/security'
 import {
   createGeminiLiveSession,
   removeGeminiLiveSession,
@@ -12,7 +12,7 @@ import {
   GeminiLiveClientPacketSchema,
   type GeminiLiveClientPacket,
   type GeminiLiveServerPacket,
-} from '../core-contracts/geminiLive.js'
+} from '@dhcb/core-contracts/geminiLive'
 
 export const WS_GEMINI_LIVE_PATH = '/ws/gemini-live'
 

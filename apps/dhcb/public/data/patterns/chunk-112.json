@@ -1,0 +1,2136 @@
+[
+  {
+    "starter": "The neighbors are planning to",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      { "en": "The neighbors are planning to sleep early.", "vi": "Hàng xóm đang định ngủ sớm." },
+      { "en": "The neighbors are planning to leave early.", "vi": "Hàng xóm đang định về sớm." },
+      { "en": "The neighbors are planning to make tea.", "vi": "Hàng xóm đang định pha trà." },
+      {
+        "en": "The neighbors are planning to invite some friends.",
+        "vi": "Hàng xóm đang định mời vài người bạn."
+      },
+      {
+        "en": "The neighbors are planning to fill out the form.",
+        "vi": "Hàng xóm đang định điền vào biểu mẫu."
+      },
+      {
+        "en": "The neighbors are planning to visit the doctor.",
+        "vi": "Hàng xóm đang định đi khám bác sĩ."
+      },
+      {
+        "en": "The neighbors are planning to stay up late.",
+        "vi": "Hàng xóm đang định thức khuya."
+      },
+      {
+        "en": "The neighbors are planning to start over.",
+        "vi": "Hàng xóm đang định bắt đầu lại."
+      },
+      {
+        "en": "The neighbors are planning to buy groceries.",
+        "vi": "Hàng xóm đang định mua thực phẩm."
+      },
+      {
+        "en": "The neighbors are planning to rate the service.",
+        "vi": "Hàng xóm đang định đánh giá dịch vụ."
+      },
+      {
+        "en": "The neighbors are planning to take a day off.",
+        "vi": "Hàng xóm đang định xin nghỉ một ngày."
+      },
+      {
+        "en": "The neighbors are planning to learn something new.",
+        "vi": "Hàng xóm đang định học điều gì đó mới."
+      },
+      {
+        "en": "The neighbors are planning to prepare the presentation.",
+        "vi": "Hàng xóm đang định chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The neighbors are planning to do the laundry.",
+        "vi": "Hàng xóm đang định giặt đồ."
+      },
+      {
+        "en": "The neighbors are planning to log in again.",
+        "vi": "Hàng xóm đang định đăng nhập lại."
+      },
+      {
+        "en": "The neighbors are planning to ask for help.",
+        "vi": "Hàng xóm đang định nhờ giúp đỡ."
+      },
+      {
+        "en": "The neighbors are planning to reset the password.",
+        "vi": "Hàng xóm đang định đặt lại mật khẩu."
+      },
+      {
+        "en": "The neighbors are planning to move forward.",
+        "vi": "Hàng xóm đang định tiến về phía trước."
+      },
+      {
+        "en": "The neighbors are planning to launch the product.",
+        "vi": "Hàng xóm đang định ra mắt sản phẩm."
+      },
+      {
+        "en": "The neighbors are planning to double-check the numbers.",
+        "vi": "Hàng xóm đang định kiểm tra lại các con số."
+      },
+      {
+        "en": "The neighbors are planning to change careers.",
+        "vi": "Hàng xóm đang định chuyển nghề."
+      },
+      {
+        "en": "The neighbors are planning to manage the schedule.",
+        "vi": "Hàng xóm đang định quản lý lịch trình."
+      },
+      {
+        "en": "The neighbors are planning to donate to charity.",
+        "vi": "Hàng xóm đang định quyên góp từ thiện."
+      },
+      {
+        "en": "The neighbors are planning to confirm the booking.",
+        "vi": "Hàng xóm đang định xác nhận đặt chỗ."
+      },
+      {
+        "en": "The neighbors are planning to make a decision.",
+        "vi": "Hàng xóm đang định đưa ra quyết định."
+      },
+      {
+        "en": "The neighbors are planning to apply for the position.",
+        "vi": "Hàng xóm đang định nộp đơn cho vị trí."
+      },
+      {
+        "en": "The neighbors are planning to clean the house.",
+        "vi": "Hàng xóm đang định dọn nhà."
+      },
+      {
+        "en": "The neighbors are planning to ask for a raise.",
+        "vi": "Hàng xóm đang định xin tăng lương."
+      },
+      {
+        "en": "The neighbors are planning to keep in touch.",
+        "vi": "Hàng xóm đang định giữ liên lạc."
+      },
+      {
+        "en": "The neighbors are planning to never give up.",
+        "vi": "Hàng xóm đang định không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The neighbors are planning to get a promotion.",
+        "vi": "Hàng xóm đang định được thăng chức."
+      },
+      {
+        "en": "The neighbors are planning to submit the form.",
+        "vi": "Hàng xóm đang định nộp biểu mẫu."
+      },
+      {
+        "en": "The neighbors are planning to improve my skills.",
+        "vi": "Hàng xóm đang định cải thiện kỹ năng."
+      },
+      {
+        "en": "The neighbors are planning to walk the dog.",
+        "vi": "Hàng xóm đang định dắt chó đi dạo."
+      },
+      {
+        "en": "The neighbors are planning to read the news.",
+        "vi": "Hàng xóm đang định đọc tin tức."
+      },
+      {
+        "en": "The neighbors are planning to buy a new phone.",
+        "vi": "Hàng xóm đang định mua điện thoại mới."
+      },
+      {
+        "en": "The neighbors are planning to travel abroad.",
+        "vi": "Hàng xóm đang định đi du lịch nước ngoài."
+      },
+      {
+        "en": "The neighbors are planning to share the post.",
+        "vi": "Hàng xóm đang định chia sẻ bài viết."
+      },
+      {
+        "en": "The neighbors are planning to watch a movie.",
+        "vi": "Hàng xóm đang định xem phim."
+      },
+      {
+        "en": "The neighbors are planning to book a hotel.",
+        "vi": "Hàng xóm đang định đặt khách sạn."
+      },
+      {
+        "en": "The neighbors are planning to think positive.",
+        "vi": "Hàng xóm đang định suy nghĩ tích cực."
+      },
+      {
+        "en": "The neighbors are planning to understand the lesson.",
+        "vi": "Hàng xóm đang định hiểu bài học."
+      },
+      {
+        "en": "The neighbors are planning to sign up today.",
+        "vi": "Hàng xóm đang định đăng ký hôm nay."
+      },
+      {
+        "en": "The neighbors are planning to enjoy the weekend.",
+        "vi": "Hàng xóm đang định tận hưởng cuối tuần."
+      },
+      {
+        "en": "The neighbors are planning to watch the game.",
+        "vi": "Hàng xóm đang định xem trận đấu."
+      },
+      {
+        "en": "The neighbors are planning to cook breakfast.",
+        "vi": "Hàng xóm đang định nấu bữa sáng."
+      },
+      {
+        "en": "The neighbors are planning to keep a promise.",
+        "vi": "Hàng xóm đang định giữ lời hứa."
+      },
+      {
+        "en": "The neighbors are planning to review the document.",
+        "vi": "Hàng xóm đang định xem lại tài liệu."
+      },
+      {
+        "en": "The neighbors are planning to get some rest.",
+        "vi": "Hàng xóm đang định nghỉ ngơi một chút."
+      },
+      {
+        "en": "The neighbors are planning to follow the rules.",
+        "vi": "Hàng xóm đang định tuân theo quy tắc."
+      },
+      { "en": "The neighbors are planning to wake up early.", "vi": "Hàng xóm đang định dậy sớm." },
+      { "en": "The neighbors are planning to go for a walk.", "vi": "Hàng xóm đang định đi dạo." },
+      {
+        "en": "The neighbors are planning to arrive on time.",
+        "vi": "Hàng xóm đang định đến đúng giờ."
+      },
+      {
+        "en": "The neighbors are planning to finish the report.",
+        "vi": "Hàng xóm đang định hoàn thành báo cáo."
+      },
+      {
+        "en": "The neighbors are planning to check the details.",
+        "vi": "Hàng xóm đang định kiểm tra chi tiết."
+      },
+      {
+        "en": "The neighbors are planning to set a goal.",
+        "vi": "Hàng xóm đang định đặt một mục tiêu."
+      },
+      {
+        "en": "The neighbors are planning to attend the class.",
+        "vi": "Hàng xóm đang định tham gia lớp học."
+      },
+      {
+        "en": "The neighbors are planning to make a plan.",
+        "vi": "Hàng xóm đang định lập một kế hoạch."
+      },
+      {
+        "en": "The neighbors are planning to talk to the manager.",
+        "vi": "Hàng xóm đang định nói chuyện với quản lý."
+      },
+      { "en": "The neighbors are planning to stay home.", "vi": "Hàng xóm đang định ở nhà." },
+      {
+        "en": "The neighbors are planning to lower the cost.",
+        "vi": "Hàng xóm đang định giảm chi phí."
+      },
+      { "en": "The neighbors are planning to give feedback.", "vi": "Hàng xóm đang định góp ý." },
+      {
+        "en": "The neighbors are planning to negotiate the terms.",
+        "vi": "Hàng xóm đang định thương lượng điều khoản."
+      },
+      {
+        "en": "The neighbors are planning to be on time.",
+        "vi": "Hàng xóm đang định đến đúng giờ."
+      },
+      {
+        "en": "The neighbors are planning to try harder next time.",
+        "vi": "Hàng xóm đang định cố gắng hơn lần sau."
+      },
+      {
+        "en": "The neighbors are planning to send the email.",
+        "vi": "Hàng xóm đang định gửi email."
+      },
+      {
+        "en": "The neighbors are planning to plan ahead.",
+        "vi": "Hàng xóm đang định lên kế hoạch trước."
+      },
+      {
+        "en": "The neighbors are planning to save for the future.",
+        "vi": "Hàng xóm đang định tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The neighbors are planning to read more books.",
+        "vi": "Hàng xóm đang định đọc thêm sách."
+      },
+      {
+        "en": "The neighbors are planning to sign the contract.",
+        "vi": "Hàng xóm đang định ký hợp đồng."
+      },
+      {
+        "en": "The neighbors are planning to ask more questions.",
+        "vi": "Hàng xóm đang định hỏi nhiều hơn."
+      },
+      { "en": "The neighbors are planning to take notes.", "vi": "Hàng xóm đang định ghi chép." },
+      {
+        "en": "The neighbors are planning to write a report.",
+        "vi": "Hàng xóm đang định viết một báo cáo."
+      },
+      { "en": "The neighbors are planning to go home.", "vi": "Hàng xóm đang định về nhà." },
+      {
+        "en": "The neighbors are planning to ask a question.",
+        "vi": "Hàng xóm đang định hỏi một câu."
+      },
+      {
+        "en": "The neighbors are planning to share my opinion.",
+        "vi": "Hàng xóm đang định chia sẻ ý kiến."
+      },
+      {
+        "en": "The neighbors are planning to remember the password.",
+        "vi": "Hàng xóm đang định nhớ mật khẩu."
+      },
+      {
+        "en": "The neighbors are planning to raise the price.",
+        "vi": "Hàng xóm đang định tăng giá."
+      },
+      {
+        "en": "The neighbors are planning to catch the train.",
+        "vi": "Hàng xóm đang định bắt chuyến tàu."
+      },
+      { "en": "The neighbors are planning to try again.", "vi": "Hàng xóm đang định thử lại." },
+      { "en": "The neighbors are planning to take a rest.", "vi": "Hàng xóm đang định nghỉ ngơi." },
+      {
+        "en": "The neighbors are planning to cut expenses.",
+        "vi": "Hàng xóm đang định cắt giảm chi tiêu."
+      },
+      {
+        "en": "The neighbors are planning to throw a party.",
+        "vi": "Hàng xóm đang định tổ chức tiệc."
+      },
+      {
+        "en": "The neighbors are planning to install the app.",
+        "vi": "Hàng xóm đang định cài đặt ứng dụng."
+      },
+      {
+        "en": "The neighbors are planning to drink more water.",
+        "vi": "Hàng xóm đang định uống nhiều nước hơn."
+      },
+      {
+        "en": "The neighbors are planning to plan a trip.",
+        "vi": "Hàng xóm đang định lên kế hoạch một chuyến đi."
+      },
+      { "en": "The neighbors are planning to order food.", "vi": "Hàng xóm đang định gọi đồ ăn." },
+      {
+        "en": "The neighbors are planning to explain the situation.",
+        "vi": "Hàng xóm đang định giải thích tình huống."
+      },
+      {
+        "en": "The neighbors are planning to register for the course.",
+        "vi": "Hàng xóm đang định đăng ký khóa học."
+      },
+      {
+        "en": "The neighbors are planning to turn off the light.",
+        "vi": "Hàng xóm đang định tắt đèn."
+      },
+      {
+        "en": "The neighbors are planning to cook dinner.",
+        "vi": "Hàng xóm đang định nấu bữa tối."
+      },
+      {
+        "en": "The neighbors are planning to write it down.",
+        "vi": "Hàng xóm đang định ghi nó lại."
+      },
+      {
+        "en": "The neighbors are planning to wait a moment.",
+        "vi": "Hàng xóm đang định chờ một chút."
+      },
+      {
+        "en": "The neighbors are planning to take a chance.",
+        "vi": "Hàng xóm đang định nắm lấy cơ hội."
+      },
+      { "en": "The neighbors are planning to take it easy.", "vi": "Hàng xóm đang định thư giãn." },
+      {
+        "en": "The neighbors are planning to support each other.",
+        "vi": "Hàng xóm đang định hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The neighbors are planning to take a photo.",
+        "vi": "Hàng xóm đang định chụp một bức ảnh."
+      },
+      {
+        "en": "The neighbors are planning to water the plants.",
+        "vi": "Hàng xóm đang định tưới cây."
+      },
+      {
+        "en": "The neighbors are planning to meet the deadline.",
+        "vi": "Hàng xóm đang định kịp thời hạn."
+      },
+      {
+        "en": "The neighbors are planning to call a friend.",
+        "vi": "Hàng xóm đang định gọi cho một người bạn."
+      }
+    ]
+  },
+  {
+    "starter": "The neighbors used to",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      { "en": "The neighbors used to pack my bags.", "vi": "Hàng xóm từng xếp hành lý." },
+      {
+        "en": "The neighbors used to test the feature.",
+        "vi": "Hàng xóm từng kiểm thử tính năng."
+      },
+      { "en": "The neighbors used to report the bug.", "vi": "Hàng xóm từng báo lỗi." },
+      {
+        "en": "The neighbors used to enjoy the weekend.",
+        "vi": "Hàng xóm từng tận hưởng cuối tuần."
+      },
+      { "en": "The neighbors used to save money.", "vi": "Hàng xóm từng tiết kiệm tiền." },
+      {
+        "en": "The neighbors used to reply to the message.",
+        "vi": "Hàng xóm từng trả lời tin nhắn."
+      },
+      {
+        "en": "The neighbors used to call a friend.",
+        "vi": "Hàng xóm từng gọi cho một người bạn."
+      },
+      { "en": "The neighbors used to arrive on time.", "vi": "Hàng xóm từng đến đúng giờ." },
+      { "en": "The neighbors used to meet new people.", "vi": "Hàng xóm từng gặp gỡ người mới." },
+      {
+        "en": "The neighbors used to donate to charity.",
+        "vi": "Hàng xóm từng quyên góp từ thiện."
+      },
+      {
+        "en": "The neighbors used to solve this issue.",
+        "vi": "Hàng xóm từng giải quyết vấn đề này."
+      },
+      { "en": "The neighbors used to ride a bike.", "vi": "Hàng xóm từng đạp xe." },
+      { "en": "The neighbors used to quit smoking.", "vi": "Hàng xóm từng bỏ thuốc lá." },
+      { "en": "The neighbors used to log in again.", "vi": "Hàng xóm từng đăng nhập lại." },
+      { "en": "The neighbors used to get a degree.", "vi": "Hàng xóm từng lấy bằng." },
+      {
+        "en": "The neighbors used to never give up.",
+        "vi": "Hàng xóm từng không bao giờ bỏ cuộc."
+      },
+      { "en": "The neighbors used to raise the price.", "vi": "Hàng xóm từng tăng giá." },
+      { "en": "The neighbors used to sleep early.", "vi": "Hàng xóm từng ngủ sớm." },
+      { "en": "The neighbors used to stay home.", "vi": "Hàng xóm từng ở nhà." },
+      { "en": "The neighbors used to reach the goal.", "vi": "Hàng xóm từng đạt mục tiêu." },
+      { "en": "The neighbors used to visit my family.", "vi": "Hàng xóm từng thăm gia đình." },
+      { "en": "The neighbors used to get some rest.", "vi": "Hàng xóm từng nghỉ ngơi một chút." },
+      { "en": "The neighbors used to attend the class.", "vi": "Hàng xóm từng tham gia lớp học." },
+      { "en": "The neighbors used to think positive.", "vi": "Hàng xóm từng suy nghĩ tích cực." },
+      { "en": "The neighbors used to share the post.", "vi": "Hàng xóm từng chia sẻ bài viết." },
+      { "en": "The neighbors used to support each other.", "vi": "Hàng xóm từng hỗ trợ lẫn nhau." },
+      {
+        "en": "The neighbors used to restart the computer.",
+        "vi": "Hàng xóm từng khởi động lại máy tính."
+      },
+      { "en": "The neighbors used to rent a car.", "vi": "Hàng xóm từng thuê xe." },
+      { "en": "The neighbors used to speak English.", "vi": "Hàng xóm từng nói tiếng Anh." },
+      { "en": "The neighbors used to keep a diary.", "vi": "Hàng xóm từng viết nhật ký." },
+      { "en": "The neighbors used to miss the flight.", "vi": "Hàng xóm từng lỡ chuyến bay." },
+      { "en": "The neighbors used to throw a party.", "vi": "Hàng xóm từng tổ chức tiệc." },
+      { "en": "The neighbors used to keep in touch.", "vi": "Hàng xóm từng giữ liên lạc." },
+      { "en": "The neighbors used to water the plants.", "vi": "Hàng xóm từng tưới cây." },
+      {
+        "en": "The neighbors used to answer the phone.",
+        "vi": "Hàng xóm từng trả lời điện thoại."
+      },
+      { "en": "The neighbors used to learn English.", "vi": "Hàng xóm từng học tiếng Anh." },
+      { "en": "The neighbors used to say sorry.", "vi": "Hàng xóm từng nói lời xin lỗi." },
+      { "en": "The neighbors used to study abroad.", "vi": "Hàng xóm từng du học." },
+      {
+        "en": "The neighbors used to invite some friends.",
+        "vi": "Hàng xóm từng mời vài người bạn."
+      },
+      { "en": "The neighbors used to join a club.", "vi": "Hàng xóm từng tham gia câu lạc bộ." },
+      {
+        "en": "The neighbors used to exercise every day.",
+        "vi": "Hàng xóm từng tập thể dục mỗi ngày."
+      },
+      {
+        "en": "The neighbors used to register for the course.",
+        "vi": "Hàng xóm từng đăng ký khóa học."
+      },
+      { "en": "The neighbors used to set a goal.", "vi": "Hàng xóm từng đặt một mục tiêu." },
+      { "en": "The neighbors used to take it easy.", "vi": "Hàng xóm từng thư giãn." },
+      { "en": "The neighbors used to take a photo.", "vi": "Hàng xóm từng chụp một bức ảnh." },
+      { "en": "The neighbors used to take notes.", "vi": "Hàng xóm từng ghi chép." },
+      { "en": "The neighbors used to call back later.", "vi": "Hàng xóm từng gọi lại sau." },
+      { "en": "The neighbors used to take the exam.", "vi": "Hàng xóm từng làm bài thi." },
+      { "en": "The neighbors used to make a plan.", "vi": "Hàng xóm từng lập một kế hoạch." },
+      { "en": "The neighbors used to install the app.", "vi": "Hàng xóm từng cài đặt ứng dụng." },
+      {
+        "en": "The neighbors used to start a new project.",
+        "vi": "Hàng xóm từng bắt đầu một dự án mới."
+      },
+      { "en": "The neighbors used to take a chance.", "vi": "Hàng xóm từng nắm lấy cơ hội." },
+      { "en": "The neighbors used to stay focused.", "vi": "Hàng xóm từng giữ tập trung." },
+      { "en": "The neighbors used to go for a walk.", "vi": "Hàng xóm từng đi dạo." },
+      { "en": "The neighbors used to be on time.", "vi": "Hàng xóm từng đến đúng giờ." },
+      { "en": "The neighbors used to lock the door.", "vi": "Hàng xóm từng khóa cửa." },
+      { "en": "The neighbors used to wake up early.", "vi": "Hàng xóm từng dậy sớm." },
+      { "en": "The neighbors used to check my email.", "vi": "Hàng xóm từng kiểm tra email." },
+      { "en": "The neighbors used to write a report.", "vi": "Hàng xóm từng viết một báo cáo." },
+      { "en": "The neighbors used to sign up today.", "vi": "Hàng xóm từng đăng ký hôm nay." },
+      { "en": "The neighbors used to take a day off.", "vi": "Hàng xóm từng xin nghỉ một ngày." },
+      {
+        "en": "The neighbors used to finish the report.",
+        "vi": "Hàng xóm từng hoàn thành báo cáo."
+      },
+      { "en": "The neighbors used to cook dinner.", "vi": "Hàng xóm từng nấu bữa tối." },
+      { "en": "The neighbors used to charge the phone.", "vi": "Hàng xóm từng sạc điện thoại." },
+      { "en": "The neighbors used to thank everyone.", "vi": "Hàng xóm từng cảm ơn mọi người." },
+      { "en": "The neighbors used to take a break.", "vi": "Hàng xóm từng nghỉ giải lao." },
+      { "en": "The neighbors used to play sports.", "vi": "Hàng xóm từng chơi thể thao." },
+      {
+        "en": "The neighbors used to open a savings account.",
+        "vi": "Hàng xóm từng mở tài khoản tiết kiệm."
+      },
+      { "en": "The neighbors used to wash the dishes.", "vi": "Hàng xóm từng rửa bát." },
+      { "en": "The neighbors used to finish on time.", "vi": "Hàng xóm từng hoàn thành đúng hạn." },
+      { "en": "The neighbors used to meditate daily.", "vi": "Hàng xóm từng thiền mỗi ngày." },
+      { "en": "The neighbors used to work harder.", "vi": "Hàng xóm từng làm việc chăm chỉ hơn." },
+      { "en": "The neighbors used to make a decision.", "vi": "Hàng xóm từng đưa ra quyết định." },
+      { "en": "The neighbors used to read the news.", "vi": "Hàng xóm từng đọc tin tức." },
+      {
+        "en": "The neighbors used to fill out the form.",
+        "vi": "Hàng xóm từng điền vào biểu mẫu."
+      },
+      { "en": "The neighbors used to take medicine.", "vi": "Hàng xóm từng uống thuốc." },
+      {
+        "en": "The neighbors used to drink less coffee.",
+        "vi": "Hàng xóm từng uống ít cà phê hơn."
+      },
+      {
+        "en": "The neighbors used to save for the future.",
+        "vi": "Hàng xóm từng tiết kiệm cho tương lai."
+      },
+      { "en": "The neighbors used to help out.", "vi": "Hàng xóm từng giúp đỡ." },
+      {
+        "en": "The neighbors used to prepare the presentation.",
+        "vi": "Hàng xóm từng chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The neighbors used to improve my skills.",
+        "vi": "Hàng xóm từng cải thiện kỹ năng."
+      },
+      { "en": "The neighbors used to find a job.", "vi": "Hàng xóm từng tìm việc làm." },
+      { "en": "The neighbors used to sign the contract.", "vi": "Hàng xóm từng ký hợp đồng." },
+      { "en": "The neighbors used to take a rest.", "vi": "Hàng xóm từng nghỉ ngơi." },
+      { "en": "The neighbors used to lose weight.", "vi": "Hàng xóm từng giảm cân." },
+      { "en": "The neighbors used to order food.", "vi": "Hàng xóm từng gọi đồ ăn." },
+      {
+        "en": "The neighbors used to talk to the manager.",
+        "vi": "Hàng xóm từng nói chuyện với quản lý."
+      },
+      { "en": "The neighbors used to copy the link.", "vi": "Hàng xóm từng sao chép liên kết." },
+      { "en": "The neighbors used to listen to music.", "vi": "Hàng xóm từng nghe nhạc." },
+      { "en": "The neighbors used to understand the lesson.", "vi": "Hàng xóm từng hiểu bài học." },
+      { "en": "The neighbors used to close the window.", "vi": "Hàng xóm từng đóng cửa sổ." },
+      { "en": "The neighbors used to keep learning.", "vi": "Hàng xóm từng tiếp tục học hỏi." },
+      { "en": "The neighbors used to read more books.", "vi": "Hàng xóm từng đọc thêm sách." },
+      { "en": "The neighbors used to watch a movie.", "vi": "Hàng xóm từng xem phim." },
+      { "en": "The neighbors used to try again.", "vi": "Hàng xóm từng thử lại." },
+      { "en": "The neighbors used to submit the form.", "vi": "Hàng xóm từng nộp biểu mẫu." },
+      { "en": "The neighbors used to move forward.", "vi": "Hàng xóm từng tiến về phía trước." },
+      { "en": "The neighbors used to leave early.", "vi": "Hàng xóm từng về sớm." },
+      {
+        "en": "The neighbors used to volunteer on weekends.",
+        "vi": "Hàng xóm từng tình nguyện cuối tuần."
+      },
+      { "en": "The neighbors used to pay the bill.", "vi": "Hàng xóm từng thanh toán hóa đơn." }
+    ]
+  },
+  {
+    "starter": "The neighbors don't",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      { "en": "The neighbors don't cut the budget.", "vi": "Hàng xóm không cắt giảm ngân sách." },
+      { "en": "The neighbors don't do the laundry.", "vi": "Hàng xóm không giặt đồ." },
+      {
+        "en": "The neighbors don't exercise every day.",
+        "vi": "Hàng xóm không tập thể dục mỗi ngày."
+      },
+      { "en": "The neighbors don't turn off the light.", "vi": "Hàng xóm không tắt đèn." },
+      { "en": "The neighbors don't plan ahead.", "vi": "Hàng xóm không lên kế hoạch trước." },
+      { "en": "The neighbors don't leave early.", "vi": "Hàng xóm không về sớm." },
+      { "en": "The neighbors don't ask for a raise.", "vi": "Hàng xóm không xin tăng lương." },
+      { "en": "The neighbors don't work as a team.", "vi": "Hàng xóm không làm việc theo nhóm." },
+      { "en": "The neighbors don't support each other.", "vi": "Hàng xóm không hỗ trợ lẫn nhau." },
+      {
+        "en": "The neighbors don't celebrate together.",
+        "vi": "Hàng xóm không ăn mừng cùng nhau."
+      },
+      { "en": "The neighbors don't leave a comment.", "vi": "Hàng xóm không để lại bình luận." },
+      { "en": "The neighbors don't take a day off.", "vi": "Hàng xóm không xin nghỉ một ngày." },
+      { "en": "The neighbors don't listen carefully.", "vi": "Hàng xóm không lắng nghe cẩn thận." },
+      { "en": "The neighbors don't fill out the form.", "vi": "Hàng xóm không điền vào biểu mẫu." },
+      { "en": "The neighbors don't speak English.", "vi": "Hàng xóm không nói tiếng Anh." },
+      { "en": "The neighbors don't write a report.", "vi": "Hàng xóm không viết một báo cáo." },
+      { "en": "The neighbors don't set an alarm.", "vi": "Hàng xóm không đặt báo thức." },
+      {
+        "en": "The neighbors don't volunteer on weekends.",
+        "vi": "Hàng xóm không tình nguyện cuối tuần."
+      },
+      { "en": "The neighbors don't breathe deeply.", "vi": "Hàng xóm không hít thở sâu." },
+      { "en": "The neighbors don't get a promotion.", "vi": "Hàng xóm không được thăng chức." },
+      { "en": "The neighbors don't change the plan.", "vi": "Hàng xóm không thay đổi kế hoạch." },
+      { "en": "The neighbors don't meet new people.", "vi": "Hàng xóm không gặp gỡ người mới." },
+      { "en": "The neighbors don't pack my bags.", "vi": "Hàng xóm không xếp hành lý." },
+      { "en": "The neighbors don't follow the rules.", "vi": "Hàng xóm không tuân theo quy tắc." },
+      { "en": "The neighbors don't train the team.", "vi": "Hàng xóm không đào tạo nhóm." },
+      {
+        "en": "The neighbors don't start a new project.",
+        "vi": "Hàng xóm không bắt đầu một dự án mới."
+      },
+      { "en": "The neighbors don't keep a diary.", "vi": "Hàng xóm không viết nhật ký." },
+      { "en": "The neighbors don't share the post.", "vi": "Hàng xóm không chia sẻ bài viết." },
+      { "en": "The neighbors don't report the bug.", "vi": "Hàng xóm không báo lỗi." },
+      { "en": "The neighbors don't catch the train.", "vi": "Hàng xóm không bắt chuyến tàu." },
+      { "en": "The neighbors don't take it easy.", "vi": "Hàng xóm không thư giãn." },
+      { "en": "The neighbors don't lock the door.", "vi": "Hàng xóm không khóa cửa." },
+      { "en": "The neighbors don't lead the project.", "vi": "Hàng xóm không dẫn dắt dự án." },
+      { "en": "The neighbors don't take a photo.", "vi": "Hàng xóm không chụp một bức ảnh." },
+      { "en": "The neighbors don't join a club.", "vi": "Hàng xóm không tham gia câu lạc bộ." },
+      { "en": "The neighbors don't cook dinner.", "vi": "Hàng xóm không nấu bữa tối." },
+      { "en": "The neighbors don't cancel the order.", "vi": "Hàng xóm không hủy đơn hàng." },
+      { "en": "The neighbors don't quit smoking.", "vi": "Hàng xóm không bỏ thuốc lá." },
+      { "en": "The neighbors don't meet the deadline.", "vi": "Hàng xóm không kịp thời hạn." },
+      { "en": "The neighbors don't test the feature.", "vi": "Hàng xóm không kiểm thử tính năng." },
+      { "en": "The neighbors don't water the plants.", "vi": "Hàng xóm không tưới cây." },
+      { "en": "The neighbors don't log in again.", "vi": "Hàng xóm không đăng nhập lại." },
+      { "en": "The neighbors don't try again.", "vi": "Hàng xóm không thử lại." },
+      { "en": "The neighbors don't fix the problem.", "vi": "Hàng xóm không sửa vấn đề." },
+      {
+        "en": "The neighbors don't save for the future.",
+        "vi": "Hàng xóm không tiết kiệm cho tương lai."
+      },
+      { "en": "The neighbors don't keep a promise.", "vi": "Hàng xóm không giữ lời hứa." },
+      { "en": "The neighbors don't move forward.", "vi": "Hàng xóm không tiến về phía trước." },
+      { "en": "The neighbors don't improve my skills.", "vi": "Hàng xóm không cải thiện kỹ năng." },
+      { "en": "The neighbors don't scan the receipt.", "vi": "Hàng xóm không quét hóa đơn." },
+      { "en": "The neighbors don't watch a movie.", "vi": "Hàng xóm không xem phim." },
+      {
+        "en": "The neighbors don't confirm the booking.",
+        "vi": "Hàng xóm không xác nhận đặt chỗ."
+      },
+      { "en": "The neighbors don't sign the contract.", "vi": "Hàng xóm không ký hợp đồng." },
+      { "en": "The neighbors don't visit my family.", "vi": "Hàng xóm không thăm gia đình." },
+      { "en": "The neighbors don't finish on time.", "vi": "Hàng xóm không hoàn thành đúng hạn." },
+      { "en": "The neighbors don't copy the link.", "vi": "Hàng xóm không sao chép liên kết." },
+      {
+        "en": "The neighbors don't drink less coffee.",
+        "vi": "Hàng xóm không uống ít cà phê hơn."
+      },
+      { "en": "The neighbors don't get some rest.", "vi": "Hàng xóm không nghỉ ngơi một chút." },
+      { "en": "The neighbors don't learn to swim.", "vi": "Hàng xóm không học bơi." },
+      { "en": "The neighbors don't tell the truth.", "vi": "Hàng xóm không nói sự thật." },
+      { "en": "The neighbors don't help the team.", "vi": "Hàng xóm không giúp đỡ nhóm." },
+      { "en": "The neighbors don't relax at home.", "vi": "Hàng xóm không thư giãn ở nhà." },
+      { "en": "The neighbors don't write it down.", "vi": "Hàng xóm không ghi nó lại." },
+      { "en": "The neighbors don't reach the goal.", "vi": "Hàng xóm không đạt mục tiêu." },
+      { "en": "The neighbors don't back up the data.", "vi": "Hàng xóm không sao lưu dữ liệu." },
+      { "en": "The neighbors don't take a chance.", "vi": "Hàng xóm không nắm lấy cơ hội." },
+      { "en": "The neighbors don't send the email.", "vi": "Hàng xóm không gửi email." },
+      { "en": "The neighbors don't study abroad.", "vi": "Hàng xóm không du học." },
+      {
+        "en": "The neighbors don't restart the computer.",
+        "vi": "Hàng xóm không khởi động lại máy tính."
+      },
+      { "en": "The neighbors don't join the meeting.", "vi": "Hàng xóm không tham gia cuộc họp." },
+      { "en": "The neighbors don't schedule a meeting.", "vi": "Hàng xóm không sắp xếp cuộc họp." },
+      { "en": "The neighbors don't make a reservation.", "vi": "Hàng xóm không đặt chỗ trước." },
+      { "en": "The neighbors don't buy a new phone.", "vi": "Hàng xóm không mua điện thoại mới." },
+      { "en": "The neighbors don't eat healthy.", "vi": "Hàng xóm không ăn uống lành mạnh." },
+      { "en": "The neighbors don't remember the password.", "vi": "Hàng xóm không nhớ mật khẩu." },
+      { "en": "The neighbors don't watch the game.", "vi": "Hàng xóm không xem trận đấu." },
+      { "en": "The neighbors don't keep in touch.", "vi": "Hàng xóm không giữ liên lạc." },
+      { "en": "The neighbors don't ask for help.", "vi": "Hàng xóm không nhờ giúp đỡ." },
+      { "en": "The neighbors don't never give up.", "vi": "Hàng xóm không không bao giờ bỏ cuộc." },
+      { "en": "The neighbors don't attend the class.", "vi": "Hàng xóm không tham gia lớp học." },
+      {
+        "en": "The neighbors don't practice every day.",
+        "vi": "Hàng xóm không luyện tập mỗi ngày."
+      },
+      { "en": "The neighbors don't meditate daily.", "vi": "Hàng xóm không thiền mỗi ngày." },
+      { "en": "The neighbors don't say sorry.", "vi": "Hàng xóm không nói lời xin lỗi." },
+      { "en": "The neighbors don't learn English.", "vi": "Hàng xóm không học tiếng Anh." },
+      {
+        "en": "The neighbors don't help a neighbor.",
+        "vi": "Hàng xóm không giúp một người hàng xóm."
+      },
+      { "en": "The neighbors don't give feedback.", "vi": "Hàng xóm không góp ý." },
+      { "en": "The neighbors don't get a degree.", "vi": "Hàng xóm không lấy bằng." },
+      { "en": "The neighbors don't understand the lesson.", "vi": "Hàng xóm không hiểu bài học." },
+      {
+        "en": "The neighbors don't apply for the position.",
+        "vi": "Hàng xóm không nộp đơn cho vị trí."
+      },
+      {
+        "en": "The neighbors don't enjoy the weekend.",
+        "vi": "Hàng xóm không tận hưởng cuối tuần."
+      },
+      { "en": "The neighbors don't book a hotel.", "vi": "Hàng xóm không đặt khách sạn." },
+      { "en": "The neighbors don't invest wisely.", "vi": "Hàng xóm không đầu tư khôn ngoan." },
+      { "en": "The neighbors don't lose weight.", "vi": "Hàng xóm không giảm cân." },
+      { "en": "The neighbors don't throw a party.", "vi": "Hàng xóm không tổ chức tiệc." },
+      { "en": "The neighbors don't set a goal.", "vi": "Hàng xóm không đặt một mục tiêu." },
+      { "en": "The neighbors don't call a friend.", "vi": "Hàng xóm không gọi cho một người bạn." },
+      { "en": "The neighbors don't close the window.", "vi": "Hàng xóm không đóng cửa sổ." },
+      { "en": "The neighbors don't travel abroad.", "vi": "Hàng xóm không đi du lịch nước ngoài." },
+      { "en": "The neighbors don't pay the bill.", "vi": "Hàng xóm không thanh toán hóa đơn." },
+      { "en": "The neighbors don't win the contract.", "vi": "Hàng xóm không giành hợp đồng." },
+      { "en": "The neighbors don't wake up early.", "vi": "Hàng xóm không dậy sớm." }
+    ]
+  },
+  {
+    "starter": "The neighbors didn't",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      {
+        "en": "The neighbors didn't negotiate the terms.",
+        "vi": "Hàng xóm đã không thương lượng điều khoản."
+      },
+      {
+        "en": "The neighbors didn't join the meeting.",
+        "vi": "Hàng xóm đã không tham gia cuộc họp."
+      },
+      {
+        "en": "The neighbors didn't save for the future.",
+        "vi": "Hàng xóm đã không tiết kiệm cho tương lai."
+      },
+      { "en": "The neighbors didn't help out.", "vi": "Hàng xóm đã không giúp đỡ." },
+      {
+        "en": "The neighbors didn't cook for everyone.",
+        "vi": "Hàng xóm đã không nấu ăn cho mọi người."
+      },
+      { "en": "The neighbors didn't start over.", "vi": "Hàng xóm đã không bắt đầu lại." },
+      { "en": "The neighbors didn't win the contract.", "vi": "Hàng xóm đã không giành hợp đồng." },
+      { "en": "The neighbors didn't say sorry.", "vi": "Hàng xóm đã không nói lời xin lỗi." },
+      { "en": "The neighbors didn't share my opinion.", "vi": "Hàng xóm đã không chia sẻ ý kiến." },
+      { "en": "The neighbors didn't speak English.", "vi": "Hàng xóm đã không nói tiếng Anh." },
+      { "en": "The neighbors didn't cut expenses.", "vi": "Hàng xóm đã không cắt giảm chi tiêu." },
+      { "en": "The neighbors didn't cook breakfast.", "vi": "Hàng xóm đã không nấu bữa sáng." },
+      { "en": "The neighbors didn't study abroad.", "vi": "Hàng xóm đã không du học." },
+      {
+        "en": "The neighbors didn't drink less coffee.",
+        "vi": "Hàng xóm đã không uống ít cà phê hơn."
+      },
+      {
+        "en": "The neighbors didn't manage the schedule.",
+        "vi": "Hàng xóm đã không quản lý lịch trình."
+      },
+      {
+        "en": "The neighbors didn't apply for the position.",
+        "vi": "Hàng xóm đã không nộp đơn cho vị trí."
+      },
+      { "en": "The neighbors didn't leave early.", "vi": "Hàng xóm đã không về sớm." },
+      { "en": "The neighbors didn't cancel the order.", "vi": "Hàng xóm đã không hủy đơn hàng." },
+      {
+        "en": "The neighbors didn't try harder next time.",
+        "vi": "Hàng xóm đã không cố gắng hơn lần sau."
+      },
+      {
+        "en": "The neighbors didn't take a day off.",
+        "vi": "Hàng xóm đã không xin nghỉ một ngày."
+      },
+      {
+        "en": "The neighbors didn't open a business.",
+        "vi": "Hàng xóm đã không mở một doanh nghiệp."
+      },
+      { "en": "The neighbors didn't raise the price.", "vi": "Hàng xóm đã không tăng giá." },
+      {
+        "en": "The neighbors didn't solve this issue.",
+        "vi": "Hàng xóm đã không giải quyết vấn đề này."
+      },
+      { "en": "The neighbors didn't reach the goal.", "vi": "Hàng xóm đã không đạt mục tiêu." },
+      { "en": "The neighbors didn't sleep early.", "vi": "Hàng xóm đã không ngủ sớm." },
+      { "en": "The neighbors didn't set an alarm.", "vi": "Hàng xóm đã không đặt báo thức." },
+      { "en": "The neighbors didn't lower the cost.", "vi": "Hàng xóm đã không giảm chi phí." },
+      { "en": "The neighbors didn't take the exam.", "vi": "Hàng xóm đã không làm bài thi." },
+      {
+        "en": "The neighbors didn't never give up.",
+        "vi": "Hàng xóm đã không không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The neighbors didn't check the details.",
+        "vi": "Hàng xóm đã không kiểm tra chi tiết."
+      },
+      { "en": "The neighbors didn't drive to work.", "vi": "Hàng xóm đã không lái xe đi làm." },
+      {
+        "en": "The neighbors didn't volunteer on weekends.",
+        "vi": "Hàng xóm đã không tình nguyện cuối tuần."
+      },
+      {
+        "en": "The neighbors didn't make a decision.",
+        "vi": "Hàng xóm đã không đưa ra quyết định."
+      },
+      {
+        "en": "The neighbors didn't help a neighbor.",
+        "vi": "Hàng xóm đã không giúp một người hàng xóm."
+      },
+      { "en": "The neighbors didn't print the document.", "vi": "Hàng xóm đã không in tài liệu." },
+      {
+        "en": "The neighbors didn't celebrate together.",
+        "vi": "Hàng xóm đã không ăn mừng cùng nhau."
+      },
+      { "en": "The neighbors didn't sign the contract.", "vi": "Hàng xóm đã không ký hợp đồng." },
+      {
+        "en": "The neighbors didn't support each other.",
+        "vi": "Hàng xóm đã không hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The neighbors didn't take a course.",
+        "vi": "Hàng xóm đã không tham gia một khóa học."
+      },
+      { "en": "The neighbors didn't sign up today.", "vi": "Hàng xóm đã không đăng ký hôm nay." },
+      { "en": "The neighbors didn't learn to swim.", "vi": "Hàng xóm đã không học bơi." },
+      { "en": "The neighbors didn't go for a walk.", "vi": "Hàng xóm đã không đi dạo." },
+      { "en": "The neighbors didn't turn off the light.", "vi": "Hàng xóm đã không tắt đèn." },
+      { "en": "The neighbors didn't pay the bill.", "vi": "Hàng xóm đã không thanh toán hóa đơn." },
+      { "en": "The neighbors didn't stay up late.", "vi": "Hàng xóm đã không thức khuya." },
+      { "en": "The neighbors didn't save money.", "vi": "Hàng xóm đã không tiết kiệm tiền." },
+      { "en": "The neighbors didn't make new friends.", "vi": "Hàng xóm đã không kết bạn mới." },
+      { "en": "The neighbors didn't order food.", "vi": "Hàng xóm đã không gọi đồ ăn." },
+      {
+        "en": "The neighbors didn't pay off the loan.",
+        "vi": "Hàng xóm đã không trả hết khoản vay."
+      },
+      { "en": "The neighbors didn't give feedback.", "vi": "Hàng xóm đã không góp ý." },
+      {
+        "en": "The neighbors didn't make a reservation.",
+        "vi": "Hàng xóm đã không đặt chỗ trước."
+      },
+      { "en": "The neighbors didn't wake up early.", "vi": "Hàng xóm đã không dậy sớm." },
+      { "en": "The neighbors didn't train the team.", "vi": "Hàng xóm đã không đào tạo nhóm." },
+      { "en": "The neighbors didn't check my email.", "vi": "Hàng xóm đã không kiểm tra email." },
+      { "en": "The neighbors didn't take the bus.", "vi": "Hàng xóm đã không đi xe buýt." },
+      { "en": "The neighbors didn't find a job.", "vi": "Hàng xóm đã không tìm việc làm." },
+      { "en": "The neighbors didn't take a break.", "vi": "Hàng xóm đã không nghỉ giải lao." },
+      {
+        "en": "The neighbors didn't hire new staff.",
+        "vi": "Hàng xóm đã không tuyển nhân viên mới."
+      },
+      {
+        "en": "The neighbors didn't fill out the form.",
+        "vi": "Hàng xóm đã không điền vào biểu mẫu."
+      },
+      { "en": "The neighbors didn't download the file.", "vi": "Hàng xóm đã không tải tệp xuống." },
+      {
+        "en": "The neighbors didn't update the software.",
+        "vi": "Hàng xóm đã không cập nhật phần mềm."
+      },
+      { "en": "The neighbors didn't take medicine.", "vi": "Hàng xóm đã không uống thuốc." },
+      { "en": "The neighbors didn't make tea.", "vi": "Hàng xóm đã không pha trà." },
+      { "en": "The neighbors didn't take a rest.", "vi": "Hàng xóm đã không nghỉ ngơi." },
+      {
+        "en": "The neighbors didn't drink more water.",
+        "vi": "Hàng xóm đã không uống nhiều nước hơn."
+      },
+      { "en": "The neighbors didn't water the plants.", "vi": "Hàng xóm đã không tưới cây." },
+      {
+        "en": "The neighbors didn't schedule a meeting.",
+        "vi": "Hàng xóm đã không sắp xếp cuộc họp."
+      },
+      { "en": "The neighbors didn't fix the problem.", "vi": "Hàng xóm đã không sửa vấn đề." },
+      {
+        "en": "The neighbors didn't reset the password.",
+        "vi": "Hàng xóm đã không đặt lại mật khẩu."
+      },
+      { "en": "The neighbors didn't walk the dog.", "vi": "Hàng xóm đã không dắt chó đi dạo." },
+      { "en": "The neighbors didn't submit the form.", "vi": "Hàng xóm đã không nộp biểu mẫu." },
+      { "en": "The neighbors didn't wash the dishes.", "vi": "Hàng xóm đã không rửa bát." },
+      { "en": "The neighbors didn't arrive on time.", "vi": "Hàng xóm đã không đến đúng giờ." },
+      { "en": "The neighbors didn't tell the truth.", "vi": "Hàng xóm đã không nói sự thật." },
+      {
+        "en": "The neighbors didn't enjoy the weekend.",
+        "vi": "Hàng xóm đã không tận hưởng cuối tuần."
+      },
+      { "en": "The neighbors didn't take it easy.", "vi": "Hàng xóm đã không thư giãn." },
+      { "en": "The neighbors didn't offer support.", "vi": "Hàng xóm đã không đề nghị hỗ trợ." },
+      {
+        "en": "The neighbors didn't finish on time.",
+        "vi": "Hàng xóm đã không hoàn thành đúng hạn."
+      },
+      { "en": "The neighbors didn't log in again.", "vi": "Hàng xóm đã không đăng nhập lại." },
+      {
+        "en": "The neighbors didn't exercise every day.",
+        "vi": "Hàng xóm đã không tập thể dục mỗi ngày."
+      },
+      { "en": "The neighbors didn't read more books.", "vi": "Hàng xóm đã không đọc thêm sách." },
+      {
+        "en": "The neighbors didn't travel abroad.",
+        "vi": "Hàng xóm đã không đi du lịch nước ngoài."
+      },
+      {
+        "en": "The neighbors didn't work harder.",
+        "vi": "Hàng xóm đã không làm việc chăm chỉ hơn."
+      },
+      { "en": "The neighbors didn't be on time.", "vi": "Hàng xóm đã không đến đúng giờ." },
+      { "en": "The neighbors didn't keep a diary.", "vi": "Hàng xóm đã không viết nhật ký." },
+      {
+        "en": "The neighbors didn't test the feature.",
+        "vi": "Hàng xóm đã không kiểm thử tính năng."
+      },
+      { "en": "The neighbors didn't wait a moment.", "vi": "Hàng xóm đã không chờ một chút." },
+      { "en": "The neighbors didn't keep in touch.", "vi": "Hàng xóm đã không giữ liên lạc." },
+      { "en": "The neighbors didn't ask for a raise.", "vi": "Hàng xóm đã không xin tăng lương." },
+      {
+        "en": "The neighbors didn't launch the product.",
+        "vi": "Hàng xóm đã không ra mắt sản phẩm."
+      },
+      { "en": "The neighbors didn't ride a bike.", "vi": "Hàng xóm đã không đạp xe." },
+      { "en": "The neighbors didn't miss the flight.", "vi": "Hàng xóm đã không lỡ chuyến bay." },
+      { "en": "The neighbors didn't go on vacation.", "vi": "Hàng xóm đã không đi nghỉ mát." },
+      {
+        "en": "The neighbors didn't follow the rules.",
+        "vi": "Hàng xóm đã không tuân theo quy tắc."
+      },
+      {
+        "en": "The neighbors didn't restart the computer.",
+        "vi": "Hàng xóm đã không khởi động lại máy tính."
+      },
+      { "en": "The neighbors didn't play sports.", "vi": "Hàng xóm đã không chơi thể thao." },
+      { "en": "The neighbors didn't catch the train.", "vi": "Hàng xóm đã không bắt chuyến tàu." },
+      {
+        "en": "The neighbors didn't double-check the numbers.",
+        "vi": "Hàng xóm đã không kiểm tra lại các con số."
+      },
+      {
+        "en": "The neighbors didn't buy a new phone.",
+        "vi": "Hàng xóm đã không mua điện thoại mới."
+      },
+      { "en": "The neighbors didn't lead the project.", "vi": "Hàng xóm đã không dẫn dắt dự án." }
+    ]
+  },
+  {
+    "starter": "My colleagues are",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      { "en": "My colleagues are calm.", "vi": "Các đồng nghiệp của tôi bình tĩnh." },
+      { "en": "My colleagues are really proud.", "vi": "Các đồng nghiệp của tôi thực sự tự hào." },
+      { "en": "My colleagues are confident.", "vi": "Các đồng nghiệp của tôi tự tin." },
+      { "en": "My colleagues are serious.", "vi": "Các đồng nghiệp của tôi nghiêm túc." },
+      { "en": "My colleagues are bored.", "vi": "Các đồng nghiệp của tôi chán." },
+      {
+        "en": "My colleagues are quick to respond.",
+        "vi": "Các đồng nghiệp của tôi phản hồi nhanh."
+      },
+      {
+        "en": "My colleagues are calm and collected.",
+        "vi": "Các đồng nghiệp của tôi bình tĩnh và điềm đạm."
+      },
+      {
+        "en": "My colleagues are out of practice.",
+        "vi": "Các đồng nghiệp của tôi lâu rồi không luyện."
+      },
+      { "en": "My colleagues are tired.", "vi": "Các đồng nghiệp của tôi mệt." },
+      { "en": "My colleagues are low on battery.", "vi": "Các đồng nghiệp của tôi sắp hết pin." },
+      { "en": "My colleagues are done with work.", "vi": "Các đồng nghiệp của tôi xong việc." },
+      { "en": "My colleagues are motivated.", "vi": "Các đồng nghiệp của tôi có động lực." },
+      { "en": "My colleagues are out of ideas.", "vi": "Các đồng nghiệp của tôi hết ý tưởng." },
+      { "en": "My colleagues are relieved.", "vi": "Các đồng nghiệp của tôi nhẹ nhõm." },
+      { "en": "My colleagues are interested.", "vi": "Các đồng nghiệp của tôi quan tâm." },
+      { "en": "My colleagues are grateful.", "vi": "Các đồng nghiệp của tôi biết ơn." },
+      { "en": "My colleagues are extremely tired.", "vi": "Các đồng nghiệp của tôi cực kỳ mệt." },
+      { "en": "My colleagues are hard to please.", "vi": "Các đồng nghiệp của tôi khó chiều." },
+      { "en": "My colleagues are flexible.", "vi": "Các đồng nghiệp của tôi linh hoạt." },
+      { "en": "My colleagues are generous.", "vi": "Các đồng nghiệp của tôi rộng lượng." },
+      { "en": "My colleagues are curious.", "vi": "Các đồng nghiệp của tôi tò mò." },
+      {
+        "en": "My colleagues are glad to help.",
+        "vi": "Các đồng nghiệp của tôi vui được giúp đỡ."
+      },
+      {
+        "en": "My colleagues are ahead of schedule.",
+        "vi": "Các đồng nghiệp của tôi sớm hơn dự kiến."
+      },
+      {
+        "en": "My colleagues are very motivated.",
+        "vi": "Các đồng nghiệp của tôi rất có động lực."
+      },
+      { "en": "My colleagues are happy.", "vi": "Các đồng nghiệp của tôi vui." },
+      { "en": "My colleagues are fine.", "vi": "Các đồng nghiệp của tôi ổn." },
+      { "en": "My colleagues are more than happy.", "vi": "Các đồng nghiệp của tôi hơn cả vui." },
+      { "en": "My colleagues are worried.", "vi": "Các đồng nghiệp của tôi lo lắng." },
+      {
+        "en": "My colleagues are tired but happy.",
+        "vi": "Các đồng nghiệp của tôi mệt nhưng vui."
+      },
+      {
+        "en": "My colleagues are glad it worked.",
+        "vi": "Các đồng nghiệp của tôi vui vì nó hiệu quả."
+      },
+      { "en": "My colleagues are in a good mood.", "vi": "Các đồng nghiệp của tôi đang vui vẻ." },
+      {
+        "en": "My colleagues are ready to start.",
+        "vi": "Các đồng nghiệp của tôi sẵn sàng bắt đầu."
+      },
+      { "en": "My colleagues are sure.", "vi": "Các đồng nghiệp của tôi chắc chắn." },
+      {
+        "en": "My colleagues are willing to help.",
+        "vi": "Các đồng nghiệp của tôi sẵn lòng giúp."
+      },
+      {
+        "en": "My colleagues are totally lost.",
+        "vi": "Các đồng nghiệp của tôi hoàn toàn lạc lối."
+      },
+      { "en": "My colleagues are sleepy.", "vi": "Các đồng nghiệp của tôi buồn ngủ." },
+      { "en": "My colleagues are short of money.", "vi": "Các đồng nghiệp của tôi thiếu tiền." },
+      { "en": "My colleagues are friendly.", "vi": "Các đồng nghiệp của tôi thân thiện." },
+      {
+        "en": "My colleagues are on the right track.",
+        "vi": "Các đồng nghiệp của tôi đi đúng hướng."
+      },
+      { "en": "My colleagues are stuck in traffic.", "vi": "Các đồng nghiệp của tôi kẹt xe." },
+      {
+        "en": "My colleagues are nervous about the interview.",
+        "vi": "Các đồng nghiệp của tôi hồi hộp về buổi phỏng vấn."
+      },
+      { "en": "My colleagues are busy until noon.", "vi": "Các đồng nghiệp của tôi bận đến trưa." },
+      { "en": "My colleagues are enthusiastic.", "vi": "Các đồng nghiệp của tôi nhiệt tình." },
+      { "en": "My colleagues are under pressure.", "vi": "Các đồng nghiệp của tôi dưới áp lực." },
+      { "en": "My colleagues are content.", "vi": "Các đồng nghiệp của tôi mãn nguyện." },
+      { "en": "My colleagues are hungry.", "vi": "Các đồng nghiệp của tôi đói." },
+      { "en": "My colleagues are focused.", "vi": "Các đồng nghiệp của tôi tập trung." },
+      {
+        "en": "My colleagues are back at the office.",
+        "vi": "Các đồng nghiệp của tôi đã trở lại văn phòng."
+      },
+      {
+        "en": "My colleagues are ready for anything.",
+        "vi": "Các đồng nghiệp của tôi sẵn sàng cho mọi thứ."
+      },
+      { "en": "My colleagues are careful.", "vi": "Các đồng nghiệp của tôi cẩn thận." },
+      { "en": "My colleagues are full of ideas.", "vi": "Các đồng nghiệp của tôi đầy ý tưởng." },
+      {
+        "en": "My colleagues are proud of the team.",
+        "vi": "Các đồng nghiệp của tôi tự hào về đội."
+      },
+      { "en": "My colleagues are behind schedule.", "vi": "Các đồng nghiệp của tôi chậm tiến độ." },
+      { "en": "My colleagues are upset.", "vi": "Các đồng nghiệp của tôi buồn bực." },
+      {
+        "en": "My colleagues are better than yesterday.",
+        "vi": "Các đồng nghiệp của tôi tốt hơn hôm qua."
+      },
+      {
+        "en": "My colleagues are sorry to hear that.",
+        "vi": "Các đồng nghiệp của tôi tiếc khi nghe điều đó."
+      },
+      {
+        "en": "My colleagues are proud of the result.",
+        "vi": "Các đồng nghiệp của tôi tự hào về kết quả."
+      },
+      { "en": "My colleagues are new here.", "vi": "Các đồng nghiệp của tôi mới đến đây." },
+      { "en": "My colleagues are creative.", "vi": "Các đồng nghiệp của tôi sáng tạo." },
+      { "en": "My colleagues are curious about it.", "vi": "Các đồng nghiệp của tôi tò mò về nó." },
+      { "en": "My colleagues are late.", "vi": "Các đồng nghiệp của tôi muộn." },
+      {
+        "en": "My colleagues are available after lunch.",
+        "vi": "Các đồng nghiệp của tôi rảnh sau bữa trưa."
+      },
+      {
+        "en": "My colleagues are afraid of failing.",
+        "vi": "Các đồng nghiệp của tôi sợ thất bại."
+      },
+      {
+        "en": "My colleagues are free right now.",
+        "vi": "Các đồng nghiệp của tôi rảnh ngay bây giờ."
+      },
+      { "en": "My colleagues are responsible.", "vi": "Các đồng nghiệp của tôi có trách nhiệm." },
+      { "en": "My colleagues are bad at cooking.", "vi": "Các đồng nghiệp của tôi dở nấu ăn." },
+      {
+        "en": "My colleagues are confident about the result.",
+        "vi": "Các đồng nghiệp của tôi tự tin về kết quả."
+      },
+      {
+        "en": "My colleagues are ready for the weekend.",
+        "vi": "Các đồng nghiệp của tôi sẵn sàng cho cuối tuần."
+      },
+      {
+        "en": "My colleagues are a bit overwhelmed.",
+        "vi": "Các đồng nghiệp của tôi hơi quá tải."
+      },
+      { "en": "My colleagues are humble.", "vi": "Các đồng nghiệp của tôi khiêm tốn." },
+      { "en": "My colleagues are amazed.", "vi": "Các đồng nghiệp của tôi kinh ngạc." },
+      {
+        "en": "My colleagues are fully prepared.",
+        "vi": "Các đồng nghiệp của tôi chuẩn bị kỹ càng."
+      },
+      { "en": "My colleagues are super hungry.", "vi": "Các đồng nghiệp của tôi đói lắm." },
+      { "en": "My colleagues are refreshed.", "vi": "Các đồng nghiệp của tôi sảng khoái." },
+      {
+        "en": "My colleagues are good at English.",
+        "vi": "Các đồng nghiệp của tôi giỏi tiếng Anh."
+      },
+      { "en": "My colleagues are optimistic.", "vi": "Các đồng nghiệp của tôi lạc quan." },
+      {
+        "en": "My colleagues are full of energy.",
+        "vi": "Các đồng nghiệp của tôi tràn đầy năng lượng."
+      },
+      {
+        "en": "My colleagues are happy to be back.",
+        "vi": "Các đồng nghiệp của tôi vui khi trở lại."
+      },
+      { "en": "My colleagues are out of energy.", "vi": "Các đồng nghiệp của tôi hết năng lượng." },
+      { "en": "My colleagues are okay.", "vi": "Các đồng nghiệp của tôi ổn cả." },
+      { "en": "My colleagues are patient.", "vi": "Các đồng nghiệp của tôi kiên nhẫn." },
+      { "en": "My colleagues are on my way.", "vi": "Các đồng nghiệp của tôi đang trên đường." },
+      { "en": "My colleagues are ambitious.", "vi": "Các đồng nghiệp của tôi tham vọng." },
+      { "en": "My colleagues are peaceful.", "vi": "Các đồng nghiệp của tôi yên bình." },
+      { "en": "My colleagues are so excited.", "vi": "Các đồng nghiệp của tôi rất hào hứng." },
+      { "en": "My colleagues are thirsty.", "vi": "Các đồng nghiệp của tôi khát." },
+      { "en": "My colleagues are considerate.", "vi": "Các đồng nghiệp của tôi biết quan tâm." },
+      {
+        "en": "My colleagues are happy with the result.",
+        "vi": "Các đồng nghiệp của tôi hài lòng với kết quả."
+      },
+      { "en": "My colleagues are perfectly fine.", "vi": "Các đồng nghiệp của tôi hoàn toàn ổn." },
+      {
+        "en": "My colleagues are happy to see you.",
+        "vi": "Các đồng nghiệp của tôi vui khi gặp bạn."
+      },
+      { "en": "My colleagues are proud.", "vi": "Các đồng nghiệp của tôi tự hào." },
+      {
+        "en": "My colleagues are free this weekend.",
+        "vi": "Các đồng nghiệp của tôi rảnh cuối tuần này."
+      },
+      { "en": "My colleagues are comfortable.", "vi": "Các đồng nghiệp của tôi thoải mái." },
+      {
+        "en": "My colleagues are committed to the plan.",
+        "vi": "Các đồng nghiệp của tôi cam kết với kế hoạch."
+      },
+      { "en": "My colleagues are running late.", "vi": "Các đồng nghiệp của tôi bị trễ." },
+      { "en": "My colleagues are satisfied.", "vi": "Các đồng nghiệp của tôi hài lòng." },
+      { "en": "My colleagues are organized.", "vi": "Các đồng nghiệp của tôi ngăn nắp." },
+      { "en": "My colleagues are passionate.", "vi": "Các đồng nghiệp của tôi đầy đam mê." },
+      { "en": "My colleagues are very happy.", "vi": "Các đồng nghiệp của tôi rất vui." },
+      {
+        "en": "My colleagues are grateful for your help.",
+        "vi": "Các đồng nghiệp của tôi biết ơn sự giúp đỡ của bạn."
+      }
+    ]
+  },
+  {
+    "starter": "My colleagues were",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      {
+        "en": "My colleagues were thankful for today.",
+        "vi": "Các đồng nghiệp của tôi đã biết ơn ngày hôm nay."
+      },
+      {
+        "en": "My colleagues were surprisingly calm.",
+        "vi": "Các đồng nghiệp của tôi đã bình tĩnh đến lạ."
+      },
+      { "en": "My colleagues were disappointed.", "vi": "Các đồng nghiệp của tôi đã thất vọng." },
+      { "en": "My colleagues were patient.", "vi": "Các đồng nghiệp của tôi đã kiên nhẫn." },
+      { "en": "My colleagues were stressed.", "vi": "Các đồng nghiệp của tôi đã căng thẳng." },
+      { "en": "My colleagues were generous.", "vi": "Các đồng nghiệp của tôi đã rộng lượng." },
+      {
+        "en": "My colleagues were used to it.",
+        "vi": "Các đồng nghiệp của tôi đã đã quen với nó."
+      },
+      { "en": "My colleagues were right on time.", "vi": "Các đồng nghiệp của tôi đã đúng giờ." },
+      { "en": "My colleagues were out of ideas.", "vi": "Các đồng nghiệp của tôi đã hết ý tưởng." },
+      { "en": "My colleagues were polite.", "vi": "Các đồng nghiệp của tôi đã lịch sự." },
+      {
+        "en": "My colleagues were ready for the challenge.",
+        "vi": "Các đồng nghiệp của tôi đã sẵn sàng cho thử thách."
+      },
+      { "en": "My colleagues were lonely.", "vi": "Các đồng nghiệp của tôi đã cô đơn." },
+      {
+        "en": "My colleagues were energetic.",
+        "vi": "Các đồng nghiệp của tôi đã tràn đầy năng lượng."
+      },
+      {
+        "en": "My colleagues were committed to the plan.",
+        "vi": "Các đồng nghiệp của tôi đã cam kết với kế hoạch."
+      },
+      {
+        "en": "My colleagues were out for lunch.",
+        "vi": "Các đồng nghiệp của tôi đã ra ngoài ăn trưa."
+      },
+      {
+        "en": "My colleagues were hopeful again.",
+        "vi": "Các đồng nghiệp của tôi đã lại tràn hy vọng."
+      },
+      {
+        "en": "My colleagues were hopeful for the best.",
+        "vi": "Các đồng nghiệp của tôi đã hy vọng điều tốt nhất."
+      },
+      {
+        "en": "My colleagues were full of energy.",
+        "vi": "Các đồng nghiệp của tôi đã tràn đầy năng lượng."
+      },
+      { "en": "My colleagues were tired.", "vi": "Các đồng nghiệp của tôi đã mệt." },
+      { "en": "My colleagues were joyful.", "vi": "Các đồng nghiệp của tôi đã hân hoan." },
+      {
+        "en": "My colleagues were glad to help.",
+        "vi": "Các đồng nghiệp của tôi đã vui được giúp đỡ."
+      },
+      {
+        "en": "My colleagues were out of practice.",
+        "vi": "Các đồng nghiệp của tôi đã lâu rồi không luyện."
+      },
+      { "en": "My colleagues were bad at cooking.", "vi": "Các đồng nghiệp của tôi đã dở nấu ăn." },
+      { "en": "My colleagues were ready.", "vi": "Các đồng nghiệp của tôi đã sẵn sàng." },
+      { "en": "My colleagues were peaceful.", "vi": "Các đồng nghiệp của tôi đã yên bình." },
+      {
+        "en": "My colleagues were short on time.",
+        "vi": "Các đồng nghiệp của tôi đã thiếu thời gian."
+      },
+      {
+        "en": "My colleagues were better than yesterday.",
+        "vi": "Các đồng nghiệp của tôi đã tốt hơn hôm qua."
+      },
+      { "en": "My colleagues were thirsty.", "vi": "Các đồng nghiệp của tôi đã khát." },
+      {
+        "en": "My colleagues were afraid of failing.",
+        "vi": "Các đồng nghiệp của tôi đã sợ thất bại."
+      },
+      {
+        "en": "My colleagues were well-rested.",
+        "vi": "Các đồng nghiệp của tôi đã được nghỉ ngơi đầy đủ."
+      },
+      {
+        "en": "My colleagues were in a good mood.",
+        "vi": "Các đồng nghiệp của tôi đã đang vui vẻ."
+      },
+      {
+        "en": "My colleagues were a bit nervous.",
+        "vi": "Các đồng nghiệp của tôi đã hơi hồi hộp."
+      },
+      { "en": "My colleagues were so excited.", "vi": "Các đồng nghiệp của tôi đã rất hào hứng." },
+      { "en": "My colleagues were grateful.", "vi": "Các đồng nghiệp của tôi đã biết ơn." },
+      { "en": "My colleagues were serious.", "vi": "Các đồng nghiệp của tôi đã nghiêm túc." },
+      {
+        "en": "My colleagues were deeply grateful.",
+        "vi": "Các đồng nghiệp của tôi đã vô cùng biết ơn."
+      },
+      {
+        "en": "My colleagues were from Vietnam.",
+        "vi": "Các đồng nghiệp của tôi đã đến từ Việt Nam."
+      },
+      {
+        "en": "My colleagues were cautiously optimistic.",
+        "vi": "Các đồng nghiệp của tôi đã lạc quan thận trọng."
+      },
+      { "en": "My colleagues were sure.", "vi": "Các đồng nghiệp của tôi đã chắc chắn." },
+      { "en": "My colleagues were confident.", "vi": "Các đồng nghiệp của tôi đã tự tin." },
+      {
+        "en": "My colleagues were under pressure.",
+        "vi": "Các đồng nghiệp của tôi đã dưới áp lực."
+      },
+      {
+        "en": "My colleagues were worried about the exam.",
+        "vi": "Các đồng nghiệp của tôi đã lo lắng về kỳ thi."
+      },
+      { "en": "My colleagues were curious.", "vi": "Các đồng nghiệp của tôi đã tò mò." },
+      {
+        "en": "My colleagues were happy with the result.",
+        "vi": "Các đồng nghiệp của tôi đã hài lòng với kết quả."
+      },
+      { "en": "My colleagues were hardworking.", "vi": "Các đồng nghiệp của tôi đã chăm chỉ." },
+      {
+        "en": "My colleagues were good at English.",
+        "vi": "Các đồng nghiệp của tôi đã giỏi tiếng Anh."
+      },
+      {
+        "en": "My colleagues were on the right track.",
+        "vi": "Các đồng nghiệp của tôi đã đi đúng hướng."
+      },
+      { "en": "My colleagues were cheerful.", "vi": "Các đồng nghiệp của tôi đã vui vẻ." },
+      { "en": "My colleagues were focused.", "vi": "Các đồng nghiệp của tôi đã tập trung." },
+      { "en": "My colleagues were hopeful.", "vi": "Các đồng nghiệp của tôi đã tràn đầy hy vọng." },
+      {
+        "en": "My colleagues were nervous about the interview.",
+        "vi": "Các đồng nghiệp của tôi đã hồi hộp về buổi phỏng vấn."
+      },
+      {
+        "en": "My colleagues were absolutely sure.",
+        "vi": "Các đồng nghiệp của tôi đã chắc chắn tuyệt đối."
+      },
+      {
+        "en": "My colleagues were proud of the result.",
+        "vi": "Các đồng nghiệp của tôi đã tự hào về kết quả."
+      },
+      { "en": "My colleagues were in a hurry.", "vi": "Các đồng nghiệp của tôi đã đang vội." },
+      { "en": "My colleagues were super hungry.", "vi": "Các đồng nghiệp của tôi đã đói lắm." },
+      {
+        "en": "My colleagues were excited about the trip.",
+        "vi": "Các đồng nghiệp của tôi đã hào hứng về chuyến đi."
+      },
+      { "en": "My colleagues were exhausted.", "vi": "Các đồng nghiệp của tôi đã kiệt sức." },
+      { "en": "My colleagues were worried.", "vi": "Các đồng nghiệp của tôi đã lo lắng." },
+      { "en": "My colleagues were new here.", "vi": "Các đồng nghiệp của tôi đã mới đến đây." },
+      { "en": "My colleagues were in a meeting.", "vi": "Các đồng nghiệp của tôi đã đang họp." },
+      {
+        "en": "My colleagues were busy until noon.",
+        "vi": "Các đồng nghiệp của tôi đã bận đến trưa."
+      },
+      { "en": "My colleagues were friendly.", "vi": "Các đồng nghiệp của tôi đã thân thiện." },
+      {
+        "en": "My colleagues were quick to respond.",
+        "vi": "Các đồng nghiệp của tôi đã phản hồi nhanh."
+      },
+      {
+        "en": "My colleagues were grateful for your help.",
+        "vi": "Các đồng nghiệp của tôi đã biết ơn sự giúp đỡ của bạn."
+      },
+      { "en": "My colleagues were honest.", "vi": "Các đồng nghiệp của tôi đã trung thực." },
+      {
+        "en": "My colleagues were short of money.",
+        "vi": "Các đồng nghiệp của tôi đã thiếu tiền."
+      },
+      {
+        "en": "My colleagues were truly impressed.",
+        "vi": "Các đồng nghiệp của tôi đã thực sự ấn tượng."
+      },
+      { "en": "My colleagues were ready to go.", "vi": "Các đồng nghiệp của tôi đã sẵn sàng đi." },
+      { "en": "My colleagues were proud.", "vi": "Các đồng nghiệp của tôi đã tự hào." },
+      {
+        "en": "My colleagues were calm and ready.",
+        "vi": "Các đồng nghiệp của tôi đã bình tĩnh và sẵn sàng."
+      },
+      {
+        "en": "My colleagues were thankful for everything.",
+        "vi": "Các đồng nghiệp của tôi đã biết ơn vì tất cả."
+      },
+      { "en": "My colleagues were satisfied.", "vi": "Các đồng nghiệp của tôi đã hài lòng." },
+      {
+        "en": "My colleagues were proud of the progress.",
+        "vi": "Các đồng nghiệp của tôi đã tự hào về sự tiến bộ."
+      },
+      { "en": "My colleagues were almost there.", "vi": "Các đồng nghiệp của tôi đã sắp đến nơi." },
+      {
+        "en": "My colleagues were open to ideas.",
+        "vi": "Các đồng nghiệp của tôi đã cởi mở với ý tưởng."
+      },
+      {
+        "en": "My colleagues were confident in the team.",
+        "vi": "Các đồng nghiệp của tôi đã tin tưởng vào nhóm."
+      },
+      { "en": "My colleagues were wide awake.", "vi": "Các đồng nghiệp của tôi đã tỉnh táo hẳn." },
+      {
+        "en": "My colleagues were out of energy.",
+        "vi": "Các đồng nghiệp của tôi đã hết năng lượng."
+      },
+      {
+        "en": "My colleagues were totally focused.",
+        "vi": "Các đồng nghiệp của tôi đã hoàn toàn tập trung."
+      },
+      {
+        "en": "My colleagues were perfectly fine.",
+        "vi": "Các đồng nghiệp của tôi đã hoàn toàn ổn."
+      },
+      { "en": "My colleagues were flexible.", "vi": "Các đồng nghiệp của tôi đã linh hoạt." },
+      {
+        "en": "My colleagues were working from home.",
+        "vi": "Các đồng nghiệp của tôi đã làm việc tại nhà."
+      },
+      {
+        "en": "My colleagues were satisfied with the service.",
+        "vi": "Các đồng nghiệp của tôi đã hài lòng với dịch vụ."
+      },
+      {
+        "en": "My colleagues were happy to see you.",
+        "vi": "Các đồng nghiệp của tôi đã vui khi gặp bạn."
+      },
+      { "en": "My colleagues were careful.", "vi": "Các đồng nghiệp của tôi đã cẩn thận." },
+      { "en": "My colleagues were organized.", "vi": "Các đồng nghiệp của tôi đã ngăn nắp." },
+      { "en": "My colleagues were done with work.", "vi": "Các đồng nghiệp của tôi đã xong việc." },
+      { "en": "My colleagues were reliable.", "vi": "Các đồng nghiệp của tôi đã đáng tin cậy." },
+      { "en": "My colleagues were busy.", "vi": "Các đồng nghiệp của tôi đã bận." },
+      { "en": "My colleagues were motivated.", "vi": "Các đồng nghiệp của tôi đã có động lực." },
+      {
+        "en": "My colleagues were on my way.",
+        "vi": "Các đồng nghiệp của tôi đã đang trên đường."
+      },
+      {
+        "en": "My colleagues were eager to learn.",
+        "vi": "Các đồng nghiệp của tôi đã háo hức học hỏi."
+      },
+      { "en": "My colleagues were thoughtful.", "vi": "Các đồng nghiệp của tôi đã chu đáo." },
+      { "en": "My colleagues were nervous.", "vi": "Các đồng nghiệp của tôi đã hồi hộp." },
+      { "en": "My colleagues were stuck in traffic.", "vi": "Các đồng nghiệp của tôi đã kẹt xe." },
+      { "en": "My colleagues were slightly worried.", "vi": "Các đồng nghiệp của tôi đã hơi lo." },
+      {
+        "en": "My colleagues were curious about it.",
+        "vi": "Các đồng nghiệp của tôi đã tò mò về nó."
+      },
+      { "en": "My colleagues were okay.", "vi": "Các đồng nghiệp của tôi đã ổn cả." },
+      {
+        "en": "My colleagues were nervous but excited.",
+        "vi": "Các đồng nghiệp của tôi đã hồi hộp nhưng hào hứng."
+      },
+      { "en": "My colleagues were sick.", "vi": "Các đồng nghiệp của tôi đã ốm." }
+    ]
+  },
+  {
+    "starter": "My colleagues have",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      {
+        "en": "My colleagues have a tight budget.",
+        "vi": "Các đồng nghiệp của tôi có một ngân sách eo hẹp."
+      },
+      { "en": "My colleagues have a request.", "vi": "Các đồng nghiệp của tôi có một yêu cầu." },
+      {
+        "en": "My colleagues have a busy week ahead.",
+        "vi": "Các đồng nghiệp của tôi có một tuần bận rộn phía trước."
+      },
+      { "en": "My colleagues have a fever.", "vi": "Các đồng nghiệp của tôi có bị sốt." },
+      {
+        "en": "My colleagues have a warranty.",
+        "vi": "Các đồng nghiệp của tôi có một chế độ bảo hành."
+      },
+      {
+        "en": "My colleagues have a kind gesture.",
+        "vi": "Các đồng nghiệp của tôi có một cử chỉ tử tế."
+      },
+      { "en": "My colleagues have a long day.", "vi": "Các đồng nghiệp của tôi có một ngày dài." },
+      { "en": "My colleagues have a problem.", "vi": "Các đồng nghiệp của tôi có một vấn đề." },
+      {
+        "en": "My colleagues have a clear schedule today.",
+        "vi": "Các đồng nghiệp của tôi có một lịch trình trống hôm nay."
+      },
+      {
+        "en": "My colleagues have a complaint.",
+        "vi": "Các đồng nghiệp của tôi có một lời phàn nàn."
+      },
+      {
+        "en": "My colleagues have a sunny day.",
+        "vi": "Các đồng nghiệp của tôi có một ngày nắng đẹp."
+      },
+      {
+        "en": "My colleagues have a great idea for the project.",
+        "vi": "Các đồng nghiệp của tôi có một ý tưởng tuyệt cho dự án."
+      },
+      {
+        "en": "My colleagues have a meeting tomorrow morning.",
+        "vi": "Các đồng nghiệp của tôi có một cuộc họp sáng mai."
+      },
+      {
+        "en": "My colleagues have a lot of homework.",
+        "vi": "Các đồng nghiệp của tôi có rất nhiều bài tập."
+      },
+      {
+        "en": "My colleagues have a doctor's appointment.",
+        "vi": "Các đồng nghiệp của tôi có một cuộc hẹn với bác sĩ."
+      },
+      {
+        "en": "My colleagues have a local guide.",
+        "vi": "Các đồng nghiệp của tôi có một hướng dẫn viên địa phương."
+      },
+      {
+        "en": "My colleagues have a hotel booking.",
+        "vi": "Các đồng nghiệp của tôi có một đặt phòng khách sạn."
+      },
+      {
+        "en": "My colleagues have a clear answer.",
+        "vi": "Các đồng nghiệp của tôi có một câu trả lời rõ ràng."
+      },
+      {
+        "en": "My colleagues have high expectations.",
+        "vi": "Các đồng nghiệp của tôi có kỳ vọng cao."
+      },
+      {
+        "en": "My colleagues have a cup of coffee.",
+        "vi": "Các đồng nghiệp của tôi có một tách cà phê."
+      },
+      { "en": "My colleagues have a suggestion.", "vi": "Các đồng nghiệp của tôi có một đề xuất." },
+      {
+        "en": "My colleagues have a dinner reservation.",
+        "vi": "Các đồng nghiệp của tôi có một chỗ đặt bữa tối."
+      },
+      {
+        "en": "My colleagues have a question about the price.",
+        "vi": "Các đồng nghiệp của tôi có một câu hỏi về giá."
+      },
+      { "en": "My colleagues have a good point.", "vi": "Các đồng nghiệp của tôi có một ý hay." },
+      {
+        "en": "My colleagues have a monthly budget.",
+        "vi": "Các đồng nghiệp của tôi có một ngân sách hàng tháng."
+      },
+      {
+        "en": "My colleagues have a job interview.",
+        "vi": "Các đồng nghiệp của tôi có một buổi phỏng vấn việc làm."
+      },
+      { "en": "My colleagues have bad news.", "vi": "Các đồng nghiệp của tôi có tin xấu." },
+      {
+        "en": "My colleagues have a backup plan.",
+        "vi": "Các đồng nghiệp của tôi có một kế hoạch dự phòng."
+      },
+      {
+        "en": "My colleagues have a warm welcome.",
+        "vi": "Các đồng nghiệp của tôi có một sự chào đón nồng nhiệt."
+      },
+      {
+        "en": "My colleagues have a report to finish.",
+        "vi": "Các đồng nghiệp của tôi có một báo cáo cần hoàn thành."
+      },
+      {
+        "en": "My colleagues have a new project.",
+        "vi": "Các đồng nghiệp của tôi có một dự án mới."
+      },
+      {
+        "en": "My colleagues have a savings plan.",
+        "vi": "Các đồng nghiệp của tôi có một kế hoạch tiết kiệm."
+      },
+      {
+        "en": "My colleagues have a meeting this afternoon.",
+        "vi": "Các đồng nghiệp của tôi có một cuộc họp chiều nay."
+      },
+      {
+        "en": "My colleagues have an appointment.",
+        "vi": "Các đồng nghiệp của tôi có một cuộc hẹn."
+      },
+      {
+        "en": "My colleagues have a discount.",
+        "vi": "Các đồng nghiệp của tôi có một ưu đãi giảm giá."
+      },
+      {
+        "en": "My colleagues have a driver's license.",
+        "vi": "Các đồng nghiệp của tôi có một bằng lái xe."
+      },
+      {
+        "en": "My colleagues have a marketing strategy.",
+        "vi": "Các đồng nghiệp của tôi có một chiến lược tiếp thị."
+      },
+      {
+        "en": "My colleagues have a helpful tip.",
+        "vi": "Các đồng nghiệp của tôi có một mẹo hữu ích."
+      },
+      {
+        "en": "My colleagues have a good reason.",
+        "vi": "Các đồng nghiệp của tôi có một lý do chính đáng."
+      },
+      {
+        "en": "My colleagues have a positive attitude.",
+        "vi": "Các đồng nghiệp của tôi có một thái độ tích cực."
+      },
+      {
+        "en": "My colleagues have a lot to do.",
+        "vi": "Các đồng nghiệp của tôi có nhiều việc phải làm."
+      },
+      {
+        "en": "My colleagues have a simple explanation.",
+        "vi": "Các đồng nghiệp của tôi có một lời giải thích đơn giản."
+      },
+      {
+        "en": "My colleagues have a home-cooked meal.",
+        "vi": "Các đồng nghiệp của tôi có một bữa ăn tự nấu."
+      },
+      {
+        "en": "My colleagues have a cozy cafe.",
+        "vi": "Các đồng nghiệp của tôi có một quán cà phê ấm cúng."
+      },
+      {
+        "en": "My colleagues have a great opportunity.",
+        "vi": "Các đồng nghiệp của tôi có một cơ hội tuyệt vời."
+      },
+      {
+        "en": "My colleagues have a fresh start.",
+        "vi": "Các đồng nghiệp của tôi có một khởi đầu mới."
+      },
+      {
+        "en": "My colleagues have a special offer.",
+        "vi": "Các đồng nghiệp của tôi có một ưu đãi đặc biệt."
+      },
+      {
+        "en": "My colleagues have a business idea.",
+        "vi": "Các đồng nghiệp của tôi có một ý tưởng kinh doanh."
+      },
+      {
+        "en": "My colleagues have a standing desk.",
+        "vi": "Các đồng nghiệp của tôi có một bàn đứng."
+      },
+      {
+        "en": "My colleagues have a personal trainer.",
+        "vi": "Các đồng nghiệp của tôi có một huấn luyện viên riêng."
+      },
+      {
+        "en": "My colleagues have a side income.",
+        "vi": "Các đồng nghiệp của tôi có một nguồn thu phụ."
+      },
+      {
+        "en": "My colleagues have a morning routine.",
+        "vi": "Các đồng nghiệp của tôi có một thói quen buổi sáng."
+      },
+      {
+        "en": "My colleagues have a balanced diet.",
+        "vi": "Các đồng nghiệp của tôi có một chế độ ăn cân bằng."
+      },
+      {
+        "en": "My colleagues have a beautiful view.",
+        "vi": "Các đồng nghiệp của tôi có một khung cảnh đẹp."
+      },
+      {
+        "en": "My colleagues have a good relationship with them.",
+        "vi": "Các đồng nghiệp của tôi có một mối quan hệ tốt với họ."
+      },
+      {
+        "en": "My colleagues have a city map.",
+        "vi": "Các đồng nghiệp của tôi có một bản đồ thành phố."
+      },
+      {
+        "en": "My colleagues have a fair price.",
+        "vi": "Các đồng nghiệp của tôi có một mức giá hợp lý."
+      },
+      {
+        "en": "My colleagues have a quick question.",
+        "vi": "Các đồng nghiệp của tôi có một câu hỏi nhanh."
+      },
+      { "en": "My colleagues have a meeting.", "vi": "Các đồng nghiệp của tôi có một cuộc họp." },
+      { "en": "My colleagues have a plan.", "vi": "Các đồng nghiệp của tôi có một kế hoạch." },
+      {
+        "en": "My colleagues have a comfortable home.",
+        "vi": "Các đồng nghiệp của tôi có một ngôi nhà thoải mái."
+      },
+      {
+        "en": "My colleagues have a big decision to make.",
+        "vi": "Các đồng nghiệp của tôi có một quyết định lớn phải đưa ra."
+      },
+      {
+        "en": "My colleagues have a flight at noon.",
+        "vi": "Các đồng nghiệp của tôi có một chuyến bay lúc trưa."
+      },
+      {
+        "en": "My colleagues have a meeting at 3 PM.",
+        "vi": "Các đồng nghiệp của tôi có một cuộc họp lúc 3 giờ chiều."
+      },
+      {
+        "en": "My colleagues have health insurance.",
+        "vi": "Các đồng nghiệp của tôi có bảo hiểm sức khỏe."
+      },
+      {
+        "en": "My colleagues have a second chance.",
+        "vi": "Các đồng nghiệp của tôi có một cơ hội thứ hai."
+      },
+      {
+        "en": "My colleagues have a quick lunch.",
+        "vi": "Các đồng nghiệp của tôi có một bữa trưa nhanh."
+      },
+      {
+        "en": "My colleagues have a reservation for two.",
+        "vi": "Các đồng nghiệp của tôi có một chỗ đặt cho hai người."
+      },
+      {
+        "en": "My colleagues have a headache.",
+        "vi": "Các đồng nghiệp của tôi có một cơn đau đầu."
+      },
+      {
+        "en": "My colleagues have a busy morning.",
+        "vi": "Các đồng nghiệp của tôi có một buổi sáng bận rộn."
+      },
+      {
+        "en": "My colleagues have a good night out.",
+        "vi": "Các đồng nghiệp của tôi có một buổi tối đi chơi vui."
+      },
+      {
+        "en": "My colleagues have a new contract.",
+        "vi": "Các đồng nghiệp của tôi có một hợp đồng mới."
+      },
+      {
+        "en": "My colleagues have a favor to ask.",
+        "vi": "Các đồng nghiệp của tôi có một việc muốn nhờ."
+      },
+      {
+        "en": "My colleagues have a calendar reminder.",
+        "vi": "Các đồng nghiệp của tôi có một lời nhắc lịch."
+      },
+      {
+        "en": "My colleagues have a minor issue.",
+        "vi": "Các đồng nghiệp của tôi có một vấn đề nhỏ."
+      },
+      {
+        "en": "My colleagues have a supportive family.",
+        "vi": "Các đồng nghiệp của tôi có một gia đình ủng hộ."
+      },
+      {
+        "en": "My colleagues have a water bottle.",
+        "vi": "Các đồng nghiệp của tôi có một bình nước."
+      },
+      {
+        "en": "My colleagues have a realistic goal.",
+        "vi": "Các đồng nghiệp của tôi có một mục tiêu thực tế."
+      },
+      {
+        "en": "My colleagues have a pair of headphones.",
+        "vi": "Các đồng nghiệp của tôi có một cặp tai nghe."
+      },
+      {
+        "en": "My colleagues have a good habit.",
+        "vi": "Các đồng nghiệp của tôi có một thói quen tốt."
+      },
+      {
+        "en": "My colleagues have a good night's sleep.",
+        "vi": "Các đồng nghiệp của tôi có một giấc ngủ ngon."
+      },
+      {
+        "en": "My colleagues have a presentation today.",
+        "vi": "Các đồng nghiệp của tôi có một bài thuyết trình hôm nay."
+      },
+      {
+        "en": "My colleagues have a new hobby.",
+        "vi": "Các đồng nghiệp của tôi có một sở thích mới."
+      },
+      {
+        "en": "My colleagues have a rest day.",
+        "vi": "Các đồng nghiệp của tôi có một ngày nghỉ ngơi."
+      },
+      {
+        "en": "My colleagues have a packed calendar.",
+        "vi": "Các đồng nghiệp của tôi có một lịch kín."
+      },
+      {
+        "en": "My colleagues have a strong team spirit.",
+        "vi": "Các đồng nghiệp của tôi có một tinh thần đồng đội mạnh mẽ."
+      },
+      {
+        "en": "My colleagues have a long way to go.",
+        "vi": "Các đồng nghiệp của tôi có một chặng đường dài phía trước."
+      },
+      {
+        "en": "My colleagues have a travel plan.",
+        "vi": "Các đồng nghiệp của tôi có một kế hoạch du lịch."
+      },
+      {
+        "en": "My colleagues have a reservation.",
+        "vi": "Các đồng nghiệp của tôi có một chỗ đặt trước."
+      },
+      {
+        "en": "My colleagues have a quiet evening.",
+        "vi": "Các đồng nghiệp của tôi có một buổi tối yên tĩnh."
+      },
+      {
+        "en": "My colleagues have a weekend trip.",
+        "vi": "Các đồng nghiệp của tôi có một chuyến đi cuối tuần."
+      },
+      {
+        "en": "My colleagues have a better option.",
+        "vi": "Các đồng nghiệp của tôi có một lựa chọn tốt hơn."
+      },
+      {
+        "en": "My colleagues have a detailed plan.",
+        "vi": "Các đồng nghiệp của tôi có một kế hoạch chi tiết."
+      },
+      {
+        "en": "My colleagues have a positive review.",
+        "vi": "Các đồng nghiệp của tôi có một đánh giá tích cực."
+      },
+      {
+        "en": "My colleagues have a reliable laptop.",
+        "vi": "Các đồng nghiệp của tôi có một chiếc laptop đáng tin cậy."
+      },
+      {
+        "en": "My colleagues have a lot on my mind.",
+        "vi": "Các đồng nghiệp của tôi có nhiều điều trong đầu."
+      },
+      {
+        "en": "My colleagues have a credit card.",
+        "vi": "Các đồng nghiệp của tôi có một thẻ tín dụng."
+      },
+      {
+        "en": "My colleagues have a regular checkup.",
+        "vi": "Các đồng nghiệp của tôi có một lần khám định kỳ."
+      },
+      {
+        "en": "My colleagues have a supportive friend.",
+        "vi": "Các đồng nghiệp của tôi có một người bạn biết động viên."
+      },
+      {
+        "en": "My colleagues have a busy schedule.",
+        "vi": "Các đồng nghiệp của tôi có một lịch trình bận rộn."
+      }
+    ]
+  },
+  {
+    "starter": "My colleagues want to",
+    "category": "Nhiều người",
+    "color": "indigo",
+    "sentences": [
+      {
+        "en": "My colleagues want to try harder next time.",
+        "vi": "Các đồng nghiệp của tôi muốn cố gắng hơn lần sau."
+      },
+      {
+        "en": "My colleagues want to charge the phone.",
+        "vi": "Các đồng nghiệp của tôi muốn sạc điện thoại."
+      },
+      {
+        "en": "My colleagues want to ask for help.",
+        "vi": "Các đồng nghiệp của tôi muốn nhờ giúp đỡ."
+      },
+      { "en": "My colleagues want to stay home.", "vi": "Các đồng nghiệp của tôi muốn ở nhà." },
+      {
+        "en": "My colleagues want to understand the lesson.",
+        "vi": "Các đồng nghiệp của tôi muốn hiểu bài học."
+      },
+      {
+        "en": "My colleagues want to register for the course.",
+        "vi": "Các đồng nghiệp của tôi muốn đăng ký khóa học."
+      },
+      { "en": "My colleagues want to rent a car.", "vi": "Các đồng nghiệp của tôi muốn thuê xe." },
+      {
+        "en": "My colleagues want to stay organized.",
+        "vi": "Các đồng nghiệp của tôi muốn giữ ngăn nắp."
+      },
+      {
+        "en": "My colleagues want to talk to the manager.",
+        "vi": "Các đồng nghiệp của tôi muốn nói chuyện với quản lý."
+      },
+      {
+        "en": "My colleagues want to win the contract.",
+        "vi": "Các đồng nghiệp của tôi muốn giành hợp đồng."
+      },
+      {
+        "en": "My colleagues want to watch a movie.",
+        "vi": "Các đồng nghiệp của tôi muốn xem phim."
+      },
+      {
+        "en": "My colleagues want to raise the price.",
+        "vi": "Các đồng nghiệp của tôi muốn tăng giá."
+      },
+      {
+        "en": "My colleagues want to book a hotel.",
+        "vi": "Các đồng nghiệp của tôi muốn đặt khách sạn."
+      },
+      {
+        "en": "My colleagues want to join a club.",
+        "vi": "Các đồng nghiệp của tôi muốn tham gia câu lạc bộ."
+      },
+      {
+        "en": "My colleagues want to close the window.",
+        "vi": "Các đồng nghiệp của tôi muốn đóng cửa sổ."
+      },
+      { "en": "My colleagues want to take notes.", "vi": "Các đồng nghiệp của tôi muốn ghi chép." },
+      {
+        "en": "My colleagues want to sign up today.",
+        "vi": "Các đồng nghiệp của tôi muốn đăng ký hôm nay."
+      },
+      {
+        "en": "My colleagues want to enjoy the weekend.",
+        "vi": "Các đồng nghiệp của tôi muốn tận hưởng cuối tuần."
+      },
+      {
+        "en": "My colleagues want to close the deal.",
+        "vi": "Các đồng nghiệp của tôi muốn chốt thỏa thuận."
+      },
+      {
+        "en": "My colleagues want to start a new project.",
+        "vi": "Các đồng nghiệp của tôi muốn bắt đầu một dự án mới."
+      },
+      {
+        "en": "My colleagues want to help the team.",
+        "vi": "Các đồng nghiệp của tôi muốn giúp đỡ nhóm."
+      },
+      {
+        "en": "My colleagues want to move forward.",
+        "vi": "Các đồng nghiệp của tôi muốn tiến về phía trước."
+      },
+      {
+        "en": "My colleagues want to meditate daily.",
+        "vi": "Các đồng nghiệp của tôi muốn thiền mỗi ngày."
+      },
+      {
+        "en": "My colleagues want to take the exam.",
+        "vi": "Các đồng nghiệp của tôi muốn làm bài thi."
+      },
+      {
+        "en": "My colleagues want to double-check the numbers.",
+        "vi": "Các đồng nghiệp của tôi muốn kiểm tra lại các con số."
+      },
+      {
+        "en": "My colleagues want to set a goal.",
+        "vi": "Các đồng nghiệp của tôi muốn đặt một mục tiêu."
+      },
+      {
+        "en": "My colleagues want to read more books.",
+        "vi": "Các đồng nghiệp của tôi muốn đọc thêm sách."
+      },
+      {
+        "en": "My colleagues want to sign the contract.",
+        "vi": "Các đồng nghiệp của tôi muốn ký hợp đồng."
+      },
+      { "en": "My colleagues want to ride a bike.", "vi": "Các đồng nghiệp của tôi muốn đạp xe." },
+      {
+        "en": "My colleagues want to go for a walk.",
+        "vi": "Các đồng nghiệp của tôi muốn đi dạo."
+      },
+      {
+        "en": "My colleagues want to give it a try.",
+        "vi": "Các đồng nghiệp của tôi muốn thử một lần."
+      },
+      {
+        "en": "My colleagues want to work harder.",
+        "vi": "Các đồng nghiệp của tôi muốn làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "My colleagues want to reach the goal.",
+        "vi": "Các đồng nghiệp của tôi muốn đạt mục tiêu."
+      },
+      {
+        "en": "My colleagues want to open a savings account.",
+        "vi": "Các đồng nghiệp của tôi muốn mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "My colleagues want to send the email.",
+        "vi": "Các đồng nghiệp của tôi muốn gửi email."
+      },
+      {
+        "en": "My colleagues want to fix the problem.",
+        "vi": "Các đồng nghiệp của tôi muốn sửa vấn đề."
+      },
+      {
+        "en": "My colleagues want to turn off the light.",
+        "vi": "Các đồng nghiệp của tôi muốn tắt đèn."
+      },
+      {
+        "en": "My colleagues want to manage the schedule.",
+        "vi": "Các đồng nghiệp của tôi muốn quản lý lịch trình."
+      },
+      {
+        "en": "My colleagues want to share my opinion.",
+        "vi": "Các đồng nghiệp của tôi muốn chia sẻ ý kiến."
+      },
+      {
+        "en": "My colleagues want to review the document.",
+        "vi": "Các đồng nghiệp của tôi muốn xem lại tài liệu."
+      },
+      {
+        "en": "My colleagues want to plan ahead.",
+        "vi": "Các đồng nghiệp của tôi muốn lên kế hoạch trước."
+      },
+      {
+        "en": "My colleagues want to wake up early.",
+        "vi": "Các đồng nghiệp của tôi muốn dậy sớm."
+      },
+      {
+        "en": "My colleagues want to say goodbye.",
+        "vi": "Các đồng nghiệp của tôi muốn nói lời tạm biệt."
+      },
+      {
+        "en": "My colleagues want to listen to music.",
+        "vi": "Các đồng nghiệp của tôi muốn nghe nhạc."
+      },
+      {
+        "en": "My colleagues want to explain the situation.",
+        "vi": "Các đồng nghiệp của tôi muốn giải thích tình huống."
+      },
+      {
+        "en": "My colleagues want to follow the rules.",
+        "vi": "Các đồng nghiệp của tôi muốn tuân theo quy tắc."
+      },
+      {
+        "en": "My colleagues want to visit my family.",
+        "vi": "Các đồng nghiệp của tôi muốn thăm gia đình."
+      },
+      {
+        "en": "My colleagues want to lead the project.",
+        "vi": "Các đồng nghiệp của tôi muốn dẫn dắt dự án."
+      },
+      {
+        "en": "My colleagues want to cancel the order.",
+        "vi": "Các đồng nghiệp của tôi muốn hủy đơn hàng."
+      },
+      {
+        "en": "My colleagues want to keep a promise.",
+        "vi": "Các đồng nghiệp của tôi muốn giữ lời hứa."
+      },
+      {
+        "en": "My colleagues want to take a break.",
+        "vi": "Các đồng nghiệp của tôi muốn nghỉ giải lao."
+      },
+      {
+        "en": "My colleagues want to restart the computer.",
+        "vi": "Các đồng nghiệp của tôi muốn khởi động lại máy tính."
+      },
+      {
+        "en": "My colleagues want to pay the bill.",
+        "vi": "Các đồng nghiệp của tôi muốn thanh toán hóa đơn."
+      },
+      {
+        "en": "My colleagues want to train the team.",
+        "vi": "Các đồng nghiệp của tôi muốn đào tạo nhóm."
+      },
+      {
+        "en": "My colleagues want to finish the report.",
+        "vi": "Các đồng nghiệp của tôi muốn hoàn thành báo cáo."
+      },
+      { "en": "My colleagues want to go home.", "vi": "Các đồng nghiệp của tôi muốn về nhà." },
+      {
+        "en": "My colleagues want to speak clearly.",
+        "vi": "Các đồng nghiệp của tôi muốn nói rõ ràng."
+      },
+      {
+        "en": "My colleagues want to speak English.",
+        "vi": "Các đồng nghiệp của tôi muốn nói tiếng Anh."
+      },
+      {
+        "en": "My colleagues want to volunteer on weekends.",
+        "vi": "Các đồng nghiệp của tôi muốn tình nguyện cuối tuần."
+      },
+      {
+        "en": "My colleagues want to invite some friends.",
+        "vi": "Các đồng nghiệp của tôi muốn mời vài người bạn."
+      },
+      {
+        "en": "My colleagues want to copy the link.",
+        "vi": "Các đồng nghiệp của tôi muốn sao chép liên kết."
+      },
+      {
+        "en": "My colleagues want to go on vacation.",
+        "vi": "Các đồng nghiệp của tôi muốn đi nghỉ mát."
+      },
+      {
+        "en": "My colleagues want to watch the game.",
+        "vi": "Các đồng nghiệp của tôi muốn xem trận đấu."
+      },
+      {
+        "en": "My colleagues want to take the bus.",
+        "vi": "Các đồng nghiệp của tôi muốn đi xe buýt."
+      },
+      {
+        "en": "My colleagues want to save money.",
+        "vi": "Các đồng nghiệp của tôi muốn tiết kiệm tiền."
+      },
+      {
+        "en": "My colleagues want to back up the data.",
+        "vi": "Các đồng nghiệp của tôi muốn sao lưu dữ liệu."
+      },
+      {
+        "en": "My colleagues want to print the document.",
+        "vi": "Các đồng nghiệp của tôi muốn in tài liệu."
+      },
+      {
+        "en": "My colleagues want to install the app.",
+        "vi": "Các đồng nghiệp của tôi muốn cài đặt ứng dụng."
+      },
+      {
+        "en": "My colleagues want to schedule a meeting.",
+        "vi": "Các đồng nghiệp của tôi muốn sắp xếp cuộc họp."
+      },
+      {
+        "en": "My colleagues want to cut the budget.",
+        "vi": "Các đồng nghiệp của tôi muốn cắt giảm ngân sách."
+      },
+      {
+        "en": "My colleagues want to pass the exam.",
+        "vi": "Các đồng nghiệp của tôi muốn đậu kỳ thi."
+      },
+      {
+        "en": "My colleagues want to cook for everyone.",
+        "vi": "Các đồng nghiệp của tôi muốn nấu ăn cho mọi người."
+      },
+      {
+        "en": "My colleagues want to ask more questions.",
+        "vi": "Các đồng nghiệp của tôi muốn hỏi nhiều hơn."
+      },
+      {
+        "en": "My colleagues want to lose weight.",
+        "vi": "Các đồng nghiệp của tôi muốn giảm cân."
+      },
+      {
+        "en": "My colleagues want to buy groceries.",
+        "vi": "Các đồng nghiệp của tôi muốn mua thực phẩm."
+      },
+      {
+        "en": "My colleagues want to attend the class.",
+        "vi": "Các đồng nghiệp của tôi muốn tham gia lớp học."
+      },
+      {
+        "en": "My colleagues want to update the software.",
+        "vi": "Các đồng nghiệp của tôi muốn cập nhật phần mềm."
+      },
+      {
+        "en": "My colleagues want to play sports.",
+        "vi": "Các đồng nghiệp của tôi muốn chơi thể thao."
+      },
+      {
+        "en": "My colleagues want to water the plants.",
+        "vi": "Các đồng nghiệp của tôi muốn tưới cây."
+      },
+      {
+        "en": "My colleagues want to cheer for the team.",
+        "vi": "Các đồng nghiệp của tôi muốn cổ vũ cho đội."
+      },
+      {
+        "en": "My colleagues want to remember the password.",
+        "vi": "Các đồng nghiệp của tôi muốn nhớ mật khẩu."
+      },
+      {
+        "en": "My colleagues want to order food.",
+        "vi": "Các đồng nghiệp của tôi muốn gọi đồ ăn."
+      },
+      {
+        "en": "My colleagues want to log in again.",
+        "vi": "Các đồng nghiệp của tôi muốn đăng nhập lại."
+      },
+      { "en": "My colleagues want to make tea.", "vi": "Các đồng nghiệp của tôi muốn pha trà." },
+      {
+        "en": "My colleagues want to report the bug.",
+        "vi": "Các đồng nghiệp của tôi muốn báo lỗi."
+      },
+      {
+        "en": "My colleagues want to write a report.",
+        "vi": "Các đồng nghiệp của tôi muốn viết một báo cáo."
+      },
+      {
+        "en": "My colleagues want to split the bill.",
+        "vi": "Các đồng nghiệp của tôi muốn chia hóa đơn."
+      },
+      {
+        "en": "My colleagues want to think positive.",
+        "vi": "Các đồng nghiệp của tôi muốn suy nghĩ tích cực."
+      },
+      {
+        "en": "My colleagues want to never give up.",
+        "vi": "Các đồng nghiệp của tôi muốn không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "My colleagues want to pack my bags.",
+        "vi": "Các đồng nghiệp của tôi muốn xếp hành lý."
+      },
+      {
+        "en": "My colleagues want to find a job.",
+        "vi": "Các đồng nghiệp của tôi muốn tìm việc làm."
+      },
+      {
+        "en": "My colleagues want to finish on time.",
+        "vi": "Các đồng nghiệp của tôi muốn hoàn thành đúng hạn."
+      },
+      {
+        "en": "My colleagues want to donate to charity.",
+        "vi": "Các đồng nghiệp của tôi muốn quyên góp từ thiện."
+      },
+      { "en": "My colleagues want to try again.", "vi": "Các đồng nghiệp của tôi muốn thử lại." },
+      {
+        "en": "My colleagues want to breathe deeply.",
+        "vi": "Các đồng nghiệp của tôi muốn hít thở sâu."
+      },
+      {
+        "en": "My colleagues want to lock the door.",
+        "vi": "Các đồng nghiệp của tôi muốn khóa cửa."
+      },
+      {
+        "en": "My colleagues want to arrive on time.",
+        "vi": "Các đồng nghiệp của tôi muốn đến đúng giờ."
+      },
+      {
+        "en": "My colleagues want to improve my skills.",
+        "vi": "Các đồng nghiệp của tôi muốn cải thiện kỹ năng."
+      },
+      { "en": "My colleagues want to leave early.", "vi": "Các đồng nghiệp của tôi muốn về sớm." },
+      {
+        "en": "My colleagues want to start over.",
+        "vi": "Các đồng nghiệp của tôi muốn bắt đầu lại."
+      }
+    ]
+  }
+]

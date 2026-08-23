@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { getTheme, applyTheme, setTheme, THEMES, KID_THEME, type Theme } from './theme'
+import { getTheme, applyTheme, setTheme, THEMES, KID_THEME, type Theme } from './theme.js'
 
 beforeEach(() => {
   localStorage.clear()

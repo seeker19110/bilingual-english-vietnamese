@@ -1,0 +1,610 @@
+[
+  {
+    "id": 111,
+    "title": "Hỏi về khóa học tiếng Anh",
+    "situation": "Mai đến một trung tâm Anh ngữ ở Quận 3 để hỏi về khóa học giao tiếp buổi tối.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Mai", "en": "Mai" },
+    "speakerBName": { "vi": "Huy", "en": "Huy" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I saw your ad for evening English classes. Could you tell me a bit more about them?",
+        "vi": "Chào anh, em thấy quảng cáo lớp tiếng Anh buổi tối của trung tâm. Anh cho em hỏi thêm một chút được không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! We run communication classes three evenings a week — Monday, Wednesday, and Friday, from 6:30 to 8:30.",
+        "vi": "Tất nhiên rồi! Bên anh có lớp giao tiếp ba buổi tối mỗi tuần — thứ Hai, thứ Tư và thứ Sáu, từ 6 giờ 30 đến 8 giờ 30."
+      },
+      {
+        "speaker": "A",
+        "en": "That timing works well for me after work. How many students are there in each class?",
+        "vi": "Giờ đó hợp với em sau giờ làm. Mỗi lớp có bao nhiêu học viên ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "We keep classes small — usually ten to twelve, so everyone gets plenty of speaking time.",
+        "vi": "Bên anh giữ lớp nhỏ — thường mười đến mười hai bạn, để ai cũng có nhiều thời gian luyện nói."
+      },
+      {
+        "speaker": "A",
+        "en": "That's reassuring. I'm a bit worried my level might be too low, though.",
+        "vi": "Vậy thì em yên tâm hơn. Nhưng em hơi lo trình độ của em thấp quá."
+      },
+      {
+        "speaker": "B",
+        "en": "No need to worry. Every new student takes a short placement test, and then we put you in the right group.",
+        "vi": "Không cần lo đâu. Mỗi học viên mới đều làm một bài kiểm tra xếp lớp ngắn, rồi bọn anh xếp vào nhóm phù hợp."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, that's helpful. Is the test difficult?",
+        "vi": "Ồ, vậy tiện quá. Bài kiểm tra có khó không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Not at all — about fifteen minutes, a little grammar and a short chat with a teacher. Just relax and speak naturally.",
+        "vi": "Không hề — khoảng mười lăm phút, một chút ngữ pháp và nói chuyện ngắn với giáo viên. Em cứ thoải mái nói tự nhiên thôi."
+      },
+      {
+        "speaker": "A",
+        "en": "Good to know. Are the teachers Vietnamese or foreign?",
+        "vi": "Vậy thì tốt. Giáo viên là người Việt hay người nước ngoài ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Both. A Vietnamese teacher handles the grammar and explanations, and a native speaker leads the speaking sessions.",
+        "vi": "Cả hai. Giáo viên người Việt phụ trách ngữ pháp và giải thích, còn giáo viên bản ngữ dẫn dắt phần luyện nói."
+      }
+    ]
+  },
+  {
+    "id": 112,
+    "title": "Thuê phòng trọ",
+    "situation": "Lan đi xem một phòng trọ gần Đại học Bách Khoa và trao đổi với chủ trọ là chú Nam.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Lan", "en": "Lan" },
+    "speakerBName": { "vi": "Nam", "en": "Nam" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I called earlier about the room for rent. Is it still available?",
+        "vi": "Cháu chào chú, cháu là người gọi điện hỏi phòng cho thuê lúc nãy. Phòng còn trống không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, it is. Come on in — the room's on the second floor. Let me show you.",
+        "vi": "Còn cháu ạ. Vào đi — phòng ở tầng hai. Để chú dẫn lên xem."
+      },
+      {
+        "speaker": "A",
+        "en": "Thank you. Oh, it's brighter than I expected. How big is it?",
+        "vi": "Cháu cảm ơn chú. Ồ, phòng sáng hơn cháu tưởng. Phòng rộng bao nhiêu ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "About twenty square meters. There's a private bathroom, and the kitchen corner is over there.",
+        "vi": "Khoảng hai mươi mét vuông. Có nhà vệ sinh riêng, còn góc bếp ở đằng kia."
+      },
+      {
+        "speaker": "A",
+        "en": "A private bathroom is a big plus. How much is the rent per month?",
+        "vi": "Nhà vệ sinh riêng là điểm cộng lớn ạ. Tiền thuê mỗi tháng là bao nhiêu ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Two and a half million a month. Electricity and water are separate, charged by the meter.",
+        "vi": "Hai triệu rưỡi một tháng. Điện nước tính riêng, theo đồng hồ."
+      },
+      {
+        "speaker": "A",
+        "en": "How much do you charge for electricity?",
+        "vi": "Chú tính tiền điện thế nào ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Three thousand five hundred per unit — the same as the state rate, no markup.",
+        "vi": "Ba nghìn rưỡi một số — đúng giá nhà nước, chú không tính thêm."
+      },
+      {
+        "speaker": "A",
+        "en": "That's fair. Is Wi-Fi included?",
+        "vi": "Vậy hợp lý ạ. Có bao gồm wifi không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, free Wi-Fi for the whole building. It's fast enough for studying and video calls.",
+        "vi": "Có, wifi miễn phí cho cả nhà. Đủ nhanh để học và gọi video."
+      }
+    ]
+  },
+  {
+    "id": 113,
+    "title": "Đăng ký gói cước điện thoại",
+    "situation": "Hà đăng ký một gói cước di động mới tại cửa hàng nhà mạng.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Hà", "en": "Ha" },
+    "speakerBName": { "vi": "Nhân viên nhà mạng", "en": "Phone shop staff" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'd like to sign up for a new mobile phone plan.",
+        "vi": "Chào anh, tôi muốn đăng ký một gói cước điện thoại mới."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. Do you use more data or more calls?",
+        "vi": "Được ạ. Chị dùng nhiều data hay nhiều cuộc gọi hơn?"
+      },
+      {
+        "speaker": "A",
+        "en": "Mostly data. I watch videos and use maps a lot.",
+        "vi": "Chủ yếu là data. Tôi hay xem video và dùng bản đồ."
+      },
+      {
+        "speaker": "B",
+        "en": "Then this plan is perfect: 5GB a day for a hundred and twenty thousand a month.",
+        "vi": "Vậy gói này hợp lắm: 5GB mỗi ngày, một trăm hai mươi nghìn một tháng."
+      },
+      {
+        "speaker": "A",
+        "en": "That sounds good. Does it include free calls?",
+        "vi": "Nghe được đấy. Có kèm gọi miễn phí không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, free calls within the same network, and a hundred minutes to other networks.",
+        "vi": "Có, gọi miễn phí nội mạng, và một trăm phút gọi ngoại mạng."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. Can I keep my old phone number?",
+        "vi": "Tuyệt. Tôi giữ được số điện thoại cũ chứ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. Just bring your ID and your old SIM.",
+        "vi": "Đương nhiên. Chị chỉ cần mang căn cước và SIM cũ."
+      },
+      {
+        "speaker": "A",
+        "en": "I have both here. How long does it take?",
+        "vi": "Tôi có cả hai đây. Mất bao lâu vậy ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "About ten minutes. Your new plan will be active today.",
+        "vi": "Khoảng mười phút. Gói mới của chị sẽ kích hoạt ngay hôm nay."
+      }
+    ]
+  },
+  {
+    "id": 114,
+    "title": "Đặt tiệc sinh nhật",
+    "situation": "Thảo gọi điện đặt phòng tại một nhà hàng để tổ chức tiệc sinh nhật và trao đổi với nhân viên Long.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Thảo", "en": "Thảo" },
+    "speakerBName": { "vi": "Long", "en": "Long" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I'd like to book a table for a birthday party next Saturday evening.",
+        "vi": "Chào anh, em muốn đặt bàn tổ chức tiệc sinh nhật vào tối thứ Bảy tới ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "Wonderful! How many guests are you expecting?",
+        "vi": "Tuyệt quá! Chị dự kiến khoảng bao nhiêu khách ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "Around fifteen people — mostly adults, but two children.",
+        "vi": "Khoảng mười lăm người — chủ yếu người lớn, nhưng có hai bé nhỏ."
+      },
+      {
+        "speaker": "B",
+        "en": "No problem. We have a private room that seats up to twenty. Would that suit you?",
+        "vi": "Không vấn đề gì ạ. Bên em có phòng riêng chứa được tới hai mươi người. Chị thấy được không?"
+      },
+      {
+        "speaker": "A",
+        "en": "A private room sounds perfect. Is there an extra charge for it?",
+        "vi": "Phòng riêng thì tuyệt rồi. Có tính thêm phí phòng không anh?"
+      },
+      {
+        "speaker": "B",
+        "en": "It's free if your bill is over three million dong, which fifteen guests will easily reach.",
+        "vi": "Miễn phí nếu hóa đơn trên ba triệu, mà mười lăm khách thì dễ đạt lắm ạ."
+      },
+      {
+        "speaker": "A",
+        "en": "Great. Can we bring our own birthday cake?",
+        "vi": "Hay quá. Bọn em mang bánh sinh nhật của mình tới được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course. We'll keep it in the fridge and bring it out whenever you're ready.",
+        "vi": "Được chứ ạ. Bên em sẽ cất tủ lạnh và mang ra khi nào chị sẵn sàng."
+      },
+      {
+        "speaker": "A",
+        "en": "That's very thoughtful. Do you have a set menu for groups?",
+        "vi": "Chu đáo quá. Bên anh có thực đơn theo set cho nhóm không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Yes, we offer three set menus — starting from two hundred and fifty thousand per person.",
+        "vi": "Có ạ, bên em có ba set — từ hai trăm năm mươi nghìn một người."
+      }
+    ]
+  },
+  {
+    "id": 115,
+    "title": "Hỏi về lớp học nấu ăn",
+    "situation": "Hải hỏi trung tâm về một lớp học nấu món Việt cho người mới.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Hải", "en": "Hai" },
+    "speakerBName": { "vi": "Nhân viên trung tâm", "en": "Course advisor" },
+    "_aiGenerated": true,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I saw your ad for a cooking class. Can you tell me more?",
+        "vi": "Xin chào, tôi thấy quảng cáo về lớp học nấu ăn. Cho tôi hỏi thêm được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! We have Vietnamese, Italian, and baking classes.",
+        "vi": "Tất nhiên ạ! Bên em có lớp món Việt, món Ý và lớp làm bánh."
+      },
+      {
+        "speaker": "A",
+        "en": "I'm interested in Vietnamese cooking. I'm a beginner.",
+        "vi": "Tôi quan tâm đến nấu món Việt. Tôi mới bắt đầu."
+      },
+      {
+        "speaker": "B",
+        "en": "Perfect. Our beginner class teaches ten popular dishes.",
+        "vi": "Tuyệt. Lớp cơ bản của bên em dạy mười món phổ biến."
+      },
+      { "speaker": "A", "en": "How long is the course?", "vi": "Khóa học kéo dài bao lâu ạ?" },
+      {
+        "speaker": "B",
+        "en": "Five weeks, with one evening class each week.",
+        "vi": "Năm tuần, mỗi tuần một buổi tối."
+      },
+      {
+        "speaker": "A",
+        "en": "Do I need to bring my own ingredients?",
+        "vi": "Tôi có cần mang nguyên liệu riêng không?"
+      },
+      {
+        "speaker": "B",
+        "en": "No, everything is provided. You just bring an apron.",
+        "vi": "Không, mọi thứ đều có sẵn. Anh chỉ cần mang tạp dề."
+      },
+      {
+        "speaker": "A",
+        "en": "Sounds great. How much is the tuition?",
+        "vi": "Nghe hay đấy. Học phí bao nhiêu ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "One and a half million for the whole course, including materials.",
+        "vi": "Một triệu rưỡi cho cả khóa, đã gồm nguyên liệu."
+      }
+    ]
+  },
+  {
+    "id": 116,
+    "title": "Hỏi đường đi bộ",
+    "situation": "Minh là du khách, dừng lại hỏi một người dân địa phương tên Hương đường đi bộ tới Bưu điện Trung tâm.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Minh", "en": "Minh" },
+    "speakerBName": { "vi": "Hương", "en": "Hương" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Excuse me, could you help me? I'm trying to find the Central Post Office.",
+        "vi": "Xin lỗi, chị giúp em được không? Em đang tìm Bưu điện Trung tâm ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "Of course! It's not far — about a ten-minute walk from here.",
+        "vi": "Được chứ! Không xa đâu — đi bộ từ đây khoảng mười phút thôi."
+      },
+      {
+        "speaker": "A",
+        "en": "Oh, good. Which way should I go?",
+        "vi": "Ồ, may quá. Em nên đi hướng nào ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Go straight down this street until you reach the second traffic light.",
+        "vi": "Em đi thẳng con đường này tới khi gặp đèn giao thông thứ hai."
+      },
+      {
+        "speaker": "A",
+        "en": "Straight to the second light. And then?",
+        "vi": "Đi thẳng tới đèn thứ hai. Rồi sao nữa ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Turn left there, and you'll see a big park on your right.",
+        "vi": "Rẽ trái ở đó, em sẽ thấy một công viên lớn bên tay phải."
+      },
+      {
+        "speaker": "A",
+        "en": "A park on the right. Should I go through it?",
+        "vi": "Công viên bên phải. Em có cần đi xuyên qua không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "No need. Just walk along the edge of the park to the end of the street.",
+        "vi": "Không cần đâu. Em chỉ đi dọc theo rìa công viên tới cuối đường."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay, along the park to the end. Is the post office right there?",
+        "vi": "Vâng, dọc công viên tới cuối. Bưu điện ở ngay đó luôn ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Almost. At the end, turn right, and it's the yellow building on the corner.",
+        "vi": "Gần tới rồi. Tới cuối đường rẽ phải, đó là tòa nhà màu vàng ở góc."
+      }
+    ]
+  },
+  {
+    "id": 117,
+    "title": "Gửi và nhận bưu kiện",
+    "situation": "Hoa tới bưu cục để gửi một bưu kiện đi Đà Nẵng và tiện thể nhận một bưu kiện gửi đến, được nhân viên Nam hỗ trợ.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Hoa", "en": "Hoa" },
+    "speakerBName": { "vi": "Nam", "en": "Nam" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hello, I'd like to send this parcel to Da Nang, please.",
+        "vi": "Chào anh, em muốn gửi bưu kiện này đi Đà Nẵng ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "Sure. Could you place it on the scale for me?",
+        "vi": "Được ạ. Chị đặt lên cân giúp em nhé?"
+      },
+      {
+        "speaker": "A",
+        "en": "Here you go. It's a bit heavy — some books and clothes.",
+        "vi": "Đây ạ. Hơi nặng một chút — vài cuốn sách với quần áo."
+      },
+      {
+        "speaker": "B",
+        "en": "It's two and a half kilograms. Do you want standard or express delivery?",
+        "vi": "Được hai cân rưỡi ạ. Chị muốn gửi thường hay chuyển phát nhanh?"
+      },
+      {
+        "speaker": "A",
+        "en": "What's the difference in time and price?",
+        "vi": "Khác nhau về thời gian và giá thế nào anh?"
+      },
+      {
+        "speaker": "B",
+        "en": "Standard takes three to four days for thirty-five thousand; express is next-day for ninety thousand.",
+        "vi": "Gửi thường mất ba đến bốn ngày, ba mươi lăm nghìn; nhanh thì hôm sau tới, chín mươi nghìn."
+      },
+      {
+        "speaker": "A",
+        "en": "Standard is fine. There's nothing urgent inside.",
+        "vi": "Gửi thường là được ạ. Bên trong không có gì gấp cả."
+      },
+      {
+        "speaker": "B",
+        "en": "Got it. Is there anything fragile or valuable in the parcel?",
+        "vi": "Vâng. Trong bưu kiện có gì dễ vỡ hay giá trị cao không ạ?"
+      },
+      {
+        "speaker": "A",
+        "en": "No, nothing fragile. Just books and a few shirts.",
+        "vi": "Không có gì dễ vỡ ạ. Chỉ sách với mấy cái áo thôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Good. Please fill in the sender and receiver details on this form.",
+        "vi": "Tốt ạ. Chị điền thông tin người gửi và người nhận vào phiếu này giúp em."
+      }
+    ]
+  },
+  {
+    "id": 118,
+    "title": "Mua bảo hiểm xe máy",
+    "situation": "Tuấn vừa mua xe máy mới và đến gặp nhân viên tư vấn Ngân để mua bảo hiểm.",
+    "speakerAGender": "male",
+    "speakerBGender": "female",
+    "speakerAName": { "vi": "Tuấn", "en": "Tuấn" },
+    "speakerBName": { "vi": "Ngân", "en": "Ngân" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Hi, I just bought a new motorbike and I want to buy insurance for it.",
+        "vi": "Chào chị, em vừa mua xe máy mới và muốn mua bảo hiểm cho xe ạ."
+      },
+      {
+        "speaker": "B",
+        "en": "Congratulations on the new bike! Are you interested in compulsory insurance, voluntary, or both?",
+        "vi": "Chúc mừng em có xe mới! Em muốn mua bảo hiểm bắt buộc, tự nguyện, hay cả hai?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'm not sure of the difference. Could you explain?",
+        "vi": "Em chưa rõ khác nhau thế nào. Chị giải thích giúp em được không?"
+      },
+      {
+        "speaker": "B",
+        "en": "Compulsory insurance is required by law and covers damage you cause to others. Voluntary covers your own bike too.",
+        "vi": "Bảo hiểm bắt buộc là theo luật, đền bù thiệt hại em gây ra cho người khác. Tự nguyện thì bồi thường cả cho xe của em."
+      },
+      {
+        "speaker": "A",
+        "en": "I see. How much is the compulsory one?",
+        "vi": "Em hiểu rồi. Bảo hiểm bắt buộc bao nhiêu ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "It's sixty thousand dong a year for a motorbike — very affordable.",
+        "vi": "Sáu mươi nghìn một năm cho xe máy thôi — rất rẻ ạ."
+      },
+      {
+        "speaker": "A",
+        "en": "That's cheap. And the voluntary insurance?",
+        "vi": "Rẻ thật. Thế còn bảo hiểm tự nguyện ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "That depends on your bike's value — usually around one to two percent of the price per year.",
+        "vi": "Cái đó tùy giá trị xe — thường khoảng một đến hai phần trăm giá xe mỗi năm."
+      },
+      {
+        "speaker": "A",
+        "en": "My bike cost forty million. So roughly four to eight hundred thousand a year?",
+        "vi": "Xe em bốn mươi triệu. Vậy khoảng bốn đến tám trăm nghìn một năm phải không ạ?"
+      },
+      {
+        "speaker": "B",
+        "en": "Exactly. It covers theft, accidents, and damage to your own bike.",
+        "vi": "Chính xác. Nó bảo hiểm cả mất cắp, tai nạn và hư hỏng xe của em."
+      }
+    ]
+  },
+  {
+    "id": 119,
+    "title": "Bàn về kế hoạch hôn nhân",
+    "situation": "Lan và Khoa yêu nhau ba năm, cùng ngồi lại bàn nghiêm túc về kế hoạch kết hôn.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Lan", "en": "Lan" },
+    "speakerBName": { "vi": "Khoa", "en": "Khoa" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Khoa, now that we've been together for three years, I think we should talk about the future.",
+        "vi": "Khoa à, mình yêu nhau ba năm rồi, em nghĩ tụi mình nên nói chuyện về tương lai."
+      },
+      {
+        "speaker": "B",
+        "en": "I've been thinking about that too, Lan. You mean about getting married?",
+        "vi": "Anh cũng đang nghĩ tới chuyện đó, Lan. Ý em là chuyện cưới xin phải không?"
+      },
+      {
+        "speaker": "A",
+        "en": "Yes. I'd love to, but I want us to plan it properly, not rush.",
+        "vi": "Vâng. Em rất muốn, nhưng em mong tụi mình lên kế hoạch đàng hoàng, không vội."
+      },
+      {
+        "speaker": "B",
+        "en": "I agree completely. Should we aim for next year, maybe in the autumn?",
+        "vi": "Anh hoàn toàn đồng ý. Hay mình nhắm năm sau, khoảng mùa thu?"
+      },
+      {
+        "speaker": "A",
+        "en": "Autumn would be lovely — the weather is cooler and perfect for a wedding.",
+        "vi": "Mùa thu thì tuyệt — trời mát mẻ, rất hợp để làm đám cưới."
+      },
+      {
+        "speaker": "B",
+        "en": "True. Have you thought about where we'd hold the ceremony?",
+        "vi": "Đúng vậy. Em đã nghĩ tổ chức lễ ở đâu chưa?"
+      },
+      {
+        "speaker": "A",
+        "en": "I'd like something small at home in my hometown, then a party in the city for friends.",
+        "vi": "Em muốn một lễ nhỏ ở quê nhà em, rồi tiệc ở thành phố cho bạn bè."
+      },
+      {
+        "speaker": "B",
+        "en": "That sounds warm and meaningful. How many guests do you imagine?",
+        "vi": "Nghe ấm cúng và ý nghĩa đấy. Em hình dung khoảng bao nhiêu khách?"
+      },
+      {
+        "speaker": "A",
+        "en": "Maybe a hundred and fifty in total, between both families.",
+        "vi": "Chắc tổng cộng khoảng một trăm năm mươi, cả hai bên gia đình."
+      },
+      {
+        "speaker": "B",
+        "en": "That's manageable. We should start saving now, though — weddings aren't cheap.",
+        "vi": "Số đó lo được. Nhưng mình nên bắt đầu tiết kiệm từ giờ — cưới xin tốn kém lắm."
+      }
+    ]
+  },
+  {
+    "id": 120,
+    "title": "Dạy con làm bài tập",
+    "situation": "Chị Mai hướng dẫn con trai là bé Bin làm bài tập toán trước giờ ăn tối.",
+    "speakerAGender": "female",
+    "speakerBGender": "male",
+    "speakerAName": { "vi": "Mai", "en": "Mai" },
+    "speakerBName": { "vi": "Bin", "en": "Bin" },
+    "_aiGenerated": false,
+    "turns": [
+      {
+        "speaker": "A",
+        "en": "Bin, have you finished your homework yet? It's almost dinner time.",
+        "vi": "Bin ơi, con làm xong bài tập chưa? Sắp tới giờ ăn tối rồi đấy."
+      },
+      {
+        "speaker": "B",
+        "en": "Not yet, Mom. The math is really hard today.",
+        "vi": "Chưa ạ mẹ. Bài toán hôm nay khó lắm."
+      },
+      {
+        "speaker": "A",
+        "en": "Let's look at it together. Which question is giving you trouble?",
+        "vi": "Để mẹ con mình cùng xem. Câu nào làm con thấy khó nào?"
+      },
+      {
+        "speaker": "B",
+        "en": "This one. I have to find how many apples are left after giving some away.",
+        "vi": "Câu này ạ. Con phải tìm còn lại bao nhiêu quả táo sau khi cho bớt đi."
+      },
+      {
+        "speaker": "A",
+        "en": "Okay. Read the question out loud for me, slowly.",
+        "vi": "Được rồi. Con đọc to đề bài cho mẹ nghe, đọc chậm thôi."
+      },
+      {
+        "speaker": "B",
+        "en": "Nam has twelve apples. He gives four to his friend. How many are left?",
+        "vi": "Nam có mười hai quả táo. Bạn ấy cho bạn bốn quả. Hỏi còn lại mấy quả?"
+      },
+      {
+        "speaker": "A",
+        "en": "Good reading! So, if he starts with twelve and gives away four, what do we do?",
+        "vi": "Đọc tốt lắm! Vậy nếu lúc đầu có mười hai, cho đi bốn, thì mình làm phép gì?"
+      },
+      { "speaker": "B", "en": "Umm… do we add them?", "vi": "Ưm… mình cộng vào ạ?" },
+      {
+        "speaker": "A",
+        "en": "Think about it — he's giving apples away, so does he have more or fewer?",
+        "vi": "Con nghĩ kỹ xem — bạn ấy cho táo đi, vậy còn nhiều hơn hay ít hơn?"
+      },
+      { "speaker": "B", "en": "Fewer! So we subtract.", "vi": "Ít hơn ạ! Vậy mình làm phép trừ." }
+    ]
+  }
+]

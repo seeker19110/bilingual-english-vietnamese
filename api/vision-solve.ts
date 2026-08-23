@@ -5,12 +5,13 @@ import {
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { VisionSolveRequestSchema } from '../packages/core-contracts/visionSolver.js'
-import { solveProblemWithVision } from '../packages/core-ai/visionSolverService.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { VisionSolveRequestSchema } from '@dhcb/core-contracts/visionSolver'
+import { solveProblemWithVision } from '@dhcb/core-ai/visionSolverService'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { checkAndConsumeUsage, refundUsage } from '@dhcb/core-billing/usage'
 
 export default async function handler(req: Request): Promise<Response> {
   const headers = { ...getCorsHeaders(req), ...SECURITY_HEADERS }
@@ -42,10 +43,20 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse(validation.error, validation.error.status, headers)
   }
 
+  // Đếm lượt như chế độ 'chat' — endpoint gọi Gemini Vision trả phí, phải chịu hạn mức
+  // Free/Pro như mọi đường AI khác (vá lỗ hổng chi phí 2026-08-23, đề xuất N1 mục B3).
+  const gate = await checkAndConsumeUsage(auth.userId, 'chat')
+  if (!gate.ok) {
+    logSecurityEvent('USAGE_LIMIT', clientIp, { path: '/api/vision-solve' })
+    return jsonResponse({ error: gate.message }, 429, headers)
+  }
+
   try {
     const result = await solveProblemWithVision(validation.data)
     return jsonResponse(result, 200, headers)
   } catch (err: unknown) {
+    // Provider lỗi → trả lại lượt vừa trừ
+    refundUsage(auth.userId, 'chat', gate.day).catch(() => {})
     if (isAppError(err)) {
       return jsonResponse(toErrorBody(err), err.status, headers)
     }

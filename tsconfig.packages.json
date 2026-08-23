@@ -1,0 +1,56 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/core-ai"
+    },
+    {
+      "path": "./packages/core-auth"
+    },
+    {
+      "path": "./packages/core-billing"
+    },
+    {
+      "path": "./packages/core-career"
+    },
+    {
+      "path": "./packages/core-chat"
+    },
+    {
+      "path": "./packages/core-config"
+    },
+    {
+      "path": "./packages/core-contracts"
+    },
+    {
+      "path": "./packages/core-db"
+    },
+    {
+      "path": "./packages/core-errors"
+    },
+    {
+      "path": "./packages/core-grading"
+    },
+    {
+      "path": "./packages/core-http"
+    },
+    {
+      "path": "./packages/core-integrations"
+    },
+    {
+      "path": "./packages/core-learner"
+    },
+    {
+      "path": "./packages/core-life"
+    },
+    {
+      "path": "./packages/core-personal"
+    },
+    {
+      "path": "./packages/core-startup"
+    },
+    {
+      "path": "./packages/core-work"
+    }
+  ]
+}

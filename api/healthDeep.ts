@@ -2,9 +2,17 @@
 // Kiểm tra trạng thái sống của CSDL PostgreSQL, Storage R2/Local, Memory, Uptime.
 // Trả về 200 (Healthy) hoặc 503 (Degraded/Down) cho monitoring và uptime alerts.
 
-import { getPgPool } from '../packages/core-db/pgPool.js'
-import { getCorsHeaders, SECURITY_HEADERS } from '../packages/core-auth/security.js'
-import { jsonResponse } from './_lib/http.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import {
+  getCorsHeaders,
+  SECURITY_HEADERS,
+  checkRateLimit,
+  validateAuth,
+  logSecurityEvent,
+} from '@dhcb/core-auth/security'
+import { isAdminEmail } from '@dhcb/core-auth/adminAuth'
+import { getUserById } from '@dhcb/core-auth/authService'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 export interface DeepHealthCheckResult {
   status: 'healthy' | 'degraded' | 'unhealthy'
@@ -108,6 +116,26 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: 'Method not allowed' }, 405, allHeaders)
   }
 
+  const clientIp = getClientIp(req)
+  if (!(await checkRateLimit(clientIp, 30, 'health_deep'))) {
+    logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/health/deep' })
+    return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429, allHeaders)
+  }
+
   const { statusCode, result } = await checkSystemHealth()
+
+  // Chi tiết nội bộ (pool stats, RSS/heap, driver storage, thông báo lỗi DB) CHỈ trả cho
+  // admin — trước đây lộ công khai (vá 2026-08-23, đề xuất N1 mục B2). Uptime monitor bên
+  // ngoài không đăng nhập vẫn dùng được: nhận status + đúng mã 200/503, không kèm nội tình.
+  const auth = await validateAuth(req)
+  const user = auth ? await getUserById(auth.userId) : null
+  if (!isAdminEmail(user?.email)) {
+    return jsonResponse(
+      { status: result.status, timestamp: result.timestamp },
+      statusCode,
+      allHeaders,
+    )
+  }
+
   return jsonResponse(result, statusCode, allHeaders)
 }

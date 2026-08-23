@@ -3,15 +3,15 @@
 import type { Pool, PoolClient } from 'pg'
 import { randomUUID } from 'node:crypto'
 import { z } from 'zod'
-import { withTransaction } from '../core-db/transaction.js'
-import { ConflictError, NotFoundError, ValidationError } from '../core-errors/appError.js'
+import { withTransaction } from '@dhcb/core-db/transaction'
+import { ConflictError, NotFoundError, ValidationError } from '@dhcb/core-errors/appError'
 import {
   DecisionRecordSchema,
   DECISION_RECORD_SCHEMA_VERSION,
   type DecisionRecord,
   type EvidenceRefSchema,
   DecisionStatusSchema,
-} from '../core-contracts/decisionRecord.js'
+} from '@dhcb/core-contracts/decisionRecord'
 
 type DecisionStatus = z.infer<typeof DecisionStatusSchema>
 type EvidenceRef = z.infer<typeof EvidenceRefSchema>

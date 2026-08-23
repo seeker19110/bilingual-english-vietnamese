@@ -1,17 +1,17 @@
 import { beforeEach, expect, it, vi } from 'vitest'
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
 let rateOk = true
-vi.mock('../packages/core-auth/security.js', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => rateOk,
   validateAuth: async () => authState.user,
   logSecurityEvent: () => {},
 }))
-vi.mock('../packages/core-db/pgPool.js', () => ({ getPgPool: () => ({}) }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: () => ({}) }))
 const backfill = vi.fn()
 const read = vi.fn()
-vi.mock('../packages/core-learner/learningGoalAdapter.js', () => ({
+vi.mock('@dhcb/core-personal/learningGoalAdapter', () => ({
   backfillCurrentLearningGoal: (...a: unknown[]) => backfill(...a),
   readLearningGoalFromLifeGraph: (...a: unknown[]) => read(...a),
 }))

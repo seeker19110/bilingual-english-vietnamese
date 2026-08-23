@@ -6,7 +6,7 @@ import {
   DebateSessionConfig,
   DebateRubricScore,
   LogicalFallacyType,
-} from '../core-contracts/debateArena.js'
+} from '@dhcb/core-contracts/debateArena'
 
 export class DebateArenaService {
   /**

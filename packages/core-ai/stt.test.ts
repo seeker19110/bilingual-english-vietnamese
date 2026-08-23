@@ -4,7 +4,7 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
-vi.mock('../core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => true,
@@ -12,16 +12,16 @@ vi.mock('../core-auth/security', () => ({
   validateContentType: () => true,
   logSecurityEvent: () => {},
 }))
-vi.mock('../core-billing/usage', () => ({
+vi.mock('@dhcb/core-billing/usage', () => ({
   checkAndConsumeUsage: vi.fn(async () => ({ ok: true as const, day: '2026-08-12' })),
   refundUsage: vi.fn(async () => {}),
 }))
-vi.mock('./openaiStt', () => ({ transcribeAudio: vi.fn() }))
+vi.mock('./openaiStt.js', () => ({ transcribeAudio: vi.fn() }))
 
-import handler from './stt'
-import * as security from '../core-auth/security'
-import { checkAndConsumeUsage, refundUsage } from '../core-billing/usage'
-import { transcribeAudio } from './openaiStt'
+import handler from './stt.js'
+import * as security from '@dhcb/core-auth/security'
+import { checkAndConsumeUsage, refundUsage } from '@dhcb/core-billing/usage'
+import { transcribeAudio } from './openaiStt.js'
 
 const mockedConsume = vi.mocked(checkAndConsumeUsage)
 const mockedRefund = vi.mocked(refundUsage)

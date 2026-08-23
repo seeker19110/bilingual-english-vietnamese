@@ -15,7 +15,7 @@
 
 import * as fs from 'node:fs'
 import * as path from 'node:path'
-import { DEFAULT_SEED_VOICE_IDS, type VoiceId } from '../../api/_lib/googleTts.ts'
+import { DEFAULT_SEED_VOICE_IDS, type VoiceId } from '@dhcb/core-ai/googleTts'
 
 // Giọng cần seed TRƯỚC cho các nhóm phát theo lựa chọn người dùng — 8 giọng mặc định
 // (4 nữ + 4 nam phổ biến nhất, xem DEFAULT_SEED_VOICE_IDS) trong số 14 giọng hiện có (xem

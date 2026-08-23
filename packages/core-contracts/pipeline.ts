@@ -13,7 +13,7 @@
 // (AI trả sai định dạng / vi phạm luật nghiệp vụ / bị chính sách chặn), không phải lỗi hạ tầng.
 
 import { z } from 'zod'
-import { ValidationError } from '../core-errors/appError.js'
+import { ValidationError } from '@dhcb/core-errors/appError'
 
 export type PipelineStage = 'parse' | 'schema' | 'domain' | 'policy'
 

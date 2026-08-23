@@ -1,14 +1,14 @@
 // V2-05 Life Graph API. personId luôn suy từ token, không nhận từ client.
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getOrCreatePerson } from '../packages/core-personal/personService.js'
+} from '@dhcb/core-auth/security'
+import { getOrCreatePerson } from '@dhcb/core-personal/personService'
 import {
   createNode,
   listNodes,
@@ -20,15 +20,12 @@ import {
   softDeleteEdge,
   transitionGoalStatus,
   validateGraphIntegrity,
-} from '../packages/core-personal/lifeGraphService.js'
-import {
-  LifeGraphNodeTypeSchema,
-  LifeRelationSchema,
-} from '../packages/core-contracts/lifeGraph.js'
-import { LifeGoalStatusSchema } from '../packages/core-contracts/lifeGoal.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-personal/lifeGraphService'
+import { LifeGraphNodeTypeSchema, LifeRelationSchema } from '@dhcb/core-contracts/lifeGraph'
+import { LifeGoalStatusSchema } from '@dhcb/core-contracts/lifeGoal'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 const CreateNodeSchema = z
   .object({
@@ -46,8 +43,8 @@ const CreateEdgeSchema = z
     provenance: z.string().min(1).max(100),
   })
   .strict()
-import { syncCrossDomainLifeGraph } from '../packages/core-personal/crossDomainGraphService.js'
-import { analyzeCrossDomainSynergies } from '../packages/core-personal/crossDomainSynergyService.js'
+import { syncCrossDomainLifeGraph } from '@dhcb/core-personal/crossDomainGraphService'
+import { analyzeCrossDomainSynergies } from '@dhcb/core-personal/crossDomainSynergyService'
 
 const CreateCrossDomainSyncSchema = z
   .object({

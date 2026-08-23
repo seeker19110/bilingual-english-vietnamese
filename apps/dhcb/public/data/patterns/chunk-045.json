@@ -1,0 +1,2376 @@
+[
+  {
+    "starter": "The interviewer is",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The interviewer is low on battery.", "vi": "Người phỏng vấn sắp hết pin." },
+      { "en": "The interviewer is happy for you.", "vi": "Người phỏng vấn mừng cho bạn." },
+      {
+        "en": "The interviewer is confident about the result.",
+        "vi": "Người phỏng vấn tự tin về kết quả."
+      },
+      { "en": "The interviewer is polite.", "vi": "Người phỏng vấn lịch sự." },
+      { "en": "The interviewer is sick.", "vi": "Người phỏng vấn ốm." },
+      { "en": "The interviewer is worried.", "vi": "Người phỏng vấn lo lắng." },
+      { "en": "The interviewer is deeply grateful.", "vi": "Người phỏng vấn vô cùng biết ơn." },
+      { "en": "The interviewer is free right now.", "vi": "Người phỏng vấn rảnh ngay bây giờ." },
+      { "en": "The interviewer is out of practice.", "vi": "Người phỏng vấn lâu rồi không luyện." },
+      { "en": "The interviewer is flexible.", "vi": "Người phỏng vấn linh hoạt." },
+      { "en": "The interviewer is glad it worked.", "vi": "Người phỏng vấn vui vì nó hiệu quả." },
+      { "en": "The interviewer is bored.", "vi": "Người phỏng vấn chán." },
+      { "en": "The interviewer is serious.", "vi": "Người phỏng vấn nghiêm túc." },
+      { "en": "The interviewer is new here.", "vi": "Người phỏng vấn mới đến đây." },
+      {
+        "en": "The interviewer is calm and collected.",
+        "vi": "Người phỏng vấn bình tĩnh và điềm đạm."
+      },
+      { "en": "The interviewer is hopeful again.", "vi": "Người phỏng vấn lại tràn hy vọng." },
+      {
+        "en": "The interviewer is better than yesterday.",
+        "vi": "Người phỏng vấn tốt hơn hôm qua."
+      },
+      { "en": "The interviewer is perfectly fine.", "vi": "Người phỏng vấn hoàn toàn ổn." },
+      { "en": "The interviewer is glad you came.", "vi": "Người phỏng vấn vui vì bạn đã đến." },
+      { "en": "The interviewer is calm.", "vi": "Người phỏng vấn bình tĩnh." },
+      { "en": "The interviewer is passionate.", "vi": "Người phỏng vấn đầy đam mê." },
+      { "en": "The interviewer is curious.", "vi": "Người phỏng vấn tò mò." },
+      { "en": "The interviewer is totally focused.", "vi": "Người phỏng vấn hoàn toàn tập trung." },
+      { "en": "The interviewer is cheerful.", "vi": "Người phỏng vấn vui vẻ." },
+      { "en": "The interviewer is completely lost.", "vi": "Người phỏng vấn hoàn toàn lạc lối." },
+      { "en": "The interviewer is really proud.", "vi": "Người phỏng vấn thực sự tự hào." },
+      { "en": "The interviewer is glad to be here.", "vi": "Người phỏng vấn vui khi được ở đây." },
+      { "en": "The interviewer is sleepy.", "vi": "Người phỏng vấn buồn ngủ." },
+      {
+        "en": "The interviewer is ready for the challenge.",
+        "vi": "Người phỏng vấn sẵn sàng cho thử thách."
+      },
+      {
+        "en": "The interviewer is nervous about the interview.",
+        "vi": "Người phỏng vấn hồi hộp về buổi phỏng vấn."
+      },
+      { "en": "The interviewer is running late.", "vi": "Người phỏng vấn bị trễ." },
+      { "en": "The interviewer is quick to respond.", "vi": "Người phỏng vấn phản hồi nhanh." },
+      { "en": "The interviewer is done with work.", "vi": "Người phỏng vấn xong việc." },
+      {
+        "en": "The interviewer is proud of the progress.",
+        "vi": "Người phỏng vấn tự hào về sự tiến bộ."
+      },
+      { "en": "The interviewer is delighted.", "vi": "Người phỏng vấn vui sướng." },
+      { "en": "The interviewer is hard to please.", "vi": "Người phỏng vấn khó chiều." },
+      {
+        "en": "The interviewer is sure about my decision.",
+        "vi": "Người phỏng vấn chắc chắn về quyết định của mình."
+      },
+      { "en": "The interviewer is thankful.", "vi": "Người phỏng vấn biết ơn." },
+      { "en": "The interviewer is angry.", "vi": "Người phỏng vấn tức giận." },
+      { "en": "The interviewer is confident.", "vi": "Người phỏng vấn tự tin." },
+      { "en": "The interviewer is generous.", "vi": "Người phỏng vấn rộng lượng." },
+      { "en": "The interviewer is a bit overwhelmed.", "vi": "Người phỏng vấn hơi quá tải." },
+      { "en": "The interviewer is tired.", "vi": "Người phỏng vấn mệt." },
+      { "en": "The interviewer is exhausted.", "vi": "Người phỏng vấn kiệt sức." },
+      { "en": "The interviewer is free all day.", "vi": "Người phỏng vấn rảnh cả ngày." },
+      { "en": "The interviewer is out of ideas.", "vi": "Người phỏng vấn hết ý tưởng." },
+      { "en": "The interviewer is late.", "vi": "Người phỏng vấn muộn." },
+      { "en": "The interviewer is interested.", "vi": "Người phỏng vấn quan tâm." },
+      { "en": "The interviewer is very motivated.", "vi": "Người phỏng vấn rất có động lực." },
+      { "en": "The interviewer is slightly worried.", "vi": "Người phỏng vấn hơi lo." },
+      { "en": "The interviewer is busy but okay.", "vi": "Người phỏng vấn bận nhưng ổn." },
+      { "en": "The interviewer is proud.", "vi": "Người phỏng vấn tự hào." },
+      { "en": "The interviewer is optimistic.", "vi": "Người phỏng vấn lạc quan." },
+      { "en": "The interviewer is very happy.", "vi": "Người phỏng vấn rất vui." },
+      { "en": "The interviewer is upset.", "vi": "Người phỏng vấn buồn bực." },
+      { "en": "The interviewer is working from home.", "vi": "Người phỏng vấn làm việc tại nhà." },
+      {
+        "en": "The interviewer is nervous but excited.",
+        "vi": "Người phỏng vấn hồi hộp nhưng hào hứng."
+      },
+      { "en": "The interviewer is busy.", "vi": "Người phỏng vấn bận." },
+      { "en": "The interviewer is nervous.", "vi": "Người phỏng vấn hồi hộp." },
+      {
+        "en": "The interviewer is hopeful for the best.",
+        "vi": "Người phỏng vấn hy vọng điều tốt nhất."
+      },
+      { "en": "The interviewer is comfortable.", "vi": "Người phỏng vấn thoải mái." },
+      {
+        "en": "The interviewer is hopeful about the future.",
+        "vi": "Người phỏng vấn hy vọng về tương lai."
+      },
+      {
+        "en": "The interviewer is excited about the trip.",
+        "vi": "Người phỏng vấn hào hứng về chuyến đi."
+      },
+      { "en": "The interviewer is lonely.", "vi": "Người phỏng vấn cô đơn." },
+      { "en": "The interviewer is busy until noon.", "vi": "Người phỏng vấn bận đến trưa." },
+      {
+        "en": "The interviewer is cautiously optimistic.",
+        "vi": "Người phỏng vấn lạc quan thận trọng."
+      },
+      { "en": "The interviewer is out for lunch.", "vi": "Người phỏng vấn ra ngoài ăn trưa." },
+      { "en": "The interviewer is used to it.", "vi": "Người phỏng vấn đã quen với nó." },
+      { "en": "The interviewer is a little tired.", "vi": "Người phỏng vấn hơi mệt." },
+      { "en": "The interviewer is new to this.", "vi": "Người phỏng vấn mới với việc này." },
+      {
+        "en": "The interviewer is excited for tomorrow.",
+        "vi": "Người phỏng vấn háo hức cho ngày mai."
+      },
+      { "en": "The interviewer is encouraged.", "vi": "Người phỏng vấn được động viên." },
+      {
+        "en": "The interviewer is sorry for the delay.",
+        "vi": "Người phỏng vấn xin lỗi vì sự chậm trễ."
+      },
+      { "en": "The interviewer is hungry.", "vi": "Người phỏng vấn đói." },
+      {
+        "en": "The interviewer is grateful for your help.",
+        "vi": "Người phỏng vấn biết ơn sự giúp đỡ của bạn."
+      },
+      {
+        "en": "The interviewer is done for today.",
+        "vi": "Người phỏng vấn xong việc cho hôm nay."
+      },
+      { "en": "The interviewer is inspired.", "vi": "Người phỏng vấn được truyền cảm hứng." },
+      {
+        "en": "The interviewer is confident in the team.",
+        "vi": "Người phỏng vấn tin tưởng vào nhóm."
+      },
+      { "en": "The interviewer is alert.", "vi": "Người phỏng vấn tỉnh táo." },
+      { "en": "The interviewer is ahead of schedule.", "vi": "Người phỏng vấn sớm hơn dự kiến." },
+      { "en": "The interviewer is behind schedule.", "vi": "Người phỏng vấn chậm tiến độ." },
+      { "en": "The interviewer is surprisingly calm.", "vi": "Người phỏng vấn bình tĩnh đến lạ." },
+      {
+        "en": "The interviewer is back at the office.",
+        "vi": "Người phỏng vấn đã trở lại văn phòng."
+      },
+      { "en": "The interviewer is eager to learn.", "vi": "Người phỏng vấn háo hức học hỏi." },
+      { "en": "The interviewer is ambitious.", "vi": "Người phỏng vấn tham vọng." },
+      { "en": "The interviewer is under pressure.", "vi": "Người phỏng vấn dưới áp lực." },
+      {
+        "en": "The interviewer is interested in the offer.",
+        "vi": "Người phỏng vấn quan tâm đến lời đề nghị."
+      },
+      { "en": "The interviewer is from Vietnam.", "vi": "Người phỏng vấn đến từ Việt Nam." },
+      { "en": "The interviewer is refreshed.", "vi": "Người phỏng vấn sảng khoái." },
+      { "en": "The interviewer is almost done.", "vi": "Người phỏng vấn gần xong." },
+      {
+        "en": "The interviewer is ready for anything.",
+        "vi": "Người phỏng vấn sẵn sàng cho mọi thứ."
+      },
+      { "en": "The interviewer is glad to help.", "vi": "Người phỏng vấn vui được giúp đỡ." },
+      { "en": "The interviewer is on the right track.", "vi": "Người phỏng vấn đi đúng hướng." },
+      { "en": "The interviewer is happy.", "vi": "Người phỏng vấn vui." },
+      { "en": "The interviewer is motivated.", "vi": "Người phỏng vấn có động lực." },
+      { "en": "The interviewer is satisfied.", "vi": "Người phỏng vấn hài lòng." },
+      { "en": "The interviewer is confused.", "vi": "Người phỏng vấn bối rối." },
+      {
+        "en": "The interviewer is happy with the result.",
+        "vi": "Người phỏng vấn hài lòng với kết quả."
+      },
+      { "en": "The interviewer is early.", "vi": "Người phỏng vấn sớm." },
+      { "en": "The interviewer is calm and ready.", "vi": "Người phỏng vấn bình tĩnh và sẵn sàng." }
+    ]
+  },
+  {
+    "starter": "The interviewer was",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The interviewer was short of money.", "vi": "Người phỏng vấn đã thiếu tiền." },
+      {
+        "en": "The interviewer was completely lost.",
+        "vi": "Người phỏng vấn đã hoàn toàn lạc lối."
+      },
+      { "en": "The interviewer was worried.", "vi": "Người phỏng vấn đã lo lắng." },
+      { "en": "The interviewer was impressed.", "vi": "Người phỏng vấn đã ấn tượng." },
+      { "en": "The interviewer was relaxed.", "vi": "Người phỏng vấn đã thư giãn." },
+      { "en": "The interviewer was hopeful again.", "vi": "Người phỏng vấn đã lại tràn hy vọng." },
+      { "en": "The interviewer was on my way.", "vi": "Người phỏng vấn đã đang trên đường." },
+      {
+        "en": "The interviewer was on the phone.",
+        "vi": "Người phỏng vấn đã đang nghe điện thoại."
+      },
+      { "en": "The interviewer was glad to help.", "vi": "Người phỏng vấn đã vui được giúp đỡ." },
+      { "en": "The interviewer was energetic.", "vi": "Người phỏng vấn đã tràn đầy năng lượng." },
+      { "en": "The interviewer was optimistic.", "vi": "Người phỏng vấn đã lạc quan." },
+      {
+        "en": "The interviewer was stronger than before.",
+        "vi": "Người phỏng vấn đã mạnh mẽ hơn trước."
+      },
+      { "en": "The interviewer was confused.", "vi": "Người phỏng vấn đã bối rối." },
+      { "en": "The interviewer was new to this.", "vi": "Người phỏng vấn đã mới với việc này." },
+      { "en": "The interviewer was behind schedule.", "vi": "Người phỏng vấn đã chậm tiến độ." },
+      {
+        "en": "The interviewer was out of practice.",
+        "vi": "Người phỏng vấn đã lâu rồi không luyện."
+      },
+      { "en": "The interviewer was ready to go.", "vi": "Người phỏng vấn đã sẵn sàng đi." },
+      {
+        "en": "The interviewer was ready for the weekend.",
+        "vi": "Người phỏng vấn đã sẵn sàng cho cuối tuần."
+      },
+      { "en": "The interviewer was easy to talk to.", "vi": "Người phỏng vấn đã dễ trò chuyện." },
+      {
+        "en": "The interviewer was full of energy.",
+        "vi": "Người phỏng vấn đã tràn đầy năng lượng."
+      },
+      { "en": "The interviewer was in a meeting.", "vi": "Người phỏng vấn đã đang họp." },
+      { "en": "The interviewer was used to it.", "vi": "Người phỏng vấn đã đã quen với nó." },
+      { "en": "The interviewer was busy but okay.", "vi": "Người phỏng vấn đã bận nhưng ổn." },
+      { "en": "The interviewer was encouraged.", "vi": "Người phỏng vấn đã được động viên." },
+      {
+        "en": "The interviewer was satisfied with the service.",
+        "vi": "Người phỏng vấn đã hài lòng với dịch vụ."
+      },
+      { "en": "The interviewer was inspired.", "vi": "Người phỏng vấn đã được truyền cảm hứng." },
+      {
+        "en": "The interviewer was proud of my work.",
+        "vi": "Người phỏng vấn đã tự hào về công việc của mình."
+      },
+      { "en": "The interviewer was a bit overwhelmed.", "vi": "Người phỏng vấn đã hơi quá tải." },
+      { "en": "The interviewer was thirsty.", "vi": "Người phỏng vấn đã khát." },
+      { "en": "The interviewer was motivated.", "vi": "Người phỏng vấn đã có động lực." },
+      { "en": "The interviewer was peaceful.", "vi": "Người phỏng vấn đã yên bình." },
+      { "en": "The interviewer was a little tired.", "vi": "Người phỏng vấn đã hơi mệt." },
+      { "en": "The interviewer was upset.", "vi": "Người phỏng vấn đã buồn bực." },
+      {
+        "en": "The interviewer was on the right track.",
+        "vi": "Người phỏng vấn đã đi đúng hướng."
+      },
+      {
+        "en": "The interviewer was thankful for everything.",
+        "vi": "Người phỏng vấn đã biết ơn vì tất cả."
+      },
+      { "en": "The interviewer was thankful.", "vi": "Người phỏng vấn đã biết ơn." },
+      { "en": "The interviewer was passionate.", "vi": "Người phỏng vấn đã đầy đam mê." },
+      {
+        "en": "The interviewer was worried about the exam.",
+        "vi": "Người phỏng vấn đã lo lắng về kỳ thi."
+      },
+      { "en": "The interviewer was tired.", "vi": "Người phỏng vấn đã mệt." },
+      { "en": "The interviewer was humble.", "vi": "Người phỏng vấn đã khiêm tốn." },
+      { "en": "The interviewer was free all day.", "vi": "Người phỏng vấn đã rảnh cả ngày." },
+      { "en": "The interviewer was hard to please.", "vi": "Người phỏng vấn đã khó chiều." },
+      { "en": "The interviewer was confident.", "vi": "Người phỏng vấn đã tự tin." },
+      {
+        "en": "The interviewer was proud of the result.",
+        "vi": "Người phỏng vấn đã tự hào về kết quả."
+      },
+      { "en": "The interviewer was happy.", "vi": "Người phỏng vấn đã vui." },
+      { "en": "The interviewer was wide awake.", "vi": "Người phỏng vấn đã tỉnh táo hẳn." },
+      { "en": "The interviewer was nervous.", "vi": "Người phỏng vấn đã hồi hộp." },
+      { "en": "The interviewer was delighted.", "vi": "Người phỏng vấn đã vui sướng." },
+      { "en": "The interviewer was cautious.", "vi": "Người phỏng vấn đã thận trọng." },
+      { "en": "The interviewer was in a good mood.", "vi": "Người phỏng vấn đã đang vui vẻ." },
+      { "en": "The interviewer was under pressure.", "vi": "Người phỏng vấn đã dưới áp lực." },
+      {
+        "en": "The interviewer was sorry for the delay.",
+        "vi": "Người phỏng vấn đã xin lỗi vì sự chậm trễ."
+      },
+      { "en": "The interviewer was satisfied.", "vi": "Người phỏng vấn đã hài lòng." },
+      { "en": "The interviewer was quick to respond.", "vi": "Người phỏng vấn đã phản hồi nhanh." },
+      { "en": "The interviewer was full of ideas.", "vi": "Người phỏng vấn đã đầy ý tưởng." },
+      { "en": "The interviewer was totally lost.", "vi": "Người phỏng vấn đã hoàn toàn lạc lối." },
+      { "en": "The interviewer was out of energy.", "vi": "Người phỏng vấn đã hết năng lượng." },
+      { "en": "The interviewer was busy until noon.", "vi": "Người phỏng vấn đã bận đến trưa." },
+      { "en": "The interviewer was ready to start.", "vi": "Người phỏng vấn đã sẵn sàng bắt đầu." },
+      { "en": "The interviewer was new here.", "vi": "Người phỏng vấn đã mới đến đây." },
+      {
+        "en": "The interviewer was calm and collected.",
+        "vi": "Người phỏng vấn đã bình tĩnh và điềm đạm."
+      },
+      {
+        "en": "The interviewer was available tomorrow.",
+        "vi": "Người phỏng vấn đã rảnh vào ngày mai."
+      },
+      {
+        "en": "The interviewer was glad to be here.",
+        "vi": "Người phỏng vấn đã vui khi được ở đây."
+      },
+      { "en": "The interviewer was lucky.", "vi": "Người phỏng vấn đã may mắn." },
+      {
+        "en": "The interviewer was confident in the team.",
+        "vi": "Người phỏng vấn đã tin tưởng vào nhóm."
+      },
+      { "en": "The interviewer was serious.", "vi": "Người phỏng vấn đã nghiêm túc." },
+      { "en": "The interviewer was ready.", "vi": "Người phỏng vấn đã sẵn sàng." },
+      { "en": "The interviewer was curious.", "vi": "Người phỏng vấn đã tò mò." },
+      { "en": "The interviewer was very motivated.", "vi": "Người phỏng vấn đã rất có động lực." },
+      { "en": "The interviewer was determined.", "vi": "Người phỏng vấn đã quyết tâm." },
+      { "en": "The interviewer was curious about it.", "vi": "Người phỏng vấn đã tò mò về nó." },
+      { "en": "The interviewer was ambitious.", "vi": "Người phỏng vấn đã tham vọng." },
+      { "en": "The interviewer was hardworking.", "vi": "Người phỏng vấn đã chăm chỉ." },
+      {
+        "en": "The interviewer was grateful for your help.",
+        "vi": "Người phỏng vấn đã biết ơn sự giúp đỡ của bạn."
+      },
+      { "en": "The interviewer was a bit nervous.", "vi": "Người phỏng vấn đã hơi hồi hộp." },
+      { "en": "The interviewer was early.", "vi": "Người phỏng vấn đã sớm." },
+      { "en": "The interviewer was in a hurry.", "vi": "Người phỏng vấn đã đang vội." },
+      { "en": "The interviewer was stuck in traffic.", "vi": "Người phỏng vấn đã kẹt xe." },
+      { "en": "The interviewer was quite confident.", "vi": "Người phỏng vấn đã khá tự tin." },
+      { "en": "The interviewer was from Vietnam.", "vi": "Người phỏng vấn đã đến từ Việt Nam." },
+      { "en": "The interviewer was refreshed.", "vi": "Người phỏng vấn đã sảng khoái." },
+      {
+        "en": "The interviewer was hopeful about the future.",
+        "vi": "Người phỏng vấn đã hy vọng về tương lai."
+      },
+      { "en": "The interviewer was relieved.", "vi": "Người phỏng vấn đã nhẹ nhõm." },
+      { "en": "The interviewer was happy for you.", "vi": "Người phỏng vấn đã mừng cho bạn." },
+      { "en": "The interviewer was interested.", "vi": "Người phỏng vấn đã quan tâm." },
+      {
+        "en": "The interviewer was absolutely sure.",
+        "vi": "Người phỏng vấn đã chắc chắn tuyệt đối."
+      },
+      { "en": "The interviewer was late.", "vi": "Người phỏng vấn đã muộn." },
+      { "en": "The interviewer was super hungry.", "vi": "Người phỏng vấn đã đói lắm." },
+      {
+        "en": "The interviewer was working from home.",
+        "vi": "Người phỏng vấn đã làm việc tại nhà."
+      },
+      {
+        "en": "The interviewer was ready for the challenge.",
+        "vi": "Người phỏng vấn đã sẵn sàng cho thử thách."
+      },
+      {
+        "en": "The interviewer was hopeful for the best.",
+        "vi": "Người phỏng vấn đã hy vọng điều tốt nhất."
+      },
+      {
+        "en": "The interviewer was proud of everyone.",
+        "vi": "Người phỏng vấn đã tự hào về mọi người."
+      },
+      { "en": "The interviewer was sick.", "vi": "Người phỏng vấn đã ốm." },
+      { "en": "The interviewer was sure.", "vi": "Người phỏng vấn đã chắc chắn." },
+      { "en": "The interviewer was stressed.", "vi": "Người phỏng vấn đã căng thẳng." },
+      { "en": "The interviewer was excited.", "vi": "Người phỏng vấn đã hào hứng." },
+      { "en": "The interviewer was organized.", "vi": "Người phỏng vấn đã ngăn nắp." },
+      {
+        "en": "The interviewer was interested in the offer.",
+        "vi": "Người phỏng vấn đã quan tâm đến lời đề nghị."
+      },
+      {
+        "en": "The interviewer was open to feedback.",
+        "vi": "Người phỏng vấn đã cởi mở với góp ý."
+      },
+      { "en": "The interviewer was happy to be back.", "vi": "Người phỏng vấn đã vui khi trở lại." }
+    ]
+  },
+  {
+    "starter": "The interviewer has",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The interviewer has a simple explanation.",
+        "vi": "Người phỏng vấn có một lời giải thích đơn giản."
+      },
+      {
+        "en": "The interviewer has a shopping list.",
+        "vi": "Người phỏng vấn có một danh sách mua sắm."
+      },
+      { "en": "The interviewer has a complaint.", "vi": "Người phỏng vấn có một lời phàn nàn." },
+      {
+        "en": "The interviewer has a special offer.",
+        "vi": "Người phỏng vấn có một ưu đãi đặc biệt."
+      },
+      {
+        "en": "The interviewer has a monthly budget.",
+        "vi": "Người phỏng vấn có một ngân sách hàng tháng."
+      },
+      {
+        "en": "The interviewer has a question about the price.",
+        "vi": "Người phỏng vấn có một câu hỏi về giá."
+      },
+      { "en": "The interviewer has a spare room.", "vi": "Người phỏng vấn có một phòng trống." },
+      {
+        "en": "The interviewer has a gym membership.",
+        "vi": "Người phỏng vấn có một thẻ tập gym."
+      },
+      {
+        "en": "The interviewer has a playlist for work.",
+        "vi": "Người phỏng vấn có một danh sách nhạc để làm việc."
+      },
+      {
+        "en": "The interviewer has a local guide.",
+        "vi": "Người phỏng vấn có một hướng dẫn viên địa phương."
+      },
+      {
+        "en": "The interviewer has a strong team spirit.",
+        "vi": "Người phỏng vấn có một tinh thần đồng đội mạnh mẽ."
+      },
+      {
+        "en": "The interviewer has a flight at noon.",
+        "vi": "Người phỏng vấn có một chuyến bay lúc trưa."
+      },
+      { "en": "The interviewer has a solution.", "vi": "Người phỏng vấn có một giải pháp." },
+      {
+        "en": "The interviewer has a clear schedule today.",
+        "vi": "Người phỏng vấn có một lịch trình trống hôm nay."
+      },
+      { "en": "The interviewer has a new project.", "vi": "Người phỏng vấn có một dự án mới." },
+      { "en": "The interviewer has a return ticket.", "vi": "Người phỏng vấn có một vé khứ hồi." },
+      { "en": "The interviewer has a pet dog.", "vi": "Người phỏng vấn có một chú chó cưng." },
+      {
+        "en": "The interviewer has a doctor's appointment.",
+        "vi": "Người phỏng vấn có một cuộc hẹn với bác sĩ."
+      },
+      {
+        "en": "The interviewer has a busy week ahead.",
+        "vi": "Người phỏng vấn có một tuần bận rộn phía trước."
+      },
+      {
+        "en": "The interviewer has a short break.",
+        "vi": "Người phỏng vấn có một khoảng nghỉ ngắn."
+      },
+      {
+        "en": "The interviewer has a good night out.",
+        "vi": "Người phỏng vấn có một buổi tối đi chơi vui."
+      },
+      {
+        "en": "The interviewer has a remote job.",
+        "vi": "Người phỏng vấn có một công việc từ xa."
+      },
+      { "en": "The interviewer has a plan.", "vi": "Người phỏng vấn có một kế hoạch." },
+      {
+        "en": "The interviewer has a quick lunch.",
+        "vi": "Người phỏng vấn có một bữa trưa nhanh."
+      },
+      {
+        "en": "The interviewer has a good night's sleep.",
+        "vi": "Người phỏng vấn có một giấc ngủ ngon."
+      },
+      {
+        "en": "The interviewer has a healthy lifestyle.",
+        "vi": "Người phỏng vấn có một lối sống lành mạnh."
+      },
+      {
+        "en": "The interviewer has a major update.",
+        "vi": "Người phỏng vấn có một bản cập nhật lớn."
+      },
+      { "en": "The interviewer has a minor issue.", "vi": "Người phỏng vấn có một vấn đề nhỏ." },
+      { "en": "The interviewer has an idea.", "vi": "Người phỏng vấn có một ý tưởng." },
+      {
+        "en": "The interviewer has a home-cooked meal.",
+        "vi": "Người phỏng vấn có một bữa ăn tự nấu."
+      },
+      {
+        "en": "The interviewer has a good reason.",
+        "vi": "Người phỏng vấn có một lý do chính đáng."
+      },
+      {
+        "en": "The interviewer has a weekend trip.",
+        "vi": "Người phỏng vấn có một chuyến đi cuối tuần."
+      },
+      {
+        "en": "The interviewer has a strong resume.",
+        "vi": "Người phỏng vấn có một bản lý lịch ấn tượng."
+      },
+      { "en": "The interviewer has a big surprise.", "vi": "Người phỏng vấn có một bất ngờ lớn." },
+      {
+        "en": "The interviewer has a lot to learn.",
+        "vi": "Người phỏng vấn có nhiều điều phải học."
+      },
+      {
+        "en": "The interviewer has a lot of homework.",
+        "vi": "Người phỏng vấn có rất nhiều bài tập."
+      },
+      {
+        "en": "The interviewer has a supportive friend.",
+        "vi": "Người phỏng vấn có một người bạn biết động viên."
+      },
+      { "en": "The interviewer has a rest day.", "vi": "Người phỏng vấn có một ngày nghỉ ngơi." },
+      {
+        "en": "The interviewer has a meeting tomorrow morning.",
+        "vi": "Người phỏng vấn có một cuộc họp sáng mai."
+      },
+      { "en": "The interviewer has bad news.", "vi": "Người phỏng vấn có tin xấu." },
+      {
+        "en": "The interviewer has a reservation for two.",
+        "vi": "Người phỏng vấn có một chỗ đặt cho hai người."
+      },
+      {
+        "en": "The interviewer has a question about the schedule.",
+        "vi": "Người phỏng vấn có một câu hỏi về lịch trình."
+      },
+      { "en": "The interviewer has a car.", "vi": "Người phỏng vấn có một chiếc xe hơi." },
+      {
+        "en": "The interviewer has a backup plan.",
+        "vi": "Người phỏng vấn có một kế hoạch dự phòng."
+      },
+      {
+        "en": "The interviewer has a reliable laptop.",
+        "vi": "Người phỏng vấn có một chiếc laptop đáng tin cậy."
+      },
+      { "en": "The interviewer has a side income.", "vi": "Người phỏng vấn có một nguồn thu phụ." },
+      {
+        "en": "The interviewer has a lot of experience.",
+        "vi": "Người phỏng vấn có rất nhiều kinh nghiệm."
+      },
+      {
+        "en": "The interviewer has a clear answer.",
+        "vi": "Người phỏng vấn có một câu trả lời rõ ràng."
+      },
+      { "en": "The interviewer has a standing desk.", "vi": "Người phỏng vấn có một bàn đứng." },
+      {
+        "en": "The interviewer has a phone call to make.",
+        "vi": "Người phỏng vấn có một cuộc gọi cần thực hiện."
+      },
+      { "en": "The interviewer has a meeting.", "vi": "Người phỏng vấn có một cuộc họp." },
+      { "en": "The interviewer has a fair price.", "vi": "Người phỏng vấn có một mức giá hợp lý." },
+      { "en": "The interviewer has a pay raise.", "vi": "Người phỏng vấn có một đợt tăng lương." },
+      { "en": "The interviewer has a packed calendar.", "vi": "Người phỏng vấn có một lịch kín." },
+      {
+        "en": "The interviewer has a favor to ask.",
+        "vi": "Người phỏng vấn có một việc muốn nhờ."
+      },
+      {
+        "en": "The interviewer has a to-do list.",
+        "vi": "Người phỏng vấn có một danh sách việc cần làm."
+      },
+      {
+        "en": "The interviewer has a daily routine.",
+        "vi": "Người phỏng vấn có một thói quen hằng ngày."
+      },
+      {
+        "en": "The interviewer has a workout plan.",
+        "vi": "Người phỏng vấn có một kế hoạch tập luyện."
+      },
+      { "en": "The interviewer has a new contract.", "vi": "Người phỏng vấn có một hợp đồng mới." },
+      {
+        "en": "The interviewer has a tight schedule.",
+        "vi": "Người phỏng vấn có một lịch trình dày đặc."
+      },
+      { "en": "The interviewer has a warranty.", "vi": "Người phỏng vấn có một chế độ bảo hành." },
+      {
+        "en": "The interviewer has a reference letter.",
+        "vi": "Người phỏng vấn có một thư giới thiệu."
+      },
+      { "en": "The interviewer has a new job.", "vi": "Người phỏng vấn có một công việc mới." },
+      { "en": "The interviewer has a sunny day.", "vi": "Người phỏng vấn có một ngày nắng đẹp." },
+      {
+        "en": "The interviewer has a balanced diet.",
+        "vi": "Người phỏng vấn có một chế độ ăn cân bằng."
+      },
+      {
+        "en": "The interviewer has a backup device.",
+        "vi": "Người phỏng vấn có một thiết bị dự phòng."
+      },
+      { "en": "The interviewer has a sore throat.", "vi": "Người phỏng vấn có đau họng." },
+      { "en": "The interviewer has a city map.", "vi": "Người phỏng vấn có một bản đồ thành phố." },
+      { "en": "The interviewer has a few questions.", "vi": "Người phỏng vấn có một vài câu hỏi." },
+      {
+        "en": "The interviewer has a table by the window.",
+        "vi": "Người phỏng vấn có một bàn cạnh cửa sổ."
+      },
+      {
+        "en": "The interviewer has a lot of friends.",
+        "vi": "Người phỏng vấn có rất nhiều bạn bè."
+      },
+      {
+        "en": "The interviewer has a happy ending.",
+        "vi": "Người phỏng vấn có một cái kết có hậu."
+      },
+      {
+        "en": "The interviewer has a flexible schedule.",
+        "vi": "Người phỏng vấn có một lịch trình linh hoạt."
+      },
+      {
+        "en": "The interviewer has a long conversation.",
+        "vi": "Người phỏng vấn có một cuộc trò chuyện dài."
+      },
+      { "en": "The interviewer has a glass of water.", "vi": "Người phỏng vấn có một ly nước." },
+      {
+        "en": "The interviewer has a pair of headphones.",
+        "vi": "Người phỏng vấn có một cặp tai nghe."
+      },
+      {
+        "en": "The interviewer has an important call.",
+        "vi": "Người phỏng vấn có một cuộc gọi quan trọng."
+      },
+      {
+        "en": "The interviewer has a warm welcome.",
+        "vi": "Người phỏng vấn có một sự chào đón nồng nhiệt."
+      },
+      {
+        "en": "The interviewer has a reason to celebrate.",
+        "vi": "Người phỏng vấn có một lý do để ăn mừng."
+      },
+      { "en": "The interviewer has a lot to do.", "vi": "Người phỏng vấn có nhiều việc phải làm." },
+      {
+        "en": "The interviewer has a rainy afternoon.",
+        "vi": "Người phỏng vấn có một buổi chiều mưa."
+      },
+      {
+        "en": "The interviewer has a meeting at 3 PM.",
+        "vi": "Người phỏng vấn có một cuộc họp lúc 3 giờ chiều."
+      },
+      {
+        "en": "The interviewer has a quiet workspace.",
+        "vi": "Người phỏng vấn có một không gian làm việc yên tĩnh."
+      },
+      { "en": "The interviewer has a helpful tip.", "vi": "Người phỏng vấn có một mẹo hữu ích." },
+      {
+        "en": "The interviewer has a bright future.",
+        "vi": "Người phỏng vấn có một tương lai tươi sáng."
+      },
+      {
+        "en": "The interviewer has a detailed plan.",
+        "vi": "Người phỏng vấn có một kế hoạch chi tiết."
+      },
+      {
+        "en": "The interviewer has a busy schedule.",
+        "vi": "Người phỏng vấn có một lịch trình bận rộn."
+      },
+      {
+        "en": "The interviewer has a meeting with the client.",
+        "vi": "Người phỏng vấn có một cuộc họp với khách hàng."
+      },
+      {
+        "en": "The interviewer has a tight deadline.",
+        "vi": "Người phỏng vấn có một thời hạn gấp."
+      },
+      {
+        "en": "The interviewer has a dinner reservation.",
+        "vi": "Người phỏng vấn có một chỗ đặt bữa tối."
+      },
+      { "en": "The interviewer has two children.", "vi": "Người phỏng vấn có hai đứa con." },
+      {
+        "en": "The interviewer has a savings plan.",
+        "vi": "Người phỏng vấn có một kế hoạch tiết kiệm."
+      },
+      { "en": "The interviewer has a long day.", "vi": "Người phỏng vấn có một ngày dài." },
+      {
+        "en": "The interviewer has an account here.",
+        "vi": "Người phỏng vấn có một tài khoản ở đây."
+      },
+      {
+        "en": "The interviewer has a quick question.",
+        "vi": "Người phỏng vấn có một câu hỏi nhanh."
+      },
+      {
+        "en": "The interviewer has a loyal customer.",
+        "vi": "Người phỏng vấn có một khách hàng trung thành."
+      },
+      {
+        "en": "The interviewer has a report to finish.",
+        "vi": "Người phỏng vấn có một báo cáo cần hoàn thành."
+      },
+      {
+        "en": "The interviewer has a great team.",
+        "vi": "Người phỏng vấn có một đội ngũ tuyệt vời."
+      },
+      {
+        "en": "The interviewer has a lot on my mind.",
+        "vi": "Người phỏng vấn có nhiều điều trong đầu."
+      },
+      {
+        "en": "The interviewer has a feeling about this.",
+        "vi": "Người phỏng vấn có một linh cảm về điều này."
+      }
+    ]
+  },
+  {
+    "starter": "The interviewer wants to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The interviewer wants to be on time.", "vi": "Người phỏng vấn muốn đến đúng giờ." },
+      {
+        "en": "The interviewer wants to take a day off.",
+        "vi": "Người phỏng vấn muốn xin nghỉ một ngày."
+      },
+      {
+        "en": "The interviewer wants to learn English.",
+        "vi": "Người phỏng vấn muốn học tiếng Anh."
+      },
+      {
+        "en": "The interviewer wants to travel abroad.",
+        "vi": "Người phỏng vấn muốn đi du lịch nước ngoài."
+      },
+      {
+        "en": "The interviewer wants to install the app.",
+        "vi": "Người phỏng vấn muốn cài đặt ứng dụng."
+      },
+      { "en": "The interviewer wants to ride a bike.", "vi": "Người phỏng vấn muốn đạp xe." },
+      {
+        "en": "The interviewer wants to ask for a raise.",
+        "vi": "Người phỏng vấn muốn xin tăng lương."
+      },
+      {
+        "en": "The interviewer wants to double-check everything.",
+        "vi": "Người phỏng vấn muốn kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "The interviewer wants to catch the train.",
+        "vi": "Người phỏng vấn muốn bắt chuyến tàu."
+      },
+      {
+        "en": "The interviewer wants to learn something new.",
+        "vi": "Người phỏng vấn muốn học điều gì đó mới."
+      },
+      {
+        "en": "The interviewer wants to follow the rules.",
+        "vi": "Người phỏng vấn muốn tuân theo quy tắc."
+      },
+      {
+        "en": "The interviewer wants to write a report.",
+        "vi": "Người phỏng vấn muốn viết một báo cáo."
+      },
+      {
+        "en": "The interviewer wants to buy a new phone.",
+        "vi": "Người phỏng vấn muốn mua điện thoại mới."
+      },
+      { "en": "The interviewer wants to lock the door.", "vi": "Người phỏng vấn muốn khóa cửa." },
+      {
+        "en": "The interviewer wants to say goodbye.",
+        "vi": "Người phỏng vấn muốn nói lời tạm biệt."
+      },
+      {
+        "en": "The interviewer wants to save for the future.",
+        "vi": "Người phỏng vấn muốn tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The interviewer wants to print the document.",
+        "vi": "Người phỏng vấn muốn in tài liệu."
+      },
+      { "en": "The interviewer wants to book a ticket.", "vi": "Người phỏng vấn muốn đặt vé." },
+      {
+        "en": "The interviewer wants to reach the goal.",
+        "vi": "Người phỏng vấn muốn đạt mục tiêu."
+      },
+      { "en": "The interviewer wants to start over.", "vi": "Người phỏng vấn muốn bắt đầu lại." },
+      { "en": "The interviewer wants to report the bug.", "vi": "Người phỏng vấn muốn báo lỗi." },
+      {
+        "en": "The interviewer wants to cut expenses.",
+        "vi": "Người phỏng vấn muốn cắt giảm chi tiêu."
+      },
+      {
+        "en": "The interviewer wants to help a neighbor.",
+        "vi": "Người phỏng vấn muốn giúp một người hàng xóm."
+      },
+      {
+        "en": "The interviewer wants to make a reservation.",
+        "vi": "Người phỏng vấn muốn đặt chỗ trước."
+      },
+      { "en": "The interviewer wants to lose weight.", "vi": "Người phỏng vấn muốn giảm cân." },
+      {
+        "en": "The interviewer wants to finish on time.",
+        "vi": "Người phỏng vấn muốn hoàn thành đúng hạn."
+      },
+      {
+        "en": "The interviewer wants to improve my skills.",
+        "vi": "Người phỏng vấn muốn cải thiện kỹ năng."
+      },
+      {
+        "en": "The interviewer wants to get a promotion.",
+        "vi": "Người phỏng vấn muốn được thăng chức."
+      },
+      {
+        "en": "The interviewer wants to tell the truth.",
+        "vi": "Người phỏng vấn muốn nói sự thật."
+      },
+      {
+        "en": "The interviewer wants to meditate daily.",
+        "vi": "Người phỏng vấn muốn thiền mỗi ngày."
+      },
+      {
+        "en": "The interviewer wants to schedule a meeting.",
+        "vi": "Người phỏng vấn muốn sắp xếp cuộc họp."
+      },
+      {
+        "en": "The interviewer wants to lead the project.",
+        "vi": "Người phỏng vấn muốn dẫn dắt dự án."
+      },
+      { "en": "The interviewer wants to find a job.", "vi": "Người phỏng vấn muốn tìm việc làm." },
+      { "en": "The interviewer wants to rent a car.", "vi": "Người phỏng vấn muốn thuê xe." },
+      {
+        "en": "The interviewer wants to play sports.",
+        "vi": "Người phỏng vấn muốn chơi thể thao."
+      },
+      {
+        "en": "The interviewer wants to exercise every day.",
+        "vi": "Người phỏng vấn muốn tập thể dục mỗi ngày."
+      },
+      {
+        "en": "The interviewer wants to fill out the form.",
+        "vi": "Người phỏng vấn muốn điền vào biểu mẫu."
+      },
+      {
+        "en": "The interviewer wants to listen to music.",
+        "vi": "Người phỏng vấn muốn nghe nhạc."
+      },
+      { "en": "The interviewer wants to take notes.", "vi": "Người phỏng vấn muốn ghi chép." },
+      {
+        "en": "The interviewer wants to wait a moment.",
+        "vi": "Người phỏng vấn muốn chờ một chút."
+      },
+      {
+        "en": "The interviewer wants to join the meeting.",
+        "vi": "Người phỏng vấn muốn tham gia cuộc họp."
+      },
+      {
+        "en": "The interviewer wants to reply to the message.",
+        "vi": "Người phỏng vấn muốn trả lời tin nhắn."
+      },
+      {
+        "en": "The interviewer wants to cook breakfast.",
+        "vi": "Người phỏng vấn muốn nấu bữa sáng."
+      },
+      {
+        "en": "The interviewer wants to work as a team.",
+        "vi": "Người phỏng vấn muốn làm việc theo nhóm."
+      },
+      {
+        "en": "The interviewer wants to remember the password.",
+        "vi": "Người phỏng vấn muốn nhớ mật khẩu."
+      },
+      {
+        "en": "The interviewer wants to lower the cost.",
+        "vi": "Người phỏng vấn muốn giảm chi phí."
+      },
+      {
+        "en": "The interviewer wants to answer the phone.",
+        "vi": "Người phỏng vấn muốn trả lời điện thoại."
+      },
+      { "en": "The interviewer wants to send the email.", "vi": "Người phỏng vấn muốn gửi email." },
+      { "en": "The interviewer wants to leave early.", "vi": "Người phỏng vấn muốn về sớm." },
+      {
+        "en": "The interviewer wants to attend the workshop.",
+        "vi": "Người phỏng vấn muốn tham dự buổi hội thảo."
+      },
+      {
+        "en": "The interviewer wants to invite some friends.",
+        "vi": "Người phỏng vấn muốn mời vài người bạn."
+      },
+      {
+        "en": "The interviewer wants to ask a question.",
+        "vi": "Người phỏng vấn muốn hỏi một câu."
+      },
+      {
+        "en": "The interviewer wants to understand the lesson.",
+        "vi": "Người phỏng vấn muốn hiểu bài học."
+      },
+      {
+        "en": "The interviewer wants to open a business.",
+        "vi": "Người phỏng vấn muốn mở một doanh nghiệp."
+      },
+      {
+        "en": "The interviewer wants to make new friends.",
+        "vi": "Người phỏng vấn muốn kết bạn mới."
+      },
+      {
+        "en": "The interviewer wants to never give up.",
+        "vi": "Người phỏng vấn muốn không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The interviewer wants to call back later.",
+        "vi": "Người phỏng vấn muốn gọi lại sau."
+      },
+      {
+        "en": "The interviewer wants to hire new staff.",
+        "vi": "Người phỏng vấn muốn tuyển nhân viên mới."
+      },
+      { "en": "The interviewer wants to ask for help.", "vi": "Người phỏng vấn muốn nhờ giúp đỡ." },
+      {
+        "en": "The interviewer wants to drive to work.",
+        "vi": "Người phỏng vấn muốn lái xe đi làm."
+      },
+      {
+        "en": "The interviewer wants to download the file.",
+        "vi": "Người phỏng vấn muốn tải tệp xuống."
+      },
+      {
+        "en": "The interviewer wants to cut the budget.",
+        "vi": "Người phỏng vấn muốn cắt giảm ngân sách."
+      },
+      {
+        "en": "The interviewer wants to relax at home.",
+        "vi": "Người phỏng vấn muốn thư giãn ở nhà."
+      },
+      {
+        "en": "The interviewer wants to test the feature.",
+        "vi": "Người phỏng vấn muốn kiểm thử tính năng."
+      },
+      { "en": "The interviewer wants to pass the exam.", "vi": "Người phỏng vấn muốn đậu kỳ thi." },
+      {
+        "en": "The interviewer wants to set an alarm.",
+        "vi": "Người phỏng vấn muốn đặt báo thức."
+      },
+      {
+        "en": "The interviewer wants to charge the phone.",
+        "vi": "Người phỏng vấn muốn sạc điện thoại."
+      },
+      {
+        "en": "The interviewer wants to register for the course.",
+        "vi": "Người phỏng vấn muốn đăng ký khóa học."
+      },
+      {
+        "en": "The interviewer wants to save money.",
+        "vi": "Người phỏng vấn muốn tiết kiệm tiền."
+      },
+      {
+        "en": "The interviewer wants to stay focused.",
+        "vi": "Người phỏng vấn muốn giữ tập trung."
+      },
+      {
+        "en": "The interviewer wants to speak clearly.",
+        "vi": "Người phỏng vấn muốn nói rõ ràng."
+      },
+      {
+        "en": "The interviewer wants to help the team.",
+        "vi": "Người phỏng vấn muốn giúp đỡ nhóm."
+      },
+      {
+        "en": "The interviewer wants to meet the deadline.",
+        "vi": "Người phỏng vấn muốn kịp thời hạn."
+      },
+      {
+        "en": "The interviewer wants to plan ahead.",
+        "vi": "Người phỏng vấn muốn lên kế hoạch trước."
+      },
+      {
+        "en": "The interviewer wants to give it a try.",
+        "vi": "Người phỏng vấn muốn thử một lần."
+      },
+      {
+        "en": "The interviewer wants to apply for the position.",
+        "vi": "Người phỏng vấn muốn nộp đơn cho vị trí."
+      },
+      {
+        "en": "The interviewer wants to pay off the loan.",
+        "vi": "Người phỏng vấn muốn trả hết khoản vay."
+      },
+      {
+        "en": "The interviewer wants to open a savings account.",
+        "vi": "Người phỏng vấn muốn mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "The interviewer wants to walk the dog.",
+        "vi": "Người phỏng vấn muốn dắt chó đi dạo."
+      },
+      { "en": "The interviewer wants to order food.", "vi": "Người phỏng vấn muốn gọi đồ ăn." },
+      {
+        "en": "The interviewer wants to double-check the numbers.",
+        "vi": "Người phỏng vấn muốn kiểm tra lại các con số."
+      },
+      { "en": "The interviewer wants to raise the price.", "vi": "Người phỏng vấn muốn tăng giá." },
+      {
+        "en": "The interviewer wants to keep a diary.",
+        "vi": "Người phỏng vấn muốn viết nhật ký."
+      },
+      {
+        "en": "The interviewer wants to keep in touch.",
+        "vi": "Người phỏng vấn muốn giữ liên lạc."
+      },
+      { "en": "The interviewer wants to learn to swim.", "vi": "Người phỏng vấn muốn học bơi." },
+      {
+        "en": "The interviewer wants to cook for everyone.",
+        "vi": "Người phỏng vấn muốn nấu ăn cho mọi người."
+      },
+      {
+        "en": "The interviewer wants to offer support.",
+        "vi": "Người phỏng vấn muốn đề nghị hỗ trợ."
+      },
+      {
+        "en": "The interviewer wants to visit the doctor.",
+        "vi": "Người phỏng vấn muốn đi khám bác sĩ."
+      },
+      {
+        "en": "The interviewer wants to read the news.",
+        "vi": "Người phỏng vấn muốn đọc tin tức."
+      },
+      {
+        "en": "The interviewer wants to buy groceries.",
+        "vi": "Người phỏng vấn muốn mua thực phẩm."
+      },
+      {
+        "en": "The interviewer wants to volunteer on weekends.",
+        "vi": "Người phỏng vấn muốn tình nguyện cuối tuần."
+      },
+      {
+        "en": "The interviewer wants to grow the business.",
+        "vi": "Người phỏng vấn muốn phát triển kinh doanh."
+      },
+      { "en": "The interviewer wants to take it easy.", "vi": "Người phỏng vấn muốn thư giãn." },
+      {
+        "en": "The interviewer wants to log in again.",
+        "vi": "Người phỏng vấn muốn đăng nhập lại."
+      },
+      { "en": "The interviewer wants to go home.", "vi": "Người phỏng vấn muốn về nhà." },
+      {
+        "en": "The interviewer wants to update the software.",
+        "vi": "Người phỏng vấn muốn cập nhật phần mềm."
+      },
+      {
+        "en": "The interviewer wants to copy the link.",
+        "vi": "Người phỏng vấn muốn sao chép liên kết."
+      },
+      { "en": "The interviewer wants to wake up early.", "vi": "Người phỏng vấn muốn dậy sớm." },
+      {
+        "en": "The interviewer wants to think it over.",
+        "vi": "Người phỏng vấn muốn suy nghĩ kỹ."
+      },
+      {
+        "en": "The interviewer wants to practice every day.",
+        "vi": "Người phỏng vấn muốn luyện tập mỗi ngày."
+      }
+    ]
+  },
+  {
+    "starter": "The interviewer needs to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The interviewer needs to watch the game.",
+        "vi": "Người phỏng vấn cần xem trận đấu."
+      },
+      {
+        "en": "The interviewer needs to check the details.",
+        "vi": "Người phỏng vấn cần kiểm tra chi tiết."
+      },
+      {
+        "en": "The interviewer needs to cook breakfast.",
+        "vi": "Người phỏng vấn cần nấu bữa sáng."
+      },
+      { "en": "The interviewer needs to sleep early.", "vi": "Người phỏng vấn cần ngủ sớm." },
+      { "en": "The interviewer needs to quit smoking.", "vi": "Người phỏng vấn cần bỏ thuốc lá." },
+      { "en": "The interviewer needs to watch a movie.", "vi": "Người phỏng vấn cần xem phim." },
+      {
+        "en": "The interviewer needs to double-check everything.",
+        "vi": "Người phỏng vấn cần kiểm tra lại mọi thứ."
+      },
+      { "en": "The interviewer needs to take the exam.", "vi": "Người phỏng vấn cần làm bài thi." },
+      {
+        "en": "The interviewer needs to make a reservation.",
+        "vi": "Người phỏng vấn cần đặt chỗ trước."
+      },
+      { "en": "The interviewer needs to learn to swim.", "vi": "Người phỏng vấn cần học bơi." },
+      {
+        "en": "The interviewer needs to remember the password.",
+        "vi": "Người phỏng vấn cần nhớ mật khẩu."
+      },
+      {
+        "en": "The interviewer needs to close the deal.",
+        "vi": "Người phỏng vấn cần chốt thỏa thuận."
+      },
+      { "en": "The interviewer needs to take medicine.", "vi": "Người phỏng vấn cần uống thuốc." },
+      {
+        "en": "The interviewer needs to meet the deadline.",
+        "vi": "Người phỏng vấn cần kịp thời hạn."
+      },
+      {
+        "en": "The interviewer needs to improve my skills.",
+        "vi": "Người phỏng vấn cần cải thiện kỹ năng."
+      },
+      {
+        "en": "The interviewer needs to keep learning.",
+        "vi": "Người phỏng vấn cần tiếp tục học hỏi."
+      },
+      {
+        "en": "The interviewer needs to buy a new phone.",
+        "vi": "Người phỏng vấn cần mua điện thoại mới."
+      },
+      {
+        "en": "The interviewer needs to work as a team.",
+        "vi": "Người phỏng vấn cần làm việc theo nhóm."
+      },
+      {
+        "en": "The interviewer needs to invite some friends.",
+        "vi": "Người phỏng vấn cần mời vài người bạn."
+      },
+      { "en": "The interviewer needs to listen to music.", "vi": "Người phỏng vấn cần nghe nhạc." },
+      {
+        "en": "The interviewer needs to cancel the order.",
+        "vi": "Người phỏng vấn cần hủy đơn hàng."
+      },
+      {
+        "en": "The interviewer needs to train the team.",
+        "vi": "Người phỏng vấn cần đào tạo nhóm."
+      },
+      {
+        "en": "The interviewer needs to change careers.",
+        "vi": "Người phỏng vấn cần chuyển nghề."
+      },
+      {
+        "en": "The interviewer needs to confirm the booking.",
+        "vi": "Người phỏng vấn cần xác nhận đặt chỗ."
+      },
+      { "en": "The interviewer needs to lock the door.", "vi": "Người phỏng vấn cần khóa cửa." },
+      { "en": "The interviewer needs to wash the dishes.", "vi": "Người phỏng vấn cần rửa bát." },
+      {
+        "en": "The interviewer needs to visit my family.",
+        "vi": "Người phỏng vấn cần thăm gia đình."
+      },
+      { "en": "The interviewer needs to clean the house.", "vi": "Người phỏng vấn cần dọn nhà." },
+      {
+        "en": "The interviewer needs to review the document.",
+        "vi": "Người phỏng vấn cần xem lại tài liệu."
+      },
+      {
+        "en": "The interviewer needs to miss the flight.",
+        "vi": "Người phỏng vấn cần lỡ chuyến bay."
+      },
+      {
+        "en": "The interviewer needs to save for the future.",
+        "vi": "Người phỏng vấn cần tiết kiệm cho tương lai."
+      },
+      { "en": "The interviewer needs to pass the exam.", "vi": "Người phỏng vấn cần đậu kỳ thi." },
+      {
+        "en": "The interviewer needs to schedule a meeting.",
+        "vi": "Người phỏng vấn cần sắp xếp cuộc họp."
+      },
+      {
+        "en": "The interviewer needs to cook for everyone.",
+        "vi": "Người phỏng vấn cần nấu ăn cho mọi người."
+      },
+      {
+        "en": "The interviewer needs to ask a question.",
+        "vi": "Người phỏng vấn cần hỏi một câu."
+      },
+      {
+        "en": "The interviewer needs to log in again.",
+        "vi": "Người phỏng vấn cần đăng nhập lại."
+      },
+      { "en": "The interviewer needs to keep a diary.", "vi": "Người phỏng vấn cần viết nhật ký." },
+      {
+        "en": "The interviewer needs to walk the dog.",
+        "vi": "Người phỏng vấn cần dắt chó đi dạo."
+      },
+      {
+        "en": "The interviewer needs to rate the service.",
+        "vi": "Người phỏng vấn cần đánh giá dịch vụ."
+      },
+      {
+        "en": "The interviewer needs to copy the link.",
+        "vi": "Người phỏng vấn cần sao chép liên kết."
+      },
+      {
+        "en": "The interviewer needs to get some rest.",
+        "vi": "Người phỏng vấn cần nghỉ ngơi một chút."
+      },
+      {
+        "en": "The interviewer needs to tell the truth.",
+        "vi": "Người phỏng vấn cần nói sự thật."
+      },
+      {
+        "en": "The interviewer needs to understand the lesson.",
+        "vi": "Người phỏng vấn cần hiểu bài học."
+      },
+      {
+        "en": "The interviewer needs to win the contract.",
+        "vi": "Người phỏng vấn cần giành hợp đồng."
+      },
+      { "en": "The interviewer needs to take it easy.", "vi": "Người phỏng vấn cần thư giãn." },
+      {
+        "en": "The interviewer needs to read more books.",
+        "vi": "Người phỏng vấn cần đọc thêm sách."
+      },
+      {
+        "en": "The interviewer needs to make a plan.",
+        "vi": "Người phỏng vấn cần lập một kế hoạch."
+      },
+      { "en": "The interviewer needs to ride a bike.", "vi": "Người phỏng vấn cần đạp xe." },
+      {
+        "en": "The interviewer needs to start a new project.",
+        "vi": "Người phỏng vấn cần bắt đầu một dự án mới."
+      },
+      {
+        "en": "The interviewer needs to take a course.",
+        "vi": "Người phỏng vấn cần tham gia một khóa học."
+      },
+      {
+        "en": "The interviewer needs to learn something new.",
+        "vi": "Người phỏng vấn cần học điều gì đó mới."
+      },
+      {
+        "en": "The interviewer needs to never give up.",
+        "vi": "Người phỏng vấn cần không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The interviewer needs to wait a moment.",
+        "vi": "Người phỏng vấn cần chờ một chút."
+      },
+      {
+        "en": "The interviewer needs to help a neighbor.",
+        "vi": "Người phỏng vấn cần giúp một người hàng xóm."
+      },
+      {
+        "en": "The interviewer needs to help the team.",
+        "vi": "Người phỏng vấn cần giúp đỡ nhóm."
+      },
+      { "en": "The interviewer needs to give it a try.", "vi": "Người phỏng vấn cần thử một lần." },
+      {
+        "en": "The interviewer needs to join the meeting.",
+        "vi": "Người phỏng vấn cần tham gia cuộc họp."
+      },
+      {
+        "en": "The interviewer needs to test the feature.",
+        "vi": "Người phỏng vấn cần kiểm thử tính năng."
+      },
+      { "en": "The interviewer needs to book a ticket.", "vi": "Người phỏng vấn cần đặt vé." },
+      {
+        "en": "The interviewer needs to keep in touch.",
+        "vi": "Người phỏng vấn cần giữ liên lạc."
+      },
+      {
+        "en": "The interviewer needs to donate to charity.",
+        "vi": "Người phỏng vấn cần quyên góp từ thiện."
+      },
+      { "en": "The interviewer needs to send the email.", "vi": "Người phỏng vấn cần gửi email." },
+      {
+        "en": "The interviewer needs to learn English.",
+        "vi": "Người phỏng vấn cần học tiếng Anh."
+      },
+      {
+        "en": "The interviewer needs to answer the phone.",
+        "vi": "Người phỏng vấn cần trả lời điện thoại."
+      },
+      { "en": "The interviewer needs to start over.", "vi": "Người phỏng vấn cần bắt đầu lại." },
+      {
+        "en": "The interviewer needs to make a decision.",
+        "vi": "Người phỏng vấn cần đưa ra quyết định."
+      },
+      { "en": "The interviewer needs to think it over.", "vi": "Người phỏng vấn cần suy nghĩ kỹ." },
+      {
+        "en": "The interviewer needs to check my email.",
+        "vi": "Người phỏng vấn cần kiểm tra email."
+      },
+      { "en": "The interviewer needs to wake up early.", "vi": "Người phỏng vấn cần dậy sớm." },
+      {
+        "en": "The interviewer needs to arrive on time.",
+        "vi": "Người phỏng vấn cần đến đúng giờ."
+      },
+      {
+        "en": "The interviewer needs to register for the course.",
+        "vi": "Người phỏng vấn cần đăng ký khóa học."
+      },
+      {
+        "en": "The interviewer needs to charge the phone.",
+        "vi": "Người phỏng vấn cần sạc điện thoại."
+      },
+      {
+        "en": "The interviewer needs to attend the class.",
+        "vi": "Người phỏng vấn cần tham gia lớp học."
+      },
+      {
+        "en": "The interviewer needs to catch the train.",
+        "vi": "Người phỏng vấn cần bắt chuyến tàu."
+      },
+      {
+        "en": "The interviewer needs to cut expenses.",
+        "vi": "Người phỏng vấn cần cắt giảm chi tiêu."
+      },
+      {
+        "en": "The interviewer needs to open a business.",
+        "vi": "Người phỏng vấn cần mở một doanh nghiệp."
+      },
+      {
+        "en": "The interviewer needs to invest wisely.",
+        "vi": "Người phỏng vấn cần đầu tư khôn ngoan."
+      },
+      {
+        "en": "The interviewer needs to call back later.",
+        "vi": "Người phỏng vấn cần gọi lại sau."
+      },
+      {
+        "en": "The interviewer needs to take a chance.",
+        "vi": "Người phỏng vấn cần nắm lấy cơ hội."
+      },
+      {
+        "en": "The interviewer needs to throw a party.",
+        "vi": "Người phỏng vấn cần tổ chức tiệc."
+      },
+      {
+        "en": "The interviewer needs to reset the password.",
+        "vi": "Người phỏng vấn cần đặt lại mật khẩu."
+      },
+      { "en": "The interviewer needs to help out.", "vi": "Người phỏng vấn cần giúp đỡ." },
+      {
+        "en": "The interviewer needs to ask for a raise.",
+        "vi": "Người phỏng vấn cần xin tăng lương."
+      },
+      {
+        "en": "The interviewer needs to reach the goal.",
+        "vi": "Người phỏng vấn cần đạt mục tiêu."
+      },
+      {
+        "en": "The interviewer needs to drink less coffee.",
+        "vi": "Người phỏng vấn cần uống ít cà phê hơn."
+      },
+      { "en": "The interviewer needs to say sorry.", "vi": "Người phỏng vấn cần nói lời xin lỗi." },
+      {
+        "en": "The interviewer needs to move forward.",
+        "vi": "Người phỏng vấn cần tiến về phía trước."
+      },
+      {
+        "en": "The interviewer needs to leave a comment.",
+        "vi": "Người phỏng vấn cần để lại bình luận."
+      },
+      { "en": "The interviewer needs to write it down.", "vi": "Người phỏng vấn cần ghi nó lại." },
+      {
+        "en": "The interviewer needs to reply to the message.",
+        "vi": "Người phỏng vấn cần trả lời tin nhắn."
+      },
+      {
+        "en": "The interviewer needs to exercise every day.",
+        "vi": "Người phỏng vấn cần tập thể dục mỗi ngày."
+      },
+      {
+        "en": "The interviewer needs to finish on time.",
+        "vi": "Người phỏng vấn cần hoàn thành đúng hạn."
+      },
+      {
+        "en": "The interviewer needs to download the file.",
+        "vi": "Người phỏng vấn cần tải tệp xuống."
+      },
+      {
+        "en": "The interviewer needs to travel abroad.",
+        "vi": "Người phỏng vấn cần đi du lịch nước ngoài."
+      },
+      {
+        "en": "The interviewer needs to update the software.",
+        "vi": "Người phỏng vấn cần cập nhật phần mềm."
+      },
+      {
+        "en": "The interviewer needs to lead the project.",
+        "vi": "Người phỏng vấn cần dẫn dắt dự án."
+      },
+      { "en": "The interviewer needs to get a degree.", "vi": "Người phỏng vấn cần lấy bằng." },
+      {
+        "en": "The interviewer needs to think positive.",
+        "vi": "Người phỏng vấn cần suy nghĩ tích cực."
+      },
+      {
+        "en": "The interviewer needs to take a break.",
+        "vi": "Người phỏng vấn cần nghỉ giải lao."
+      },
+      {
+        "en": "The interviewer needs to buy groceries.",
+        "vi": "Người phỏng vấn cần mua thực phẩm."
+      }
+    ]
+  },
+  {
+    "starter": "The interviewer would like to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The interviewer would like to get a degree.",
+        "vi": "Người phỏng vấn muốn lấy bằng."
+      },
+      {
+        "en": "The interviewer would like to set a goal.",
+        "vi": "Người phỏng vấn muốn đặt một mục tiêu."
+      },
+      {
+        "en": "The interviewer would like to share my opinion.",
+        "vi": "Người phỏng vấn muốn chia sẻ ý kiến."
+      },
+      { "en": "The interviewer would like to make tea.", "vi": "Người phỏng vấn muốn pha trà." },
+      {
+        "en": "The interviewer would like to get some rest.",
+        "vi": "Người phỏng vấn muốn nghỉ ngơi một chút."
+      },
+      {
+        "en": "The interviewer would like to finish on time.",
+        "vi": "Người phỏng vấn muốn hoàn thành đúng hạn."
+      },
+      {
+        "en": "The interviewer would like to order food.",
+        "vi": "Người phỏng vấn muốn gọi đồ ăn."
+      },
+      {
+        "en": "The interviewer would like to cook breakfast.",
+        "vi": "Người phỏng vấn muốn nấu bữa sáng."
+      },
+      {
+        "en": "The interviewer would like to cancel the order.",
+        "vi": "Người phỏng vấn muốn hủy đơn hàng."
+      },
+      {
+        "en": "The interviewer would like to manage the schedule.",
+        "vi": "Người phỏng vấn muốn quản lý lịch trình."
+      },
+      {
+        "en": "The interviewer would like to help a neighbor.",
+        "vi": "Người phỏng vấn muốn giúp một người hàng xóm."
+      },
+      {
+        "en": "The interviewer would like to finish the report.",
+        "vi": "Người phỏng vấn muốn hoàn thành báo cáo."
+      },
+      {
+        "en": "The interviewer would like to miss the flight.",
+        "vi": "Người phỏng vấn muốn lỡ chuyến bay."
+      },
+      {
+        "en": "The interviewer would like to never give up.",
+        "vi": "Người phỏng vấn muốn không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The interviewer would like to stay focused.",
+        "vi": "Người phỏng vấn muốn giữ tập trung."
+      },
+      {
+        "en": "The interviewer would like to calm down.",
+        "vi": "Người phỏng vấn muốn bình tĩnh lại."
+      },
+      {
+        "en": "The interviewer would like to book a hotel.",
+        "vi": "Người phỏng vấn muốn đặt khách sạn."
+      },
+      {
+        "en": "The interviewer would like to move forward.",
+        "vi": "Người phỏng vấn muốn tiến về phía trước."
+      },
+      {
+        "en": "The interviewer would like to breathe deeply.",
+        "vi": "Người phỏng vấn muốn hít thở sâu."
+      },
+      {
+        "en": "The interviewer would like to volunteer on weekends.",
+        "vi": "Người phỏng vấn muốn tình nguyện cuối tuần."
+      },
+      {
+        "en": "The interviewer would like to reply to the message.",
+        "vi": "Người phỏng vấn muốn trả lời tin nhắn."
+      },
+      {
+        "en": "The interviewer would like to quit smoking.",
+        "vi": "Người phỏng vấn muốn bỏ thuốc lá."
+      },
+      {
+        "en": "The interviewer would like to install the app.",
+        "vi": "Người phỏng vấn muốn cài đặt ứng dụng."
+      },
+      {
+        "en": "The interviewer would like to speak English.",
+        "vi": "Người phỏng vấn muốn nói tiếng Anh."
+      },
+      {
+        "en": "The interviewer would like to launch the product.",
+        "vi": "Người phỏng vấn muốn ra mắt sản phẩm."
+      },
+      {
+        "en": "The interviewer would like to solve this issue.",
+        "vi": "Người phỏng vấn muốn giải quyết vấn đề này."
+      },
+      {
+        "en": "The interviewer would like to talk to the manager.",
+        "vi": "Người phỏng vấn muốn nói chuyện với quản lý."
+      },
+      {
+        "en": "The interviewer would like to test the feature.",
+        "vi": "Người phỏng vấn muốn kiểm thử tính năng."
+      },
+      {
+        "en": "The interviewer would like to change the plan.",
+        "vi": "Người phỏng vấn muốn thay đổi kế hoạch."
+      },
+      {
+        "en": "The interviewer would like to watch the game.",
+        "vi": "Người phỏng vấn muốn xem trận đấu."
+      },
+      {
+        "en": "The interviewer would like to tell the truth.",
+        "vi": "Người phỏng vấn muốn nói sự thật."
+      },
+      {
+        "en": "The interviewer would like to write it down.",
+        "vi": "Người phỏng vấn muốn ghi nó lại."
+      },
+      {
+        "en": "The interviewer would like to celebrate together.",
+        "vi": "Người phỏng vấn muốn ăn mừng cùng nhau."
+      },
+      { "en": "The interviewer would like to try again.", "vi": "Người phỏng vấn muốn thử lại." },
+      {
+        "en": "The interviewer would like to go for a walk.",
+        "vi": "Người phỏng vấn muốn đi dạo."
+      },
+      { "en": "The interviewer would like to go home.", "vi": "Người phỏng vấn muốn về nhà." },
+      {
+        "en": "The interviewer would like to register for the course.",
+        "vi": "Người phỏng vấn muốn đăng ký khóa học."
+      },
+      {
+        "en": "The interviewer would like to get a promotion.",
+        "vi": "Người phỏng vấn muốn được thăng chức."
+      },
+      {
+        "en": "The interviewer would like to submit the form.",
+        "vi": "Người phỏng vấn muốn nộp biểu mẫu."
+      },
+      {
+        "en": "The interviewer would like to invite some friends.",
+        "vi": "Người phỏng vấn muốn mời vài người bạn."
+      },
+      {
+        "en": "The interviewer would like to take a rest.",
+        "vi": "Người phỏng vấn muốn nghỉ ngơi."
+      },
+      {
+        "en": "The interviewer would like to relax at home.",
+        "vi": "Người phỏng vấn muốn thư giãn ở nhà."
+      },
+      {
+        "en": "The interviewer would like to cut expenses.",
+        "vi": "Người phỏng vấn muốn cắt giảm chi tiêu."
+      },
+      { "en": "The interviewer would like to help out.", "vi": "Người phỏng vấn muốn giúp đỡ." },
+      {
+        "en": "The interviewer would like to learn English.",
+        "vi": "Người phỏng vấn muốn học tiếng Anh."
+      },
+      {
+        "en": "The interviewer would like to lower the cost.",
+        "vi": "Người phỏng vấn muốn giảm chi phí."
+      },
+      {
+        "en": "The interviewer would like to double-check everything.",
+        "vi": "Người phỏng vấn muốn kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "The interviewer would like to call a friend.",
+        "vi": "Người phỏng vấn muốn gọi cho một người bạn."
+      },
+      {
+        "en": "The interviewer would like to buy a new phone.",
+        "vi": "Người phỏng vấn muốn mua điện thoại mới."
+      },
+      {
+        "en": "The interviewer would like to learn to swim.",
+        "vi": "Người phỏng vấn muốn học bơi."
+      },
+      {
+        "en": "The interviewer would like to keep in touch.",
+        "vi": "Người phỏng vấn muốn giữ liên lạc."
+      },
+      {
+        "en": "The interviewer would like to sign up today.",
+        "vi": "Người phỏng vấn muốn đăng ký hôm nay."
+      },
+      {
+        "en": "The interviewer would like to fix the problem.",
+        "vi": "Người phỏng vấn muốn sửa vấn đề."
+      },
+      { "en": "The interviewer would like to rent a car.", "vi": "Người phỏng vấn muốn thuê xe." },
+      {
+        "en": "The interviewer would like to answer the phone.",
+        "vi": "Người phỏng vấn muốn trả lời điện thoại."
+      },
+      {
+        "en": "The interviewer would like to water the plants.",
+        "vi": "Người phỏng vấn muốn tưới cây."
+      },
+      {
+        "en": "The interviewer would like to give it a try.",
+        "vi": "Người phỏng vấn muốn thử một lần."
+      },
+      {
+        "en": "The interviewer would like to delete the file.",
+        "vi": "Người phỏng vấn muốn xóa tệp."
+      },
+      {
+        "en": "The interviewer would like to follow the rules.",
+        "vi": "Người phỏng vấn muốn tuân theo quy tắc."
+      },
+      { "en": "The interviewer would like to study abroad.", "vi": "Người phỏng vấn muốn du học." },
+      {
+        "en": "The interviewer would like to print the document.",
+        "vi": "Người phỏng vấn muốn in tài liệu."
+      },
+      {
+        "en": "The interviewer would like to take a day off.",
+        "vi": "Người phỏng vấn muốn xin nghỉ một ngày."
+      },
+      {
+        "en": "The interviewer would like to ask more questions.",
+        "vi": "Người phỏng vấn muốn hỏi nhiều hơn."
+      },
+      {
+        "en": "The interviewer would like to send the email.",
+        "vi": "Người phỏng vấn muốn gửi email."
+      },
+      {
+        "en": "The interviewer would like to cheer for the team.",
+        "vi": "Người phỏng vấn muốn cổ vũ cho đội."
+      },
+      {
+        "en": "The interviewer would like to restart the computer.",
+        "vi": "Người phỏng vấn muốn khởi động lại máy tính."
+      },
+      {
+        "en": "The interviewer would like to confirm the booking.",
+        "vi": "Người phỏng vấn muốn xác nhận đặt chỗ."
+      },
+      {
+        "en": "The interviewer would like to practice every day.",
+        "vi": "Người phỏng vấn muốn luyện tập mỗi ngày."
+      },
+      {
+        "en": "The interviewer would like to say goodbye.",
+        "vi": "Người phỏng vấn muốn nói lời tạm biệt."
+      },
+      {
+        "en": "The interviewer would like to catch the train.",
+        "vi": "Người phỏng vấn muốn bắt chuyến tàu."
+      },
+      { "en": "The interviewer would like to take notes.", "vi": "Người phỏng vấn muốn ghi chép." },
+      {
+        "en": "The interviewer would like to thank everyone.",
+        "vi": "Người phỏng vấn muốn cảm ơn mọi người."
+      },
+      {
+        "en": "The interviewer would like to open a savings account.",
+        "vi": "Người phỏng vấn muốn mở tài khoản tiết kiệm."
+      },
+      { "en": "The interviewer would like to sleep early.", "vi": "Người phỏng vấn muốn ngủ sớm." },
+      {
+        "en": "The interviewer would like to keep a diary.",
+        "vi": "Người phỏng vấn muốn viết nhật ký."
+      },
+      { "en": "The interviewer would like to leave early.", "vi": "Người phỏng vấn muốn về sớm." },
+      {
+        "en": "The interviewer would like to wait a moment.",
+        "vi": "Người phỏng vấn muốn chờ một chút."
+      },
+      {
+        "en": "The interviewer would like to write a report.",
+        "vi": "Người phỏng vấn muốn viết một báo cáo."
+      },
+      {
+        "en": "The interviewer would like to stay organized.",
+        "vi": "Người phỏng vấn muốn giữ ngăn nắp."
+      },
+      {
+        "en": "The interviewer would like to update the software.",
+        "vi": "Người phỏng vấn muốn cập nhật phần mềm."
+      },
+      {
+        "en": "The interviewer would like to improve my skills.",
+        "vi": "Người phỏng vấn muốn cải thiện kỹ năng."
+      },
+      {
+        "en": "The interviewer would like to play sports.",
+        "vi": "Người phỏng vấn muốn chơi thể thao."
+      },
+      {
+        "en": "The interviewer would like to learn something new.",
+        "vi": "Người phỏng vấn muốn học điều gì đó mới."
+      },
+      {
+        "en": "The interviewer would like to drive to work.",
+        "vi": "Người phỏng vấn muốn lái xe đi làm."
+      },
+      { "en": "The interviewer would like to stay home.", "vi": "Người phỏng vấn muốn ở nhà." },
+      {
+        "en": "The interviewer would like to meditate daily.",
+        "vi": "Người phỏng vấn muốn thiền mỗi ngày."
+      },
+      {
+        "en": "The interviewer would like to keep learning.",
+        "vi": "Người phỏng vấn muốn tiếp tục học hỏi."
+      },
+      {
+        "en": "The interviewer would like to travel abroad.",
+        "vi": "Người phỏng vấn muốn đi du lịch nước ngoài."
+      },
+      {
+        "en": "The interviewer would like to drink less coffee.",
+        "vi": "Người phỏng vấn muốn uống ít cà phê hơn."
+      },
+      {
+        "en": "The interviewer would like to pay off the loan.",
+        "vi": "Người phỏng vấn muốn trả hết khoản vay."
+      },
+      {
+        "en": "The interviewer would like to work harder.",
+        "vi": "Người phỏng vấn muốn làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The interviewer would like to ask for help.",
+        "vi": "Người phỏng vấn muốn nhờ giúp đỡ."
+      },
+      {
+        "en": "The interviewer would like to win the contract.",
+        "vi": "Người phỏng vấn muốn giành hợp đồng."
+      },
+      {
+        "en": "The interviewer would like to invest wisely.",
+        "vi": "Người phỏng vấn muốn đầu tư khôn ngoan."
+      },
+      {
+        "en": "The interviewer would like to set an alarm.",
+        "vi": "Người phỏng vấn muốn đặt báo thức."
+      },
+      {
+        "en": "The interviewer would like to save money.",
+        "vi": "Người phỏng vấn muốn tiết kiệm tiền."
+      },
+      {
+        "en": "The interviewer would like to book a ticket.",
+        "vi": "Người phỏng vấn muốn đặt vé."
+      },
+      {
+        "en": "The interviewer would like to close the window.",
+        "vi": "Người phỏng vấn muốn đóng cửa sổ."
+      },
+      {
+        "en": "The interviewer would like to visit the doctor.",
+        "vi": "Người phỏng vấn muốn đi khám bác sĩ."
+      },
+      {
+        "en": "The interviewer would like to be on time.",
+        "vi": "Người phỏng vấn muốn đến đúng giờ."
+      }
+    ]
+  },
+  {
+    "starter": "The interviewer loves to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The interviewer loves to save for the future.",
+        "vi": "Người phỏng vấn thích tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The interviewer loves to drive to work.",
+        "vi": "Người phỏng vấn thích lái xe đi làm."
+      },
+      {
+        "en": "The interviewer loves to answer the phone.",
+        "vi": "Người phỏng vấn thích trả lời điện thoại."
+      },
+      {
+        "en": "The interviewer loves to listen carefully.",
+        "vi": "Người phỏng vấn thích lắng nghe cẩn thận."
+      },
+      {
+        "en": "The interviewer loves to read the news.",
+        "vi": "Người phỏng vấn thích đọc tin tức."
+      },
+      {
+        "en": "The interviewer loves to reset the password.",
+        "vi": "Người phỏng vấn thích đặt lại mật khẩu."
+      },
+      {
+        "en": "The interviewer loves to think positive.",
+        "vi": "Người phỏng vấn thích suy nghĩ tích cực."
+      },
+      {
+        "en": "The interviewer loves to review the document.",
+        "vi": "Người phỏng vấn thích xem lại tài liệu."
+      },
+      {
+        "en": "The interviewer loves to pay off the loan.",
+        "vi": "Người phỏng vấn thích trả hết khoản vay."
+      },
+      { "en": "The interviewer loves to rent a car.", "vi": "Người phỏng vấn thích thuê xe." },
+      {
+        "en": "The interviewer loves to call back later.",
+        "vi": "Người phỏng vấn thích gọi lại sau."
+      },
+      { "en": "The interviewer loves to report the bug.", "vi": "Người phỏng vấn thích báo lỗi." },
+      {
+        "en": "The interviewer loves to ask more questions.",
+        "vi": "Người phỏng vấn thích hỏi nhiều hơn."
+      },
+      {
+        "en": "The interviewer loves to reach the goal.",
+        "vi": "Người phỏng vấn thích đạt mục tiêu."
+      },
+      {
+        "en": "The interviewer loves to close the window.",
+        "vi": "Người phỏng vấn thích đóng cửa sổ."
+      },
+      {
+        "en": "The interviewer loves to invite some friends.",
+        "vi": "Người phỏng vấn thích mời vài người bạn."
+      },
+      {
+        "en": "The interviewer loves to check the details.",
+        "vi": "Người phỏng vấn thích kiểm tra chi tiết."
+      },
+      {
+        "en": "The interviewer loves to follow the rules.",
+        "vi": "Người phỏng vấn thích tuân theo quy tắc."
+      },
+      {
+        "en": "The interviewer loves to write a report.",
+        "vi": "Người phỏng vấn thích viết một báo cáo."
+      },
+      {
+        "en": "The interviewer loves to pass the exam.",
+        "vi": "Người phỏng vấn thích đậu kỳ thi."
+      },
+      {
+        "en": "The interviewer loves to ask a question.",
+        "vi": "Người phỏng vấn thích hỏi một câu."
+      },
+      {
+        "en": "The interviewer loves to play sports.",
+        "vi": "Người phỏng vấn thích chơi thể thao."
+      },
+      { "en": "The interviewer loves to take the bus.", "vi": "Người phỏng vấn thích đi xe buýt." },
+      {
+        "en": "The interviewer loves to write it down.",
+        "vi": "Người phỏng vấn thích ghi nó lại."
+      },
+      {
+        "en": "The interviewer loves to share my opinion.",
+        "vi": "Người phỏng vấn thích chia sẻ ý kiến."
+      },
+      {
+        "en": "The interviewer loves to listen to music.",
+        "vi": "Người phỏng vấn thích nghe nhạc."
+      },
+      {
+        "en": "The interviewer loves to make a reservation.",
+        "vi": "Người phỏng vấn thích đặt chỗ trước."
+      },
+      {
+        "en": "The interviewer loves to fix the problem.",
+        "vi": "Người phỏng vấn thích sửa vấn đề."
+      },
+      {
+        "en": "The interviewer loves to charge the phone.",
+        "vi": "Người phỏng vấn thích sạc điện thoại."
+      },
+      {
+        "en": "The interviewer loves to take medicine.",
+        "vi": "Người phỏng vấn thích uống thuốc."
+      },
+      { "en": "The interviewer loves to be on time.", "vi": "Người phỏng vấn thích đến đúng giờ." },
+      {
+        "en": "The interviewer loves to join a club.",
+        "vi": "Người phỏng vấn thích tham gia câu lạc bộ."
+      },
+      {
+        "en": "The interviewer loves to meet the deadline.",
+        "vi": "Người phỏng vấn thích kịp thời hạn."
+      },
+      {
+        "en": "The interviewer loves to register for the course.",
+        "vi": "Người phỏng vấn thích đăng ký khóa học."
+      },
+      {
+        "en": "The interviewer loves to solve this issue.",
+        "vi": "Người phỏng vấn thích giải quyết vấn đề này."
+      },
+      {
+        "en": "The interviewer loves to attend the workshop.",
+        "vi": "Người phỏng vấn thích tham dự buổi hội thảo."
+      },
+      {
+        "en": "The interviewer loves to take a course.",
+        "vi": "Người phỏng vấn thích tham gia một khóa học."
+      },
+      { "en": "The interviewer loves to go for a walk.", "vi": "Người phỏng vấn thích đi dạo." },
+      {
+        "en": "The interviewer loves to call a friend.",
+        "vi": "Người phỏng vấn thích gọi cho một người bạn."
+      },
+      {
+        "en": "The interviewer loves to rate the service.",
+        "vi": "Người phỏng vấn thích đánh giá dịch vụ."
+      },
+      { "en": "The interviewer loves to give feedback.", "vi": "Người phỏng vấn thích góp ý." },
+      { "en": "The interviewer loves to sleep early.", "vi": "Người phỏng vấn thích ngủ sớm." },
+      {
+        "en": "The interviewer loves to change careers.",
+        "vi": "Người phỏng vấn thích chuyển nghề."
+      },
+      {
+        "en": "The interviewer loves to meditate daily.",
+        "vi": "Người phỏng vấn thích thiền mỗi ngày."
+      },
+      {
+        "en": "The interviewer loves to copy the link.",
+        "vi": "Người phỏng vấn thích sao chép liên kết."
+      },
+      {
+        "en": "The interviewer loves to learn English.",
+        "vi": "Người phỏng vấn thích học tiếng Anh."
+      },
+      {
+        "en": "The interviewer loves to start a new project.",
+        "vi": "Người phỏng vấn thích bắt đầu một dự án mới."
+      },
+      {
+        "en": "The interviewer loves to cook breakfast.",
+        "vi": "Người phỏng vấn thích nấu bữa sáng."
+      },
+      {
+        "en": "The interviewer loves to change the plan.",
+        "vi": "Người phỏng vấn thích thay đổi kế hoạch."
+      },
+      { "en": "The interviewer loves to lock the door.", "vi": "Người phỏng vấn thích khóa cửa." },
+      {
+        "en": "The interviewer loves to remember the password.",
+        "vi": "Người phỏng vấn thích nhớ mật khẩu."
+      },
+      {
+        "en": "The interviewer loves to watch the game.",
+        "vi": "Người phỏng vấn thích xem trận đấu."
+      },
+      {
+        "en": "The interviewer loves to buy a new phone.",
+        "vi": "Người phỏng vấn thích mua điện thoại mới."
+      },
+      {
+        "en": "The interviewer loves to keep in touch.",
+        "vi": "Người phỏng vấn thích giữ liên lạc."
+      },
+      { "en": "The interviewer loves to learn to swim.", "vi": "Người phỏng vấn thích học bơi." },
+      {
+        "en": "The interviewer loves to buy groceries.",
+        "vi": "Người phỏng vấn thích mua thực phẩm."
+      },
+      { "en": "The interviewer loves to start over.", "vi": "Người phỏng vấn thích bắt đầu lại." },
+      {
+        "en": "The interviewer loves to back up the data.",
+        "vi": "Người phỏng vấn thích sao lưu dữ liệu."
+      },
+      {
+        "en": "The interviewer loves to update the software.",
+        "vi": "Người phỏng vấn thích cập nhật phần mềm."
+      },
+      { "en": "The interviewer loves to clean the house.", "vi": "Người phỏng vấn thích dọn nhà." },
+      {
+        "en": "The interviewer loves to work harder.",
+        "vi": "Người phỏng vấn thích làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The interviewer loves to arrive on time.",
+        "vi": "Người phỏng vấn thích đến đúng giờ."
+      },
+      {
+        "en": "The interviewer loves to raise the price.",
+        "vi": "Người phỏng vấn thích tăng giá."
+      },
+      {
+        "en": "The interviewer loves to get some rest.",
+        "vi": "Người phỏng vấn thích nghỉ ngơi một chút."
+      },
+      {
+        "en": "The interviewer loves to finish the report.",
+        "vi": "Người phỏng vấn thích hoàn thành báo cáo."
+      },
+      { "en": "The interviewer loves to wake up early.", "vi": "Người phỏng vấn thích dậy sớm." },
+      {
+        "en": "The interviewer loves to enjoy the weekend.",
+        "vi": "Người phỏng vấn thích tận hưởng cuối tuần."
+      },
+      {
+        "en": "The interviewer loves to understand the lesson.",
+        "vi": "Người phỏng vấn thích hiểu bài học."
+      },
+      {
+        "en": "The interviewer loves to exercise every day.",
+        "vi": "Người phỏng vấn thích tập thể dục mỗi ngày."
+      },
+      {
+        "en": "The interviewer loves to breathe deeply.",
+        "vi": "Người phỏng vấn thích hít thở sâu."
+      },
+      {
+        "en": "The interviewer loves to explain the situation.",
+        "vi": "Người phỏng vấn thích giải thích tình huống."
+      },
+      {
+        "en": "The interviewer loves to travel abroad.",
+        "vi": "Người phỏng vấn thích đi du lịch nước ngoài."
+      },
+      {
+        "en": "The interviewer loves to lower the cost.",
+        "vi": "Người phỏng vấn thích giảm chi phí."
+      },
+      {
+        "en": "The interviewer loves to check my email.",
+        "vi": "Người phỏng vấn thích kiểm tra email."
+      },
+      {
+        "en": "The interviewer loves to take the exam.",
+        "vi": "Người phỏng vấn thích làm bài thi."
+      },
+      {
+        "en": "The interviewer loves to pack my bags.",
+        "vi": "Người phỏng vấn thích xếp hành lý."
+      },
+      {
+        "en": "The interviewer loves to quit smoking.",
+        "vi": "Người phỏng vấn thích bỏ thuốc lá."
+      },
+      {
+        "en": "The interviewer loves to set an alarm.",
+        "vi": "Người phỏng vấn thích đặt báo thức."
+      },
+      {
+        "en": "The interviewer loves to read more books.",
+        "vi": "Người phỏng vấn thích đọc thêm sách."
+      },
+      {
+        "en": "The interviewer loves to try harder next time.",
+        "vi": "Người phỏng vấn thích cố gắng hơn lần sau."
+      },
+      {
+        "en": "The interviewer loves to talk to the manager.",
+        "vi": "Người phỏng vấn thích nói chuyện với quản lý."
+      },
+      {
+        "en": "The interviewer loves to split the bill.",
+        "vi": "Người phỏng vấn thích chia hóa đơn."
+      },
+      { "en": "The interviewer loves to do the laundry.", "vi": "Người phỏng vấn thích giặt đồ." },
+      {
+        "en": "The interviewer loves to close the deal.",
+        "vi": "Người phỏng vấn thích chốt thỏa thuận."
+      },
+      { "en": "The interviewer loves to watch a movie.", "vi": "Người phỏng vấn thích xem phim." },
+      {
+        "en": "The interviewer loves to catch the train.",
+        "vi": "Người phỏng vấn thích bắt chuyến tàu."
+      },
+      {
+        "en": "The interviewer loves to work as a team.",
+        "vi": "Người phỏng vấn thích làm việc theo nhóm."
+      },
+      {
+        "en": "The interviewer loves to go on vacation.",
+        "vi": "Người phỏng vấn thích đi nghỉ mát."
+      },
+      {
+        "en": "The interviewer loves to offer support.",
+        "vi": "Người phỏng vấn thích đề nghị hỗ trợ."
+      },
+      {
+        "en": "The interviewer loves to cheer for the team.",
+        "vi": "Người phỏng vấn thích cổ vũ cho đội."
+      },
+      { "en": "The interviewer loves to help out.", "vi": "Người phỏng vấn thích giúp đỡ." },
+      {
+        "en": "The interviewer loves to open a business.",
+        "vi": "Người phỏng vấn thích mở một doanh nghiệp."
+      },
+      {
+        "en": "The interviewer loves to prepare the presentation.",
+        "vi": "Người phỏng vấn thích chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The interviewer loves to speak clearly.",
+        "vi": "Người phỏng vấn thích nói rõ ràng."
+      },
+      {
+        "en": "The interviewer loves to thank everyone.",
+        "vi": "Người phỏng vấn thích cảm ơn mọi người."
+      },
+      {
+        "en": "The interviewer loves to submit the form.",
+        "vi": "Người phỏng vấn thích nộp biểu mẫu."
+      },
+      {
+        "en": "The interviewer loves to save money.",
+        "vi": "Người phỏng vấn thích tiết kiệm tiền."
+      },
+      {
+        "en": "The interviewer loves to join the meeting.",
+        "vi": "Người phỏng vấn thích tham gia cuộc họp."
+      },
+      {
+        "en": "The interviewer loves to set a goal.",
+        "vi": "Người phỏng vấn thích đặt một mục tiêu."
+      },
+      {
+        "en": "The interviewer loves to never give up.",
+        "vi": "Người phỏng vấn thích không bao giờ bỏ cuộc."
+      }
+    ]
+  },
+  {
+    "starter": "The interviewer can",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The interviewer can cook dinner.", "vi": "Người phỏng vấn có thể nấu bữa tối." },
+      {
+        "en": "The interviewer can visit the doctor.",
+        "vi": "Người phỏng vấn có thể đi khám bác sĩ."
+      },
+      {
+        "en": "The interviewer can change the plan.",
+        "vi": "Người phỏng vấn có thể thay đổi kế hoạch."
+      },
+      {
+        "en": "The interviewer can travel abroad.",
+        "vi": "Người phỏng vấn có thể đi du lịch nước ngoài."
+      },
+      {
+        "en": "The interviewer can close the deal.",
+        "vi": "Người phỏng vấn có thể chốt thỏa thuận."
+      },
+      { "en": "The interviewer can find a job.", "vi": "Người phỏng vấn có thể tìm việc làm." },
+      {
+        "en": "The interviewer can catch the train.",
+        "vi": "Người phỏng vấn có thể bắt chuyến tàu."
+      },
+      {
+        "en": "The interviewer can finish the report.",
+        "vi": "Người phỏng vấn có thể hoàn thành báo cáo."
+      },
+      { "en": "The interviewer can give it a try.", "vi": "Người phỏng vấn có thể thử một lần." },
+      { "en": "The interviewer can think it over.", "vi": "Người phỏng vấn có thể suy nghĩ kỹ." },
+      {
+        "en": "The interviewer can close the window.",
+        "vi": "Người phỏng vấn có thể đóng cửa sổ."
+      },
+      {
+        "en": "The interviewer can back up the data.",
+        "vi": "Người phỏng vấn có thể sao lưu dữ liệu."
+      },
+      { "en": "The interviewer can try again.", "vi": "Người phỏng vấn có thể thử lại." },
+      {
+        "en": "The interviewer can apply for the position.",
+        "vi": "Người phỏng vấn có thể nộp đơn cho vị trí."
+      },
+      { "en": "The interviewer can arrive on time.", "vi": "Người phỏng vấn có thể đến đúng giờ." },
+      { "en": "The interviewer can quit smoking.", "vi": "Người phỏng vấn có thể bỏ thuốc lá." },
+      { "en": "The interviewer can drive to work.", "vi": "Người phỏng vấn có thể lái xe đi làm." },
+      {
+        "en": "The interviewer can buy a new phone.",
+        "vi": "Người phỏng vấn có thể mua điện thoại mới."
+      },
+      { "en": "The interviewer can call back later.", "vi": "Người phỏng vấn có thể gọi lại sau." },
+      { "en": "The interviewer can split the bill.", "vi": "Người phỏng vấn có thể chia hóa đơn." },
+      {
+        "en": "The interviewer can visit my family.",
+        "vi": "Người phỏng vấn có thể thăm gia đình."
+      },
+      {
+        "en": "The interviewer can remember the password.",
+        "vi": "Người phỏng vấn có thể nhớ mật khẩu."
+      },
+      { "en": "The interviewer can be on time.", "vi": "Người phỏng vấn có thể đến đúng giờ." },
+      {
+        "en": "The interviewer can download the file.",
+        "vi": "Người phỏng vấn có thể tải tệp xuống."
+      },
+      {
+        "en": "The interviewer can negotiate the terms.",
+        "vi": "Người phỏng vấn có thể thương lượng điều khoản."
+      },
+      {
+        "en": "The interviewer can schedule a meeting.",
+        "vi": "Người phỏng vấn có thể sắp xếp cuộc họp."
+      },
+      { "en": "The interviewer can lose weight.", "vi": "Người phỏng vấn có thể giảm cân." },
+      { "en": "The interviewer can delete the file.", "vi": "Người phỏng vấn có thể xóa tệp." },
+      {
+        "en": "The interviewer can offer support.",
+        "vi": "Người phỏng vấn có thể đề nghị hỗ trợ."
+      },
+      {
+        "en": "The interviewer can try harder next time.",
+        "vi": "Người phỏng vấn có thể cố gắng hơn lần sau."
+      },
+      {
+        "en": "The interviewer can share the post.",
+        "vi": "Người phỏng vấn có thể chia sẻ bài viết."
+      },
+      { "en": "The interviewer can clean the house.", "vi": "Người phỏng vấn có thể dọn nhà." },
+      {
+        "en": "The interviewer can drink more water.",
+        "vi": "Người phỏng vấn có thể uống nhiều nước hơn."
+      },
+      {
+        "en": "The interviewer can win the contract.",
+        "vi": "Người phỏng vấn có thể giành hợp đồng."
+      },
+      {
+        "en": "The interviewer can pay off the loan.",
+        "vi": "Người phỏng vấn có thể trả hết khoản vay."
+      },
+      {
+        "en": "The interviewer can cheer for the team.",
+        "vi": "Người phỏng vấn có thể cổ vũ cho đội."
+      },
+      {
+        "en": "The interviewer can launch the product.",
+        "vi": "Người phỏng vấn có thể ra mắt sản phẩm."
+      },
+      {
+        "en": "The interviewer can copy the link.",
+        "vi": "Người phỏng vấn có thể sao chép liên kết."
+      },
+      {
+        "en": "The interviewer can invest wisely.",
+        "vi": "Người phỏng vấn có thể đầu tư khôn ngoan."
+      },
+      {
+        "en": "The interviewer can talk to the manager.",
+        "vi": "Người phỏng vấn có thể nói chuyện với quản lý."
+      },
+      { "en": "The interviewer can buy groceries.", "vi": "Người phỏng vấn có thể mua thực phẩm." },
+      {
+        "en": "The interviewer can plan ahead.",
+        "vi": "Người phỏng vấn có thể lên kế hoạch trước."
+      },
+      { "en": "The interviewer can set an alarm.", "vi": "Người phỏng vấn có thể đặt báo thức." },
+      {
+        "en": "The interviewer can prepare the presentation.",
+        "vi": "Người phỏng vấn có thể chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The interviewer can read more books.",
+        "vi": "Người phỏng vấn có thể đọc thêm sách."
+      },
+      {
+        "en": "The interviewer can say goodbye.",
+        "vi": "Người phỏng vấn có thể nói lời tạm biệt."
+      },
+      { "en": "The interviewer can ask for help.", "vi": "Người phỏng vấn có thể nhờ giúp đỡ." },
+      {
+        "en": "The interviewer can print the document.",
+        "vi": "Người phỏng vấn có thể in tài liệu."
+      },
+      { "en": "The interviewer can say sorry.", "vi": "Người phỏng vấn có thể nói lời xin lỗi." },
+      {
+        "en": "The interviewer can meditate daily.",
+        "vi": "Người phỏng vấn có thể thiền mỗi ngày."
+      },
+      { "en": "The interviewer can fix the problem.", "vi": "Người phỏng vấn có thể sửa vấn đề." },
+      { "en": "The interviewer can speak clearly.", "vi": "Người phỏng vấn có thể nói rõ ràng." },
+      { "en": "The interviewer can wash the dishes.", "vi": "Người phỏng vấn có thể rửa bát." },
+      { "en": "The interviewer can keep a promise.", "vi": "Người phỏng vấn có thể giữ lời hứa." },
+      {
+        "en": "The interviewer can take a course.",
+        "vi": "Người phỏng vấn có thể tham gia một khóa học."
+      },
+      { "en": "The interviewer can ride a bike.", "vi": "Người phỏng vấn có thể đạp xe." },
+      {
+        "en": "The interviewer can cut the budget.",
+        "vi": "Người phỏng vấn có thể cắt giảm ngân sách."
+      },
+      { "en": "The interviewer can go on vacation.", "vi": "Người phỏng vấn có thể đi nghỉ mát." },
+      { "en": "The interviewer can study abroad.", "vi": "Người phỏng vấn có thể du học." },
+      {
+        "en": "The interviewer can cut expenses.",
+        "vi": "Người phỏng vấn có thể cắt giảm chi tiêu."
+      },
+      {
+        "en": "The interviewer can donate to charity.",
+        "vi": "Người phỏng vấn có thể quyên góp từ thiện."
+      },
+      {
+        "en": "The interviewer can hire new staff.",
+        "vi": "Người phỏng vấn có thể tuyển nhân viên mới."
+      },
+      { "en": "The interviewer can help the team.", "vi": "Người phỏng vấn có thể giúp đỡ nhóm." },
+      { "en": "The interviewer can take medicine.", "vi": "Người phỏng vấn có thể uống thuốc." },
+      {
+        "en": "The interviewer can finish on time.",
+        "vi": "Người phỏng vấn có thể hoàn thành đúng hạn."
+      },
+      { "en": "The interviewer can walk the dog.", "vi": "Người phỏng vấn có thể dắt chó đi dạo." },
+      {
+        "en": "The interviewer can improve my skills.",
+        "vi": "Người phỏng vấn có thể cải thiện kỹ năng."
+      },
+      {
+        "en": "The interviewer can thank everyone.",
+        "vi": "Người phỏng vấn có thể cảm ơn mọi người."
+      },
+      {
+        "en": "The interviewer can move forward.",
+        "vi": "Người phỏng vấn có thể tiến về phía trước."
+      },
+      {
+        "en": "The interviewer can pay the bill.",
+        "vi": "Người phỏng vấn có thể thanh toán hóa đơn."
+      },
+      {
+        "en": "The interviewer can manage the schedule.",
+        "vi": "Người phỏng vấn có thể quản lý lịch trình."
+      },
+      {
+        "en": "The interviewer can restart the computer.",
+        "vi": "Người phỏng vấn có thể khởi động lại máy tính."
+      },
+      { "en": "The interviewer can take notes.", "vi": "Người phỏng vấn có thể ghi chép." },
+      {
+        "en": "The interviewer can register for the course.",
+        "vi": "Người phỏng vấn có thể đăng ký khóa học."
+      },
+      {
+        "en": "The interviewer can make a decision.",
+        "vi": "Người phỏng vấn có thể đưa ra quyết định."
+      },
+      { "en": "The interviewer can keep a diary.", "vi": "Người phỏng vấn có thể viết nhật ký." },
+      {
+        "en": "The interviewer can take a day off.",
+        "vi": "Người phỏng vấn có thể xin nghỉ một ngày."
+      },
+      {
+        "en": "The interviewer can grow the business.",
+        "vi": "Người phỏng vấn có thể phát triển kinh doanh."
+      },
+      { "en": "The interviewer can write it down.", "vi": "Người phỏng vấn có thể ghi nó lại." },
+      { "en": "The interviewer can calm down.", "vi": "Người phỏng vấn có thể bình tĩnh lại." },
+      {
+        "en": "The interviewer can update the software.",
+        "vi": "Người phỏng vấn có thể cập nhật phần mềm."
+      },
+      {
+        "en": "The interviewer can drink less coffee.",
+        "vi": "Người phỏng vấn có thể uống ít cà phê hơn."
+      },
+      {
+        "en": "The interviewer can attend the workshop.",
+        "vi": "Người phỏng vấn có thể tham dự buổi hội thảo."
+      },
+      {
+        "en": "The interviewer can meet the deadline.",
+        "vi": "Người phỏng vấn có thể kịp thời hạn."
+      },
+      {
+        "en": "The interviewer can scan the receipt.",
+        "vi": "Người phỏng vấn có thể quét hóa đơn."
+      },
+      { "en": "The interviewer can watch the game.", "vi": "Người phỏng vấn có thể xem trận đấu." },
+      { "en": "The interviewer can book a hotel.", "vi": "Người phỏng vấn có thể đặt khách sạn." },
+      { "en": "The interviewer can book a ticket.", "vi": "Người phỏng vấn có thể đặt vé." },
+      { "en": "The interviewer can train the team.", "vi": "Người phỏng vấn có thể đào tạo nhóm." },
+      {
+        "en": "The interviewer can practice every day.",
+        "vi": "Người phỏng vấn có thể luyện tập mỗi ngày."
+      },
+      { "en": "The interviewer can wake up early.", "vi": "Người phỏng vấn có thể dậy sớm." },
+      { "en": "The interviewer can take the bus.", "vi": "Người phỏng vấn có thể đi xe buýt." },
+      {
+        "en": "The interviewer can open a savings account.",
+        "vi": "Người phỏng vấn có thể mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "The interviewer can confirm the booking.",
+        "vi": "Người phỏng vấn có thể xác nhận đặt chỗ."
+      },
+      {
+        "en": "The interviewer can charge the phone.",
+        "vi": "Người phỏng vấn có thể sạc điện thoại."
+      },
+      {
+        "en": "The interviewer can cancel the order.",
+        "vi": "Người phỏng vấn có thể hủy đơn hàng."
+      },
+      { "en": "The interviewer can stay up late.", "vi": "Người phỏng vấn có thể thức khuya." },
+      {
+        "en": "The interviewer can get some rest.",
+        "vi": "Người phỏng vấn có thể nghỉ ngơi một chút."
+      },
+      { "en": "The interviewer can set a goal.", "vi": "Người phỏng vấn có thể đặt một mục tiêu." },
+      { "en": "The interviewer can leave early.", "vi": "Người phỏng vấn có thể về sớm." }
+    ]
+  }
+]

@@ -1,8 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import {
-  evaluateMemoryCandidate,
-  type MemoryCandidate,
-} from '../packages/core-personal/memoryService.js'
+import { evaluateMemoryCandidate, type MemoryCandidate } from '@dhcb/core-personal/memoryService'
 
 describe('Eval V2 Memory', () => {
   const createMockRunner = (rows: any[]) =>

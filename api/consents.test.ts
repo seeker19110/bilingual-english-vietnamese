@@ -1,10 +1,10 @@
 // Test /api/consents — xem/cấp/thu hồi consent (V2-04 slice 1).
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { ConflictError, NotFoundError } from '../packages/core-errors/appError.js'
+import { ConflictError, NotFoundError } from '@dhcb/core-errors/appError'
 
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
 let rateLimitOk = true
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => rateLimitOk,
@@ -12,17 +12,17 @@ vi.mock('../packages/core-auth/security', () => ({
   logSecurityEvent: () => {},
 }))
 
-vi.mock('../packages/core-db/pgPool.js', () => ({ getPgPool: () => ({}) }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: () => ({}) }))
 
 const getOrCreatePerson = vi.fn()
-vi.mock('../packages/core-personal/personService.js', () => ({
+vi.mock('@dhcb/core-personal/personService', () => ({
   getOrCreatePerson: (...a: unknown[]) => getOrCreatePerson(...a),
 }))
 
 const grantConsent = vi.fn()
 const listConsents = vi.fn()
 const revokeConsent = vi.fn()
-vi.mock('../packages/core-personal/consentService.js', () => ({
+vi.mock('@dhcb/core-personal/consentService', () => ({
   grantConsent: (...a: unknown[]) => grantConsent(...a),
   listConsents: (...a: unknown[]) => listConsents(...a),
   revokeConsent: (...a: unknown[]) => revokeConsent(...a),

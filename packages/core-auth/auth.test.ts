@@ -5,7 +5,7 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('./security', () => ({
+vi.mock('./security.js', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => true,
@@ -40,26 +40,26 @@ const authService = vi.hoisted(() => ({
   getUserById: vi.fn(),
   SESSION_TTL_MS: 30 * 24 * 60 * 60 * 1000,
 }))
-vi.mock('./authService', () => authService)
+vi.mock('./authService.js', () => authService)
 
-vi.mock('./emailVerification', () => ({
+vi.mock('./emailVerification.js', () => ({
   sendVerificationCode: vi.fn(async () => ({ ok: true, mail: 'sent' })),
   verifyCode: vi.fn(),
   isEmailVerified: vi.fn(async () => false),
 }))
 
-vi.mock('./adminAuth', () => ({ isAdminEmail: () => false }))
+vi.mock('./adminAuth.js', () => ({ isAdminEmail: () => false }))
 
 const trial = vi.hoisted(() => ({ grantSignupTrial: vi.fn(async () => true) }))
-vi.mock('../../api/_lib/trial', () => ({ ...trial, SIGNUP_TRIAL_DAYS: 14 }))
+vi.mock('./trial.js', () => ({ ...trial, SIGNUP_TRIAL_DAYS: 14 }))
 
-vi.mock('./changeEmail', () => ({ changeEmail: vi.fn() }))
-vi.mock('../../api/_lib/passwordReset', () => ({
+vi.mock('./changeEmail.js', () => ({ changeEmail: vi.fn() }))
+vi.mock('./passwordReset.js', () => ({
   requestPasswordReset: vi.fn(),
   resetPassword: vi.fn(),
 }))
 
-import handler from './auth'
+import handler from './auth.js'
 
 function makeRequest(body: unknown): Request {
   return new Request('http://localhost/api/auth', {

@@ -1,9 +1,9 @@
 // api/_lib/emailReminders.ts — Tự động gửi Email Nhắc Nhở Thông Minh (Smart Email Reminders)
 // cho các học viên chưa học hôm nay, không đăng ký Web Push, và đang trong cooldown 3 ngày.
 
-import { getPgPool } from '../../packages/core-db/pgPool.js'
-import { vnDateStr, addDays } from '../../packages/core-db/date.js'
-import { sendMailWithQuota } from './mailQuota.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import { vnDateStr, addDays } from '@dhcb/core-db/date'
+import { sendMailWithQuota } from '@dhcb/core-http/mailQuota'
 import {
   pickReminderMessage,
   computeStreakAtRisk,

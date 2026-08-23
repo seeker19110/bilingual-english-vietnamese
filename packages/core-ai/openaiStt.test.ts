@@ -5,7 +5,7 @@
 // tắc với parseGroqText đã sửa ở api/ai.ts (F1).
 
 import { describe, it, expect, afterEach, vi } from 'vitest'
-import { transcribeAudio } from './openaiStt'
+import { transcribeAudio } from './openaiStt.js'
 import { __resetGroqKeyRotationForTests } from './groqKeyPool.js'
 
 const OLD_GROQ = process.env.GROQ_API_KEY

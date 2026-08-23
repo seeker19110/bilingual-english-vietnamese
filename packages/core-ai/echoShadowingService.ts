@@ -5,7 +5,7 @@ import {
   type ShadowingSession,
   type AcousticDriftSample,
   SHADOWING_SCHEMA_VERSION,
-} from '../core-contracts/echoShadowing.js'
+} from '@dhcb/core-contracts/echoShadowing'
 
 export const PREDEFINED_PASSAGES: ShadowingPassage[] = [
   {

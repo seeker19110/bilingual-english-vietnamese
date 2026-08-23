@@ -1,0 +1,2739 @@
+[
+  {
+    "starter": "The new employee might",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The new employee might double-check the numbers.",
+        "vi": "Nhân viên mới có thể kiểm tra lại các con số."
+      },
+      {
+        "en": "The new employee might take a photo.",
+        "vi": "Nhân viên mới có thể chụp một bức ảnh."
+      },
+      { "en": "The new employee might speak clearly.", "vi": "Nhân viên mới có thể nói rõ ràng." },
+      {
+        "en": "The new employee might offer support.",
+        "vi": "Nhân viên mới có thể đề nghị hỗ trợ."
+      },
+      {
+        "en": "The new employee might train the team.",
+        "vi": "Nhân viên mới có thể đào tạo nhóm."
+      },
+      {
+        "en": "The new employee might watch the game.",
+        "vi": "Nhân viên mới có thể xem trận đấu."
+      },
+      {
+        "en": "The new employee might prepare the presentation.",
+        "vi": "Nhân viên mới có thể chuẩn bị bài thuyết trình."
+      },
+      { "en": "The new employee might stay up late.", "vi": "Nhân viên mới có thể thức khuya." },
+      {
+        "en": "The new employee might miss the flight.",
+        "vi": "Nhân viên mới có thể lỡ chuyến bay."
+      },
+      {
+        "en": "The new employee might attend the workshop.",
+        "vi": "Nhân viên mới có thể tham dự buổi hội thảo."
+      },
+      {
+        "en": "The new employee might leave a comment.",
+        "vi": "Nhân viên mới có thể để lại bình luận."
+      },
+      {
+        "en": "The new employee might set a goal.",
+        "vi": "Nhân viên mới có thể đặt một mục tiêu."
+      },
+      { "en": "The new employee might go for a walk.", "vi": "Nhân viên mới có thể đi dạo." },
+      { "en": "The new employee might pack my bags.", "vi": "Nhân viên mới có thể xếp hành lý." },
+      {
+        "en": "The new employee might test the feature.",
+        "vi": "Nhân viên mới có thể kiểm thử tính năng."
+      },
+      {
+        "en": "The new employee might review the document.",
+        "vi": "Nhân viên mới có thể xem lại tài liệu."
+      },
+      { "en": "The new employee might report the bug.", "vi": "Nhân viên mới có thể báo lỗi." },
+      {
+        "en": "The new employee might remember the password.",
+        "vi": "Nhân viên mới có thể nhớ mật khẩu."
+      },
+      { "en": "The new employee might say sorry.", "vi": "Nhân viên mới có thể nói lời xin lỗi." },
+      {
+        "en": "The new employee might print the document.",
+        "vi": "Nhân viên mới có thể in tài liệu."
+      },
+      { "en": "The new employee might wait a moment.", "vi": "Nhân viên mới có thể chờ một chút." },
+      {
+        "en": "The new employee might make a reservation.",
+        "vi": "Nhân viên mới có thể đặt chỗ trước."
+      },
+      { "en": "The new employee might ride a bike.", "vi": "Nhân viên mới có thể đạp xe." },
+      {
+        "en": "The new employee might call back later.",
+        "vi": "Nhân viên mới có thể gọi lại sau."
+      },
+      {
+        "en": "The new employee might take a course.",
+        "vi": "Nhân viên mới có thể tham gia một khóa học."
+      },
+      { "en": "The new employee might learn to swim.", "vi": "Nhân viên mới có thể học bơi." },
+      { "en": "The new employee might raise the price.", "vi": "Nhân viên mới có thể tăng giá." },
+      { "en": "The new employee might change careers.", "vi": "Nhân viên mới có thể chuyển nghề." },
+      {
+        "en": "The new employee might eat healthy.",
+        "vi": "Nhân viên mới có thể ăn uống lành mạnh."
+      },
+      { "en": "The new employee might set an alarm.", "vi": "Nhân viên mới có thể đặt báo thức." },
+      { "en": "The new employee might read the news.", "vi": "Nhân viên mới có thể đọc tin tức." },
+      {
+        "en": "The new employee might open a business.",
+        "vi": "Nhân viên mới có thể mở một doanh nghiệp."
+      },
+      {
+        "en": "The new employee might pay off the loan.",
+        "vi": "Nhân viên mới có thể trả hết khoản vay."
+      },
+      {
+        "en": "The new employee might talk to the manager.",
+        "vi": "Nhân viên mới có thể nói chuyện với quản lý."
+      },
+      {
+        "en": "The new employee might grow the business.",
+        "vi": "Nhân viên mới có thể phát triển kinh doanh."
+      },
+      { "en": "The new employee might listen to music.", "vi": "Nhân viên mới có thể nghe nhạc." },
+      {
+        "en": "The new employee might negotiate the terms.",
+        "vi": "Nhân viên mới có thể thương lượng điều khoản."
+      },
+      { "en": "The new employee might take the bus.", "vi": "Nhân viên mới có thể đi xe buýt." },
+      {
+        "en": "The new employee might keep learning.",
+        "vi": "Nhân viên mới có thể tiếp tục học hỏi."
+      },
+      {
+        "en": "The new employee might change the plan.",
+        "vi": "Nhân viên mới có thể thay đổi kế hoạch."
+      },
+      { "en": "The new employee might help out.", "vi": "Nhân viên mới có thể giúp đỡ." },
+      { "en": "The new employee might give it a try.", "vi": "Nhân viên mới có thể thử một lần." },
+      {
+        "en": "The new employee might buy groceries.",
+        "vi": "Nhân viên mới có thể mua thực phẩm."
+      },
+      { "en": "The new employee might get a degree.", "vi": "Nhân viên mới có thể lấy bằng." },
+      { "en": "The new employee might turn off the light.", "vi": "Nhân viên mới có thể tắt đèn." },
+      {
+        "en": "The new employee might finish the report.",
+        "vi": "Nhân viên mới có thể hoàn thành báo cáo."
+      },
+      {
+        "en": "The new employee might back up the data.",
+        "vi": "Nhân viên mới có thể sao lưu dữ liệu."
+      },
+      { "en": "The new employee might throw a party.", "vi": "Nhân viên mới có thể tổ chức tiệc." },
+      {
+        "en": "The new employee might visit the doctor.",
+        "vi": "Nhân viên mới có thể đi khám bác sĩ."
+      },
+      { "en": "The new employee might help the team.", "vi": "Nhân viên mới có thể giúp đỡ nhóm." },
+      {
+        "en": "The new employee might lead the project.",
+        "vi": "Nhân viên mới có thể dẫn dắt dự án."
+      },
+      {
+        "en": "The new employee might follow the rules.",
+        "vi": "Nhân viên mới có thể tuân theo quy tắc."
+      },
+      {
+        "en": "The new employee might start a new project.",
+        "vi": "Nhân viên mới có thể bắt đầu một dự án mới."
+      },
+      { "en": "The new employee might think it over.", "vi": "Nhân viên mới có thể suy nghĩ kỹ." },
+      { "en": "The new employee might take it easy.", "vi": "Nhân viên mới có thể thư giãn." },
+      {
+        "en": "The new employee might close the deal.",
+        "vi": "Nhân viên mới có thể chốt thỏa thuận."
+      },
+      {
+        "en": "The new employee might join a club.",
+        "vi": "Nhân viên mới có thể tham gia câu lạc bộ."
+      },
+      {
+        "en": "The new employee might understand the lesson.",
+        "vi": "Nhân viên mới có thể hiểu bài học."
+      },
+      { "en": "The new employee might write it down.", "vi": "Nhân viên mới có thể ghi nó lại." },
+      {
+        "en": "The new employee might register for the course.",
+        "vi": "Nhân viên mới có thể đăng ký khóa học."
+      },
+      {
+        "en": "The new employee might donate to charity.",
+        "vi": "Nhân viên mới có thể quyên góp từ thiện."
+      },
+      {
+        "en": "The new employee might sign the contract.",
+        "vi": "Nhân viên mới có thể ký hợp đồng."
+      },
+      {
+        "en": "The new employee might support each other.",
+        "vi": "Nhân viên mới có thể hỗ trợ lẫn nhau."
+      },
+      { "en": "The new employee might lock the door.", "vi": "Nhân viên mới có thể khóa cửa." },
+      {
+        "en": "The new employee might update the software.",
+        "vi": "Nhân viên mới có thể cập nhật phần mềm."
+      },
+      {
+        "en": "The new employee might split the bill.",
+        "vi": "Nhân viên mới có thể chia hóa đơn."
+      },
+      { "en": "The new employee might take a rest.", "vi": "Nhân viên mới có thể nghỉ ngơi." },
+      {
+        "en": "The new employee might reply to the message.",
+        "vi": "Nhân viên mới có thể trả lời tin nhắn."
+      },
+      { "en": "The new employee might water the plants.", "vi": "Nhân viên mới có thể tưới cây." },
+      {
+        "en": "The new employee might submit the form.",
+        "vi": "Nhân viên mới có thể nộp biểu mẫu."
+      },
+      {
+        "en": "The new employee might drink less coffee.",
+        "vi": "Nhân viên mới có thể uống ít cà phê hơn."
+      },
+      {
+        "en": "The new employee might move forward.",
+        "vi": "Nhân viên mới có thể tiến về phía trước."
+      },
+      {
+        "en": "The new employee might reach the goal.",
+        "vi": "Nhân viên mới có thể đạt mục tiêu."
+      },
+      { "en": "The new employee might try again.", "vi": "Nhân viên mới có thể thử lại." },
+      {
+        "en": "The new employee might restart the computer.",
+        "vi": "Nhân viên mới có thể khởi động lại máy tính."
+      },
+      {
+        "en": "The new employee might travel abroad.",
+        "vi": "Nhân viên mới có thể đi du lịch nước ngoài."
+      },
+      { "en": "The new employee might order food.", "vi": "Nhân viên mới có thể gọi đồ ăn." },
+      {
+        "en": "The new employee might buy a new phone.",
+        "vi": "Nhân viên mới có thể mua điện thoại mới."
+      },
+      {
+        "en": "The new employee might stay organized.",
+        "vi": "Nhân viên mới có thể giữ ngăn nắp."
+      },
+      {
+        "en": "The new employee might arrive on time.",
+        "vi": "Nhân viên mới có thể đến đúng giờ."
+      },
+      { "en": "The new employee might keep a diary.", "vi": "Nhân viên mới có thể viết nhật ký." },
+      {
+        "en": "The new employee might download the file.",
+        "vi": "Nhân viên mới có thể tải tệp xuống."
+      },
+      {
+        "en": "The new employee might learn something new.",
+        "vi": "Nhân viên mới có thể học điều gì đó mới."
+      },
+      {
+        "en": "The new employee might close the window.",
+        "vi": "Nhân viên mới có thể đóng cửa sổ."
+      },
+      {
+        "en": "The new employee might cut expenses.",
+        "vi": "Nhân viên mới có thể cắt giảm chi tiêu."
+      },
+      {
+        "en": "The new employee might take a chance.",
+        "vi": "Nhân viên mới có thể nắm lấy cơ hội."
+      },
+      {
+        "en": "The new employee might charge the phone.",
+        "vi": "Nhân viên mới có thể sạc điện thoại."
+      },
+      { "en": "The new employee might stay focused.", "vi": "Nhân viên mới có thể giữ tập trung." },
+      {
+        "en": "The new employee might launch the product.",
+        "vi": "Nhân viên mới có thể ra mắt sản phẩm."
+      },
+      {
+        "en": "The new employee might enjoy the weekend.",
+        "vi": "Nhân viên mới có thể tận hưởng cuối tuần."
+      },
+      {
+        "en": "The new employee might invest wisely.",
+        "vi": "Nhân viên mới có thể đầu tư khôn ngoan."
+      },
+      { "en": "The new employee might lose weight.", "vi": "Nhân viên mới có thể giảm cân." },
+      { "en": "The new employee might find a job.", "vi": "Nhân viên mới có thể tìm việc làm." },
+      {
+        "en": "The new employee might fill out the form.",
+        "vi": "Nhân viên mới có thể điền vào biểu mẫu."
+      },
+      {
+        "en": "The new employee might improve my skills.",
+        "vi": "Nhân viên mới có thể cải thiện kỹ năng."
+      },
+      { "en": "The new employee might watch a movie.", "vi": "Nhân viên mới có thể xem phim." },
+      {
+        "en": "The new employee might cook for everyone.",
+        "vi": "Nhân viên mới có thể nấu ăn cho mọi người."
+      },
+      { "en": "The new employee might take a break.", "vi": "Nhân viên mới có thể nghỉ giải lao." },
+      { "en": "The new employee might cook dinner.", "vi": "Nhân viên mới có thể nấu bữa tối." },
+      {
+        "en": "The new employee might rate the service.",
+        "vi": "Nhân viên mới có thể đánh giá dịch vụ."
+      }
+    ]
+  },
+  {
+    "starter": "The new employee has to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      { "en": "The new employee has to listen to music.", "vi": "Nhân viên mới phải nghe nhạc." },
+      { "en": "The new employee has to take the exam.", "vi": "Nhân viên mới phải làm bài thi." },
+      { "en": "The new employee has to calm down.", "vi": "Nhân viên mới phải bình tĩnh lại." },
+      {
+        "en": "The new employee has to pay the bill.",
+        "vi": "Nhân viên mới phải thanh toán hóa đơn."
+      },
+      {
+        "en": "The new employee has to take a photo.",
+        "vi": "Nhân viên mới phải chụp một bức ảnh."
+      },
+      { "en": "The new employee has to leave early.", "vi": "Nhân viên mới phải về sớm." },
+      { "en": "The new employee has to walk the dog.", "vi": "Nhân viên mới phải dắt chó đi dạo." },
+      {
+        "en": "The new employee has to update the software.",
+        "vi": "Nhân viên mới phải cập nhật phần mềm."
+      },
+      {
+        "en": "The new employee has to sign up today.",
+        "vi": "Nhân viên mới phải đăng ký hôm nay."
+      },
+      { "en": "The new employee has to take the bus.", "vi": "Nhân viên mới phải đi xe buýt." },
+      {
+        "en": "The new employee has to meditate daily.",
+        "vi": "Nhân viên mới phải thiền mỗi ngày."
+      },
+      { "en": "The new employee has to go on vacation.", "vi": "Nhân viên mới phải đi nghỉ mát." },
+      {
+        "en": "The new employee has to practice every day.",
+        "vi": "Nhân viên mới phải luyện tập mỗi ngày."
+      },
+      {
+        "en": "The new employee has to download the file.",
+        "vi": "Nhân viên mới phải tải tệp xuống."
+      },
+      {
+        "en": "The new employee has to move forward.",
+        "vi": "Nhân viên mới phải tiến về phía trước."
+      },
+      {
+        "en": "The new employee has to join the meeting.",
+        "vi": "Nhân viên mới phải tham gia cuộc họp."
+      },
+      { "en": "The new employee has to throw a party.", "vi": "Nhân viên mới phải tổ chức tiệc." },
+      {
+        "en": "The new employee has to plan ahead.",
+        "vi": "Nhân viên mới phải lên kế hoạch trước."
+      },
+      { "en": "The new employee has to turn off the light.", "vi": "Nhân viên mới phải tắt đèn." },
+      { "en": "The new employee has to stay up late.", "vi": "Nhân viên mới phải thức khuya." },
+      {
+        "en": "The new employee has to restart the computer.",
+        "vi": "Nhân viên mới phải khởi động lại máy tính."
+      },
+      {
+        "en": "The new employee has to open a business.",
+        "vi": "Nhân viên mới phải mở một doanh nghiệp."
+      },
+      { "en": "The new employee has to set a goal.", "vi": "Nhân viên mới phải đặt một mục tiêu." },
+      {
+        "en": "The new employee has to enjoy the weekend.",
+        "vi": "Nhân viên mới phải tận hưởng cuối tuần."
+      },
+      {
+        "en": "The new employee has to lead the project.",
+        "vi": "Nhân viên mới phải dẫn dắt dự án."
+      },
+      { "en": "The new employee has to read the news.", "vi": "Nhân viên mới phải đọc tin tức." },
+      {
+        "en": "The new employee has to scan the receipt.",
+        "vi": "Nhân viên mới phải quét hóa đơn."
+      },
+      { "en": "The new employee has to fix the problem.", "vi": "Nhân viên mới phải sửa vấn đề." },
+      {
+        "en": "The new employee has to save for the future.",
+        "vi": "Nhân viên mới phải tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The new employee has to install the app.",
+        "vi": "Nhân viên mới phải cài đặt ứng dụng."
+      },
+      {
+        "en": "The new employee has to help a neighbor.",
+        "vi": "Nhân viên mới phải giúp một người hàng xóm."
+      },
+      { "en": "The new employee has to find a job.", "vi": "Nhân viên mới phải tìm việc làm." },
+      {
+        "en": "The new employee has to ask more questions.",
+        "vi": "Nhân viên mới phải hỏi nhiều hơn."
+      },
+      { "en": "The new employee has to try again.", "vi": "Nhân viên mới phải thử lại." },
+      { "en": "The new employee has to help the team.", "vi": "Nhân viên mới phải giúp đỡ nhóm." },
+      { "en": "The new employee has to learn English.", "vi": "Nhân viên mới phải học tiếng Anh." },
+      {
+        "en": "The new employee has to manage the schedule.",
+        "vi": "Nhân viên mới phải quản lý lịch trình."
+      },
+      {
+        "en": "The new employee has to offer support.",
+        "vi": "Nhân viên mới phải đề nghị hỗ trợ."
+      },
+      {
+        "en": "The new employee has to test the feature.",
+        "vi": "Nhân viên mới phải kiểm thử tính năng."
+      },
+      {
+        "en": "The new employee has to sign the contract.",
+        "vi": "Nhân viên mới phải ký hợp đồng."
+      },
+      {
+        "en": "The new employee has to buy a new phone.",
+        "vi": "Nhân viên mới phải mua điện thoại mới."
+      },
+      { "en": "The new employee has to ask a question.", "vi": "Nhân viên mới phải hỏi một câu." },
+      {
+        "en": "The new employee has to call a friend.",
+        "vi": "Nhân viên mới phải gọi cho một người bạn."
+      },
+      { "en": "The new employee has to learn to swim.", "vi": "Nhân viên mới phải học bơi." },
+      {
+        "en": "The new employee has to say goodbye.",
+        "vi": "Nhân viên mới phải nói lời tạm biệt."
+      },
+      { "en": "The new employee has to wake up early.", "vi": "Nhân viên mới phải dậy sớm." },
+      {
+        "en": "The new employee has to back up the data.",
+        "vi": "Nhân viên mới phải sao lưu dữ liệu."
+      },
+      { "en": "The new employee has to quit smoking.", "vi": "Nhân viên mới phải bỏ thuốc lá." },
+      { "en": "The new employee has to say sorry.", "vi": "Nhân viên mới phải nói lời xin lỗi." },
+      {
+        "en": "The new employee has to take a day off.",
+        "vi": "Nhân viên mới phải xin nghỉ một ngày."
+      },
+      {
+        "en": "The new employee has to work harder.",
+        "vi": "Nhân viên mới phải làm việc chăm chỉ hơn."
+      },
+      { "en": "The new employee has to cook dinner.", "vi": "Nhân viên mới phải nấu bữa tối." },
+      {
+        "en": "The new employee has to close the deal.",
+        "vi": "Nhân viên mới phải chốt thỏa thuận."
+      },
+      { "en": "The new employee has to send the email.", "vi": "Nhân viên mới phải gửi email." },
+      {
+        "en": "The new employee has to reset the password.",
+        "vi": "Nhân viên mới phải đặt lại mật khẩu."
+      },
+      {
+        "en": "The new employee has to apply for the position.",
+        "vi": "Nhân viên mới phải nộp đơn cho vị trí."
+      },
+      { "en": "The new employee has to set an alarm.", "vi": "Nhân viên mới phải đặt báo thức." },
+      {
+        "en": "The new employee has to cut the budget.",
+        "vi": "Nhân viên mới phải cắt giảm ngân sách."
+      },
+      {
+        "en": "The new employee has to make a reservation.",
+        "vi": "Nhân viên mới phải đặt chỗ trước."
+      },
+      {
+        "en": "The new employee has to finish on time.",
+        "vi": "Nhân viên mới phải hoàn thành đúng hạn."
+      },
+      { "en": "The new employee has to reach the goal.", "vi": "Nhân viên mới phải đạt mục tiêu." },
+      {
+        "en": "The new employee has to work as a team.",
+        "vi": "Nhân viên mới phải làm việc theo nhóm."
+      },
+      {
+        "en": "The new employee has to take a chance.",
+        "vi": "Nhân viên mới phải nắm lấy cơ hội."
+      },
+      { "en": "The new employee has to go home.", "vi": "Nhân viên mới phải về nhà." },
+      {
+        "en": "The new employee has to miss the flight.",
+        "vi": "Nhân viên mới phải lỡ chuyến bay."
+      },
+      {
+        "en": "The new employee has to keep learning.",
+        "vi": "Nhân viên mới phải tiếp tục học hỏi."
+      },
+      {
+        "en": "The new employee has to cancel the order.",
+        "vi": "Nhân viên mới phải hủy đơn hàng."
+      },
+      { "en": "The new employee has to rent a car.", "vi": "Nhân viên mới phải thuê xe." },
+      { "en": "The new employee has to water the plants.", "vi": "Nhân viên mới phải tưới cây." },
+      {
+        "en": "The new employee has to review the document.",
+        "vi": "Nhân viên mới phải xem lại tài liệu."
+      },
+      {
+        "en": "The new employee has to attend the workshop.",
+        "vi": "Nhân viên mới phải tham dự buổi hội thảo."
+      },
+      { "en": "The new employee has to breathe deeply.", "vi": "Nhân viên mới phải hít thở sâu." },
+      {
+        "en": "The new employee has to eat healthy.",
+        "vi": "Nhân viên mới phải ăn uống lành mạnh."
+      },
+      {
+        "en": "The new employee has to make new friends.",
+        "vi": "Nhân viên mới phải kết bạn mới."
+      },
+      { "en": "The new employee has to give it a try.", "vi": "Nhân viên mới phải thử một lần." },
+      {
+        "en": "The new employee has to solve this issue.",
+        "vi": "Nhân viên mới phải giải quyết vấn đề này."
+      },
+      { "en": "The new employee has to study abroad.", "vi": "Nhân viên mới phải du học." },
+      {
+        "en": "The new employee has to cook for everyone.",
+        "vi": "Nhân viên mới phải nấu ăn cho mọi người."
+      },
+      { "en": "The new employee has to pack my bags.", "vi": "Nhân viên mới phải xếp hành lý." },
+      { "en": "The new employee has to split the bill.", "vi": "Nhân viên mới phải chia hóa đơn." },
+      {
+        "en": "The new employee has to get some rest.",
+        "vi": "Nhân viên mới phải nghỉ ngơi một chút."
+      },
+      { "en": "The new employee has to give feedback.", "vi": "Nhân viên mới phải góp ý." },
+      {
+        "en": "The new employee has to donate to charity.",
+        "vi": "Nhân viên mới phải quyên góp từ thiện."
+      },
+      {
+        "en": "The new employee has to exercise every day.",
+        "vi": "Nhân viên mới phải tập thể dục mỗi ngày."
+      },
+      {
+        "en": "The new employee has to pay off the loan.",
+        "vi": "Nhân viên mới phải trả hết khoản vay."
+      },
+      {
+        "en": "The new employee has to leave a comment.",
+        "vi": "Nhân viên mới phải để lại bình luận."
+      },
+      {
+        "en": "The new employee has to confirm the booking.",
+        "vi": "Nhân viên mới phải xác nhận đặt chỗ."
+      },
+      { "en": "The new employee has to help out.", "vi": "Nhân viên mới phải giúp đỡ." },
+      {
+        "en": "The new employee has to check my email.",
+        "vi": "Nhân viên mới phải kiểm tra email."
+      },
+      {
+        "en": "The new employee has to print the document.",
+        "vi": "Nhân viên mới phải in tài liệu."
+      },
+      {
+        "en": "The new employee has to make a decision.",
+        "vi": "Nhân viên mới phải đưa ra quyết định."
+      },
+      { "en": "The new employee has to delete the file.", "vi": "Nhân viên mới phải xóa tệp." },
+      { "en": "The new employee has to wash the dishes.", "vi": "Nhân viên mới phải rửa bát." },
+      { "en": "The new employee has to drive to work.", "vi": "Nhân viên mới phải lái xe đi làm." },
+      { "en": "The new employee has to lock the door.", "vi": "Nhân viên mới phải khóa cửa." },
+      {
+        "en": "The new employee has to write a report.",
+        "vi": "Nhân viên mới phải viết một báo cáo."
+      },
+      {
+        "en": "The new employee has to negotiate the terms.",
+        "vi": "Nhân viên mới phải thương lượng điều khoản."
+      },
+      { "en": "The new employee has to watch a movie.", "vi": "Nhân viên mới phải xem phim." },
+      {
+        "en": "The new employee has to change the plan.",
+        "vi": "Nhân viên mới phải thay đổi kế hoạch."
+      },
+      { "en": "The new employee has to take notes.", "vi": "Nhân viên mới phải ghi chép." }
+    ]
+  },
+  {
+    "starter": "The new employee is going to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The new employee is going to change careers.",
+        "vi": "Nhân viên mới sắp chuyển nghề."
+      },
+      { "en": "The new employee is going to calm down.", "vi": "Nhân viên mới sắp bình tĩnh lại." },
+      { "en": "The new employee is going to delete the file.", "vi": "Nhân viên mới sắp xóa tệp." },
+      {
+        "en": "The new employee is going to talk to the manager.",
+        "vi": "Nhân viên mới sắp nói chuyện với quản lý."
+      },
+      {
+        "en": "The new employee is going to attend the workshop.",
+        "vi": "Nhân viên mới sắp tham dự buổi hội thảo."
+      },
+      {
+        "en": "The new employee is going to apply for the position.",
+        "vi": "Nhân viên mới sắp nộp đơn cho vị trí."
+      },
+      { "en": "The new employee is going to report the bug.", "vi": "Nhân viên mới sắp báo lỗi." },
+      {
+        "en": "The new employee is going to meet new people.",
+        "vi": "Nhân viên mới sắp gặp gỡ người mới."
+      },
+      {
+        "en": "The new employee is going to stay organized.",
+        "vi": "Nhân viên mới sắp giữ ngăn nắp."
+      },
+      {
+        "en": "The new employee is going to close the window.",
+        "vi": "Nhân viên mới sắp đóng cửa sổ."
+      },
+      {
+        "en": "The new employee is going to listen to music.",
+        "vi": "Nhân viên mới sắp nghe nhạc."
+      },
+      {
+        "en": "The new employee is going to say goodbye.",
+        "vi": "Nhân viên mới sắp nói lời tạm biệt."
+      },
+      {
+        "en": "The new employee is going to manage the schedule.",
+        "vi": "Nhân viên mới sắp quản lý lịch trình."
+      },
+      {
+        "en": "The new employee is going to travel abroad.",
+        "vi": "Nhân viên mới sắp đi du lịch nước ngoài."
+      },
+      {
+        "en": "The new employee is going to finish the report.",
+        "vi": "Nhân viên mới sắp hoàn thành báo cáo."
+      },
+      {
+        "en": "The new employee is going to throw a party.",
+        "vi": "Nhân viên mới sắp tổ chức tiệc."
+      },
+      {
+        "en": "The new employee is going to take a chance.",
+        "vi": "Nhân viên mới sắp nắm lấy cơ hội."
+      },
+      {
+        "en": "The new employee is going to never give up.",
+        "vi": "Nhân viên mới sắp không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The new employee is going to remember the password.",
+        "vi": "Nhân viên mới sắp nhớ mật khẩu."
+      },
+      { "en": "The new employee is going to try again.", "vi": "Nhân viên mới sắp thử lại." },
+      {
+        "en": "The new employee is going to update the software.",
+        "vi": "Nhân viên mới sắp cập nhật phần mềm."
+      },
+      {
+        "en": "The new employee is going to exercise every day.",
+        "vi": "Nhân viên mới sắp tập thể dục mỗi ngày."
+      },
+      { "en": "The new employee is going to lock the door.", "vi": "Nhân viên mới sắp khóa cửa." },
+      {
+        "en": "The new employee is going to follow the rules.",
+        "vi": "Nhân viên mới sắp tuân theo quy tắc."
+      },
+      {
+        "en": "The new employee is going to log in again.",
+        "vi": "Nhân viên mới sắp đăng nhập lại."
+      },
+      {
+        "en": "The new employee is going to close the deal.",
+        "vi": "Nhân viên mới sắp chốt thỏa thuận."
+      },
+      {
+        "en": "The new employee is going to invest wisely.",
+        "vi": "Nhân viên mới sắp đầu tư khôn ngoan."
+      },
+      {
+        "en": "The new employee is going to register for the course.",
+        "vi": "Nhân viên mới sắp đăng ký khóa học."
+      },
+      {
+        "en": "The new employee is going to make new friends.",
+        "vi": "Nhân viên mới sắp kết bạn mới."
+      },
+      { "en": "The new employee is going to get a degree.", "vi": "Nhân viên mới sắp lấy bằng." },
+      {
+        "en": "The new employee is going to listen carefully.",
+        "vi": "Nhân viên mới sắp lắng nghe cẩn thận."
+      },
+      {
+        "en": "The new employee is going to fill out the form.",
+        "vi": "Nhân viên mới sắp điền vào biểu mẫu."
+      },
+      {
+        "en": "The new employee is going to plan ahead.",
+        "vi": "Nhân viên mới sắp lên kế hoạch trước."
+      },
+      {
+        "en": "The new employee is going to try harder next time.",
+        "vi": "Nhân viên mới sắp cố gắng hơn lần sau."
+      },
+      {
+        "en": "The new employee is going to move forward.",
+        "vi": "Nhân viên mới sắp tiến về phía trước."
+      },
+      { "en": "The new employee is going to do the laundry.", "vi": "Nhân viên mới sắp giặt đồ." },
+      {
+        "en": "The new employee is going to attend the class.",
+        "vi": "Nhân viên mới sắp tham gia lớp học."
+      },
+      {
+        "en": "The new employee is going to write it down.",
+        "vi": "Nhân viên mới sắp ghi nó lại."
+      },
+      {
+        "en": "The new employee is going to take medicine.",
+        "vi": "Nhân viên mới sắp uống thuốc."
+      },
+      { "en": "The new employee is going to watch a movie.", "vi": "Nhân viên mới sắp xem phim." },
+      {
+        "en": "The new employee is going to send the email.",
+        "vi": "Nhân viên mới sắp gửi email."
+      },
+      {
+        "en": "The new employee is going to restart the computer.",
+        "vi": "Nhân viên mới sắp khởi động lại máy tính."
+      },
+      {
+        "en": "The new employee is going to raise the price.",
+        "vi": "Nhân viên mới sắp tăng giá."
+      },
+      {
+        "en": "The new employee is going to confirm the booking.",
+        "vi": "Nhân viên mới sắp xác nhận đặt chỗ."
+      },
+      { "en": "The new employee is going to clean the house.", "vi": "Nhân viên mới sắp dọn nhà." },
+      {
+        "en": "The new employee is going to sign up today.",
+        "vi": "Nhân viên mới sắp đăng ký hôm nay."
+      },
+      {
+        "en": "The new employee is going to volunteer on weekends.",
+        "vi": "Nhân viên mới sắp tình nguyện cuối tuần."
+      },
+      {
+        "en": "The new employee is going to hire new staff.",
+        "vi": "Nhân viên mới sắp tuyển nhân viên mới."
+      },
+      {
+        "en": "The new employee is going to tell the truth.",
+        "vi": "Nhân viên mới sắp nói sự thật."
+      },
+      { "en": "The new employee is going to stay up late.", "vi": "Nhân viên mới sắp thức khuya." },
+      {
+        "en": "The new employee is going to invite some friends.",
+        "vi": "Nhân viên mới sắp mời vài người bạn."
+      },
+      {
+        "en": "The new employee is going to ask more questions.",
+        "vi": "Nhân viên mới sắp hỏi nhiều hơn."
+      },
+      {
+        "en": "The new employee is going to drink less coffee.",
+        "vi": "Nhân viên mới sắp uống ít cà phê hơn."
+      },
+      {
+        "en": "The new employee is going to donate to charity.",
+        "vi": "Nhân viên mới sắp quyên góp từ thiện."
+      },
+      {
+        "en": "The new employee is going to join a club.",
+        "vi": "Nhân viên mới sắp tham gia câu lạc bộ."
+      },
+      {
+        "en": "The new employee is going to save for the future.",
+        "vi": "Nhân viên mới sắp tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The new employee is going to get a promotion.",
+        "vi": "Nhân viên mới sắp được thăng chức."
+      },
+      {
+        "en": "The new employee is going to back up the data.",
+        "vi": "Nhân viên mới sắp sao lưu dữ liệu."
+      },
+      {
+        "en": "The new employee is going to pass the exam.",
+        "vi": "Nhân viên mới sắp đậu kỳ thi."
+      },
+      { "en": "The new employee is going to take a rest.", "vi": "Nhân viên mới sắp nghỉ ngơi." },
+      {
+        "en": "The new employee is going to win the contract.",
+        "vi": "Nhân viên mới sắp giành hợp đồng."
+      },
+      {
+        "en": "The new employee is going to install the app.",
+        "vi": "Nhân viên mới sắp cài đặt ứng dụng."
+      },
+      {
+        "en": "The new employee is going to pack my bags.",
+        "vi": "Nhân viên mới sắp xếp hành lý."
+      },
+      {
+        "en": "The new employee is going to leave a comment.",
+        "vi": "Nhân viên mới sắp để lại bình luận."
+      },
+      {
+        "en": "The new employee is going to lead the project.",
+        "vi": "Nhân viên mới sắp dẫn dắt dự án."
+      },
+      {
+        "en": "The new employee is going to set a goal.",
+        "vi": "Nhân viên mới sắp đặt một mục tiêu."
+      },
+      {
+        "en": "The new employee is going to wait a moment.",
+        "vi": "Nhân viên mới sắp chờ một chút."
+      },
+      { "en": "The new employee is going to take it easy.", "vi": "Nhân viên mới sắp thư giãn." },
+      {
+        "en": "The new employee is going to solve this issue.",
+        "vi": "Nhân viên mới sắp giải quyết vấn đề này."
+      },
+      {
+        "en": "The new employee is going to help the team.",
+        "vi": "Nhân viên mới sắp giúp đỡ nhóm."
+      },
+      {
+        "en": "The new employee is going to book a hotel.",
+        "vi": "Nhân viên mới sắp đặt khách sạn."
+      },
+      {
+        "en": "The new employee is going to plan a trip.",
+        "vi": "Nhân viên mới sắp lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "The new employee is going to quit smoking.",
+        "vi": "Nhân viên mới sắp bỏ thuốc lá."
+      },
+      { "en": "The new employee is going to go for a walk.", "vi": "Nhân viên mới sắp đi dạo." },
+      {
+        "en": "The new employee is going to take a break.",
+        "vi": "Nhân viên mới sắp nghỉ giải lao."
+      },
+      {
+        "en": "The new employee is going to set an alarm.",
+        "vi": "Nhân viên mới sắp đặt báo thức."
+      },
+      {
+        "en": "The new employee is going to schedule a meeting.",
+        "vi": "Nhân viên mới sắp sắp xếp cuộc họp."
+      },
+      { "en": "The new employee is going to be on time.", "vi": "Nhân viên mới sắp đến đúng giờ." },
+      {
+        "en": "The new employee is going to grow the business.",
+        "vi": "Nhân viên mới sắp phát triển kinh doanh."
+      },
+      {
+        "en": "The new employee is going to miss the flight.",
+        "vi": "Nhân viên mới sắp lỡ chuyến bay."
+      },
+      {
+        "en": "The new employee is going to test the feature.",
+        "vi": "Nhân viên mới sắp kiểm thử tính năng."
+      },
+      {
+        "en": "The new employee is going to save money.",
+        "vi": "Nhân viên mới sắp tiết kiệm tiền."
+      },
+      {
+        "en": "The new employee is going to change the plan.",
+        "vi": "Nhân viên mới sắp thay đổi kế hoạch."
+      },
+      {
+        "en": "The new employee is going to take the exam.",
+        "vi": "Nhân viên mới sắp làm bài thi."
+      },
+      {
+        "en": "The new employee is going to read the news.",
+        "vi": "Nhân viên mới sắp đọc tin tức."
+      },
+      {
+        "en": "The new employee is going to pay off the loan.",
+        "vi": "Nhân viên mới sắp trả hết khoản vay."
+      },
+      {
+        "en": "The new employee is going to rate the service.",
+        "vi": "Nhân viên mới sắp đánh giá dịch vụ."
+      },
+      { "en": "The new employee is going to give feedback.", "vi": "Nhân viên mới sắp góp ý." },
+      {
+        "en": "The new employee is going to celebrate together.",
+        "vi": "Nhân viên mới sắp ăn mừng cùng nhau."
+      },
+      {
+        "en": "The new employee is going to call a friend.",
+        "vi": "Nhân viên mới sắp gọi cho một người bạn."
+      },
+      {
+        "en": "The new employee is going to reply to the message.",
+        "vi": "Nhân viên mới sắp trả lời tin nhắn."
+      },
+      {
+        "en": "The new employee is going to finish on time.",
+        "vi": "Nhân viên mới sắp hoàn thành đúng hạn."
+      },
+      {
+        "en": "The new employee is going to double-check the numbers.",
+        "vi": "Nhân viên mới sắp kiểm tra lại các con số."
+      },
+      {
+        "en": "The new employee is going to fix the problem.",
+        "vi": "Nhân viên mới sắp sửa vấn đề."
+      },
+      {
+        "en": "The new employee is going to check the details.",
+        "vi": "Nhân viên mới sắp kiểm tra chi tiết."
+      },
+      {
+        "en": "The new employee is going to speak English.",
+        "vi": "Nhân viên mới sắp nói tiếng Anh."
+      },
+      {
+        "en": "The new employee is going to meditate daily.",
+        "vi": "Nhân viên mới sắp thiền mỗi ngày."
+      },
+      {
+        "en": "The new employee is going to help a neighbor.",
+        "vi": "Nhân viên mới sắp giúp một người hàng xóm."
+      },
+      {
+        "en": "The new employee is going to download the file.",
+        "vi": "Nhân viên mới sắp tải tệp xuống."
+      },
+      {
+        "en": "The new employee is going to stay focused.",
+        "vi": "Nhân viên mới sắp giữ tập trung."
+      }
+    ]
+  },
+  {
+    "starter": "The new employee is trying to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The new employee is trying to win the contract.",
+        "vi": "Nhân viên mới đang cố giành hợp đồng."
+      },
+      {
+        "en": "The new employee is trying to keep a diary.",
+        "vi": "Nhân viên mới đang cố viết nhật ký."
+      },
+      {
+        "en": "The new employee is trying to split the bill.",
+        "vi": "Nhân viên mới đang cố chia hóa đơn."
+      },
+      {
+        "en": "The new employee is trying to make new friends.",
+        "vi": "Nhân viên mới đang cố kết bạn mới."
+      },
+      {
+        "en": "The new employee is trying to book a ticket.",
+        "vi": "Nhân viên mới đang cố đặt vé."
+      },
+      {
+        "en": "The new employee is trying to clean the house.",
+        "vi": "Nhân viên mới đang cố dọn nhà."
+      },
+      {
+        "en": "The new employee is trying to attend the class.",
+        "vi": "Nhân viên mới đang cố tham gia lớp học."
+      },
+      {
+        "en": "The new employee is trying to book a hotel.",
+        "vi": "Nhân viên mới đang cố đặt khách sạn."
+      },
+      {
+        "en": "The new employee is trying to go for a walk.",
+        "vi": "Nhân viên mới đang cố đi dạo."
+      },
+      {
+        "en": "The new employee is trying to stay up late.",
+        "vi": "Nhân viên mới đang cố thức khuya."
+      },
+      {
+        "en": "The new employee is trying to send the email.",
+        "vi": "Nhân viên mới đang cố gửi email."
+      },
+      {
+        "en": "The new employee is trying to hire new staff.",
+        "vi": "Nhân viên mới đang cố tuyển nhân viên mới."
+      },
+      {
+        "en": "The new employee is trying to be on time.",
+        "vi": "Nhân viên mới đang cố đến đúng giờ."
+      },
+      {
+        "en": "The new employee is trying to stay organized.",
+        "vi": "Nhân viên mới đang cố giữ ngăn nắp."
+      },
+      {
+        "en": "The new employee is trying to take a photo.",
+        "vi": "Nhân viên mới đang cố chụp một bức ảnh."
+      },
+      {
+        "en": "The new employee is trying to pass the exam.",
+        "vi": "Nhân viên mới đang cố đậu kỳ thi."
+      },
+      {
+        "en": "The new employee is trying to follow the rules.",
+        "vi": "Nhân viên mới đang cố tuân theo quy tắc."
+      },
+      {
+        "en": "The new employee is trying to say goodbye.",
+        "vi": "Nhân viên mới đang cố nói lời tạm biệt."
+      },
+      {
+        "en": "The new employee is trying to take medicine.",
+        "vi": "Nhân viên mới đang cố uống thuốc."
+      },
+      {
+        "en": "The new employee is trying to test the feature.",
+        "vi": "Nhân viên mới đang cố kiểm thử tính năng."
+      },
+      {
+        "en": "The new employee is trying to change careers.",
+        "vi": "Nhân viên mới đang cố chuyển nghề."
+      },
+      {
+        "en": "The new employee is trying to give it a try.",
+        "vi": "Nhân viên mới đang cố thử một lần."
+      },
+      {
+        "en": "The new employee is trying to cut the budget.",
+        "vi": "Nhân viên mới đang cố cắt giảm ngân sách."
+      },
+      {
+        "en": "The new employee is trying to check my email.",
+        "vi": "Nhân viên mới đang cố kiểm tra email."
+      },
+      {
+        "en": "The new employee is trying to exercise every day.",
+        "vi": "Nhân viên mới đang cố tập thể dục mỗi ngày."
+      },
+      {
+        "en": "The new employee is trying to sign the contract.",
+        "vi": "Nhân viên mới đang cố ký hợp đồng."
+      },
+      {
+        "en": "The new employee is trying to log in again.",
+        "vi": "Nhân viên mới đang cố đăng nhập lại."
+      },
+      {
+        "en": "The new employee is trying to take a break.",
+        "vi": "Nhân viên mới đang cố nghỉ giải lao."
+      },
+      {
+        "en": "The new employee is trying to start over.",
+        "vi": "Nhân viên mới đang cố bắt đầu lại."
+      },
+      {
+        "en": "The new employee is trying to finish on time.",
+        "vi": "Nhân viên mới đang cố hoàn thành đúng hạn."
+      },
+      {
+        "en": "The new employee is trying to pay off the loan.",
+        "vi": "Nhân viên mới đang cố trả hết khoản vay."
+      },
+      {
+        "en": "The new employee is trying to back up the data.",
+        "vi": "Nhân viên mới đang cố sao lưu dữ liệu."
+      },
+      {
+        "en": "The new employee is trying to eat healthy.",
+        "vi": "Nhân viên mới đang cố ăn uống lành mạnh."
+      },
+      {
+        "en": "The new employee is trying to train the team.",
+        "vi": "Nhân viên mới đang cố đào tạo nhóm."
+      },
+      {
+        "en": "The new employee is trying to launch the product.",
+        "vi": "Nhân viên mới đang cố ra mắt sản phẩm."
+      },
+      {
+        "en": "The new employee is trying to reply to the message.",
+        "vi": "Nhân viên mới đang cố trả lời tin nhắn."
+      },
+      {
+        "en": "The new employee is trying to wash the dishes.",
+        "vi": "Nhân viên mới đang cố rửa bát."
+      },
+      {
+        "en": "The new employee is trying to drink less coffee.",
+        "vi": "Nhân viên mới đang cố uống ít cà phê hơn."
+      },
+      {
+        "en": "The new employee is trying to join a club.",
+        "vi": "Nhân viên mới đang cố tham gia câu lạc bộ."
+      },
+      {
+        "en": "The new employee is trying to get a promotion.",
+        "vi": "Nhân viên mới đang cố được thăng chức."
+      },
+      {
+        "en": "The new employee is trying to ask for a raise.",
+        "vi": "Nhân viên mới đang cố xin tăng lương."
+      },
+      {
+        "en": "The new employee is trying to relax at home.",
+        "vi": "Nhân viên mới đang cố thư giãn ở nhà."
+      },
+      {
+        "en": "The new employee is trying to fill out the form.",
+        "vi": "Nhân viên mới đang cố điền vào biểu mẫu."
+      },
+      {
+        "en": "The new employee is trying to set an alarm.",
+        "vi": "Nhân viên mới đang cố đặt báo thức."
+      },
+      {
+        "en": "The new employee is trying to try harder next time.",
+        "vi": "Nhân viên mới đang cố cố gắng hơn lần sau."
+      },
+      {
+        "en": "The new employee is trying to lower the cost.",
+        "vi": "Nhân viên mới đang cố giảm chi phí."
+      },
+      {
+        "en": "The new employee is trying to donate to charity.",
+        "vi": "Nhân viên mới đang cố quyên góp từ thiện."
+      },
+      {
+        "en": "The new employee is trying to negotiate the terms.",
+        "vi": "Nhân viên mới đang cố thương lượng điều khoản."
+      },
+      { "en": "The new employee is trying to stay home.", "vi": "Nhân viên mới đang cố ở nhà." },
+      {
+        "en": "The new employee is trying to understand the lesson.",
+        "vi": "Nhân viên mới đang cố hiểu bài học."
+      },
+      {
+        "en": "The new employee is trying to start a new project.",
+        "vi": "Nhân viên mới đang cố bắt đầu một dự án mới."
+      },
+      {
+        "en": "The new employee is trying to charge the phone.",
+        "vi": "Nhân viên mới đang cố sạc điện thoại."
+      },
+      {
+        "en": "The new employee is trying to throw a party.",
+        "vi": "Nhân viên mới đang cố tổ chức tiệc."
+      },
+      {
+        "en": "The new employee is trying to prepare the presentation.",
+        "vi": "Nhân viên mới đang cố chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The new employee is trying to leave a comment.",
+        "vi": "Nhân viên mới đang cố để lại bình luận."
+      },
+      {
+        "en": "The new employee is trying to watch the game.",
+        "vi": "Nhân viên mới đang cố xem trận đấu."
+      },
+      {
+        "en": "The new employee is trying to double-check everything.",
+        "vi": "Nhân viên mới đang cố kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "The new employee is trying to get a degree.",
+        "vi": "Nhân viên mới đang cố lấy bằng."
+      },
+      {
+        "en": "The new employee is trying to answer the phone.",
+        "vi": "Nhân viên mới đang cố trả lời điện thoại."
+      },
+      {
+        "en": "The new employee is trying to set a goal.",
+        "vi": "Nhân viên mới đang cố đặt một mục tiêu."
+      },
+      {
+        "en": "The new employee is trying to visit the doctor.",
+        "vi": "Nhân viên mới đang cố đi khám bác sĩ."
+      },
+      {
+        "en": "The new employee is trying to report the bug.",
+        "vi": "Nhân viên mới đang cố báo lỗi."
+      },
+      {
+        "en": "The new employee is trying to make a decision.",
+        "vi": "Nhân viên mới đang cố đưa ra quyết định."
+      },
+      {
+        "en": "The new employee is trying to ask a question.",
+        "vi": "Nhân viên mới đang cố hỏi một câu."
+      },
+      {
+        "en": "The new employee is trying to support each other.",
+        "vi": "Nhân viên mới đang cố hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The new employee is trying to arrive on time.",
+        "vi": "Nhân viên mới đang cố đến đúng giờ."
+      },
+      {
+        "en": "The new employee is trying to cook breakfast.",
+        "vi": "Nhân viên mới đang cố nấu bữa sáng."
+      },
+      {
+        "en": "The new employee is trying to drink more water.",
+        "vi": "Nhân viên mới đang cố uống nhiều nước hơn."
+      },
+      {
+        "en": "The new employee is trying to call a friend.",
+        "vi": "Nhân viên mới đang cố gọi cho một người bạn."
+      },
+      {
+        "en": "The new employee is trying to delete the file.",
+        "vi": "Nhân viên mới đang cố xóa tệp."
+      },
+      {
+        "en": "The new employee is trying to ask for help.",
+        "vi": "Nhân viên mới đang cố nhờ giúp đỡ."
+      },
+      {
+        "en": "The new employee is trying to scan the receipt.",
+        "vi": "Nhân viên mới đang cố quét hóa đơn."
+      },
+      {
+        "en": "The new employee is trying to order food.",
+        "vi": "Nhân viên mới đang cố gọi đồ ăn."
+      },
+      {
+        "en": "The new employee is trying to attend the workshop.",
+        "vi": "Nhân viên mới đang cố tham dự buổi hội thảo."
+      },
+      {
+        "en": "The new employee is trying to move forward.",
+        "vi": "Nhân viên mới đang cố tiến về phía trước."
+      },
+      {
+        "en": "The new employee is trying to meditate daily.",
+        "vi": "Nhân viên mới đang cố thiền mỗi ngày."
+      },
+      {
+        "en": "The new employee is trying to wait a moment.",
+        "vi": "Nhân viên mới đang cố chờ một chút."
+      },
+      {
+        "en": "The new employee is trying to take a chance.",
+        "vi": "Nhân viên mới đang cố nắm lấy cơ hội."
+      },
+      {
+        "en": "The new employee is trying to cut expenses.",
+        "vi": "Nhân viên mới đang cố cắt giảm chi tiêu."
+      },
+      {
+        "en": "The new employee is trying to save for the future.",
+        "vi": "Nhân viên mới đang cố tiết kiệm cho tương lai."
+      },
+      {
+        "en": "The new employee is trying to read the news.",
+        "vi": "Nhân viên mới đang cố đọc tin tức."
+      },
+      {
+        "en": "The new employee is trying to open a business.",
+        "vi": "Nhân viên mới đang cố mở một doanh nghiệp."
+      },
+      {
+        "en": "The new employee is trying to tell the truth.",
+        "vi": "Nhân viên mới đang cố nói sự thật."
+      },
+      {
+        "en": "The new employee is trying to make a reservation.",
+        "vi": "Nhân viên mới đang cố đặt chỗ trước."
+      },
+      {
+        "en": "The new employee is trying to write a report.",
+        "vi": "Nhân viên mới đang cố viết một báo cáo."
+      },
+      {
+        "en": "The new employee is trying to never give up.",
+        "vi": "Nhân viên mới đang cố không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The new employee is trying to schedule a meeting.",
+        "vi": "Nhân viên mới đang cố sắp xếp cuộc họp."
+      },
+      {
+        "en": "The new employee is trying to save money.",
+        "vi": "Nhân viên mới đang cố tiết kiệm tiền."
+      },
+      {
+        "en": "The new employee is trying to take it easy.",
+        "vi": "Nhân viên mới đang cố thư giãn."
+      },
+      { "en": "The new employee is trying to rent a car.", "vi": "Nhân viên mới đang cố thuê xe." },
+      {
+        "en": "The new employee is trying to reset the password.",
+        "vi": "Nhân viên mới đang cố đặt lại mật khẩu."
+      },
+      {
+        "en": "The new employee is trying to take a day off.",
+        "vi": "Nhân viên mới đang cố xin nghỉ một ngày."
+      },
+      {
+        "en": "The new employee is trying to write it down.",
+        "vi": "Nhân viên mới đang cố ghi nó lại."
+      },
+      {
+        "en": "The new employee is trying to restart the computer.",
+        "vi": "Nhân viên mới đang cố khởi động lại máy tính."
+      },
+      {
+        "en": "The new employee is trying to cook for everyone.",
+        "vi": "Nhân viên mới đang cố nấu ăn cho mọi người."
+      },
+      {
+        "en": "The new employee is trying to calm down.",
+        "vi": "Nhân viên mới đang cố bình tĩnh lại."
+      },
+      {
+        "en": "The new employee is trying to install the app.",
+        "vi": "Nhân viên mới đang cố cài đặt ứng dụng."
+      },
+      {
+        "en": "The new employee is trying to visit my family.",
+        "vi": "Nhân viên mới đang cố thăm gia đình."
+      },
+      {
+        "en": "The new employee is trying to offer support.",
+        "vi": "Nhân viên mới đang cố đề nghị hỗ trợ."
+      },
+      {
+        "en": "The new employee is trying to say sorry.",
+        "vi": "Nhân viên mới đang cố nói lời xin lỗi."
+      }
+    ]
+  },
+  {
+    "starter": "The new employee is planning to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The new employee is planning to answer the phone.",
+        "vi": "Nhân viên mới đang định trả lời điện thoại."
+      },
+      {
+        "en": "The new employee is planning to walk the dog.",
+        "vi": "Nhân viên mới đang định dắt chó đi dạo."
+      },
+      {
+        "en": "The new employee is planning to finish on time.",
+        "vi": "Nhân viên mới đang định hoàn thành đúng hạn."
+      },
+      { "en": "The new employee is planning to go home.", "vi": "Nhân viên mới đang định về nhà." },
+      {
+        "en": "The new employee is planning to book a ticket.",
+        "vi": "Nhân viên mới đang định đặt vé."
+      },
+      {
+        "en": "The new employee is planning to sign up today.",
+        "vi": "Nhân viên mới đang định đăng ký hôm nay."
+      },
+      {
+        "en": "The new employee is planning to cook for everyone.",
+        "vi": "Nhân viên mới đang định nấu ăn cho mọi người."
+      },
+      {
+        "en": "The new employee is planning to wash the dishes.",
+        "vi": "Nhân viên mới đang định rửa bát."
+      },
+      {
+        "en": "The new employee is planning to join the meeting.",
+        "vi": "Nhân viên mới đang định tham gia cuộc họp."
+      },
+      {
+        "en": "The new employee is planning to make a reservation.",
+        "vi": "Nhân viên mới đang định đặt chỗ trước."
+      },
+      {
+        "en": "The new employee is planning to pay the bill.",
+        "vi": "Nhân viên mới đang định thanh toán hóa đơn."
+      },
+      {
+        "en": "The new employee is planning to wake up early.",
+        "vi": "Nhân viên mới đang định dậy sớm."
+      },
+      {
+        "en": "The new employee is planning to log in again.",
+        "vi": "Nhân viên mới đang định đăng nhập lại."
+      },
+      {
+        "en": "The new employee is planning to reach the goal.",
+        "vi": "Nhân viên mới đang định đạt mục tiêu."
+      },
+      {
+        "en": "The new employee is planning to work harder.",
+        "vi": "Nhân viên mới đang định làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The new employee is planning to help the team.",
+        "vi": "Nhân viên mới đang định giúp đỡ nhóm."
+      },
+      {
+        "en": "The new employee is planning to launch the product.",
+        "vi": "Nhân viên mới đang định ra mắt sản phẩm."
+      },
+      {
+        "en": "The new employee is planning to ask more questions.",
+        "vi": "Nhân viên mới đang định hỏi nhiều hơn."
+      },
+      {
+        "en": "The new employee is planning to take a rest.",
+        "vi": "Nhân viên mới đang định nghỉ ngơi."
+      },
+      {
+        "en": "The new employee is planning to invest wisely.",
+        "vi": "Nhân viên mới đang định đầu tư khôn ngoan."
+      },
+      {
+        "en": "The new employee is planning to make a decision.",
+        "vi": "Nhân viên mới đang định đưa ra quyết định."
+      },
+      {
+        "en": "The new employee is planning to clean the house.",
+        "vi": "Nhân viên mới đang định dọn nhà."
+      },
+      {
+        "en": "The new employee is planning to help out.",
+        "vi": "Nhân viên mới đang định giúp đỡ."
+      },
+      {
+        "en": "The new employee is planning to play sports.",
+        "vi": "Nhân viên mới đang định chơi thể thao."
+      },
+      {
+        "en": "The new employee is planning to enjoy the weekend.",
+        "vi": "Nhân viên mới đang định tận hưởng cuối tuần."
+      },
+      {
+        "en": "The new employee is planning to miss the flight.",
+        "vi": "Nhân viên mới đang định lỡ chuyến bay."
+      },
+      {
+        "en": "The new employee is planning to fix the problem.",
+        "vi": "Nhân viên mới đang định sửa vấn đề."
+      },
+      {
+        "en": "The new employee is planning to read the news.",
+        "vi": "Nhân viên mới đang định đọc tin tức."
+      },
+      {
+        "en": "The new employee is planning to eat healthy.",
+        "vi": "Nhân viên mới đang định ăn uống lành mạnh."
+      },
+      {
+        "en": "The new employee is planning to wait a moment.",
+        "vi": "Nhân viên mới đang định chờ một chút."
+      },
+      {
+        "en": "The new employee is planning to go for a walk.",
+        "vi": "Nhân viên mới đang định đi dạo."
+      },
+      {
+        "en": "The new employee is planning to read more books.",
+        "vi": "Nhân viên mới đang định đọc thêm sách."
+      },
+      {
+        "en": "The new employee is planning to take notes.",
+        "vi": "Nhân viên mới đang định ghi chép."
+      },
+      {
+        "en": "The new employee is planning to try harder next time.",
+        "vi": "Nhân viên mới đang định cố gắng hơn lần sau."
+      },
+      {
+        "en": "The new employee is planning to get some rest.",
+        "vi": "Nhân viên mới đang định nghỉ ngơi một chút."
+      },
+      {
+        "en": "The new employee is planning to grow the business.",
+        "vi": "Nhân viên mới đang định phát triển kinh doanh."
+      },
+      {
+        "en": "The new employee is planning to stay up late.",
+        "vi": "Nhân viên mới đang định thức khuya."
+      },
+      {
+        "en": "The new employee is planning to prepare the presentation.",
+        "vi": "Nhân viên mới đang định chuẩn bị bài thuyết trình."
+      },
+      {
+        "en": "The new employee is planning to meditate daily.",
+        "vi": "Nhân viên mới đang định thiền mỗi ngày."
+      },
+      {
+        "en": "The new employee is planning to solve this issue.",
+        "vi": "Nhân viên mới đang định giải quyết vấn đề này."
+      },
+      {
+        "en": "The new employee is planning to move forward.",
+        "vi": "Nhân viên mới đang định tiến về phía trước."
+      },
+      {
+        "en": "The new employee is planning to try again.",
+        "vi": "Nhân viên mới đang định thử lại."
+      },
+      {
+        "en": "The new employee is planning to donate to charity.",
+        "vi": "Nhân viên mới đang định quyên góp từ thiện."
+      },
+      {
+        "en": "The new employee is planning to delete the file.",
+        "vi": "Nhân viên mới đang định xóa tệp."
+      },
+      {
+        "en": "The new employee is planning to go on vacation.",
+        "vi": "Nhân viên mới đang định đi nghỉ mát."
+      },
+      {
+        "en": "The new employee is planning to pack my bags.",
+        "vi": "Nhân viên mới đang định xếp hành lý."
+      },
+      {
+        "en": "The new employee is planning to take the bus.",
+        "vi": "Nhân viên mới đang định đi xe buýt."
+      },
+      {
+        "en": "The new employee is planning to make new friends.",
+        "vi": "Nhân viên mới đang định kết bạn mới."
+      },
+      {
+        "en": "The new employee is planning to share my opinion.",
+        "vi": "Nhân viên mới đang định chia sẻ ý kiến."
+      },
+      {
+        "en": "The new employee is planning to fill out the form.",
+        "vi": "Nhân viên mới đang định điền vào biểu mẫu."
+      },
+      {
+        "en": "The new employee is planning to think positive.",
+        "vi": "Nhân viên mới đang định suy nghĩ tích cực."
+      },
+      {
+        "en": "The new employee is planning to rent a car.",
+        "vi": "Nhân viên mới đang định thuê xe."
+      },
+      {
+        "en": "The new employee is planning to invite some friends.",
+        "vi": "Nhân viên mới đang định mời vài người bạn."
+      },
+      {
+        "en": "The new employee is planning to update the software.",
+        "vi": "Nhân viên mới đang định cập nhật phần mềm."
+      },
+      {
+        "en": "The new employee is planning to send the email.",
+        "vi": "Nhân viên mới đang định gửi email."
+      },
+      {
+        "en": "The new employee is planning to pass the exam.",
+        "vi": "Nhân viên mới đang định đậu kỳ thi."
+      },
+      {
+        "en": "The new employee is planning to breathe deeply.",
+        "vi": "Nhân viên mới đang định hít thở sâu."
+      },
+      {
+        "en": "The new employee is planning to confirm the booking.",
+        "vi": "Nhân viên mới đang định xác nhận đặt chỗ."
+      },
+      {
+        "en": "The new employee is planning to book a hotel.",
+        "vi": "Nhân viên mới đang định đặt khách sạn."
+      },
+      {
+        "en": "The new employee is planning to give feedback.",
+        "vi": "Nhân viên mới đang định góp ý."
+      },
+      {
+        "en": "The new employee is planning to lose weight.",
+        "vi": "Nhân viên mới đang định giảm cân."
+      },
+      {
+        "en": "The new employee is planning to order food.",
+        "vi": "Nhân viên mới đang định gọi đồ ăn."
+      },
+      {
+        "en": "The new employee is planning to travel abroad.",
+        "vi": "Nhân viên mới đang định đi du lịch nước ngoài."
+      },
+      {
+        "en": "The new employee is planning to drink less coffee.",
+        "vi": "Nhân viên mới đang định uống ít cà phê hơn."
+      },
+      {
+        "en": "The new employee is planning to listen carefully.",
+        "vi": "Nhân viên mới đang định lắng nghe cẩn thận."
+      },
+      {
+        "en": "The new employee is planning to watch a movie.",
+        "vi": "Nhân viên mới đang định xem phim."
+      },
+      {
+        "en": "The new employee is planning to join a club.",
+        "vi": "Nhân viên mới đang định tham gia câu lạc bộ."
+      },
+      {
+        "en": "The new employee is planning to take a break.",
+        "vi": "Nhân viên mới đang định nghỉ giải lao."
+      },
+      {
+        "en": "The new employee is planning to ask for a raise.",
+        "vi": "Nhân viên mới đang định xin tăng lương."
+      },
+      {
+        "en": "The new employee is planning to take the exam.",
+        "vi": "Nhân viên mới đang định làm bài thi."
+      },
+      {
+        "en": "The new employee is planning to support each other.",
+        "vi": "Nhân viên mới đang định hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The new employee is planning to set an alarm.",
+        "vi": "Nhân viên mới đang định đặt báo thức."
+      },
+      {
+        "en": "The new employee is planning to buy a new phone.",
+        "vi": "Nhân viên mới đang định mua điện thoại mới."
+      },
+      {
+        "en": "The new employee is planning to talk to the manager.",
+        "vi": "Nhân viên mới đang định nói chuyện với quản lý."
+      },
+      {
+        "en": "The new employee is planning to thank everyone.",
+        "vi": "Nhân viên mới đang định cảm ơn mọi người."
+      },
+      {
+        "en": "The new employee is planning to close the deal.",
+        "vi": "Nhân viên mới đang định chốt thỏa thuận."
+      },
+      {
+        "en": "The new employee is planning to ask a question.",
+        "vi": "Nhân viên mới đang định hỏi một câu."
+      },
+      {
+        "en": "The new employee is planning to cheer for the team.",
+        "vi": "Nhân viên mới đang định cổ vũ cho đội."
+      },
+      {
+        "en": "The new employee is planning to attend the workshop.",
+        "vi": "Nhân viên mới đang định tham dự buổi hội thảo."
+      },
+      {
+        "en": "The new employee is planning to raise the price.",
+        "vi": "Nhân viên mới đang định tăng giá."
+      },
+      {
+        "en": "The new employee is planning to practice every day.",
+        "vi": "Nhân viên mới đang định luyện tập mỗi ngày."
+      },
+      {
+        "en": "The new employee is planning to install the app.",
+        "vi": "Nhân viên mới đang định cài đặt ứng dụng."
+      },
+      {
+        "en": "The new employee is planning to meet new people.",
+        "vi": "Nhân viên mới đang định gặp gỡ người mới."
+      },
+      {
+        "en": "The new employee is planning to review the document.",
+        "vi": "Nhân viên mới đang định xem lại tài liệu."
+      },
+      {
+        "en": "The new employee is planning to give it a try.",
+        "vi": "Nhân viên mới đang định thử một lần."
+      },
+      {
+        "en": "The new employee is planning to listen to music.",
+        "vi": "Nhân viên mới đang định nghe nhạc."
+      },
+      {
+        "en": "The new employee is planning to keep a diary.",
+        "vi": "Nhân viên mới đang định viết nhật ký."
+      },
+      {
+        "en": "The new employee is planning to submit the form.",
+        "vi": "Nhân viên mới đang định nộp biểu mẫu."
+      },
+      {
+        "en": "The new employee is planning to get a promotion.",
+        "vi": "Nhân viên mới đang định được thăng chức."
+      },
+      {
+        "en": "The new employee is planning to print the document.",
+        "vi": "Nhân viên mới đang định in tài liệu."
+      },
+      {
+        "en": "The new employee is planning to leave a comment.",
+        "vi": "Nhân viên mới đang định để lại bình luận."
+      },
+      {
+        "en": "The new employee is planning to share the post.",
+        "vi": "Nhân viên mới đang định chia sẻ bài viết."
+      },
+      {
+        "en": "The new employee is planning to train the team.",
+        "vi": "Nhân viên mới đang định đào tạo nhóm."
+      },
+      {
+        "en": "The new employee is planning to stay home.",
+        "vi": "Nhân viên mới đang định ở nhà."
+      },
+      {
+        "en": "The new employee is planning to cook breakfast.",
+        "vi": "Nhân viên mới đang định nấu bữa sáng."
+      },
+      {
+        "en": "The new employee is planning to call back later.",
+        "vi": "Nhân viên mới đang định gọi lại sau."
+      },
+      {
+        "en": "The new employee is planning to meet the deadline.",
+        "vi": "Nhân viên mới đang định kịp thời hạn."
+      },
+      {
+        "en": "The new employee is planning to drive to work.",
+        "vi": "Nhân viên mới đang định lái xe đi làm."
+      },
+      {
+        "en": "The new employee is planning to remember the password.",
+        "vi": "Nhân viên mới đang định nhớ mật khẩu."
+      },
+      {
+        "en": "The new employee is planning to close the window.",
+        "vi": "Nhân viên mới đang định đóng cửa sổ."
+      }
+    ]
+  },
+  {
+    "starter": "The new employee used to",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The new employee used to help a neighbor.",
+        "vi": "Nhân viên mới từng giúp một người hàng xóm."
+      },
+      {
+        "en": "The new employee used to remember the password.",
+        "vi": "Nhân viên mới từng nhớ mật khẩu."
+      },
+      {
+        "en": "The new employee used to test the feature.",
+        "vi": "Nhân viên mới từng kiểm thử tính năng."
+      },
+      {
+        "en": "The new employee used to drink more water.",
+        "vi": "Nhân viên mới từng uống nhiều nước hơn."
+      },
+      {
+        "en": "The new employee used to relax at home.",
+        "vi": "Nhân viên mới từng thư giãn ở nhà."
+      },
+      {
+        "en": "The new employee used to learn something new.",
+        "vi": "Nhân viên mới từng học điều gì đó mới."
+      },
+      {
+        "en": "The new employee used to check the details.",
+        "vi": "Nhân viên mới từng kiểm tra chi tiết."
+      },
+      { "en": "The new employee used to play sports.", "vi": "Nhân viên mới từng chơi thể thao." },
+      {
+        "en": "The new employee used to confirm the booking.",
+        "vi": "Nhân viên mới từng xác nhận đặt chỗ."
+      },
+      {
+        "en": "The new employee used to work harder.",
+        "vi": "Nhân viên mới từng làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The new employee used to leave a comment.",
+        "vi": "Nhân viên mới từng để lại bình luận."
+      },
+      {
+        "en": "The new employee used to miss the flight.",
+        "vi": "Nhân viên mới từng lỡ chuyến bay."
+      },
+      {
+        "en": "The new employee used to get a promotion.",
+        "vi": "Nhân viên mới từng được thăng chức."
+      },
+      {
+        "en": "The new employee used to launch the product.",
+        "vi": "Nhân viên mới từng ra mắt sản phẩm."
+      },
+      { "en": "The new employee used to listen to music.", "vi": "Nhân viên mới từng nghe nhạc." },
+      {
+        "en": "The new employee used to watch the game.",
+        "vi": "Nhân viên mới từng xem trận đấu."
+      },
+      {
+        "en": "The new employee used to meet the deadline.",
+        "vi": "Nhân viên mới từng kịp thời hạn."
+      },
+      {
+        "en": "The new employee used to get some rest.",
+        "vi": "Nhân viên mới từng nghỉ ngơi một chút."
+      },
+      { "en": "The new employee used to do the laundry.", "vi": "Nhân viên mới từng giặt đồ." },
+      {
+        "en": "The new employee used to update the software.",
+        "vi": "Nhân viên mới từng cập nhật phần mềm."
+      },
+      {
+        "en": "The new employee used to take a chance.",
+        "vi": "Nhân viên mới từng nắm lấy cơ hội."
+      },
+      { "en": "The new employee used to get a degree.", "vi": "Nhân viên mới từng lấy bằng." },
+      { "en": "The new employee used to help out.", "vi": "Nhân viên mới từng giúp đỡ." },
+      { "en": "The new employee used to cook dinner.", "vi": "Nhân viên mới từng nấu bữa tối." },
+      {
+        "en": "The new employee used to answer the phone.",
+        "vi": "Nhân viên mới từng trả lời điện thoại."
+      },
+      {
+        "en": "The new employee used to cancel the order.",
+        "vi": "Nhân viên mới từng hủy đơn hàng."
+      },
+      {
+        "en": "The new employee used to join the meeting.",
+        "vi": "Nhân viên mới từng tham gia cuộc họp."
+      },
+      {
+        "en": "The new employee used to download the file.",
+        "vi": "Nhân viên mới từng tải tệp xuống."
+      },
+      {
+        "en": "The new employee used to understand the lesson.",
+        "vi": "Nhân viên mới từng hiểu bài học."
+      },
+      { "en": "The new employee used to take it easy.", "vi": "Nhân viên mới từng thư giãn." },
+      { "en": "The new employee used to pass the exam.", "vi": "Nhân viên mới từng đậu kỳ thi." },
+      { "en": "The new employee used to sleep early.", "vi": "Nhân viên mới từng ngủ sớm." },
+      { "en": "The new employee used to start over.", "vi": "Nhân viên mới từng bắt đầu lại." },
+      {
+        "en": "The new employee used to sign the contract.",
+        "vi": "Nhân viên mới từng ký hợp đồng."
+      },
+      { "en": "The new employee used to make tea.", "vi": "Nhân viên mới từng pha trà." },
+      {
+        "en": "The new employee used to catch the train.",
+        "vi": "Nhân viên mới từng bắt chuyến tàu."
+      },
+      {
+        "en": "The new employee used to review the document.",
+        "vi": "Nhân viên mới từng xem lại tài liệu."
+      },
+      {
+        "en": "The new employee used to celebrate together.",
+        "vi": "Nhân viên mới từng ăn mừng cùng nhau."
+      },
+      { "en": "The new employee used to take the bus.", "vi": "Nhân viên mới từng đi xe buýt." },
+      { "en": "The new employee used to take a rest.", "vi": "Nhân viên mới từng nghỉ ngơi." },
+      { "en": "The new employee used to read the news.", "vi": "Nhân viên mới từng đọc tin tức." },
+      {
+        "en": "The new employee used to pay off the loan.",
+        "vi": "Nhân viên mới từng trả hết khoản vay."
+      },
+      {
+        "en": "The new employee used to set a goal.",
+        "vi": "Nhân viên mới từng đặt một mục tiêu."
+      },
+      {
+        "en": "The new employee used to walk the dog.",
+        "vi": "Nhân viên mới từng dắt chó đi dạo."
+      },
+      {
+        "en": "The new employee used to split the bill.",
+        "vi": "Nhân viên mới từng chia hóa đơn."
+      },
+      {
+        "en": "The new employee used to thank everyone.",
+        "vi": "Nhân viên mới từng cảm ơn mọi người."
+      },
+      { "en": "The new employee used to book a hotel.", "vi": "Nhân viên mới từng đặt khách sạn." },
+      {
+        "en": "The new employee used to make a plan.",
+        "vi": "Nhân viên mới từng lập một kế hoạch."
+      },
+      {
+        "en": "The new employee used to plan a trip.",
+        "vi": "Nhân viên mới từng lên kế hoạch một chuyến đi."
+      },
+      { "en": "The new employee used to send the email.", "vi": "Nhân viên mới từng gửi email." },
+      { "en": "The new employee used to pack my bags.", "vi": "Nhân viên mới từng xếp hành lý." },
+      {
+        "en": "The new employee used to talk to the manager.",
+        "vi": "Nhân viên mới từng nói chuyện với quản lý."
+      },
+      { "en": "The new employee used to go home.", "vi": "Nhân viên mới từng về nhà." },
+      {
+        "en": "The new employee used to learn English.",
+        "vi": "Nhân viên mới từng học tiếng Anh."
+      },
+      { "en": "The new employee used to take the exam.", "vi": "Nhân viên mới từng làm bài thi." },
+      {
+        "en": "The new employee used to scan the receipt.",
+        "vi": "Nhân viên mới từng quét hóa đơn."
+      },
+      {
+        "en": "The new employee used to follow the rules.",
+        "vi": "Nhân viên mới từng tuân theo quy tắc."
+      },
+      {
+        "en": "The new employee used to call back later.",
+        "vi": "Nhân viên mới từng gọi lại sau."
+      },
+      {
+        "en": "The new employee used to solve this issue.",
+        "vi": "Nhân viên mới từng giải quyết vấn đề này."
+      },
+      {
+        "en": "The new employee used to try harder next time.",
+        "vi": "Nhân viên mới từng cố gắng hơn lần sau."
+      },
+      { "en": "The new employee used to tell the truth.", "vi": "Nhân viên mới từng nói sự thật." },
+      {
+        "en": "The new employee used to share my opinion.",
+        "vi": "Nhân viên mới từng chia sẻ ý kiến."
+      },
+      {
+        "en": "The new employee used to schedule a meeting.",
+        "vi": "Nhân viên mới từng sắp xếp cuộc họp."
+      },
+      {
+        "en": "The new employee used to read more books.",
+        "vi": "Nhân viên mới từng đọc thêm sách."
+      },
+      {
+        "en": "The new employee used to eat healthy.",
+        "vi": "Nhân viên mới từng ăn uống lành mạnh."
+      },
+      { "en": "The new employee used to take a break.", "vi": "Nhân viên mới từng nghỉ giải lao." },
+      { "en": "The new employee used to report the bug.", "vi": "Nhân viên mới từng báo lỗi." },
+      {
+        "en": "The new employee used to close the window.",
+        "vi": "Nhân viên mới từng đóng cửa sổ."
+      },
+      {
+        "en": "The new employee used to drive to work.",
+        "vi": "Nhân viên mới từng lái xe đi làm."
+      },
+      {
+        "en": "The new employee used to train the team.",
+        "vi": "Nhân viên mới từng đào tạo nhóm."
+      },
+      {
+        "en": "The new employee used to grow the business.",
+        "vi": "Nhân viên mới từng phát triển kinh doanh."
+      },
+      { "en": "The new employee used to log in again.", "vi": "Nhân viên mới từng đăng nhập lại." },
+      {
+        "en": "The new employee used to rate the service.",
+        "vi": "Nhân viên mới từng đánh giá dịch vụ."
+      },
+      {
+        "en": "The new employee used to charge the phone.",
+        "vi": "Nhân viên mới từng sạc điện thoại."
+      },
+      { "en": "The new employee used to fix the problem.", "vi": "Nhân viên mới từng sửa vấn đề." },
+      { "en": "The new employee used to study abroad.", "vi": "Nhân viên mới từng du học." },
+      {
+        "en": "The new employee used to double-check everything.",
+        "vi": "Nhân viên mới từng kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "The new employee used to take a course.",
+        "vi": "Nhân viên mới từng tham gia một khóa học."
+      },
+      { "en": "The new employee used to go on vacation.", "vi": "Nhân viên mới từng đi nghỉ mát." },
+      { "en": "The new employee used to water the plants.", "vi": "Nhân viên mới từng tưới cây." },
+      {
+        "en": "The new employee used to cut the budget.",
+        "vi": "Nhân viên mới từng cắt giảm ngân sách."
+      },
+      {
+        "en": "The new employee used to enjoy the weekend.",
+        "vi": "Nhân viên mới từng tận hưởng cuối tuần."
+      },
+      { "en": "The new employee used to take medicine.", "vi": "Nhân viên mới từng uống thuốc." },
+      { "en": "The new employee used to lock the door.", "vi": "Nhân viên mới từng khóa cửa." },
+      {
+        "en": "The new employee used to manage the schedule.",
+        "vi": "Nhân viên mới từng quản lý lịch trình."
+      },
+      { "en": "The new employee used to give it a try.", "vi": "Nhân viên mới từng thử một lần." },
+      {
+        "en": "The new employee used to stay organized.",
+        "vi": "Nhân viên mới từng giữ ngăn nắp."
+      },
+      {
+        "en": "The new employee used to reset the password.",
+        "vi": "Nhân viên mới từng đặt lại mật khẩu."
+      },
+      { "en": "The new employee used to speak clearly.", "vi": "Nhân viên mới từng nói rõ ràng." },
+      {
+        "en": "The new employee used to attend the workshop.",
+        "vi": "Nhân viên mới từng tham dự buổi hội thảo."
+      },
+      {
+        "en": "The new employee used to say goodbye.",
+        "vi": "Nhân viên mới từng nói lời tạm biệt."
+      },
+      { "en": "The new employee used to watch a movie.", "vi": "Nhân viên mới từng xem phim." },
+      { "en": "The new employee used to throw a party.", "vi": "Nhân viên mới từng tổ chức tiệc." },
+      {
+        "en": "The new employee used to pay the bill.",
+        "vi": "Nhân viên mới từng thanh toán hóa đơn."
+      },
+      { "en": "The new employee used to help the team.", "vi": "Nhân viên mới từng giúp đỡ nhóm." },
+      {
+        "en": "The new employee used to submit the form.",
+        "vi": "Nhân viên mới từng nộp biểu mẫu."
+      },
+      {
+        "en": "The new employee used to open a savings account.",
+        "vi": "Nhân viên mới từng mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "The new employee used to take a day off.",
+        "vi": "Nhân viên mới từng xin nghỉ một ngày."
+      },
+      {
+        "en": "The new employee used to negotiate the terms.",
+        "vi": "Nhân viên mới từng thương lượng điều khoản."
+      },
+      { "en": "The new employee used to save money.", "vi": "Nhân viên mới từng tiết kiệm tiền." }
+    ]
+  },
+  {
+    "starter": "The new employee doesn't",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The new employee doesn't visit the doctor.",
+        "vi": "Nhân viên mới không đi khám bác sĩ."
+      },
+      {
+        "en": "The new employee doesn't cancel the order.",
+        "vi": "Nhân viên mới không hủy đơn hàng."
+      },
+      {
+        "en": "The new employee doesn't learn English.",
+        "vi": "Nhân viên mới không học tiếng Anh."
+      },
+      {
+        "en": "The new employee doesn't print the document.",
+        "vi": "Nhân viên mới không in tài liệu."
+      },
+      {
+        "en": "The new employee doesn't ask more questions.",
+        "vi": "Nhân viên mới không hỏi nhiều hơn."
+      },
+      {
+        "en": "The new employee doesn't turn off the light.",
+        "vi": "Nhân viên mới không tắt đèn."
+      },
+      {
+        "en": "The new employee doesn't practice every day.",
+        "vi": "Nhân viên mới không luyện tập mỗi ngày."
+      },
+      {
+        "en": "The new employee doesn't miss the flight.",
+        "vi": "Nhân viên mới không lỡ chuyến bay."
+      },
+      {
+        "en": "The new employee doesn't support each other.",
+        "vi": "Nhân viên mới không hỗ trợ lẫn nhau."
+      },
+      {
+        "en": "The new employee doesn't ask for a raise.",
+        "vi": "Nhân viên mới không xin tăng lương."
+      },
+      { "en": "The new employee doesn't help out.", "vi": "Nhân viên mới không giúp đỡ." },
+      {
+        "en": "The new employee doesn't rate the service.",
+        "vi": "Nhân viên mới không đánh giá dịch vụ."
+      },
+      {
+        "en": "The new employee doesn't never give up.",
+        "vi": "Nhân viên mới không không bao giờ bỏ cuộc."
+      },
+      {
+        "en": "The new employee doesn't speak English.",
+        "vi": "Nhân viên mới không nói tiếng Anh."
+      },
+      {
+        "en": "The new employee doesn't finish the report.",
+        "vi": "Nhân viên mới không hoàn thành báo cáo."
+      },
+      {
+        "en": "The new employee doesn't invest wisely.",
+        "vi": "Nhân viên mới không đầu tư khôn ngoan."
+      },
+      {
+        "en": "The new employee doesn't exercise every day.",
+        "vi": "Nhân viên mới không tập thể dục mỗi ngày."
+      },
+      {
+        "en": "The new employee doesn't double-check the numbers.",
+        "vi": "Nhân viên mới không kiểm tra lại các con số."
+      },
+      { "en": "The new employee doesn't make tea.", "vi": "Nhân viên mới không pha trà." },
+      {
+        "en": "The new employee doesn't drink more water.",
+        "vi": "Nhân viên mới không uống nhiều nước hơn."
+      },
+      {
+        "en": "The new employee doesn't restart the computer.",
+        "vi": "Nhân viên mới không khởi động lại máy tính."
+      },
+      { "en": "The new employee doesn't do the laundry.", "vi": "Nhân viên mới không giặt đồ." },
+      { "en": "The new employee doesn't speak clearly.", "vi": "Nhân viên mới không nói rõ ràng." },
+      {
+        "en": "The new employee doesn't prepare the presentation.",
+        "vi": "Nhân viên mới không chuẩn bị bài thuyết trình."
+      },
+      { "en": "The new employee doesn't quit smoking.", "vi": "Nhân viên mới không bỏ thuốc lá." },
+      {
+        "en": "The new employee doesn't celebrate together.",
+        "vi": "Nhân viên mới không ăn mừng cùng nhau."
+      },
+      {
+        "en": "The new employee doesn't change the plan.",
+        "vi": "Nhân viên mới không thay đổi kế hoạch."
+      },
+      {
+        "en": "The new employee doesn't work harder.",
+        "vi": "Nhân viên mới không làm việc chăm chỉ hơn."
+      },
+      { "en": "The new employee doesn't lose weight.", "vi": "Nhân viên mới không giảm cân." },
+      {
+        "en": "The new employee doesn't invite some friends.",
+        "vi": "Nhân viên mới không mời vài người bạn."
+      },
+      { "en": "The new employee doesn't take it easy.", "vi": "Nhân viên mới không thư giãn." },
+      {
+        "en": "The new employee doesn't update the software.",
+        "vi": "Nhân viên mới không cập nhật phần mềm."
+      },
+      {
+        "en": "The new employee doesn't lower the cost.",
+        "vi": "Nhân viên mới không giảm chi phí."
+      },
+      {
+        "en": "The new employee doesn't get a promotion.",
+        "vi": "Nhân viên mới không được thăng chức."
+      },
+      {
+        "en": "The new employee doesn't watch the game.",
+        "vi": "Nhân viên mới không xem trận đấu."
+      },
+      {
+        "en": "The new employee doesn't make a decision.",
+        "vi": "Nhân viên mới không đưa ra quyết định."
+      },
+      {
+        "en": "The new employee doesn't try harder next time.",
+        "vi": "Nhân viên mới không cố gắng hơn lần sau."
+      },
+      {
+        "en": "The new employee doesn't finish on time.",
+        "vi": "Nhân viên mới không hoàn thành đúng hạn."
+      },
+      {
+        "en": "The new employee doesn't fill out the form.",
+        "vi": "Nhân viên mới không điền vào biểu mẫu."
+      },
+      {
+        "en": "The new employee doesn't eat healthy.",
+        "vi": "Nhân viên mới không ăn uống lành mạnh."
+      },
+      { "en": "The new employee doesn't rent a car.", "vi": "Nhân viên mới không thuê xe." },
+      {
+        "en": "The new employee doesn't back up the data.",
+        "vi": "Nhân viên mới không sao lưu dữ liệu."
+      },
+      { "en": "The new employee doesn't set an alarm.", "vi": "Nhân viên mới không đặt báo thức." },
+      {
+        "en": "The new employee doesn't launch the product.",
+        "vi": "Nhân viên mới không ra mắt sản phẩm."
+      },
+      { "en": "The new employee doesn't take notes.", "vi": "Nhân viên mới không ghi chép." },
+      {
+        "en": "The new employee doesn't visit my family.",
+        "vi": "Nhân viên mới không thăm gia đình."
+      },
+      {
+        "en": "The new employee doesn't buy groceries.",
+        "vi": "Nhân viên mới không mua thực phẩm."
+      },
+      {
+        "en": "The new employee doesn't take a day off.",
+        "vi": "Nhân viên mới không xin nghỉ một ngày."
+      },
+      { "en": "The new employee doesn't take the exam.", "vi": "Nhân viên mới không làm bài thi." },
+      { "en": "The new employee doesn't listen to music.", "vi": "Nhân viên mới không nghe nhạc." },
+      {
+        "en": "The new employee doesn't explain the situation.",
+        "vi": "Nhân viên mới không giải thích tình huống."
+      },
+      {
+        "en": "The new employee doesn't volunteer on weekends.",
+        "vi": "Nhân viên mới không tình nguyện cuối tuần."
+      },
+      { "en": "The new employee doesn't go home.", "vi": "Nhân viên mới không về nhà." },
+      {
+        "en": "The new employee doesn't take a course.",
+        "vi": "Nhân viên mới không tham gia một khóa học."
+      },
+      {
+        "en": "The new employee doesn't check my email.",
+        "vi": "Nhân viên mới không kiểm tra email."
+      },
+      {
+        "en": "The new employee doesn't split the bill.",
+        "vi": "Nhân viên mới không chia hóa đơn."
+      },
+      { "en": "The new employee doesn't give feedback.", "vi": "Nhân viên mới không góp ý." },
+      {
+        "en": "The new employee doesn't donate to charity.",
+        "vi": "Nhân viên mới không quyên góp từ thiện."
+      },
+      {
+        "en": "The new employee doesn't reset the password.",
+        "vi": "Nhân viên mới không đặt lại mật khẩu."
+      },
+      {
+        "en": "The new employee doesn't follow the rules.",
+        "vi": "Nhân viên mới không tuân theo quy tắc."
+      },
+      {
+        "en": "The new employee doesn't cook breakfast.",
+        "vi": "Nhân viên mới không nấu bữa sáng."
+      },
+      {
+        "en": "The new employee doesn't make new friends.",
+        "vi": "Nhân viên mới không kết bạn mới."
+      },
+      { "en": "The new employee doesn't report the bug.", "vi": "Nhân viên mới không báo lỗi." },
+      {
+        "en": "The new employee doesn't cook for everyone.",
+        "vi": "Nhân viên mới không nấu ăn cho mọi người."
+      },
+      {
+        "en": "The new employee doesn't walk the dog.",
+        "vi": "Nhân viên mới không dắt chó đi dạo."
+      },
+      { "en": "The new employee doesn't get a degree.", "vi": "Nhân viên mới không lấy bằng." },
+      {
+        "en": "The new employee doesn't make a plan.",
+        "vi": "Nhân viên mới không lập một kế hoạch."
+      },
+      { "en": "The new employee doesn't leave early.", "vi": "Nhân viên mới không về sớm." },
+      {
+        "en": "The new employee doesn't attend the class.",
+        "vi": "Nhân viên mới không tham gia lớp học."
+      },
+      { "en": "The new employee doesn't give it a try.", "vi": "Nhân viên mới không thử một lần." },
+      {
+        "en": "The new employee doesn't take a break.",
+        "vi": "Nhân viên mới không nghỉ giải lao."
+      },
+      {
+        "en": "The new employee doesn't schedule a meeting.",
+        "vi": "Nhân viên mới không sắp xếp cuộc họp."
+      },
+      {
+        "en": "The new employee doesn't keep learning.",
+        "vi": "Nhân viên mới không tiếp tục học hỏi."
+      },
+      { "en": "The new employee doesn't be on time.", "vi": "Nhân viên mới không đến đúng giờ." },
+      {
+        "en": "The new employee doesn't take a photo.",
+        "vi": "Nhân viên mới không chụp một bức ảnh."
+      },
+      {
+        "en": "The new employee doesn't attend the workshop.",
+        "vi": "Nhân viên mới không tham dự buổi hội thảo."
+      },
+      {
+        "en": "The new employee doesn't copy the link.",
+        "vi": "Nhân viên mới không sao chép liên kết."
+      },
+      {
+        "en": "The new employee doesn't breathe deeply.",
+        "vi": "Nhân viên mới không hít thở sâu."
+      },
+      {
+        "en": "The new employee doesn't set a goal.",
+        "vi": "Nhân viên mới không đặt một mục tiêu."
+      },
+      {
+        "en": "The new employee doesn't answer the phone.",
+        "vi": "Nhân viên mới không trả lời điện thoại."
+      },
+      { "en": "The new employee doesn't study abroad.", "vi": "Nhân viên mới không du học." },
+      {
+        "en": "The new employee doesn't thank everyone.",
+        "vi": "Nhân viên mới không cảm ơn mọi người."
+      },
+      {
+        "en": "The new employee doesn't plan a trip.",
+        "vi": "Nhân viên mới không lên kế hoạch một chuyến đi."
+      },
+      {
+        "en": "The new employee doesn't meet new people.",
+        "vi": "Nhân viên mới không gặp gỡ người mới."
+      },
+      {
+        "en": "The new employee doesn't learn something new.",
+        "vi": "Nhân viên mới không học điều gì đó mới."
+      },
+      {
+        "en": "The new employee doesn't lead the project.",
+        "vi": "Nhân viên mới không dẫn dắt dự án."
+      },
+      {
+        "en": "The new employee doesn't log in again.",
+        "vi": "Nhân viên mới không đăng nhập lại."
+      },
+      { "en": "The new employee doesn't say sorry.", "vi": "Nhân viên mới không nói lời xin lỗi." },
+      {
+        "en": "The new employee doesn't share my opinion.",
+        "vi": "Nhân viên mới không chia sẻ ý kiến."
+      },
+      { "en": "The new employee doesn't play sports.", "vi": "Nhân viên mới không chơi thể thao." },
+      {
+        "en": "The new employee doesn't join a club.",
+        "vi": "Nhân viên mới không tham gia câu lạc bộ."
+      },
+      {
+        "en": "The new employee doesn't make a reservation.",
+        "vi": "Nhân viên mới không đặt chỗ trước."
+      },
+      {
+        "en": "The new employee doesn't improve my skills.",
+        "vi": "Nhân viên mới không cải thiện kỹ năng."
+      },
+      {
+        "en": "The new employee doesn't keep a promise.",
+        "vi": "Nhân viên mới không giữ lời hứa."
+      },
+      {
+        "en": "The new employee doesn't leave a comment.",
+        "vi": "Nhân viên mới không để lại bình luận."
+      },
+      {
+        "en": "The new employee doesn't close the window.",
+        "vi": "Nhân viên mới không đóng cửa sổ."
+      },
+      {
+        "en": "The new employee doesn't check the details.",
+        "vi": "Nhân viên mới không kiểm tra chi tiết."
+      },
+      {
+        "en": "The new employee doesn't change careers.",
+        "vi": "Nhân viên mới không chuyển nghề."
+      },
+      {
+        "en": "The new employee doesn't train the team.",
+        "vi": "Nhân viên mới không đào tạo nhóm."
+      },
+      {
+        "en": "The new employee doesn't share the post.",
+        "vi": "Nhân viên mới không chia sẻ bài viết."
+      }
+    ]
+  },
+  {
+    "starter": "The new employee didn't",
+    "category": "Người (số ít)",
+    "color": "teal",
+    "sentences": [
+      {
+        "en": "The new employee didn't meditate daily.",
+        "vi": "Nhân viên mới đã không thiền mỗi ngày."
+      },
+      { "en": "The new employee didn't wash the dishes.", "vi": "Nhân viên mới đã không rửa bát." },
+      {
+        "en": "The new employee didn't keep learning.",
+        "vi": "Nhân viên mới đã không tiếp tục học hỏi."
+      },
+      {
+        "en": "The new employee didn't throw a party.",
+        "vi": "Nhân viên mới đã không tổ chức tiệc."
+      },
+      {
+        "en": "The new employee didn't understand the lesson.",
+        "vi": "Nhân viên mới đã không hiểu bài học."
+      },
+      { "en": "The new employee didn't help out.", "vi": "Nhân viên mới đã không giúp đỡ." },
+      {
+        "en": "The new employee didn't explain the situation.",
+        "vi": "Nhân viên mới đã không giải thích tình huống."
+      },
+      { "en": "The new employee didn't leave early.", "vi": "Nhân viên mới đã không về sớm." },
+      {
+        "en": "The new employee didn't learn English.",
+        "vi": "Nhân viên mới đã không học tiếng Anh."
+      },
+      {
+        "en": "The new employee didn't learn something new.",
+        "vi": "Nhân viên mới đã không học điều gì đó mới."
+      },
+      {
+        "en": "The new employee didn't copy the link.",
+        "vi": "Nhân viên mới đã không sao chép liên kết."
+      },
+      { "en": "The new employee didn't lock the door.", "vi": "Nhân viên mới đã không khóa cửa." },
+      {
+        "en": "The new employee didn't travel abroad.",
+        "vi": "Nhân viên mới đã không đi du lịch nước ngoài."
+      },
+      { "en": "The new employee didn't calm down.", "vi": "Nhân viên mới đã không bình tĩnh lại." },
+      {
+        "en": "The new employee didn't launch the product.",
+        "vi": "Nhân viên mới đã không ra mắt sản phẩm."
+      },
+      {
+        "en": "The new employee didn't listen carefully.",
+        "vi": "Nhân viên mới đã không lắng nghe cẩn thận."
+      },
+      {
+        "en": "The new employee didn't fix the problem.",
+        "vi": "Nhân viên mới đã không sửa vấn đề."
+      },
+      {
+        "en": "The new employee didn't drive to work.",
+        "vi": "Nhân viên mới đã không lái xe đi làm."
+      },
+      {
+        "en": "The new employee didn't say goodbye.",
+        "vi": "Nhân viên mới đã không nói lời tạm biệt."
+      },
+      { "en": "The new employee didn't delete the file.", "vi": "Nhân viên mới đã không xóa tệp." },
+      {
+        "en": "The new employee didn't talk to the manager.",
+        "vi": "Nhân viên mới đã không nói chuyện với quản lý."
+      },
+      {
+        "en": "The new employee didn't reach the goal.",
+        "vi": "Nhân viên mới đã không đạt mục tiêu."
+      },
+      {
+        "en": "The new employee didn't work as a team.",
+        "vi": "Nhân viên mới đã không làm việc theo nhóm."
+      },
+      {
+        "en": "The new employee didn't ask for help.",
+        "vi": "Nhân viên mới đã không nhờ giúp đỡ."
+      },
+      {
+        "en": "The new employee didn't sign up today.",
+        "vi": "Nhân viên mới đã không đăng ký hôm nay."
+      },
+      {
+        "en": "The new employee didn't meet the deadline.",
+        "vi": "Nhân viên mới đã không kịp thời hạn."
+      },
+      {
+        "en": "The new employee didn't get a promotion.",
+        "vi": "Nhân viên mới đã không được thăng chức."
+      },
+      {
+        "en": "The new employee didn't open a savings account.",
+        "vi": "Nhân viên mới đã không mở tài khoản tiết kiệm."
+      },
+      {
+        "en": "The new employee didn't change careers.",
+        "vi": "Nhân viên mới đã không chuyển nghề."
+      },
+      {
+        "en": "The new employee didn't offer support.",
+        "vi": "Nhân viên mới đã không đề nghị hỗ trợ."
+      },
+      {
+        "en": "The new employee didn't water the plants.",
+        "vi": "Nhân viên mới đã không tưới cây."
+      },
+      { "en": "The new employee didn't take notes.", "vi": "Nhân viên mới đã không ghi chép." },
+      {
+        "en": "The new employee didn't cancel the order.",
+        "vi": "Nhân viên mới đã không hủy đơn hàng."
+      },
+      {
+        "en": "The new employee didn't hire new staff.",
+        "vi": "Nhân viên mới đã không tuyển nhân viên mới."
+      },
+      {
+        "en": "The new employee didn't attend the workshop.",
+        "vi": "Nhân viên mới đã không tham dự buổi hội thảo."
+      },
+      {
+        "en": "The new employee didn't never give up.",
+        "vi": "Nhân viên mới đã không không bao giờ bỏ cuộc."
+      },
+      { "en": "The new employee didn't lose weight.", "vi": "Nhân viên mới đã không giảm cân." },
+      {
+        "en": "The new employee didn't eat healthy.",
+        "vi": "Nhân viên mới đã không ăn uống lành mạnh."
+      },
+      {
+        "en": "The new employee didn't write it down.",
+        "vi": "Nhân viên mới đã không ghi nó lại."
+      },
+      { "en": "The new employee didn't wake up early.", "vi": "Nhân viên mới đã không dậy sớm." },
+      { "en": "The new employee didn't give feedback.", "vi": "Nhân viên mới đã không góp ý." },
+      {
+        "en": "The new employee didn't drink less coffee.",
+        "vi": "Nhân viên mới đã không uống ít cà phê hơn."
+      },
+      {
+        "en": "The new employee didn't check the details.",
+        "vi": "Nhân viên mới đã không kiểm tra chi tiết."
+      },
+      {
+        "en": "The new employee didn't pack my bags.",
+        "vi": "Nhân viên mới đã không xếp hành lý."
+      },
+      { "en": "The new employee didn't rent a car.", "vi": "Nhân viên mới đã không thuê xe." },
+      {
+        "en": "The new employee didn't buy groceries.",
+        "vi": "Nhân viên mới đã không mua thực phẩm."
+      },
+      {
+        "en": "The new employee didn't check my email.",
+        "vi": "Nhân viên mới đã không kiểm tra email."
+      },
+      {
+        "en": "The new employee didn't stay focused.",
+        "vi": "Nhân viên mới đã không giữ tập trung."
+      },
+      {
+        "en": "The new employee didn't finish the report.",
+        "vi": "Nhân viên mới đã không hoàn thành báo cáo."
+      },
+      {
+        "en": "The new employee didn't volunteer on weekends.",
+        "vi": "Nhân viên mới đã không tình nguyện cuối tuần."
+      },
+      {
+        "en": "The new employee didn't lower the cost.",
+        "vi": "Nhân viên mới đã không giảm chi phí."
+      },
+      { "en": "The new employee didn't report the bug.", "vi": "Nhân viên mới đã không báo lỗi." },
+      {
+        "en": "The new employee didn't join the meeting.",
+        "vi": "Nhân viên mới đã không tham gia cuộc họp."
+      },
+      {
+        "en": "The new employee didn't move forward.",
+        "vi": "Nhân viên mới đã không tiến về phía trước."
+      },
+      {
+        "en": "The new employee didn't back up the data.",
+        "vi": "Nhân viên mới đã không sao lưu dữ liệu."
+      },
+      {
+        "en": "The new employee didn't make a plan.",
+        "vi": "Nhân viên mới đã không lập một kế hoạch."
+      },
+      { "en": "The new employee didn't stay home.", "vi": "Nhân viên mới đã không ở nhà." },
+      { "en": "The new employee didn't ride a bike.", "vi": "Nhân viên mới đã không đạp xe." },
+      {
+        "en": "The new employee didn't finish on time.",
+        "vi": "Nhân viên mới đã không hoàn thành đúng hạn."
+      },
+      {
+        "en": "The new employee didn't try harder next time.",
+        "vi": "Nhân viên mới đã không cố gắng hơn lần sau."
+      },
+      {
+        "en": "The new employee didn't walk the dog.",
+        "vi": "Nhân viên mới đã không dắt chó đi dạo."
+      },
+      { "en": "The new employee didn't try again.", "vi": "Nhân viên mới đã không thử lại." },
+      {
+        "en": "The new employee didn't remember the password.",
+        "vi": "Nhân viên mới đã không nhớ mật khẩu."
+      },
+      {
+        "en": "The new employee didn't relax at home.",
+        "vi": "Nhân viên mới đã không thư giãn ở nhà."
+      },
+      {
+        "en": "The new employee didn't catch the train.",
+        "vi": "Nhân viên mới đã không bắt chuyến tàu."
+      },
+      {
+        "en": "The new employee didn't stay organized.",
+        "vi": "Nhân viên mới đã không giữ ngăn nắp."
+      },
+      {
+        "en": "The new employee didn't speak clearly.",
+        "vi": "Nhân viên mới đã không nói rõ ràng."
+      },
+      {
+        "en": "The new employee didn't enjoy the weekend.",
+        "vi": "Nhân viên mới đã không tận hưởng cuối tuần."
+      },
+      {
+        "en": "The new employee didn't double-check everything.",
+        "vi": "Nhân viên mới đã không kiểm tra lại mọi thứ."
+      },
+      {
+        "en": "The new employee didn't breathe deeply.",
+        "vi": "Nhân viên mới đã không hít thở sâu."
+      },
+      {
+        "en": "The new employee didn't schedule a meeting.",
+        "vi": "Nhân viên mới đã không sắp xếp cuộc họp."
+      },
+      {
+        "en": "The new employee didn't think positive.",
+        "vi": "Nhân viên mới đã không suy nghĩ tích cực."
+      },
+      {
+        "en": "The new employee didn't read the news.",
+        "vi": "Nhân viên mới đã không đọc tin tức."
+      },
+      {
+        "en": "The new employee didn't submit the form.",
+        "vi": "Nhân viên mới đã không nộp biểu mẫu."
+      },
+      {
+        "en": "The new employee didn't make a reservation.",
+        "vi": "Nhân viên mới đã không đặt chỗ trước."
+      },
+      {
+        "en": "The new employee didn't get some rest.",
+        "vi": "Nhân viên mới đã không nghỉ ngơi một chút."
+      },
+      {
+        "en": "The new employee didn't share the post.",
+        "vi": "Nhân viên mới đã không chia sẻ bài viết."
+      },
+      {
+        "en": "The new employee didn't meet new people.",
+        "vi": "Nhân viên mới đã không gặp gỡ người mới."
+      },
+      {
+        "en": "The new employee didn't answer the phone.",
+        "vi": "Nhân viên mới đã không trả lời điện thoại."
+      },
+      { "en": "The new employee didn't study abroad.", "vi": "Nhân viên mới đã không du học." },
+      {
+        "en": "The new employee didn't invest wisely.",
+        "vi": "Nhân viên mới đã không đầu tư khôn ngoan."
+      },
+      { "en": "The new employee didn't book a ticket.", "vi": "Nhân viên mới đã không đặt vé." },
+      {
+        "en": "The new employee didn't manage the schedule.",
+        "vi": "Nhân viên mới đã không quản lý lịch trình."
+      },
+      {
+        "en": "The new employee didn't take a break.",
+        "vi": "Nhân viên mới đã không nghỉ giải lao."
+      },
+      {
+        "en": "The new employee didn't say sorry.",
+        "vi": "Nhân viên mới đã không nói lời xin lỗi."
+      },
+      { "en": "The new employee didn't watch a movie.", "vi": "Nhân viên mới đã không xem phim." },
+      {
+        "en": "The new employee didn't plan ahead.",
+        "vi": "Nhân viên mới đã không lên kế hoạch trước."
+      },
+      {
+        "en": "The new employee didn't pay the bill.",
+        "vi": "Nhân viên mới đã không thanh toán hóa đơn."
+      },
+      {
+        "en": "The new employee didn't work harder.",
+        "vi": "Nhân viên mới đã không làm việc chăm chỉ hơn."
+      },
+      {
+        "en": "The new employee didn't celebrate together.",
+        "vi": "Nhân viên mới đã không ăn mừng cùng nhau."
+      },
+      {
+        "en": "The new employee didn't pay off the loan.",
+        "vi": "Nhân viên mới đã không trả hết khoản vay."
+      },
+      {
+        "en": "The new employee didn't buy a new phone.",
+        "vi": "Nhân viên mới đã không mua điện thoại mới."
+      },
+      {
+        "en": "The new employee didn't thank everyone.",
+        "vi": "Nhân viên mới đã không cảm ơn mọi người."
+      },
+      { "en": "The new employee didn't take the bus.", "vi": "Nhân viên mới đã không đi xe buýt." },
+      {
+        "en": "The new employee didn't take medicine.",
+        "vi": "Nhân viên mới đã không uống thuốc."
+      },
+      {
+        "en": "The new employee didn't miss the flight.",
+        "vi": "Nhân viên mới đã không lỡ chuyến bay."
+      },
+      {
+        "en": "The new employee didn't solve this issue.",
+        "vi": "Nhân viên mới đã không giải quyết vấn đề này."
+      },
+      { "en": "The new employee didn't learn to swim.", "vi": "Nhân viên mới đã không học bơi." },
+      {
+        "en": "The new employee didn't visit the doctor.",
+        "vi": "Nhân viên mới đã không đi khám bác sĩ."
+      },
+      {
+        "en": "The new employee didn't arrive on time.",
+        "vi": "Nhân viên mới đã không đến đúng giờ."
+      }
+    ]
+  }
+]

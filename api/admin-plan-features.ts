@@ -9,20 +9,20 @@
 // DELETE /api/admin-plan-features  body: { key }                        (xoá hẳn tính năng)
 
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
-import { withTransaction } from '../packages/core-db/transaction.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import { withTransaction } from '@dhcb/core-db/transaction'
 import {
   validateAuth,
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getUserById } from '../packages/core-auth/authService.js'
-import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
-import { getPlanFeatureMatrix, invalidatePlanFeatureCache } from './_lib/planFeatures.js'
-import { readJsonBody, validateBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { getUserById } from '@dhcb/core-auth/authService'
+import { isAdminEmail } from '@dhcb/core-auth/adminAuth'
+import { getPlanFeatureMatrix, invalidatePlanFeatureCache } from '@dhcb/core-billing/planFeatures'
+import { readJsonBody, validateBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 const ToggleSchema = z.object({
   featureKey: z.string().trim().min(1).max(100),

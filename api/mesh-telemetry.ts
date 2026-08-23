@@ -1,12 +1,12 @@
 // api/mesh-telemetry.ts — REST handler cho WebSocket Mesh & Realtime Telemetry V4.4.
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
 import {
   RealtimeSessionTelemetry,
   RealtimeSessionTelemetrySchema,
   MESH_TELEMETRY_VERSION,
-} from '../packages/core-contracts/meshTelemetry.js'
-import { MeshTelemetryService } from '../packages/core-ai/meshTelemetryService.js'
+} from '@dhcb/core-contracts/meshTelemetry'
+import { MeshTelemetryService } from '@dhcb/core-ai/meshTelemetryService'
 
 const inMemorySessionTelemetry = new Map<string, RealtimeSessionTelemetry>()
 

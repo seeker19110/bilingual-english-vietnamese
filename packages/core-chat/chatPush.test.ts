@@ -3,7 +3,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { notifyOfflinePeers } from './chatPush.js'
 import * as redisChatModule from './redisChat.js'
-import * as pgPoolModule from '../core-db/pgPool.js'
+import * as pgPoolModule from '@dhcb/core-db/pgPool'
 import webpush from 'web-push'
 
 describe('chatPush: notifyOfflinePeers', () => {

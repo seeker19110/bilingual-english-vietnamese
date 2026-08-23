@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildContextPackage } from '../packages/core-personal/contextEngine.js'
+import { buildContextPackage } from '@dhcb/core-personal/contextEngine'
 
 describe('Eval V2 Context', () => {
   it('should include current_request in context', async () => {

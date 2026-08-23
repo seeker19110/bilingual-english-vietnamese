@@ -24,13 +24,13 @@ import * as fs from 'node:fs'
 import { writeJsonPretty } from './lib/writeJson.ts'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import type { DictEntry } from '../apps/english/src/types.ts'
+import type { DictEntry } from '../apps/dhcb/src/types.ts'
 import { wordKey, buildLevelGroups } from './lib/vocabTopics.ts'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const DICT_DIR = path.join(ROOT, 'public/data/dictionary')
-const CURRICULUM_JSON = path.join(ROOT, 'public/data/curriculum.json')
-const OUT = path.join(ROOT, 'apps/english/src/data/cefrA1B2ExtraVocab.json')
+const DICT_DIR = path.join(ROOT, 'apps/dhcb/public/data/dictionary')
+const CURRICULUM_JSON = path.join(ROOT, 'apps/dhcb/public/data/curriculum.json')
+const OUT = path.join(ROOT, 'apps/dhcb/src/data/cefrA1B2ExtraVocab.json')
 
 const WORDS_PER_CIRCLE = 20 // = DAILY_GOAL (src/lib/curriculum.ts), khớp cỡ vòng nền tảng A1–B2
 const MAX_CIRCLES_PER_UNIT = 5

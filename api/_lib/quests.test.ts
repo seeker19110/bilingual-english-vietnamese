@@ -2,16 +2,16 @@
 // (7 ngày), đây là chỗ đụng tiền thật (grantPlanDays).
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('../../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const granted: { calls: { userId: string; plan: string; days: number }[] } = { calls: [] }
-vi.mock('./planGrant', () => ({
+vi.mock('@dhcb/core-billing/planGrant', () => ({
   grantPlanDays: async (userId: string, plan: string, days: number) => {
     granted.calls.push({ userId, plan, days })
     return { plan, planExpiresAt: new Date() }
   },
 }))
 
-vi.mock('./referral', () => ({
+vi.mock('./referral.js', () => ({
   getReferralStats: async () => ({
     code: 'ABC123',
     rewardedCount: 0,
@@ -34,8 +34,8 @@ import {
   STREAK_QUEST_REWARD_DAYS,
   CEFR_EXAM_QUEST_REWARD_DAYS,
 } from './quests'
-import { vnDateStr, addDays } from '../../packages/core-db/date'
-import { getPgPool } from '../../packages/core-db/pgPool'
+import { vnDateStr, addDays } from '@dhcb/core-db/date'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

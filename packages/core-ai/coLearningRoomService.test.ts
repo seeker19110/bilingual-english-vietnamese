@@ -4,7 +4,7 @@ import {
   createCoLearningRoom,
   evaluateSocraticIntervention,
   postMessageToRoom,
-} from './coLearningRoomService'
+} from './coLearningRoomService.js'
 
 describe('coLearningRoomService (Multiplayer Co-learning & Socratic Moderator)', () => {
   const sampleHost: CoLearningMember = {

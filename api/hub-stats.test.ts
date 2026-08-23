@@ -1,17 +1,17 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: vi.fn(async () => true),
   validateAuth: vi.fn(),
   logSecurityEvent: () => {},
 }))
-vi.mock('../packages/core-auth/authService', () => ({
+vi.mock('@dhcb/core-auth/authService', () => ({
   getUserById: vi.fn(),
 }))
-vi.mock('../packages/core-auth/adminAuth', () => ({
+vi.mock('@dhcb/core-auth/adminAuth', () => ({
   isAdminEmail: vi.fn(),
 }))
 
@@ -19,7 +19,7 @@ const query = vi.fn()
 
 async function importHandler() {
   vi.resetModules()
-  const { getPgPool } = await import('../packages/core-db/pgPool')
+  const { getPgPool } = await import('@dhcb/core-db/pgPool')
   vi.mocked(getPgPool).mockReturnValue({ query } as unknown as ReturnType<typeof getPgPool>)
   const mod = await import('./hub-stats')
   return mod.default
@@ -32,7 +32,7 @@ beforeEach(() => {
 
 describe('/api/hub-stats', () => {
   it('người dùng chưa đăng nhập → trả { isAdmin: false, loggedIn: false }, KHÔNG trả totalUsers hay totalEnglishSessions', async () => {
-    const { validateAuth } = await import('../packages/core-auth/security')
+    const { validateAuth } = await import('@dhcb/core-auth/security')
     vi.mocked(validateAuth).mockResolvedValue(null)
 
     const handler = await importHandler()
@@ -47,9 +47,9 @@ describe('/api/hub-stats', () => {
   })
 
   it('người dùng thông thường đã đăng nhập → trả { isAdmin: false, loggedIn: true, userName }, KHÔNG trả totalUsers hay totalEnglishSessions', async () => {
-    const { validateAuth } = await import('../packages/core-auth/security')
-    const { getUserById } = await import('../packages/core-auth/authService')
-    const { isAdminEmail } = await import('../packages/core-auth/adminAuth')
+    const { validateAuth } = await import('@dhcb/core-auth/security')
+    const { getUserById } = await import('@dhcb/core-auth/authService')
+    const { isAdminEmail } = await import('@dhcb/core-auth/adminAuth')
 
     vi.mocked(validateAuth).mockResolvedValue({ userId: 'user-123' })
     vi.mocked(getUserById).mockResolvedValue({ id: 'user-123', email: 'student@example.com' })
@@ -68,9 +68,9 @@ describe('/api/hub-stats', () => {
   })
 
   it('admin đã đăng nhập → trả { isAdmin: true, loggedIn: true, totalUsers, totalEnglishSessions }', async () => {
-    const { validateAuth } = await import('../packages/core-auth/security')
-    const { getUserById } = await import('../packages/core-auth/authService')
-    const { isAdminEmail } = await import('../packages/core-auth/adminAuth')
+    const { validateAuth } = await import('@dhcb/core-auth/security')
+    const { getUserById } = await import('@dhcb/core-auth/authService')
+    const { isAdminEmail } = await import('@dhcb/core-auth/adminAuth')
 
     vi.mocked(validateAuth).mockResolvedValue({ userId: 'admin-123' })
     vi.mocked(getUserById).mockResolvedValue({
@@ -101,7 +101,7 @@ describe('/api/hub-stats', () => {
   })
 
   it('OPTIONS trả 204 và rate limit trả 429', async () => {
-    const { checkRateLimit } = await import('../packages/core-auth/security')
+    const { checkRateLimit } = await import('@dhcb/core-auth/security')
     const handler = await importHandler()
 
     const resOpt = await handler(
@@ -115,9 +115,9 @@ describe('/api/hub-stats', () => {
   })
 
   it('fallback tên từ email khi profile name null, và fail-open khi DB lỗi', async () => {
-    const { validateAuth } = await import('../packages/core-auth/security')
-    const { getUserById } = await import('../packages/core-auth/authService')
-    const { isAdminEmail } = await import('../packages/core-auth/adminAuth')
+    const { validateAuth } = await import('@dhcb/core-auth/security')
+    const { getUserById } = await import('@dhcb/core-auth/authService')
+    const { isAdminEmail } = await import('@dhcb/core-auth/adminAuth')
 
     vi.mocked(validateAuth).mockResolvedValue({ userId: 'u1' })
     vi.mocked(getUserById).mockResolvedValue({ id: 'u1', email: 'john.doe@example.com' })

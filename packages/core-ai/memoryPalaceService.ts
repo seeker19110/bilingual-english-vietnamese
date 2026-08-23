@@ -4,7 +4,7 @@ import {
   MemoryPalaceTheme,
   LocusAnchor,
   LocusRecallResult,
-} from '../core-contracts/memoryPalace.js'
+} from '@dhcb/core-contracts/memoryPalace'
 
 export class MemoryPalaceService {
   /**

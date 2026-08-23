@@ -1,18 +1,18 @@
 // Gác tự động cho quy ước "PHẢI khớp tay" giữa 2 bảng phân quyền giọng:
-//   - apps/english/src/lib/voiceTiers.ts  (client — quyết định UI cho chọn giọng nào)
+//   - apps/dhcb/src/lib/voiceTiers.ts  (client — quyết định UI cho chọn giọng nào)
 //   - api/_lib/voiceAccess.ts             (server — nguồn sự thật, tự hạ giọng ngoài quyền)
 // Lệch nhau thì UI cho chọn giọng mà server âm thầm hạ về giọng khác (lỗi thật đã gặp).
 // Dự án không share code giữa api/ và src/ (2 tsconfig riêng) nên chỉ có test mới bắt được.
 import { describe, it, expect } from 'vitest'
-import { VOICE_TIERS as CLIENT_TIERS } from '../../apps/english/src/lib/voiceTiers'
-import { VOICE_TIERS as SERVER_TIERS } from './voiceAccess.js'
-import { GEMINI_VOICE_IDS } from '../../packages/core-ai/geminiTts.js'
+import { VOICE_TIERS as CLIENT_TIERS } from '../../apps/dhcb/src/lib/voiceTiers'
+import { VOICE_TIERS as SERVER_TIERS } from '@dhcb/core-ai/voiceAccess'
+import { GEMINI_VOICE_IDS } from '@dhcb/core-ai/geminiTts'
 import {
   ELEVEN_VOICE_IDS as SERVER_ELEVEN_IDS,
   isValidElevenVoice,
-} from '../../packages/core-ai/elevenLabsTts.js'
-import { ELEVEN_VOICE_IDS as CLIENT_ELEVEN_IDS } from '../../apps/english/src/lib/voiceTiers'
-import type { Plan } from '../../packages/core-billing/plan.js'
+} from '@dhcb/core-ai/elevenLabsTts'
+import { ELEVEN_VOICE_IDS as CLIENT_ELEVEN_IDS } from '../../apps/dhcb/src/lib/voiceTiers'
+import type { Plan } from '@dhcb/core-billing/plan'
 
 const PLANS: Plan[] = ['free', 'pro', 'vip']
 

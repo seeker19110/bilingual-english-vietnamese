@@ -1,7 +1,7 @@
 // packages/core-contracts/assessment.ts — Contract cho "Assessment" (Phase 10 Assessment Engine,
 // docs/phases/10-assessment-engine.md). Kết quả chấm điểm AI trả về — hình thức hoá đúng hình
 // dạng đã dùng THẬT trong app hôm nay (khác các entity khác trong Phase 02 vốn CHƯA có engine),
-// gộp từ các interface hiện có, tất cả đều đang được `parseJson<T>()` (apps/english/src/lib/ai.ts)
+// gộp từ các interface hiện có, tất cả đều đang được `parseJson<T>()` (apps/dhcb/src/lib/ai.ts)
 // parse KHÔNG kiểm tra runtime (chỉ `as T`):
 //   - `FeedbackData`/`WritingFeedback` (Writing.tsx/stats.ts) — chấm bài viết kiểu IELTS.
 //   - `EvaluationResult` (types.ts, dùng ở Chat/Speaking/Lessons "Kết thúc & chấm điểm").

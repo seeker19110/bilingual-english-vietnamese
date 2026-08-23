@@ -4,7 +4,7 @@ import {
   ScratchpadStep,
   ScratchpadStepValidation,
   StemSubjectType,
-} from '../core-contracts/stemScratchpad.js'
+} from '@dhcb/core-contracts/stemScratchpad'
 
 export class StemScratchpadService {
   /**

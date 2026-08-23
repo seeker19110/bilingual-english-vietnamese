@@ -6,10 +6,10 @@ import {
   validateAuth,
   validateContentType,
   logSecurityEvent,
-} from './security'
+} from './security.js'
 
 const validateSessionToken = vi.hoisted(() => vi.fn())
-vi.mock('./authService', () => ({ validateSessionToken }))
+vi.mock('./authService.js', () => ({ validateSessionToken }))
 
 // Request giả tối thiểu — chỉ cần headers.get(...).
 function reqWithHeaders(headers: Record<string, string | null>): Request {

@@ -1,8 +1,8 @@
 // api/debate-arena.ts — REST handler cho Platform V5 AI Debate Arena & Socratic Multi-Agent.
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
-import { DebateArenaService } from '../packages/core-ai/debateArenaService.js'
-import { DebateSessionConfig, DebateSessionState } from '../packages/core-contracts/debateArena.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
+import { DebateArenaService } from '@dhcb/core-ai/debateArenaService'
+import { DebateSessionConfig, DebateSessionState } from '@dhcb/core-contracts/debateArena'
 
 // In-memory cache cho các phiên tranh biện của user
 const activeSessions = new Map<string, DebateSessionState>()

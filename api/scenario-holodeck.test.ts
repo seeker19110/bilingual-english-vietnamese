@@ -5,7 +5,7 @@ const authState: { user: { userId: string } | null } = {
 }
 let rateLimitOk = true
 
-vi.mock('../packages/core-auth/security.js', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => rateLimitOk,
@@ -13,10 +13,10 @@ vi.mock('../packages/core-auth/security.js', () => ({
   logSecurityEvent: () => {},
 }))
 
-vi.mock('../packages/core-db/pgPool.js', () => ({ getPgPool: () => ({}) }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: () => ({}) }))
 
 const getOrCreatePerson = vi.fn()
-vi.mock('../packages/core-personal/personService.js', () => ({
+vi.mock('@dhcb/core-personal/personService', () => ({
   getOrCreatePerson: (...a: unknown[]) => getOrCreatePerson(...a),
 }))
 

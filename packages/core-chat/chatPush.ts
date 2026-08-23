@@ -2,7 +2,7 @@
 // cho người dùng đang offline / không mở WebSocket.
 
 import webpush from 'web-push'
-import { getPgPool } from '../core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import { isOnline } from './redisChat.js'
 
 const VAPID_PUBLIC = process.env.VAPID_PUBLIC_KEY ?? ''

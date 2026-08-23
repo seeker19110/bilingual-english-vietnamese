@@ -6,7 +6,7 @@ import {
   NotFoundError,
   RateLimitError,
   ValidationError,
-} from '../core-errors/appError.js'
+} from '@dhcb/core-errors/appError'
 import {
   createAutomationGrant,
   pauseAutomationGrant,

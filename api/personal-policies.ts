@@ -10,20 +10,20 @@
 // NGAY Ở ĐÂY bằng Zod (400) — trước khi chạm DB; DB còn một `check` constraint làm lưới cuối.
 
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { AuthorityLevelSchema } from '../packages/core-contracts/personalPolicy.js'
-import { getOrCreatePerson } from '../packages/core-personal/personService.js'
-import { setPolicy, listPolicies, revokePolicy } from '../packages/core-personal/policyService.js'
+} from '@dhcb/core-auth/security'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { AuthorityLevelSchema } from '@dhcb/core-contracts/personalPolicy'
+import { getOrCreatePerson } from '@dhcb/core-personal/personService'
+import { setPolicy, listPolicies, revokePolicy } from '@dhcb/core-personal/policyService'
 
 const PostSchema = z
   .object({

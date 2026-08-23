@@ -2,7 +2,7 @@
 //  gen-stories-json.mjs — Sinh dữ liệu "Truyện cổ tích / Ngụ ngôn song ngữ"
 //  cho trang /listening.
 //
-//  Đọc mọi file apps/english/src/data/stories/raw/*.json (nguồn — do Opus soạn),
+//  Đọc mọi file apps/dhcb/src/data/stories/raw/*.json (nguồn — do Opus soạn),
 //  validate theo ràng buộc mục 5.3 của đặc tả, rồi ghi ra:
 //    - public/data/stories/<id>.json  (nội dung đầy đủ, kèm lineCount tự tính)
 //    - public/data/stories/index.json (mảng StoryMeta, KHÔNG kèm lines/source/moral*)
@@ -15,10 +15,10 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dirname, join, basename } from 'node:path'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const RAW_DIR = join(__dirname, '..', 'apps', 'english', 'src', 'data', 'stories', 'raw')
-const OUT_DIR = join(__dirname, '..', 'public', 'data', 'stories')
+const RAW_DIR = join(__dirname, '..', 'apps', 'dhcb', 'src', 'data', 'stories', 'raw')
+const OUT_DIR = join(__dirname, '..', 'apps', 'dhcb', 'public', 'data', 'stories')
 
-// Phải khớp STORY_KINDS ở apps/english/src/data/stories/index.ts (file .mjs không import type được).
+// Phải khớp STORY_KINDS ở apps/dhcb/src/data/stories/index.ts (file .mjs không import type được).
 const VALID_KINDS = ['fairy-tale', 'fable', 'vn-folk', 'myth', 'humor', 'children']
 const VALID_LEVELS = ['A2', 'B1', 'B2']
 

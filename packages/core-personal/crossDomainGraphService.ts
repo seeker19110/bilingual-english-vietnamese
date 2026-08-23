@@ -2,15 +2,15 @@
 // Kết nối Career, Learning và Personal vào Life Graph mà không vi phạm ranh giới bảng.
 import type { Pool } from 'pg'
 import { randomUUID } from 'node:crypto'
-import { listCareerGoals } from '../core-career/careerService.js'
-import { getLearningReadModel } from '../core-learner/learningReadModelService.js'
+import { listCareerGoals } from '@dhcb/core-career/careerService'
+import { getLearningReadModel } from '@dhcb/core-learner/learningReadModelService'
 import { listNodes, listEdges } from './lifeGraphService.js'
 import {
   CrossDomainGraphProjectionSchema,
   CROSS_DOMAIN_GRAPH_SCHEMA_VERSION,
   type CrossDomainGraphProjection,
-} from '../core-contracts/crossDomainGraph.js'
-import { type LifeGraphNodeType, type LifeRelation } from '../core-contracts/lifeGraph.js'
+} from '@dhcb/core-contracts/crossDomainGraph'
+import { type LifeGraphNodeType, type LifeRelation } from '@dhcb/core-contracts/lifeGraph'
 
 interface NodeRow {
   id: string

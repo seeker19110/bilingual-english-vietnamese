@@ -2,14 +2,14 @@
 // Enforces explicit grants, trigger checks, budgets/rate limits, retries/compensation, and immutable action receipts.
 import type { Pool } from 'pg'
 import { randomUUID } from 'node:crypto'
-import { withTransaction } from '../core-db/transaction.js'
+import { withTransaction } from '@dhcb/core-db/transaction'
 import {
   ConflictError,
   ForbiddenError,
   NotFoundError,
   RateLimitError,
   ValidationError,
-} from '../core-errors/appError.js'
+} from '@dhcb/core-errors/appError'
 import {
   AutomationGrantSchema,
   ActionReceiptSchema,
@@ -20,7 +20,7 @@ import {
   type AutomationTrigger,
   type AutomationBudget,
   type AutomationCompensation,
-} from '../core-contracts/automation.js'
+} from '@dhcb/core-contracts/automation'
 import { resolveAuthority } from './policyService.js'
 import { getToolManifest, validateToolInput } from './toolRegistry.js'
 

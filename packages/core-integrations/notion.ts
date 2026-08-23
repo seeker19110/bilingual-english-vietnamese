@@ -1,6 +1,6 @@
 // packages/core-integrations/notion.ts — Notion Integration Connector.
 import { randomUUID } from 'node:crypto'
-import type { NotionTaskExport, IntegrationSyncResponse } from '../core-contracts/integrations.js'
+import type { NotionTaskExport, IntegrationSyncResponse } from '@dhcb/core-contracts/integrations'
 
 export interface NotionPagePayload {
   parent?: { database_id: string }

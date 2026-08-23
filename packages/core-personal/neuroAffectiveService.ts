@@ -9,7 +9,7 @@ import {
   type VoiceProsodyMetrics,
   NeuroAffectiveStateSchema,
   NEURO_SCHEMA_VERSION,
-} from '../core-contracts/neuroAffective.js'
+} from '@dhcb/core-contracts/neuroAffective'
 
 // In-memory cache for latest neuro state per person
 const neuroStateCache = new Map<string, NeuroAffectiveState>()

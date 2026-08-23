@@ -8,6 +8,188 @@
 
 ## Giai đoạn hiện tại
 
+### fix+feat: bổ sung tiêu chuẩn còn thiếu — vá tiền/bảo mật N1 + nền persistence + gate CI (2026-08-23)
+
+**Bối cảnh:** người dùng yêu cầu "bổ sung các tiêu chuẩn còn thiếu chưa đạt" (mục 5 đặc tả
+platform) rồi tạo PR merge. Làm trong PR này:
+
+**B — Vá tiền & bảo mật (đề xuất N1, toàn bộ B1→B6):**
+
+1. **B3 — 5 đường AI trả tiền giờ ĐẾM LƯỢT + rate-limit đủ**: `/api/companion` trừ mode
+   `chat` (+refund khi provider lỗi, cả nhánh stream lẫn thường); `/api/vision-solve` +
+   `/api/ambient-vision` trừ `chat` + refund; `/api/gemini-live` thêm rate-limit 10/phút +
+   trừ 1 lượt `speaking` mỗi phiên (đường AI đắt nhất, trước đây không hàng rào nào);
+   `/api/co-learning-audio` thêm rate-limit 30/phút.
+2. **B1 — bỏ fallback `'u-default'`/`'guest-learner'`** ở daily-quests/pvp-arena/referral-vip
+   → 401 thật (trước: mọi khách vãng lai đọc/ghi chung một bucket dữ liệu).
+3. **B2 — `/api/health/deep`**: công khai chỉ còn `{status, timestamp}` + đúng mã 200/503
+   (uptime monitor vẫn dùng được); chi tiết nội bộ (pool stats, RSS/heap, driver, lỗi DB)
+   CHỈ trả cho admin; thêm rate-limit 30/phút.
+4. **B5 — scheduler chỉ chạy ở instance 0** (`NODE_APP_INSTANCE`): hết cảnh push/email nhắc
+   học gửi 3 lần/người và `downgradeExpiredPlans()` chạy 3 lần trong PM2 cluster.
+5. **B6 — server.ts**: bỏ đăng ký trùng `/api/vision-solve`; `/api/*` không khớp trả JSON
+   404 thay vì rơi vào catch-all SPA trả HTML 200.
+
+**Nền persistence (mở màn N3 — 33 API in-memory, 12-factor stateless):**
+
+6. Migration **`0058_platform_feature_state.sql`**: bảng `platform.feature_state`
+   (user_id, feature, state JSONB, PK (user_id, feature)) + helper
+   `packages/core-db/featureState.ts` (get/set upsert, có test). Là backing service chung
+   thay các `Map` in-memory.
+7. **Chuyển lô đầu 5 handler nhóm B** (state theo user, giữ lâu dài) sang `feature_state`:
+   memory-palace, metacognitive-reflection, neural-curriculum, action-canvas,
+   avatar-embodiment — hết mất dữ liệu khi restart, hết vỡ PM2 cluster.
+   **Phân loại phần còn lại** (ghi để lô sau): nhóm A (trùng hệ thật → GỘP/XOÁ, không
+   persist: daily-quests, referral-vip, leaderboard giả PvP — việc quyết định #1); nhóm C
+   (state phiên tạm: trận PvP, phòng audio, debate, realtime session, telemetry cache →
+   chuyển shared store khi tính năng làm thật, hoặc ẩn theo Q1 từng tính năng).
+
+**Gate CI mới (N5):** `npm audit --omit=dev` (0 lỗ hổng production deps) + `codemap cycles`
+= 0 — thêm vào job `quality`.
+
+**Chốt Q2 — MỘT lộ trình duy nhất:** nguồn thi hành = `PROGRESS.md` + đặc tả platform;
+`docs/MASTER_SPEC.md` giữ vai trò tầm nhìn; `docs/phases/00..45` + `docs/architecture-v2/`
+gắn banner THAM KHẢO (không phải backlog đang chạy). CLAUDE.md mục 2 cập nhật theo.
+
+**Việc tay còn lại cho người dùng (ngoài khả năng AI):** bật `quality` + `e2e` làm
+**required status check** trên GitHub Settings → Branches (hiện coverage đỏ vẫn merge được);
+chạy `npm run migrate:pg` sẽ tự chạy trong deploy.sh.
+
+### refactor: PR-S2b — chốt tầm nhìn PLATFORM, đổi tên app chính thành `apps/dhcb` (2026-08-23)
+
+**Quyết định người dùng (2026-08-23):** _"DHCB là nền tảng bao hàm tất cả các lĩnh vực mà cá
+nhân cần thiết, english chỉ là 1 môn học như bao môn khác"_ + _"mọi cấu trúc và phát triển
+phần mềm phải đúng tiêu chuẩn cao nhất của ngành"_. Đây là câu trả lời cho Q1 của bản đề xuất
+nâng cấp — hướng PLATFORM. Đặc tả kiến trúc mới:
+**`docs/research/dac-ta-kien-truc-platform-dhcb-2026-08-23.md`** (mô hình khái niệm, khuôn
+"thêm môn học mới" 5 mảnh, điều chỉnh S4: `subject-english` + `api/subjects/english/` thay vì
+`core-english` + `api/english/`, danh sách tiêu chuẩn ngành đạt/thiếu).
+
+**Đã làm trong PR này:**
+
+1. `git mv apps/english → apps/dhcb`; gói `@dhcb/english` → **`@dhcb/app`** — app chính mang
+   đúng tên nền tảng (nó chứa toàn bộ platform: companion, 4 trụ đời sống, admin, phòng học
+   đa môn; phần riêng môn Anh chỉ là `src/pages/subjects/english/` + data/prompts).
+2. Cập nhật MỌI chuỗi đường dẫn `apps/english` trong code/config đang sống (2 dạng:
+   `apps/english` và `'apps', 'english'`): tsconfig 4 file, vite/vitest config, package.json,
+   scripts/ (seed/gen/deploy), e2e, api/_lib, codemap scanRoots, hub vite.config, CI không đổi.
+3. **Xoá hẳn alias `@english/*`** (đo thật: 0 nơi import — không giữ khái niệm chết) khỏi
+   tsconfig.base/vite/vitest; alias còn lại: `@dhcb/*` (workspace) + `@core` (core-ui).
+4. CLAUDE.md viết lại mục 1 (định nghĩa platform DHCB, english = môn trong trụ Learning) +
+   tiêu đề file + mục 6 đường dẫn. URL công khai/route/schema `english.*` KHÔNG đổi.
+
+**Ghi chú trung thực:** tầm nhìn platform KHÔNG đổi thứ tự ưu tiên sửa lỗi — nhóm N1 (5 đường
+AI không đếm lượt, auth `'u-default'`, REDIS_URL, scheduler ×3) và N3 (33 API in-memory →
+Postgres, gộp referral/quest trùng) vẫn là việc phải làm thật trước khi thêm tính năng platform
+mới. Xem mục 5 của đặc tả kiến trúc platform.
+
+### refactor: PR-S2 — app english về đúng chỗ `apps/english/` (nay là `apps/dhcb/`, 2026-08-23)
+
+**Bối cảnh:** bước S2 của `docs/research/dac-ta-cai-to-cau-truc-2026-08-23.md`, tiếp nối S1,
+cùng nhánh `claude/project-upgrade-proposal-c3wb5h`.
+
+**Đã làm:**
+
+1. `git mv` `index.html` + `public/` + `vite.config.ts` + `tailwind.config.js` +
+   `postcss.config.js` từ GỐC repo → `apps/english/`; thêm `apps/english/package.json`
+   (`@dhcb/english`, thành workspace thật) + `apps/english/tsconfig.json`.
+2. Tách `tsconfig.base.json` (compilerOptions + paths chung, baseUrl gốc repo) — tsconfig gốc
+   giờ chỉ là solution file (extends base, `files: []`, references) nên tsx/editor vẫn đọc
+   được paths `@dhcb/@core/@english`.
+3. `vite.config.ts` tự khai `root` = thư mục app (không phụ thuộc cwd), env đọc từ gốc repo,
+   **`outDir` giữ nguyên `dist/` gốc** (bất biến hạ tầng — nginx/deploy/PM2/size-limit không
+   đổi); dev middleware nạp handler `api/`/`packages/` NGOÀI root qua `/@fs` + `server.fs.allow`.
+4. Npm script gốc giữ nguyên TÊN (`dev`/`build`/`preview`/`typecheck`), chỉ đổi ruột sang
+   `--config apps/english/vite.config.ts` / `tsc -p apps/english/tsconfig.json` — Playwright
+   (`npm run dev -- --port 5179`), CI, thói quen cũ không gãy.
+5. Cập nhật 5 điểm trỏ `public/` cũ: `gen-data-manifest.mjs`, `gen-stories-json.mjs`,
+   `vitest.setup.ts`, `build-lessons-public.mjs`, `deploy.sh` (git clean path).
+6. **2 hồi quy bị bắt và sửa ngay trong lúc làm** (đúng vai trò của gate size-limit):
+   Tailwind plugin tìm config theo cwd → chỉ định đường tuyệt đối trong `postcss.config.js`;
+   Tailwind v3 resolve `content` glob theo cwd (không theo vị trí config) → đổi glob sang
+   đường tuyệt đối trong `tailwind.config.js`. CSS từ 2.44 kB (mất sạch utilities) về đúng
+   15.75 kB brotli như trước khi dời.
+
+**Cổng đã chạy:** typecheck ✅ (4 project) · lint ✅ · build đầy đủ ✅ (gen scripts + vite +
+server + hub; `dist/` gốc đúng app english, đủ data manifest) · size ✅ (JS 120.66/123 kB, CSS
+15.75/16 kB — khớp trước khi dời) · smoke dev server thật ✅ (index + `/src/main.tsx` +
+`/api/app-settings` qua dev middleware `/@fs`) · test+coverage ✅ (xem số ở mô tả PR/commit).
+
+### refactor: PR-S1 — workspace npm THẬT + project references (phương án B, người dùng chốt 2026-08-23)
+
+**Bối cảnh:** thực thi bước S1 của `docs/research/dac-ta-cai-to-cau-truc-2026-08-23.md`. Người
+dùng chốt **phương án B** (TypeScript project references) thay vì esbuild. Nhánh:
+`claude/project-upgrade-proposal-c3wb5h`.
+
+**Đã làm:**
+
+1. **18 gói `packages/*` thành npm workspace thật** — mỗi gói có `package.json`
+   (`@dhcb/core-*`, `exports "./*"` trỏ `dist/`) + `tsconfig.json` composite
+   (extends `tsconfig.package.base.json` mới, emit `dist/` riêng từng gói,
+   `references` theo đồ thị phụ thuộc thật). `tsconfig.packages.json` gom 17 gói build được
+   (`core-ui` là React/tsx, chỉ frontend dùng qua bundler — không build). Lệnh mới:
+   `npm run build:packages` (`tsc -b`), chạy tự động trong `build:server`.
+2. **Codemod 3 đợt, ~1.590 điểm import**: (a) mọi import tương đối xuyên gói →
+   `@dhcb/<gói>/<file>` không đuôi (1.209 điểm/447 file); (b) 31 điểm quanh các file dời đợt 2;
+   (c) 346 chuỗi `vi.mock`/`vi.importActual` trong 132 file test map theo đường mới (lượt test
+   đầu 145 fail đều do mock lệch đường — đã chữa đúng gốc, không sửa test lẻ).
+3. **Dời 21 file `api/_lib` bị packages import ngược** (điều kiện per-package build):
+   gói MỚI `core-http` (http, validation, fetchTimeout, mailer, mailQuota) ·
+   `core-auth` (passwordReset, trial, reservedNames) · `core-billing` (planFeatures, planGrant,
+   planMarketing, pricePromo, prices, sepay) · `core-ai` (geminiApi, googleTts, ttsCrypto,
+   visemeTimeline, voiceAccess, espeakPhonemes) · `core-chat` (friends). Kèm test đi cùng.
+4. **Cắt 3 chu trình phụ thuộc CẤP GÓI** (điều kiện sống của `tsc -b`): 7 handler HTTP của
+   `core-billing` (checkout, payment-webhook, payment-status/history, plan-prices/features/
+   marketing) trả về `api/` (handler thuộc tầng server — khớp định hướng S4);
+   `learningGoalAdapter` dời `core-learner` → `core-personal`. Xác minh lại: 0 chu trình.
+5. **Resolver nhất quán 2 chế độ**: production `node dist-server/server.js` phân giải `@dhcb`
+   qua `exports` → `dist/` từng gói; dev/test (tsx, Vite, Vitest) phân giải về SOURCE qua
+   tsconfig `paths` + alias regex — đã kiểm chứng thật cả hai (boot server biên dịch + boot tsx
+   sau khi giấu `dist/` của core-db). ESLint thêm luật `packages/ ↛ api/`.
+6. **CI thêm boot check**: `node dist-server/server.js` phải trả `/api/health` 200.
+7. Codemap hiểu alias `@dhcb/*` + `scripts/*.ts` vào ENTRY_POINTS (hết false-positive orphan)
+   — giao subagent, 67/67 test lib codemap xanh.
+
+**Cổng đã chạy:** typecheck ✅ (4 tsconfig + `tsc -b` 17 gói + `tsc -p tsconfig.server.json`) ·
+lint ✅ (0 cảnh báo, thêm rule mới) · format ✅ · test ✅ (5070/5070 sau 2 vòng sửa
+mock/route-test) + coverage trên sàn 90 · vite build ✅ · size ✅ (JS 120.71/123 kB,
+CSS 15.75/16 kB) · hub build ✅ · boot check thật ✅ · codemap cycles = 0 ✅.
+
+**Lưu ý vận hành:** deploy/nginx/PM2 KHÔNG đổi đường dẫn nào (`dist/` +
+`dist-server/server.js` giữ nguyên). `package-lock.json` đổi do npm link 18 workspace.
+Còn lại của lộ trình: S2→S6 (xem đặc tả).
+
+### docs: quét toàn dự án + bản đề xuất nâng cấp/cải tổ (2026-08-23)
+
+**Việc đã làm:** người dùng yêu cầu "quét toàn dự án và đưa ra đề xuất nâng cấp, cải tổ tốt
+nhất". Đã chạy 4 lượt khảo sát song song (backend API, frontend, kiến trúc monorepo, nợ kỹ
+thuật/tài liệu) và tổng hợp thành
+**`docs/research/de-xuat-nang-cap-cai-to-2026-08-23.md`** — đọc file đó để biết đầy đủ.
+
+**Phát hiện nổi bật (tóm tắt):**
+
+- 33/48 API mở rộng (Platform Vx/Companion) KHÔNG có persistence — `Map` in-memory, vỡ trong
+  PM2 cluster 3 instance; dữ liệu giả (ReferralVipBanner, DailyQuestsCard) hiện ngay trang chủ.
+- 5 đường gọi AI trả tiền không đếm lượt (`gemini-live`, `companion`, `vision-solve`,
+  `ambient-vision`, `co-learning-audio`); `ecosystem.config.cjs` thiếu `REDIS_URL`; scheduler
+  chạy ×3 instance (push nhắc học gửi 3 lần/người); `/api/health/deep` không auth.
+- Workspace monorepo "giả" (17 gói + apps/english không có package.json); 49 shim pages mồ côi;
+  `core-grading` 1.355 dòng không ai dùng; 3 bảng DB chết; 2 cặp migration trùng số 0026/0027;
+  Sổ tay lỗi sai chỉ nằm localStorage (rủi ro mất dữ liệu người dùng thật).
+
+**Đề xuất (chờ người dùng duyệt):** 2 quyết định chiến lược N0 (Q1 chốt phạm vi — khuyến nghị
+quay về lõi gia sư, đóng băng Platform Vx chưa thật; Q2 chốt 1 lộ trình kiến trúc duy nhất) +
+5 nhóm việc N1→N5, trong đó **N1 (vá tiền/bảo mật) đề xuất chèn TRƯỚC PR D** của loạt A→G
+đang dở. Trình tự chi tiết ở mục 4 của bản đề xuất. Nhánh: `claude/project-upgrade-proposal-c3wb5h`.
+
+**Bổ sung cùng ngày — đặc tả cải tổ CẤU TRÚC THƯ MỤC** (người dùng yêu cầu nghiên cứu riêng):
+**`docs/research/dac-ta-cai-to-cau-truc-2026-08-23.md`** — cây thư mục đích chuẩn
+(`apps/{english,hub,server}` + 14 gói `@dhcb/*` có package.json thật, `api/` chia theo domain,
+`core-english`/`core-domains` mới), quyết định kỹ thuật then chốt (bundle server bằng esbuild
+để hết cấm alias ở backend, giữ bất biến `dist/` + `dist-server/server.js` nên KHÔNG cần việc
+tay trên VPS), lộ trình 6 PR (S1→S6, ~6,5 ngày công) kèm rủi ro/cách đỡ. Chờ người dùng chốt
+3 cổng: phương án esbuild, cây đích, thời điểm (sau hay chen giữa loạt PR D→G).
+
 ### fix: sửa lỗi logic SRS/CEFR — PR C trong loạt nâng cấp toàn diện (2026-08-23)
 
 **Bối cảnh:** tiếp nối PR A (gamification) + PR B (3 chế độ học) trong kế hoạch 7 PR (A→G) + 4

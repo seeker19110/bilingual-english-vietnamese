@@ -3,15 +3,15 @@
 import type { Pool, PoolClient } from 'pg'
 import { randomUUID } from 'node:crypto'
 import { z } from 'zod'
-import { withTransaction } from '../core-db/transaction.js'
-import { ConflictError, NotFoundError } from '../core-errors/appError.js'
+import { withTransaction } from '@dhcb/core-db/transaction'
+import { ConflictError, NotFoundError } from '@dhcb/core-errors/appError'
 import {
   ProposedActionSchema,
   PROPOSED_ACTION_SCHEMA_VERSION,
   type ProposedAction,
   ProposedActionStatusSchema,
-} from '../core-contracts/proposedAction.js'
-import { CapabilityRiskLevelSchema } from '../core-contracts/capabilityManifest.js'
+} from '@dhcb/core-contracts/proposedAction'
+import { CapabilityRiskLevelSchema } from '@dhcb/core-contracts/capabilityManifest'
 import { resolveAuthority } from './policyService.js'
 import { getToolManifest, validateToolInput } from './toolRegistry.js'
 
