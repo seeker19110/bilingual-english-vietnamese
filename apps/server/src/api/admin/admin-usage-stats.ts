@@ -26,6 +26,7 @@ import { getUserById } from '@dhcb/core-auth/authService'
 import { isAdminEmail } from '@dhcb/core-auth/adminAuth'
 import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 import { getUnitCostsUsd, getUsdVndRate, estimateCostUsd } from '@dhcb/core-ai/aiCost'
+import { getDailyBudgetUsd } from '@dhcb/core-ai/aiTokenUsage'
 import { FREE_WEEKLY_CAP, FREE_ROLLING_WINDOW_DAYS, type UsageMode } from '@dhcb/core-billing/usage'
 import { vnDateStr, addDays } from '@dhcb/core-db/date'
 
@@ -70,6 +71,20 @@ interface PlanUsageRow {
   speaking: number
   stt: number
   pronounce: number
+}
+
+// Một dòng token THẬT gộp theo provider/model (bảng platform.ai_token_usage_daily, mục N4).
+// numeric/bigint của Postgres về Node dưới dạng CHUỖI (pg không tự ép để tránh mất chính xác)
+// → khai kiểu string rồi Number() một lần khi gộp.
+interface TokenUsageRow {
+  provider: string
+  model: string
+  mode: string
+  calls: number
+  prompt_tokens: string
+  completion_tokens: string
+  cache_read_tokens: string
+  cost_usd: string
 }
 
 interface TopUserRow {
@@ -144,6 +159,7 @@ export default async function handler(req: Request): Promise<Response> {
       revenueDailyRes,
       creditRes,
       topUsersRes,
+      tokenRes,
     ] = await Promise.all([
       // ① Tổng người dùng + số đăng ký mới trong kỳ
       pool.query<{ total: number; new_in_range: number }>(
@@ -294,6 +310,24 @@ export default async function handler(req: Request): Promise<Response> {
          limit ${TOP_USERS_LIMIT}`,
         [from],
       ),
+
+      // ⑫ CHI PHÍ AI THEO TOKEN THẬT (mục N4) — khác hẳn ⑪/costByFeature ở trên: các số kia
+      // là ƯỚC TÍNH (lượt × đơn giá đoán sẵn), còn bảng này là token do CHÍNH nhà cung cấp
+      // báo về, quy giá theo bảng giá thật. Giữ CẢ HAI trên dashboard để thấy ước tính lệch
+      // bao nhiêu — nếu lệch nhiều thì chỉnh AI_COST_*_USD trong .env cho sát.
+      pool.query<TokenUsageRow>(
+        `select provider, model, mode,
+                sum(calls)::int as calls,
+                sum(prompt_tokens)::text     as prompt_tokens,
+                sum(completion_tokens)::text as completion_tokens,
+                sum(cache_read_tokens)::text as cache_read_tokens,
+                sum(cost_usd)::text          as cost_usd
+         from platform.ai_token_usage_daily
+         where day >= $1
+         group by provider, model, mode
+         order by sum(cost_usd) desc`,
+        [from],
+      ),
     ])
 
     // ── Gộp số liệu, tính chi phí ────────────────────────────────────────────
@@ -343,6 +377,28 @@ export default async function handler(req: Request): Promise<Response> {
       costUsd: estimateCostUsd(toCounts(row)),
     }))
 
+    // ── Token THẬT: gộp tổng + đổi chuỗi numeric của Postgres sang số ────────
+    const tokenRows = tokenRes.rows.map((row) => ({
+      provider: row.provider,
+      model: row.model,
+      mode: row.mode,
+      calls: row.calls,
+      promptTokens: Number(row.prompt_tokens) || 0,
+      completionTokens: Number(row.completion_tokens) || 0,
+      cacheReadTokens: Number(row.cache_read_tokens) || 0,
+      costUsd: Number(row.cost_usd) || 0,
+    }))
+    const tokenTotals = tokenRows.reduce(
+      (acc, row) => ({
+        calls: acc.calls + row.calls,
+        promptTokens: acc.promptTokens + row.promptTokens,
+        completionTokens: acc.completionTokens + row.completionTokens,
+        cacheReadTokens: acc.cacheReadTokens + row.cacheReadTokens,
+        costUsd: acc.costUsd + row.costUsd,
+      }),
+      { calls: 0, promptTokens: 0, completionTokens: 0, cacheReadTokens: 0, costUsd: 0 },
+    )
+
     const activeRow = activeRes.rows[0] ?? { dau: 0, wau: 0, mau: 0, returning: 0 }
     const paidUsers = planCounts.pro + planCounts.vip
     const costVnd = totalCostUsd * usdVndRate
@@ -377,6 +433,14 @@ export default async function handler(req: Request): Promise<Response> {
           // Chi phí bình quân trên MỘT người hoạt động tháng — so trực tiếp với giá gói
           // (Pro 40.000đ/tháng) để biết bán một gói có lãi không.
           perActiveUserVnd: activeRow.mau > 0 ? costVnd / activeRow.mau : 0,
+        },
+        // Chi phí ĐO THẬT theo token (mục N4). `dailyBudgetUsd` = null nghĩa là chưa đặt
+        // AI_DAILY_BUDGET_USD → server không cảnh báo vượt ngân sách.
+        tokenCost: {
+          totals: tokenTotals,
+          totalVnd: tokenTotals.costUsd * usdVndRate,
+          byProviderModel: tokenRows,
+          dailyBudgetUsd: getDailyBudgetUsd(),
         },
         revenue: {
           vnd: revenueVnd,
