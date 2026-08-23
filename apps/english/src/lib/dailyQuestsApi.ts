@@ -1,9 +1,6 @@
 // apps/english/src/lib/dailyQuestsApi.ts — Client API cho Daily Quests & Streak Vault.
 import { getAuthHeader } from '@core/authHeader'
-import type {
-  DailyQuestsState,
-  QuestCategory,
-} from '../../../../packages/core-contracts/dailyQuests'
+import type { DailyQuestsState, QuestCategory } from '@dhcb/core-contracts/dailyQuests'
 
 export async function fetchDailyQuests(): Promise<DailyQuestsState> {
   const res = await fetch('/api/daily-quests', {

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Activity, Mic, RefreshCw } from 'lucide-react'
 import { useToast } from '@core/ToastProvider'
 import { getAuthHeader } from '@core/authHeader'
-import type { AcousticPhoneticsReport } from '../../../../../packages/core-contracts/realtimeMultimodal'
+import type { AcousticPhoneticsReport } from '@dhcb/core-contracts/realtimeMultimodal'
 
 export default function AcousticPhoneticsLab() {
   const [targetSentence, setTargetSentence] = useState('Think outside the box')

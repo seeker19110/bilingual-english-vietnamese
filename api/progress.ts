@@ -7,18 +7,18 @@
 //                             cefrExams, placement, weeklyGoal, achievements }
 
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
-import { vnDateStr } from '../packages/core-db/date.js'
-import { FREE_WEEKLY_BONUS_PER_DAY } from '../packages/core-billing/usage.js'
+} from '@dhcb/core-auth/security'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { vnDateStr } from '@dhcb/core-db/date'
+import { FREE_WEEKLY_BONUS_PER_DAY } from '@dhcb/core-billing/usage'
 import {
   mergeSrsMap,
   mergeExamMap,

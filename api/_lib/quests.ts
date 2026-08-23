@@ -13,9 +13,9 @@
 //   4. "Mời bạn xác thực email" — đã có sẵn từ trước (api/_lib/referral.ts), CHỈ gộp số liệu
 //      vào GET /api/quests để hiện chung 1 nơi, không đổi logic thưởng đã có.
 
-import { getPgPool } from '../../packages/core-db/pgPool.js'
-import { grantPlanDays } from './planGrant.js'
-import { vnDateStr, addDays } from '../../packages/core-db/date.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import { grantPlanDays } from '@dhcb/core-billing/planGrant'
+import { vnDateStr, addDays } from '@dhcb/core-db/date'
 import { getReferralStats, type ReferralStats } from './referral.js'
 
 export type ClaimQuestResult = { ok: true; rewardDays: number } | { ok: false; message: string }

@@ -5,10 +5,7 @@ import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import { useToast } from '@core/ToastProvider'
 import { submitFeedback } from '../lib/feedbackApi'
-import {
-  CATEGORY_METADATA,
-  type UserFeedbackCategory,
-} from '../../../../packages/core-contracts/feedback'
+import { CATEGORY_METADATA, type UserFeedbackCategory } from '@dhcb/core-contracts/feedback'
 
 interface Props {
   isOpen: boolean

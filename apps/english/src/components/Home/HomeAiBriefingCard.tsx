@@ -18,7 +18,7 @@ import {
 } from 'lucide-react'
 import { fetchProactiveBriefing } from '../../lib/proactiveBriefingApi'
 import { speak } from '../../lib/tts'
-import type { ProactiveBriefing } from '../../../../../packages/core-contracts/proactiveBriefing'
+import type { ProactiveBriefing } from '@dhcb/core-contracts/proactiveBriefing'
 
 interface Props {
   userName?: string

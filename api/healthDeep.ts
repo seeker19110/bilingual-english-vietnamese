@@ -2,9 +2,9 @@
 // Kiểm tra trạng thái sống của CSDL PostgreSQL, Storage R2/Local, Memory, Uptime.
 // Trả về 200 (Healthy) hoặc 503 (Degraded/Down) cho monitoring và uptime alerts.
 
-import { getPgPool } from '../packages/core-db/pgPool.js'
-import { getCorsHeaders, SECURITY_HEADERS } from '../packages/core-auth/security.js'
-import { jsonResponse } from './_lib/http.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import { getCorsHeaders, SECURITY_HEADERS } from '@dhcb/core-auth/security'
+import { jsonResponse } from '@dhcb/core-http/http'
 
 export interface DeepHealthCheckResult {
   status: 'healthy' | 'degraded' | 'unhealthy'

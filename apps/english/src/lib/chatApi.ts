@@ -2,7 +2,7 @@
 // Real-time (tin nhắn mới, typing, read receipt, presence) đi qua WebSocket (xem useChat.ts).
 
 import { getAuthHeader } from '@core/authHeader'
-import type { ChatMessage, RoomSummary } from '../../../../packages/core-contracts/chat'
+import type { ChatMessage, RoomSummary } from '@dhcb/core-contracts/chat'
 
 export type { ChatMessage, RoomSummary }
 

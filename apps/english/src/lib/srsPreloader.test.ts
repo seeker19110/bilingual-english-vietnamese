@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 // Mock progressSync
-vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
+vi.mock('./progressSync.js', () => ({ pushProgress: vi.fn() }))
 
 // Mock tts: speechCacheKey mô phỏng đúng khoá thật (version:lang:voice:text)
 const mockPrefetchSpeech = vi.fn().mockResolvedValue(undefined)
-vi.mock('./tts', () => ({
+vi.mock('./tts.js', () => ({
   getVoicePref: () => 'Kore',
   speechCacheKey: (text: string, lang: string, voice: string) => `${lang}:${voice}:${text}`,
   prefetchSpeech: (...args: unknown[]) => mockPrefetchSpeech(...args),
@@ -13,20 +13,20 @@ vi.mock('./tts', () => ({
 
 // Mock danh sách giọng gói cho phép — mặc định 2 giọng để kiểm tra nhân bản theo giọng
 const mockVoices = vi.fn(() => ['Kore', 'Puck'])
-vi.mock('./voiceTiers', () => ({
+vi.mock('./voiceTiers.js', () => ({
   getPreloadVoices: () => mockVoices(),
 }))
 
 // Mock nguồn "từ mới hôm nay" — mặc định rỗng để các ca cũ chỉ xét thẻ SRS đến hạn
 const mockTodayBatch = vi.fn<() => DictEntry[]>(() => [])
-vi.mock('./curriculum', () => ({
+vi.mock('./curriculum.js', () => ({
   getTodayBatchFrom: () => mockTodayBatch(),
   getDailyAllowance: () => 10,
 }))
-vi.mock('./vocab', () => ({ getLearnedWords: () => new Set<string>() }))
+vi.mock('./vocab.js', () => ({ getLearnedWords: () => new Set<string>() }))
 
 // Mock audioCache: chỉ giọng Kore của từ "apple" là đã có sẵn
-vi.mock('./audioCache', () => ({
+vi.mock('./audioCache.js', () => ({
   audioCacheKey: (text: string, lang: string, voice: string) => `${lang}:${voice}:${text}`,
   getAudioBuffer: vi.fn().mockImplementation((key: string) => {
     if (key === 'en-US:Kore:apple') return Promise.resolve(new ArrayBuffer(10))

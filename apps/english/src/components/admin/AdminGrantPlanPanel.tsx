@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 import { Loader2, Search, ShieldCheck } from 'lucide-react'
 import { useToast } from '@core/ToastProvider'
 import { getAuthHeader } from '@core/authHeader'
-import type { Plan } from '../../../../../packages/core-billing/plan'
+import type { Plan } from '@dhcb/core-billing/plan'
 
 const PLAN_OPTIONS: { key: Plan; label: string }[] = [
   { key: 'free', label: 'Free' },

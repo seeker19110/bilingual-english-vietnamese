@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { orchestrateAutonomousAgentTask } from './agentOrchestratorService'
-import { AgentExecutionSessionSchema } from '../core-contracts/agentOrchestrator'
+import { orchestrateAutonomousAgentTask } from './agentOrchestratorService.js'
+import { AgentExecutionSessionSchema } from '@dhcb/core-contracts/agentOrchestrator'
 
 describe('agentOrchestratorService', () => {
   it('orchestrates an autonomous agent task loop successfully matching v5.5.0', () => {

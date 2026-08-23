@@ -1,7 +1,7 @@
 // api/life-synthesis.ts — REST handler cho Cross-Domain Life Synthesis & Predictive Goal Horizon.
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
-import { generateLifeSynthesisReport } from '../packages/core-personal/lifeSynthesisService.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
+import { generateLifeSynthesisReport } from '@dhcb/core-personal/lifeSynthesisService'
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {

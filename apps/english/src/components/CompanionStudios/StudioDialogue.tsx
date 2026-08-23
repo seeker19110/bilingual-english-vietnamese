@@ -22,8 +22,8 @@ import RealtimeMultimodalLiveOrb from '../CompanionVoice/RealtimeMultimodalLiveO
 import CyberTutorAvatar3D from '../Companion3D/CyberTutorAvatar3D'
 import AvatarEmbodimentSelector, { EmbodimentMode } from '../Companion3D/AvatarEmbodimentSelector'
 import EdgeAiIndicator from '../EdgeAi/EdgeAiIndicator'
-import type { ProposedAction } from '../../../../../packages/core-contracts/proposedAction'
-import type { ContextPackage } from '../../../../../packages/core-contracts/contextPackage'
+import type { ProposedAction } from '@dhcb/core-contracts/proposedAction'
+import type { ContextPackage } from '@dhcb/core-contracts/contextPackage'
 import { ChatMessage, DOMAIN_OPTIONS, QUICK_PROMPTS } from './studioTypes'
 
 interface StudioDialogueProps {

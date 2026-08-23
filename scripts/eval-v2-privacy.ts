@@ -7,11 +7,8 @@
 // Exit 0: all drills pass
 // Exit 1: any drill fails
 
-import {
-  exportPersonData,
-  erasePersonData,
-} from '../packages/core-personal/personErasureService.js'
-import { NotFoundError } from '../packages/core-errors/appError.js'
+import { exportPersonData, erasePersonData } from '@dhcb/core-personal/personErasureService'
+import { NotFoundError } from '@dhcb/core-errors/appError'
 
 const PERSON_ID = '00000000-0000-0000-0000-000000000042'
 

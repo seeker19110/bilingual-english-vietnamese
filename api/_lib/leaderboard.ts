@@ -14,8 +14,8 @@
 //
 // Toàn bộ hàm ở đây THUẦN (không gọi Supabase) để dễ test — api/leaderboard.ts lo truy vấn.
 
-import { addDays, weekStartOf } from '../../packages/core-db/date.js'
-import { isReservedName } from './reservedNames.js'
+import { addDays, weekStartOf } from '@dhcb/core-db/date'
+import { isReservedName } from '@dhcb/core-auth/reservedNames'
 
 export const LEAGUE_POINTS = {
   learnOrReview: 1, // 1 lượt học từ mới / ôn SRS (daily_usage.learn_count)

@@ -47,10 +47,15 @@ export default defineConfig(({ mode }) => {
   // — không proxy thẳng tới Anthropic nữa, để handler tự chọn nhà cung cấp (Gemini/Groq/Anthropic).
   return {
     resolve: {
-      alias: {
-        '@core': coreUiDir,
-        '@english': srcDir,
-      },
+      alias: [
+        // @dhcb/<gói>/<file> -> packages/<gói>/<file> (source) — workspace thật, xem tsconfig paths
+        {
+          find: /^@dhcb\/(.*)$/,
+          replacement: fileURLToPath(new URL('./packages', import.meta.url)) + '/$1',
+        },
+        { find: '@core', replacement: coreUiDir },
+        { find: '@english', replacement: srcDir },
+      ],
     },
     plugins: [
       react(),

@@ -8,17 +8,17 @@
 //
 // GET /api/hub-stats
 
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getUserById } from '../packages/core-auth/authService.js'
-import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { getUserById } from '@dhcb/core-auth/authService'
+import { isAdminEmail } from '@dhcb/core-auth/adminAuth'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 interface AdminHubStats {
   totalUsers: number

@@ -1,15 +1,12 @@
 // apps/english/src/lib/knowledgeFabricApi.ts — Client API for Personal Knowledge Fabric, Facts, Memories, Automation & Privacy
 import { getAuthHeader } from '@core/authHeader'
-import type { PersonalFact, Sensitivity } from '../../../../packages/core-contracts/personalFact'
-import type {
-  MemoryRecord,
-  MemoryNamespace,
-} from '../../../../packages/core-contracts/personalMemory'
-import type { AutomationGrant, ActionReceipt } from '../../../../packages/core-contracts/automation'
+import type { PersonalFact, Sensitivity } from '@dhcb/core-contracts/personalFact'
+import type { MemoryRecord, MemoryNamespace } from '@dhcb/core-contracts/personalMemory'
+import type { AutomationGrant, ActionReceipt } from '@dhcb/core-contracts/automation'
 import type {
   CrossDomainGraphProjection,
   CrossDomainSyncSummary,
-} from '../../../../packages/core-contracts/crossDomainGraph'
+} from '@dhcb/core-contracts/crossDomainGraph'
 
 // ── Personal Facts ────────────────────────────────────────────────────────────
 

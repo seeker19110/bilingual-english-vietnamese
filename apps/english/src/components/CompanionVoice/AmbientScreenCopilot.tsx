@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { Monitor, Eye, EyeOff, Sparkles, Lightbulb, Tag, Loader2, CheckCircle2 } from 'lucide-react'
-import type { AmbientContextInsight } from '../../../../../packages/core-contracts/ambientContext'
+import type { AmbientContextInsight } from '@dhcb/core-contracts/ambientContext'
 
 export const AmbientScreenCopilot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)

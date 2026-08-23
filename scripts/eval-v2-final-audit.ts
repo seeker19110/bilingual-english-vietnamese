@@ -14,11 +14,8 @@
 // Exit 0: All 8 criteria PASSED
 // Exit 1: Any criterion FAILED
 
-import { CapabilityCostTracker } from '../packages/core-ai/capabilityCostTracker.js'
-import {
-  exportPersonData,
-  erasePersonData,
-} from '../packages/core-personal/personErasureService.js'
+import { CapabilityCostTracker } from '@dhcb/core-ai/capabilityCostTracker'
+import { exportPersonData, erasePersonData } from '@dhcb/core-personal/personErasureService'
 
 export interface AuditCriterionResult {
   id: number

@@ -11,8 +11,8 @@ import {
   Target,
   Compass,
 } from 'lucide-react'
-import type { ProposedAction } from '../../../../../packages/core-contracts/proposedAction'
-import type { ContextPackage } from '../../../../../packages/core-contracts/contextPackage'
+import type { ProposedAction } from '@dhcb/core-contracts/proposedAction'
+import type { ContextPackage } from '@dhcb/core-contracts/contextPackage'
 
 export type StudioTab = 'dialogue' | 'cognitive' | 'labs' | 'proactive' | 'synthesis'
 

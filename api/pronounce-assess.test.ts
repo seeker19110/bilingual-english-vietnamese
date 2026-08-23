@@ -5,7 +5,7 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => true,
@@ -13,21 +13,18 @@ vi.mock('../packages/core-auth/security', () => ({
   validateContentType: () => true,
   logSecurityEvent: () => {},
 }))
-vi.mock('../packages/core-billing/usage', () => ({
+vi.mock('@dhcb/core-billing/usage', () => ({
   checkAndConsumeUsage: vi.fn(async () => ({ ok: true as const, day: '2026-08-12' })),
   refundUsage: vi.fn(async () => {}),
 }))
-vi.mock('../packages/core-ai/azurePronounce', () => ({
+vi.mock('@dhcb/core-ai/azurePronounce', () => ({
   resolveAzurePronounceConfig: vi.fn(),
   assessPronunciation: vi.fn(),
 }))
 
 import handler from './pronounce-assess'
-import { checkAndConsumeUsage, refundUsage } from '../packages/core-billing/usage'
-import {
-  resolveAzurePronounceConfig,
-  assessPronunciation,
-} from '../packages/core-ai/azurePronounce'
+import { checkAndConsumeUsage, refundUsage } from '@dhcb/core-billing/usage'
+import { resolveAzurePronounceConfig, assessPronunciation } from '@dhcb/core-ai/azurePronounce'
 
 const mockedConsume = vi.mocked(checkAndConsumeUsage)
 const mockedRefund = vi.mocked(refundUsage)

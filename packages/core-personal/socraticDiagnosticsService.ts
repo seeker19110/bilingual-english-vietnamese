@@ -5,7 +5,7 @@ import {
   type CognitiveBreakthroughRecord,
   type SocraticReflectionTurn,
   SOCRATIC_SCHEMA_VERSION,
-} from '../core-contracts/socraticDiagnostics.js'
+} from '@dhcb/core-contracts/socraticDiagnostics'
 
 export const PREDEFINED_MISCONCEPTIONS: MentalModelMisconception[] = [
   {

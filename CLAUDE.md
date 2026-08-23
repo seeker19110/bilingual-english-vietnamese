@@ -117,13 +117,18 @@ Hệ thống được chuẩn hóa theo 10 bộ quy chuẩn SOTA chuyên biệt 
 - **Deploy:** VPS Ubuntu (PM2 + Nginx + Let's Encrypt), đang chạy tại https://en-vi.donghanhcungban.org — xem `docs/deploy-vps-ubuntu.md`. `.com` là domain cũ/redirect.
 - **GIỮ NGUYÊN PHIÊN BẢN — KHÔNG nâng React/TS/Tailwind/ESLint.** Dự án cố tình dùng **Tailwind 3** (không phải v4) và **ESLint 8 với `.eslintrc.cjs`** (không phải flat config). Tài liệu khung có nhắc Tailwind v4 / ESLint flat config — chỉ để **tham khảo**, KHÔNG áp vào dự án này.
 - **Lệnh:** dev `npm run dev` · build `npm run build` · typecheck `npm run typecheck` (gộp cả `tsconfig.json` + `tsconfig.api.json` + `tsconfig.e2e.json`) · lint `npm run lint` (max-warnings 0) · format `npm run format` (Prettier — đang thêm ở bước khung) · test `npm test` (`vitest run`) · E2E `npm run test:e2e` (Playwright) · start `npm start` (`tsx server.ts`) · migration Postgres tự host `npm run migrate:pg` (tự chạy trong `scripts/deploy.sh`, xem `postgres/migrations/README.md`).
-- **Cấu trúc [Cập nhật 2026-07-31, đang tách monorepo — xem ADR-0001]:** `apps/english/src/` (React:
-  `pages/`, `components/`, `lib/`, `data/`, `prompts/` — dời từ `src/` ở PR-2), `api/` (handler
-  kiểu serverless của môn tiếng Anh + hạ tầng dùng chung chưa tách hết), `packages/core-db/`
-  (Postgres pool, ngày giờ, utility dùng chung), `packages/core-ai/` (TTS/STT/AI gateway — tách ở
-  PR-3), `server.ts` (Express gắn handler), `postgres/` (`schema.sql` + `migrations/`),
-  `scripts/` (seed/sync, import từ `apps/english/src/` + `packages/`), `docs/`. Xem
-  `docs/research/dac-ta-gd1-tach-loi-monorepo-2026-07-31.md` để biết việc tách đang tới đâu.
+- **Cấu trúc [Cập nhật 2026-08-23, workspace THẬT — PR-S1 phương án B, xem
+  `docs/research/dac-ta-cai-to-cau-truc-2026-08-23.md`]:** `apps/english/src/` (React: `pages/`,
+  `components/`, `lib/`, `data/`, `prompts/`), `api/` (handler HTTP của server), `packages/`
+  (18 gói npm workspace thật, tên `@dhcb/core-*`, MỖI GÓI có `package.json` + `tsconfig.json`
+  composite; gói mới `core-http` = hạ tầng http/validation/mailer tách từ `api/_lib`),
+  `server.ts` (Express gắn handler), `postgres/`, `scripts/`, `docs/`.
+  **Import xuyên gói dùng tên gói `@dhcb/<gói>/<file>` (KHÔNG đuôi `.js`), import nội bộ gói
+  dùng đường tương đối có đuôi `.js`.** Luật phụ thuộc (ESLint chặn): `packages/` không import
+  `apps/` và không import `api/`. Build backend = `npm run build:packages` (`tsc -b` project
+  references, mỗi gói emit `dist/` riêng) rồi `tsc -p tsconfig.server.json`; dev
+  (`tsx`/Vite/Vitest) phân giải `@dhcb` về source qua tsconfig `paths` + alias, KHÔNG cần build
+  gói trước. CI có bước boot check `node dist-server/server.js` + `/api/health`.
 - **Đặt tên:** component PascalCase (`apps/english/src/components`), tiện ích camelCase
   (`apps/english/src/lib`), prompt gửi AI để riêng trong `apps/english/src/prompts/`.
 

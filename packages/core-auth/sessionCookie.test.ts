@@ -4,7 +4,7 @@ import {
   buildSessionCookie,
   buildClearSessionCookie,
   readSessionCookie,
-} from './sessionCookie'
+} from './sessionCookie.js'
 
 const ORIGINAL_ENV = { ...process.env }
 

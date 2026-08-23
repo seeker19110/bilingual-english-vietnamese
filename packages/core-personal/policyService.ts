@@ -16,15 +16,15 @@
 // policy = revoke bản cũ + insert bản mới, không update giá trị nghiệp vụ, không delete dòng.
 
 import type { Pool, PoolClient } from 'pg'
-import { withTransaction } from '../core-db/transaction.js'
-import { ConflictError, NotFoundError } from '../core-errors/appError.js'
+import { withTransaction } from '@dhcb/core-db/transaction'
+import { ConflictError, NotFoundError } from '@dhcb/core-errors/appError'
 import {
   PersonalPolicySchema,
   AuthorityLevelSchema,
   PERSONAL_POLICY_SCHEMA_VERSION,
   type PersonalPolicy,
   type AuthorityLevel,
-} from '../core-contracts/personalPolicy.js'
+} from '@dhcb/core-contracts/personalPolicy'
 
 interface PolicyRow {
   id: string

@@ -1,10 +1,10 @@
 // api/gemini-live.test.ts — Tests cho REST handler gemini-live
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import handler from './gemini-live.js'
-import { _resetGeminiLiveServiceStateForTests } from '../packages/core-ai/geminiLiveService.js'
+import { _resetGeminiLiveServiceStateForTests } from '@dhcb/core-ai/geminiLiveService'
 
 // Mock validateAuth
-vi.mock('../packages/core-auth/security.js', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   validateAuth: vi.fn(async (req: Request) => {
     const authHeader = req.headers.get('Authorization')
     if (authHeader && authHeader.includes('valid-token')) {

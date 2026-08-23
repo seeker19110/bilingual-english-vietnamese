@@ -1,12 +1,12 @@
 // api/neural-curriculum.ts — REST handler cho Lộ trình Vi mô Thần kinh & Collocations V4.3.
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
 import {
   NeuralCurriculumState,
   NeuralCurriculumStateSchema,
   NEURAL_CURRICULUM_VERSION,
-} from '../packages/core-contracts/neuralCurriculum.js'
-import { NeuralCurriculumService } from '../packages/core-ai/neuralCurriculumService.js'
+} from '@dhcb/core-contracts/neuralCurriculum'
+import { NeuralCurriculumService } from '@dhcb/core-ai/neuralCurriculumService'
 
 const inMemoryCurriculumMap = new Map<string, NeuralCurriculumState>()
 

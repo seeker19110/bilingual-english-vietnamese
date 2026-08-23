@@ -4,7 +4,7 @@ import type {
   ReferralVipDashboard,
   ReferralMilestoneDefinition,
   ViralShareCardData,
-} from '../../../../packages/core-contracts/referralVip'
+} from '@dhcb/core-contracts/referralVip'
 
 export async function fetchReferralVipDashboard(): Promise<{
   dashboard: ReferralVipDashboard

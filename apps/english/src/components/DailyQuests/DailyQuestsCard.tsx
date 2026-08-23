@@ -2,10 +2,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Lock, Sparkles, Gift, RefreshCw } from 'lucide-react'
 import { useToast } from '@core/ToastProvider'
-import type {
-  DailyQuestsState,
-  DailyQuestItem,
-} from '../../../../../packages/core-contracts/dailyQuests.js'
+import type { DailyQuestsState, DailyQuestItem } from '@dhcb/core-contracts/dailyQuests'
 import { fetchDailyQuests, claimMysteryChest } from '../../lib/dailyQuestsApi.js'
 
 export default function DailyQuestsCard() {

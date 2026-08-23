@@ -1,9 +1,6 @@
 // apps/english/src/lib/feedbackApi.ts — Client API gửi và tra cứu ý kiến đóng góp người dùng.
 import { getAuthHeader } from '@core/authHeader'
-import type {
-  CreateFeedbackInput,
-  UserFeedbackRecord,
-} from '../../../../packages/core-contracts/feedback'
+import type { CreateFeedbackInput, UserFeedbackRecord } from '@dhcb/core-contracts/feedback'
 
 export async function submitFeedback(
   input: CreateFeedbackInput,

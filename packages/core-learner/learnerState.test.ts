@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { getPgPool } from '../core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import { getLearnerState } from './learnerState.js'
 
-vi.mock('../core-db/pgPool.js', () => ({ getPgPool: vi.fn() }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const mockedGetPool = vi.mocked(getPgPool)
 
 afterEach(() => {

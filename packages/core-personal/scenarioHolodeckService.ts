@@ -6,7 +6,7 @@ import {
   type HolodeckTurn,
   type HolodeckRubricScore,
   HOLODECK_SCHEMA_VERSION,
-} from '../core-contracts/scenarioHolodeck.js'
+} from '@dhcb/core-contracts/scenarioHolodeck'
 
 export const PREDEFINED_SCENARIOS: HolodeckScenario[] = [
   {

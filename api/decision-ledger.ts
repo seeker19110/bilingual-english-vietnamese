@@ -1,15 +1,15 @@
 // api/decision-ledger.ts — V2-10 Decision Ledger & Outcome Loop API.
 // personId luôn suy từ token xác thực, không nhận từ client.
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getOrCreatePerson } from '../packages/core-personal/personService.js'
+} from '@dhcb/core-auth/security'
+import { getOrCreatePerson } from '@dhcb/core-personal/personService'
 import {
   createDecision,
   decideDecision,
@@ -18,16 +18,13 @@ import {
   supersedeDecision,
   getDecision,
   listDecisions,
-} from '../packages/core-personal/decisionLedgerService.js'
-import { calculateOutcomeCalibration } from '../packages/core-personal/outcomeCalibrationService.js'
-import {
-  DecisionStatusSchema,
-  EvidenceRefSchema,
-} from '../packages/core-contracts/decisionRecord.js'
-import { IsoDateTimeSchema, UuidSchema } from '../packages/core-contracts/shared.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-personal/decisionLedgerService'
+import { calculateOutcomeCalibration } from '@dhcb/core-personal/outcomeCalibrationService'
+import { DecisionStatusSchema, EvidenceRefSchema } from '@dhcb/core-contracts/decisionRecord'
+import { IsoDateTimeSchema, UuidSchema } from '@dhcb/core-contracts/shared'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 const CreateDecisionSchema = z
   .object({

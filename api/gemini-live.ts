@@ -1,15 +1,12 @@
 // api/gemini-live.ts — REST handler cho Gemini Live Session Gateway V7.2.
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
 import {
   createGeminiLiveSession,
   getGeminiLiveSession,
   removeGeminiLiveSession,
-} from '../packages/core-ai/geminiLiveService.js'
-import {
-  GeminiLiveSessionConfigSchema,
-  GEMINI_LIVE_VERSION,
-} from '../packages/core-contracts/geminiLive.js'
+} from '@dhcb/core-ai/geminiLiveService'
+import { GeminiLiveSessionConfigSchema, GEMINI_LIVE_VERSION } from '@dhcb/core-contracts/geminiLive'
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {

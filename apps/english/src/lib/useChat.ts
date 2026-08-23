@@ -9,7 +9,7 @@ import {
   type ChatMessage,
   type RoomSummary,
 } from './chatApi'
-import type { WsClientEvent, WsServerEvent } from '../../../../packages/core-contracts/chat'
+import type { WsClientEvent, WsServerEvent } from '@dhcb/core-contracts/chat'
 import { useAuth } from '../context/useAuth'
 
 export type WsConnectionStatus = 'connecting' | 'connected' | 'disconnected' | 'error'

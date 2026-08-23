@@ -12,10 +12,10 @@
 // không import thẳng module frontend vào backend (giữ tách 2 tầng, giống cách quests.ts đã làm
 // với CEFR_EXAM_LEVELS).
 
-import { getPgPool } from '../../packages/core-db/pgPool.js'
-import { grantPlanDays } from './planGrant.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import { grantPlanDays } from '@dhcb/core-billing/planGrant'
 import { getCurrentStreak } from './quests.js'
-import type { Plan } from '../../packages/core-billing/plan.js'
+import type { Plan } from '@dhcb/core-billing/plan'
 
 export const ACHIEVEMENT_IDS = [
   'streak_7',

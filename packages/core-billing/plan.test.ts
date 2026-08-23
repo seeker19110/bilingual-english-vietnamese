@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { normalizePlan, resolvePlan } from './plan'
+import { normalizePlan, resolvePlan } from './plan.js'
 
 describe('normalizePlan', () => {
   it('nhận đúng plus/pro/vip, mọi giá trị khác → free', () => {

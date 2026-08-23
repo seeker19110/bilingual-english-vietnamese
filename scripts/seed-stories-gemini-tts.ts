@@ -36,15 +36,15 @@ import * as dotenv from 'dotenv'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { VOICE_VERSION } from '../api/_lib/googleTts.ts'
-import { encryptAudio } from '../api/_lib/ttsCrypto.ts'
-import { saveAudio } from '../packages/core-ai/fileStorage.ts'
+import { VOICE_VERSION } from '@dhcb/core-ai/googleTts'
+import { encryptAudio } from '@dhcb/core-ai/ttsCrypto'
+import { saveAudio } from '@dhcb/core-ai/fileStorage'
 import {
   generateAudioFromGemini,
   isValidGeminiVoice,
   type GeminiVoiceId,
-} from '../packages/core-ai/geminiTts.ts'
-import { getPgPool } from '../packages/core-db/pgPool.ts'
+} from '@dhcb/core-ai/geminiTts'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import { STORY_KIND_VOICE } from '../apps/english/src/lib/stories.ts'
 import type { StoryKind } from '../apps/english/src/data/stories/index.ts'
 

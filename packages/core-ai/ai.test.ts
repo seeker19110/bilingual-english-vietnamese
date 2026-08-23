@@ -7,7 +7,7 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
-vi.mock('../core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => true,
@@ -15,17 +15,17 @@ vi.mock('../core-auth/security', () => ({
   validateContentType: () => true,
   logSecurityEvent: () => {},
 }))
-vi.mock('../core-billing/usage', () => ({
+vi.mock('@dhcb/core-billing/usage', () => ({
   checkAndConsumeUsage: vi.fn(async () => ({ ok: true as const, day: '2026-08-12' })),
   refundUsage: vi.fn(async () => {}),
 }))
-vi.mock('../../api/_lib/fetchTimeout', () => ({ fetchWithTimeout: vi.fn() }))
-vi.mock('../../api/_lib/geminiApi', () => ({ callGemini: vi.fn() }))
+vi.mock('@dhcb/core-http/fetchTimeout', () => ({ fetchWithTimeout: vi.fn() }))
+vi.mock('./geminiApi.js', () => ({ callGemini: vi.fn() }))
 
-import handler from './ai'
-import { refundUsage } from '../core-billing/usage'
-import { fetchWithTimeout } from '../../api/_lib/fetchTimeout'
-import { callGemini } from '../../api/_lib/geminiApi'
+import handler from './ai.js'
+import { refundUsage } from '@dhcb/core-billing/usage'
+import { fetchWithTimeout } from '@dhcb/core-http/fetchTimeout'
+import { callGemini } from './geminiApi.js'
 
 const mockedFetch = vi.mocked(fetchWithTimeout)
 const mockedRefund = vi.mocked(refundUsage)
@@ -87,14 +87,14 @@ describe('handler /api/agent — cổng vào (method/key/body)', () => {
   })
 
   it('Vượt rate limit → 429', async () => {
-    const security = await import('../core-auth/security')
+    const security = await import('@dhcb/core-auth/security')
     vi.spyOn(security, 'checkRateLimit').mockResolvedValueOnce(false)
     const res = await handler(makeRequest())
     expect(res.status).toBe(429)
   })
 
   it('Chưa đăng nhập (validateAuth trả null) → 401', async () => {
-    const security = await import('../core-auth/security')
+    const security = await import('@dhcb/core-auth/security')
     vi.spyOn(security, 'validateAuth').mockResolvedValueOnce(null)
     const res = await handler(makeRequest())
     expect(res.status).toBe(401)
@@ -124,7 +124,7 @@ describe('handler /api/agent — cổng vào (method/key/body)', () => {
 
 describe('handler /api/agent — nhánh Groq và hoàn lượt', () => {
   it('Hết lượt dùng (usage gate) → 429, KHÔNG gọi provider AI nào', async () => {
-    const { checkAndConsumeUsage } = await import('../core-billing/usage')
+    const { checkAndConsumeUsage } = await import('@dhcb/core-billing/usage')
     vi.mocked(checkAndConsumeUsage).mockResolvedValueOnce({
       ok: false,
       message: 'Hết lượt hôm nay',
@@ -326,7 +326,7 @@ describe('handler /api/agent — mode lạ (không phải chat/writing/speaking)
   it.each(['stt', 'pronounce', 'hack', 123, null])(
     'mode=%p → checkAndConsumeUsage("chat")',
     async (mode) => {
-      const { checkAndConsumeUsage } = await import('../core-billing/usage')
+      const { checkAndConsumeUsage } = await import('@dhcb/core-billing/usage')
       const mockedConsume = vi.mocked(checkAndConsumeUsage)
       mockedConsume.mockClear()
       await handler(makeRequest({ messages: [{ role: 'user', content: 'Hi' }], mode }))

@@ -2,10 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { X, Zap, Flame, Timer, Sparkles, CheckCircle2, XCircle } from 'lucide-react'
 import { useToast } from '@core/ToastProvider'
-import type {
-  PvPMatchState,
-  PvPRoundAction,
-} from '../../../../../packages/core-contracts/pvpArena.js'
+import type { PvPMatchState, PvPRoundAction } from '@dhcb/core-contracts/pvpArena'
 import { submitPvPRoundAction } from '../../lib/pvpArenaApi.js'
 import { updateQuestProgress } from '../../lib/dailyQuestsApi.js'
 

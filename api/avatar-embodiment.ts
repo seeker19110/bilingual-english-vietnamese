@@ -1,12 +1,12 @@
 // api/avatar-embodiment.ts — REST handler cho Hien than 3D & Cau hinh Cyber-Tutor V4.
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
 import {
   AvatarEmbodimentConfig,
   AvatarEmbodimentConfigSchema,
   AVATAR_EMBODIMENT_VERSION,
-} from '../packages/core-contracts/avatarEmbodiment.js'
-import { VisemeMorphingService } from '../packages/core-ai/visemeMorphingService.js'
+} from '@dhcb/core-contracts/avatarEmbodiment'
+import { VisemeMorphingService } from '@dhcb/core-ai/visemeMorphingService'
 
 const inMemoryConfigStore = new Map<string, AvatarEmbodimentConfig>()
 

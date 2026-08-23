@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { calculateOutcomeCalibration } from './outcomeCalibrationService.js'
 
 import type { Pool } from 'pg'
-import type { DecisionRecord } from '../core-contracts/decisionRecord.js'
+import type { DecisionRecord } from '@dhcb/core-contracts/decisionRecord'
 
 const mockDecisions: Partial<DecisionRecord>[] = []
 

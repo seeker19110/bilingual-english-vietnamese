@@ -8,17 +8,17 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('../core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const passwordState: { valid: boolean } = { valid: true }
-vi.mock('./authService', () => ({
+vi.mock('./authService.js', () => ({
   verifyPassword: async () => passwordState.valid,
 }))
-vi.mock('./emailVerification', () => ({
+vi.mock('./emailVerification.js', () => ({
   sendVerificationCode: async () => ({ ok: true, mail: 'sent' }),
 }))
 
-import { changeEmail } from './changeEmail'
-import { getPgPool } from '../core-db/pgPool'
+import { changeEmail } from './changeEmail.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

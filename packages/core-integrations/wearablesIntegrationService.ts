@@ -5,7 +5,7 @@ import {
   type BioStreamRecord,
   type CircadianLearningWindow,
   WEARABLES_SCHEMA_VERSION,
-} from '../core-contracts/wearablesIntegration.js'
+} from '@dhcb/core-contracts/wearablesIntegration'
 
 const bioStreamStore = new Map<string, BioStreamRecord>()
 

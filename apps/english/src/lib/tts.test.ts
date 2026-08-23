@@ -6,7 +6,7 @@ vi.mock('@core/authHeader', () => ({
 
 // getAudioEntry là vi.fn() (không phải arrow async cố định) để từng test tự đổi hành vi
 // (vd trả null để buộc ensureAudioWithTimeline đi qua đường gọi /api/tts thật).
-vi.mock('./audioCache', () => ({
+vi.mock('./audioCache.js', () => ({
   audioCacheKey: (text: string, lang: string, voice: string) => `${lang}:${voice}:${text}`,
   // getAudioEntry trả cả timeline khẩu hình (null = không có timing thật, xem
   // api/_lib/visemeTimeline.ts) — đường dùng chính của ensureAudioWithTimeline.

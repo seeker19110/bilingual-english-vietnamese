@@ -5,7 +5,7 @@ import type {
   MemoryPalaceTheme,
   LocusAnchor,
   LocusRecallResult,
-} from '../../../../packages/core-contracts/memoryPalace.js'
+} from '@dhcb/core-contracts/memoryPalace'
 
 export async function fetchMemoryPalaceState(): Promise<MemoryPalaceState> {
   const token = localStorage.getItem('gsa_session_token_v1')

@@ -45,8 +45,8 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import cliProgress from 'cli-progress'
-import { callGemini } from '../api/_lib/geminiApi.ts'
-import { fetchWithTimeout } from '../api/_lib/fetchTimeout.ts'
+import { callGemini } from '@dhcb/core-ai/geminiApi'
+import { fetchWithTimeout } from '@dhcb/core-http/fetchTimeout'
 import {
   buildCefrTagPrompt,
   parseCefrTagResponse,

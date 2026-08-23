@@ -3,20 +3,17 @@
 // POST /api/feedback  body: CreateFeedbackInput  → Lưu ý kiến đóng góp (kèm context & user nếu đăng nhập)
 // GET  /api/feedback                             → Danh sách phản hồi của chính người dùng hiện tại
 
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import {
-  CreateFeedbackSchema,
-  type UserFeedbackRecord,
-} from '../packages/core-contracts/feedback.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { CreateFeedbackSchema, type UserFeedbackRecord } from '@dhcb/core-contracts/feedback'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 export default async function handler(req: Request): Promise<Response> {
   const allHeaders = { ...getCorsHeaders(req), ...SECURITY_HEADERS }

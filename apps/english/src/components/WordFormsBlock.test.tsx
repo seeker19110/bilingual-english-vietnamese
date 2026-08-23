@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 
 // Mock loader ví dụ dạng từ để test không cần fetch mạng; component đọc cache module-level
 // nên chỉ cần "xả" microtask (await) là cache có dữ liệu trước khi render.
-vi.mock('../data/formExamplesLoader', () => ({
+vi.mock('../data/formExamplesLoader.js', () => ({
   loadFormExamples: () =>
     Promise.resolve({
       'go|past': [

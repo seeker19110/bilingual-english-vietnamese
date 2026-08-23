@@ -38,7 +38,7 @@ describe('saveAudio — driver r2', () => {
     process.env.R2_BUCKET = 'test-bucket'
     process.env.R2_PUBLIC_BASE_URL = 'https://pub-abc.r2.dev'
     // Cố tình KHÔNG set R2_ACCOUNT_ID/ACCESS_KEY_ID/SECRET_ACCESS_KEY (ca biên).
-    const { saveAudio } = await import('./fileStorage')
+    const { saveAudio } = await import('./fileStorage.js')
     await expect(
       saveAudio('tts-cache', 'en-US/female/abc.mp3', new ArrayBuffer(4)),
     ).rejects.toThrow(/R2_ACCOUNT_ID/)
@@ -52,7 +52,7 @@ describe('saveAudio — driver r2', () => {
     process.env.R2_ACCESS_KEY_ID = 'key123'
     process.env.R2_SECRET_ACCESS_KEY = 'secret123'
     // Thiếu R2_BUCKET/R2_PUBLIC_BASE_URL.
-    const { saveAudio } = await import('./fileStorage')
+    const { saveAudio } = await import('./fileStorage.js')
     await expect(
       saveAudio('tts-cache', 'en-US/female/abc.mp3', new ArrayBuffer(4)),
     ).rejects.toThrow(/R2_BUCKET/)
@@ -67,7 +67,7 @@ describe('saveAudio — driver r2', () => {
     process.env.R2_BUCKET = 'test-bucket'
     process.env.R2_PUBLIC_BASE_URL = 'https://pub-abc.r2.dev'
     sendMock.mockRejectedValueOnce(new Error('R2 quota exceeded'))
-    const { saveAudio } = await import('./fileStorage')
+    const { saveAudio } = await import('./fileStorage.js')
     await expect(
       saveAudio('tts-cache', 'en-US/female/abc.mp3', new ArrayBuffer(4)),
     ).rejects.toThrow(/quota exceeded/)
@@ -83,7 +83,7 @@ describe('saveAudio — driver r2', () => {
     // Cố tình có dấu / thừa ở cuối (ca biên) — phải tự chuẩn hóa, không tạo URL có "//".
     process.env.R2_PUBLIC_BASE_URL = 'https://pub-abc.r2.dev/'
 
-    const { saveAudio } = await import('./fileStorage')
+    const { saveAudio } = await import('./fileStorage.js')
     const url = await saveAudio('tts-cache', 'en-US/female/abc.mp3', new ArrayBuffer(4))
 
     expect(url).toBe('https://pub-abc.r2.dev/tts-cache/en-US/female/abc.mp3')
@@ -101,7 +101,7 @@ describe('saveAudio — driver r2', () => {
 describe('saveAudio — driver local', () => {
   it('ghi đúng đường dẫn lồng thư mục và trả URL tương đối khi không có baseUrl', async () => {
     process.env.STORAGE_DRIVER = 'local'
-    const { saveAudio } = await import('./fileStorage')
+    const { saveAudio } = await import('./fileStorage.js')
     const url = await saveAudio('tts-cache', 'en-US/female/abc.mp3', new ArrayBuffer(4))
     expect(url).toBe('/uploads/tts-cache/en-US/female/abc.mp3')
     // File phải nằm thật trên đĩa, đúng cây thư mục (mkdir -p).
@@ -111,14 +111,14 @@ describe('saveAudio — driver local', () => {
 
   it('có baseUrl → trả URL tuyệt đối', async () => {
     process.env.STORAGE_DRIVER = 'local'
-    const { saveAudio } = await import('./fileStorage')
+    const { saveAudio } = await import('./fileStorage.js')
     const url = await saveAudio('pronunciations', 'apple.mp3', new ArrayBuffer(2), 'https://x.vn')
     expect(url).toBe('https://x.vn/uploads/pronunciations/apple.mp3')
   })
 
   it('KHÔNG set STORAGE_DRIVER → mặc định là local, không đụng R2', async () => {
     delete process.env.STORAGE_DRIVER
-    const { saveAudio } = await import('./fileStorage')
+    const { saveAudio } = await import('./fileStorage.js')
     const url = await saveAudio('tts-cache', 'a.mp3', new ArrayBuffer(1))
     expect(url).toBe('/uploads/tts-cache/a.mp3')
     expect(sendMock).not.toHaveBeenCalled()
@@ -128,13 +128,13 @@ describe('saveAudio — driver local', () => {
 describe('getR2PublicBaseUrl', () => {
   it('cắt dấu / thừa ở cuối', async () => {
     process.env.R2_PUBLIC_BASE_URL = 'https://pub-abc.r2.dev/'
-    const { getR2PublicBaseUrl } = await import('./fileStorage')
+    const { getR2PublicBaseUrl } = await import('./fileStorage.js')
     expect(getR2PublicBaseUrl()).toBe('https://pub-abc.r2.dev')
   })
 
   it('chưa cấu hình → undefined', async () => {
     delete process.env.R2_PUBLIC_BASE_URL
-    const { getR2PublicBaseUrl } = await import('./fileStorage')
+    const { getR2PublicBaseUrl } = await import('./fileStorage.js')
     expect(getR2PublicBaseUrl()).toBeUndefined()
   })
 })
@@ -149,7 +149,7 @@ describe('listR2Objects', () => {
 
   it('thiếu R2_BUCKET → ném lỗi rõ ràng', async () => {
     delete process.env.R2_BUCKET
-    const { listR2Objects } = await import('./fileStorage')
+    const { listR2Objects } = await import('./fileStorage.js')
     await expect(listR2Objects('tts-cache/')).rejects.toThrow(/R2_BUCKET/)
   })
 
@@ -164,7 +164,7 @@ describe('listR2Objects', () => {
         Contents: [{ Key: 'tts-cache/b.mp3', Size: 20 }],
         IsTruncated: false,
       })
-    const { listR2Objects } = await import('./fileStorage')
+    const { listR2Objects } = await import('./fileStorage.js')
     const out = await listR2Objects('tts-cache/')
     expect(out).toEqual([
       { key: 'tts-cache/a.mp3', size: 10 },
@@ -180,7 +180,7 @@ describe('listR2Objects', () => {
       IsTruncated: true,
       // không có NextContinuationToken
     })
-    const { listR2Objects } = await import('./fileStorage')
+    const { listR2Objects } = await import('./fileStorage.js')
     const out = await listR2Objects('tts-cache/')
     expect(out).toHaveLength(1)
     expect(sendMock).toHaveBeenCalledTimes(1)
@@ -191,13 +191,13 @@ describe('listR2Objects', () => {
       Contents: [{ Size: 99 }, { Key: 'tts-cache/c.mp3' }],
       IsTruncated: false,
     })
-    const { listR2Objects } = await import('./fileStorage')
+    const { listR2Objects } = await import('./fileStorage.js')
     expect(await listR2Objects('tts-cache/')).toEqual([{ key: 'tts-cache/c.mp3', size: 0 }])
   })
 
   it('bucket rỗng (không có trường Contents) → mảng rỗng', async () => {
     sendMock.mockResolvedValueOnce({ IsTruncated: false })
-    const { listR2Objects } = await import('./fileStorage')
+    const { listR2Objects } = await import('./fileStorage.js')
     expect(await listR2Objects('tts-cache/')).toEqual([])
   })
 })
@@ -215,33 +215,33 @@ describe('isServableUrl — quyết định cache HIT hay sinh lại', () => {
 
   it('chế độ r2: URL R2 đúng → phục vụ được', async () => {
     Object.assign(process.env, R2_ENV)
-    const { isServableUrl } = await import('./fileStorage')
+    const { isServableUrl } = await import('./fileStorage.js')
     expect(isServableUrl('https://pub-abc.r2.dev/tts-cache/en-US/f/a.mp3')).toBe(true)
   })
 
   it('chế độ r2: URL /uploads cũ → KHÔNG phục vụ được (phải sinh lại qua API)', async () => {
     Object.assign(process.env, R2_ENV)
-    const { isServableUrl } = await import('./fileStorage')
+    const { isServableUrl } = await import('./fileStorage.js')
     expect(isServableUrl('/uploads/tts-cache/en-US/f/a.mp3')).toBe(false)
     expect(isServableUrl('https://en-vi.donghanhcungban.org/uploads/tts-cache/a.mp3')).toBe(false)
   })
 
   it('chế độ r2: base URL có dấu / thừa vẫn khớp đúng', async () => {
     Object.assign(process.env, R2_ENV, { R2_PUBLIC_BASE_URL: 'https://pub-abc.r2.dev/' })
-    const { isServableUrl } = await import('./fileStorage')
+    const { isServableUrl } = await import('./fileStorage.js')
     expect(isServableUrl('https://pub-abc.r2.dev/tts-cache/a.mp3')).toBe(true)
   })
 
   it('chế độ r2: domain KHÁC chỉ trùng tiền tố → không được coi là khớp', async () => {
     Object.assign(process.env, R2_ENV)
-    const { isServableUrl } = await import('./fileStorage')
+    const { isServableUrl } = await import('./fileStorage.js')
     // "pub-abc.r2.dev.evil.com" bắt đầu bằng base nếu quên dấu "/" ngăn cách.
     expect(isServableUrl('https://pub-abc.r2.dev.evil.com/tts-cache/a.mp3')).toBe(false)
   })
 
   it('chế độ local: mọi URL đều chấp nhận (không có gì để phân biệt)', async () => {
     process.env.STORAGE_DRIVER = 'local'
-    const { isServableUrl } = await import('./fileStorage')
+    const { isServableUrl } = await import('./fileStorage.js')
     expect(isServableUrl('/uploads/tts-cache/a.mp3')).toBe(true)
     expect(isServableUrl('https://pub-abc.r2.dev/tts-cache/a.mp3')).toBe(true)
   })
@@ -249,14 +249,14 @@ describe('isServableUrl — quyết định cache HIT hay sinh lại', () => {
   it('r2 nhưng THIẾU R2_PUBLIC_BASE_URL → giữ nguyên cache, không kích hoạt sinh lại toàn bộ', async () => {
     process.env.STORAGE_DRIVER = 'r2'
     delete process.env.R2_PUBLIC_BASE_URL
-    const { isServableUrl } = await import('./fileStorage')
+    const { isServableUrl } = await import('./fileStorage.js')
     // Ca biên tốn tiền: một biến môi trường thiếu KHÔNG được làm cả cache bị coi là hỏng.
     expect(isServableUrl('/uploads/tts-cache/a.mp3')).toBe(true)
   })
 
   it('URL rỗng/null → không phục vụ được', async () => {
     Object.assign(process.env, R2_ENV)
-    const { isServableUrl } = await import('./fileStorage')
+    const { isServableUrl } = await import('./fileStorage.js')
     expect(isServableUrl(null)).toBe(false)
     expect(isServableUrl(undefined)).toBe(false)
     expect(isServableUrl('')).toBe(false)

@@ -1,5 +1,13 @@
 # Đặc tả cải tổ cấu trúc dự án — sắp xếp lại cây thư mục theo chuẩn (2026-08-23)
 
+> **[CẬP NHẬT cùng ngày] Người dùng đã CHỐT PHƯƠNG ÁN B** (TypeScript project references,
+> KHÔNG dùng esbuild như khuyến nghị ban đầu ở mục 3) **và PR-S1 ĐÃ THỰC THI THEO B** — xem
+> PROGRESS.md mục "PR-S1". Khác biệt so với đặc tả gốc khi làm thật: (1) phải dời 21 file
+> `api/_lib` bị packages import ngược vào các gói (`core-http` mới + auth/billing/ai/chat);
+> (2) 7 handler HTTP của `core-billing` + `learningGoalAdapter` phải dời để cắt 3 chu trình
+> phụ thuộc CẤP GÓI; (3) dev (tsx/Vite/Vitest) phân giải `@dhcb` về source qua tsconfig
+> `paths`/alias nên không cần build gói trước khi dev.
+
 > Nghiên cứu tiếp nối `de-xuat-nang-cap-cai-to-2026-08-23.md` (mục N4), đi sâu riêng phần
 > **cấu trúc thư mục + workspace**. Đây là đặc tả để duyệt — CHƯA thực thi. Mỗi bước bên dưới
 > là 1 PR riêng, có cổng kiểm chứng và đường lùi.

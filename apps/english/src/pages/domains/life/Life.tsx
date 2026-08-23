@@ -35,7 +35,7 @@ import type {
   Habit,
   WellbeingCheck,
   GrowthMilestone,
-} from '../../../../../../packages/core-contracts/lifeFoundation'
+} from '@dhcb/core-contracts/lifeFoundation'
 
 export default function Life() {
   const nav = useNavigate()

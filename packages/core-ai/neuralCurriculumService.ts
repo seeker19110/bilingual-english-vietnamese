@@ -5,7 +5,7 @@ import {
   MicroDrillQuestion,
   NeuralCurriculumState,
   NEURAL_CURRICULUM_VERSION,
-} from '../core-contracts/neuralCurriculum.js'
+} from '@dhcb/core-contracts/neuralCurriculum'
 
 export class NeuralCurriculumService {
   /**

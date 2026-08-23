@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 // Chặn import supabase thật (thiếu env trong test) — giống srs.test.ts/vocab.test.ts.
-vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
+vi.mock('./progressSync.js', () => ({ pushProgress: vi.fn() }))
 
 import {
   UNLOCK_PCT,

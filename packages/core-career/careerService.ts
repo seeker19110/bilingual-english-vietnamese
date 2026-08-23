@@ -2,8 +2,8 @@
 // Thỏa mãn Gate: Không query trực tiếp vào bảng Learning, luôn đọc qua Learning Read Model.
 import type { Pool } from 'pg'
 import { randomUUID } from 'node:crypto'
-import { withTransaction } from '../core-db/transaction.js'
-import { NotFoundError } from '../core-errors/appError.js'
+import { withTransaction } from '@dhcb/core-db/transaction'
+import { NotFoundError } from '@dhcb/core-errors/appError'
 import {
   CareerProfileSchema,
   CareerExperienceSchema,
@@ -14,8 +14,8 @@ import {
   type CareerExperience,
   type CareerGoal,
   type CareerSkillGapAnalysis,
-} from '../core-contracts/career.js'
-import { getLearningReadModel } from '../core-learner/learningReadModelService.js'
+} from '@dhcb/core-contracts/career'
+import { getLearningReadModel } from '@dhcb/core-learner/learningReadModelService'
 
 export interface UpdateCareerProfileInput {
   targetRole: string

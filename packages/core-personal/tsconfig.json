@@ -1,0 +1,29 @@
+{
+  "extends": "../../tsconfig.package.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "."
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["dist", "**/*.test.ts"],
+  "references": [
+    {
+      "path": "../core-ai"
+    },
+    {
+      "path": "../core-career"
+    },
+    {
+      "path": "../core-contracts"
+    },
+    {
+      "path": "../core-db"
+    },
+    {
+      "path": "../core-errors"
+    },
+    {
+      "path": "../core-learner"
+    }
+  ]
+}

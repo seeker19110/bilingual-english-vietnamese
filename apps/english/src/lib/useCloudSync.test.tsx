@@ -7,8 +7,8 @@ import { useCloudSync } from './useCloudSync'
 // này) — chỉ để tắt warning console, không đổi hành vi test.
 ;(globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
-vi.mock('./cloud', () => ({ pullUserData: vi.fn(async () => undefined) }))
-vi.mock('./progressSync', () => ({ pullProgress: vi.fn(async () => undefined) }))
+vi.mock('./cloud.js', () => ({ pullUserData: vi.fn(async () => undefined) }))
+vi.mock('./progressSync.js', () => ({ pullProgress: vi.fn(async () => undefined) }))
 
 import { pullUserData } from './cloud'
 import { pullProgress } from './progressSync'

@@ -8,13 +8,13 @@ import {
   parseEquation,
   parseFormula,
   STANDARD_MOLAR_VOLUME_L_PER_MOL,
-} from './chemistry'
-import { evaluateNumeric, expressionsEqual } from './expression'
-import { DEFAULT_TOLERANCE_BY_SUBJECT, gradeAnswer } from './index'
-import { normalizeAnswerText, simplifyFraction } from './number'
-import { splitValueUnit } from './units'
-import type { NumericSpec } from './types'
-import type { ParsedEquation } from './chemistry'
+} from './chemistry.js'
+import { evaluateNumeric, expressionsEqual } from './expression.js'
+import { DEFAULT_TOLERANCE_BY_SUBJECT, gradeAnswer } from './index.js'
+import { normalizeAnswerText, simplifyFraction } from './number.js'
+import { splitValueUnit } from './units.js'
+import type { NumericSpec } from './types.js'
+import type { ParsedEquation } from './chemistry.js'
 
 describe('chuẩn hoá số — bẫy cách viết tiếng Việt', () => {
   it('hiểu dấu phẩy thập phân kiểu Việt Nam', () => {

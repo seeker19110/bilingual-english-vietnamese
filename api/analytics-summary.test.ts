@@ -1,9 +1,9 @@
 // Test /api/analytics-summary — chỉ admin xem được, ai khác bị chặn.
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => true,
@@ -11,15 +11,15 @@ vi.mock('../packages/core-auth/security', () => ({
   logSecurityEvent: () => {},
 }))
 const emailState: { email: string | undefined } = { email: 'admin@x.com' }
-vi.mock('../packages/core-auth/authService', () => ({
+vi.mock('@dhcb/core-auth/authService', () => ({
   getUserById: async () => ({ id: 'user-1', email: emailState.email }),
 }))
-vi.mock('../packages/core-auth/adminAuth', () => ({
+vi.mock('@dhcb/core-auth/adminAuth', () => ({
   isAdminEmail: (email: string | null | undefined) => email === 'admin@x.com',
 }))
 
 import handler from './analytics-summary'
-import { getPgPool } from '../packages/core-db/pgPool'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

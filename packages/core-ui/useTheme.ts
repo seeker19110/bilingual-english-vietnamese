@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { ThemeContext } from './themeContext'
+import { ThemeContext } from './themeContext.js'
 
 // Hook tiện lợi: const { theme, setTheme } = useTheme()
 export function useTheme() {

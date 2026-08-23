@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { getPgPool } from '../../packages/core-db/pgPool'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import { downgradeExpiredPlans } from './planExpiry'
 
-vi.mock('../../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const mockedGetPool = vi.mocked(getPgPool)
 
 function mockPool(rowCount: number) {

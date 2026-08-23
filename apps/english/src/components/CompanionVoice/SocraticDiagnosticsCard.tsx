@@ -11,7 +11,7 @@ import {
 import type {
   MentalModelMisconception,
   CognitiveBreakthroughRecord,
-} from '../../../../../packages/core-contracts/socraticDiagnostics'
+} from '@dhcb/core-contracts/socraticDiagnostics'
 
 export default function SocraticDiagnosticsCard() {
   const [misconceptions, setMisconceptions] = useState<MentalModelMisconception[]>([])

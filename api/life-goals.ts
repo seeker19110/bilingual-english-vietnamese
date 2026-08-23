@@ -1,19 +1,19 @@
 // Backfill/read-view Goal Learning ↔ Life Graph. Không sửa dữ liệu Learning gốc.
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
+} from '@dhcb/core-auth/security'
 import {
   backfillCurrentLearningGoal,
   readLearningGoalFromLifeGraph,
-} from '../packages/core-learner/learningGoalAdapter.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-personal/learningGoalAdapter'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 export default async function handler(req: Request): Promise<Response> {
   const headers = { ...getCorsHeaders(req), ...SECURITY_HEADERS }

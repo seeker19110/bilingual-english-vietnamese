@@ -1,8 +1,5 @@
 import { useState } from 'react'
-import type {
-  GoalAutoPilotPlan,
-  GoalAutoPilotStep,
-} from '../../../../../packages/core-contracts/proactiveAgent.js'
+import type { GoalAutoPilotPlan, GoalAutoPilotStep } from '@dhcb/core-contracts/proactiveAgent'
 import ProactiveAgentSettingsModal from './ProactiveAgentSettingsModal'
 
 interface GoalAutoPilotCardProps {

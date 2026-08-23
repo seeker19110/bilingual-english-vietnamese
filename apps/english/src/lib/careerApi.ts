@@ -5,7 +5,7 @@ import type {
   CareerExperience,
   CareerGoal,
   CareerSkillGapAnalysis,
-} from '../../../../packages/core-contracts/career'
+} from '@dhcb/core-contracts/career'
 
 export interface SaveCareerProfileParams {
   targetRole: string

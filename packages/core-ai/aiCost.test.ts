@@ -1,7 +1,7 @@
 // Test đơn giá chi phí AI — trọng tâm: biến môi trường rác KHÔNG được làm chi phí thành 0
 // (số 0 trông như "miễn phí" và dẫn tới quyết định giá sai).
 import { describe, it, expect, afterEach } from 'vitest'
-import { getUnitCostsUsd, getUsdVndRate, estimateCostUsd } from './aiCost'
+import { getUnitCostsUsd, getUsdVndRate, estimateCostUsd } from './aiCost.js'
 
 const KEYS = ['AI_COST_CHAT_USD', 'AI_COST_STT_USD', 'USD_VND_RATE'] as const
 

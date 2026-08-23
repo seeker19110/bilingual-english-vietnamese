@@ -6,11 +6,11 @@ import {
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { analyzeAmbientScreenFrame } from '../packages/core-ai/ambientVisionService.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
-import { readJsonBody } from './_lib/validation.js'
+} from '@dhcb/core-auth/security'
+import { analyzeAmbientScreenFrame } from '@dhcb/core-ai/ambientVisionService'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { readJsonBody } from '@dhcb/core-http/validation'
 
 const AmbientVisionRequestSchema = z
   .object({

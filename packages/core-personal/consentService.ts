@@ -18,13 +18,13 @@
 // kiểm bằng `person_id` NGAY TRONG câu SQL — không tin `id` client gửi lên.
 
 import type { Pool, PoolClient } from 'pg'
-import { withTransaction } from '../core-db/transaction.js'
-import { ConflictError, NotFoundError } from '../core-errors/appError.js'
+import { withTransaction } from '@dhcb/core-db/transaction'
+import { ConflictError, NotFoundError } from '@dhcb/core-errors/appError'
 import {
   ConsentGrantSchema,
   CONSENT_GRANT_SCHEMA_VERSION,
   type ConsentGrant,
-} from '../core-contracts/consentGrant.js'
+} from '@dhcb/core-contracts/consentGrant'
 
 interface ConsentRow {
   id: string

@@ -3,7 +3,7 @@ import type {
   AutonomousAgentRole,
   AgentExecutionSession,
   AgentBudgetGuardrail,
-} from '../../../../packages/core-contracts/agentOrchestrator.js'
+} from '@dhcb/core-contracts/agentOrchestrator'
 
 export async function fetchAgentSessions(): Promise<AgentExecutionSession[]> {
   const token = localStorage.getItem('gsa_session_token_v1')

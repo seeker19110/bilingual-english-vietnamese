@@ -2,7 +2,7 @@
 // Gắn vào http.Server tại route /ws/co-learning-room, xác thực bằng session cookie.
 import type { Server as HttpServer, IncomingMessage } from 'node:http'
 import { WebSocketServer, WebSocket } from 'ws'
-import { validateAuth } from '../core-auth/security.js'
+import { validateAuth } from '@dhcb/core-auth/security'
 import {
   processAudioChunk,
   joinAudioRoom,
@@ -16,7 +16,7 @@ import {
 import {
   WsCoLearningClientMessageSchema,
   type WsCoLearningClientMessage,
-} from '../core-contracts/audioCoLearningRoom.js'
+} from '@dhcb/core-contracts/audioCoLearningRoom'
 
 export const WS_CO_LEARNING_PATH = '/ws/co-learning-room'
 

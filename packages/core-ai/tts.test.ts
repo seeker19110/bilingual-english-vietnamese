@@ -6,8 +6,8 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
-vi.mock('../core-db/pgPool', () => ({ getPgPool: vi.fn() }))
-vi.mock('../../api/_lib/googleTts', () => ({
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('./googleTts.js', () => ({
   generateAudioFromGoogle: vi.fn(),
   generateStudioAudioFromGoogle: vi.fn(),
   isValidVoice: (v: string) => ['Kore', 'Aoede', 'Puck'].includes(v),
@@ -15,33 +15,33 @@ vi.mock('../../api/_lib/googleTts', () => ({
   DEFAULT_VOICE: 'Kore',
   VOICE_VERSION: 'v-test',
 }))
-vi.mock('./elevenLabsTts', () => ({
+vi.mock('./elevenLabsTts.js', () => ({
   generateAudioFromElevenLabs: vi.fn(),
   isValidElevenVoice: (v: string) => v === 'Rachel',
 }))
-vi.mock('../../api/_lib/visemeTimeline', () => ({
+vi.mock('./visemeTimeline.js', () => ({
   visemeTimelineFromAlignment: vi.fn(async () => [{ viseme: 'A', startMs: 0, endMs: 100 }]),
 }))
-vi.mock('../core-auth/authService', () => ({
+vi.mock('@dhcb/core-auth/authService', () => ({
   ensureProfileRow: vi.fn(async () => ({ plan: 'free' })),
 }))
-vi.mock('../../api/_lib/voiceAccess', () => ({
+vi.mock('./voiceAccess.js', () => ({
   clampVoiceToPlan: vi.fn(async (voice: string) => voice),
 }))
 // isServableUrl dùng bản THẬT (không mock): test không đặt STORAGE_DRIVER=r2 nên nó ở chế độ
 // local và trả true cho mọi URL — giữ nguyên hành vi các test có sẵn. Ca r2 được phủ riêng
 // trong fileStorage.test.ts.
-vi.mock('./fileStorage', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('./fileStorage')>()),
+vi.mock('./fileStorage.js', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('./fileStorage.js')>()),
   saveAudio: vi.fn(async () => 'https://cdn.test/audio.mp3'),
 }))
-vi.mock('../../api/_lib/ttsCrypto', () => ({
+vi.mock('./ttsCrypto.js', () => ({
   // Khớp chữ ký thật sau audit 2026-08-12: trả { cipher, iv_b64 } — iv ngẫu nhiên mỗi lần
   // mã hoá và được lưu vào cột tts_cache.iv (migration 0038).
   encryptAudio: vi.fn(async (buf: ArrayBuffer) => ({ cipher: buf, iv_b64: 'iv-moi' })),
   getClientKeyMaterial: vi.fn(async () => ({ key_b64: 'key', iv_b64: 'iv' })),
 }))
-vi.mock('../core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => true,
@@ -50,14 +50,14 @@ vi.mock('../core-auth/security', () => ({
   logSecurityEvent: () => {},
 }))
 
-import handler from './tts'
-import { getPgPool } from '../core-db/pgPool'
-import { generateAudioFromGoogle, generateStudioAudioFromGoogle } from '../../api/_lib/googleTts'
-import { generateAudioFromElevenLabs } from './elevenLabsTts'
-import { saveAudio } from './fileStorage'
-import * as security from '../core-auth/security'
-import { ensureProfileRow } from '../core-auth/authService'
-import { clampVoiceToPlan } from '../../api/_lib/voiceAccess'
+import handler from './tts.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import { generateAudioFromGoogle, generateStudioAudioFromGoogle } from './googleTts.js'
+import { generateAudioFromElevenLabs } from './elevenLabsTts.js'
+import { saveAudio } from './fileStorage.js'
+import * as security from '@dhcb/core-auth/security'
+import { ensureProfileRow } from '@dhcb/core-auth/authService'
+import { clampVoiceToPlan } from './voiceAccess.js'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const mockedGenGoogle = vi.mocked(generateAudioFromGoogle)
@@ -361,7 +361,7 @@ describe('handler /api/tts — giọng ElevenLabs (VIP) và Studio', () => {
   })
 
   it('dựng viseme timeline lỗi → không làm hỏng audio, viseme_timeline trả về null', async () => {
-    const { visemeTimelineFromAlignment } = await import('../../api/_lib/visemeTimeline')
+    const { visemeTimelineFromAlignment } = await import('./visemeTimeline.js')
     vi.mocked(visemeTimelineFromAlignment).mockRejectedValueOnce(new Error('espeak-ng missing'))
     mockedGetPool.mockReturnValue(makePool(poolLeaderFlow()) as never)
     mockedGenEleven.mockResolvedValueOnce({

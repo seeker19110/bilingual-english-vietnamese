@@ -1,8 +1,5 @@
 // apps/english/src/lib/neuralCurriculumApi.ts — Client API giao tiếp Lộ trình Vi mô Thần kinh.
-import {
-  NeuralCurriculumState,
-  MicroCurriculumModule,
-} from '../../../../packages/core-contracts/neuralCurriculum.js'
+import { NeuralCurriculumState, MicroCurriculumModule } from '@dhcb/core-contracts/neuralCurriculum'
 
 export async function fetchNeuralCurriculum(): Promise<NeuralCurriculumState> {
   const token = localStorage.getItem('gsa_session_token_v1')

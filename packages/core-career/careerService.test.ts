@@ -18,13 +18,13 @@ const GOAL_ID = '44444444-4444-4444-8444-444444444444'
 const mockQuery = vi.fn()
 const mockClient = { query: mockQuery }
 
-vi.mock('../core-db/transaction.js', () => ({
+vi.mock('@dhcb/core-db/transaction', () => ({
   withTransaction: async (_pool: unknown, fn: (client: typeof mockClient) => Promise<unknown>) =>
     fn(mockClient),
 }))
 
 const getLearningReadModel = vi.fn()
-vi.mock('../core-learner/learningReadModelService.js', () => ({
+vi.mock('@dhcb/core-learner/learningReadModelService', () => ({
   getLearningReadModel: (...a: unknown[]) => getLearningReadModel(...a),
 }))
 

@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { analyzeCrossDomainSynergies } from './crossDomainSynergyService.js'
 
 import type { Pool } from 'pg'
-import type { LifeGraphNode, LifeGraphEdge } from '../core-contracts/lifeGraph.js'
+import type { LifeGraphNode, LifeGraphEdge } from '@dhcb/core-contracts/lifeGraph'
 
 const mockGraph: { nodes: Partial<LifeGraphNode>[]; edges: Partial<LifeGraphEdge>[] } = {
   nodes: [],

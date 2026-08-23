@@ -3,7 +3,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 let rateLimitOk = true
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => rateLimitOk,
@@ -11,7 +11,7 @@ vi.mock('../packages/core-auth/security', () => ({
 }))
 
 const getAppSettingsMock = vi.fn()
-vi.mock('../packages/core-db/settings.js', () => ({
+vi.mock('@dhcb/core-db/settings', () => ({
   getAppSettings: () => getAppSettingsMock(),
 }))
 

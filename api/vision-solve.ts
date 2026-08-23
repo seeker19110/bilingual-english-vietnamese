@@ -5,12 +5,12 @@ import {
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { VisionSolveRequestSchema } from '../packages/core-contracts/visionSolver.js'
-import { solveProblemWithVision } from '../packages/core-ai/visionSolverService.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { VisionSolveRequestSchema } from '@dhcb/core-contracts/visionSolver'
+import { solveProblemWithVision } from '@dhcb/core-ai/visionSolverService'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 export default async function handler(req: Request): Promise<Response> {
   const headers = { ...getCorsHeaders(req), ...SECURITY_HEADERS }

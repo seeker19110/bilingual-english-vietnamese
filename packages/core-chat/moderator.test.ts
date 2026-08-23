@@ -4,7 +4,7 @@
 // trùng ngẫu nhiên với 1 từ xấu ngắn hơn.
 
 import { describe, it, expect } from 'vitest'
-import { moderateContent, normalizeToken } from './moderator'
+import { moderateContent, normalizeToken } from './moderator.js'
 
 describe('normalizeToken', () => {
   it('bỏ dấu tiếng Việt + viết thường', () => {

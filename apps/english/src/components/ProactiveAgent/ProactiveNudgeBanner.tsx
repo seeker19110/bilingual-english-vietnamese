@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { ProactiveNudge } from '../../../../../packages/core-contracts/proactiveAgent.js'
+import type { ProactiveNudge } from '@dhcb/core-contracts/proactiveAgent'
 import { dismissProactiveNudge, executeProactiveAction } from '../../lib/proactiveAgentApi.js'
 
 interface ProactiveNudgeBannerProps {

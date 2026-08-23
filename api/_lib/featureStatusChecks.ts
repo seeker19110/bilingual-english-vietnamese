@@ -8,8 +8,8 @@
 // cấu hình thì báo 'unconfigured' (không tính là lỗi, vì dự án cho phép chỉ cần 1 trong nhiều
 // provider).
 
-import { getPgPool } from '../../packages/core-db/pgPool.js'
-import { groqKeyPool, isSkippableGroqKeyError } from '../../packages/core-ai/groqKeyPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import { groqKeyPool, isSkippableGroqKeyError } from '@dhcb/core-ai/groqKeyPool'
 
 export type FeatureCheckStatus = 'up' | 'down' | 'unconfigured'
 

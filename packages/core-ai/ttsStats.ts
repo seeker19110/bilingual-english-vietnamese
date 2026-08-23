@@ -9,7 +9,7 @@
 // gọi ở đây là "bắn rồi quên" — lỗi chỉ ghi console.warn, không ném lên trên.
 
 import type { Pool } from 'pg'
-import { vnDateStr } from '../core-db/date.js'
+import { vnDateStr } from '@dhcb/core-db/date'
 
 export interface TtsCacheEvent {
   lang: string

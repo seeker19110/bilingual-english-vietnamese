@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 vi.mock('@core/authHeader', () => ({
   getAuthHeader: async () => ({ Authorization: 'Bearer test-token' }),
 }))
-vi.mock('./wav', () => ({
+vi.mock('./wav.js', () => ({
   blobToWav16kMono: vi.fn(async () => new ArrayBuffer(8)),
 }))
 

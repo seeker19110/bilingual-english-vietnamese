@@ -3,7 +3,7 @@ import type {
   StemProblemState,
   ScratchpadStep,
   StemSubjectType,
-} from '../../../../../packages/core-contracts/stemScratchpad.js'
+} from '@dhcb/core-contracts/stemScratchpad'
 import {
   createStemProblemApi,
   validateStemStepApi,

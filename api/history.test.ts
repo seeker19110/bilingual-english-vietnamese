@@ -7,9 +7,9 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => true,
@@ -18,10 +18,10 @@ vi.mock('../packages/core-auth/security', () => ({
 }))
 
 // Thưởng "mời bạn" — mock để kiểm chính xác NGƯỠNG nào kích hoạt thưởng, không chạy logic thật.
-vi.mock('./_lib/referral', () => ({ rewardReferralIfEligible: vi.fn(async () => {}) }))
+vi.mock('./_lib/referral.js', () => ({ rewardReferralIfEligible: vi.fn(async () => {}) }))
 
 import handler from './history'
-import { getPgPool } from '../packages/core-db/pgPool'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import { rewardReferralIfEligible } from './_lib/referral'
 
 const mockedGetPool = vi.mocked(getPgPool)

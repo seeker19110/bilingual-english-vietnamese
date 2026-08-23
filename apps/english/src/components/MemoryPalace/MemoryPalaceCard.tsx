@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import MemoryPalaceExplorerModal from './MemoryPalaceExplorerModal.js'
 import { fetchMemoryPalaceState } from '../../lib/memoryPalaceApi.js'
-import type { MemoryPalaceState } from '../../../../../packages/core-contracts/memoryPalace.js'
+import type { MemoryPalaceState } from '@dhcb/core-contracts/memoryPalace'
 
 export default function MemoryPalaceCard() {
   const [isOpenModal, setIsOpenModal] = useState(false)

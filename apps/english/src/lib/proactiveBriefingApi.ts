@@ -1,5 +1,5 @@
 // apps/english/src/lib/proactiveBriefingApi.ts — Client API for Proactive Companion Briefings.
-import type { ProactiveBriefing } from '../../../../packages/core-contracts/proactiveBriefing'
+import type { ProactiveBriefing } from '@dhcb/core-contracts/proactiveBriefing'
 
 export async function fetchProactiveBriefing(
   type?: 'morning' | 'evening',

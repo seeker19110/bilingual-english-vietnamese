@@ -8,7 +8,7 @@ import A2ANegotiatorCard from '../CompanionVoice/A2ANegotiatorCard'
 import ProactiveBriefingCard from '../ProactiveBriefingCard'
 import AmbientScreenCopilot from '../CompanionVoice/AmbientScreenCopilot'
 import NeuroAffectiveCard from '../CompanionVoice/NeuroAffectiveCard'
-import type { ProactiveAgentState } from '../../../../../packages/core-contracts/proactiveAgent'
+import type { ProactiveAgentState } from '@dhcb/core-contracts/proactiveAgent'
 
 interface StudioProactiveProps {
   proactiveState: ProactiveAgentState | null

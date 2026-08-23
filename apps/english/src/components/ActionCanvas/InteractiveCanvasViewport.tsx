@@ -1,9 +1,5 @@
 import React, { useRef, useState } from 'react'
-import {
-  CanvasNode,
-  CanvasEdge,
-  CanvasViewport,
-} from '../../../../../packages/core-contracts/actionCanvas.js'
+import { CanvasNode, CanvasEdge, CanvasViewport } from '@dhcb/core-contracts/actionCanvas'
 import { CheckCircle2, AlertCircle, Clock, User, Bot, Trash2 } from 'lucide-react'
 
 interface InteractiveCanvasViewportProps {

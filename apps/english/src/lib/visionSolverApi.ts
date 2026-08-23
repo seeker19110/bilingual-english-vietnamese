@@ -1,8 +1,5 @@
 // apps/english/src/lib/visionSolverApi.ts — Client API for Multimodal Vision STEM Solver.
-import type {
-  VisionSolveRequest,
-  VisionSolveResponse,
-} from '../../../../packages/core-contracts/visionSolver'
+import type { VisionSolveRequest, VisionSolveResponse } from '@dhcb/core-contracts/visionSolver'
 
 export async function solveProblemImage(request: VisionSolveRequest): Promise<VisionSolveResponse> {
   const resp = await fetch('/api/vision-solve', {

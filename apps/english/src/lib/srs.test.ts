@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 // Mock đồng bộ cloud để test chạy OFFLINE (progressSync import supabase — sẽ ném lỗi khi
 // thiếu env trong test). Chỉ cần stub pushProgress là cả chuỗi import supabase không chạy.
-vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
+vi.mock('./progressSync.js', () => ({ pushProgress: vi.fn() }))
 
 import {
   addToSRS,

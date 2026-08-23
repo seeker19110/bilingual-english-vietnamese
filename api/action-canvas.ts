@@ -1,12 +1,12 @@
 // api/action-canvas.ts — REST handler cho Không gian làm việc Tương tác Action Canvas V4.2.
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
 import {
   ActionCanvasState,
   ActionCanvasStateSchema,
   ACTION_CANVAS_VERSION,
-} from '../packages/core-contracts/actionCanvas.js'
-import { ActionCanvasService } from '../packages/core-personal/actionCanvasService.js'
+} from '@dhcb/core-contracts/actionCanvas'
+import { ActionCanvasService } from '@dhcb/core-personal/actionCanvasService'
 
 const inMemoryCanvasMap = new Map<string, ActionCanvasState>()
 

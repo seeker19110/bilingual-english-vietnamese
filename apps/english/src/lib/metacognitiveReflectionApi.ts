@@ -3,7 +3,7 @@ import type {
   MetacognitiveReflection,
   SocraticDailyPrompt,
   MetacognitiveSummary,
-} from '../../../../packages/core-contracts/metacognitiveReflection.js'
+} from '@dhcb/core-contracts/metacognitiveReflection'
 
 export async function fetchDailySocraticPrompt(
   domain: 'learning' | 'career' | 'work' | 'startup' | 'life' = 'learning',

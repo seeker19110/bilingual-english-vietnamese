@@ -13,7 +13,7 @@ import {
   type GeminiLiveServerPacket,
   GeminiLiveSessionConfigSchema,
   GEMINI_LIVE_VERSION,
-} from '../core-contracts/geminiLive.js'
+} from '@dhcb/core-contracts/geminiLive'
 
 const GEMINI_LIVE_WS_BASE =
   'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent'

@@ -9,7 +9,7 @@ import {
   Layers,
 } from 'lucide-react'
 import { fetchLifeSynthesisReport } from '../../lib/lifeSynthesisApi'
-import type { LifeSynthesisReport } from '../../../../../packages/core-contracts/lifeSynthesis'
+import type { LifeSynthesisReport } from '@dhcb/core-contracts/lifeSynthesis'
 import LifeSynthesisDetailModal from './LifeSynthesisDetailModal'
 
 export default function LifeSynthesisDashboard() {

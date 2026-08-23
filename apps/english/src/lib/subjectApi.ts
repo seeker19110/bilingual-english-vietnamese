@@ -1,6 +1,6 @@
 // apps/english/src/lib/subjectApi.ts — Client API for Multi-Subject Learning (V2-12)
 import { getAuthHeader } from '@core/authHeader'
-import type { SubjectManifest } from '../../../../packages/core-contracts/subjectManifest'
+import type { SubjectManifest } from '@dhcb/core-contracts/subjectManifest'
 
 const API_BASE = '/api/subjects'
 

@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { getAppSettings, isSubjectEnforced, invalidateSettingsCache } from './settings'
+import { getAppSettings, isSubjectEnforced, invalidateSettingsCache } from './settings.js'
 
 const queryMock = vi.fn()
-vi.mock('./pgPool', () => ({
+vi.mock('./pgPool.js', () => ({
   getPgPool: () => ({ query: (...args: unknown[]) => queryMock(...args) }),
 }))
 

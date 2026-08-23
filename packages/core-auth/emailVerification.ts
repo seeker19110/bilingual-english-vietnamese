@@ -8,9 +8,9 @@
 // chỉ mở khoá phần THƯỞNG — đúng chỗ có tiền thật, không cản đường người học.
 
 import { createHash, randomInt } from 'node:crypto'
-import { getPgPool } from '../core-db/pgPool.js'
-import type { MailStatus } from '../../api/_lib/mailer.js'
-import { sendMailWithQuota } from '../../api/_lib/mailQuota.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import type { MailStatus } from '@dhcb/core-http/mailer'
+import { sendMailWithQuota } from '@dhcb/core-http/mailQuota'
 
 // Mã sống 15 phút — đủ để mở mail, đủ ngắn để mã lộ không dùng được lâu.
 const CODE_TTL_MS = 15 * 60 * 1000

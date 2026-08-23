@@ -1,15 +1,12 @@
 // api/daily-quests.ts — REST handler cho Nhiệm Vụ Hàng Ngày & Rương Báu Bí Ẩn (Daily Quests & Streak Vault).
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
 import {
   generateDailyQuests,
   updateQuestProgress,
   claimMysteryChestReward,
-} from '../packages/core-personal/dailyQuestsService.js'
-import {
-  type DailyQuestsState,
-  type QuestCategory,
-} from '../packages/core-contracts/dailyQuests.js'
+} from '@dhcb/core-personal/dailyQuestsService'
+import { type DailyQuestsState, type QuestCategory } from '@dhcb/core-contracts/dailyQuests'
 
 // In-memory store cho trạng thái nhiệm vụ ngày của users
 const userDailyQuestsMap = new Map<string, DailyQuestsState>()

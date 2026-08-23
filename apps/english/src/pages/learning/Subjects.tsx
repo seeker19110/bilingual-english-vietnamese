@@ -19,7 +19,7 @@ import {
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import { listSubjects } from '../../lib/subjectApi'
-import type { SubjectManifest } from '../../../../../packages/core-contracts/subjectManifest'
+import type { SubjectManifest } from '@dhcb/core-contracts/subjectManifest'
 
 const SUBJECT_ICONS: Record<string, typeof BookOpen> = {
   english: BookOpen,

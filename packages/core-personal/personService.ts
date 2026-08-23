@@ -17,16 +17,16 @@
 // gọi kiểm soát được connection và để test mock được pool — giống khuôn `withTransaction`.
 
 import type { Pool, PoolClient } from 'pg'
-import { withTransaction } from '../core-db/transaction.js'
-import { ConflictError, NotFoundError } from '../core-errors/appError.js'
-import { PersonSchema, PERSON_SCHEMA_VERSION, type Person } from '../core-contracts/person.js'
+import { withTransaction } from '@dhcb/core-db/transaction'
+import { ConflictError, NotFoundError } from '@dhcb/core-errors/appError'
+import { PersonSchema, PERSON_SCHEMA_VERSION, type Person } from '@dhcb/core-contracts/person'
 import {
   PersonalFactSchema,
   PERSONAL_FACT_SCHEMA_VERSION,
   type PersonalFact,
   type FactOrigin,
   type Sensitivity,
-} from '../core-contracts/personalFact.js'
+} from '@dhcb/core-contracts/personalFact'
 
 // ─── Hàng thô từ Postgres → contract ────────────────────────────────────────
 

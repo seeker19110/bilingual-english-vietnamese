@@ -1,10 +1,10 @@
 // Test /api/admin-plan-features — chặn quyền admin, bật/tắt/thêm/xoá tính năng theo gói.
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
-vi.mock('../packages/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
 const rateLimitState: { ok: boolean } = { ok: true }
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => rateLimitState.ok,
@@ -12,22 +12,22 @@ vi.mock('../packages/core-auth/security', () => ({
   logSecurityEvent: () => {},
 }))
 const emailState: { email: string | undefined } = { email: 'admin@x.com' }
-vi.mock('../packages/core-auth/authService', () => ({
+vi.mock('@dhcb/core-auth/authService', () => ({
   getUserById: async () => ({ id: 'user-1', email: emailState.email }),
 }))
-vi.mock('../packages/core-auth/adminAuth', () => ({
+vi.mock('@dhcb/core-auth/adminAuth', () => ({
   isAdminEmail: (email: string | null | undefined) => email === 'admin@x.com',
 }))
 const matrixResult = { catalog: [], flags: {}, updatedAt: '2026-01-01T00:00:00.000Z' }
 const getPlanFeatureMatrix = vi.fn(async () => matrixResult)
 const invalidatePlanFeatureCache = vi.fn()
-vi.mock('./_lib/planFeatures', () => ({
+vi.mock('@dhcb/core-billing/planFeatures', () => ({
   getPlanFeatureMatrix: () => getPlanFeatureMatrix(),
   invalidatePlanFeatureCache: (...args: unknown[]) => invalidatePlanFeatureCache(...args),
 }))
 
 import handler from './admin-plan-features'
-import { getPgPool } from '../packages/core-db/pgPool'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

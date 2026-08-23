@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CollocationNode } from '../../../../../packages/core-contracts/neuralCurriculum.js'
+import { CollocationNode } from '@dhcb/core-contracts/neuralCurriculum'
 import { Sparkles, Network, Volume2, BookOpen, Layers } from 'lucide-react'
 
 interface CollocationGraphExplorerProps {

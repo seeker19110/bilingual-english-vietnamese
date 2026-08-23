@@ -2,11 +2,7 @@ import { useEffect, useState } from 'react'
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import { useToast } from '@core/ToastProvider'
-import {
-  ActionCanvasState,
-  CanvasNode,
-  CanvasViewport,
-} from '../../../../../packages/core-contracts/actionCanvas.js'
+import { ActionCanvasState, CanvasNode, CanvasViewport } from '@dhcb/core-contracts/actionCanvas'
 import {
   fetchActionCanvas,
   saveActionCanvas,

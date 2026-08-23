@@ -10,8 +10,8 @@
 
 import type { Server as HttpServer, IncomingMessage } from 'node:http'
 import { WebSocketServer, WebSocket, type RawData } from 'ws'
-import { validateAuth } from '../core-auth/security.js'
-import { WsClientEventSchema, type WsServerEvent } from '../core-contracts/chat.js'
+import { validateAuth } from '@dhcb/core-auth/security'
+import { WsClientEventSchema, type WsServerEvent } from '@dhcb/core-contracts/chat'
 import {
   sendMessage,
   isRoomMember,

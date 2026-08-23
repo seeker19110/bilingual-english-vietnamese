@@ -3,12 +3,12 @@
 // vẫn khớp 1-1 với đặc tả, còn file này lo phần "đường xấu": đầu vào hỏng, đơn vị lạ, tràn nhánh.
 
 import { describe, expect, it } from 'vitest'
-import { checkBalance, parseEquation, parseFormula } from './chemistry'
-import { evaluateNumeric, expressionsEqual, parseExpression } from './expression'
-import { gradeAnswer } from './index'
-import { gcd, normalizeAnswerText, simplifyFraction } from './number'
-import { defaultToleranceFor, roundToSigFigs, withinTolerance } from './tolerance'
-import { dimOf, splitValueUnit, toSI } from './units'
+import { checkBalance, parseEquation, parseFormula } from './chemistry.js'
+import { evaluateNumeric, expressionsEqual, parseExpression } from './expression.js'
+import { gradeAnswer } from './index.js'
+import { gcd, normalizeAnswerText, simplifyFraction } from './number.js'
+import { defaultToleranceFor, roundToSigFigs, withinTolerance } from './tolerance.js'
+import { dimOf, splitValueUnit, toSI } from './units.js'
 
 describe('dung sai — đủ 4 chế độ', () => {
   it('exact chỉ chấp nhận đúng tuyệt đối', () => {

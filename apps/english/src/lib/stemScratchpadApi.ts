@@ -4,7 +4,7 @@ import type {
   ScratchpadStep,
   ScratchpadStepValidation,
   StemSubjectType,
-} from '../../../../packages/core-contracts/stemScratchpad.js'
+} from '@dhcb/core-contracts/stemScratchpad'
 
 export async function fetchSampleStemProblems(): Promise<
   Array<{

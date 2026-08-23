@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { RealtimeSessionTelemetry } from '../../../../../packages/core-contracts/meshTelemetry.js'
+import { RealtimeSessionTelemetry } from '@dhcb/core-contracts/meshTelemetry'
 import { fetchMeshTelemetry, MeshStatusSummary } from '../../lib/meshTelemetryApi.js'
 import RealtimeCostTelemetryBadge from './RealtimeCostTelemetryBadge'
 import MeshHealthMonitorModal from './MeshHealthMonitorModal'

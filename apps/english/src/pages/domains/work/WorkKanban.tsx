@@ -11,7 +11,7 @@ import {
   updateWorkTaskStatus,
   listWorkProjects,
 } from '../../../lib/workApi'
-import type { WorkTask, WorkProject } from '../../../../../../packages/core-contracts/work'
+import type { WorkTask, WorkProject } from '@dhcb/core-contracts/work'
 
 const PRIORITY_COLORS: Record<string, { label: string; cls: string }> = {
   urgent: { label: 'Khẩn cấp', cls: 'bg-red-500/15 text-red-400 border-red-500/30' },

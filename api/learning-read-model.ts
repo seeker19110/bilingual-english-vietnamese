@@ -1,17 +1,17 @@
 // api/learning-read-model.ts — V2-11 Learning Domain Read Model API.
 // Trả về Learning Read Model cho người học đã xác thực mà không lộ cấu trúc lưu trữ nội bộ.
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getOrCreatePerson } from '../packages/core-personal/personService.js'
-import { getLearningReadModel } from '../packages/core-learner/learningReadModelService.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { getOrCreatePerson } from '@dhcb/core-personal/personService'
+import { getLearningReadModel } from '@dhcb/core-learner/learningReadModelService'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 export default async function handler(req: Request): Promise<Response> {
   const headers = { ...getCorsHeaders(req), ...SECURITY_HEADERS }

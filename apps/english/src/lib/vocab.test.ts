@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 // vocab.ts import progressSync → supabase (ném lỗi khi thiếu env). Stub để chạy offline.
-vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
+vi.mock('./progressSync.js', () => ({ pushProgress: vi.fn() }))
 
 import {
   markLearned,

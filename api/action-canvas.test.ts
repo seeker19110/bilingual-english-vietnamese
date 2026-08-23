@@ -1,7 +1,7 @@
 // api/action-canvas.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import handler from './action-canvas.js'
-import * as security from '../packages/core-auth/security.js'
+import * as security from '@dhcb/core-auth/security'
 
 describe('Action Canvas API Handler (/api/action-canvas)', () => {
   beforeEach(() => {

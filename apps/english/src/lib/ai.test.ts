@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // callClaude() gọi getAuthHeader() (đụng supabase) — mock để test chạy OFFLINE.
 vi.mock('@core/authHeader', () => ({ getAuthHeader: vi.fn().mockResolvedValue({}) }))
-vi.mock('./errorTracking', () => ({ captureException: vi.fn().mockResolvedValue(undefined) }))
+vi.mock('./errorTracking.js', () => ({ captureException: vi.fn().mockResolvedValue(undefined) }))
 
 import { callClaude, parseJson } from './ai'
 import { captureException } from './errorTracking'

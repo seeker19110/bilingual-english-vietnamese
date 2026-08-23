@@ -9,10 +9,7 @@ import {
   Loader2,
   Lock,
 } from 'lucide-react'
-import type {
-  PeerStudyMatch,
-  A2ANegotiationResult,
-} from '../../../../../packages/core-contracts/a2aProtocol'
+import type { PeerStudyMatch, A2ANegotiationResult } from '@dhcb/core-contracts/a2aProtocol'
 
 export const A2ANegotiatorCard: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)

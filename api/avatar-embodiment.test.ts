@@ -1,7 +1,7 @@
 // api/avatar-embodiment.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import handler from './avatar-embodiment.js'
-import * as security from '../packages/core-auth/security.js'
+import * as security from '@dhcb/core-auth/security'
 
 describe('Avatar Embodiment API Handler (/api/avatar-embodiment)', () => {
   beforeEach(() => {

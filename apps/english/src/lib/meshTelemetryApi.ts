@@ -1,8 +1,5 @@
 // apps/english/src/lib/meshTelemetryApi.ts — Client API giao tiếp WebSocket Mesh & Realtime Telemetry.
-import {
-  RealtimeSessionTelemetry,
-  AiProviderType,
-} from '../../../../packages/core-contracts/meshTelemetry.js'
+import { RealtimeSessionTelemetry, AiProviderType } from '@dhcb/core-contracts/meshTelemetry'
 
 export interface MeshStatusSummary {
   activeNodes: number

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest'
 
 // getDailySpeed() (curriculum.ts) đọc getLearnedCount() từ ./vocab, kéo theo
 // progressSync → supabase — mock để test chạy OFFLINE (giống srs.test.ts).
-vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
+vi.mock('./progressSync.js', () => ({ pushProgress: vi.fn() }))
 
 import {
   DAILY_GOAL,

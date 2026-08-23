@@ -15,7 +15,7 @@ import {
   CATEGORY_METADATA,
   type UserFeedbackRecord,
   type UserFeedbackStatus,
-} from '../../../../../packages/core-contracts/feedback'
+} from '@dhcb/core-contracts/feedback'
 
 export default function AdminFeedbackPanel() {
   const toast = useToast()

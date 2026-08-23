@@ -32,7 +32,7 @@ import type {
   CareerExperience,
   CareerGoal,
   CareerSkillGapAnalysis,
-} from '../../../../../../packages/core-contracts/career'
+} from '@dhcb/core-contracts/career'
 
 export default function Career() {
   const nav = useNavigate()

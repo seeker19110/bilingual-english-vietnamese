@@ -4,7 +4,7 @@ import {
   CanvasNode,
   CanvasEdge,
   ACTION_CANVAS_VERSION,
-} from '../core-contracts/actionCanvas.js'
+} from '@dhcb/core-contracts/actionCanvas'
 
 export class ActionCanvasService {
   static synthesizeCrossDomainGoalCanvas(params: {

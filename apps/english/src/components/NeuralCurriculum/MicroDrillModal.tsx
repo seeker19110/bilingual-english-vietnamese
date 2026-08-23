@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MicroDrillQuestion } from '../../../../../packages/core-contracts/neuralCurriculum.js'
+import { MicroDrillQuestion } from '@dhcb/core-contracts/neuralCurriculum'
 import { Zap, CheckCircle2, XCircle, X, ArrowRight, Trophy } from 'lucide-react'
 
 interface MicroDrillModalProps {

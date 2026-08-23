@@ -11,7 +11,7 @@ import type {
   MemoryPalaceTheme,
   LocusAnchor,
   LocusRecallResult,
-} from '../../../../../packages/core-contracts/memoryPalace.js'
+} from '@dhcb/core-contracts/memoryPalace'
 
 interface MemoryPalaceExplorerModalProps {
   onClose: () => void

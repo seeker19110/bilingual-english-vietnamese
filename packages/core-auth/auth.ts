@@ -32,7 +32,7 @@ import {
   ensureProfileRow,
   getUserById,
 } from './authService.js'
-import type { Plan } from '../core-billing/plan.js'
+import type { Plan } from '@dhcb/core-billing/plan'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -40,14 +40,14 @@ import {
   validateAuth,
   logSecurityEvent,
 } from './security.js'
-import { validateBody, readJsonBody } from '../../api/_lib/validation.js'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
 import { sendVerificationCode, verifyCode, isEmailVerified } from './emailVerification.js'
 import { isAdminEmail } from './adminAuth.js'
-import { grantSignupTrial, SIGNUP_TRIAL_DAYS } from '../../api/_lib/trial.js'
+import { grantSignupTrial, SIGNUP_TRIAL_DAYS } from './trial.js'
 import { changeEmail } from './changeEmail.js'
-import { requestPasswordReset, resetPassword } from '../../api/_lib/passwordReset.js'
-import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
-import { isReservedName } from '../../api/_lib/reservedNames.js'
+import { requestPasswordReset, resetPassword } from './passwordReset.js'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { isReservedName } from './reservedNames.js'
 import { buildSessionCookie, buildClearSessionCookie, readSessionCookie } from './sessionCookie.js'
 
 const RegisterSchema = z.object({

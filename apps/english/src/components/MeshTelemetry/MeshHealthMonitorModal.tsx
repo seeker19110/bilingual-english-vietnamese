@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { RealtimeSessionTelemetry } from '../../../../../packages/core-contracts/meshTelemetry.js'
+import { RealtimeSessionTelemetry } from '@dhcb/core-contracts/meshTelemetry'
 import { MeshStatusSummary, resetSessionBudget } from '../../lib/meshTelemetryApi.js'
 import { useToast } from '@core/ToastProvider'
 import { ShieldCheck, X, Radio } from 'lucide-react'

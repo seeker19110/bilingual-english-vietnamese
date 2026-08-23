@@ -7,7 +7,7 @@ import {
   RealtimeSessionConfigSchema,
   RealtimeSessionEventSchema,
   REALTIME_MULTIMODAL_VERSION,
-} from '../core-contracts/realtimeMultimodal.js'
+} from '@dhcb/core-contracts/realtimeMultimodal'
 
 export type MultimodalSessionState =
   | 'initializing'

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Sparkles, Sun, Moon, ArrowRight, CheckCircle2, ChevronRight } from 'lucide-react'
 import { fetchProactiveBriefing } from '../lib/proactiveBriefingApi'
-import type { ProactiveBriefing } from '../../../../packages/core-contracts/proactiveBriefing'
+import type { ProactiveBriefing } from '@dhcb/core-contracts/proactiveBriefing'
 
 export default function ProactiveBriefingCard() {
   const [briefing, setBriefing] = useState<ProactiveBriefing | null>(null)

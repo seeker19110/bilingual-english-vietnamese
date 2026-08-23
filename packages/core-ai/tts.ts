@@ -23,7 +23,7 @@
 // Chi tiết suy khoá: xem api/_lib/ttsCrypto.ts.
 
 import { z } from 'zod'
-import { getPgPool } from '../core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   generateAudioFromGoogle,
   generateStudioAudioFromGoogle,
@@ -33,15 +33,15 @@ import {
   VOICE_VERSION,
   type Lang,
   type VoiceId,
-} from '../../api/_lib/googleTts.js'
+} from './googleTts.js'
 import { generateAudioFromElevenLabs, isValidElevenVoice } from './elevenLabsTts.js'
 import { generateAudioFromGemini, isValidGeminiVoice } from './geminiTts.js'
-import { visemeTimelineFromAlignment, type VisemeFrame } from '../../api/_lib/visemeTimeline.js'
-import { ensureProfileRow } from '../core-auth/authService.js'
-import { clampVoiceToPlan, type AnyVoiceId } from '../../api/_lib/voiceAccess.js'
+import { visemeTimelineFromAlignment, type VisemeFrame } from './visemeTimeline.js'
+import { ensureProfileRow } from '@dhcb/core-auth/authService'
+import { clampVoiceToPlan, type AnyVoiceId } from './voiceAccess.js'
 import { saveAudio, isServableUrl } from './fileStorage.js'
 import { recordTtsCacheEvent } from './ttsStats.js'
-import { encryptAudio, getClientKeyMaterial } from '../../api/_lib/ttsCrypto.js'
+import { encryptAudio, getClientKeyMaterial } from './ttsCrypto.js'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -49,10 +49,10 @@ import {
   validateAuth,
   validateContentType,
   logSecurityEvent,
-} from '../core-auth/security.js'
-import { readJsonBody, validateBody } from '../../api/_lib/validation.js'
-import { withConcurrencyLimit } from '../core-db/concurrencyLimiter.js'
-import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { readJsonBody, validateBody } from '@dhcb/core-http/validation'
+import { withConcurrencyLimit } from '@dhcb/core-db/concurrencyLimiter'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 const VALID_LANGS: Lang[] = ['en-US', 'vi-VN']
 

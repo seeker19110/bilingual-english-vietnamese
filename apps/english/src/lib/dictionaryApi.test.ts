@@ -54,7 +54,7 @@ const FIXTURE: DictEntry[] = [
   },
 ]
 
-vi.mock('../data/dictionary/loader', () => ({
+vi.mock('../data/dictionary/loader.js', () => ({
   loadDictionary: async () => FIXTURE,
 }))
 

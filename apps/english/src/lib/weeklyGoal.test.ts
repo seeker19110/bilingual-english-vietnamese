@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 
 // Chỉ cần biết pushProgress ĐƯỢC GỌI khi đổi mục tiêu — mock hẳn progressSync cho gọn.
-vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
+vi.mock('./progressSync.js', () => ({ pushProgress: vi.fn() }))
 
 import { pushProgress } from './progressSync'
 import {

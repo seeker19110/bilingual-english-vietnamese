@@ -2,7 +2,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import handler, { checkSystemHealth } from './healthDeep.js'
-import * as pgPoolModule from '../packages/core-db/pgPool.js'
+import * as pgPoolModule from '@dhcb/core-db/pgPool'
 
 describe('Deep Health Check API (/api/health/deep)', () => {
   const originalEnv = { ...process.env }

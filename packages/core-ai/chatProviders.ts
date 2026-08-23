@@ -15,7 +15,7 @@
 // Xác minh: sau khi refactor `ai.ts` dùng các hàm này, toàn bộ `ai.test.ts` (34 ca, không sửa 1
 // dòng) vẫn xanh — bằng chứng hành vi observable không đổi.
 
-import { fetchWithTimeout } from '../../api/_lib/fetchTimeout.js'
+import { fetchWithTimeout } from '@dhcb/core-http/fetchTimeout'
 import {
   groqKeyPool,
   groqModelPool,

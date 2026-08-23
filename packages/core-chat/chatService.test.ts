@@ -5,14 +5,14 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 const mockQuery = vi.fn()
-vi.mock('../core-db/pgPool', () => ({ getPgPool: () => ({ query: mockQuery }) }))
-vi.mock('../core-db/transaction', () => ({
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: () => ({ query: mockQuery }) }))
+vi.mock('@dhcb/core-db/transaction', () => ({
   withTransaction: async (_pool: unknown, fn: (client: { query: typeof mockQuery }) => unknown) =>
     fn({ query: mockQuery }),
 }))
 
 const areFriendsMock = vi.fn()
-vi.mock('../../api/_lib/friends', () => ({ areFriends: (...a: unknown[]) => areFriendsMock(...a) }))
+vi.mock('./friends.js', () => ({ areFriends: (...a: unknown[]) => areFriendsMock(...a) }))
 
 import {
   createOrGetDmRoom,
@@ -24,7 +24,7 @@ import {
   deleteMessage,
   getRoomMemberIds,
   getRoomPeerIds,
-} from './chatService'
+} from './chatService.js'
 
 beforeEach(() => {
   mockQuery.mockReset()

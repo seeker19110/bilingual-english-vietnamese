@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { ProactiveAgentConfig } from '../../../../../packages/core-contracts/proactiveAgent.js'
+import type { ProactiveAgentConfig } from '@dhcb/core-contracts/proactiveAgent'
 import { updateProactiveConfigApi } from '../../lib/proactiveAgentApi.js'
 
 interface ProactiveAgentSettingsModalProps {

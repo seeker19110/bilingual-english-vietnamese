@@ -4,7 +4,7 @@ import type {
   DebateSessionState,
   DebateTurn,
   DebateRubricScore,
-} from '../../../../packages/core-contracts/debateArena.js'
+} from '@dhcb/core-contracts/debateArena'
 
 export async function fetchDebateTopics(): Promise<
   Array<{

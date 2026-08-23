@@ -1,23 +1,23 @@
 // api/workplace-insights.ts — V3 Workplace Error Harvester & Auto-SRS Endpoint.
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getOrCreatePerson } from '../packages/core-personal/personService.js'
+} from '@dhcb/core-auth/security'
+import { getOrCreatePerson } from '@dhcb/core-personal/personService'
 import {
   harvestMistakesFromText,
   listHarvestedMistakes,
   convertMistakeToSrsCard,
   listAutoSrsCards,
-} from '../packages/core-personal/workplaceErrorHarvesterService.js'
-import { type HarvestedSourceType } from '../packages/core-contracts/workplaceErrorHarvester.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
-import { readJsonBody } from './_lib/validation.js'
+} from '@dhcb/core-personal/workplaceErrorHarvesterService'
+import { type HarvestedSourceType } from '@dhcb/core-contracts/workplaceErrorHarvester'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { readJsonBody } from '@dhcb/core-http/validation'
 
 export default async function handler(req: Request): Promise<Response> {
   const headers = { ...getCorsHeaders(req), ...SECURITY_HEADERS }

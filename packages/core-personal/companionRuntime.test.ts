@@ -35,7 +35,7 @@ const chatProvidersMock = vi.hoisted(() => ({
   callAnthropicChat: vi.fn(),
 }))
 
-vi.mock('../core-ai/chatProviders.js', () => ({
+vi.mock('@dhcb/core-ai/chatProviders', () => ({
   callGroqChat: (...a: unknown[]) => chatProvidersMock.callGroqChat(...a),
   callGroqChatWithKeyPool: (...a: unknown[]) => chatProvidersMock.callGroqChatWithKeyPool(...a),
   callAnthropicChat: (...a: unknown[]) => chatProvidersMock.callAnthropicChat(...a),
@@ -45,7 +45,7 @@ const geminiApiMock = vi.hoisted(() => ({
   callGemini: vi.fn(),
 }))
 
-vi.mock('../../api/_lib/geminiApi.js', () => ({
+vi.mock('@dhcb/core-ai/geminiApi', () => ({
   callGemini: (...a: unknown[]) => geminiApiMock.callGemini(...a),
 }))
 

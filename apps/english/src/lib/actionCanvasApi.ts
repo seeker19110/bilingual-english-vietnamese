@@ -1,5 +1,5 @@
 // apps/english/src/lib/actionCanvasApi.ts — Client API giao tiếp Action Canvas V4.2.
-import { ActionCanvasState } from '../../../../packages/core-contracts/actionCanvas.js'
+import { ActionCanvasState } from '@dhcb/core-contracts/actionCanvas'
 
 export async function fetchActionCanvas(): Promise<ActionCanvasState> {
   const token = localStorage.getItem('gsa_session_token_v1')

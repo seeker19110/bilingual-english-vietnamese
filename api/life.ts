@@ -1,14 +1,14 @@
 // api/life.ts — REST API cho Life Foundation Domain (V2-17).
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getOrCreatePerson } from '../packages/core-personal/personService.js'
+} from '@dhcb/core-auth/security'
+import { getOrCreatePerson } from '@dhcb/core-personal/personService'
 import {
   createLifePlan,
   listLifePlans,
@@ -20,17 +20,17 @@ import {
   listWellbeingChecks,
   createGrowthMilestone,
   listGrowthMilestones,
-} from '../packages/core-life/lifeFoundationService.js'
+} from '@dhcb/core-life/lifeFoundationService'
 import {
   LifePlanTypeSchema,
   LifePlanStatusSchema,
   HabitTypeSchema,
   HabitFrequencySchema,
   GrowthAreaSchema,
-} from '../packages/core-contracts/lifeFoundation.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-contracts/lifeFoundation'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 const CreatePlanSchema = z
   .object({

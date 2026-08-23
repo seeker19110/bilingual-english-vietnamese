@@ -4,7 +4,7 @@ import {
   RealtimeSessionTelemetry,
   AiProviderType,
   MESH_TELEMETRY_VERSION,
-} from '../core-contracts/meshTelemetry.js'
+} from '@dhcb/core-contracts/meshTelemetry'
 
 export const PROVIDER_UNIT_RATES_USD: Record<
   AiProviderType,

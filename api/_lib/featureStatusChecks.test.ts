@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
-vi.mock('../../packages/core-db/pgPool.js', () => {
+vi.mock('@dhcb/core-db/pgPool', () => {
   const query = vi.fn()
   return { getPgPool: () => ({ query }) }
 })
@@ -11,7 +11,7 @@ vi.mock('@aws-sdk/client-s3', () => ({
   ListObjectsV2Command: vi.fn((input: unknown) => input),
 }))
 
-import { getPgPool } from '../../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   runAllFeatureChecks,
   summarizeOverallStatus,

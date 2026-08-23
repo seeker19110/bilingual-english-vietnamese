@@ -1,10 +1,10 @@
 // packages/core-ai/visionSolverService.ts — V2 Flagship Multimodal Vision STEM Solver Service.
-import { fetchWithTimeout } from '../../api/_lib/fetchTimeout.js'
+import { fetchWithTimeout } from '@dhcb/core-http/fetchTimeout'
 import type {
   VisionSolveRequest,
   VisionSolveResponse,
   VisionSolvedStep,
-} from '../core-contracts/visionSolver.js'
+} from '@dhcb/core-contracts/visionSolver'
 
 const VISION_TIMEOUT_MS = 35_000
 

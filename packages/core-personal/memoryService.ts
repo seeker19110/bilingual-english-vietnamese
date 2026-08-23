@@ -1,14 +1,14 @@
 // packages/core-personal/memoryService.ts — V2-06 Personal Knowledge Fabric.
 import type { Pool, PoolClient } from 'pg'
-import { withTransaction } from '../core-db/transaction.js'
-import { ConflictError, NotFoundError, ValidationError } from '../core-errors/appError.js'
+import { withTransaction } from '@dhcb/core-db/transaction'
+import { ConflictError, NotFoundError, ValidationError } from '@dhcb/core-errors/appError'
 import {
   MemoryRecordSchema,
   PERSONAL_MEMORY_SCHEMA_VERSION,
   type MemoryRecord,
   type MemoryNamespace,
-} from '../core-contracts/personalMemory.js'
-import type { Sensitivity } from '../core-contracts/personalFact.js'
+} from '@dhcb/core-contracts/personalMemory'
+import type { Sensitivity } from '@dhcb/core-contracts/personalFact'
 
 type Runner = Pick<Pool | PoolClient, 'query'>
 

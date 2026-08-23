@@ -1,8 +1,5 @@
 // apps/english/src/lib/lifeSynthesisApi.ts — REST Client cho Cross-Domain Life Synthesis Engine V5.4.
-import type {
-  LifeSynthesisReport,
-  LifeDomainType,
-} from '../../../../packages/core-contracts/lifeSynthesis.js'
+import type { LifeSynthesisReport, LifeDomainType } from '@dhcb/core-contracts/lifeSynthesis'
 
 export async function fetchLifeSynthesisReport(
   timeframe: 'daily' | 'weekly' | 'monthly' = 'weekly',

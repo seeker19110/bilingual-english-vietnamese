@@ -6,7 +6,7 @@ import type {
   HabitLog,
   WellbeingCheck,
   GrowthMilestone,
-} from '../../../../packages/core-contracts/lifeFoundation'
+} from '@dhcb/core-contracts/lifeFoundation'
 
 export interface CreateLifePlanParams {
   title: string

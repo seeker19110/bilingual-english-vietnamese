@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { getPgPool } from '../core-db/pgPool'
-import { checkAndConsumeUsage, refundUsage, isUsageMode } from './usage'
-import { invalidateSettingsCache } from '../core-db/settings'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import { checkAndConsumeUsage, refundUsage, isUsageMode } from './usage.js'
+import { invalidateSettingsCache } from '@dhcb/core-db/settings'
 
 // Mock Pool Postgres để test logic đếm/hoàn lượt OFFLINE (không cần DB thật).
-vi.mock('../core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const mockedGetPool = vi.mocked(getPgPool)
 
 beforeEach(() => {

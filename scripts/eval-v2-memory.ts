@@ -1,10 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import * as path from 'node:path'
-import {
-  evaluateMemoryCandidate,
-  type MemoryCandidate,
-} from '../packages/core-personal/memoryService.js'
+import { evaluateMemoryCandidate, type MemoryCandidate } from '@dhcb/core-personal/memoryService'
 
 const SCRIPT_DIR = fileURLToPath(new URL('.', import.meta.url))
 const FIXTURES_PATH = path.join(SCRIPT_DIR, 'eval-v2-memory-fixtures.json')

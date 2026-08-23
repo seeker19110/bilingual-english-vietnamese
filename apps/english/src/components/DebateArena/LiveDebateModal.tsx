@@ -1,8 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import type {
-  DebateSessionState,
-  DebateTurn,
-} from '../../../../../packages/core-contracts/debateArena.js'
+import type { DebateSessionState, DebateTurn } from '@dhcb/core-contracts/debateArena'
 import {
   createDebateSessionApi,
   submitDebateTurnApi,

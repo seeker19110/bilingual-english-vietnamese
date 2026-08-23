@@ -4,7 +4,7 @@ import type {
   BioStreamRecord,
   CircadianLearningWindow,
   WearableSource,
-} from '../../../../../packages/core-contracts/wearablesIntegration'
+} from '@dhcb/core-contracts/wearablesIntegration'
 
 export default function WearablesSyncCard() {
   const [bio, setBio] = useState<BioStreamRecord | null>(null)

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import handler from './acoustic-phonetics.js'
-import * as security from '../packages/core-auth/security.js'
+import * as security from '@dhcb/core-auth/security'
 
 describe('api/acoustic-phonetics', () => {
   beforeEach(() => {

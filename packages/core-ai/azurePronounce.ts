@@ -17,8 +17,8 @@
 // trong src/data/pronunciationTraps.ts (vd /θ/, /ð/, /ʃ/) — client PR sau map thẳng phoneme
 // trả về vào bảng trap mà không cần thêm 1 bảng chuyển đổi SAPI→IPA.
 
-import { fetchWithTimeout } from '../../api/_lib/fetchTimeout.js'
-import { bytesToBase64 } from '../core-db/base64.js'
+import { fetchWithTimeout } from '@dhcb/core-http/fetchTimeout'
+import { bytesToBase64 } from '@dhcb/core-db/base64'
 
 const AZURE_TIMEOUT_MS = 20_000
 

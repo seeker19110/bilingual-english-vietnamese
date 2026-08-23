@@ -1,11 +1,6 @@
 // apps/english/src/lib/workApi.ts — Client API wrapper for Work Domain (V2-15)
 import { getAuthHeader } from '@core/authHeader'
-import type {
-  WorkProject,
-  WorkTask,
-  WorkMeeting,
-  WorkDocument,
-} from '../../../../packages/core-contracts/work'
+import type { WorkProject, WorkTask, WorkMeeting, WorkDocument } from '@dhcb/core-contracts/work'
 
 export interface CreateWorkProjectParams {
   name: string

@@ -1,9 +1,6 @@
 // apps/english/src/lib/geminiLiveApi.ts — Client Hook & API cho Gemini Live Realtime Streaming V7.2
 import { useState, useEffect, useRef, useCallback } from 'react'
-import type {
-  GeminiLiveServerPacket,
-  GeminiLiveStatus,
-} from '../../../../packages/core-contracts/geminiLive.js'
+import type { GeminiLiveServerPacket, GeminiLiveStatus } from '@dhcb/core-contracts/geminiLive'
 
 export function useGeminiLiveSession() {
   const [status, setStatus] = useState<GeminiLiveStatus>('idle')

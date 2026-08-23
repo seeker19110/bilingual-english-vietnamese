@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
 let rateLimitOk = true
 
-vi.mock('../packages/core-auth/security.js', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => rateLimitOk,
@@ -11,10 +11,10 @@ vi.mock('../packages/core-auth/security.js', () => ({
   logSecurityEvent: () => {},
 }))
 
-vi.mock('../packages/core-db/pgPool.js', () => ({ getPgPool: () => ({}) }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: () => ({}) }))
 
 const getOrCreatePerson = vi.fn()
-vi.mock('../packages/core-personal/personService.js', () => ({
+vi.mock('@dhcb/core-personal/personService', () => ({
   getOrCreatePerson: (...a: unknown[]) => getOrCreatePerson(...a),
 }))
 
@@ -31,7 +31,7 @@ const workService = vi.hoisted(() => ({
   listWorkDocuments: vi.fn(),
 }))
 
-vi.mock('../packages/core-work/workService.js', () => ({
+vi.mock('@dhcb/core-work/workService', () => ({
   ...workService,
 }))
 

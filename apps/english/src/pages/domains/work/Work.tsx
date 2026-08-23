@@ -30,12 +30,7 @@ import {
   listWorkDocuments,
   createWorkDocument,
 } from '../../../lib/workApi'
-import type {
-  WorkProject,
-  WorkTask,
-  WorkMeeting,
-  WorkDocument,
-} from '../../../../../../packages/core-contracts/work'
+import type { WorkProject, WorkTask, WorkMeeting, WorkDocument } from '@dhcb/core-contracts/work'
 
 export default function Work() {
   const nav = useNavigate()

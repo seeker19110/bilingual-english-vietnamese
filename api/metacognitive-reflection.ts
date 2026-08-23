@@ -1,8 +1,8 @@
 // api/metacognitive-reflection.ts — REST handler cho Metacognitive Reflection & Socratic Journaling.
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
-import { MetacognitiveReflectionService } from '../packages/core-personal/metacognitiveReflectionService.js'
-import { MetacognitiveReflection } from '../packages/core-contracts/metacognitiveReflection.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
+import { MetacognitiveReflectionService } from '@dhcb/core-personal/metacognitiveReflectionService'
+import { MetacognitiveReflection } from '@dhcb/core-contracts/metacognitiveReflection'
 
 const userReflectionsMap = new Map<string, MetacognitiveReflection[]>()
 

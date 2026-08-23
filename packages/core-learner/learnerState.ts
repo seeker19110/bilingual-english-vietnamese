@@ -25,17 +25,17 @@
 // tính năng UI chưa tồn tại, "vi phạm nguyên tắc không triển khai dở dang", CLAUDE.md mục 4).
 // Wiring 1 endpoint thật là việc của phase/PR sau khi có UI cần tới.
 
-import { getPgPool } from '../core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   CefrLevelSchema,
   DirectionSchema,
   type ContractDirection,
   type ContractCefrLevel,
-} from '../core-contracts/shared.js'
-import type { Skill } from '../core-contracts/skill.js'
-import type { Knowledge } from '../core-contracts/knowledge.js'
-import type { ErrorRecord } from '../core-contracts/errorRecord.js'
-import type { Evidence } from '../core-contracts/evidence.js'
+} from '@dhcb/core-contracts/shared'
+import type { Skill } from '@dhcb/core-contracts/skill'
+import type { Knowledge } from '@dhcb/core-contracts/knowledge'
+import type { ErrorRecord } from '@dhcb/core-contracts/errorRecord'
+import type { Evidence } from '@dhcb/core-contracts/evidence'
 
 export interface LearnerGoal {
   label: string

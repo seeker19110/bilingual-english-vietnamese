@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.package.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "."
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["dist", "**/*.test.ts"],
+  "references": [
+    {
+      "path": "../core-billing"
+    },
+    {
+      "path": "../core-db"
+    },
+    {
+      "path": "../core-http"
+    }
+  ]
+}

@@ -15,7 +15,7 @@ import {
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { fetchCareerProfile } from '../../../lib/careerApi'
-import type { CareerProfile } from '../../../../../../packages/core-contracts/career'
+import type { CareerProfile } from '@dhcb/core-contracts/career'
 
 interface InterviewTurn {
   id: string

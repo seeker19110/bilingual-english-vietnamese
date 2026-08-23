@@ -1,8 +1,5 @@
 // apps/english/src/lib/coLearningAudioApi.ts — Client API cho Phòng Học Nhóm Âm Thanh Thời Gian Thực V7.1.
-import type {
-  AudioRoomState,
-  AudioRoomEvent,
-} from '../../../../packages/core-contracts/audioCoLearningRoom.js'
+import type { AudioRoomState, AudioRoomEvent } from '@dhcb/core-contracts/audioCoLearningRoom'
 
 export async function fetchActiveAudioRooms(): Promise<
   Array<{

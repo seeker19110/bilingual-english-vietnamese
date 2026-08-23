@@ -5,8 +5,8 @@ import type {
   ProactiveBriefing,
   ProactiveBriefingItem,
   ProactiveBriefingType,
-} from '../core-contracts/proactiveBriefing.js'
-import { getLearningReadModel } from '../core-learner/learningReadModelService.js'
+} from '@dhcb/core-contracts/proactiveBriefing'
+import { getLearningReadModel } from '@dhcb/core-learner/learningReadModelService'
 
 export interface GenerateBriefingOptions {
   type?: ProactiveBriefingType

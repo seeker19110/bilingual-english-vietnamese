@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import * as path from 'node:path'
-import { buildContextPackage } from '../packages/core-personal/contextEngine.js'
+import { buildContextPackage } from '@dhcb/core-personal/contextEngine'
 
 const SCRIPT_DIR = fileURLToPath(new URL('.', import.meta.url))
 const FIXTURES_PATH = path.join(SCRIPT_DIR, 'eval-v2-context-fixtures.json')

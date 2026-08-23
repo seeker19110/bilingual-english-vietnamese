@@ -3,7 +3,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => true,
@@ -15,7 +15,7 @@ const createOrGetDmRoomMock = vi.fn()
 const getMessagesMock = vi.fn()
 const getRoomsMock = vi.fn()
 const deleteMessageMock = vi.fn()
-vi.mock('../packages/core-chat/chatService', () => ({
+vi.mock('@dhcb/core-chat/chatService', () => ({
   createOrGetDmRoom: (...a: unknown[]) => createOrGetDmRoomMock(...a),
   getMessages: (...a: unknown[]) => getMessagesMock(...a),
   getRooms: (...a: unknown[]) => getRoomsMock(...a),

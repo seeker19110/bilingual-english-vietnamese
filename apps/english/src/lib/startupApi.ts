@@ -1,11 +1,6 @@
 // apps/english/src/lib/startupApi.ts — Client API wrapper for Startup Domain (V2-16)
 import { getAuthHeader } from '@core/authHeader'
-import type {
-  Venture,
-  Problem,
-  Hypothesis,
-  ValidatedEvidence,
-} from '../../../../packages/core-contracts/startup'
+import type { Venture, Problem, Hypothesis, ValidatedEvidence } from '@dhcb/core-contracts/startup'
 
 export interface CreateVentureParams {
   name: string

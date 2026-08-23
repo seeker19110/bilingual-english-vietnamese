@@ -16,8 +16,8 @@
 //   - no AI output can trigger erasure — the endpoint requires auth + ownership verification.
 
 import type { Pool } from 'pg'
-import { withTransaction } from '../core-db/transaction.js'
-import { NotFoundError } from '../core-errors/appError.js'
+import { withTransaction } from '@dhcb/core-db/transaction'
+import { NotFoundError } from '@dhcb/core-errors/appError'
 
 // ─── Export Types ─────────────────────────────────────────────────────────────
 

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { useTheme } from './useTheme'
-import { ThemeContext } from './themeContext'
+import { useTheme } from './useTheme.js'
+import { ThemeContext } from './themeContext.js'
 
 function Consumer() {
   const { theme, locked } = useTheme()

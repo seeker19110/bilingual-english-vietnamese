@@ -7,7 +7,7 @@ import {
 import type {
   SocraticDailyPrompt,
   MetacognitiveSummary,
-} from '../../../../../packages/core-contracts/metacognitiveReflection.js'
+} from '@dhcb/core-contracts/metacognitiveReflection'
 
 export default function MetacognitiveJournalCard() {
   const [isOpenModal, setIsOpenModal] = useState(false)

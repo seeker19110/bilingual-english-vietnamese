@@ -7,14 +7,14 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { EventEmitter } from 'node:events'
 
 const authState: { user: { userId: string } | null } = { user: null }
-vi.mock('../core-auth/security', () => ({ validateAuth: async () => authState.user }))
+vi.mock('@dhcb/core-auth/security', () => ({ validateAuth: async () => authState.user }))
 
 const sendMessageMock = vi.fn()
 const isRoomMemberMock = vi.fn()
 const getRoomMemberIdsMock = vi.fn()
 const getRoomPeerIdsMock = vi.fn()
 const markReadMock = vi.fn()
-vi.mock('./chatService', () => ({
+vi.mock('./chatService.js', () => ({
   sendMessage: (...a: unknown[]) => sendMessageMock(...a),
   isRoomMember: (...a: unknown[]) => isRoomMemberMock(...a),
   getRoomMemberIds: (...a: unknown[]) => getRoomMemberIdsMock(...a),
@@ -31,7 +31,7 @@ const subscribeChannelMock = vi.fn((channel: string, fn: (payload: unknown) => v
 const setPresenceMock = vi.fn()
 const clearPresenceMock = vi.fn()
 const isOnlineMock = vi.fn().mockResolvedValue(true)
-vi.mock('./redisChat', () => ({
+vi.mock('./redisChat.js', () => ({
   publish: (...a: unknown[]) => publishMock(...a),
   subscribeChannel: (channel: string, fn: (payload: unknown) => void) =>
     subscribeChannelMock(channel, fn),
@@ -81,7 +81,7 @@ const { FakeWebSocket, FakeWebSocketServer } = vi.hoisted(() => {
 
 vi.mock('ws', () => ({ WebSocketServer: FakeWebSocketServer, WebSocket: FakeWebSocket }))
 
-import { attachChatWebSocketServer, _resetWsHandlerStateForTests } from './wsHandler'
+import { attachChatWebSocketServer, _resetWsHandlerStateForTests } from './wsHandler.js'
 
 type FakeWebSocketInstance = InstanceType<typeof FakeWebSocket>
 

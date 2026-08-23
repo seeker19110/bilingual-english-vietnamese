@@ -4,18 +4,18 @@
 // POST /api/admin-system-control  body { action: 'toggle-circuit-breaker', enabled: boolean }
 
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   validateAuth,
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getUserById } from '../packages/core-auth/authService.js'
-import { isAdminEmail } from '../packages/core-auth/adminAuth.js'
-import { readJsonBody, validateBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { getUserById } from '@dhcb/core-auth/authService'
+import { isAdminEmail } from '@dhcb/core-auth/adminAuth'
+import { readJsonBody, validateBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 const ActionSchema = z.object({
   action: z.literal('toggle-circuit-breaker'),

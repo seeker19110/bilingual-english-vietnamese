@@ -24,7 +24,7 @@ import { solveProblemImage } from '../../lib/visionSolverApi'
 import { speak } from '../../lib/tts'
 import IntegrationsModal from '../../components/IntegrationsModal'
 import { STEM_CURRICULUM } from '../../data/stemCurriculum'
-import type { SubjectManifest } from '../../../../../packages/core-contracts/subjectManifest'
+import type { SubjectManifest } from '@dhcb/core-contracts/subjectManifest'
 
 interface SolvedStep {
   title: string

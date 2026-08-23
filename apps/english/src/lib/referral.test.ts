@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 vi.mock('@core/authHeader', () => ({
   getAuthHeader: vi.fn(() => ({ Authorization: 'Bearer test-token' })),
 }))
-vi.mock('./deviceId', () => ({
+vi.mock('./deviceId.js', () => ({
   getDeviceHash: vi.fn(async () => 'device-hash-abc'),
 }))
 

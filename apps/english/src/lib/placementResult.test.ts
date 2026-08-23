@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { getPlacementResult, savePlacementResult } from './placementResult'
 
 // Mock pushProgress — chỉ cần biết có gọi hay không, không cần chạy thật (gọi Supabase).
-vi.mock('./progressSync', () => ({ pushProgress: vi.fn() }))
+vi.mock('./progressSync.js', () => ({ pushProgress: vi.fn() }))
 import { pushProgress } from './progressSync'
 const mockedPushProgress = vi.mocked(pushProgress)
 

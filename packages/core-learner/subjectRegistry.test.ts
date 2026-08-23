@@ -4,7 +4,7 @@ import {
   listSupportedSubjects,
   isValidSubjectLevel,
 } from './subjectRegistry.js'
-import { NotFoundError } from '../core-errors/appError.js'
+import { NotFoundError } from '@dhcb/core-errors/appError'
 
 describe('subjectRegistry', () => {
   it('retrieves English manifest', () => {

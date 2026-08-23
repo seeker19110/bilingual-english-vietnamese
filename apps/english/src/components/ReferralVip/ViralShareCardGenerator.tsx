@@ -1,7 +1,7 @@
 // apps/english/src/components/ReferralVip/ViralShareCardGenerator.tsx — Trình Tạo Ảnh Story Mạng Xã Hội Viral (Facebook / Zalo / Instagram).
 import { useState, useRef } from 'react'
 import { Download, Check, Copy } from 'lucide-react'
-import type { ViralShareCardData } from '../../../../../packages/core-contracts/referralVip.js'
+import type { ViralShareCardData } from '@dhcb/core-contracts/referralVip'
 
 interface ViralShareCardGeneratorProps {
   data: ViralShareCardData

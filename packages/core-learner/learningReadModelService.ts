@@ -5,13 +5,13 @@ import {
   LearningReadModelSchema,
   LEARNING_READ_MODEL_SCHEMA_VERSION,
   type LearningReadModel,
-} from '../core-contracts/learningReadModel.js'
+} from '@dhcb/core-contracts/learningReadModel'
 import {
   CefrLevelSchema,
   DirectionSchema,
   type ContractDirection,
   type ContractCefrLevel,
-} from '../core-contracts/shared.js'
+} from '@dhcb/core-contracts/shared'
 
 export interface GetLearningReadModelOptions {
   personId: string

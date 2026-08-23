@@ -1,7 +1,7 @@
 // api/mesh-telemetry.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import handler from './mesh-telemetry.js'
-import * as security from '../packages/core-auth/security.js'
+import * as security from '@dhcb/core-auth/security'
 
 describe('Mesh Telemetry API Handler (/api/mesh-telemetry)', () => {
   beforeEach(() => {

@@ -9,7 +9,7 @@ import type {
   SocraticDailyPrompt,
   MetacognitiveReflection,
   MetacognitiveSummary,
-} from '../../../../../packages/core-contracts/metacognitiveReflection.js'
+} from '@dhcb/core-contracts/metacognitiveReflection'
 
 interface MetacognitiveReflectionModalProps {
   initialPrompt?: SocraticDailyPrompt | null

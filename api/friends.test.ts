@@ -3,7 +3,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => true,
@@ -16,7 +16,7 @@ const findUserByFriendCodeMock = vi.fn()
 const addFriendByCodeMock = vi.fn()
 const listFriendsMock = vi.fn()
 const removeFriendMock = vi.fn()
-vi.mock('./_lib/friends', () => ({
+vi.mock('@dhcb/core-chat/friends', () => ({
   ensureFriendCode: (userId: string) => ensureFriendCodeMock(userId),
   findUserByFriendCode: (code: string) => findUserByFriendCodeMock(code),
   addFriendByCode: (userId: string, code: string) => addFriendByCodeMock(userId, code),

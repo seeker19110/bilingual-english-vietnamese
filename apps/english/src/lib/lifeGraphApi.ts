@@ -4,8 +4,8 @@ import type {
   LifeGraphEdge,
   LifeGraphNodeType,
   LifeRelation,
-} from '../../../../packages/core-contracts/lifeGraph'
-import type { Goal } from '../../../../packages/core-contracts/goal'
+} from '@dhcb/core-contracts/lifeGraph'
+import type { Goal } from '@dhcb/core-contracts/goal'
 
 export async function listLifeGraphNodes(type?: LifeGraphNodeType): Promise<LifeGraphNode[]> {
   const url = new URL(window.location.origin + '/api/life-graph')

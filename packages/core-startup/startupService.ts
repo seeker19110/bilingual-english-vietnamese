@@ -2,8 +2,8 @@
 // Gate: AI-generated market claims NEVER become facts without evidence/provenance.
 import type { Pool } from 'pg'
 import { randomUUID } from 'node:crypto'
-import { withTransaction } from '../core-db/transaction.js'
-import { NotFoundError } from '../core-errors/appError.js'
+import { withTransaction } from '@dhcb/core-db/transaction'
+import { NotFoundError } from '@dhcb/core-errors/appError'
 import {
   VentureSchema,
   ProblemSchema,
@@ -16,7 +16,7 @@ import {
   type ValidatedEvidence,
   type VentureStageSchema,
   type HypothesisStatusSchema,
-} from '../core-contracts/startup.js'
+} from '@dhcb/core-contracts/startup'
 import type { z } from 'zod'
 
 export type VentureStage = z.infer<typeof VentureStageSchema>

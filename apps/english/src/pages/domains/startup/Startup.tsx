@@ -30,12 +30,7 @@ import {
   listEvidence,
   recordEvidence,
 } from '../../../lib/startupApi'
-import type {
-  Venture,
-  Problem,
-  Hypothesis,
-  ValidatedEvidence,
-} from '../../../../../../packages/core-contracts/startup'
+import type { Venture, Problem, Hypothesis, ValidatedEvidence } from '@dhcb/core-contracts/startup'
 
 export default function Startup() {
   const nav = useNavigate()

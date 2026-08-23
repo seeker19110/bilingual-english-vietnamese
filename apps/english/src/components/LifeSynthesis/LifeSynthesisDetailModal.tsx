@@ -1,9 +1,6 @@
 import { useState } from 'react'
 import { X, Compass, RefreshCw, TrendingUp, Zap, CheckCircle2 } from 'lucide-react'
-import type {
-  LifeSynthesisReport,
-  LifeDomainType,
-} from '../../../../../packages/core-contracts/lifeSynthesis'
+import type { LifeSynthesisReport, LifeDomainType } from '@dhcb/core-contracts/lifeSynthesis'
 import { generateCustomLifeSynthesisReport } from '../../lib/lifeSynthesisApi'
 
 interface Props {

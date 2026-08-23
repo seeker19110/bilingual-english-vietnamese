@@ -9,7 +9,7 @@
 //   - Ngược lại         → dùng OpenAI (OPENAI_API_KEY, model gpt-4o-mini-transcribe).
 // Có thể ép model riêng qua STT_MODEL.
 
-import { fetchWithTimeout } from '../../api/_lib/fetchTimeout.js'
+import { fetchWithTimeout } from '@dhcb/core-http/fetchTimeout'
 import { groqKeyPool, isSkippableGroqKeyError, nextGroqKeyStartIndex } from './groqKeyPool.js'
 
 // STT có thể chậm hơn chat (phải xử lý cả file audio) → cho timeout rộng hơn.

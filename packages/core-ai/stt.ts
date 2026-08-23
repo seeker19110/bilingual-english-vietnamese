@@ -13,7 +13,7 @@
 
 import { z } from 'zod'
 import { transcribeAudio, type SttLang } from './openaiStt.js'
-import { withConcurrencyLimit } from '../core-db/concurrencyLimiter.js'
+import { withConcurrencyLimit } from '@dhcb/core-db/concurrencyLimiter'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -21,11 +21,11 @@ import {
   validateAuth,
   validateContentType,
   logSecurityEvent,
-} from '../core-auth/security.js'
-import { checkAndConsumeUsage, refundUsage } from '../core-billing/usage.js'
-import { readJsonBody, validateBody } from '../../api/_lib/validation.js'
-import { jsonResponse, getClientIp } from '../../api/_lib/http.js'
-import { base64ToBytes } from '../core-db/base64.js'
+} from '@dhcb/core-auth/security'
+import { checkAndConsumeUsage, refundUsage } from '@dhcb/core-billing/usage'
+import { readJsonBody, validateBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { base64ToBytes } from '@dhcb/core-db/base64'
 
 // Giới hạn dung lượng base64 (~8MB chuỗi ≈ ~6MB audio thật, đủ cho ~1–2 phút nói).
 const MAX_AUDIO_B64 = 8 * 1024 * 1024

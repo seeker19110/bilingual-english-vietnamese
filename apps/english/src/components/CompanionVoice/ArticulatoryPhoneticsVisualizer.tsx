@@ -4,7 +4,7 @@ import type {
   L1PhonemeTarget,
   ArticulatoryGuide,
   PhoneticAnalysisReport,
-} from '../../../../../packages/core-contracts/articulatoryPhonetics'
+} from '@dhcb/core-contracts/articulatoryPhonetics'
 
 const PHONEME_OPTIONS: { target: L1PhonemeTarget; label: string; sample: string }[] = [
   { target: 'TH_VOICELESS', label: '/θ/ (th- vô thanh)', sample: 'think, thought, path' },

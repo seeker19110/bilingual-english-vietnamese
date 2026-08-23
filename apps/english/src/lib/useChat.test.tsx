@@ -6,7 +6,7 @@ import * as chatApi from './chatApi'
 
 ;(globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
-vi.mock('../context/useAuth', () => ({
+vi.mock('../context/useAuth.js', () => ({
   useAuth: () => ({
     user: { id: 'user-self', name: 'Self User' },
   }),

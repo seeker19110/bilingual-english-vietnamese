@@ -1,6 +1,6 @@
 // packages/core-integrations/googleCalendar.ts — Google Calendar Integration Connector.
 import { randomUUID } from 'node:crypto'
-import type { CalendarEventSync, IntegrationSyncResponse } from '../core-contracts/integrations.js'
+import type { CalendarEventSync, IntegrationSyncResponse } from '@dhcb/core-contracts/integrations'
 
 export function formatGoogleCalendarUrl(event: CalendarEventSync): string {
   // Format ISO strings to Google Calendar basic format: YYYYMMDDTHHmmSSZ

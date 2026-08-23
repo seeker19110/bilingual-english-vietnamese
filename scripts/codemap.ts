@@ -18,7 +18,7 @@
 //
 // Lệnh tra cứu tự quét lại nếu chưa có .codemap/graph.json.
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 
 import {
@@ -36,8 +36,21 @@ const OUTPUT_FILE = path.join(REPO_ROOT, '.codemap', 'graph.json')
 
 /** Thư mục được quét. Bỏ qua node_modules/dist vì không phải code của mình. */
 const SCAN_ROOTS = ['apps/english/src', 'apps/hub/src', 'api', 'packages', 'scripts']
-/** File điểm vào — vốn dĩ không ai import, không tính là "mồ côi". */
-const ENTRY_POINTS = ['server.ts']
+/**
+ * File điểm vào — vốn dĩ không ai import, không tính là "mồ côi".
+ * Gồm `server.ts` + mọi script CLI top-level `scripts/*.ts` (không gồm `scripts/lib/` —
+ * đó là code dùng chung, phải có ai import; không gồm `*.test.ts` — test tự chạy qua vitest).
+ * Quét glob thay vì liệt kê tay để thêm script CLI mới không bị báo nhầm orphan.
+ */
+function listScriptEntryPoints(): string[] {
+  const scriptsDir = path.join(REPO_ROOT, 'scripts')
+  if (!existsSync(scriptsDir)) return []
+  return readdirSync(scriptsDir)
+    .filter((name) => name.endsWith('.ts') && !name.endsWith('.test.ts'))
+    .map((name) => `scripts/${name}`)
+}
+
+const ENTRY_POINTS = ['server.ts', ...listScriptEntryPoints()]
 
 /** Dựng lại đồ thị từ mã nguồn thật của repo này. */
 function buildGraph(): CodeGraph {

@@ -1,8 +1,8 @@
 // api/memory-palace.ts — REST handler cho Spatial Memory Palace & Method of Loci.
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
-import { MemoryPalaceService } from '../packages/core-ai/memoryPalaceService.js'
-import { MemoryPalaceRoom, MemoryPalaceState } from '../packages/core-contracts/memoryPalace.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
+import { MemoryPalaceService } from '@dhcb/core-ai/memoryPalaceService'
+import { MemoryPalaceRoom, MemoryPalaceState } from '@dhcb/core-contracts/memoryPalace'
 
 const userPalaceMap = new Map<string, MemoryPalaceRoom[]>()
 

@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { ThemeContext } from './themeContext'
-import { getTheme, applyTheme, setTheme as persistTheme, KID_THEME, type Theme } from './theme'
+import { ThemeContext } from './themeContext.js'
+import { getTheme, applyTheme, setTheme as persistTheme, KID_THEME, type Theme } from './theme.js'
 
 export interface ThemeProviderProps {
   children: ReactNode

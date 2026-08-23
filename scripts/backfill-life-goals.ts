@@ -1,5 +1,5 @@
-import { getPgPool } from '../packages/core-db/pgPool.js'
-import { backfillCurrentLearningGoal } from '../packages/core-learner/learningGoalAdapter.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import { backfillCurrentLearningGoal } from '@dhcb/core-personal/learningGoalAdapter'
 
 async function run() {
   const pool = getPgPool()

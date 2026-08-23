@@ -1,4 +1,4 @@
-import { RealtimeSessionTelemetry } from '../../../../../packages/core-contracts/meshTelemetry.js'
+import { RealtimeSessionTelemetry } from '@dhcb/core-contracts/meshTelemetry'
 import { DollarSign, Cpu } from 'lucide-react'
 
 interface RealtimeCostTelemetryBadgeProps {

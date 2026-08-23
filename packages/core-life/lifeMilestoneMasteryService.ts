@@ -17,8 +17,8 @@ import {
   MotivationDiagnosticSchema,
   type MicroEvidenceLog,
   MicroEvidenceLogSchema,
-} from '../core-contracts/lifeMilestoneMastery.js'
-import { vnDateStr } from '../core-db/date.js'
+} from '@dhcb/core-contracts/lifeMilestoneMastery'
+import { vnDateStr } from '@dhcb/core-db/date'
 
 // 1. Kho Dữ Liệu Chuẩn Mực 8 Giai Đoạn Cuộc Đời
 const LIFE_STAGE_PROFILES: Record<LifeStageType, LifeStageProfile> = {

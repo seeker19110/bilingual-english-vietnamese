@@ -14,16 +14,16 @@ import {
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 import {
   createOrGetDmRoom,
   getMessages,
   getRooms,
   deleteMessage,
-} from '../packages/core-chat/chatService.js'
-import { CreateRoomBodySchema, GetMessagesQuerySchema } from '../packages/core-contracts/chat.js'
+} from '@dhcb/core-chat/chatService'
+import { CreateRoomBodySchema, GetMessagesQuerySchema } from '@dhcb/core-contracts/chat'
 
 export default async function handler(req: Request): Promise<Response> {
   const allHeaders = { ...getCorsHeaders(req), ...SECURITY_HEADERS }

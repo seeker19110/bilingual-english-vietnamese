@@ -5,7 +5,7 @@ import {
   clearStoredToken,
   getAccessToken,
   getAuthHeader,
-} from './authHeader'
+} from './authHeader.js'
 
 beforeEach(() => {
   localStorage.clear()

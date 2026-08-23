@@ -1,7 +1,7 @@
 // api/agent-orchestrator.test.ts
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import handler from './agent-orchestrator.js'
-import * as security from '../packages/core-auth/security.js'
+import * as security from '@dhcb/core-auth/security'
 
 describe('Agent Orchestrator API Handler (/api/agent-orchestrator)', () => {
   beforeEach(() => {

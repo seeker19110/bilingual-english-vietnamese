@@ -12,7 +12,7 @@ import {
   Send,
   HelpCircle,
 } from 'lucide-react'
-import type { AudioRoomState } from '../../../../../packages/core-contracts/audioCoLearningRoom.js'
+import type { AudioRoomState } from '@dhcb/core-contracts/audioCoLearningRoom'
 import {
   createAudioRoomApi,
   leaveAudioRoomApi,

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { validateAiOutput } from './pipeline.js'
 import { AssessmentSchema, ASSESSMENT_SCHEMA_VERSION } from './assessment.js'
-import { ValidationError } from '../core-errors/appError.js'
+import { ValidationError } from '@dhcb/core-errors/appError'
 
 const validAssessmentJson = JSON.stringify({
   id: '123e4567-e89b-12d3-a456-426614174000',

@@ -4,7 +4,7 @@ import type {
   ProactiveAction,
   ProactiveAgentConfig,
   ProactiveAgentState,
-} from '../../../../packages/core-contracts/proactiveAgent.js'
+} from '@dhcb/core-contracts/proactiveAgent'
 
 export async function fetchProactiveAgentState(params?: {
   stressIndex?: number

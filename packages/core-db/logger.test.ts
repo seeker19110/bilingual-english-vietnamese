@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { createLogger, createRequestLogger } from './logger'
-import { resetSecretCache } from '../core-config/secrets.js'
+import { createLogger, createRequestLogger } from './logger.js'
+import { resetSecretCache } from '@dhcb/core-config/secrets'
 
 const originalLogLevel = process.env.LOG_LEVEL
 

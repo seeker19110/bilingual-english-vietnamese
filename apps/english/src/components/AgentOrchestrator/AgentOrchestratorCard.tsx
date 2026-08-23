@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Play, Cpu, CheckCircle2 } from 'lucide-react'
 import { fetchAgentSessions } from '../../lib/agentOrchestratorApi'
-import type { AgentExecutionSession } from '../../../../../packages/core-contracts/agentOrchestrator'
+import type { AgentExecutionSession } from '@dhcb/core-contracts/agentOrchestrator'
 import AgentOrchestratorModal from './AgentOrchestratorModal'
 
 export default function AgentOrchestratorCard() {

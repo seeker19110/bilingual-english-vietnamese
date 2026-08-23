@@ -20,7 +20,7 @@ import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { useToast } from '@core/ToastProvider'
 import { listVentures } from '../../../lib/startupApi'
-import type { Venture } from '../../../../../../packages/core-contracts/startup'
+import type { Venture } from '@dhcb/core-contracts/startup'
 
 interface CanvasState {
   problem: string[]

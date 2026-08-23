@@ -1,7 +1,7 @@
 // apps/english/src/lib/companionApi.ts — Client API wrapper for Companion Runtime and Proposed Actions
 import { getAuthHeader } from '@core/authHeader'
-import type { ContextPackage } from '../../../../packages/core-contracts/contextPackage'
-import type { ProposedAction } from '../../../../packages/core-contracts/proposedAction'
+import type { ContextPackage } from '@dhcb/core-contracts/contextPackage'
+import type { ProposedAction } from '@dhcb/core-contracts/proposedAction'
 
 export interface CompanionExecutionSummary {
   plannedSteps: number

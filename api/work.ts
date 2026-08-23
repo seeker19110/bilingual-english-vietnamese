@@ -1,14 +1,14 @@
 // api/work.ts — REST API cho Work Domain (V2-15).
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getOrCreatePerson } from '../packages/core-personal/personService.js'
+} from '@dhcb/core-auth/security'
+import { getOrCreatePerson } from '@dhcb/core-personal/personService'
 import {
   createWorkProject,
   listWorkProjects,
@@ -20,16 +20,16 @@ import {
   listWorkMeetings,
   createWorkDocument,
   listWorkDocuments,
-} from '../packages/core-work/workService.js'
+} from '@dhcb/core-work/workService'
 import {
   WorkProjectStatusSchema,
   WorkTaskPrioritySchema,
   WorkTaskStatusSchema,
   WorkDocumentTypeSchema,
-} from '../packages/core-contracts/work.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-contracts/work'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 const CreateProjectBodySchema = z
   .object({

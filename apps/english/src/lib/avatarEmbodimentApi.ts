@@ -1,8 +1,5 @@
 // apps/english/src/lib/avatarEmbodimentApi.ts — Client API giao tiep Hien than 3D Cyber-Tutor.
-import {
-  AvatarEmbodimentConfig,
-  Avatar3DState,
-} from '../../../../packages/core-contracts/avatarEmbodiment.js'
+import { AvatarEmbodimentConfig, Avatar3DState } from '@dhcb/core-contracts/avatarEmbodiment'
 
 export async function fetchAvatarEmbodiment(): Promise<{
   config: AvatarEmbodimentConfig

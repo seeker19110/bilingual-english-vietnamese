@@ -7,10 +7,18 @@ import { defineConfig } from 'vitest/config'
 // đúng packages/core-ui/ như production để test không lệch alias với build thật.
 export default defineConfig({
   resolve: {
-    alias: {
-      '@core': fileURLToPath(new URL('./packages/core-ui', import.meta.url)),
-      '@english': fileURLToPath(new URL('./apps/english/src', import.meta.url)),
-    },
+    alias: [
+      // @dhcb/<gói>/<file> -> packages/<gói>/<file> (source, không qua dist) — khớp tsconfig paths
+      {
+        find: /^@dhcb\/(.*)$/,
+        replacement: fileURLToPath(new URL('./packages', import.meta.url)) + '/$1',
+      },
+      { find: '@core', replacement: fileURLToPath(new URL('./packages/core-ui', import.meta.url)) },
+      {
+        find: '@english',
+        replacement: fileURLToPath(new URL('./apps/english/src', import.meta.url)),
+      },
+    ],
   },
   test: {
     environment: 'happy-dom',

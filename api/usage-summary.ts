@@ -6,22 +6,22 @@
 //
 // GET /api/usage-summary  (cần đăng nhập — cookie)
 
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 import {
   lookupPlan,
   FREE_WEEKLY_CAP,
   FREE_ROLLING_WINDOW_DAYS,
   DEFAULT_SUBJECT,
-} from '../packages/core-billing/usage.js'
-import { vnDateStr } from '../packages/core-db/date.js'
+} from '@dhcb/core-billing/usage'
+import { vnDateStr } from '@dhcb/core-db/date'
 
 export default async function handler(req: Request): Promise<Response> {
   const allHeaders = { ...getCorsHeaders(req), ...SECURITY_HEADERS }

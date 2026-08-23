@@ -38,11 +38,11 @@ import {
   VOICE_VERSION,
   type Lang,
   type VoiceId,
-} from '../api/_lib/googleTts.ts'
+} from '@dhcb/core-ai/googleTts'
 import { CEFR_LEVELS } from '../apps/english/src/data/cefr.ts'
-import { encryptAudio } from '../api/_lib/ttsCrypto.ts'
-import { saveAudio } from '../packages/core-ai/fileStorage.ts'
-import { getPgPool } from '../packages/core-db/pgPool.ts'
+import { encryptAudio } from '@dhcb/core-ai/ttsCrypto'
+import { saveAudio } from '@dhcb/core-ai/fileStorage'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import { loadSubjectsInDisplayOrder, PREF_VOICE_IDS } from './_lib/patternOrder.ts'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')

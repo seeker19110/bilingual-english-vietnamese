@@ -1,7 +1,7 @@
 // packages/core-ui/clientAuth.test.ts — Kiểm thử module xác thực clientAuth và Safe Redirect.
 
 import { describe, it, expect, vi } from 'vitest'
-import { getSafeRedirectUrl } from './clientAuth'
+import { getSafeRedirectUrl } from './clientAuth.js'
 
 describe('packages/core-ui/clientAuth.ts', () => {
   describe('getSafeRedirectUrl', () => {
@@ -58,7 +58,7 @@ describe('packages/core-ui/clientAuth.ts', () => {
 
   describe('callAuthApi, register, login, logout, getCurrentUser', () => {
     it('callAuthApi trả về null khi resp không ok', async () => {
-      const { callAuthApi } = await import('./clientAuth')
+      const { callAuthApi } = await import('./clientAuth.js')
       vi.spyOn(global, 'fetch').mockResolvedValueOnce({
         ok: false,
         status: 400,
@@ -69,7 +69,7 @@ describe('packages/core-ui/clientAuth.ts', () => {
     })
 
     it('register lưu token và trả user', async () => {
-      const { register } = await import('./clientAuth')
+      const { register } = await import('./clientAuth.js')
       const mockUser = {
         id: 'u1',
         email: 'test@example.com',
@@ -89,7 +89,7 @@ describe('packages/core-ui/clientAuth.ts', () => {
     })
 
     it('login trả về null khi thất bại', async () => {
-      const { login } = await import('./clientAuth')
+      const { login } = await import('./clientAuth.js')
       vi.spyOn(global, 'fetch').mockResolvedValueOnce({
         ok: false,
         status: 401,
@@ -100,7 +100,7 @@ describe('packages/core-ui/clientAuth.ts', () => {
     })
 
     it('logout gọi API và xóa stored token', async () => {
-      const { logout } = await import('./clientAuth')
+      const { logout } = await import('./clientAuth.js')
       localStorage.setItem('gsa_session_token_v1', 'existing-token')
       vi.spyOn(global, 'fetch').mockResolvedValueOnce({
         ok: true,
@@ -112,14 +112,14 @@ describe('packages/core-ui/clientAuth.ts', () => {
     })
 
     it('getCurrentUser trả về null khi không có token', async () => {
-      const { getCurrentUser } = await import('./clientAuth')
+      const { getCurrentUser } = await import('./clientAuth.js')
       localStorage.removeItem('gsa_session_token_v1')
       const user = await getCurrentUser()
       expect(user).toBeNull()
     })
 
     it('getCurrentUser xóa token khi nhận 401', async () => {
-      const { getCurrentUser } = await import('./clientAuth')
+      const { getCurrentUser } = await import('./clientAuth.js')
       localStorage.setItem('gsa_session_token_v1', 'expired-token')
       vi.spyOn(global, 'fetch').mockResolvedValueOnce({
         ok: false,
@@ -132,7 +132,7 @@ describe('packages/core-ui/clientAuth.ts', () => {
     })
 
     it('getCurrentUser trả user hợp lệ khi token đúng', async () => {
-      const { getCurrentUser } = await import('./clientAuth')
+      const { getCurrentUser } = await import('./clientAuth.js')
       localStorage.setItem('gsa_session_token_v1', 'valid-token')
       const mockProfile = {
         id: 'u-valid',
@@ -156,7 +156,7 @@ describe('packages/core-ui/clientAuth.ts', () => {
 
   describe('GoogleAuthError & OAuth utilities', () => {
     it('GoogleAuthError khởi tạo đúng name và code', async () => {
-      const { GoogleAuthError } = await import('./clientAuth')
+      const { GoogleAuthError } = await import('./clientAuth.js')
       const err = new GoogleAuthError('popup_blocked', 'Popup bị chặn')
       expect(err.name).toBe('GoogleAuthError')
       expect(err.code).toBe('popup_blocked')
@@ -164,7 +164,7 @@ describe('packages/core-ui/clientAuth.ts', () => {
     })
 
     it('handleOAuthRedirectCallback trả về null khi không có access_token trong url', async () => {
-      const { handleOAuthRedirectCallback } = await import('./clientAuth')
+      const { handleOAuthRedirectCallback } = await import('./clientAuth.js')
       window.location.hash = ''
       window.location.search = ''
       const user = await handleOAuthRedirectCallback()
@@ -172,7 +172,7 @@ describe('packages/core-ui/clientAuth.ts', () => {
     })
 
     it('handleOAuthRedirectCallback xử lý access_token từ hash thành công', async () => {
-      const { handleOAuthRedirectCallback } = await import('./clientAuth')
+      const { handleOAuthRedirectCallback } = await import('./clientAuth.js')
       window.location.hash = '#access_token=google-oauth-token-123'
       const mockUser = {
         id: 'u-google',
@@ -193,7 +193,7 @@ describe('packages/core-ui/clientAuth.ts', () => {
     })
 
     it('preloadOAuthProviders chạy an toàn mà không quăng lỗi', async () => {
-      const { preloadOAuthProviders } = await import('./clientAuth')
+      const { preloadOAuthProviders } = await import('./clientAuth.js')
       expect(() => preloadOAuthProviders()).not.toThrow()
     })
   })

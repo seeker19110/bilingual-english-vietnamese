@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { withConcurrencyLimit } from './concurrencyLimiter'
+import { withConcurrencyLimit } from './concurrencyLimiter.js'
 
 const ENV_KEY = 'AI_CONCURRENCY_TESTKEY'
 

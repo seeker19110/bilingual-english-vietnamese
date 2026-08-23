@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Mic, Play, Award, Sparkles, Zap, RotateCcw, Volume2 } from 'lucide-react'
-import type {
-  ShadowingPassage,
-  ShadowingSession,
-} from '../../../../../packages/core-contracts/echoShadowing'
+import type { ShadowingPassage, ShadowingSession } from '@dhcb/core-contracts/echoShadowing'
 
 export default function EchoShadowingCard() {
   const [passages, setPassages] = useState<ShadowingPassage[]>([])

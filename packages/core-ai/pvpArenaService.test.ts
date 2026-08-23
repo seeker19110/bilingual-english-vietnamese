@@ -11,7 +11,7 @@ import {
   finalizePvPMatch,
   getWeeklyLeaderboard,
 } from './pvpArenaService.js'
-import { type PvPPlayerProfile } from '../core-contracts/pvpArena.js'
+import { type PvPPlayerProfile } from '@dhcb/core-contracts/pvpArena'
 
 describe('pvpArenaService (1v1 PvP & Ghost Matchmaking Engine)', () => {
   it('maps elo ratings to correct rank tiers', () => {

@@ -10,10 +10,7 @@ import {
   CheckCircle,
   Loader2,
 } from 'lucide-react'
-import type {
-  NeuroAffectiveState,
-  ActiveShield,
-} from '../../../../../packages/core-contracts/neuroAffective'
+import type { NeuroAffectiveState, ActiveShield } from '@dhcb/core-contracts/neuroAffective'
 
 export const NeuroAffectiveCard: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)

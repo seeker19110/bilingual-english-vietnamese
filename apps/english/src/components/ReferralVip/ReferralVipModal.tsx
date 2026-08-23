@@ -5,7 +5,7 @@ import type {
   ReferralVipDashboard,
   ReferralMilestoneDefinition,
   RefereeRecord,
-} from '../../../../../packages/core-contracts/referralVip.js'
+} from '@dhcb/core-contracts/referralVip'
 import { fetchReferralVipDashboard } from '../../lib/referralVipApi.js'
 import ViralShareCardGenerator from './ViralShareCardGenerator.js'
 

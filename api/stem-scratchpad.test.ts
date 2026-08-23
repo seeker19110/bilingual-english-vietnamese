@@ -1,7 +1,7 @@
 // api/stem-scratchpad.test.ts
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import handler from './stem-scratchpad.js'
-import * as security from '../packages/core-auth/security.js'
+import * as security from '@dhcb/core-auth/security'
 
 describe('STEM Scratchpad API Handler (/api/stem-scratchpad)', () => {
   beforeEach(() => {

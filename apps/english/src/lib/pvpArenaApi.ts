@@ -6,7 +6,7 @@ import type {
   PvPGameMode,
   PvPLeaderboardEntry,
   PvPRoundAction,
-} from '../../../../packages/core-contracts/pvpArena'
+} from '@dhcb/core-contracts/pvpArena'
 
 export async function fetchPvPProfile(): Promise<{
   profile: PvPPlayerProfile

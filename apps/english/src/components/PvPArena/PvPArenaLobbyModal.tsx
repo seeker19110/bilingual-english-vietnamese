@@ -7,7 +7,7 @@ import type {
   PvPLeaderboardEntry,
   PvPGameMode,
   PvPMatchState,
-} from '../../../../../packages/core-contracts/pvpArena.js'
+} from '@dhcb/core-contracts/pvpArena'
 import { fetchPvPProfile, matchmakePvPMatch } from '../../lib/pvpArenaApi.js'
 import PvPBattlefieldModal from './PvPBattlefieldModal.js'
 

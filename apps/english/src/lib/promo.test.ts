@@ -3,7 +3,7 @@ import { getAppSettings } from './appSettings'
 import { isFullAccessPromoActive, effectivePlan } from './promo'
 import { getAllowedVoices } from './voiceTiers'
 
-vi.mock('./appSettings', () => ({ getAppSettings: vi.fn() }))
+vi.mock('./appSettings.js', () => ({ getAppSettings: vi.fn() }))
 const mockedGetAppSettings = vi.mocked(getAppSettings)
 
 // Cấu hình tối thiểu cho test — chỉ promoUntil ảnh hưởng tới các hàm ở đây.

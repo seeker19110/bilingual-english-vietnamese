@@ -9,12 +9,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { createHash } from 'node:crypto'
 
-vi.mock('../core-db/pgPool', () => ({ getPgPool: vi.fn() }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
 const mailState: { status: string } = { status: 'sent' }
 // emailVerification gửi qua mailQuota (kiểm soát hạn mức + tự chuyển kênh dự phòng) chứ không
 // gọi thẳng mailer — mock ở đúng tầng này, hành vi hạn mức/chuyển kênh có test riêng ở
 // mailQuota.test.ts, ở đây chỉ cần giả lập kết quả gửi cuối cùng.
-vi.mock('../../api/_lib/mailQuota', () => ({
+vi.mock('@dhcb/core-http/mailQuota', () => ({
   sendMailWithQuota: async () => ({
     status: mailState.status,
     channel: 'primary',
@@ -22,8 +22,8 @@ vi.mock('../../api/_lib/mailQuota', () => ({
   }),
 }))
 
-import { sendVerificationCode, verifyCode, isEmailVerified } from './emailVerification'
-import { getPgPool } from '../core-db/pgPool'
+import { sendVerificationCode, verifyCode, isEmailVerified } from './emailVerification.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 
 const mockedGetPool = vi.mocked(getPgPool)
 const query = vi.fn()

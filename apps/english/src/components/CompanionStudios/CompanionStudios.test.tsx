@@ -6,29 +6,29 @@ import StudioCognitive from './StudioCognitive'
 import StudioLabs from './StudioLabs'
 
 // Mock sub-components
-vi.mock('../MetacognitiveReflection/MetacognitiveJournalCard', () => ({
+vi.mock('../MetacognitiveReflection/MetacognitiveJournalCard.js', () => ({
   default: () =>
     React.createElement('div', { 'data-testid': 'meta-card' }, 'MetacognitiveJournalCard'),
 }))
-vi.mock('../MemoryPalace/MemoryPalaceCard', () => ({
+vi.mock('../MemoryPalace/MemoryPalaceCard.js', () => ({
   default: () => React.createElement('div', { 'data-testid': 'palace-card' }, 'MemoryPalaceCard'),
 }))
-vi.mock('../CompanionVoice/SubconsciousInsightsCard', () => ({
+vi.mock('../CompanionVoice/SubconsciousInsightsCard.js', () => ({
   default: () =>
     React.createElement('div', { 'data-testid': 'subconscious-card' }, 'SubconsciousInsightsCard'),
 }))
-vi.mock('../CompanionVoice/SocraticDiagnosticsCard', () => ({
+vi.mock('../CompanionVoice/SocraticDiagnosticsCard.js', () => ({
   default: () =>
     React.createElement('div', { 'data-testid': 'socratic-card' }, 'SocraticDiagnosticsCard'),
 }))
-vi.mock('../DebateArena/DebateArenaCard', () => ({
+vi.mock('../DebateArena/DebateArenaCard.js', () => ({
   default: () => React.createElement('div', { 'data-testid': 'debate-card' }, 'DebateArenaCard'),
 }))
-vi.mock('../StemScratchpad/StemScratchpadCard', () => ({
+vi.mock('../StemScratchpad/StemScratchpadCard.js', () => ({
   default: () =>
     React.createElement('div', { 'data-testid': 'scratchpad-card' }, 'StemScratchpadCard'),
 }))
-vi.mock('../CompanionVoice/ArticulatoryPhoneticsVisualizer', () => ({
+vi.mock('../CompanionVoice/ArticulatoryPhoneticsVisualizer.js', () => ({
   default: () =>
     React.createElement(
       'div',
@@ -36,14 +36,14 @@ vi.mock('../CompanionVoice/ArticulatoryPhoneticsVisualizer', () => ({
       'ArticulatoryPhoneticsVisualizer',
     ),
 }))
-vi.mock('../CompanionVoice/AcousticPhoneticsLab', () => ({
+vi.mock('../CompanionVoice/AcousticPhoneticsLab.js', () => ({
   default: () =>
     React.createElement('div', { 'data-testid': 'acoustic-lab' }, 'AcousticPhoneticsLab'),
 }))
-vi.mock('../CompanionVoice/EchoShadowingCard', () => ({
+vi.mock('../CompanionVoice/EchoShadowingCard.js', () => ({
   default: () => React.createElement('div', { 'data-testid': 'echo-card' }, 'EchoShadowingCard'),
 }))
-vi.mock('../CompanionVoice/ScenarioHolodeckCard', () => ({
+vi.mock('../CompanionVoice/ScenarioHolodeckCard.js', () => ({
   default: () =>
     React.createElement('div', { 'data-testid': 'holodeck-card' }, 'ScenarioHolodeckCard'),
 }))

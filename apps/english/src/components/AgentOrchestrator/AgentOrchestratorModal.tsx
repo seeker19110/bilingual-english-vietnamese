@@ -3,7 +3,7 @@ import { X, Bot, Play, RefreshCw, CheckCircle2, AlertCircle, ShieldCheck } from 
 import type {
   AutonomousAgentRole,
   AgentExecutionSession,
-} from '../../../../../packages/core-contracts/agentOrchestrator'
+} from '@dhcb/core-contracts/agentOrchestrator'
 import { createAutonomousAgentSession } from '../../lib/agentOrchestratorApi'
 
 interface Props {

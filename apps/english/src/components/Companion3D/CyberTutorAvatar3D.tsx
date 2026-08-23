@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Eye, Cpu, ShieldCheck } from 'lucide-react'
-import {
-  Oculus15Viseme,
-  AvatarEmotionType,
-} from '../../../../../packages/core-contracts/avatarEmbodiment.js'
-import { VisemeMorphingService } from '../../../../../packages/core-ai/visemeMorphingService.js'
+import { Oculus15Viseme, AvatarEmotionType } from '@dhcb/core-contracts/avatarEmbodiment'
+import { VisemeMorphingService } from '@dhcb/core-ai/visemeMorphingService'
 
 interface CyberTutorAvatar3DProps {
   isSpeaking?: boolean

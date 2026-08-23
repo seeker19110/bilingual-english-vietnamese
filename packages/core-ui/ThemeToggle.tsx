@@ -1,6 +1,6 @@
 import { Palette } from 'lucide-react'
-import { useTheme } from './useTheme'
-import { THEMES } from './theme'
+import { useTheme } from './useTheme.js'
+import { THEMES } from './theme.js'
 
 export interface ThemeToggleProps {
   lang?: 'vi' | 'en'

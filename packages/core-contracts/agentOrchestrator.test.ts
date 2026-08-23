@@ -3,7 +3,7 @@ import {
   AgentExecutionSessionSchema,
   AgentBudgetGuardrailSchema,
   type AgentExecutionSession,
-} from './agentOrchestrator'
+} from './agentOrchestrator.js'
 
 describe('AgentOrchestrator Schemas', () => {
   it('validates a valid AgentExecutionSession', () => {

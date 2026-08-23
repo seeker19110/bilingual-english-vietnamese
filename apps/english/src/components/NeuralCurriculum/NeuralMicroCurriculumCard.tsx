@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { NeuralCurriculumState } from '../../../../../packages/core-contracts/neuralCurriculum.js'
+import { NeuralCurriculumState } from '@dhcb/core-contracts/neuralCurriculum'
 import {
   fetchNeuralCurriculum,
   generateMicroModule,

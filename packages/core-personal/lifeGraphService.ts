@@ -1,7 +1,7 @@
 // V2-05 Life Graph foundation. Tái sử dụng trực tiếp contract LifeGraph/LifeGoal hiện có.
 import type { Pool, PoolClient } from 'pg'
-import { withTransaction } from '../core-db/transaction.js'
-import { ConflictError, NotFoundError, ValidationError } from '../core-errors/appError.js'
+import { withTransaction } from '@dhcb/core-db/transaction'
+import { ConflictError, NotFoundError, ValidationError } from '@dhcb/core-errors/appError'
 import {
   LifeGraphNodeSchema,
   LifeGraphEdgeSchema,
@@ -11,12 +11,12 @@ import {
   type LifeGraphNodeType,
   type LifeGraphEdge,
   type LifeRelation,
-} from '../core-contracts/lifeGraph.js'
+} from '@dhcb/core-contracts/lifeGraph'
 import {
   LifeGoalSchema,
   LIFE_GOAL_SCHEMA_VERSION,
   type LifeGoal,
-} from '../core-contracts/lifeGoal.js'
+} from '@dhcb/core-contracts/lifeGoal'
 
 type LifeGoalStatus = LifeGoal['status']
 

@@ -12,7 +12,7 @@
 // định kèm 1 câu chỉ dẫn phong cách cố định (xem GEMINI_STORY_VOICES) — không phải giọng
 // chọn tự do như Chirp3-HD/ElevenLabs.
 
-import { fetchWithTimeout } from '../../api/_lib/fetchTimeout.js'
+import { fetchWithTimeout } from '@dhcb/core-http/fetchTimeout'
 
 const TTS_TIMEOUT_MS = 30_000
 

@@ -14,7 +14,7 @@ import type {
   HolodeckScenario,
   HolodeckSession,
   HolodeckTurn,
-} from '../../../../../packages/core-contracts/scenarioHolodeck'
+} from '@dhcb/core-contracts/scenarioHolodeck'
 
 export default function ScenarioHolodeckCard() {
   const [scenarios, setScenarios] = useState<HolodeckScenario[]>([])

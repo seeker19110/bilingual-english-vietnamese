@@ -4,7 +4,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
 const rateLimitOk = { value: true }
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => rateLimitOk.value,
@@ -14,7 +14,7 @@ vi.mock('../packages/core-auth/security', () => ({
 
 const query = vi.fn()
 const readPool = { query: vi.fn() }
-vi.mock('../packages/core-db/pgPool', () => ({
+vi.mock('@dhcb/core-db/pgPool', () => ({
   getPgPool: () => ({ query }),
   getPgReadPool: () => readPool,
 }))

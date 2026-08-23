@@ -1,6 +1,6 @@
 // api/co-learning-audio.ts — REST handler cho Phòng Học Nhóm Âm Thanh Thời Gian Thực V7.1.
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
 import {
   createAudioRoom,
   getAudioRoom,
@@ -9,7 +9,7 @@ import {
   leaveAudioRoom,
   broadcastAiSocraticHint,
   setMemberMuted,
-} from '../packages/core-ai/audioCoLearningService.js'
+} from '@dhcb/core-ai/audioCoLearningService'
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {

@@ -51,19 +51,10 @@ import type {
   LifeGraphNode,
   LifeGraphEdge,
   LifeGraphNodeType,
-} from '../../../../../../packages/core-contracts/lifeGraph'
-import type {
-  PersonalFact,
-  Sensitivity,
-} from '../../../../../../packages/core-contracts/personalFact'
-import type {
-  MemoryRecord,
-  MemoryNamespace,
-} from '../../../../../../packages/core-contracts/personalMemory'
-import type {
-  AutomationGrant,
-  ActionReceipt,
-} from '../../../../../../packages/core-contracts/automation'
+} from '@dhcb/core-contracts/lifeGraph'
+import type { PersonalFact, Sensitivity } from '@dhcb/core-contracts/personalFact'
+import type { MemoryRecord, MemoryNamespace } from '@dhcb/core-contracts/personalMemory'
+import type { AutomationGrant, ActionReceipt } from '@dhcb/core-contracts/automation'
 
 const NODE_ICONS: Record<LifeGraphNodeType, React.ReactNode> = {
   Person: <User className="w-4 h-4 text-blue-400" />,

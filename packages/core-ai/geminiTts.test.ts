@@ -8,7 +8,7 @@ import {
   isValidGeminiVoice,
   hasGeminiTtsKey,
   parseSampleRate as parseSampleRateForTest,
-} from './geminiTts'
+} from './geminiTts.js'
 
 const OLD_KEY = process.env.GEMINI_API_KEY
 
@@ -179,7 +179,7 @@ describe('GEMINI_TTS_MODEL tuỳ chỉnh qua biến môi trường', () => {
     process.env.GEMINI_API_KEY = 'test-key'
     process.env.GEMINI_TTS_MODEL = 'gemini-2.5-pro-preview-tts'
     vi.resetModules()
-    const { generateAudioFromGemini: freshGenerate } = await import('./geminiTts')
+    const { generateAudioFromGemini: freshGenerate } = await import('./geminiTts.js')
 
     const pcmBytes = Buffer.from([1])
     vi.stubGlobal(

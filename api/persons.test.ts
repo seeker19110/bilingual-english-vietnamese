@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 const authState: { user: { userId: string } | null } = { user: { userId: 'user-1' } }
 let rateLimitOk = true
-vi.mock('../packages/core-auth/security', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
   checkRateLimit: async () => rateLimitOk,
@@ -11,16 +11,16 @@ vi.mock('../packages/core-auth/security', () => ({
   logSecurityEvent: () => {},
 }))
 
-vi.mock('../packages/core-db/pgPool.js', () => ({ getPgPool: vi.fn().mockReturnValue({}) }))
+vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn().mockReturnValue({}) }))
 
 const getOrCreatePersonMock = vi.fn()
-vi.mock('../packages/core-personal/personService.js', () => ({
+vi.mock('@dhcb/core-personal/personService', () => ({
   getOrCreatePerson: (...args: unknown[]) => getOrCreatePersonMock(...args),
 }))
 
 const exportPersonDataMock = vi.fn()
 const erasePersonDataMock = vi.fn()
-vi.mock('../packages/core-personal/personErasureService.js', () => ({
+vi.mock('@dhcb/core-personal/personErasureService', () => ({
   exportPersonData: (...args: unknown[]) => exportPersonDataMock(...args),
   erasePersonData: (...args: unknown[]) => erasePersonDataMock(...args),
 }))

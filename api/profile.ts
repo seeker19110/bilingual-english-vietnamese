@@ -7,19 +7,19 @@
 // POST /api/profile  body { action: 'onboarding', level, goal, dailyMinutes }
 
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
-import { ensureProfileRow } from '../packages/core-auth/authService.js'
-import { resolvePlan } from '../packages/core-billing/plan.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import { ensureProfileRow } from '@dhcb/core-auth/authService'
+import { resolvePlan } from '@dhcb/core-billing/plan'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { backfillCurrentLearningGoal } from '../packages/core-learner/learningGoalAdapter.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
+} from '@dhcb/core-auth/security'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { backfillCurrentLearningGoal } from '@dhcb/core-personal/learningGoalAdapter'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 const AGE_GROUPS = ['nhi_dong', 'thieu_nien', 'thanh_nien', 'nguoi_lon'] as const
 

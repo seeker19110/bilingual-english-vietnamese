@@ -1,15 +1,15 @@
 // api/career.ts — V2-13 Career Domain API.
 // Quản lý hồ sơ sự nghiệp, kinh nghiệm, mục tiêu và phân tích khoảng cách kỹ năng (Skill Gap).
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { getOrCreatePerson } from '../packages/core-personal/personService.js'
+} from '@dhcb/core-auth/security'
+import { getOrCreatePerson } from '@dhcb/core-personal/personService'
 import {
   getOrCreateCareerProfile,
   updateCareerProfile,
@@ -18,11 +18,11 @@ import {
   createCareerGoal,
   listCareerGoals,
   analyzeCareerSkillGap,
-} from '../packages/core-career/careerService.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
-import { UuidSchema } from '../packages/core-contracts/shared.js'
+} from '@dhcb/core-career/careerService'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { UuidSchema } from '@dhcb/core-contracts/shared'
 
 const PostCareerSchema = z.discriminatedUnion('resource', [
   z

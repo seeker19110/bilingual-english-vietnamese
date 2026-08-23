@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import handler from './admin-payments.js'
 
-vi.mock('../packages/core-db/pgPool.js', () => {
+vi.mock('@dhcb/core-db/pgPool', () => {
   const query = vi.fn()
   return { getPgPool: () => ({ query }) }
 })
 
-vi.mock('../packages/core-auth/security.js', () => ({
+vi.mock('@dhcb/core-auth/security', () => ({
   validateAuth: vi.fn(),
   getCorsHeaders: () => ({}),
   SECURITY_HEADERS: {},
@@ -14,21 +14,21 @@ vi.mock('../packages/core-auth/security.js', () => ({
   logSecurityEvent: vi.fn(),
 }))
 
-vi.mock('../packages/core-auth/authService.js', () => ({
+vi.mock('@dhcb/core-auth/authService', () => ({
   getUserById: vi.fn(),
 }))
 
-vi.mock('../packages/core-auth/adminAuth.js', () => ({
+vi.mock('@dhcb/core-auth/adminAuth', () => ({
   isAdminEmail: (e?: string) => e === 'admin@example.com',
 }))
 
-vi.mock('./_lib/planGrant.js', () => ({
+vi.mock('@dhcb/core-billing/planGrant', () => ({
   grantPlanDays: vi.fn(() => Promise.resolve()),
 }))
 
-import { getPgPool } from '../packages/core-db/pgPool.js'
-import { validateAuth, checkRateLimit } from '../packages/core-auth/security.js'
-import { getUserById } from '../packages/core-auth/authService.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
+import { validateAuth, checkRateLimit } from '@dhcb/core-auth/security'
+import { getUserById } from '@dhcb/core-auth/authService'
 
 type UserInfo = Awaited<ReturnType<typeof getUserById>>
 

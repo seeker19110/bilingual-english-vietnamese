@@ -2,9 +2,9 @@
 // No generic mega Life Agent — each subdomain scoped separately.
 import type { Pool } from 'pg'
 import { randomUUID } from 'node:crypto'
-import { withTransaction } from '../core-db/transaction.js'
-import { vnDateStr } from '../core-db/date.js'
-import { NotFoundError } from '../core-errors/appError.js'
+import { withTransaction } from '@dhcb/core-db/transaction'
+import { vnDateStr } from '@dhcb/core-db/date'
+import { NotFoundError } from '@dhcb/core-errors/appError'
 import {
   LifePlanSchema,
   HabitSchema,
@@ -22,7 +22,7 @@ import {
   type HabitTypeSchema,
   type HabitFrequencySchema,
   type GrowthAreaSchema,
-} from '../core-contracts/lifeFoundation.js'
+} from '@dhcb/core-contracts/lifeFoundation'
 import type { z } from 'zod'
 
 export type LifePlanType = z.infer<typeof LifePlanTypeSchema>

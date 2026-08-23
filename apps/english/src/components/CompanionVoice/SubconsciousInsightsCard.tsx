@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Brain, Sparkles, Target, ShieldAlert, RefreshCw, Layers, CheckCircle2 } from 'lucide-react'
-import type { SubconsciousThoughtLog } from '../../../../../packages/core-contracts/subconscious'
+import type { SubconsciousThoughtLog } from '@dhcb/core-contracts/subconscious'
 
 export const SubconsciousInsightsCard: React.FC = () => {
   const [thought, setThought] = useState<SubconsciousThoughtLog | null>(null)

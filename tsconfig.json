@@ -21,6 +21,7 @@
     "baseUrl": ".",
     "paths": {
       "@core/*": ["packages/core-ui/*"],
+      "@dhcb/*": ["packages/*"],
       "@english/*": ["apps/english/src/*"]
     }
   },

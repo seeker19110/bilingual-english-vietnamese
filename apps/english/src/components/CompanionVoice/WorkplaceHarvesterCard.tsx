@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Briefcase, Zap, CheckCircle2, Plus, BookOpen } from 'lucide-react'
-import type {
-  HarvestedMistake,
-  AutoSrsCard,
-} from '../../../../../packages/core-contracts/workplaceErrorHarvester'
+import type { HarvestedMistake, AutoSrsCard } from '@dhcb/core-contracts/workplaceErrorHarvester'
 
 export default function WorkplaceHarvesterCard() {
   const [mistakes, setMistakes] = useState<HarvestedMistake[]>([])

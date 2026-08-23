@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from 'vitest'
-import { isAdminEmail } from './adminAuth'
+import { isAdminEmail } from './adminAuth.js'
 
 const OLD_ADMIN_EMAILS = process.env.ADMIN_EMAILS
 

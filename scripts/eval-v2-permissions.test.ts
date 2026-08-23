@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { resolveAuthority } from '../packages/core-personal/policyService.js'
+import { resolveAuthority } from '@dhcb/core-personal/policyService'
 
 describe('Eval V2 Permissions', () => {
   it('should resolve DENY', async () => {

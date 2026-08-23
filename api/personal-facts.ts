@@ -14,17 +14,17 @@
 // "derived" (hoặc ngược lại, giả mạo "user_declared") và lách GATE V2-03.
 
 import { z } from 'zod'
-import { getPgPool } from '../packages/core-db/pgPool.js'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
-} from '../packages/core-auth/security.js'
-import { validateBody, readJsonBody } from './_lib/validation.js'
-import { jsonResponse, getClientIp } from './_lib/http.js'
-import { isAppError, toErrorBody } from '../packages/core-errors/appError.js'
+} from '@dhcb/core-auth/security'
+import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
 import {
   getOrCreatePerson,
   declareFact,
@@ -32,7 +32,7 @@ import {
   correctFact,
   deleteFact,
   exportPersonData,
-} from '../packages/core-personal/personService.js'
+} from '@dhcb/core-personal/personService'
 
 const SourceSchema = z
   .object({

@@ -1,12 +1,12 @@
 // api/referral-vip.ts — REST handler cho Tiếp thị Liên kết & Giới thiệu Bạn bè VIP (Referral VIP Booster).
-import { jsonResponse } from './_lib/http.js'
-import { validateAuth, getCorsHeaders } from '../packages/core-auth/security.js'
+import { jsonResponse } from '@dhcb/core-http/http'
+import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
 import {
   buildReferralDashboard,
   prepareViralCardData,
   getMilestoneDefinitions,
-} from '../packages/core-personal/referralVipService.js'
-import { type RefereeRecord } from '../packages/core-contracts/referralVip.js'
+} from '@dhcb/core-personal/referralVipService'
+import { type RefereeRecord } from '@dhcb/core-contracts/referralVip'
 
 // In-memory mock store cho danh sách bạn bè đã mời của user
 const userRefereesMap = new Map<string, RefereeRecord[]>()

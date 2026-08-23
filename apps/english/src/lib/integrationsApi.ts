@@ -2,7 +2,7 @@
 import type {
   IntegrationSyncRequest,
   IntegrationSyncResponse,
-} from '../../../../packages/core-contracts/integrations'
+} from '@dhcb/core-contracts/integrations'
 
 export async function fetchIntegrations(): Promise<{
   integrations: Array<{ provider: string; name: string; status: string }>

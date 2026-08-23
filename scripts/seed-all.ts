@@ -90,22 +90,22 @@ import {
   type Lang,
   type VoiceId,
   type StudioVoiceId,
-} from '../api/_lib/googleTts.ts'
+} from '@dhcb/core-ai/googleTts'
 import {
   generateAudioFromGemini,
   isValidGeminiVoice,
   hasGeminiTtsKey,
   type GeminiVoiceId,
-} from '../packages/core-ai/geminiTts.ts'
+} from '@dhcb/core-ai/geminiTts'
 import { STORY_KIND_VOICE } from '../apps/english/src/lib/stories.ts'
 import { type VoiceId as AppVoiceId } from '../apps/english/src/lib/voiceTiers.ts'
 import type { StoryKind } from '../apps/english/src/data/stories/index.ts'
-import { isValidElevenVoice } from '../packages/core-ai/elevenLabsTts.ts'
+import { isValidElevenVoice } from '@dhcb/core-ai/elevenLabsTts'
 import { CEFR_LEVELS } from '../apps/english/src/data/cefr.ts'
-import { encryptAudio, decryptAudio } from '../api/_lib/ttsCrypto.ts'
-import { saveAudio } from '../packages/core-ai/fileStorage.ts'
+import { encryptAudio, decryptAudio } from '@dhcb/core-ai/ttsCrypto'
+import { saveAudio } from '@dhcb/core-ai/fileStorage'
 import type { QueryResultRow } from 'pg'
-import { getPgPool } from '../packages/core-db/pgPool.ts'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import { FOUNDATION } from '../apps/english/src/data/curriculum.ts'
 import { CHALLENGE_TOPICS } from '../apps/english/src/data/challengeTopics.ts'
 import {

@@ -1,7 +1,7 @@
 // api/neural-curriculum.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import handler from './neural-curriculum.js'
-import * as security from '../packages/core-auth/security.js'
+import * as security from '@dhcb/core-auth/security'
 
 describe('Neural Curriculum API Handler (/api/neural-curriculum)', () => {
   beforeEach(() => {
