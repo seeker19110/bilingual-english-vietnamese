@@ -48,7 +48,13 @@ Ba chế độ:
   tuổi kèm dấu hiệu đạt + hành động 90 ngày, thang 5 bậc thay "số năm kinh nghiệm", 8 họ nghề,
   cách chấm/xếp hạng khoảng cách. **Luật bắt buộc: giới tính KHÔNG dùng làm trục kỳ vọng năng
   lực** — dùng "vai trò chăm sóc & gián đoạn nghề" thay thế (mục 8 của tài liệu). Đọc trước khi
-  làm bất cứ việc gì liên quan hồ sơ năng lực/lộ trình cá nhân.
+  làm bất cứ việc gì liên quan hồ sơ năng lực/lộ trình cá nhân. **Bộ 3 tài liệu**, đọc kèm:
+  `docs/research/nang-luc-10-40-chi-tiet-2026-08-23.md` (chi tiết vận hành quãng 10–40: 6 băng
+  nhỏ, ngưỡng đo được, bài tự chẩn đoán 23 câu, chương trình 12 tuần) và
+  `docs/research/dong-hanh-va-phat-trien-nang-khieu-2026-08-23.md` (**tư thế ĐỒNG HÀNH** — 8 luật
+  hành xử của Companion theo SDT; **đường ĐỈNH phát triển năng khiếu** tách khỏi đường nền; cơ
+  chế đóng góp xã hội). **Luật số 1 của sản phẩm: kết quả chẩn đoán KHÔNG bao giờ là màn hình
+  chính** — nó là công cụ chọn việc, không phải bảng chấm điểm con người.
 - `docs/deploy-vps-ubuntu.md` — hướng dẫn deploy VPS. ADR (quyết định kiến trúc lớn): đặt ở `docs/adr/` khi có.
 - `docs/ke-hoach-khoi-phuc-su-co-server.md` — **quy trình khôi phục khi server sập/gặp sự cố** (chẩn đoán nhanh → kịch bản xử lý → restore backup → post-mortem). Đọc khi có sự cố thật hoặc chuẩn bị runbook. Khác `docs/DEPLOY.md` (deploy + fix nhanh) và `docs/rollback-runbook.md` (rollback cấu hình theo PR cụ thể).
 - `docs/MASTER_SPEC.md` — tầm nhìn kiến trúc Đồng Hành Platform (THAM KHẢO tầm nhìn).

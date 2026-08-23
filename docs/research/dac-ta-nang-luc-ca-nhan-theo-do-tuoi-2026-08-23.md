@@ -11,6 +11,15 @@
 > (`packages/core-domains/lifeMilestoneMasteryService.ts` — 8 giai đoạn cuộc đời), **không** tạo
 > hệ song song. Xem mục 12.0 "Luật chống trùng hệ".
 
+> **Bộ tài liệu này gồm 3 phần — đọc theo thứ tự:**
+>
+> 1. **(file này)** Khung: 3 trục, 30 năng lực lõi, 8 băng tuổi 6→50+.
+> 2. `nang-luc-10-40-chi-tiet-2026-08-23.md` — chi tiết vận hành quãng **10–40** (6 băng nhỏ,
+>    ngưỡng đo được, bài tự chẩn đoán, chương trình 12 tuần, đường bù khi chưa đạt).
+> 3. `dong-hanh-va-phat-trien-nang-khieu-2026-08-23.md` — **tư thế đồng hành** (8 luật hành xử của
+>    Companion) + **đường ĐỈNH phát triển năng khiếu** + cơ chế đóng góp xã hội. Chứa luật số 1 của
+>    cả sản phẩm: kết quả chẩn đoán không bao giờ là màn hình chính.
+
 ---
 
 ## 1. Tóm tắt cho người bận

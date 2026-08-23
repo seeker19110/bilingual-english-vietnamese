@@ -40,6 +40,30 @@ chứng; 7 rủi ro; kế hoạch 5 PR (C1→C5).
 C1–C5 có UI) · có hỏi giới tính không · 8 họ nghề đã đủ cho tệp VN chưa (thiếu nông nghiệp, du
 lịch–NHKS, logistics?) · ưu tiên băng tuổi nào trước (đề xuất: 18–38).
 
+**Bổ sung cùng ngày — 2 tài liệu nữa (người dùng thu hẹp phạm vi + nêu tầm nhìn sản phẩm):**
+
+- `docs/research/nang-luc-10-40-chi-tiet-2026-08-23.md` — người dùng chốt quãng **10–40**. Chia
+  **6 băng nhỏ N1–N6** (10–14 · 15–18 · 19–22 · 23–27 · 28–33 · 34–40), mỗi băng có ngưỡng đo
+  được, 5 câu tự chẩn đoán, chương trình 12 tuần, biến thể theo họ nghề, đường bù khi chưa đạt;
+  bảng **cửa sổ hẹp dần / cửa sổ mở rộng** theo tuổi (kèm luật chống định mệnh luận); bảng **tự
+  chẩn đoán nhanh 23 câu**; cơ chế `tuổi_nghề_hiệu_dụng` cho người có gián đoạn chăm sóc.
+- `docs/research/dong-hanh-va-phat-trien-nang-khieu-2026-08-23.md` — người dùng nêu tầm nhìn:
+  _"DHCB là bạn đồng hành… phát triển vượt bậc năng khiếu… góp phần phát triển xã hội"_. Tài liệu
+  dịch tuyên bố thành 4 cam kết kiểm được + **8 luật hành xử của Companion** (nền SDT, cắm vào
+  `MotivationDiagnostic` đã có) + **đường ĐỈNH năng khiếu** tách khỏi đường nền (mô hình Gagné DMGT
+  - Talent Development Megamodel; 12 lĩnh vực với quỹ đạo riêng; 5 tín hiệu nhận diện; 6 luật chống
+    dán nhãn; 4 giai đoạn G1–G4 kèm **luật chuyển giao sang thầy người thật**) + 4 cơ chế đóng góp xã
+    hội đo được + 6 rủi ro riêng R8–R13.
+
+**Căng thẳng đã nêu thẳng với người dùng:** hai tài liệu đầu nghiêng về chẩn đoán/ngưỡng — đúng cho
+năng lực nền, nhưng bê nguyên sang quan hệ hằng ngày sẽ thành máy chấm điểm người. Giải bằng
+**Luật số 1**: kết quả chẩn đoán không bao giờ là màn hình chính, chỉ là công cụ chọn việc.
+
+**Kế hoạch PR cập nhật:** thêm **C0** (hiến chương đồng hành — 8 luật thành ràng buộc kiểm được
+trong `SupremePrincipleCompliance` đã có, **làm TRƯỚC C1** vì chi phối toàn bộ giọng sản phẩm),
+**C6** (đường đỉnh năng khiếu), **C7** (vòng kèm cặp). Thứ tự đề xuất: C0 → C1 → C2b (bảng chẩn
+đoán) → C5 màn chẩn đoán → C2 → C3 → C4 → C6 → C7.
+
 ### feat+refactor: N3 — hợp nhất hệ trùng + PvP hết hardcode + ẩn telemetry USD (2026-08-23)
 
 **Bối cảnh:** 3 "việc quyết định lớn" còn lại (đã người dùng duyệt từ kế hoạch 7 PR A→G) +
