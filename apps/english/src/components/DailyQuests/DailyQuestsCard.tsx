@@ -1,6 +1,7 @@
 // apps/english/src/components/DailyQuests/DailyQuestsCard.tsx — Thẻ 3 Nhiệm Vụ Hàng Ngày & Rương Báu Bí Ẩn.
-import { useState, useEffect } from 'react'
-import { Lock, Sparkles, Gift } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import { Lock, Sparkles, Gift, RefreshCw } from 'lucide-react'
+import { useToast } from '@core/ToastProvider'
 import type {
   DailyQuestsState,
   DailyQuestItem,
@@ -9,16 +10,25 @@ import { fetchDailyQuests, claimMysteryChest } from '../../lib/dailyQuestsApi.js
 
 export default function DailyQuestsCard() {
   const [state, setState] = useState<DailyQuestsState | null>(null)
+  const [loadError, setLoadError] = useState(false)
   const [claiming, setClaiming] = useState(false)
   const [rewardClaimed, setRewardClaimed] = useState<{
     streakFreeze: number
     bonusExp: number
     vipHours: number
   } | null>(null)
+  const toast = useToast()
+
+  const load = useCallback(() => {
+    setLoadError(false)
+    fetchDailyQuests()
+      .then(setState)
+      .catch(() => setLoadError(true))
+  }, [])
 
   useEffect(() => {
-    fetchDailyQuests().then(setState)
-  }, [])
+    load()
+  }, [load])
 
   async function handleClaimChest() {
     if (claiming || !state?.chestState.isUnlocked || state?.chestState.isClaimed) return
@@ -27,9 +37,27 @@ export default function DailyQuestsCard() {
       const res = await claimMysteryChest()
       setState(res.state)
       setRewardClaimed(res.rewards)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Không mở được rương. Thử lại nhé.')
     } finally {
       setClaiming(false)
     }
+  }
+
+  if (loadError) {
+    return (
+      <div className="rounded-3xl border border-zinc-800 bg-zinc-900/70 p-4 sm:p-5 mb-6 flex items-center justify-between gap-3">
+        <p className="text-xs text-zinc-400">Không tải được Nhiệm Vụ Hàng Ngày.</p>
+        <button
+          type="button"
+          onClick={load}
+          className="tap-44 px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-bold flex items-center gap-1.5"
+        >
+          <RefreshCw className="w-3.5 h-3.5" />
+          Thử lại
+        </button>
+      </div>
+    )
   }
 
   if (!state) return null

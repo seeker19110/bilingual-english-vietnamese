@@ -1,6 +1,7 @@
 // apps/english/src/components/PvPArena/PvPArenaLobbyModal.tsx — Sảnh Chờ & Bảng Xếp Hạng Đấu Trường PvP.
 import { useState, useEffect } from 'react'
 import { X, Trophy, Flame, Swords, ChevronRight } from 'lucide-react'
+import { useToast } from '@core/ToastProvider'
 import type {
   PvPPlayerProfile,
   PvPLeaderboardEntry,
@@ -14,6 +15,10 @@ interface PvPArenaLobbyModalProps {
   onClose: () => void
 }
 
+// Hiệu ứng tìm đối thủ tối thiểu 1.2s cho kịch tính — chạy SONG SONG với request
+// thật (không cộng dồn sau khi request đã xong) để độ chờ thật = max(request, 1.2s).
+const MIN_MATCHING_UI_MS = 1200
+
 export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps) {
   const [profile, setProfile] = useState<PvPPlayerProfile | null>(null)
   const [leaderboard, setLeaderboard] = useState<PvPLeaderboardEntry[]>([])
@@ -21,12 +26,16 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
   const [isMatching, setIsMatching] = useState(false)
   const [activeMatch, setActiveMatch] = useState<PvPMatchState | null>(null)
   const [tab, setTab] = useState<'modes' | 'leaderboard'>('modes')
+  const toast = useToast()
 
   useEffect(() => {
-    fetchPvPProfile().then((data) => {
-      setProfile(data.profile)
-      setLeaderboard(data.leaderboard)
-    })
+    fetchPvPProfile()
+      .then((data) => {
+        setProfile(data.profile)
+        setLeaderboard(data.leaderboard)
+      })
+      .catch(() => toast.error('Không tải được hồ sơ Đấu Trường. Thử mở lại sảnh nhé.'))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function handleStartMatch(mode: PvPGameMode) {
@@ -34,15 +43,14 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
     setIsMatching(true)
     setSelectedMode(mode)
 
+    const minDelay = new Promise((resolve) => setTimeout(resolve, MIN_MATCHING_UI_MS))
     try {
-      const match = await matchmakePvPMatch(mode, profile || undefined)
-      // Giả lập hiệu ứng tìm đối thủ 1.2s cho kịch tính
-      setTimeout(() => {
-        setIsMatching(false)
-        setActiveMatch(match)
-      }, 1200)
-    } catch {
+      const [match] = await Promise.all([matchmakePvPMatch(mode, profile || undefined), minDelay])
       setIsMatching(false)
+      setActiveMatch(match)
+    } catch (err) {
+      setIsMatching(false)
+      toast.error(err instanceof Error ? err.message : 'Không ghép được trận đấu. Thử lại nhé.')
     }
   }
 
@@ -268,10 +276,14 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
           initialMatch={activeMatch}
           onClose={() => setActiveMatch(null)}
           onMatchComplete={() => {
-            fetchPvPProfile().then((data) => {
-              setProfile(data.profile)
-              setLeaderboard(data.leaderboard)
-            })
+            fetchPvPProfile()
+              .then((data) => {
+                setProfile(data.profile)
+                setLeaderboard(data.leaderboard)
+              })
+              .catch(() => {
+                /* trận đã lưu ở server; hồ sơ chỉ chưa refresh — không chặn người dùng đóng modal */
+              })
           }}
         />
       )}

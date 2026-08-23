@@ -60,6 +60,7 @@ import type { DictEntry } from '../types'
 import { getLearnedWords, markLearned } from '../lib/vocab'
 import { addToSRS, addToSRSKnown } from '../lib/srs'
 import { bumpDailyLearned } from '../lib/curriculum'
+import { updateQuestProgress } from '../lib/dailyQuestsApi'
 import { getUsage, incrementUsage, markStudiedToday } from '../lib/storage'
 import { isGrammarDone, markGrammarDone, unmarkGrammarDone } from '../lib/cefrProgress'
 import { ACCENT, type AccentClasses } from '../lib/cefrAccent'
@@ -386,6 +387,9 @@ export function VocabFlash({
     markLearned(uid, card.word)
     addToSRS(uid, card.word)
     bumpDailyLearned(uid)
+    updateQuestProgress('vocab_mastery').catch(() => {
+      /* nhiệm vụ ngày là phần thưởng phụ — lỗi ở đây không chặn luồng học chính */
+    })
     markStudiedToday(uid) // ghi nhận có học hôm nay → tính streak (đồng bộ server)
     onProgress()
     setIdx((i) => i + 1)

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Activity, Mic, RefreshCw } from 'lucide-react'
 import { useToast } from '@core/ToastProvider'
+import { getAuthHeader } from '@core/authHeader'
 import type { AcousticPhoneticsReport } from '../../../../../packages/core-contracts/realtimeMultimodal'
 
 export default function AcousticPhoneticsLab() {
@@ -16,7 +17,7 @@ export default function AcousticPhoneticsLab() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('auth_token') || 'dev_token'}`,
+          ...getAuthHeader(),
         },
         body: JSON.stringify({
           targetSentence: sentence,
