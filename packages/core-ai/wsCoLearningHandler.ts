@@ -9,6 +9,7 @@ import {
   leaveAudioRoom,
   setMemberMuted,
   broadcastAiSocraticHint,
+  generateAiSocraticHint,
   subscribeToRoomEvents,
   getAudioRoom,
   type AudioRoomEventHandler,
@@ -122,11 +123,12 @@ export function attachCoLearningWebSocketServer(server: HttpServer): void {
             if (shouldTriggerAiModerator) {
               const room = getAudioRoom(session.currentRoomId)
               if (room) {
-                broadcastAiSocraticHint(
-                  session.currentRoomId,
-                  `Các bạn có thắc mắc gì về chủ đề "${room.topic}" cần tôi giải thích thêm không?`,
-                  'probing_reasons',
-                )
+                const roomId = session.currentRoomId
+                // KHÔNG await trong luồng relay audio — chờ AI sẽ làm nghẽn tiếng nói cả phòng.
+                // Sinh xong mới phát, kèm cờ isFallback nếu là câu mẫu.
+                void generateAiSocraticHint(room.topic).then(({ hint, isFallback }) => {
+                  broadcastAiSocraticHint(roomId, hint, 'probing_reasons', isFallback)
+                })
               }
             }
           }
@@ -226,11 +228,10 @@ export function attachCoLearningWebSocketServer(server: HttpServer): void {
               if (shouldTriggerAiModerator) {
                 const room = getAudioRoom(msg.roomId)
                 if (room) {
-                  broadcastAiSocraticHint(
-                    msg.roomId,
-                    `Một câu hỏi thú vị cho cả phòng: Theo các bạn, điểm mấu chốt ở đây là gì?`,
-                    'probing_assumptions',
-                  )
+                  const roomId = msg.roomId
+                  void generateAiSocraticHint(room.topic).then(({ hint, isFallback }) => {
+                    broadcastAiSocraticHint(roomId, hint, 'probing_assumptions', isFallback)
+                  })
                 }
               }
             }

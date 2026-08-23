@@ -1,6 +1,12 @@
 // api/debate-arena.ts — REST handler cho Platform V5 AI Debate Arena & Socratic Multi-Agent.
-import { jsonResponse } from '@dhcb/core-http/http'
-import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
+import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import {
+  validateAuth,
+  getCorsHeaders,
+  checkRateLimit,
+  logSecurityEvent,
+} from '@dhcb/core-auth/security'
+import { checkAndConsumeUsage, refundUsage } from '@dhcb/core-billing/usage'
 import { DebateArenaService } from '@dhcb/core-ai/debateArenaService'
 import { DebateSessionConfig, DebateSessionState } from '@dhcb/core-contracts/debateArena'
 
@@ -10,6 +16,15 @@ const activeSessions = new Map<string, DebateSessionState>()
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: getCorsHeaders(req) })
+  }
+
+  // [2026-08-23] Endpoint này nay gọi model TRẢ TIỀN thật (trước đây chỉ trả chuỗi cứng nên
+  // không ai thấy cần chặn). Phải có rate-limit + đếm lượt như mọi đường AI khác — CLAUDE.md
+  // mục 7 và khuôn đã áp cho /api/companion ở đề xuất N1 mục B3.
+  const clientIp = getClientIp(req)
+  if (!(await checkRateLimit(clientIp, 60, 'debate-arena'))) {
+    logSecurityEvent('RATE_LIMIT_EXCEEDED', clientIp, { path: '/api/debate-arena' })
+    return jsonResponse({ error: 'Quá nhiều yêu cầu — thử lại sau 1 phút' }, 429)
   }
 
   const auth = await validateAuth(req)
@@ -113,14 +128,27 @@ export default async function handler(req: Request): Promise<Response> {
         }
         session.turns.push(userTurn)
 
-        // 2. Sinh lượt đối đáp của AI (Opponent)
+        // 2. Sinh lượt đối đáp của AI (Opponent) — gọi model THẬT, nên trừ lượt như chế độ
+        // 'chat'. Trừ TRƯỚC khi gọi (server authoritative), hoàn lại nếu không dùng được AI.
+        const gate = await checkAndConsumeUsage(personId, 'chat')
+        if (!gate.ok) {
+          logSecurityEvent('USAGE_LIMIT', clientIp, { path: '/api/debate-arena' })
+          return jsonResponse({ error: gate.message }, 429)
+        }
+
         const opponentRole = session.config.userStance === 'support' ? 'negative' : 'affirmative'
-        const aiTurn = DebateArenaService.generateAiTurn(session, opponentRole)
+        const aiTurn = await DebateArenaService.generateAiTurn(session, opponentRole)
         session.turns.push(aiTurn)
+
+        // Không gọi được AI (thiếu key / provider lỗi) → người học nhận mẫu cứng, KHÔNG được
+        // tính tiền lượt đó. Hoàn lượt và để cờ isFallback nói thật với UI.
+        if (aiTurn.isFallback) {
+          await refundUsage(personId, 'chat', gate.day).catch(() => {})
+        }
 
         // 3. Nếu sang vòng mới, moderator có thể đưa ra câu hỏi gợi mở
         if (session.turns.length >= 4 && session.turns.length % 4 === 0) {
-          const modTurn = DebateArenaService.generateAiTurn(session, 'socratic_moderator')
+          const modTurn = await DebateArenaService.generateAiTurn(session, 'socratic_moderator')
           session.turns.push(modTurn)
           session.currentRound += 1
         }

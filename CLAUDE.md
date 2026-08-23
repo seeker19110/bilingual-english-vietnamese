@@ -234,7 +234,10 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
    2026-07-11, xem `supabase/migrations/README.md`).
 5. ~~Sentry chưa bật~~ **ĐÃ XONG (2026-07-27, người dùng xác nhận)** — đã điền
    `SENTRY_DSN`/`VITE_SENTRY_DSN` trên VPS, đã thấy lỗi test được ghi nhận trên Sentry.
-6. ~~Branch protection cho nhánh `main`~~ ĐÃ XONG (người dùng xác nhận 2026-07-11) — rule yêu cầu
-   PR trước khi merge + 2 CI check `quality`/`e2e` xanh đã bật trên GitHub Settings → Branches.
+6. ~~Branch protection cho nhánh `main`~~ ĐÃ XONG — rule yêu cầu PR trước khi merge + **required
+   status check** đã bật trên GitHub (Settings → Rules/Branches). Người dùng xác nhận lần đầu
+   2026-07-11 và **xác nhận lại 2026-08-23** sau khi rà soát (đặc tả platform từng ghi nhầm là
+   "chưa làm" — nay đã sửa). Các check bắt buộc: `quality`, `e2e` (từ `ci.yml`) và `metadata`
+   (từ `pr-policy.yml` — cổng bắt PR có mô tả đầy đủ + liên kết đặc tả).
 
 Chú thích: `[x]` xong · `[~]` làm một phần · `[ ]` chưa làm.
