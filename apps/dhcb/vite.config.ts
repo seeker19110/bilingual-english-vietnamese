@@ -162,23 +162,23 @@ export default defineConfig(({ mode }) => {
 //
 // Bảng ánh xạ route → file handler. Thêm endpoint mới chỉ cần thêm 1 dòng ở đây.
 const API_ROUTES: { prefix: string; module: string }[] = [
-  { prefix: '/api/pronunciation', module: '/api/pronunciation.ts' },
+  { prefix: '/api/pronunciation', module: '/apps/server/src/api/pronunciation.ts' },
   { prefix: '/api/tts', module: '/packages/core-ai/tts.ts' },
   { prefix: '/api/stt', module: '/packages/core-ai/stt.ts' },
   { prefix: '/api/agent', module: '/packages/core-ai/ai.ts' },
-  { prefix: '/api/dictionary', module: '/api/dictionary.ts' },
-  { prefix: '/api/leaderboard', module: '/api/leaderboard.ts' },
-  { prefix: '/api/pronounce-assess', module: '/api/pronounce-assess.ts' },
+  { prefix: '/api/dictionary', module: '/apps/server/src/api/dictionary.ts' },
+  { prefix: '/api/leaderboard', module: '/apps/server/src/api/leaderboard.ts' },
+  { prefix: '/api/pronounce-assess', module: '/apps/server/src/api/pronounce-assess.ts' },
   { prefix: '/api/auth', module: '/packages/core-auth/auth.ts' },
-  { prefix: '/api/profile', module: '/api/profile.ts' },
-  { prefix: '/api/progress', module: '/api/progress.ts' },
-  { prefix: '/api/history', module: '/api/history.ts' },
-  { prefix: '/api/challenge', module: '/api/challenge.ts' },
-  { prefix: '/api/tutor-feedback', module: '/api/tutor-feedback.ts' },
-  { prefix: '/api/admin-settings', module: '/api/admin-settings.ts' },
-  { prefix: '/api/app-settings', module: '/api/app-settings.ts' },
-  { prefix: '/api/avatar-visemes', module: '/api/avatar-visemes.ts' },
-  { prefix: '/api/companion', module: '/api/companion.ts' },
+  { prefix: '/api/profile', module: '/apps/server/src/api/profile.ts' },
+  { prefix: '/api/progress', module: '/apps/server/src/api/progress.ts' },
+  { prefix: '/api/history', module: '/apps/server/src/api/history.ts' },
+  { prefix: '/api/challenge', module: '/apps/server/src/api/challenge.ts' },
+  { prefix: '/api/tutor-feedback', module: '/apps/server/src/api/tutor-feedback.ts' },
+  { prefix: '/api/admin-settings', module: '/apps/server/src/api/admin-settings.ts' },
+  { prefix: '/api/app-settings', module: '/apps/server/src/api/app-settings.ts' },
+  { prefix: '/api/avatar-visemes', module: '/apps/server/src/api/avatar-visemes.ts' },
+  { prefix: '/api/companion', module: '/apps/server/src/api/companion.ts' },
 ]
 
 function apiEdgeDevMiddleware(): Plugin {

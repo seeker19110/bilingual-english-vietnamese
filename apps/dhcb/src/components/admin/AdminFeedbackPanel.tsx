@@ -10,7 +10,7 @@ import {
 } from 'lucide-react'
 import { getAuthHeader } from '@core/authHeader'
 import { useToast } from '@core/ToastProvider'
-import type { TutorFeedbackRow } from '../../../../../api/admin-feedback'
+import type { TutorFeedbackRow } from '../../../../server/src/api/admin-feedback'
 import {
   CATEGORY_METADATA,
   type UserFeedbackRecord,
