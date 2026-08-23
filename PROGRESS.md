@@ -8,6 +8,47 @@
 
 ## Giai đoạn hiện tại
 
+### fix(script): smoke:gemini-live nói rõ lý do thay vì treo 30 giây (2026-08-23)
+
+**Chạy thật lần đầu trên VPS (có key mới) cho 3 kết quả:**
+
+1. ✅ **Key hợp lệ, Live API đã mở** cho tài khoản — liệt kê được **6 model**:
+   `gemini-2.5-flash-native-audio-latest`, `…-preview-09-2025`, `…-preview-12-2025`,
+   **`gemini-3.1-flash-live-preview`**, `gemini-robotics-er-2-streaming-preview`,
+   `gemini-3.5-live-translate-preview`. Model mặc định tôi đặt trong code
+   (`gemini-3.1-flash-live-preview`) NẰM TRONG danh sách → bản vá model là đúng.
+2. ⚠️ `.env` trên VPS vẫn ghi `GEMINI_LIVE_MODEL=gemini-2.0-flash-exp` (đã ngừng phục vụ
+   31/03/2026) — biến env ĐÈ lên mặc định của code. **Việc tay: sửa dòng này.**
+3. ❌ Script treo 30s rồi báo "nghi endpoint sai" — **suy đoán đó KHÔNG đáng tin**: WebSocket
+   ĐÃ MỞ ĐƯỢC nghĩa là URL/host đúng (sai đường dẫn thì handshake hỏng ngay).
+
+**Lỗi thật nằm trong chính script tôi viết:**
+
+- Chỉ lắng nghe `setupComplete` + `serverContent`, **không in thông điệp lạ** và **không bắt sự
+  kiện `close`** → khi Google trả khung LỖI giải thích rõ nguyên nhân, script nuốt mất rồi báo
+  "timeout 30s" vô nghĩa, bắt người dùng ngồi đoán.
+- Chọn model bằng cách lấy **phần tử đầu danh sách** → trúng `native-audio` (loại CHỈ trả
+  audio) trong khi gói `setup` xin `responseModalities: ['TEXT']` → nhiều khả năng bị từ chối.
+
+**Đã sửa:**
+
+1. **Bắt sự kiện `close`** — in mã + lý do Google gửi kèm. Đây là thứ biến "timeout bí ẩn"
+   thành câu trả lời.
+2. **In MỌI thông điệp không nhận dạng được** (cắt 400 ký tự).
+3. **Chọn model thông minh**: ưu tiên `GEMINI_LIVE_MODEL` nếu còn dùng được → nếu không, ưu
+   tiên model có `-live-` → cuối cùng mới lấy phần tử đầu.
+4. **Modality theo loại model**: `native-audio` → xin `AUDIO`, còn lại → `TEXT`. Và coi
+   `inlineData` (audio) cũng là phản hồi hợp lệ.
+
+**Ghi chú chi phí (người dùng hỏi "bản nào rẻ nhất"):** giữa các model Live giá gần như KHÔNG
+khác nhau — Live API dùng biểu giá audio chung (~$3/1M vào, ~$12/1M ra, số từ nguồn thứ ba,
+chưa xác minh ở trang giá chính thức vì sandbox chặn `ai.google.dev`). Đòn bẩy chi phí thật là
+**có dùng Live hay không**: đường hiện tại (Groq miễn phí + Google TTS cache VĨNH VIỄN trên R2)
+gần như 0đ cho câu lặp lại, còn Live tính tiền từng giây audio và KHÔNG cache được. Khớp với
+Phương án C đã chốt ở `docs/research/dac-ta-gemini-live-2026-08-21.md`.
+
+**Cổng:** typecheck ✅ · lint ✅ · format ✅ · test 4962/4962 ✅.
+
 ### feat(security): báo trạng thái Redis ngay lúc khởi động (2026-08-23)
 
 **Bối cảnh — sự cố thật vừa xảy ra:** Redis trên VPS **KHÔNG chết** (chạy tốt 1 ngày 23 giờ,

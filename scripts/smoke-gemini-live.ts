@@ -71,7 +71,10 @@ function runLiveSession(apiKey: string, model: string): Promise<void> {
         JSON.stringify({
           setup: {
             model: `models/${model}`,
-            generationConfig: { responseModalities: ['TEXT'] },
+            // Model 'native-audio' CHỈ trả audio — xin TEXT là bị từ chối.
+            generationConfig: {
+              responseModalities: [/native-audio/.test(model) ? 'AUDIO' : 'TEXT'],
+            },
           },
         }),
       )
@@ -118,6 +121,22 @@ function runLiveSession(apiKey: string, model: string): Promise<void> {
       clearTimeout(timer)
       reject(new Error(`Lỗi WebSocket: ${String(err)}`))
     })
+
+    // Google thường đóng kết nối kèm MÃ + LÝ DO khi gói setup sai (model không hỗ trợ, sai
+    // modality, payload lỗi…). Không bắt sự kiện này thì mọi lỗi đều biến thành "timeout 30s".
+    ws.on('close', (code, reasonBuf) => {
+      const reason = reasonBuf?.toString() || '(không kèm lý do)'
+      if (!setupDone) {
+        clearTimeout(timer)
+        reject(
+          new Error(
+            `Google ĐÓNG kết nối trước khi setup xong — mã ${code}: ${reason}\n` +
+              `   Model đang thử: ${model}\n` +
+              `   Thường do model không hỗ trợ Live, hoặc responseModalities không hợp với model này.`,
+          ),
+        )
+      }
+    })
   })
 }
 
@@ -139,9 +158,15 @@ async function main() {
   }
   console.log(`   • Dùng được ${models.length} model: ${models.join(', ')}`)
 
-  // Ưu tiên model đang cấu hình nếu nó nằm trong danh sách; không thì lấy cái đầu tiên.
+  // Ưu tiên model đang cấu hình nếu nó CÒN dùng được. Không thì ưu tiên model có chữ 'live'
+  // (đối thoại text/audio hai chiều) thay vì lấy bừa cái đầu danh sách — cái đầu thường là
+  // model 'native-audio', loại CHỈ trả audio nên xin TEXT sẽ bị từ chối (bài học 2026-08-23:
+  // script từng chọn native-audio rồi treo 30s không rõ lý do).
   const configured = process.env.GEMINI_LIVE_MODEL
-  const chosen = configured && models.includes(configured) ? configured : models[0]!
+  const chosen =
+    configured && models.includes(configured)
+      ? configured
+      : (models.find((m) => /(^|-)live-/.test(m)) ?? models[0]!)
   if (configured && !models.includes(configured)) {
     console.log(
       `   • ⚠️  GEMINI_LIVE_MODEL="${configured}" KHÔNG nằm trong danh sách trên — ` +
