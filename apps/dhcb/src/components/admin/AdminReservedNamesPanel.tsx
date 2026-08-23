@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Ban, Plus, Trash2, AlertCircle, RefreshCw } from 'lucide-react'
 import { getAuthHeader } from '@core/authHeader'
-import type { ReservedNameRow } from '../../../../server/src/api/admin-reserved-names'
+import type { ReservedNameRow } from '@dhcb/core-contracts/adminViews'
 
 export default function AdminReservedNamesPanel() {
   const [items, setItems] = useState<ReservedNameRow[]>([])

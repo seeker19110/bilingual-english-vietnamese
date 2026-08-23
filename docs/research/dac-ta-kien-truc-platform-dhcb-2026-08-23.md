@@ -117,6 +117,6 @@ zero-downtime deploy (PM2 wait_ready).
 ## 6. Trình tự còn lại (điều chỉnh)
 
 ~~S3 (server → `apps/server/`)~~ ✅ ĐÃ XONG (cùng ngày) · ~~N1~~ ✅ ĐÃ XONG trong PR #625 (vá tiền/bảo mật — không
-phụ thuộc cấu trúc) → S4 (chia `api/` + `subject-english` + `core-domains`) → S5 (taxonomy
+phụ thuộc cấu trúc) → ~~S4 (chia `api/` + `subject-english` + `core-domains`)~~ ✅ ĐÃ XONG (cùng ngày) → S5 (taxonomy
 components/lib) → S6 (archive scripts + gate CI + ADR). Mỗi bước 1 PR, giữ 2 bất biến
 `dist/` + `dist-server/server.js` tới khi có quyết định khác.

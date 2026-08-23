@@ -29,7 +29,7 @@ import { attachChatWebSocketServer } from '@dhcb/core-chat/wsHandler'
 import { attachVoiceWebSocketServer } from '@dhcb/core-ai/wsVoiceHandler'
 import { attachCoLearningWebSocketServer } from '@dhcb/core-ai/wsCoLearningHandler'
 import { attachGeminiLiveWebSocketServer } from '@dhcb/core-ai/wsGeminiLiveHandler'
-import { sendReminders } from './api/push.js'
+import { sendReminders } from './api/core/push.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
 

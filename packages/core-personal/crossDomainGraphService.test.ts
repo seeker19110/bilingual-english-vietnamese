@@ -11,7 +11,7 @@ const mockQuery = vi.fn()
 const pool = { query: mockQuery } as unknown as Pool
 
 const listCareerGoals = vi.fn()
-vi.mock('@dhcb/core-career/careerService', () => ({
+vi.mock('@dhcb/core-domains/careerService', () => ({
   listCareerGoals: (...a: unknown[]) => listCareerGoals(...a),
 }))
 
