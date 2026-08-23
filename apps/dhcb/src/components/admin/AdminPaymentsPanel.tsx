@@ -11,7 +11,7 @@ import {
   X,
 } from 'lucide-react'
 import { getAuthHeader } from '@core/authHeader'
-import type { AdminPaymentRow } from '../../../../server/src/api/admin-payments'
+import type { AdminPaymentRow } from '@dhcb/core-contracts/adminViews'
 
 export default function AdminPaymentsPanel() {
   const [payments, setPayments] = useState<AdminPaymentRow[]>([])

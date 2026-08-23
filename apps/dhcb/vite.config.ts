@@ -162,23 +162,35 @@ export default defineConfig(({ mode }) => {
 //
 // Bảng ánh xạ route → file handler. Thêm endpoint mới chỉ cần thêm 1 dòng ở đây.
 const API_ROUTES: { prefix: string; module: string }[] = [
-  { prefix: '/api/pronunciation', module: '/apps/server/src/api/pronunciation.ts' },
+  {
+    prefix: '/api/pronunciation',
+    module: '/apps/server/src/api/subjects/english/pronunciation.ts',
+  },
   { prefix: '/api/tts', module: '/packages/core-ai/tts.ts' },
   { prefix: '/api/stt', module: '/packages/core-ai/stt.ts' },
   { prefix: '/api/agent', module: '/packages/core-ai/ai.ts' },
-  { prefix: '/api/dictionary', module: '/apps/server/src/api/dictionary.ts' },
-  { prefix: '/api/leaderboard', module: '/apps/server/src/api/leaderboard.ts' },
-  { prefix: '/api/pronounce-assess', module: '/apps/server/src/api/pronounce-assess.ts' },
+  { prefix: '/api/dictionary', module: '/apps/server/src/api/subjects/english/dictionary.ts' },
+  { prefix: '/api/leaderboard', module: '/apps/server/src/api/platform/leaderboard.ts' },
+  {
+    prefix: '/api/pronounce-assess',
+    module: '/apps/server/src/api/subjects/english/pronounce-assess.ts',
+  },
   { prefix: '/api/auth', module: '/packages/core-auth/auth.ts' },
-  { prefix: '/api/profile', module: '/apps/server/src/api/profile.ts' },
-  { prefix: '/api/progress', module: '/apps/server/src/api/progress.ts' },
-  { prefix: '/api/history', module: '/apps/server/src/api/history.ts' },
-  { prefix: '/api/challenge', module: '/apps/server/src/api/challenge.ts' },
-  { prefix: '/api/tutor-feedback', module: '/apps/server/src/api/tutor-feedback.ts' },
-  { prefix: '/api/admin-settings', module: '/apps/server/src/api/admin-settings.ts' },
-  { prefix: '/api/app-settings', module: '/apps/server/src/api/app-settings.ts' },
-  { prefix: '/api/avatar-visemes', module: '/apps/server/src/api/avatar-visemes.ts' },
-  { prefix: '/api/companion', module: '/apps/server/src/api/companion.ts' },
+  { prefix: '/api/profile', module: '/apps/server/src/api/core/profile.ts' },
+  { prefix: '/api/progress', module: '/apps/server/src/api/core/progress.ts' },
+  { prefix: '/api/history', module: '/apps/server/src/api/core/history.ts' },
+  { prefix: '/api/challenge', module: '/apps/server/src/api/subjects/english/challenge.ts' },
+  {
+    prefix: '/api/tutor-feedback',
+    module: '/apps/server/src/api/subjects/english/tutor-feedback.ts',
+  },
+  { prefix: '/api/admin-settings', module: '/apps/server/src/api/admin/admin-settings.ts' },
+  { prefix: '/api/app-settings', module: '/apps/server/src/api/platform/app-settings.ts' },
+  {
+    prefix: '/api/avatar-visemes',
+    module: '/apps/server/src/api/subjects/english/avatar-visemes.ts',
+  },
+  { prefix: '/api/companion', module: '/apps/server/src/api/personal/companion.ts' },
 ]
 
 function apiEdgeDevMiddleware(): Plugin {

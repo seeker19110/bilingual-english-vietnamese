@@ -23,7 +23,7 @@
       "path": "../core-http"
     },
     {
-      "path": "../core-life"
+      "path": "../core-domains"
     }
   ]
 }

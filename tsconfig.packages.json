@@ -11,9 +11,6 @@
       "path": "./packages/core-billing"
     },
     {
-      "path": "./packages/core-career"
-    },
-    {
       "path": "./packages/core-chat"
     },
     {
@@ -26,10 +23,10 @@
       "path": "./packages/core-db"
     },
     {
-      "path": "./packages/core-errors"
+      "path": "./packages/core-domains"
     },
     {
-      "path": "./packages/core-grading"
+      "path": "./packages/core-errors"
     },
     {
       "path": "./packages/core-http"
@@ -41,16 +38,10 @@
       "path": "./packages/core-learner"
     },
     {
-      "path": "./packages/core-life"
-    },
-    {
       "path": "./packages/core-personal"
     },
     {
-      "path": "./packages/core-startup"
-    },
-    {
-      "path": "./packages/core-work"
+      "path": "./packages/subject-english"
     }
   ]
 }

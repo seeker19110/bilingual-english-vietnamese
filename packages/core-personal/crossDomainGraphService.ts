@@ -2,7 +2,7 @@
 // Kết nối Career, Learning và Personal vào Life Graph mà không vi phạm ranh giới bảng.
 import type { Pool } from 'pg'
 import { randomUUID } from 'node:crypto'
-import { listCareerGoals } from '@dhcb/core-career/careerService'
+import { listCareerGoals } from '@dhcb/core-domains/careerService'
 import { getLearningReadModel } from '@dhcb/core-learner/learningReadModelService'
 import { listNodes, listEdges } from './lifeGraphService.js'
 import {

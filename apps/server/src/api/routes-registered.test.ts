@@ -31,14 +31,23 @@ const CUSTOM_PATH: Record<string, string> = {
 // File trong api/ KHÔNG phải handler HTTP (không cần route). Thêm vào đây nếu có thêm.
 const NOT_A_HANDLER = new Set<string>([])
 
+// Tên file không kèm thư mục nhóm — URL /api/<tên-file> giữ nguyên sau PR-S4.
+function basename(rel: string): string {
+  return rel.split('/').pop() ?? rel
+}
+
 function listApiHandlers(): HandlerEntry[] {
-  return readdirSync(join(ROOT, 'api'))
+  // [PR-S4] api/ đã chia theo trụ (core/billing/admin/personal/domains/learning/platform/
+  // subjects/english) — quét ĐỆ QUY, bỏ _lib/ và chính file test này.
+  return readdirSync(join(ROOT, 'api'), { recursive: true })
+    .map((f) => String(f).replace(/\\/g, '/'))
     .filter((f) => f.endsWith('.ts') && !f.endsWith('.test.ts') && !f.endsWith('.d.ts'))
+    .filter((f) => !f.startsWith('_lib/'))
     .map((f) => f.replace(/\.ts$/, ''))
     .filter((name) => !NOT_A_HANDLER.has(name))
-    .map((name) => ({
-      importPath: `./api/${name}.js`,
-      urlPath: `/api/${CUSTOM_PATH[name] ?? name}`,
+    .map((rel) => ({
+      importPath: `./api/${rel}.js`,
+      urlPath: `/api/${CUSTOM_PATH[basename(rel)] ?? basename(rel)}`,
     }))
 }
 

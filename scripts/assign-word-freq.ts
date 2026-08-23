@@ -25,7 +25,7 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { detectWordFreqFormat, parseWordRanks } from '../apps/server/src/api/_lib/wordFreq.ts'
+import { detectWordFreqFormat, parseWordRanks } from '@dhcb/subject-english/wordFreq'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DICT_DIR = process.env.DICT_DIR
