@@ -105,6 +105,45 @@ const MOCK_USAGE_STATS = {
     ],
     perActiveUserVnd: 581730,
   },
+  // Chi phí AI đo THẬT theo token (mục N4). Trường TUỲ CHỌN ở client — có fixture này để
+  // thẻ "Chi phí AI đo THẬT theo token" được kiểm thật; ca thiếu trường được phủ bởi
+  // MOCK_USAGE_STATS_NO_TOKEN_COST bên dưới.
+  tokenCost: {
+    totals: {
+      calls: 42,
+      promptTokens: 1250000,
+      completionTokens: 310000,
+      cacheReadTokens: 900000,
+      // CỐ Ý tránh các chuỗi số mà test khác đang dò bằng getByText khớp-chuỗi-con
+      // ('1.234' tổng tài khoản, '134' người trả phí, '5.500.000' doanh thu) — đặt 1.2345
+      // ở đây từng làm test "Hiện tổng tài khoản 1.234" đỏ vì strict mode thấy 2 phần tử.
+      costUsd: 0.9876,
+    },
+    totalVnd: 24690,
+    byProviderModel: [
+      {
+        provider: 'groq',
+        model: 'openai/gpt-oss-120b',
+        mode: 'chat',
+        calls: 30,
+        promptTokens: 1000000,
+        completionTokens: 250000,
+        cacheReadTokens: 0,
+        costUsd: 0.9,
+      },
+      {
+        provider: 'anthropic',
+        model: 'claude-haiku-4-5-20251001',
+        mode: 'companion',
+        calls: 12,
+        promptTokens: 250000,
+        completionTokens: 60000,
+        cacheReadTokens: 900000,
+        costUsd: 0.0876,
+      },
+    ],
+    dailyBudgetUsd: 2,
+  },
   revenue: {
     vnd: 5500000,
     payments: { paid: 22, pending: 3, failed: 1 },
@@ -723,6 +762,44 @@ test.describe('Admin Dashboard — /admin-s', () => {
     await gotoAdmin(page, 'usage')
     await expect(page.getByText('Sử dụng & chi phí')).toBeVisible({ timeout: VISIBLE_TIMEOUT })
     await expect(page.getByText('top@test.com')).toBeVisible({ timeout: VISIBLE_TIMEOUT })
+  })
+
+  // ── Chi phí AI đo THẬT theo token (mục N4) ────────────────────────────────
+  test('Usage: Thẻ chi phí token thật hiện provider/model đã đo', async ({ page }) => {
+    await gotoAdmin(page, 'usage')
+    await expect(page.getByText('Chi phí AI đo THẬT theo token')).toBeVisible({
+      timeout: VISIBLE_TIMEOUT,
+    })
+    await expect(page.getByText('openai/gpt-oss-120b')).toBeVisible({ timeout: VISIBLE_TIMEOUT })
+    await expect(page.getByText('claude-haiku-4-5-20251001')).toBeVisible({
+      timeout: VISIBLE_TIMEOUT,
+    })
+  })
+
+  // Chốt chặn hồi quy cho đúng lỗi đã làm đỏ CI ở lần đẩy đầu của PR N4: server bản CŨ (đang
+  // deploy cuốn chiếu) trả response KHÔNG có `tokenCost` → trước khi vá, component đọc
+  // `stats.tokenCost.totalVnd` và ném TypeError, SẬP TOÀN BỘ trang admin (30 test đỏ).
+  test('Usage: Thiếu tokenCost trong response → trang admin vẫn dựng bình thường', async ({
+    page,
+  }) => {
+    await loginAsAdmin(page)
+    await mockAllAdminApis(page)
+    const statsCu: Record<string, unknown> = { ...MOCK_USAGE_STATS }
+    delete statsCu.tokenCost
+    await page.route('**/api/admin-usage-stats**', (r: Route) =>
+      r.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(statsCu),
+      }),
+    )
+    await page.goto(`${ADMIN_URL}?tab=usage`, { timeout: GOTO_TIMEOUT })
+    await expect(page.getByRole('heading', { name: 'Quản trị hệ thống' })).toBeVisible({
+      timeout: VISIBLE_TIMEOUT,
+    })
+    // Phần còn lại của tab vẫn hiển thị; riêng thẻ token thật thì ẩn đi, không sập trang.
+    await expect(page.getByText('top@test.com')).toBeVisible({ timeout: VISIBLE_TIMEOUT })
+    await expect(page.getByText('Chi phí AI đo THẬT theo token')).toHaveCount(0)
   })
 
   test('Usage: Hiện doanh thu 5.500.000', async ({ page }) => {
