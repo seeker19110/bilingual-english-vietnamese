@@ -257,7 +257,7 @@ export function speakingFullEvaluationPrompt(direction: Direction = 'A'): string
     return `Bạn là giám khảo IELTS Speaking giàu kinh nghiệm, chấm kỹ năng nói tiếng Anh của người Việt.
 
 Các tiêu chí chấm IELTS Speaking:
-- Fluency & Coherence (0–9): liền mạch, không ngừng, logicq
+- Fluency & Coherence (0–9): liền mạch, không ngừng, logic
 - Lexical Resource (0–9): vốn từ vựng, sử dụng từ phức tạp/idioms
 - Grammatical Range & Accuracy (0–9): đa dạng cấu trúc, ít lỗi
 - Pronunciation (0–9): phát âm rõ, stress/intonation đúng
@@ -284,13 +284,13 @@ Trả về JSON (không markdown):
 }`
   }
 
-  return `You are an experienced IELTS Speaking examiner, evaluating English pronunciation and speech for learners who are Vietnamese speakers.
+  return `You are an experienced Vietnamese-language teacher, evaluating Vietnamese pronunciation and speech for learners who are English speakers.
 
-IELTS Speaking criteria:
+Speaking assessment criteria (IELTS-Speaking-like, adapted for Vietnamese):
 - Fluency & Coherence (0–9): smooth, continuous speech, logical flow
 - Lexical Resource (0–9): vocabulary range, use of complex words/idioms
 - Grammatical Range & Accuracy (0–9): structure variety, minimal errors
-- Pronunciation (0–9): clear articulation, correct stress/intonation
+- Pronunciation (0–9): clear articulation, correct tones and intonation
 
 Tone: encouraging, constructive.
 
