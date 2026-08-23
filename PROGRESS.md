@@ -8,6 +8,36 @@
 
 ## Giai đoạn hiện tại
 
+### fix: auto-deploy đỏ vì `manifest.json` sinh lúc build bị theo dõi Git (2026-08-23)
+
+**Triệu chứng:** mọi lần deploy tự động sau PR #626 đều ĐỎ ngay bước SSH đầu tiên
+(các run 32634211968 → 32641660672):
+
+```
+error: Your local changes to the following files would be overwritten by checkout:
+	apps/dhcb/public/data/manifest.json
+Please commit your changes or stash them before you switch branches.
+```
+
+**Nguyên nhân gốc:** `.gitignore` có dòng `public/data/manifest.json` — mẫu CÓ dấu `/` nên Git
+neo nó vào gốc repo. Sau PR-S2 (dời `public/` vào `apps/dhcb/`), đường dẫn thật thành
+`apps/dhcb/public/data/manifest.json` → không còn khớp mẫu → file **sinh tự động lúc build**
+(`scripts/gen-data-manifest.mjs`, có trường `generatedAt` nên mỗi lần build ra nội dung khác)
+bị commit vào repo từ PR #627. Trên VPS, build xong là file này "bẩn" → lần deploy kế tiếp
+`git checkout -B main FETCH_HEAD` từ chối ghi đè và thoát mã 1.
+
+**Đã sửa:**
+
+1. `.gitignore`: sửa mẫu thành `apps/dhcb/public/data/manifest.json` (và
+   `apps/dhcb/src/data/dictionary.backup.json` — cùng lỗi neo đường dẫn sau PR-S2).
+2. Bỏ theo dõi `apps/dhcb/public/data/manifest.json` (`git rm --cached`) — build luôn sinh lại.
+3. Lưới an toàn: thêm `-f` cho `git checkout` ở CẢ `.github/workflows/deploy.yml` và
+   `scripts/deploy.sh`. Ngay sau lệnh đó deploy vốn đã ép thư mục khớp tuyệt đối `origin/main`
+   (chủ ý có sẵn), nên `-f` chỉ làm đúng ý định đó và không để một file sinh tự động nào khác
+   chặn deploy trong tương lai.
+
+**Cần biết:** deploy lần tới tự khỏi — không phải sửa tay trên VPS.
+
 ### feat: N4 — đo chi phí AI theo TOKEN THẬT + cảnh báo ngân sách (2026-08-23)
 
 **Bối cảnh:** mục còn lại cuối cùng thuộc phần AI làm được của đặc tả platform mục 5.5
