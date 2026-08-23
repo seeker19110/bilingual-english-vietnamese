@@ -2,6 +2,7 @@
 // Tương tự Groq/Anthropic, nhưng dùng endpoint Google Generative AI
 
 import { fetchWithTimeout } from '@dhcb/core-http/fetchTimeout'
+import { parseGeminiUsage, type AiTokenUsage } from './aiTokenUsage.js'
 
 // Thời gian chờ tối đa cho 1 lần gọi AI (ms) — tránh treo vô hạn khi nhà cung cấp chậm.
 const AI_TIMEOUT_MS = 30_000
@@ -21,6 +22,11 @@ export interface GeminiResponse {
   error?: {
     message?: string
   }
+  // Token THẬT Gemini báo về (mục N4) — đọc qua tham số `onUsage` của callGemini().
+  usageMetadata?: {
+    promptTokenCount?: number
+    candidatesTokenCount?: number
+  }
 }
 
 export async function callGemini(
@@ -30,6 +36,9 @@ export async function callGemini(
   messages: Array<{ role: 'user' | 'assistant'; content: string }>,
   maxTokens: number,
   cachedContent?: string,
+  // Tuỳ chọn: nhận token THẬT của lượt gọi này để ghi chi phí (mục N4). CỐ Ý là callback
+  // thay vì đổi kiểu trả về — 3 nơi đang gọi callGemini() chỉ cần text, giữ nguyên không sửa.
+  onUsage?: (usage: AiTokenUsage | null) => void,
 ): Promise<string> {
   // Chuyển đổi từ format chung sang Gemini format
   const geminiMessages: GeminiMessage[] = []
@@ -79,6 +88,10 @@ export async function callGemini(
   }
 
   const data = (await resp.json()) as GeminiResponse
+
+  // Báo usage NGAY khi có body hợp lệ — trước cả khi kiểm lỗi nội dung: Gemini đã tính tiền
+  // token cho lượt này rồi, kể cả khi phần text trả về rỗng/lỗi.
+  if (onUsage) onUsage(parseGeminiUsage(data))
 
   // Parse response
   if (data.error) {

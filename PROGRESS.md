@@ -266,6 +266,361 @@ người dùng chủ động hỏi** và **xoá được**. Lý do: niềm tin, 
 niên chắc chắn sẽ hỏi. Nếu người dùng vẫn muốn ẩn tuyệt đối thì làm theo, nhưng đề nghị giữ tối
 thiểu nút "Xoá dữ liệu đánh giá về tôi".
 
+### fix(security): Redis — hết báo lỗi giả lúc khởi động + health check thôi nói dối (2026-08-23)
+
+**Bối cảnh:** log production lặp lại `[Security] Redis lỗi (Stream isn't writeable and
+enableOfflineQueue options is false) — rate limit tạm dùng Map in-memory mỗi instance`, tức
+trong cluster 3 instance hạn mức chống lạm dụng lỏng **gấp 3**.
+
+**Rà ra HAI lỗi, cái thứ hai nặng hơn cái người dùng báo:**
+
+1. **Gọi lệnh Redis khi client chưa `ready`.** `enableOfflineQueue: false` (cố ý, để request
+   không phải chờ) nghĩa là lệnh phát ra lúc client còn `connecting`/`reconnecting` sẽ ném
+   NGAY đúng câu lỗi trên. Khớp mốc thời gian trong log: PM2 restart 14:31 → lỗi 14:34;
+   restart 14:58 → lỗi 14:59. Tức phần lớn là **trục trặc cửa sổ khởi động**, không phải
+   Redis chết cả ngày.
+2. **`/api/health/deep` NÓI DỐI về cache.** Trường `cache.status` bị **ghi cứng `'up'`**, chỉ
+   đọc `REDIS_URL` để đoán _loại_ cache. Redis chết hoàn toàn thì health check VẪN báo
+   `up, redis` → mọi cổng giám sát xanh trong khi log đầy lỗi. Đây đúng loại lỗi im lặng làm
+   sự cố nằm im.
+
+**Đã làm:**
+
+1. **Chỉ dùng Redis khi `status === 'ready'`** — trong cửa sổ kết nối thì rơi về Map **im
+   lặng** (đúng và không đáng báo động); báo động để dành cho lỗi thật.
+2. **Log theo CHUYỂN TRẠNG THÁI, không latch vĩnh viễn.** Cờ cũ `warnedRedisFallback` set
+   `true` một lần rồi câm mãi: Redis chết lại lần sau không ai biết, mà sống lại cũng không
+   ai biết — nhìn log không phân biệt nổi "trục trặc thoáng qua" với "chết cả ngày". Nay có
+   `noteRedisDegraded()` + `noteRedisRecovered()`, và có dòng **"Redis đã hoạt động trở lại"**.
+3. **`pingRedis()` + `getRedisRuntimeStatus()`** trong `core-auth/security.ts`; `healthDeep`
+   nay **PING THẬT**, trả `up` (kèm độ trễ) / `down` (kèm lý do) / `unconfigured`. Redis hỏng
+   **KHÔNG** kéo cả hệ thống thành `unhealthy` — rate limit tự rơi về Map, app vẫn phục vụ —
+   nhưng phải HIỆN RA.
+
+**Bằng chứng:** 3 test mới cho nhánh cache. Đã kiểm test **thật sự bắt lỗi**: tái tạo bản cũ
+(ghi cứng `'up'`) → test đỏ; khôi phục → xanh. Cổng: typecheck ✅ · lint ✅ · format ✅ ·
+test **4959/4959** ✅ · build ✅ · size 120.65/123 ✅.
+
+**CÒN LẠI — việc tay, code không quyết được:** bản vá này làm Redis _hết báo lỗi giả_ và
+_hiện đúng trạng thái_, nhưng nếu Redis trên VPS thật sự chết thì vẫn phải khởi động nó.
+Kiểm bằng `redis-cli ping` (mong đợi `PONG`) và `systemctl status redis-server`; sau khi deploy
+bản này, `curl -s localhost:3001/api/health/deep | jq .checks.cache` sẽ nói thẳng up/down.
+
+### fix(deploy): bỏ `rm -rf dist` — hết sập web vài phút mỗi lần deploy (2026-08-23)
+
+**Sự cố THẬT do người dùng báo:** không đăng nhập được, Console hiện `login:1 … status of 503`.
+
+**Chẩn đoán (từ log production, không đoán):**
+
+```
+Error: ENOENT: no such file or directory, stat '/var/www/dhcb/dist/index.html'
+   14:56:38 · 14:57:40 · 14:58:10   ← đúng lúc người dùng thử đăng nhập
+```
+
+`pm2 status` cho thấy cả 3 instance **online** — app KHÔNG chết. Grep toàn server: **không
+handler nào trả 503** cho luồng đăng nhập. Nên 503 là do nginx/tầng trước không lấy được
+`dist/index.html`.
+
+**Gốc bệnh — `scripts/deploy.sh` bước [3] chạy `rm -rf dist`, mãi bước [6] mới build lại.**
+Suốt khoảng giữa (cài dependencies + migration + build) app vẫn phục vụ nhưng giao diện đã bị
+xoá → mọi request vào trang đều hỏng. Đây KHÔNG phải lỗi đăng nhập Google; nút Google chỉ là
+nạn nhân.
+
+**Đã sửa:** bỏ hẳn dòng đó. Nó vốn **thừa** — `apps/dhcb/vite.config.ts` đã đặt
+`emptyOutDir: true` nên Vite tự dọn sạch ngay trước khi ghi.
+
+**Bằng chứng (đo thật, không suy luận):**
+
+1. **Chứng minh không sinh rác:** đặt 2 file rác vào `dist/` (`FILE-RAC-CU.txt` và một asset
+   cũ trong `dist/assets/`) rồi build mà KHÔNG xoá tay → **cả hai biến mất**. Tức `emptyOutDir`
+   dọn sạch thật, bỏ `rm -rf dist` không làm build bẩn hơn.
+2. **Đo cửa sổ chết:** thăm dò sự tồn tại của `dist/index.html` mỗi 0,05s trong lúc build →
+   **7,50 giây** (135 lần thăm dò thấy vắng). Trước khi sửa, cửa sổ này kéo dài từ bước [3] tới
+   hết bước [6] — trên VPS là **vài phút** (log ENOENT rải suốt 14:56→14:58).
+3. `bash -n scripts/deploy.sh` hợp lệ.
+
+**Chưa làm (tuỳ người dùng quyết):** muốn về ~0 giây thì phải build ra thư mục tạm rồi đổi tên
+(atomic swap). Đổi lại là thêm bước phức tạp trong script deploy; 7,5s đã giải quyết 95% vấn đề
+nên chưa làm trong lúc đang có sự cố.
+
+**Ba vấn đề khác log vừa phơi ra (CHƯA sửa, ghi để không quên):**
+
+- 🔴 **`GEMINI_API_KEY` trên VPS đang hỏng — `HTTP 401`** (feature-status cron báo `gemini: down`).
+  Chặn luôn việc kiểm `smoke:gemini-live`, và nhánh dự phòng Gemini trong chat đang chết.
+- 🟡 **Redis chết** (`Stream isn't writeable…`) → rate-limit rơi về Map in-memory **mỗi
+  instance**; cluster 3 instance nghĩa là hạn mức thực tế lỏng **gấp 3**.
+- 🟡 Anthropic + OpenAI STT `unconfigured` → chỉ còn Groq gánh AI, hỏng là hết đường lui.
+  SMTP cũng chưa cấu hình nên email nhắc học bị bỏ qua im lặng.
+
+### fix(gemini-live): endpoint v1beta + model còn sống + script kiểm bằng key thật (2026-08-23)
+
+**Bối cảnh:** nợ 🟡 từ 2026-08-21 — `geminiLiveService` đã nối WebSocket thật nhưng CHƯA chạy
+được với `GEMINI_API_KEY` thật (sandbox không có key). Người dùng yêu cầu kiểm.
+
+**Không kiểm được bằng key ở phiên này** (không có `.env`, không biến môi trường nào). NHƯNG rà
+theo tài liệu hiện hành thì thấy **2 lỗi CHẮC CHẮN làm nó hỏng ngay cả khi có key**:
+
+1. Endpoint ghim `v1alpha`; tài liệu Live API hiện hành dùng **`v1beta`**.
+2. Model mặc định `gemini-2.0-flash-exp` — **dòng Gemini 2.0 Flash ngừng phục vụ 31/03/2026**,
+   tức đã chết trước thời điểm hiện tại.
+
+**Đã làm:**
+
+1. Sửa cả hai, và cho **cấu hình qua biến môi trường** (`GEMINI_LIVE_WS_URL`,
+   `GEMINI_LIVE_MODEL`) — lần sau Google đổi tên thì sửa `.env` là xong, không phải sửa code +
+   deploy lại. Mặc định mới: `gemini-3.1-flash-live-preview`.
+2. **`npm run smoke:gemini-live`** (`scripts/smoke-gemini-live.ts`) — biến "AI không kiểm được"
+   thành một lệnh người dùng chạy trên máy có key. Script KHÔNG tin tên model ghim sẵn: nó hỏi
+   Google xem **tài khoản của bạn** được dùng model Live nào (ListModels, lọc
+   `bidiGenerateContent`), rồi mở phiên thật, chờ `setupComplete`, gửi một lượt text và in phản
+   hồi. Dừng ở bước đầu tiên hỏng và nói rõ phải sửa gì.
+
+**Bằng chứng:** typecheck ✅ · lint ✅ · format ✅ · test **4956/4956** ✅ · chạy thử nhánh lỗi của
+script: báo đúng "Thiếu GEMINI_API_KEY".
+
+**VẪN CÒN NỢ:** chưa ai chạy `smoke:gemini-live` với key thật. Nợ chỉ đóng khi script chạy xanh
+trên máy có key — đừng đánh dấu xong trước lúc đó.
+
+### fix(ai): Đấu trường Tranh biện + Socratic Moderator gọi AI THẬT (hết scaffolding giả) (2026-08-23)
+
+**Bối cảnh:** nợ kỹ thuật ghi từ 2026-08-21 nêu rõ _"chưa rà lại các file V6.x/V7.0 khác cùng
+thời điểm với `cf44362` xem có scaffolding giả tương tự không"_ (sau khi phát hiện
+`geminiLiveService` echo ngược audio người dùng giả làm phản hồi AI). Phiên này đã rà. Người
+dùng chọn **hướng A — nối AI thật**.
+
+**Rà soát: 6 tính năng đều NỐI THÔNG tới UI (người dùng bấm được thật). Tìm thấy 2 chỗ giả.**
+
+1. **`DebateArenaService.generateAiTurn`** — chú thích ghi _"Sinh phản hồi / phản biện AI sắc
+   sảo"_ nhưng trả về **1 trong 3 đoạn tiếng Anh CỨNG**, bỏ qua cả chủ đề tranh biện lẫn lập
+   luận người học vừa viết. UI hiển thị "Debater AI". _(Công bằng: `analyzeArgumentTurn` chấm
+   lập luận người dùng thì CÓ đọc thật nội dung — chỉ phần "đối thủ nói gì" là giả.)_
+2. **"AI Socratic Moderator"** phòng học nhóm — im lặng quá ngưỡng thì phát **một câu cố định**
+   dán nhãn `🤖 Đồng Hành AI`. _(VAD của service này là THẬT — tính RMS từ PCM 16-bit.)_
+
+**4 tính năng KHÔNG giả, đã kiểm và giữ nguyên** (ghi lại để phiên sau đừng xoá nhầm):
+`socraticDiagnosticsService` (ngân hàng ngộ nhận + lộ trình hỏi soạn sẵn),
+`metacognitiveReflectionService` (bộ câu hỏi phản tư curated — loại nội dung này VỐN NÊN soạn
+tay), `scenarioHolodeckService` (chấm theo luật nhưng CÓ đọc câu người dùng),
+`stemScratchpadService` (validator ký hiệu theo luật). **Ranh giới phân định:** nội dung soạn
+sẵn là hợp lệ; GIẢ là khi code trình bày kết quả như thể AI vừa suy nghĩ đáp lại người dùng,
+mà thực ra là chuỗi cố định bỏ qua input.
+
+**Đã làm:**
+
+1. **`generateAiTurn` gọi model THẬT** — prompt dựng từ kiến nghị (motion) + 6 lượt gần nhất
+   nên đối thủ phản biện đúng thứ người học vừa nói. Thành `async`.
+2. **Gói dùng chung `packages/core-ai/chatFallback.ts`** — chuỗi dự phòng Groq → Anthropic →
+   Gemini + tự ghi token (mục N4, chế độ `debate`/`co-learning` hiện riêng trên dashboard
+   admin). Tách ra vì cả 2 chỗ vá đều cần; chép đôi ~60 dòng gọi provider là chỗ dễ lệch nhất
+   về sau. `ai.ts`/`companionRuntime.ts` CỐ Ý không dùng — chúng còn phải tự quyết hoàn
+   lượt/forward status gốc theo từng nhánh lỗi.
+3. **Cờ `isFallback`** trong contract `DebateTurn` + payload sự kiện phòng học: khi không gọi
+   được AI thì vẫn có câu mẫu NHƯNG **UI hiện badge "Câu mẫu — chưa gọi được AI"**. Không lặp
+   lại lỗi cũ là im lặng để người học tưởng đang đấu với AI.
+4. **`/api/debate-arena` nay có rate-limit + ĐẾM LƯỢT** (chế độ `chat`, khuôn N1 mục B3) —
+   trước đây endpoint mang tiếng "AI" mà không có cả hai, vì nó chỉ trả chuỗi cứng nên không
+   ai thấy cần chặn. **Hoàn lượt khi rơi vào fallback** — không tính tiền người học cho câu mẫu.
+5. Moderator phòng học nhóm sinh câu hỏi bằng AI theo chủ đề phòng; **không `await` trong luồng
+   relay audio** (chờ AI sẽ làm nghẽn tiếng nói cả phòng), sinh xong mới phát.
+
+**Bài học về TEST:** bộ test cũ vẫn xanh suốt trong khi tính năng hoàn toàn giả, vì nó chỉ kiểm
+`content.length > 20`. Đã thêm `debateArenaAiTurn.test.ts` ghim đúng thứ test cũ bỏ lọt: có gọi
+provider không · prompt có mang chủ đề + lời người học không · model trả rỗng/lỗi mạng/không có
+key thì có gắn cờ nói thật không.
+
+**Cổng đã chạy:** typecheck ✅ · lint ✅ · format ✅ · test **4956/4956** (405 file, +8 ca mới) ✅ ·
+build ✅ · size ✅ (JS 120.65/123 · CSS 15.7/16) · `git status` sau build vẫn SẠCH ✅.
+
+**CHƯA kiểm được:** chưa gọi provider thật (sandbox không có key AI). Cần chạy thử 1 phiên
+tranh biện thật sau khi deploy để xác nhận chất lượng phản biện.
+
+### docs: sửa mâu thuẫn trạng thái required status check (2026-08-23)
+
+**Vấn đề:** hai tài liệu nói ngược nhau về cùng một việc — `CLAUDE.md` mục 13 (#6) ghi branch
+protection + CI check bắt buộc "ĐÃ XONG, xác nhận 2026-07-11", còn đặc tả platform mục 5.3 ghi
+"VIỆC TAY người dùng, chưa làm được từ phía AI". Phiên sau đọc trúng file nào thì tin file đó.
+
+**Đã hỏi người dùng và được xác nhận: ĐÃ BẬT.** Sửa cả hai tài liệu cho khớp thực tế, và ghi rõ
+danh sách check bắt buộc gồm **`quality`, `e2e` VÀ `metadata`** (đặc tả cũ chỉ nhắc 2 check —
+thiếu `metadata`, chính là cổng bắt PR có mô tả đầy đủ + liên kết đặc tả).
+
+**Bài học ghi vào đặc tả:** trạng thái VIỆC TAY (thứ chỉ người dùng làm được trên giao diện
+GitHub/VPS) phải HỎI người dùng để xác nhận, không suy từ trí nhớ phiên trước — AI không có
+cách nào tự kiểm branch protection từ trong phiên (công cụ GitHub sẵn có không đọc được rule).
+
+### fix: deploy vẫn kẹt vì cây làm việc trên VPS đã "bẩn" từ trước (2026-08-23)
+
+**Triệu chứng:** auto-deploy đỏ ngay bước SSH đầu tiên suốt 6 run liền
+(32634211968 → 32643862602), chưa hề chạy tới `scripts/deploy.sh`:
+
+```
+error: Your local changes to the following files would be overwritten by checkout:
+	apps/dhcb/public/data/manifest.json
+Please commit your changes or stash them before you switch branches.
+```
+
+**Quan hệ với PR #631:** #631 đã sửa ĐÚNG gốc bệnh phía repo (hai mẫu ignore neo sai đường dẫn
+sau PR-S2 + bỏ theo dõi `manifest.json` + commit lại 130 file truyện đúng dạng generator).
+Nhưng **deploy trên chính commit #631 VẪN ĐỎ** (run 32643862602) — lần này danh sách chặn là
+130 file `apps/dhcb/public/data/stories/*.json`. Lý do: VPS đã mang sẵn một cây làm việc bẩn từ
+những lần build trước, và `git checkout` từ chối ghi đè file đang sửa cục bộ **kể cả khi commit
+đích XOÁ hoặc thay nội dung file đó**. Sửa phía repo không tự dọn được trạng thái đã bẩn sẵn
+trên máy đích → deploy tự khoá chính nó, không thoát ra được.
+
+**Đã sửa:** thêm `-f` cho `git checkout` ở CẢ `.github/workflows/deploy.yml` và
+`scripts/deploy.sh`. Ngay dòng sau đó deploy vốn đã ép thư mục khớp tuyệt đối `origin/main`
+(chủ ý ghi rõ trong chú thích đầu `scripts/deploy.sh`: "thay đổi cục bộ lỡ tay trên VPS bị bỏ"),
+nên `-f` chỉ thực hiện đúng ý định sẵn có sớm hơn một bước.
+
+**Dọn nốt 3 mẫu ignore còn neo vào đường dẫn trước PR-S2** (#631 mới gom `public/data/`):
+`dictionary.backup.json` trong `.gitignore` + `.prettierignore`, và `lessons.json` trong
+`.prettierignore` (`src/data/…` → `apps/dhcb/src/data/…`). Đã rà lại toàn bộ hai file: **không
+còn mẫu nào neo vào đường dẫn cũ** (`grep -E "^(src|public|api|components|lib|data|pages|prompts)/"`
+trả về rỗng). Riêng `lessons.json` chỉ đổi phạm vi kiểm format, KHÔNG đổi nội dung file: nó là
+data blob tĩnh 1,1 MB, chỉ các script one-off đã archive mới ghi vào, nên không có cảnh
+generator ↔ Prettier đá nhau như 130 file truyện.
+
+**Bài học:** mọi cơ chế "ép máy đích khớp origin" phải chịu được cây làm việc bẩn có sẵn — nếu
+không, một file sinh tự động lọt vào Git một lần là đủ khoá đường ống deploy vĩnh viễn.
+
+### fix(build): build/format không còn làm bẩn cây git 131 file (2026-08-23)
+
+**Bối cảnh:** nợ số 1 phát hiện khi làm N4 (PR #630). Người dùng chọn xử lý mục này trước.
+
+**Gốc bệnh — HAI đường dẫn cũ sót lại từ PR-S2** (khi `public/` dời vào `apps/dhcb/`). Mẫu
+ignore có chứa dấu `/` được NEO TỪ GỐC REPO, nên `public/data/` sau khi dời KHÔNG còn khớp gì:
+
+1. `.prettierignore` có `public/data/` → Prettier bắt đầu "nhận" thư mục dữ liệu sinh tự động.
+   Một lần chạy `npm run format` đã in lại 131 file JSON theo kiểu xuống dòng đẹp và bản đó
+   được commit. Nhưng generator (`scripts/gen-stories-json.mjs`) ghi bằng `JSON.stringify`
+   KHÔNG indent = rút gọn 1 dòng → **hai công cụ đá nhau**: build đổi sang rút gọn, format đổi
+   ngược lại thành đẹp, mỗi lần chạy là 131 file "thay đổi" (dễ commit nhầm ~33.000 dòng rác).
+2. `.gitignore` có `public/data/manifest.json` → file build artifact này lẽ ra không được
+   commit, sau khi dời thì hết được bỏ qua và đã lọt vào git.
+
+**Đã làm:**
+
+1. Sửa cả hai đường dẫn thành `apps/dhcb/public/data/…`, kèm chú thích tại chỗ giải thích luật
+   "mẫu có dấu / thì neo từ gốc repo" để lần sau dời thư mục không dẫm lại.
+2. `git rm --cached apps/dhcb/public/data/manifest.json` — trả về đúng ý định ban đầu (build
+   artifact, không commit). An toàn: `dataPrecache.ts` chỉ chạy ở bản PROD (đã đọc code xác
+   nhận), dev không đụng tới file này.
+3. Commit lại 130 file truyện ở ĐÚNG dạng generator sinh ra. Chọn hướng này (thay vì bắt
+   generator in đẹp) vì các file này được người dùng TẢI VỀ MÁY để dùng offline —
+   **rút gọn nhẹ hơn ~200KB** (2,3MB → 2,1MB, ~9%), lợi thật cho người học mạng chậm.
+
+**Bằng chứng (chạy thật, đúng phép thử đã phát hiện lỗi):** sau `npm run build` → `git status`
+SẠCH; sau `npm run format` → `git status` SẠCH; `prettier --check .` xanh. Kèm typecheck ✅ ·
+lint ✅ · vitest 4948/4948 ✅ · e2e `listening` + `smoke` 6/6 ✅.
+
+### docs(migrations): bổ sung 19 dòng thiếu vào README + test chốt chặn (2026-08-23)
+
+**Bối cảnh:** nợ số 3 (cuối) phát hiện khi làm N4.
+
+**Số liệu THẬT sau khi đối chiếu từng file (khác con số ước đoán ban đầu):** không phải thiếu 16
+dòng `0044`→`0059` như đã ghi lúc đầu, mà thiếu **19 dòng** — trong đó **3 file CŨ HƠN `0043`**
+cũng đang thiếu: `0027_reserved_names.sql`, `0033_email_reminders.sql`,
+`0040_sync_user_settings.sql`. (Thư mục còn có SỐ TRÙNG: hai file `0026_*` và hai file `0027_*`
+— đã kiểm, cả bốn nay đều có dòng.)
+
+**Đã làm:**
+
+1. Đọc TỪNG file trong 19 file rồi viết mô tả đúng việc nó làm (không đoán theo tên file).
+2. Sửa thứ tự `0009`/`0010` bị đảo (lỗi sẵn có, cùng file nên sửa luôn).
+3. **Test chốt chặn `scripts/migrations-readme-coverage.test.ts`** — bắt CẢ hai chiều: file
+   `.sql` chưa có dòng mô tả, VÀ README còn nhắc file đã bị xoá. Cố ý KHÔNG kiểm nội dung mô tả
+   (ép định dạng chỉ gây phiền, không bắt được lỗi thật).
+
+**Vì sao cần test:** đây là kiểu hỏng IM LẶNG — bảng tụt lại 19 file mà không công cụ nào báo,
+người đọc README vẫn tưởng mình nắm hết lịch sử schema. Test biến nó thành lỗi thấy ngay ở CI.
+
+**Bằng chứng:** 61 dòng / 61 file, 0 thiếu. Test đã được kiểm là **thật sự bắt lỗi**: cố tình
+đổi tên một file trong README → test đỏ đúng cả 2 ca và nêu đúng tên file; khôi phục → xanh lại.
+Cổng: typecheck ✅ · lint ✅ · format ✅ · vitest 4951/4951 ✅.
+
+### fix(ci): cổng `metadata` nhận cả `docs/research/` + kiểm đặc tả có thật (2026-08-23)
+
+**Bối cảnh:** nợ số 2 phát hiện khi làm N4. Cổng `metadata` (`.github/workflows/pr-policy.yml`)
+bắt PR `feat:` phải link `docs/specs/YYYY-MM-DD-slug.md`, NHƯNG `CLAUDE.md` mục 2 lại chỉ định
+`docs/research/*.md` là nguồn thi hành. Hai bên mâu thuẫn → PR feat làm theo lộ trình luôn bị
+chặn oan; ở PR #630 đã phải viết spec BÙ sau khi code chỉ để qua cổng.
+
+**Đã làm:**
+
+1. **Nới nơi đặt đặc tả:** cổng nhận CẢ `docs/specs/YYYY-MM-DD-slug.md` LẪN
+   `docs/research/<slug>.md` (tên ở research không theo khuôn ngày-đầu — đã kiểm 44 file thật).
+2. **Bù lại bằng siết phần thực chất — KIỂM FILE CÓ TỒN TẠI THẬT** trong nhánh (qua
+   `repos.getContent` ở `pr.head.sha`). Trước đây cổng CHỈ dò chuỗi trong mô tả PR, nên gõ một
+   đường dẫn không có thật vẫn qua — nới nơi đặt mà không kiểm tồn tại thì cổng thành hình thức.
+   Lỗi mạng/quyền (khác 404) chỉ ghi `core.warning`, KHÔNG chặn oan PR hợp lệ.
+3. Đồng bộ `.github/pull_request_template.md` với cổng (trước đó template chỉ nói `docs/specs/`).
+
+**Bằng chứng:** chạy thật regex mới trên 7 ca dữ liệu thật — khớp 4 ca hợp lệ (spec cũ của
+PR #630, research có ngày, research không ngày, dạng link markdown), trượt đúng 3 ca phải trượt
+(không có liên kết, `docs/framework/…`, `docs/specs/` sai khuôn tên). Cổng tự nó chạy trên chính
+PR này.
+
+### feat: N4 — đo chi phí AI theo TOKEN THẬT + cảnh báo ngân sách (2026-08-23)
+
+**Bối cảnh:** mục còn lại cuối cùng thuộc phần AI làm được của đặc tả platform mục 5.5
+("Sentry đã có; thiếu uptime monitor + alert chi phí AI theo token thật"), sau khi N3 (PR #629)
+merge và lộ trình S1→S6 hoàn tất.
+
+**Vấn đề đã xác minh trong code trước khi làm:**
+
+- `packages/core-ai/aiCost.ts` chỉ ƯỚC TÍNH `số lượt × đơn giá cố định` — chính chú thích đầu
+  file thừa nhận "KHÔNG đo token thật". Sai lệch khi prompt dài/ngắn, không biết
+  provider/model nào ngốn tiền.
+- `packages/core-ai/capabilityCostTracker.ts` (231 dòng, có bảng giá thật + chiết khấu cache)
+  MỒ CÔI — 0 nơi import.
+- Cả 3 provider đều ĐÃ trả token thật trong response mà ta đang vứt đi: Groq `usage`,
+  Anthropic `usage` (kèm cache read/write), Gemini `usageMetadata`.
+
+**Đã làm:**
+
+1. **Migration `0059_ai_token_usage_daily.sql`** — bảng `platform.ai_token_usage_daily` cộng
+   dồn theo khoá (ngày giờ VN, provider, model, mode). CỐ Ý không log per-call: quy mô hiện
+   tại chỉ cần trả lời "ngày X, model Y, chế độ M tốn bao nhiêu"; bảng cũng KHÔNG có
+   `user_id` (số liệu vận hành gộp, không phải nhật ký hành vi cá nhân).
+2. **`packages/core-ai/aiTokenUsage.ts`** — parser usage cho 3 provider + `recordAiTokenUsage()`
+   upsert cộng dồn, quy USD bằng `calculateCostUsd()` của `capabilityCostTracker` (gói mồ côi
+   nay có người dùng thật). **Bất biến: đo đạc KHÔNG được làm hỏng lượt trả lời** — hàm ghi
+   nuốt mọi lỗi (DB sập/chưa migrate → chỉ log cảnh báo), caller gọi `void` không await.
+   Anthropic báo `cache_read/creation_input_tokens` TÁCH KHỎI `input_tokens` → parser cộng lại
+   để `promptTokens` là tổng đầu vào thật, đúng như `calculateCostUsd()` mong đợi.
+3. **Provider trả kèm token:** `chatProviders.ts` thêm `usage` + `model` vào kết quả
+   `success` của Groq (`model` là model THỰC SỰ dùng — bể model có thể xoay vòng, lấy
+   `GROQ_CHAT_MODEL` sẽ tính nhầm bảng giá); `geminiApi.ts` thêm tham số tuỳ chọn `onUsage`
+   (callback thay vì đổi kiểu trả về → 3 nơi gọi `callGemini()` giữ nguyên không sửa).
+4. **Ghi nhận ở 2 đường AI trả tiền:** `/api/agent` (`ai.ts` — cả 3 nhánh Groq/Anthropic/
+   Gemini, Anthropic chỉ ghi khi status 2xx, Gemini ghi cả nhánh lỗi vì đã bị tính tiền
+   token) và `companionRuntime.ts` (mode `companion`, tách khỏi lượt gia sư trong dashboard).
+5. **Cảnh báo ngân sách:** `AI_DAILY_BUDGET_USD` (bỏ trống = không cảnh báo) — vượt ngưỡng
+   ghi log `error` MỘT lần/ngày/tiến trình, không spam mỗi lượt.
+6. **Dashboard admin:** `/api/admin-usage-stats` thêm khối `tokenCost` (tổng + chia theo
+   provider/model/mode + ngưỡng ngân sách); `AdminUsagePanel` thêm thẻ "Chi phí AI đo THẬT
+   theo token" đặt CẠNH số ước tính cũ kèm tỉ lệ lệch — để biết có nên chỉnh `AI_COST_*_USD`.
+
+**Giới hạn đã biết (ghi để không hiểu nhầm số liệu):** chỉ đo đường CHAT (gia sư + Bạn Đồng
+Hành). TTS/STT/chấm phát âm tính theo ký tự/giờ audio chứ không theo token — vẫn dùng ước
+tính cũ; thẻ admin ghi rõ điều này. Uptime monitor (nửa còn lại của mục 5.5) chưa làm — cần
+dịch vụ ngoài (UptimeRobot…), là việc tay của người dùng.
+
+**Nợ phát hiện lúc làm (không sửa trong PR này — ngoài phạm vi, ghi lại để không quên):**
+
+- ~~Bảng liệt kê migration trong `postgres/migrations/README.md` dừng ở `0043`~~ **ĐÃ XỬ LÝ** —
+  xem mục "docs(migrations): bổ sung 19 dòng thiếu" ngay dưới.
+- ~~`npm run build` sinh lại 131 file `apps/dhcb/public/data/stories/*.json` làm bẩn cây git~~
+  **ĐÃ XỬ LÝ** — xem mục "fix(build): build/format không còn làm bẩn cây git" ngay dưới.
+
+**Spec:** `docs/specs/2026-08-23-ai-token-cost-observability.md` (viết BÙ sau khi code, do cổng
+CI `metadata` chặn PR `feat:` không có liên kết `docs/specs/` — bài học quy trình ghi ở mục 9
+của spec: lộ trình lớn nằm ở `docs/research/` nhưng cổng chỉ nhận `docs/specs/`, hai thư mục
+chưa nối với nhau).
+
+**Cổng đã chạy:** `npm ci` (node_modules đang lệch lockfile — TS 6.0.2 vs `^5.2.2`, đúng dấu
+hiệu CLAUDE.md mục 8 cảnh báo) · typecheck ✅ · lint ✅ · test ✅ (số ở commit/PR).
+
 ### feat+refactor: N3 — hợp nhất hệ trùng + PvP hết hardcode + ẩn telemetry USD (2026-08-23)
 
 **Bối cảnh:** 3 "việc quyết định lớn" còn lại (đã người dùng duyệt từ kế hoạch 7 PR A→G) +

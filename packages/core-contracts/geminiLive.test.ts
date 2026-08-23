@@ -38,7 +38,8 @@ describe('geminiLive contracts', () => {
         sessionId: 'session-live-01',
         personId: 'person-user-01',
       })
-      expect(config.model).toBe('gemini-2.0-flash-exp')
+      // Đổi 2026-08-23: dòng Gemini 2.0 Flash ngừng phục vụ 31/03/2026 nên mặc định cũ đã chết.
+      expect(config.model).toBe('gemini-3.1-flash-live-preview')
       expect(config.voiceName).toBe('Aoede')
       expect(config.sampleRate).toBe(24000)
       expect(config.maxDurationSeconds).toBe(600)

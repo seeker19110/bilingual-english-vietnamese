@@ -170,6 +170,13 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
                         <span className="text-xs font-bold text-indigo-300">
                           {turn.speakerName} ({turn.speakerRole})
                         </span>
+                        {/* Nói THẬT khi lượt này là câu mẫu chứ không phải AI vừa nghĩ ra
+                            (thiếu key AI / provider lỗi) — xem debateArenaService.ts. */}
+                        {turn.isFallback && (
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-200 theme-light:text-amber-900 border border-amber-500/30 font-semibold">
+                            Câu mẫu — chưa gọi được AI
+                          </span>
+                        )}
                         {turn.detectedFallacy !== 'none' && (
                           <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold">
                             ⚠️ Ngụy biện: {turn.detectedFallacy}

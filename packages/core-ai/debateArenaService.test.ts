@@ -43,7 +43,7 @@ describe('DebateArenaService', () => {
     expect(analysis.logicScore).toBeLessThan(60)
   })
 
-  it('generates AI turn and evaluates overall match rubric', () => {
+  it('generates AI turn and evaluates overall match rubric', async () => {
     const session = DebateArenaService.createDebateSession('11111111-1111-4111-8111-111111111111', {
       topicId: 'macroeconomics',
       motion: 'Universal Basic Income promotes innovation.',
@@ -53,7 +53,7 @@ describe('DebateArenaService', () => {
       maxRounds: 2,
     })
 
-    const aiTurn = DebateArenaService.generateAiTurn(session, 'negative')
+    const aiTurn = await DebateArenaService.generateAiTurn(session, 'negative')
     expect(aiTurn.speakerRole).toBe('negative')
     expect(aiTurn.content.length).toBeGreaterThan(20)
 
@@ -108,7 +108,7 @@ describe('DebateArenaService', () => {
     expect(analysis.persuasionScore).toBeGreaterThanOrEqual(75)
   })
 
-  it('creates debate session with userStance=oppose and generates affirmative/moderator turns', () => {
+  it('creates debate session with userStance=oppose and generates affirmative/moderator turns', async () => {
     const session = DebateArenaService.createDebateSession('11111111-1111-4111-8111-111111111111', {
       topicId: 't-oppose',
       motion: 'Nuclear energy should be phased out.',
@@ -120,12 +120,15 @@ describe('DebateArenaService', () => {
 
     expect(session.personas.some((p) => p.role === 'affirmative')).toBe(true)
 
-    const affTurn = DebateArenaService.generateAiTurn(session, 'affirmative')
+    const affTurn = await DebateArenaService.generateAiTurn(session, 'affirmative')
     expect(affTurn.speakerRole).toBe('affirmative')
+    // Môi trường test KHÔNG có key AI → rơi về mẫu cứng VÀ phải gắn cờ isFallback.
+    expect(affTurn.isFallback).toBe(true)
     expect(affTurn.content).toContain('ethical imperative')
 
-    const modTurn = DebateArenaService.generateAiTurn(session, 'socratic_moderator')
+    const modTurn = await DebateArenaService.generateAiTurn(session, 'socratic_moderator')
     expect(modTurn.speakerRole).toBe('socratic_moderator')
+    expect(modTurn.isFallback).toBe(true)
     expect(modTurn.content).toContain('probing line of inquiry')
   })
 

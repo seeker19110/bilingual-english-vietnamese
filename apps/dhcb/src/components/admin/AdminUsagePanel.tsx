@@ -3,7 +3,16 @@
 // là trả lời nhanh 3 câu: tính năng nào đáng giữ, chi phí AI bao nhiêu, doanh thu có bù nổi
 // không. Vì vậy mọi con số đều đi kèm ngữ cảnh so sánh (chi phí/người, tỉ lệ trả phí, lãi/lỗ).
 import { useEffect, useState } from 'react'
-import { Activity, Loader2, ShieldAlert, RefreshCw, TrendingUp, Wallet, Users } from 'lucide-react'
+import {
+  Activity,
+  Loader2,
+  ShieldAlert,
+  RefreshCw,
+  TrendingUp,
+  Wallet,
+  Users,
+  Gauge,
+} from 'lucide-react'
 import { getAuthHeader } from '@core/authHeader'
 
 type Mode = 'chat' | 'writing' | 'speaking' | 'stt' | 'pronounce'
@@ -46,6 +55,31 @@ interface Stats {
     byFeature: { mode: Mode; count: number; unitUsd: number; costUsd: number; users: number }[]
     perActiveUserVnd: number
   }
+  // Chi phí ĐO THẬT theo token nhà cung cấp báo về (mục N4) — khác `cost` ở trên (ước tính
+  // theo số lượt). dailyBudgetUsd = null nghĩa là chưa đặt AI_DAILY_BUDGET_USD trên server.
+  // TUỲ CHỌN (`?`): trong lúc deploy cuốn chiếu, server bản CŨ vẫn trả response KHÔNG có
+  // trường này — component phải bỏ qua thẻ chứ TUYỆT ĐỐI không được sập cả trang admin.
+  tokenCost?: {
+    totals: {
+      calls: number
+      promptTokens: number
+      completionTokens: number
+      cacheReadTokens: number
+      costUsd: number
+    }
+    totalVnd: number
+    byProviderModel: {
+      provider: string
+      model: string
+      mode: string
+      calls: number
+      promptTokens: number
+      completionTokens: number
+      cacheReadTokens: number
+      costUsd: number
+    }[]
+    dailyBudgetUsd: number | null
+  }
   revenue: {
     vnd: number
     payments: Record<string, number>
@@ -86,6 +120,13 @@ const CYCLE_LABELS: Record<string, string> = {
 const DAY_OPTIONS = [7, 30, 90, 180]
 
 const vnd = (n: number) => `${Math.round(n).toLocaleString('vi-VN')}đ`
+// Token đếm tới hàng triệu — rút gọn cho dễ đọc, giữ 1 chữ số thập phân để không mất thông tin.
+const tokens = (n: number) =>
+  n >= 1_000_000
+    ? `${(n / 1_000_000).toFixed(1)}M`
+    : n >= 1_000
+      ? `${(n / 1_000).toFixed(1)}K`
+      : String(n)
 const pct = (n: number) => `${(n * 100).toFixed(1)}%`
 
 function Tile({ label, value, hint }: { label: string; value: string; hint?: string }) {
@@ -327,6 +368,94 @@ export default function AdminUsagePanel() {
               ))}
             </div>
           </Card>
+
+          {/* ── Chi phí AI đo THẬT theo token ─────────────────────────── */}
+          {/* Chỉ dựng thẻ khi server có trả `tokenCost` (xem chú thích ở interface Stats). */}
+          {stats.tokenCost && (
+            <Card
+              title="Chi phí AI đo THẬT theo token"
+              icon={Gauge}
+              note='Số token do CHÍNH nhà cung cấp (Groq/Anthropic/Gemini) báo về mỗi lượt gọi, quy giá theo bảng giá thật — khác thẻ "chi phí ước tính" ở trên (lượt × đơn giá đoán sẵn). Hai số lệch nhiều nghĩa là nên chỉnh AI_COST_*_USD trong .env cho sát. Chỉ tính đường chat gia sư + Bạn Đồng Hành; TTS/STT/chấm phát âm chưa đo theo token.'
+            >
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                <Tile
+                  label="Chi phí thật trong kỳ"
+                  value={vnd(stats.tokenCost.totalVnd)}
+                  hint={`${stats.tokenCost.totals.costUsd.toFixed(4)} USD · ${stats.tokenCost.totals.calls} lượt`}
+                />
+                <Tile
+                  label="So với ước tính"
+                  value={
+                    stats.cost.totalVnd > 0
+                      ? pct(stats.tokenCost.totalVnd / stats.cost.totalVnd)
+                      : '—'
+                  }
+                  hint={`ước tính ${vnd(stats.cost.totalVnd)}`}
+                />
+                <Tile
+                  label="Token vào / ra"
+                  value={`${tokens(stats.tokenCost.totals.promptTokens)} / ${tokens(stats.tokenCost.totals.completionTokens)}`}
+                  hint={`đọc từ cache ${tokens(stats.tokenCost.totals.cacheReadTokens)}`}
+                />
+                <Tile
+                  label="Ngân sách ngày"
+                  value={
+                    stats.tokenCost.dailyBudgetUsd === null
+                      ? 'chưa đặt'
+                      : `${stats.tokenCost.dailyBudgetUsd} USD`
+                  }
+                  hint={
+                    stats.tokenCost.dailyBudgetUsd === null
+                      ? 'đặt AI_DAILY_BUDGET_USD để server cảnh báo'
+                      : 'vượt ngưỡng sẽ ghi log cảnh báo'
+                  }
+                />
+              </div>
+
+              {stats.tokenCost.byProviderModel.length > 0 ? (
+                <div className="overflow-x-auto mt-3">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="text-left text-zinc-500">
+                        <th className="pb-2 pr-3 font-medium">Nhà cung cấp / model</th>
+                        <th className="pb-2 px-3 font-medium">Chế độ</th>
+                        <th className="pb-2 px-3 font-medium text-right">Lượt</th>
+                        <th className="pb-2 px-3 font-medium text-right">Token vào/ra</th>
+                        <th className="pb-2 pl-3 font-medium text-right">Chi phí</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {stats.tokenCost.byProviderModel.map((r) => (
+                        <tr
+                          key={`${r.provider}-${r.model}-${r.mode}`}
+                          className="border-t border-zinc-800/80"
+                        >
+                          <td className="py-2 pr-3 text-zinc-300">
+                            {r.provider}
+                            <span className="text-zinc-500"> · {r.model}</span>
+                          </td>
+                          <td className="py-2 px-3 text-zinc-400">{r.mode}</td>
+                          <td className="py-2 px-3 text-right text-zinc-200 tabular-nums">
+                            {r.calls}
+                          </td>
+                          <td className="py-2 px-3 text-right text-zinc-400 tabular-nums whitespace-nowrap">
+                            {tokens(r.promptTokens)}/{tokens(r.completionTokens)}
+                          </td>
+                          <td className="py-2 pl-3 text-right text-accent-400 tabular-nums whitespace-nowrap">
+                            {vnd(r.costUsd * stats.cost.usdVndRate)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="text-xs text-zinc-500 mt-3">
+                  Chưa có lượt gọi AI nào được đo token trong kỳ này.
+                </p>
+              )}
+            </Card>
+          )}
 
           {/* ── Doanh thu & lãi lỗ ─────────────────────────────────────── */}
           <Card

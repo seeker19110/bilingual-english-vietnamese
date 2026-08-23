@@ -6,6 +6,7 @@
 //   - Budget guard: tối đa 100 phòng đồng thời (in-memory), mỗi phòng ≤ 12 người
 
 import { randomUUID } from 'node:crypto'
+import { generateChatText } from './chatFallback.js'
 import type {
   AudioRoomState,
   AudioRoomMember,
@@ -294,11 +295,38 @@ export function processAudioChunk(params: {
  * Broadcast AI Socratic hint vào phòng khi phát hiện im lặng kéo dài hoặc confusion.
  * @returns Nội dung hint đã gửi hoặc null nếu phòng không hợp lệ
  */
+// Sinh câu gợi mở Socratic bằng AI THẬT theo chủ đề phòng.
+//
+// [2026-08-23] Trước đây chỗ gọi hàm broadcast bên dưới truyền vào MỘT câu cố định
+// ("Các bạn có thắc mắc gì về chủ đề X…") nhưng dán nhãn "🤖 Đồng Hành AI" — người học tưởng
+// AI đang theo dõi buổi học. Nay hỏi model thật; không gọi được thì vẫn có câu mặc định nhưng
+// `isFallback: true` để giao diện nói rõ đó là câu mẫu.
+export async function generateAiSocraticHint(
+  topic: string,
+): Promise<{ hint: string; isFallback: boolean }> {
+  const fallback = `Các bạn có thắc mắc gì về chủ đề "${topic}" cần tôi giải thích thêm không?`
+
+  const text = await generateChatText({
+    system:
+      'Bạn là người điều phối buổi học nhóm theo lối Socratic trong ứng dụng học tiếng Anh. ' +
+      'Cả nhóm vừa im lặng một lúc. Hãy đặt ĐÚNG MỘT câu hỏi ngắn bằng tiếng Việt (tối đa 30 từ) ' +
+      'để khơi lại thảo luận: gợi mở, cụ thể, bám sát chủ đề, KHÔNG hỏi chung chung kiểu ' +
+      '"có thắc mắc gì không". Chỉ trả về câu hỏi, không thêm lời dẫn.',
+    userMessage: `Chủ đề buổi học: "${topic}".`,
+    maxTokens: 120,
+    mode: 'co-learning',
+  })
+
+  return text ? { hint: text, isFallback: false } : { hint: fallback, isFallback: true }
+}
+
 export function broadcastAiSocraticHint(
   roomId: string,
   hint: string,
   socraticType:
     'clarification' | 'probing_assumptions' | 'probing_reasons' | 'summary' = 'clarification',
+  // true = câu mẫu vì không gọi được AI. UI phải nói rõ, đừng để người học tưởng là AI.
+  isFallback = false,
 ): AudioRoomEvent | null {
   const room = activeRooms.get(roomId)
   if (!room || !room.isActive) return null
@@ -310,6 +338,7 @@ export function broadcastAiSocraticHint(
     hint,
     socraticType,
     topic: room.topic,
+    isFallback,
   })
 
   emitRoomEvent(roomId, event)

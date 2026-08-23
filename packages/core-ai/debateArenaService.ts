@@ -1,4 +1,11 @@
 // packages/core-ai/debateArenaService.ts — Động cơ Đấu trường Tranh biện AI & Socratic Multi-Agent V5.1.
+//
+// [2026-08-23] SỬA LỖI NGHIÊM TRỌNG: `generateAiTurn` trước đây KHÔNG hề gọi AI — nó trả về
+// 1 trong 3 đoạn tiếng Anh CỨNG, bỏ qua cả chủ đề tranh biện lẫn lập luận người học vừa viết,
+// trong khi UI hiển thị tên "Debater AI". Nay gọi model thật theo đúng thứ tự dự phòng của
+// Companion (Groq → Anthropic → Gemini). Khi KHÔNG provider nào chạy được thì vẫn dùng mẫu
+// cứng, nhưng gắn cờ `isFallback` để UI NÓI THẬT thay vì để người học tưởng đang đấu với AI.
+import { generateChatText } from './chatFallback.js'
 import {
   DebatePersona,
   DebateTurn,
@@ -177,29 +184,85 @@ export class DebateArenaService {
     }
   }
 
-  /**
-   * Sinh phản hồi / phản biện AI sắc sảo từ góc nhìn đối lập hoặc câu hỏi Socratic
-   */
-  static generateAiTurn(
+  // Mẫu cứng CHỈ dùng khi không gọi được AI (thiếu key / mọi provider lỗi). Lượt dùng mẫu này
+  // luôn được gắn cờ `isFallback` để UI nói rõ với người học — xem chú thích đầu file.
+  private static fallbackTurnContent(
+    speakerRole: 'affirmative' | 'negative' | 'socratic_moderator',
+  ): string {
+    if (speakerRole === 'socratic_moderator') {
+      return `A probing line of inquiry from both sides. To what extent can we balance the imperative of rapid innovation against the ethical necessity of safeguarding human agency? What concrete safeguards would you propose?`
+    }
+    if (speakerRole === 'negative') {
+      return `While that position seems appealing on the surface, it overlooks critical unintended consequences. Historical precedent demonstrates that premature interventions often exacerbate the very inequities they intend to mitigate. We must demand empirical substantiation before proceeding.`
+    }
+    return `The ethical imperative is undeniable. When facing systemic challenges, passive incrementalism is counterproductive. Establishing proactive standards serves as an indispensable catalyst for sustainable development.`
+  }
+
+  // Dựng prompt từ CHỦ ĐỀ THẬT + các lượt gần nhất, để đối thủ AI thực sự phản biện đúng thứ
+  // người học vừa nói (đây chính là phần trước đây bị bỏ qua hoàn toàn).
+  private static buildDebatePrompt(
     session: DebateSessionState,
     speakerRole: 'affirmative' | 'negative' | 'socratic_moderator',
-  ): DebateTurn {
+  ): { system: string; userMessage: string } {
+    const roleBrief =
+      speakerRole === 'socratic_moderator'
+        ? 'Bạn là NGƯỜI ĐIỀU PHỐI theo lối Socratic. KHÔNG bênh bên nào; đặt MỘT câu hỏi đào sâu buộc cả hai bên xét lại giả định của mình.'
+        : speakerRole === 'negative'
+          ? 'Bạn tranh biện PHẢN ĐỐI (negative) kiến nghị dưới đây.'
+          : 'Bạn tranh biện ỦNG HỘ (affirmative) kiến nghị dưới đây.'
+
+    const system =
+      `Bạn là đối thủ tranh biện học thuật trong một ứng dụng LUYỆN TIẾNG ANH. ${roleBrief}\n` +
+      `Kiến nghị (motion): "${session.config.motion}".\n` +
+      `Trình độ người học: ${session.config.difficulty}. Viết BẰNG TIẾNG ANH, 3–5 câu, ` +
+      `lập luận chặt theo cấu trúc Toulmin (claim → evidence → warrant), giọng lịch sự và sắc sảo. ` +
+      `PHẢI phản biện trực tiếp vào luận điểm người học vừa nêu, không nói chung chung. ` +
+      `Chỉ trả về nội dung lượt nói, KHÔNG thêm nhãn hay lời dẫn.`
+
+    // Lấy tối đa 6 lượt gần nhất làm bối cảnh — đủ để bám mạch, không thổi phồng token.
+    const recent = session.turns.slice(-6)
+    const transcript = recent
+      .map((t) => `${t.speakerRole === 'user' ? 'Người học' : 'Đối thủ'}: ${t.content}`)
+      .join('\n')
+
+    const userMessage = transcript
+      ? `Diễn biến gần đây:\n${transcript}\n\nHãy viết lượt tiếp theo của bạn.`
+      : `Hãy mở màn lượt tranh biện đầu tiên của bạn về kiến nghị trên.`
+
+    return { system, userMessage }
+  }
+
+  // Gọi model thật theo thứ tự dự phòng Groq → Anthropic → Gemini (đúng khuôn companionRuntime).
+  // Trả null khi KHÔNG provider nào dùng được → caller rơi về mẫu cứng và gắn cờ isFallback.
+  // Gọi model thật qua chuỗi dự phòng dùng chung (Groq → Anthropic → Gemini, xem
+  // chatFallback.ts). Trả null khi không provider nào dùng được → caller rơi về mẫu cứng và
+  // gắn cờ isFallback.
+  private static async callDebateModel(
+    session: DebateSessionState,
+    speakerRole: 'affirmative' | 'negative' | 'socratic_moderator',
+  ): Promise<string | null> {
+    const { system, userMessage } = this.buildDebatePrompt(session, speakerRole)
+    return generateChatText({ system, userMessage, maxTokens: 512, mode: 'debate' })
+  }
+
+  /**
+   * Sinh phản hồi / phản biện AI THẬT từ góc nhìn đối lập hoặc câu hỏi Socratic.
+   * Rơi về mẫu cứng (kèm cờ `isFallback`) khi không provider nào dùng được.
+   */
+  static async generateAiTurn(
+    session: DebateSessionState,
+    speakerRole: 'affirmative' | 'negative' | 'socratic_moderator',
+  ): Promise<DebateTurn> {
     const now = new Date().toISOString()
     const persona = session.personas.find((p) => p.role === speakerRole) || session.personas[0]
     const turnId = `turn-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`
 
-    let content = ''
-    if (speakerRole === 'socratic_moderator') {
-      content = `A probing line of inquiry from both sides. To what extent can we balance the imperative of rapid innovation against the ethical necessity of safeguarding human agency? What concrete safeguards would you propose?`
-    } else if (speakerRole === 'negative') {
-      content = `While that position seems appealing on the surface, it overlooks critical unintended consequences. Historical precedent demonstrates that premature interventions often exacerbate the very inequities they intend to mitigate. We must demand empirical substantiation before proceeding.`
-    } else {
-      content = `The ethical imperative is undeniable. When facing systemic challenges, passive incrementalism is counterproductive. Establishing proactive standards serves as an indispensable catalyst for sustainable development.`
-    }
-
+    const aiText = await this.callDebateModel(session, speakerRole)
+    const content = aiText ?? this.fallbackTurnContent(speakerRole)
     const analysis = this.analyzeArgumentTurn(content)
 
     return {
+      ...(aiText === null ? { isFallback: true as const } : {}),
       id: turnId,
       speakerId: persona?.id || 'ai-speaker',
       speakerName: persona?.name || 'Debater AI',

@@ -1,10 +1,18 @@
 // packages/core-ai/geminiLiveService.ts — Cầu nối phiên Gemini Live thật qua WebSocket BidiGenerateContent.
 //
-// PROTOTYPE (2026-08-21): chỉ mới verify bằng WebSocket giả lập trong test (geminiLiveService.test.ts),
-// CHƯA test được với API key thật trong môi trường này (không có GEMINI_API_KEY khả dụng ở sandbox).
-// Trước khi dùng thật: thêm GEMINI_API_KEY vào .env, thử 1 phiên thật, xác nhận model
-// `GEMINI_LIVE_MODEL` (mặc định gemini-2.0-flash-exp) có hỗ trợ Live API tại thời điểm dùng —
-// Google đổi tên/khả dụng model Live khá thường xuyên.
+// PROTOTYPE (2026-08-21): mới verify bằng WebSocket giả lập trong test (geminiLiveService.test.ts),
+// CHƯA chạy được với API key thật (sandbox không có GEMINI_API_KEY).
+//
+// [2026-08-23] RÀ LẠI THEO TÀI LIỆU HIỆN HÀNH — sửa 2 điểm CHẮC CHẮN HỎNG nếu chạy hôm nay:
+//   1. Endpoint ghim `v1alpha`; tài liệu Live API hiện hành dùng `v1beta`.
+//   2. Model mặc định `gemini-2.0-flash-exp` — dòng Gemini 2.0 Flash ĐÃ NGỪNG PHỤC VỤ
+//      31/03/2026, tức đã chết trước thời điểm này.
+// Cả hai nay đọc từ biến môi trường (`GEMINI_LIVE_WS_URL`, `GEMINI_LIVE_MODEL`) để lần sau
+// Google đổi tên thì SỬA .env LÀ XONG, không phải sửa code + deploy lại.
+//
+// XÁC MINH BẰNG MÁY CÓ KEY: `npm run smoke:gemini-live` — script liệt kê đúng những model mà
+// tài khoản của bạn được phép dùng cho Live, rồi mở một phiên thật. Đừng tin số liệu ở đây,
+// hãy chạy nó.
 import { EventEmitter } from 'node:events'
 import { WebSocket } from 'ws'
 import {
@@ -15,8 +23,13 @@ import {
   GEMINI_LIVE_VERSION,
 } from '@dhcb/core-contracts/geminiLive'
 
-const GEMINI_LIVE_WS_BASE =
-  'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent'
+// Đổi được qua env — xem chú thích đầu file (Google đổi phiên bản/tên model khá thường xuyên).
+export const DEFAULT_GEMINI_LIVE_WS_URL =
+  'wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent'
+
+function geminiLiveWsBase(): string {
+  return process.env.GEMINI_LIVE_WS_URL || DEFAULT_GEMINI_LIVE_WS_URL
+}
 
 /** Cho phép test tiêm factory tạo WebSocket giả — production dùng `ws` thật. */
 export type WebSocketFactory = (url: string) => WebSocket
@@ -70,7 +83,7 @@ export class GeminiLiveSession extends EventEmitter {
 
   private connectUpstream(apiKey: string): void {
     const model = process.env.GEMINI_LIVE_MODEL || this.config.model
-    const url = `${GEMINI_LIVE_WS_BASE}?key=${encodeURIComponent(apiKey)}`
+    const url = `${geminiLiveWsBase()}?key=${encodeURIComponent(apiKey)}`
     const ws = webSocketFactory(url)
     this.upstream = ws
 

@@ -16,6 +16,7 @@
 // dòng) vẫn xanh — bằng chứng hành vi observable không đổi.
 
 import { fetchWithTimeout } from '@dhcb/core-http/fetchTimeout'
+import { parseGroqUsage, type AiTokenUsage } from './aiTokenUsage.js'
 import {
   groqKeyPool,
   groqModelPool,
@@ -27,7 +28,11 @@ export const CHAT_PROVIDER_TIMEOUT_MS = 30_000
 
 /** Kết quả gọi 1 provider chat — 4 dạng loại trừ lẫn nhau, luôn kèm latency để log. */
 export type ChatCallResult =
-  | { kind: 'success'; text: string; latencyMs: number }
+  // `usage` = token THẬT do Groq trả về (mục N4) — null khi body không có khối `usage`.
+  // `model` = model ĐÃ THỰC SỰ dùng: bể model có thể xoay vòng sang model khác khi model đầu
+  // lỗi, nên caller KHÔNG được lấy GROQ_CHAT_MODEL để tính giá (sẽ tính nhầm bảng giá).
+  // Cả hai chỉ để ĐO CHI PHÍ, không ảnh hưởng nhánh fallback/hoàn lượt của ai.ts.
+  | { kind: 'success'; text: string; latencyMs: number; usage: AiTokenUsage | null; model: string }
   | { kind: 'network_error'; message: string; latencyMs: number }
   | { kind: 'http_error'; status: number; bodyText: string; latencyMs: number }
   | { kind: 'malformed_body'; message: string; latencyMs: number }
@@ -102,8 +107,16 @@ export async function callGroqChat(
   }
 
   try {
-    const text = parseGroqText(await resp.json())
-    return { kind: 'success', text, latencyMs: Date.now() - startedAt }
+    // Đọc body MỘT lần rồi rút cả text lẫn usage — Response body chỉ đọc được 1 lượt.
+    const body = await resp.json()
+    const text = parseGroqText(body)
+    return {
+      kind: 'success',
+      text,
+      latencyMs: Date.now() - startedAt,
+      usage: parseGroqUsage(body),
+      model,
+    }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
     return { kind: 'malformed_body', message, latencyMs: Date.now() - startedAt }

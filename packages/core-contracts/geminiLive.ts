@@ -19,7 +19,10 @@ export type GeminiLiveStatus = z.infer<typeof GeminiLiveStatusSchema>
 export const GeminiLiveSessionConfigSchema = z.object({
   sessionId: z.string().min(1),
   personId: z.string().min(1),
-  model: z.string().default('gemini-2.0-flash-exp'),
+  // [2026-08-23] Đổi từ 'gemini-2.0-flash-exp' — dòng Gemini 2.0 Flash NGỪNG PHỤC VỤ
+  // 31/03/2026 nên giá trị cũ đã chết. Ghi đè bằng env `GEMINI_LIVE_MODEL` khi Google đổi tên;
+  // chạy `npm run smoke:gemini-live` để xem tài khoản của bạn thực sự dùng được model nào.
+  model: z.string().default('gemini-3.1-flash-live-preview'),
   voiceName: z.enum(['Aoede', 'Charon', 'Fenrir', 'Kore', 'Puck']).default('Aoede'),
   sampleRate: z.number().int().default(24000),
   systemInstruction: z.string().optional(),
