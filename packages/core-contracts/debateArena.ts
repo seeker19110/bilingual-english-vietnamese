@@ -55,6 +55,10 @@ export const DebateTurnSchema = z.object({
   logicScore: z.number().min(0).max(100),
   persuasionScore: z.number().min(0).max(100),
   timestamp: IsoDateTimeSchema,
+  // Lượt này do MẪU CỨNG sinh ra vì không gọi được AI (thiếu key / provider lỗi), KHÔNG phải
+  // AI thật. Có cờ này để UI nói thật với người học thay vì để họ tưởng đang đấu với AI —
+  // trước 2026-08-23 toàn bộ lượt "AI" đều là 1 trong 3 đoạn cứng mà không ai biết.
+  isFallback: z.boolean().optional(),
 })
 export type DebateTurn = z.infer<typeof DebateTurnSchema>
 
