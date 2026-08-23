@@ -65,6 +65,11 @@ dịch vụ ngoài (UptimeRobot…), là việc tay của người dùng.
   commit, hoặc bỏ file sinh tự động khỏi git. (`.prettierignore` cũng còn trỏ đường dẫn cũ
   `public/data/` từ trước PR-S2 — nhưng KHÔNG gây lỗi: `prettier --check .` vẫn xanh.)
 
+**Spec:** `docs/specs/2026-08-23-ai-token-cost-observability.md` (viết BÙ sau khi code, do cổng
+CI `metadata` chặn PR `feat:` không có liên kết `docs/specs/` — bài học quy trình ghi ở mục 9
+của spec: lộ trình lớn nằm ở `docs/research/` nhưng cổng chỉ nhận `docs/specs/`, hai thư mục
+chưa nối với nhau).
+
 **Cổng đã chạy:** `npm ci` (node_modules đang lệch lockfile — TS 6.0.2 vs `^5.2.2`, đúng dấu
 hiệu CLAUDE.md mục 8 cảnh báo) · typecheck ✅ · lint ✅ · test ✅ (số ở commit/PR).
 
