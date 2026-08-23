@@ -31,6 +31,14 @@ quay về lõi gia sư, đóng băng Platform Vx chưa thật; Q2 chốt 1 lộ 
 5 nhóm việc N1→N5, trong đó **N1 (vá tiền/bảo mật) đề xuất chèn TRƯỚC PR D** của loạt A→G
 đang dở. Trình tự chi tiết ở mục 4 của bản đề xuất. Nhánh: `claude/project-upgrade-proposal-c3wb5h`.
 
+**Bổ sung cùng ngày — đặc tả cải tổ CẤU TRÚC THƯ MỤC** (người dùng yêu cầu nghiên cứu riêng):
+**`docs/research/dac-ta-cai-to-cau-truc-2026-08-23.md`** — cây thư mục đích chuẩn
+(`apps/{english,hub,server}` + 14 gói `@dhcb/*` có package.json thật, `api/` chia theo domain,
+`core-english`/`core-domains` mới), quyết định kỹ thuật then chốt (bundle server bằng esbuild
+để hết cấm alias ở backend, giữ bất biến `dist/` + `dist-server/server.js` nên KHÔNG cần việc
+tay trên VPS), lộ trình 6 PR (S1→S6, ~6,5 ngày công) kèm rủi ro/cách đỡ. Chờ người dùng chốt
+3 cổng: phương án esbuild, cây đích, thời điểm (sau hay chen giữa loạt PR D→G).
+
 ### fix: sửa lỗi logic SRS/CEFR — PR C trong loạt nâng cấp toàn diện (2026-08-23)
 
 **Bối cảnh:** tiếp nối PR A (gamification) + PR B (3 chế độ học) trong kế hoạch 7 PR (A→G) + 4
