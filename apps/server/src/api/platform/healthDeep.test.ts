@@ -1,6 +1,15 @@
 // api/healthDeep.test.ts — Unit test cho /api/health/deep endpoint
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+
+// pingRedis được mock để test KHÔNG mở kết nối Redis thật (CI không có Redis, và chờ
+// connectTimeout thật sẽ làm test chậm + để hở handle).
+const pingRedisMock = vi.fn()
+vi.mock('@dhcb/core-auth/security', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@dhcb/core-auth/security')>()),
+  pingRedis: () => pingRedisMock(),
+}))
+
 import handler, { checkSystemHealth } from './healthDeep.js'
 import * as pgPoolModule from '@dhcb/core-db/pgPool'
 
@@ -10,6 +19,8 @@ describe('Deep Health Check API (/api/health/deep)', () => {
   beforeEach(() => {
     vi.restoreAllMocks()
     process.env = { ...originalEnv }
+    pingRedisMock.mockReset()
+    pingRedisMock.mockResolvedValue({ ok: true, latencyMs: 3 })
   })
 
   afterEach(() => {
@@ -122,4 +133,50 @@ describe('Deep Health Check API (/api/health/deep)', () => {
 
     expect(res.status).toBe(405)
   })
+
+  // ── Cache/Redis: ghim đúng lỗi ĐÃ TỪNG CÓ ────────────────────────────────
+  // [2026-08-23] Trước bản vá, trường này ghi CỨNG `status: 'up'` và chỉ đọc REDIS_URL để đoán
+  // loại cache. Redis chết hoàn toàn mà health check vẫn báo "up" — log production đầy dòng
+  // "[Security] Redis lỗi (Stream isn't writeable…)" trong khi mọi cổng giám sát đều xanh.
+  it('cache: PING được → up kèm độ trễ', async () => {
+    process.env.REDIS_URL = 'redis://localhost:6379'
+    pingRedisMock.mockResolvedValue({ ok: true, latencyMs: 7 })
+    mockDbOk()
+
+    const { result } = await checkSystemHealth()
+    expect(result.checks.cache.status).toBe('up')
+    expect(result.checks.cache.latencyMs).toBe(7)
+  })
+
+  it('cache: Redis CHẾT → báo down kèm lý do (KHÔNG được báo up như bản cũ)', async () => {
+    process.env.REDIS_URL = 'redis://localhost:6379'
+    pingRedisMock.mockResolvedValue({ ok: false, error: "Stream isn't writeable" })
+    mockDbOk()
+
+    const { statusCode, result } = await checkSystemHealth()
+    expect(result.checks.cache.status).toBe('down')
+    expect(result.checks.cache.error).toContain('Stream')
+    // Redis hỏng KHÔNG kéo cả hệ thống xuống: rate limit tự rơi về Map, app vẫn phục vụ.
+    expect(result.status).toBe('healthy')
+    expect(statusCode).toBe(200)
+  })
+
+  it('cache: chưa đặt REDIS_URL → unconfigured, KHÔNG ping', async () => {
+    delete process.env.REDIS_URL
+    mockDbOk()
+
+    const { result } = await checkSystemHealth()
+    expect(result.checks.cache.status).toBe('unconfigured')
+    expect(result.checks.cache.type).toBe('in-memory')
+    expect(pingRedisMock).not.toHaveBeenCalled()
+  })
+
+  function mockDbOk() {
+    vi.spyOn(pgPoolModule, 'getPgPool').mockReturnValue({
+      query: vi.fn().mockResolvedValue({ rows: [{ '?column?': 1 }] }),
+      totalCount: 1,
+      idleCount: 1,
+      waitingCount: 0,
+    } as unknown as ReturnType<typeof pgPoolModule.getPgPool>)
+  }
 })
