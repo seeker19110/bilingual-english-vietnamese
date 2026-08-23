@@ -24,6 +24,6 @@
       "@dhcb/*": ["packages/*"]
     }
   },
-  "include": ["api", "scripts", "packages"],
+  "include": ["apps/server/src", "scripts", "packages"],
   "exclude": ["packages/core-ui"]
 }

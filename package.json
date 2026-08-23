@@ -27,7 +27,7 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "size": "size-limit",
-    "start": "tsx server.ts",
+    "start": "tsx apps/server/src/server.ts",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

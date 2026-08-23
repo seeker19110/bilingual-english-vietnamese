@@ -1,0 +1,332 @@
+// apps/server/src/routes.ts — Bảng gắn TOÀN BỘ route API (tách từ server.ts ở PR-S3).
+// server.ts chỉ còn app/middleware/static/scheduler — thêm endpoint mới thì sửa Ở ĐÂY
+// (test gác: api/routes-registered.test.ts đọc file này).
+import express from 'express'
+import { captureServerException } from './api/_lib/sentry.js'
+
+import ttsHandler from '@dhcb/core-ai/tts'
+import aiHandler from '@dhcb/core-ai/ai'
+import pronunciationHandler from './api/pronunciation.js'
+import sttHandler from '@dhcb/core-ai/stt'
+import pushHandler from './api/push.js'
+import dictionaryHandler from './api/dictionary.js'
+import leaderboardHandler from './api/leaderboard.js'
+import pronounceAssessHandler from './api/pronounce-assess.js'
+import authHandler from '@dhcb/core-auth/auth'
+import profileHandler from './api/profile.js'
+import progressHandler from './api/progress.js'
+import usageSummaryHandler from './api/usage-summary.js'
+import historyHandler from './api/history.js'
+import challengeHandler from './api/challenge.js'
+import tutorFeedbackHandler from './api/tutor-feedback.js'
+import feedbackHandler from './api/feedback.js'
+import adminSettingsHandler from './api/admin-settings.js'
+import appSettingsHandler from './api/app-settings.js'
+import adminGrantPlanHandler from './api/admin-grant-plan.js'
+import adminVipWhitelistHandler from './api/admin-vip-whitelist.js'
+import planFeaturesHandler from './api/plan-features.js'
+import adminPlanFeaturesHandler from './api/admin-plan-features.js'
+import adminPricePromoHandler from './api/admin-price-promo.js'
+import planMarketingHandler from './api/plan-marketing.js'
+import adminPlanMarketingHandler from './api/admin-plan-marketing.js'
+import analyticsHandler from './api/analytics.js'
+import analyticsSummaryHandler from './api/analytics-summary.js'
+import adminUsageStatsHandler from './api/admin-usage-stats.js'
+import adminUsersHandler from './api/admin-users.js'
+import referralHandler from './api/referral.js'
+import questsHandler from './api/quests.js'
+import achievementsHandler from './api/achievements.js'
+import friendsHandler from './api/friends.js'
+import chatHandler from './api/chat.js'
+import adminAchievementRewardsHandler from './api/admin-achievement-rewards.js'
+import adminPaymentsHandler from './api/admin-payments.js'
+import adminSystemControlHandler from './api/admin-system-control.js'
+import adminTtsCacheHandler from './api/admin-tts-cache.js'
+import adminReservedNamesHandler from './api/admin-reserved-names.js'
+import adminFeedbackHandler from './api/admin-feedback.js'
+import adminFeatureStatusHandler from './api/admin-feature-status.js'
+import planPricesHandler from './api/plan-prices.js'
+import checkoutHandler from './api/checkout.js'
+import paymentWebhookHandler from './api/payment-webhook.js'
+import paymentStatusHandler from './api/payment-status.js'
+import paymentHistoryHandler from './api/payment-history.js'
+import avatarVisemesHandler from './api/avatar-visemes.js'
+import hubStatsHandler from './api/hub-stats.js'
+import personsHandler from './api/persons.js'
+import personalFactsHandler from './api/personal-facts.js'
+import consentsHandler from './api/consents.js'
+import personalPoliciesHandler from './api/personal-policies.js'
+import lifeGraphHandler from './api/life-graph.js'
+import lifeGoalsHandler from './api/life-goals.js'
+import memoriesHandler from './api/memories.js'
+import contextPackageHandler from './api/context-package.js'
+import proposedActionsHandler from './api/proposed-actions.js'
+import companionHandler from './api/companion.js'
+import decisionLedgerHandler from './api/decision-ledger.js'
+import learningReadModelHandler from './api/learning-read-model.js'
+import subjectsHandler from './api/subjects.js'
+import careerHandler from './api/career.js'
+import workHandler from './api/work.js'
+import startupHandler from './api/startup.js'
+import lifeHandler from './api/life.js'
+import automationHandler from './api/automation.js'
+import healthDeepHandler from './api/healthDeep.js'
+import proactiveBriefingHandler from './api/proactive-briefing.js'
+import visionSolveHandler from './api/vision-solve.js'
+import integrationsHandler from './api/integrations.js'
+import subconsciousHandler from './api/subconscious.js'
+import ambientVisionHandler from './api/ambient-vision.js'
+import a2aHandler from './api/a2a.js'
+import neuroAffectiveHandler from './api/neuro-affective.js'
+import scenarioHolodeckHandler from './api/scenario-holodeck.js'
+import articulatoryPhoneticsHandler from './api/articulatory-phonetics.js'
+import workplaceInsightsHandler from './api/workplace-insights.js'
+import socraticDiagnosticsHandler from './api/socratic-diagnostics.js'
+import echoShadowingHandler from './api/echo-shadowing.js'
+import wearablesSyncHandler from './api/wearables-sync.js'
+import realtimeMultimodalHandler from './api/realtime-multimodal.js'
+import acousticPhoneticsHandler from './api/acoustic-phonetics.js'
+import avatarEmbodimentHandler from './api/avatar-embodiment.js'
+import actionCanvasHandler from './api/action-canvas.js'
+import neuralCurriculumHandler from './api/neural-curriculum.js'
+import meshTelemetryHandler from './api/mesh-telemetry.js'
+import proactiveAgentHandler from './api/proactive-agent.js'
+import debateArenaHandler from './api/debate-arena.js'
+import stemScratchpadHandler from './api/stem-scratchpad.js'
+import metacognitiveReflectionHandler from './api/metacognitive-reflection.js'
+import memoryPalaceHandler from './api/memory-palace.js'
+import lifeSynthesisHandler from './api/life-synthesis.js'
+import agentOrchestratorHandler from './api/agent-orchestrator.js'
+import pvpArenaHandler from './api/pvp-arena.js'
+import referralVipHandler from './api/referral-vip.js'
+import dailyQuestsHandler from './api/daily-quests.js'
+import coLearningAudioHandler from './api/co-learning-audio.js'
+import geminiLiveHandler from './api/gemini-live.js'
+
+// Content-Security-Policy dùng chung cho mọi response (API, static, health).
+// Đã bỏ các domain KHÔNG còn dùng: cdn.jsdelivr.net (không có script nào tải từ CDN),
+// fonts.googleapis.com + fonts.gstatic.com (font Inter đã tự host — xem src/main.tsx).
+// 'unsafe-inline'/'unsafe-eval' giữ lại vì bundle Vite hiện cần; siết thêm là việc riêng.
+// static.cloudflareinsights.com: script beacon Cloudflare tự chèn khi bật proxy
+// (xem docs/cloudflare-setup.md) — cần cho phép cả script-src (tải file) lẫn
+// connect-src (báo cáo RUM qua cdn-cgi/rum), nếu không sẽ bị chặn CSP.
+// https://accounts.google.com trong script-src: tải script Google Identity Services
+// (đăng nhập Google — Giai đoạn B, xem src/lib/auth.ts loadGoogleScript()).
+// frame-src https://accounts.google.com: khung One Tap/popup chọn tài khoản Google hiện
+// TRONG trang (không có directive này thì rơi về default-src 'self', chặn hẳn khung Google).
+// style-src thêm https://accounts.google.com: nút/khung Google Identity Services tự chèn
+// thẻ <link> tải stylesheet https://accounts.google.com/gsi/style — thiếu domain này sẽ bị
+// CSP chặn (lỗi "violates style-src directive"), khiến nút đăng nhập Google mất style/không hiện.
+// https://connect.facebook.net: tải Facebook JS SDK (đăng nhập Facebook, src/lib/auth.ts
+// loadFacebookScript()). https://appleid.cdn-apple.com: tải Sign in with Apple JS
+// (loadAppleScript()). https://alcdn.msauth.net: tải MSAL.js (đăng nhập Microsoft,
+// loadMicrosoftScript()). Cả 3 mở popup (window mới), KHÔNG nhúng iframe trong trang như
+// Google One Tap, nên KHÔNG cần thêm vào frame-src.
+export const CSP_HEADER =
+  "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://accounts.google.com https://connect.facebook.net https://appleid.cdn-apple.com https://alcdn.msauth.net; style-src 'self' 'unsafe-inline' https://accounts.google.com; font-src 'self' data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://accounts.google.com; frame-ancestors 'self'"
+
+// ── Bọc Edge Function handler thành Express route ────────────────────────────
+// Edge Function: nhận (Request) → trả (Response)  [Web API chuẩn]
+// Express      : nhận (req, res)                   [Node.js API]
+// Node.js 20 hỗ trợ sẵn Web API Request/Response nên chuyển đổi khá gọn.
+function wrapEdge(handler: (req: Request) => Promise<Response>) {
+  return async (req: express.Request, res: express.Response) => {
+    try {
+      // Dựng lại URL đầy đủ — một số handler dùng URL để đọc query params
+      const protocol = req.get('x-forwarded-proto') || req.protocol
+      const host = req.get('host') || 'localhost'
+      const fullUrl = `${protocol}://${host}${req.originalUrl}`
+
+      // Chuyển Express request → Web API Request
+      const webReq = new Request(fullUrl, {
+        method: req.method,
+        headers: req.headers as HeadersInit,
+        // GET/HEAD không có body
+        body: ['GET', 'HEAD'].includes(req.method) ? undefined : JSON.stringify(req.body),
+      })
+
+      // Gọi handler gốc
+      const webRes = await handler(webReq)
+
+      // Chuyển Web API Response → Express response
+      res.status(webRes.status)
+      webRes.headers.forEach((val, key) => res.setHeader(key, val))
+
+      // Security headers — thêm sau khi convert response, tránh conflict với Web API Response
+      res.setHeader('X-Content-Type-Options', 'nosniff')
+      res.setHeader('Content-Security-Policy', CSP_HEADER)
+      res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+
+      res.send(await webRes.text())
+    } catch (err) {
+      console.error('[server] Lỗi handler:', err)
+      captureServerException(err, { path: req.originalUrl, method: req.method })
+      res.status(500).json({ error: 'Internal server error' })
+    }
+  }
+}
+
+// Gắn toàn bộ route API vào app theo ĐÚNG thứ tự middleware cũ của server.ts:
+// parser body lớn cho 3 route đặc biệt TRƯỚC parser JSON 64kb mặc định, rồi mọi route còn lại.
+export function registerApiRoutes(app: express.Express): void {
+  // STT nhận audio base64 → body lớn hơn nhiều so với chat/tts. Đăng ký parser riêng
+  // cho route này TRƯỚC parser JSON 64kb mặc định bên dưới (Express chạy middleware theo
+  // thứ tự — nếu để parser 64kb chạy trước, body audio sẽ bị chặn 413 trước khi tới handler).
+  app.post('/api/stt', express.json({ limit: '10mb' }), wrapEdge(sttHandler))
+  // /api/pronounce-assess cũng nhận audio base64 (câu ngắn ~30s, nhẹ hơn STT hội thoại tự do)
+  // — cùng lý do cần parser riêng thay vì giới hạn 64kb mặc định.
+  app.post(
+    '/api/pronounce-assess',
+    express.json({ limit: '5mb' }),
+    wrapEdge(pronounceAssessHandler),
+  )
+  // /api/vision-solve nhận image base64 từ camera/file upload
+  app.post('/api/vision-solve', express.json({ limit: '10mb' }), wrapEdge(visionSolveHandler))
+
+  app.use(express.json({ limit: '64kb' }))
+
+  // ── API routes ────────────────────────────────────────────────────────────────
+  // Thêm vào đây nếu tạo thêm file api/*.ts mới
+  app.all('/api/tts', wrapEdge(ttsHandler))
+  app.all('/api/agent', wrapEdge(aiHandler))
+  app.all('/api/pronunciation', wrapEdge(pronunciationHandler))
+  app.all('/api/push', wrapEdge(pushHandler))
+  app.all('/api/dictionary', wrapEdge(dictionaryHandler))
+  app.all('/api/leaderboard', wrapEdge(leaderboardHandler))
+  app.all('/api/auth', wrapEdge(authHandler))
+  app.all('/api/profile', wrapEdge(profileHandler))
+  app.all('/api/progress', wrapEdge(progressHandler))
+  app.all('/api/usage-summary', wrapEdge(usageSummaryHandler))
+  app.all('/api/history', wrapEdge(historyHandler))
+  app.all('/api/challenge', wrapEdge(challengeHandler))
+  app.all('/api/tutor-feedback', wrapEdge(tutorFeedbackHandler))
+  app.all('/api/feedback', wrapEdge(feedbackHandler))
+  app.all('/api/admin-settings', wrapEdge(adminSettingsHandler))
+  app.all('/api/app-settings', wrapEdge(appSettingsHandler))
+  app.all('/api/admin-grant-plan', wrapEdge(adminGrantPlanHandler))
+  app.all('/api/admin-vip-whitelist', wrapEdge(adminVipWhitelistHandler))
+  app.all('/api/plan-features', wrapEdge(planFeaturesHandler))
+  app.all('/api/admin-plan-features', wrapEdge(adminPlanFeaturesHandler))
+  app.all('/api/admin-price-promo', wrapEdge(adminPricePromoHandler))
+  app.all('/api/plan-marketing', wrapEdge(planMarketingHandler))
+  app.all('/api/admin-plan-marketing', wrapEdge(adminPlanMarketingHandler))
+  app.all('/api/analytics', wrapEdge(analyticsHandler))
+  app.all('/api/analytics-summary', wrapEdge(analyticsSummaryHandler))
+  app.all('/api/admin-usage-stats', wrapEdge(adminUsageStatsHandler))
+  app.all('/api/admin-users', wrapEdge(adminUsersHandler))
+  app.all('/api/referral', wrapEdge(referralHandler))
+  app.all('/api/quests', wrapEdge(questsHandler))
+  app.all('/api/achievements', wrapEdge(achievementsHandler))
+  app.all('/api/friends', wrapEdge(friendsHandler))
+  app.all('/api/chat', wrapEdge(chatHandler))
+  app.all('/api/admin-achievement-rewards', wrapEdge(adminAchievementRewardsHandler))
+  app.all('/api/admin-payments', wrapEdge(adminPaymentsHandler))
+  app.all('/api/admin-system-control', wrapEdge(adminSystemControlHandler))
+  app.all('/api/admin-tts-cache', wrapEdge(adminTtsCacheHandler))
+  app.all('/api/admin-reserved-names', wrapEdge(adminReservedNamesHandler))
+  app.all('/api/admin-feedback', wrapEdge(adminFeedbackHandler))
+  app.all('/api/admin-feature-status', wrapEdge(adminFeatureStatusHandler))
+  app.all('/api/plan-prices', wrapEdge(planPricesHandler))
+  app.all('/api/checkout', wrapEdge(checkoutHandler))
+  app.all('/api/payment-webhook', wrapEdge(paymentWebhookHandler))
+  app.all('/api/payment-status', wrapEdge(paymentStatusHandler))
+  app.all('/api/payment-history', wrapEdge(paymentHistoryHandler))
+  app.all('/api/avatar-visemes', wrapEdge(avatarVisemesHandler))
+  app.all('/api/hub-stats', wrapEdge(hubStatsHandler))
+  // Personal World Model (V2-03) — danh tính + fact cá nhân, đều bắt buộc đăng nhập.
+  app.all('/api/persons', wrapEdge(personsHandler))
+  app.all('/api/personal-facts', wrapEdge(personalFactsHandler))
+  // Consent + Personal Policy (V2-04) — quyền/đồng ý của chính người dùng, bắt buộc đăng nhập.
+  app.all('/api/consents', wrapEdge(consentsHandler))
+  app.all('/api/personal-policies', wrapEdge(personalPoliciesHandler))
+  // Life Graph foundation (V2-05) — graph của chính người dùng + Learning Goal read view.
+  app.all('/api/life-graph', wrapEdge(lifeGraphHandler))
+  app.all('/api/life-goals', wrapEdge(lifeGoalsHandler))
+  // Personal Knowledge Fabric (V2-06) — bộ nhớ cá nhân hóa theo namespace & retention.
+  app.all('/api/memories', wrapEdge(memoriesHandler))
+  // Context Engine (V2-07) — xây dựng ContextPackage có lọc permission/sensitivity/budget.
+  app.all('/api/context-package', wrapEdge(contextPackageHandler))
+  // ProposedAction & Tool Manifest Pipeline (V2-08) — Planning ≠ Execution ≠ State Mutation.
+  app.all('/api/proposed-actions', wrapEdge(proposedActionsHandler))
+  // Companion Runtime (V2-09) — Intent -> Context -> Planner -> Policy -> Actions -> Response.
+  app.all('/api/companion', wrapEdge(companionHandler))
+  // Decision Ledger + Outcome Loop (V2-10) — Structured decision records & evidence loop.
+  app.all('/api/decision-ledger', wrapEdge(decisionLedgerHandler))
+  // Learning Read Model (V2-11) — Typed Learning domain read model for Companion.
+  app.all('/api/learning-read-model', wrapEdge(learningReadModelHandler))
+  // Multi-Subject Learning (V2-12) — Subject manifests & taxonomy registry.
+  app.all('/api/subjects', wrapEdge(subjectsHandler))
+  // Career Domain (V2-13) — Profile, experiences, goals & skill gap analysis.
+  app.all('/api/career', wrapEdge(careerHandler))
+  // Work Domain (V2-15) — Projects, tasks, meetings, documents, deadlines.
+  app.all('/api/work', wrapEdge(workHandler))
+  // Startup Domain (V2-16) — Ventures, problems, hypotheses, evidence (claims require provenance).
+  app.all('/api/startup', wrapEdge(startupHandler))
+  // Life Foundation (V2-17) — Plans, habits, wellbeing, growth milestones.
+  app.all('/api/life', wrapEdge(lifeHandler))
+  // Approved Automation (V2-18) — Explicit grants, triggers, budgets, retries/compensation, action receipts.
+  app.all('/api/automation', wrapEdge(automationHandler))
+  // Deep Health Check — Giám sát chuyên sâu Database, Storage, Cache, Uptime.
+  app.all('/api/health/deep', wrapEdge(healthDeepHandler))
+  // Proactive Briefing (V2 Flagship P1) — Morning / Evening personalized proactive briefs.
+  app.all('/api/proactive-briefing', wrapEdge(proactiveBriefingHandler))
+  // Multimodal Vision Solver (V2 Flagship P1) — STEM & Document OCR solver.
+  // External Integrations (V2 Flagship) — Google Calendar & Notion sync.
+  app.all('/api/integrations', wrapEdge(integrationsHandler))
+  // Subconscious Cognition & Nightly REM Consolidation (V3 Flagship) — Autonomous cognition & predictive strategy.
+  app.all('/api/subconscious', wrapEdge(subconsciousHandler))
+  // Ambient Vision & Screen Grounding (V3 Flagship) — Realtime screen context copilot.
+  app.all('/api/ambient-vision', wrapEdge(ambientVisionHandler))
+  // Multi-Agent A2A Protocol & Peer Negotiation (V3 Flagship) — Cryptographic agent-to-agent bus.
+  app.all('/api/a2a', wrapEdge(a2aHandler))
+  // Neuro-Affective Flow & Bio-Adaptive Orchestration (V3 Flagship) — Stress intervention & flow state shielding.
+  app.all('/api/neuro-affective', wrapEdge(neuroAffectiveHandler))
+  // Scenario Holodeck Engine (V3 Flagship) — Multi-persona high-stakes simulation & Cambridge rubric evaluation.
+  app.all('/api/scenario-holodeck', wrapEdge(scenarioHolodeckHandler))
+  // 3D Articulatory Phonetics & Pitch Alignment (V3 Flagship) — Vocal tract anatomy & F0 pitch contour.
+  app.all('/api/articulatory-phonetics', wrapEdge(articulatoryPhoneticsHandler))
+  // Workplace Error Harvester & Auto-SRS (V3 Flagship) — Workplace error ingestion to personalized SRS cards.
+  app.all('/api/workplace-insights', wrapEdge(workplaceInsightsHandler))
+  // Socratic Cognitive Diagnostics (V3 Flagship Wave 2) — Deep mental model debugging & guided reflection.
+  app.all('/api/socratic-diagnostics', wrapEdge(socraticDiagnosticsHandler))
+  // Real-Time Echo Shadowing (V3 Flagship Wave 2) — Sub-second acoustic drift & cadence synchronizer.
+  app.all('/api/echo-shadowing', wrapEdge(echoShadowingHandler))
+  // Wearables & Circadian Bio-Adaptive MCP (V3 Flagship Wave 2) — Biometric stream to circadian learning window.
+  app.all('/api/wearables-sync', wrapEdge(wearablesSyncHandler))
+  // Real-Time Multimodal Duplex Gateway (Platform V4 Phase 1) — Sub-250ms voice streaming & barge-in.
+  app.all('/api/realtime-multimodal', wrapEdge(realtimeMultimodalHandler))
+  // Acoustic Phonetics & GOP Engine (Platform V4 Phase 1) — Phoneme-level acoustic assessment & alignment.
+  app.all('/api/acoustic-phonetics', wrapEdge(acousticPhoneticsHandler))
+  // 3D Embodied Cyber-Tutor & Viseme Morphing (Platform V4 Phase 2) — 3D Embodiment & Real-time Visemes.
+  app.all('/api/avatar-embodiment', wrapEdge(avatarEmbodimentHandler))
+  // Live Autonomous Action Canvas & Cross-Domain Hub (Platform V4 Phase 3) — Interactive Collaborative Workspace.
+  app.all('/api/action-canvas', wrapEdge(actionCanvasHandler))
+  // Dynamic Neural Micro-Curriculum & Spaced Collocations (Platform V4 Phase 4) — Adaptive 2-min drills.
+  app.all('/api/neural-curriculum', wrapEdge(neuralCurriculumHandler))
+  // Distributed WebSocket Mesh & Realtime Telemetry (Platform V4 Phase 5) — Live session cost & latency mesh.
+  app.all('/api/mesh-telemetry', wrapEdge(meshTelemetryHandler))
+  // Autonomous Proactive Agent & Goal Auto-Pilot (Platform V5 Phase 1) — Proactive Nudges & Action Dispatcher.
+  app.all('/api/proactive-agent', wrapEdge(proactiveAgentHandler))
+  // AI Debate Arena & Socratic Multi-Agent (Platform V5 Phase 2) — Live debate & logic rubric.
+  app.all('/api/debate-arena', wrapEdge(debateArenaHandler))
+  // STEM Interactive Scratchpad (Platform V5 Phase 2) — Step-by-step math/chem/physics logic validator.
+  app.all('/api/stem-scratchpad', wrapEdge(stemScratchpadHandler))
+  // Deep Metacognitive Reflection Engine & Socratic Journal (Platform V5 Phase 3) — Peak Metacognition & Bias Detection.
+  app.all('/api/metacognitive-reflection', wrapEdge(metacognitiveReflectionHandler))
+  // Spatial Multi-Sensory Memory Palace (Platform V5 Phase 3) — Method of Loci & Neural Anchors.
+  app.all('/api/memory-palace', wrapEdge(memoryPalaceHandler))
+  // Cross-Domain Life Synthesis & Predictive Goal Horizon (Platform V5.4) — Strategic Alignment.
+  app.all('/api/life-synthesis', wrapEdge(lifeSynthesisHandler))
+  // Autonomous Multi-Agent Orchestrator Studio (Platform V5.5) — Multi-Step Autonomous Execution.
+  app.all('/api/agent-orchestrator', wrapEdge(agentOrchestratorHandler))
+  // Live 1v1 PvP Arena & Ghost Matchmaking — Speed Vocab, Grammar Clash & Elo Rank.
+  app.all('/api/pvp-arena', wrapEdge(pvpArenaHandler))
+  // Referral VIP Booster & Viral Share Studio — 7-day VIP rewards & Milestones.
+  app.all('/api/referral-vip', wrapEdge(referralVipHandler))
+  // Daily Quests & Mystery Streak Vault — Adaptive 3 quests & Streak Freeze.
+  app.all('/api/daily-quests', wrapEdge(dailyQuestsHandler))
+  // Multiplayer Audio Co-Learning Room (Platform V7.1) — Realtime Live Audio Study Rooms & Socratic Moderator.
+  app.all('/api/co-learning-audio', wrapEdge(coLearningAudioHandler))
+  // Gemini Live Bidirectional Streaming Gateway (Platform V7.2) — Full-Duplex PCM & Audio Streaming.
+  app.all('/api/gemini-live', wrapEdge(geminiLiveHandler))
+}

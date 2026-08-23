@@ -35,7 +35,7 @@ const REPO_ROOT = path.resolve(import.meta.dirname, '..')
 const OUTPUT_FILE = path.join(REPO_ROOT, '.codemap', 'graph.json')
 
 /** Thư mục được quét. Bỏ qua node_modules/dist vì không phải code của mình. */
-const SCAN_ROOTS = ['apps/dhcb/src', 'apps/hub/src', 'api', 'packages', 'scripts']
+const SCAN_ROOTS = ['apps/dhcb/src', 'apps/hub/src', 'apps/server/src', 'packages', 'scripts']
 /**
  * File điểm vào — vốn dĩ không ai import, không tính là "mồ côi".
  * Gồm `server.ts` + mọi script CLI top-level `scripts/*.ts` (không gồm `scripts/lib/` —
@@ -50,7 +50,7 @@ function listScriptEntryPoints(): string[] {
     .map((name) => `scripts/${name}`)
 }
 
-const ENTRY_POINTS = ['server.ts', ...listScriptEntryPoints()]
+const ENTRY_POINTS = ['apps/server/src/server.ts', ...listScriptEntryPoints()]
 
 /** Dựng lại đồ thị từ mã nguồn thật của repo này. */
 function buildGraph(): CodeGraph {

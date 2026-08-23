@@ -53,7 +53,7 @@ const PACKAGE_HANDLERS: HandlerEntry[] = [
 ]
 
 describe('server.ts đăng ký đủ route cho api/ + packages/', () => {
-  const server = readFileSync(join(ROOT, 'server.ts'), 'utf8')
+  const server = readFileSync(join(ROOT, 'routes.ts'), 'utf8')
   const handlers = [...listApiHandlers(), ...PACKAGE_HANDLERS]
 
   it('tìm thấy danh sách handler (chống test rỗng vô nghĩa)', () => {

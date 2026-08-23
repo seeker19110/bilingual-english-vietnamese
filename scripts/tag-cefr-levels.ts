@@ -52,19 +52,19 @@ import {
   parseCefrTagResponse,
   type CefrTagInput,
   type CefrWordLevel,
-} from '../api/_lib/cefrTagging.ts'
+} from '../apps/server/src/api/_lib/cefrTagging.ts'
 import {
   parseCefrjCsv,
   buildCefrjIndex,
   lookupCefrLevelWithLemma,
   type CefrjRow,
-} from '../api/_lib/cefrjLookup.ts'
+} from '../apps/server/src/api/_lib/cefrjLookup.ts'
 import {
   parseWordsCefrCsv,
   buildWordsCefrIndex,
   lookupWordsCefrLevel,
   type WordsCefrRow,
-} from '../api/_lib/wordsCefrDataset.ts'
+} from '../apps/server/src/api/_lib/wordsCefrDataset.ts'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })

@@ -22,7 +22,7 @@ export default defineConfig({
     // không tốn API, chỉ logic. KHÔNG gồm chính script chạy AI (scripts/eval-tutor.ts) vì nó tốn phí.
     include: [
       'apps/dhcb/src/**/*.test.{ts,tsx}',
-      'api/**/*.test.ts',
+      'apps/server/src/api/**/*.test.ts',
       'packages/**/*.test.{ts,tsx}',
       'scripts/**/*.test.ts',
     ],
@@ -33,7 +33,7 @@ export default defineConfig({
       provider: 'v8',
       // Chỉ đo phần LOGIC THUẦN (lib + api). Bỏ UI (.tsx/pages/components),
       // điểm khởi tạo (server.ts) và dữ liệu tĩnh — nơi unit test ít giá trị.
-      include: ['apps/dhcb/src/lib/**/*.ts', 'api/**/*.ts', 'packages/**/*.ts'],
+      include: ['apps/dhcb/src/lib/**/*.ts', 'apps/server/src/api/**/*.ts', 'packages/**/*.ts'],
       // Loại khỏi phép đo những file mà unit test KHÔNG mang lại giá trị thật — chúng chỉ là
       // lớp vỏ mỏng bọc API trình duyệt/nền tảng, hoặc hook React, hoặc mã khởi tạo. Test cho
       // chúng chủ yếu kiểm chứng chính cái mock ta vừa dựng, gãy mỗi lần refactor, và rủi ro
@@ -85,7 +85,7 @@ export default defineConfig({
         // Gửi-rồi-quên / khởi tạo SDK ngoài.
         'apps/dhcb/src/lib/analytics.ts',
         'apps/dhcb/src/lib/errorTracking.ts',
-        'api/_lib/sentry.ts',
+        'apps/server/src/api/_lib/sentry.ts',
         // Tạo connection pool — chạy thật cần Postgres, đã có test tích hợp che.
         'packages/core-db/pgPool.ts',
       ],

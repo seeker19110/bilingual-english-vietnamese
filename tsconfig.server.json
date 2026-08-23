@@ -20,10 +20,11 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "outDir": "dist-server",
+    "rootDir": "apps/server/src",
     "noEmit": false,
     "declaration": false,
     "sourceMap": true
   },
-  "include": ["server.ts", "api/**/*.ts"],
-  "exclude": ["api/**/*.test.ts"]
+  "include": ["apps/server/src/**/*.ts"],
+  "exclude": ["apps/server/src/**/*.test.ts"]
 }
