@@ -45,8 +45,8 @@ import {
   type GeminiVoiceId,
 } from '@dhcb/core-ai/geminiTts'
 import { getPgPool } from '@dhcb/core-db/pgPool'
-import { STORY_KIND_VOICE } from '../apps/english/src/lib/stories.ts'
-import type { StoryKind } from '../apps/english/src/data/stories/index.ts'
+import { STORY_KIND_VOICE } from '../apps/dhcb/src/lib/stories.ts'
+import type { StoryKind } from '../apps/dhcb/src/data/stories/index.ts'
 
 const PROJECT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 dotenv.config({ path: path.join(PROJECT_ROOT, '.env') })
@@ -94,7 +94,7 @@ interface Job {
 }
 
 async function main(): Promise<void> {
-  const storyDir = path.join(PROJECT_ROOT, 'apps/english/public/data/stories')
+  const storyDir = path.join(PROJECT_ROOT, 'apps/dhcb/public/data/stories')
   if (!fs.existsSync(storyDir)) {
     console.error(
       `❌ Chưa có ${storyDir} (chạy \`node scripts/gen-stories-json.mjs\` trước khi seed).`,

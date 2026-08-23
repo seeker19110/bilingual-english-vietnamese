@@ -3,7 +3,7 @@
 // Mastery — nguyên tắc kiến trúc #2 của MASTER_SPEC.md: "Evidence precedes state changes"
 // (không được đổi Mastery mà không có Evidence đứng sau). `source` liệt kê đúng các luồng SINH
 // RA quan sát hiện có trong app (chat/writing/speaking đã có trong `CallMode` ở
-// apps/english/src/lib/ai.ts; srs_review khớp `apps/english/src/lib/srs.ts`).
+// apps/dhcb/src/lib/ai.ts; srs_review khớp `apps/dhcb/src/lib/srs.ts`).
 
 import { z } from 'zod'
 import { versionedObject } from './version.js'

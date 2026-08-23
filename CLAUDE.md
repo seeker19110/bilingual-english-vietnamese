@@ -1,4 +1,4 @@
-# CLAUDE.md — Gia sư tiếng Anh AI
+# CLAUDE.md — DHCB "Đồng hành cùng bạn" (nền tảng đồng hành cá nhân)
 
 > File này được Claude Code đọc tự động ở đầu mỗi phiên. Mục tiêu: giúp Claude hiểu dự án và làm đúng ý.
 > **Người làm: mới bắt đầu lập trình.** Hãy GIẢI THÍCH NGẮN GỌN BẰNG TIẾNG VIỆT khi sửa code, và **cảnh báo trước khi làm thay đổi lớn**.
@@ -10,7 +10,15 @@ Bạn vừa là **kỹ sư phần mềm cấp cao**, vừa là **người quản
 
 ## 1. Dự án này là gì
 
-Web app **gia sư ngôn ngữ AI hai chiều (Việt ⇄ Anh)**.
+**DHCB — "Đồng hành cùng bạn"** (quyết định 2026-08-23, người dùng chốt): **nền tảng đồng
+hành cá nhân** phát triển mọi mảng liên quan đến một con người — trụ **Learning** (học tập,
+nhiều môn) · **Career** · **Work** · **Startup** · **Life**, với **Companion "Bạn Đồng Hành"**
+là tác tử AI xuyên suốt. App chính: `apps/dhcb` (gói `@dhcb/app`). Kiến trúc chuẩn:
+`docs/research/dac-ta-kien-truc-platform-dhcb-2026-08-23.md` (khuôn "thêm môn học mới",
+tiêu chuẩn ngành phải theo).
+
+**English là MỘT MÔN HỌC trong trụ Learning** — môn đầu tiên và chín nhất (mô tả chi tiết
+dưới đây vẫn đúng cho môn này): web app gia sư ngôn ngữ AI hai chiều (Việt ⇄ Anh).
 
 **Hai chiều học** (chọn bằng biến `direction` — `lib/direction.ts`):
 
@@ -96,7 +104,7 @@ Hệ thống được chuẩn hóa theo 10 bộ quy chuẩn SOTA chuyên biệt 
    - **Mọi phần còn lại** (nav, nút, badge, ô nhập, biểu tượng…) phải đạt **AA** — sàn cứng, dung sai 0.
    - Lý do không ép AAA toàn site: W3C (_Understanding Conformance_) khuyến nghị KHÔNG lấy AAA làm chính sách cho toàn bộ site vì có nội dung không thể đạt hết AAA.
    - Gác tự động, **chặn CI**, cả hai cổng TUYỆT ĐỐI (không có baseline/ngoại lệ): `e2e/a11y.spec.ts` (A/AA — 0 vi phạm ở mọi mức tác động) + `e2e/a11y-aaa.spec.ts` (AAA cho nội dung/tiêu đề). Đều quét **15 trang × 5 theme**. Kèm lint `jsx-a11y`.
-   - Màu chữ lấy từ token `--z-*`/`--a-*` (`apps/english/src/index.css`) — sửa tương phản thì **sửa token**, đừng vá từng chỗ. Lưu ý `text-white` map sang `--c-white` và **bị đảo thành màu tối ở theme nền sáng**: nền cố định tối (nút thương hiệu OAuth…) phải dùng `text-[#fff]`.
+   - Màu chữ lấy từ token `--z-*`/`--a-*` (`apps/dhcb/src/index.css`) — sửa tương phản thì **sửa token**, đừng vá từng chỗ. Lưu ý `text-white` map sang `--c-white` và **bị đảo thành màu tối ở theme nền sáng**: nền cố định tối (nút thương hiệu OAuth…) phải dùng `text-[#fff]`.
 6. **Không bí mật trong code:** dùng biến môi trường; `.env` đã nằm trong `.gitignore`.
 7. **Mobile-first & hiệu năng:** thiết kế màn nhỏ trước, vùng chạm ≥ 44px; hướng tới ngân sách Core Web Vitals (LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1) — Lighthouse CI _(đang bổ sung)_.
 8. **Theme:** **4 theme, mặc định "Xanh đêm"**; dùng design tokens qua biến CSS `--a-*` (`src/index.css` + `tailwind.config.js`), **không hard-code màu**; giữ màu ngữ nghĩa (xanh lá = "đúng", phân cấp A1–B2/loại từ). AA ở mọi theme.
@@ -117,11 +125,11 @@ Hệ thống được chuẩn hóa theo 10 bộ quy chuẩn SOTA chuyên biệt 
 - **Deploy:** VPS Ubuntu (PM2 + Nginx + Let's Encrypt), đang chạy tại https://en-vi.donghanhcungban.org — xem `docs/deploy-vps-ubuntu.md`. `.com` là domain cũ/redirect.
 - **GIỮ NGUYÊN PHIÊN BẢN — KHÔNG nâng React/TS/Tailwind/ESLint.** Dự án cố tình dùng **Tailwind 3** (không phải v4) và **ESLint 8 với `.eslintrc.cjs`** (không phải flat config). Tài liệu khung có nhắc Tailwind v4 / ESLint flat config — chỉ để **tham khảo**, KHÔNG áp vào dự án này.
 - **Lệnh:** dev `npm run dev` · build `npm run build` · typecheck `npm run typecheck` (gộp cả `tsconfig.json` + `tsconfig.api.json` + `tsconfig.e2e.json`) · lint `npm run lint` (max-warnings 0) · format `npm run format` (Prettier — đang thêm ở bước khung) · test `npm test` (`vitest run`) · E2E `npm run test:e2e` (Playwright) · start `npm start` (`tsx server.ts`) · migration Postgres tự host `npm run migrate:pg` (tự chạy trong `scripts/deploy.sh`, xem `postgres/migrations/README.md`).
-- **Cấu trúc [Cập nhật 2026-08-23, workspace THẬT — PR-S1+S2 phương án B, xem
-  `docs/research/dac-ta-cai-to-cau-truc-2026-08-23.md`]:** `apps/english/` là Vite app ĐẦY ĐỦ
+- **Cấu trúc [Cập nhật 2026-08-23, workspace THẬT — PR-S1+S2+S2b phương án B, xem
+  `docs/research/dac-ta-cai-to-cau-truc-2026-08-23.md`]:** `apps/dhcb/` (đổi tên từ `apps/english` ở PR-S2b — app NỀN TẢNG, gói `@dhcb/app`) là Vite app ĐẦY ĐỦ
   (`index.html` + `public/` + `vite.config.ts` + `tailwind/postcss` + `tsconfig.json` +
-  `package.json @dhcb/english` + `src/`: `pages/`, `components/`, `lib/`, `data/`, `prompts/`
-  — dời từ gốc repo ở PR-S2; npm script gốc gọi `vite --config apps/english/vite.config.ts`,
+  `package.json @dhcb/app` + `src/`: `pages/`, `components/`, `lib/`, `data/`, `prompts/`
+  — dời từ gốc repo ở PR-S2; npm script gốc gọi `vite --config apps/dhcb/vite.config.ts`,
   **output build VẪN là `dist/` ở gốc** cho nginx/deploy không đổi; tsconfig gốc chỉ còn là
   solution file, compilerOptions chung ở `tsconfig.base.json`), `api/` (handler HTTP của
   server), `packages/`
@@ -134,8 +142,8 @@ Hệ thống được chuẩn hóa theo 10 bộ quy chuẩn SOTA chuyên biệt 
   references, mỗi gói emit `dist/` riêng) rồi `tsc -p tsconfig.server.json`; dev
   (`tsx`/Vite/Vitest) phân giải `@dhcb` về source qua tsconfig `paths` + alias, KHÔNG cần build
   gói trước. CI có bước boot check `node dist-server/server.js` + `/api/health`.
-- **Đặt tên:** component PascalCase (`apps/english/src/components`), tiện ích camelCase
-  (`apps/english/src/lib`), prompt gửi AI để riêng trong `apps/english/src/prompts/`.
+- **Đặt tên:** component PascalCase (`apps/dhcb/src/components`), tiện ích camelCase
+  (`apps/dhcb/src/lib`), prompt gửi AI để riêng trong `apps/dhcb/src/prompts/`.
 
 ## 7. Quy ước khi viết code & cách làm việc
 
@@ -155,7 +163,7 @@ Build `npm run build` · Type `npm run typecheck` · Lint `npm run lint` (0 cả
 
 **Công cụ phải khớp lockfile (bài học 2026-08-04, CI #475 đỏ).** Cổng chỉ đáng tin khi `node_modules` đúng `package-lock.json`. Dấu hiệu lệch: cổng local báo lỗi ở **nhiều file mình không hề đụng tới**, hoặc local xanh mà CI đỏ (và ngược lại). Gặp dấu hiệu đó → `npm ci` rồi chạy lại cổng, ĐỪNG đi sửa từng file theo báo lỗi giả. Trong container phiên mới, chạy `npm ci` trước lần chạy cổng đầu tiên. Kiểm nhanh: `npx prettier --version` khớp `package.json`.
 
-**Đổi prompt hoặc model AI:** mọi PR sửa `apps/english/src/prompts/*` hoặc `packages/core-ai/aiConfig.ts` (model/guardrail) PHẢI chạy lại `npm run eval:tutor` (cần key AI trong `.env`) và **dán bảng so sánh với `docs/research/eval-tutor-baseline.md` vào mô tả PR** — recall/precision không được tụt so với baseline. Xem `scripts/eval-tutor.ts`.
+**Đổi prompt hoặc model AI:** mọi PR sửa `apps/dhcb/src/prompts/*` hoặc `packages/core-ai/aiConfig.ts` (model/guardrail) PHẢI chạy lại `npm run eval:tutor` (cần key AI trong `.env`) và **dán bảng so sánh với `docs/research/eval-tutor-baseline.md` vào mô tả PR** — recall/precision không được tụt so với baseline. Xem `scripts/eval-tutor.ts`.
 
 ## 9. Cổng trước khi MERGE (thêm)
 

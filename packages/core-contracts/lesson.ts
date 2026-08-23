@@ -15,7 +15,7 @@ export const LessonSchema = versionedObject(
   {
     id: UuidSchema,
     // Mã ổn định để liên kết SRS/tiến độ (khớp cách `lessonId` dùng trong
-    // `apps/english/src/lib/srs.ts#getDueGrammarLessonIds` — LUÔN chữ thường, xem bài học
+    // `apps/dhcb/src/lib/srs.ts#getDueGrammarLessonIds` — LUÔN chữ thường, xem bài học
     // 2026-08-12 trong PROGRESS.md về lỗi khoá lệch hoa/thường).
     code: z
       .string()

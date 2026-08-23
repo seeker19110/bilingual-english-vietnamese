@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { vi } from 'vitest'
 
-const PUBLIC_DIR = join(dirname(fileURLToPath(import.meta.url)), 'apps', 'english', 'public')
+const PUBLIC_DIR = join(dirname(fileURLToPath(import.meta.url)), 'apps', 'dhcb', 'public')
 
 vi.stubGlobal('fetch', async (input: RequestInfo | URL): Promise<Response> => {
   const url = typeof input === 'string' ? input : input.toString()

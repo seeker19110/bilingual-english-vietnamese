@@ -11,11 +11,11 @@
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import type { DictEntry } from '../apps/english/src/types.ts'
+import type { DictEntry } from '../apps/dhcb/src/types.ts'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const DICT_DIR = path.join(ROOT, 'apps/english/public/data/dictionary')
-const OUT_FILE = path.join(ROOT, 'apps/english/public/sitemap-words.xml')
+const DICT_DIR = path.join(ROOT, 'apps/dhcb/public/data/dictionary')
+const OUT_FILE = path.join(ROOT, 'apps/dhcb/public/sitemap-words.xml')
 // SITE_URL/VITE_SITE_URL: cùng quy ước với api/_lib/passwordReset.ts, App.tsx, ShareResultCard.tsx
 // — cho phép đổi domain (vd donghanhcungban.org) mà không cần sửa code, chỉ cần đặt biến môi
 // trường lúc chạy script.

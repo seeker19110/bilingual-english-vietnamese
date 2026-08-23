@@ -14,10 +14,6 @@ export default defineConfig({
         replacement: fileURLToPath(new URL('./packages', import.meta.url)) + '/$1',
       },
       { find: '@core', replacement: fileURLToPath(new URL('./packages/core-ui', import.meta.url)) },
-      {
-        find: '@english',
-        replacement: fileURLToPath(new URL('./apps/english/src', import.meta.url)),
-      },
     ],
   },
   test: {
@@ -25,7 +21,7 @@ export default defineConfig({
     // scripts/**/*.test.ts = test cho tiện ích script THUẦN (vd scripts/lib/evalScoring.test.ts) —
     // không tốn API, chỉ logic. KHÔNG gồm chính script chạy AI (scripts/eval-tutor.ts) vì nó tốn phí.
     include: [
-      'apps/english/src/**/*.test.{ts,tsx}',
+      'apps/dhcb/src/**/*.test.{ts,tsx}',
       'api/**/*.test.ts',
       'packages/**/*.test.{ts,tsx}',
       'scripts/**/*.test.ts',
@@ -37,7 +33,7 @@ export default defineConfig({
       provider: 'v8',
       // Chỉ đo phần LOGIC THUẦN (lib + api). Bỏ UI (.tsx/pages/components),
       // điểm khởi tạo (server.ts) và dữ liệu tĩnh — nơi unit test ít giá trị.
-      include: ['apps/english/src/lib/**/*.ts', 'api/**/*.ts', 'packages/**/*.ts'],
+      include: ['apps/dhcb/src/lib/**/*.ts', 'api/**/*.ts', 'packages/**/*.ts'],
       // Loại khỏi phép đo những file mà unit test KHÔNG mang lại giá trị thật — chúng chỉ là
       // lớp vỏ mỏng bọc API trình duyệt/nền tảng, hoặc hook React, hoặc mã khởi tạo. Test cho
       // chúng chủ yếu kiểm chứng chính cái mock ta vừa dựng, gãy mỗi lần refactor, và rủi ro
@@ -48,47 +44,47 @@ export default defineConfig({
         '**/*.d.ts',
         // Chỉ khai báo kiểu, không có mã chạy.
         '**/types.ts',
-        'apps/english/src/lib/srsTypes.ts',
+        'apps/dhcb/src/lib/srsTypes.ts',
         // Vỏ bọc thiết bị ghi âm/ghi hình (MediaRecorder, getUserMedia).
-        'apps/english/src/lib/audioRecorder.ts',
-        'apps/english/src/lib/sttServer.ts',
-        'apps/english/src/lib/challengeRecorder.ts',
+        'apps/dhcb/src/lib/audioRecorder.ts',
+        'apps/dhcb/src/lib/sttServer.ts',
+        'apps/dhcb/src/lib/challengeRecorder.ts',
         // Vỏ bọc Web Speech API.
-        'apps/english/src/lib/stt.ts',
+        'apps/dhcb/src/lib/stt.ts',
         // Vỏ bọc IndexedDB.
-        'apps/english/src/lib/audioCache.ts',
-        'apps/english/src/lib/challengeVideo.ts',
+        'apps/dhcb/src/lib/audioCache.ts',
+        'apps/dhcb/src/lib/challengeVideo.ts',
         // Vỏ bọc API trình duyệt lặt vặt (vibrate, canvas fingerprint, AudioContext, DOM effect).
-        'apps/english/src/lib/haptics.ts',
-        'apps/english/src/lib/deviceId.ts',
-        'apps/english/src/lib/confetti.ts',
-        'apps/english/src/lib/sound.ts',
+        'apps/dhcb/src/lib/haptics.ts',
+        'apps/dhcb/src/lib/deviceId.ts',
+        'apps/dhcb/src/lib/confetti.ts',
+        'apps/dhcb/src/lib/sound.ts',
         // Service worker / Web Push.
-        'apps/english/src/lib/pushNotif.ts',
+        'apps/dhcb/src/lib/pushNotif.ts',
         // Nạp trước dữ liệu & chunk — chỉ là điều phối fetch, không có logic nghiệp vụ.
-        'apps/english/src/lib/preloadBrowse.ts',
-        'apps/english/src/lib/preloadState.ts',
-        'apps/english/src/lib/preloader.ts',
-        'apps/english/src/lib/dataPrecache.ts',
-        'apps/english/src/lib/lazyWithRetry.ts',
+        'apps/dhcb/src/lib/preloadBrowse.ts',
+        'apps/dhcb/src/lib/preloadState.ts',
+        'apps/dhcb/src/lib/preloader.ts',
+        'apps/dhcb/src/lib/dataPrecache.ts',
+        'apps/dhcb/src/lib/lazyWithRetry.ts',
         // Vỏ bọc fetch REST phía client — không có logic nghiệp vụ, đã được test E2E che.
-        'apps/english/src/lib/*Api.ts',
+        'apps/dhcb/src/lib/*Api.ts',
         // Hook React — thuộc phạm vi test UI, không phải unit test logic thuần.
-        'apps/english/src/lib/useCloudSync.ts',
-        'apps/english/src/lib/useOneHandedDrag.ts',
-        'apps/english/src/lib/useApiThrottle.ts',
-        'apps/english/src/lib/useChat.ts',
-        'apps/english/src/lib/useAudioDsp.ts',
-        'apps/english/src/lib/useMountedRef.ts',
-        'apps/english/src/lib/useRealtimeVoice.ts',
-        'apps/english/src/lib/edgeAi/useEdgeAi.ts',
+        'apps/dhcb/src/lib/useCloudSync.ts',
+        'apps/dhcb/src/lib/useOneHandedDrag.ts',
+        'apps/dhcb/src/lib/useApiThrottle.ts',
+        'apps/dhcb/src/lib/useChat.ts',
+        'apps/dhcb/src/lib/useAudioDsp.ts',
+        'apps/dhcb/src/lib/useMountedRef.ts',
+        'apps/dhcb/src/lib/useRealtimeVoice.ts',
+        'apps/dhcb/src/lib/edgeAi/useEdgeAi.ts',
         // Worker & lưu trữ nhị phân trình duyệt (OPFS/IndexedDB).
-        'apps/english/src/lib/audioDspWorker.ts',
-        'apps/english/src/lib/edgeAi/edgeModelStorage.ts',
-        'apps/english/src/lib/edgeAi/edgeAiService.ts',
+        'apps/dhcb/src/lib/audioDspWorker.ts',
+        'apps/dhcb/src/lib/edgeAi/edgeModelStorage.ts',
+        'apps/dhcb/src/lib/edgeAi/edgeAiService.ts',
         // Gửi-rồi-quên / khởi tạo SDK ngoài.
-        'apps/english/src/lib/analytics.ts',
-        'apps/english/src/lib/errorTracking.ts',
+        'apps/dhcb/src/lib/analytics.ts',
+        'apps/dhcb/src/lib/errorTracking.ts',
         'api/_lib/sentry.ts',
         // Tạo connection pool — chạy thật cần Postgres, đã có test tích hợp che.
         'packages/core-db/pgPool.ts',

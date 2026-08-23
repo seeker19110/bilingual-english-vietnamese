@@ -35,7 +35,7 @@ const REPO_ROOT = path.resolve(import.meta.dirname, '..')
 const OUTPUT_FILE = path.join(REPO_ROOT, '.codemap', 'graph.json')
 
 /** Thư mục được quét. Bỏ qua node_modules/dist vì không phải code của mình. */
-const SCAN_ROOTS = ['apps/english/src', 'apps/hub/src', 'api', 'packages', 'scripts']
+const SCAN_ROOTS = ['apps/dhcb/src', 'apps/hub/src', 'api', 'packages', 'scripts']
 /**
  * File điểm vào — vốn dĩ không ai import, không tính là "mồ côi".
  * Gồm `server.ts` + mọi script CLI top-level `scripts/*.ts` (không gồm `scripts/lib/` —

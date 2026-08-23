@@ -45,8 +45,8 @@ export interface DictEntry {
 // Dùng process.cwd() thay vì import.meta.url của chính file này: khi biên dịch sang
 // dist-server/ (xem tsconfig.server.json) đường dẫn tương đối từ file đã build sẽ trỏ SAI.
 // process.cwd() luôn là gốc repo ở cả 3 môi trường: Vite dev, tsx, và JS đã biên dịch.
-// [PR-S2] public/ đã dời vào apps/english/public — cập nhật đường dẫn theo.
-const DICT_DIR = join(process.cwd(), 'apps', 'english', 'public', 'data', 'dictionary')
+// [PR-S2] public/ đã dời vào apps/dhcb/public — cập nhật đường dẫn theo.
+const DICT_DIR = join(process.cwd(), 'apps', 'dhcb', 'public', 'data', 'dictionary')
 
 let _all: DictEntry[] | null = null
 

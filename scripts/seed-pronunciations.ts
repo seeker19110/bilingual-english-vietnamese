@@ -54,7 +54,7 @@ const MAX_ROUNDS = 5 // số vòng retry tối đa
 const PRON_VOICE_IDS: VoiceId[] = DEFAULT_SEED_VOICE_IDS
 
 // Thư mục chứa chunk từ điển — đây là nguồn mặc định
-const DEFAULT_DICT_DIR = path.join(PROJECT_ROOT, 'apps/english/public/data/dictionary')
+const DEFAULT_DICT_DIR = path.join(PROJECT_ROOT, 'apps/dhcb/public/data/dictionary')
 const ERRORS_FILE = path.join(PROJECT_ROOT, 'scripts/seed-errors.json')
 const BASE_URL = process.env.BASE_URL || ''
 

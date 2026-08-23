@@ -6,8 +6,8 @@ test.describe('Platform V2 Specialized Domain Hubs & Companion E2E', () => {
   test.beforeEach(async ({ page }) => {
     await mockLogin(page)
 
-    // Mock Companion API — apps/english/src/pages/Companion.tsx gửi { stream: true } và parse
-    // SSE (event: <type>\ndata: <json>\n\n), xem apps/english/src/lib/companionApi.ts#
+    // Mock Companion API — apps/dhcb/src/pages/Companion.tsx gửi { stream: true } và parse
+    // SSE (event: <type>\ndata: <json>\n\n), xem apps/dhcb/src/lib/companionApi.ts#
     // sendCompanionMessageStream. Body phải đúng định dạng SSE, KHÔNG phải JSON thường — mock
     // JSON cũ khiến parser không bao giờ tách được sự kiện (không có "\n\n" trong JSON thô) nên
     // Companion không bao giờ nhận được onDone → text không hiện (đã gây CI đỏ, xem PR #602).

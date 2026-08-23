@@ -260,7 +260,7 @@ export default async function handler(req: Request): Promise<Response> {
         `Groq trả body hỏng (${groqResult.message}) — chuyển sang provider dự phòng (Anthropic/Gemini)`,
       )
     } else {
-      // Chuẩn hoá về đúng format Anthropic mà frontend (apps/english/src/lib/ai.ts) đang đọc:
+      // Chuẩn hoá về đúng format Anthropic mà frontend (apps/dhcb/src/lib/ai.ts) đang đọc:
       // data.content[0].text
       return jsonResponse({ content: [{ type: 'text', text: groqResult.text }] }, 200, allHeaders)
     }

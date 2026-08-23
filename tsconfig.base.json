@@ -1,6 +1,6 @@
 {
   // tsconfig.base.json — compilerOptions dùng chung cho frontend (tách từ tsconfig gốc ở PR-S2).
-  // baseUrl/paths khai ở ĐÂY (gốc repo) nên mọi tsconfig extends đều phân giải @dhcb/@core/@english
+  // baseUrl/paths khai ở ĐÂY (gốc repo) nên mọi tsconfig extends đều phân giải @dhcb/@core
   // về đúng source, kể cả tsx (đọc paths qua chuỗi extends của tsconfig.json gốc).
   "compilerOptions": {
     "target": "ES2022",
@@ -22,8 +22,7 @@
     "baseUrl": ".",
     "paths": {
       "@core/*": ["packages/core-ui/*"],
-      "@dhcb/*": ["packages/*"],
-      "@english/*": ["apps/english/src/*"]
+      "@dhcb/*": ["packages/*"]
     }
   }
 }

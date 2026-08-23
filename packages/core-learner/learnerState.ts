@@ -73,7 +73,7 @@ function parseDirection(settings: unknown): ContractDirection {
     const result = DirectionSchema.safeParse((settings as { direction?: unknown }).direction)
     if (result.success) return result.data
   }
-  // Mặc định 'A' — khớp getDirection() ở apps/english/src/lib/storage.ts (chưa chọn = chiều A).
+  // Mặc định 'A' — khớp getDirection() ở apps/dhcb/src/lib/storage.ts (chưa chọn = chiều A).
   return 'A'
 }
 

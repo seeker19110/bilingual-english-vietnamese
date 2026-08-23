@@ -7,7 +7,7 @@
 //
 // CÁCH LÀM: dual-accept, KHÔNG thay Bearer. `packages/core-auth/auth.ts` gắn thêm Set-Cookie
 // mỗi lần tạo/thu hồi session; `security.ts#validateAuth` đọc Authorization trước, thiếu mới
-// thử cookie. Client hiện tại (apps/english/src/lib/auth.ts) không cần đổi gì — cookie chỉ
+// thử cookie. Client hiện tại (apps/dhcb/src/lib/auth.ts) không cần đổi gì — cookie chỉ
 // được trình duyệt tự lưu, mở đường cho app con sau này xác thực thẳng bằng cookie mà không
 // cần chia sẻ token qua code.
 //

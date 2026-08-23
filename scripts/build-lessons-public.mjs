@@ -16,10 +16,10 @@ import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const SRC = path.join(ROOT, 'apps/english/src/data/lessons.json')
+const SRC = path.join(ROOT, 'apps/dhcb/src/data/lessons.json')
 const OUT_DIR = process.argv[2]
   ? path.resolve(process.argv[2])
-  : path.join(ROOT, 'apps/english/public/data/lessons')
+  : path.join(ROOT, 'apps/dhcb/public/data/lessons')
 
 const LESSONS_PER_CHUNK = 10
 

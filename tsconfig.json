@@ -1,9 +1,9 @@
 {
   // tsconfig.json gốc — từ PR-S2 chỉ còn là "solution file": KHÔNG chứa project nào.
   // Vẫn extends tsconfig.base.json để tsx (npm start, scripts/) và editor đọc được paths
-  // @dhcb/@core/@english từ gốc repo. Project thật: apps/english/tsconfig.json,
+  // @dhcb/@core/@english từ gốc repo. Project thật: apps/dhcb/tsconfig.json,
   // tsconfig.api.json, tsconfig.server.json, tsconfig.e2e.json, packages/*/tsconfig.json.
   "extends": "./tsconfig.base.json",
   "files": [],
-  "references": [{ "path": "./apps/english" }, { "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "./apps/dhcb" }, { "path": "./tsconfig.node.json" }]
 }

@@ -45,7 +45,7 @@ async function getAllowedVoices(plan: Plan, now: Date): Promise<AnyVoiceId[]> {
 }
 
 // Giọng mặc định THEO GIỚI TÍNH. PHẢI khớp defaultVoiceForGender() trong
-// apps/english/src/lib/voiceTiers.ts (client tự clamp trước để nhãn hiển thị khớp giọng thật).
+// apps/dhcb/src/lib/voiceTiers.ts (client tự clamp trước để nhãn hiển thị khớp giọng thật).
 const DEFAULT_MALE_VOICE: VoiceId = 'Puck'
 const MALE_VOICE_IDS: ReadonlySet<string> = new Set([
   'Puck',

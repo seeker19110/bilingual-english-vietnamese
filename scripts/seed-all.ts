@@ -97,17 +97,17 @@ import {
   hasGeminiTtsKey,
   type GeminiVoiceId,
 } from '@dhcb/core-ai/geminiTts'
-import { STORY_KIND_VOICE } from '../apps/english/src/lib/stories.ts'
-import { type VoiceId as AppVoiceId } from '../apps/english/src/lib/voiceTiers.ts'
-import type { StoryKind } from '../apps/english/src/data/stories/index.ts'
+import { STORY_KIND_VOICE } from '../apps/dhcb/src/lib/stories.ts'
+import { type VoiceId as AppVoiceId } from '../apps/dhcb/src/lib/voiceTiers.ts'
+import type { StoryKind } from '../apps/dhcb/src/data/stories/index.ts'
 import { isValidElevenVoice } from '@dhcb/core-ai/elevenLabsTts'
-import { CEFR_LEVELS } from '../apps/english/src/data/cefr.ts'
+import { CEFR_LEVELS } from '../apps/dhcb/src/data/cefr.ts'
 import { encryptAudio, decryptAudio } from '@dhcb/core-ai/ttsCrypto'
 import { saveAudio } from '@dhcb/core-ai/fileStorage'
 import type { QueryResultRow } from 'pg'
 import { getPgPool } from '@dhcb/core-db/pgPool'
-import { FOUNDATION } from '../apps/english/src/data/curriculum.ts'
-import { CHALLENGE_TOPICS } from '../apps/english/src/data/challengeTopics.ts'
+import { FOUNDATION } from '../apps/dhcb/src/data/curriculum.ts'
+import { CHALLENGE_TOPICS } from '../apps/dhcb/src/data/challengeTopics.ts'
 import {
   loadSubjectsInDisplayOrder,
   loadPatternSeedIndex,
@@ -433,7 +433,7 @@ function loadPatternTasks(): PatternTask[] {
 
   // ── Ưu tiên 3 & 5: lesson turns — giọng đúng per nhân vật ─────────────────
   // Giống Lessons.tsx: voiceA = giới tính A; voiceB = variant2 nếu cùng giới, giọng kia nếu khác
-  const lessonDir = path.join(PROJECT_ROOT, 'apps/english/public/data/lessons')
+  const lessonDir = path.join(PROJECT_ROOT, 'apps/dhcb/public/data/lessons')
   const lessonFiles = fs
     .readdirSync(lessonDir)
     .filter((f) => /^chunk-\d+\.json$/.test(f))
@@ -538,7 +538,7 @@ function loadPatternTasks(): PatternTask[] {
   //     (chậm hơn 1 chút) ở lần người dùng THỰC SỰ bấm nghe (cache-on-demand qua /api/tts).
   //     Chưa chạy rank:patterns lần nào (seed-index.json chưa tồn tại) → fallback seed ĐỦ
   //     100 câu/chủ thể như trước (an toàn, không vỡ hành vi cũ).
-  const patternDir = path.join(PROJECT_ROOT, 'apps/english/public/data/patterns')
+  const patternDir = path.join(PROJECT_ROOT, 'apps/dhcb/public/data/patterns')
   const patternSeedIndex = loadPatternSeedIndex(patternDir)
   if (!patternSeedIndex) {
     console.warn(
@@ -568,7 +568,7 @@ function loadPatternTasks(): PatternTask[] {
 
   // ── Ưu tiên 7: Truyện cổ tích/ngụ ngôn (trang /stories, /stories/:id) ─────────
   // Dùng giọng Gemini chuyên dụng theo từng thể loại (STORY_KIND_VOICE).
-  const storyDir = path.join(PROJECT_ROOT, 'apps/english/public/data/stories')
+  const storyDir = path.join(PROJECT_ROOT, 'apps/dhcb/public/data/stories')
   if (fs.existsSync(storyDir)) {
     const storyFiles = fs
       .readdirSync(storyDir)
@@ -609,7 +609,7 @@ function loadPatternTasks(): PatternTask[] {
 function loadFullPatternTasks(): PatternTask[] {
   const tasks: PatternTask[] = []
   const seen = new Set<string>()
-  const patternDir = path.join(PROJECT_ROOT, 'apps/english/public/data/patterns')
+  const patternDir = path.join(PROJECT_ROOT, 'apps/dhcb/public/data/patterns')
   for (const subject of loadSubjectsInDisplayOrder(patternDir)) {
     for (const { en, vi } of subject.sentences) {
       for (const { text: rawText, lang } of [
@@ -662,7 +662,7 @@ function loadPronTasks(wordsFile?: string): PronTask[] {
     )
   } else {
     // Đọc từ public/data/dictionary/chunk-*.json
-    const dir = path.join(PROJECT_ROOT, 'apps/english/public/data/dictionary')
+    const dir = path.join(PROJECT_ROOT, 'apps/dhcb/public/data/dictionary')
     const files = fs
       .readdirSync(dir)
       .filter((f) => /^chunk-\d+\.json$/.test(f))
@@ -1850,7 +1850,7 @@ async function verifyDb(
       // Google/Gemini, nên MỌI dòng giọng ElevenLabs đều nằm ngoài expectedTts và trước đây
       // bị coi là orphan → `--clean-orphans --yes` xoá sạch. Nhưng ElevenLabs (Rachel) là
       // giọng người dùng CHỌN TAY được ở Cài đặt (chỉ bị loại khỏi bể random, xem
-      // apps/english/src/lib/voiceTiers.ts RANDOM_EXCLUDED_VOICES) — /api/tts vẫn phục vụ
+      // apps/dhcb/src/lib/voiceTiers.ts RANDOM_EXCLUDED_VOICES) — /api/tts vẫn phục vụ
       // bình thường. Tức là chúng KHÔNG "mất khỏi dữ liệu app", xoá đi là vi phạm chính sách
       // cache (CLAUDE.md mục 6: không bao giờ tự xoá cache đang dùng) và phải trả tiền sinh lại.
       // Cùng tinh thần với phần bảo vệ câu pattern ngoài seed-index ở mục 1.

@@ -4,7 +4,7 @@
 // TRƯỚC, Mastery chỉ được đổi SAU khi có Evidence — không engine nào được ghi thẳng vào Mastery).
 //
 // `dueAt` (optional) là điểm nối sang Phase 19 Adaptive SRS — thời điểm nên ôn lại theo mô hình
-// quên lãng, tương tự cơ chế SRS hiện có (`apps/english/src/lib/srs.ts`) nhưng áp cho cả SKILL,
+// quên lãng, tương tự cơ chế SRS hiện có (`apps/dhcb/src/lib/srs.ts`) nhưng áp cho cả SKILL,
 // không chỉ từng từ vựng đơn lẻ.
 
 import { z } from 'zod'

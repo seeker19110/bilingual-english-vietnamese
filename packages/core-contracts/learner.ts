@@ -5,8 +5,8 @@
 // trước, Phase 03 mới quyết cách lưu/migrate dữ liệu thật).
 //
 // Field lấy đúng khái niệm đã có: `direction`/`cefrLevel` khớp `Direction`/`CefrWordLevel` ở
-// `apps/english/src/types.ts`; `dailySpeed` khớp `DailySpeed` (5/10/20 từ/ngày) ở
-// `apps/english/src/lib/curriculum.ts`.
+// `apps/dhcb/src/types.ts`; `dailySpeed` khớp `DailySpeed` (5/10/20 từ/ngày) ở
+// `apps/dhcb/src/lib/curriculum.ts`.
 
 import { z } from 'zod'
 import { versionedObject } from './version.js'

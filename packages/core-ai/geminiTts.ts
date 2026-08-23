@@ -4,7 +4,7 @@
 // generateContent với responseModalities: ["AUDIO"], có thể điều khiển PHONG CÁCH ĐỌC bằng
 // câu lệnh tự nhiên ngay trong prompt (vd "Say cheerfully: ..." → model đọc đúng phần sau
 // dấu ":" với tông vui vẻ, KHÔNG đọc luôn câu lệnh — hành vi đã được Google tài liệu hoá).
-// CHỈ chạy ở server — không bao giờ import file này từ code phía browser (apps/english/src).
+// CHỈ chạy ở server — không bao giờ import file này từ code phía browser (apps/dhcb/src).
 //
 // Dùng lại GEMINI_API_KEY đã có sẵn cho chat (api/_lib/geminiApi.ts) — không cần khoá riêng.
 //
@@ -25,7 +25,7 @@ const TTS_TIMEOUT_MS = 30_000
 const GEMINI_TTS_MODEL = process.env.GEMINI_TTS_MODEL?.trim() || 'gemini-2.5-flash-preview-tts'
 
 // 6 giọng Gemini native audio, mỗi giọng gắn với đúng 1 thể loại truyện (giữ nguyên cách
-// gán theo thể loại như Chirp3-HD ở STORY_KIND_VOICE, xem apps/english/src/lib/stories.ts).
+// gán theo thể loại như Chirp3-HD ở STORY_KIND_VOICE, xem apps/dhcb/src/lib/stories.ts).
 // Tiền tố "Gemini-" để KHÔNG trùng với tên giọng Chirp3-HD (vd "Leda" đã là 1 VoiceId khác
 // hẳn ở googleTts.ts — cùng tên nhân vật thần thoại Hy Lạp nhưng 2 engine hoàn toàn khác
 // nhau, chất lượng/giọng đọc khác nhau).

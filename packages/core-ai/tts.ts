@@ -311,7 +311,7 @@ export default async function handler(req: Request): Promise<Response> {
         // Giọng THẬT SỰ đã dùng (đã qua clampVoiceToPlan + hạ Studio cho tiếng Việt) — client
         // PHẢI dựa vào đây, không phải giọng nó gửi lên: khác nhau ở chỗ Gemini trả WAV còn
         // các provider khác trả mp3, đoán sai là gắn sai mimeType cho Blob (iOS/Safari không
-        // phát được). Xem blobMimeTypeForVoice() trong apps/english/src/lib/tts.ts.
+        // phát được). Xem blobMimeTypeForVoice() trong apps/dhcb/src/lib/tts.ts.
         voice,
         // null với audio cũ (cache trước migration 0028) hoặc giọng không có timestamp —
         // client tự ước lượng như trước, không phải lỗi.
@@ -441,7 +441,7 @@ export default async function handler(req: Request): Promise<Response> {
     // Giọng Gemini trả WAV thật (không phải mp3 như các provider khác — xem geminiTts.ts),
     // đặt đúng đuôi file cho dễ debug; nội dung đã bị mã hoá nên đuôi file không ảnh hưởng
     // việc phát (client tự khai mimeType đúng khi tạo Blob, xem blobMimeTypeForVoice() phía
-    // apps/english/src/lib/tts.ts).
+    // apps/dhcb/src/lib/tts.ts).
     const ext = isValidGeminiVoice(voice) ? 'wav' : 'mp3'
     const fileName = `${lang}/${voice}/${textHash}.${ext}`
     const origin = req.headers.get('origin') || ''

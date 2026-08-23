@@ -19,7 +19,7 @@ module.exports = {
     {
       // V2-01 domain-boundary ADR (docs/adr/0003-bien-gioi-domain-v2.md): packages/ là Platform
       // Layer dùng chung cho mọi domain/app tương lai — không được phụ thuộc ngược vào
-      // Experience Layer (apps/english, apps/hub). Vi phạm hướng ngược lại (apps/* import
+      // Experience Layer (apps/dhcb, apps/hub). Vi phạm hướng ngược lại (apps/* import
       // packages/*) là bình thường và KHÔNG bị chặn ở đây.
       files: ['packages/**/*.ts', 'packages/**/*.tsx'],
       excludedFiles: ['**/*.test.ts', '**/*.test.tsx'],

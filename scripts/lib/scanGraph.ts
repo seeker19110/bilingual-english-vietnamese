@@ -33,7 +33,7 @@ export function scanGraph({ rootDir, scanRoots, entryPoints = [] }: ScanOptions)
     return scanRoots.some((root) => repoPath === root || repoPath.startsWith(`${root}/`))
   }
 
-  // Quét rộng hơn `include` của tsconfig (vốn chỉ có apps/english/src + packages/core-ui)
+  // Quét rộng hơn `include` của tsconfig (vốn chỉ có apps/dhcb/src + packages/core-ui)
   // để phủ cả api/, scripts/, apps/hub/ và server.ts trong cùng một chương trình.
   const rootNames = scanRoots
     .flatMap((root) => {
