@@ -9,7 +9,7 @@ import { useAuth } from '../../../context/useAuth'
 import { useToast } from '@core/ToastProvider'
 import { useCloudSync } from '../../../lib/useCloudSync'
 import { useApiThrottle } from '../../../lib/useApiThrottle'
-import { callClaude, parseJson } from '../../../lib/ai'
+import { callClaude, parseJson, hasNumberFields } from '../../../lib/ai'
 import { writingSystemPrompt } from '../../../prompts'
 import { useOnboarding } from '../../../lib/onboarding'
 import type { WritingSubmission, Direction } from '../../../types'
@@ -292,7 +292,19 @@ export default function Writing() {
     try {
       const raw = await callClaude([{ role: 'user', content: userMsg }], sys, 2048, 'writing')
       const data = parseJson<FeedbackData>(raw)
-      if (!data)
+      if (
+        !data ||
+        !hasNumberFields(data.scores, [
+          'task_response',
+          'coherence',
+          'lexical',
+          'grammar',
+          'overall',
+        ]) ||
+        !Array.isArray(data.errors) ||
+        !Array.isArray(data.suggestions) ||
+        typeof data.sample !== 'string'
+      )
         throw new Error(
           isA
             ? 'AI trả về định dạng không đúng. Thử lại.'

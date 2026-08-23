@@ -25,7 +25,7 @@ import { useCloudSync } from '../../../lib/useCloudSync'
 import { useApiThrottle } from '../../../lib/useApiThrottle'
 import { useMountedRef } from '../../../lib/useMountedRef'
 import { useOnboarding } from '../../../lib/onboarding'
-import { callClaude, parseJson } from '../../../lib/ai'
+import { callClaude, parseJson, hasNumberFields } from '../../../lib/ai'
 import {
   speakingSystemPrompt,
   speakingFullEvaluationPrompt,
@@ -91,11 +91,15 @@ function sttErrorMessage(code: string, isA: boolean): string {
 // ── Setup Screen ─────────────────────────────────────────────────────────
 function SetupScreen({
   onStart,
+  loading,
+  error,
   dir,
   defaultLevel,
   practiceWords,
 }: {
   onStart: (s: string, l: Level) => void
+  loading: boolean
+  error: string
   dir: Direction
   // Trình độ khai lúc onboarding (U-3) — làm mặc định thay vì cứng 'intermediate'
   defaultLevel?: Level
@@ -212,12 +216,28 @@ function SetupScreen({
           </div>
         </div>
 
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/30 rounded-2xl px-4 py-3 text-xs text-red-400 theme-light:text-red-700">
+            {error}
+          </div>
+        )}
+
         <button
           onClick={() => onStart(situation, level)}
+          disabled={loading}
           aria-label={isA ? 'Bắt đầu luyện nói' : 'Start speaking practice'}
-          className="w-full bg-gradient-to-r from-sky-500 via-cyan-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold py-3.5 rounded-2xl text-sm transition-all duration-200 active:scale-98 shadow-lg shadow-sky-500/25 mt-2"
+          className="w-full bg-gradient-to-r from-sky-500 via-cyan-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 disabled:opacity-60 text-white font-bold py-3.5 rounded-2xl text-sm transition-all duration-200 active:scale-98 flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 mt-2"
         >
-          {isA ? 'Bắt đầu luyện nói →' : 'Start speaking →'}
+          {loading ? (
+            <>
+              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              {isA ? 'Đang kết nối AI...' : 'Connecting to AI...'}
+            </>
+          ) : isA ? (
+            'Bắt đầu luyện nói →'
+          ) : (
+            'Start speaking →'
+          )}
         </button>
       </div>
     </div>
@@ -558,11 +578,19 @@ export default function Speaking() {
     try {
       const text = await r.stop()
       setProcessing(false)
-      incrementUsage(user.id, 'sttCount') // đã gọi API STT thành công → tính 1 lượt
+      // Tới được đây nghĩa là /api/stt đã được gọi thành công (server đã trừ 1 lượt) —
+      // kể cả khi Whisper nghe ra rỗng (im lặng/tạp âm), vẫn tính đúng 1 lượt để khớp
+      // số server, không đợi lần pullUserData kế tiếp mới đúng.
+      incrementUsage(user.id, 'sttCount')
       if (text.trim()) startPendingConfirm(text.trim())
       else setError(isA ? 'Không nghe rõ, thử nói lại nhé.' : "Didn't catch that, try again.")
     } catch (e) {
       setProcessing(false)
+      if (e instanceof Error && e.message === 'EMPTY_RECORDING') {
+        // Chưa hề gọi /api/stt (không có gì để gửi) — không tính lượt.
+        setError(isA ? 'Không nghe rõ, thử nói lại nhé.' : "Didn't catch that, try again.")
+        return
+      }
       const m = e instanceof Error ? e.message : isA ? 'Lỗi nhận diện giọng nói' : 'STT error'
       setError(m)
       toast.error(m)
@@ -577,7 +605,14 @@ export default function Speaking() {
       effectivePlan(user.plan) !== 'free' &&
       usage.speakingCount >= getLimits()[effectivePlan(user.plan)].speaking
     ) {
+      // SetupScreen chỉ đọc prop `error` (banner limitHit chỉ render khi đã có session) —
+      // set cả hai để không "bấm mà không có gì xảy ra".
       setLimitHit(true)
+      setError(
+        isA
+          ? 'Bạn đã dùng hết lượt hôm nay. Quay lại vào ngày mai nhé!'
+          : "You've used all your sessions today. Come back tomorrow!",
+      )
       return
     }
     if (isThrottled) {
@@ -874,7 +909,13 @@ export default function Speaking() {
     try {
       const raw = await callClaude(history, sys, 2048, 'speaking')
       const data = parseJson<EvaluationResult>(raw)
-      if (!data)
+      if (
+        !data ||
+        !hasNumberFields(data.scores, ['fluency', 'lexical', 'grammar', 'overall']) ||
+        !Array.isArray(data.errors) ||
+        !Array.isArray(data.strengths) ||
+        !Array.isArray(data.suggestions)
+      )
         throw new Error(
           isA
             ? 'AI trả về định dạng không đúng. Thử lại.'
@@ -925,6 +966,8 @@ export default function Speaking() {
           </div>
           <SetupScreen
             onStart={startSession}
+            loading={loading}
+            error={error}
             dir={dir}
             defaultLevel={onboarding?.level}
             practiceWords={practiceWords}

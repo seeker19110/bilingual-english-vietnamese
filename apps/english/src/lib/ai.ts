@@ -75,6 +75,17 @@ export async function callClaude(
   return text
 }
 
+// Kiểm tra `v` là object có đủ các khoá trong `keys`, mỗi khoá kiểu number — dùng để
+// validate dữ liệu chấm điểm AI trả về trước khi tin tưởng render. `parseJson` chỉ đảm bảo
+// JSON hợp lệ cú pháp, KHÔNG đảm bảo đúng shape — AI có thể bỏ sót trường dù đã yêu cầu
+// trong prompt, và render thẳng field bị thiếu (VD `scores.overall`) sẽ crash trắng trang
+// (TypeError, mất luôn cả phiên hội thoại đang mở).
+export function hasNumberFields(v: unknown, keys: string[]): boolean {
+  if (!v || typeof v !== 'object') return false
+  const o = v as Record<string, unknown>
+  return keys.every((k) => typeof o[k] === 'number')
+}
+
 // Trích xuất JSON từ câu trả lời (AI đôi khi bọc thêm markdown ``` hoặc lỡ thêm
 // câu chữ thừa trước/sau khối JSON, vd "Ok! { ... }") — thử parse thẳng trước,
 // nếu lỗi thì thử cắt lấy phần từ dấu "{" đầu tiên tới dấu "}" cuối cùng.

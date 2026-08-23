@@ -21,7 +21,7 @@ import { useCloudSync } from '../../../lib/useCloudSync'
 import { useApiThrottle } from '../../../lib/useApiThrottle'
 import { useMountedRef } from '../../../lib/useMountedRef'
 import { useOnboarding } from '../../../lib/onboarding'
-import { callClaude, parseJson } from '../../../lib/ai'
+import { callClaude, parseJson, hasNumberFields } from '../../../lib/ai'
 import { effectivePlan } from '../../../lib/promo'
 import { getLimits } from '../../../lib/appSettings'
 import { chatSystemPrompt, chatFullEvaluationPrompt, situationLabel } from '../../../prompts'
@@ -397,7 +397,14 @@ export default function Chat() {
     // Gói Free: kho lượt tuần chung nằm ở server, không suy ra được từ dữ liệu local
     // (chatCount đếm theo ngày/theo mode, không còn đúng ý nghĩa) — để server tự chặn.
     if (effectivePlan(user.plan) !== 'free' && usage.chatCount >= limit.chat) {
+      // SetupScreen chỉ đọc prop `error` (banner limitHit chỉ render khi đã có session) —
+      // set cả hai để không "bấm mà không có gì xảy ra".
       setLimitHit(true)
+      setError(
+        isA
+          ? 'Bạn đã dùng hết lượt hôm nay. Quay lại vào ngày mai nhé!'
+          : "You've used all your sessions today. Come back tomorrow!",
+      )
       return
     }
     if (isThrottled) {
@@ -567,7 +574,13 @@ export default function Chat() {
     try {
       const raw = await callClaude(history, sys, 2048, 'chat')
       const data = parseJson<EvaluationResult>(raw)
-      if (!data)
+      if (
+        !data ||
+        !hasNumberFields(data.scores, ['fluency', 'lexical', 'grammar', 'overall']) ||
+        !Array.isArray(data.errors) ||
+        !Array.isArray(data.strengths) ||
+        !Array.isArray(data.suggestions)
+      )
         throw new Error(
           isA
             ? 'AI trả về định dạng không đúng. Thử lại.'
