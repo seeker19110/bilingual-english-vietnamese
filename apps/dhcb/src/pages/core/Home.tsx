@@ -19,8 +19,6 @@ import PricePromoBanner from '../../components/PricePromoBanner.js'
 import RewardTipBanner from '../../components/RewardTipBanner.js'
 import HomeAiBriefingCard from '../../components/Home/HomeAiBriefingCard.js'
 import HomeUniversalAiBar from '../../components/Home/HomeUniversalAiBar.js'
-import DailyQuestsCard from '../../components/DailyQuests/DailyQuestsCard.js'
-import ReferralVipBanner from '../../components/ReferralVip/ReferralVipBanner.js'
 import { getDirection } from '../../lib/storage'
 import type { Direction } from '../../types'
 import { useLang } from '../../context/useLang'
@@ -200,8 +198,7 @@ export default function Home() {
 
         {/* ── Mẹo thưởng & Nhiệm vụ ── */}
         {uid && <RewardTipBanner uid={uid} isA={isA} />}
-        <DailyQuestsCard />
-        <ReferralVipBanner />
+        {/* DailyQuestsCard + ReferralVipBanner (dữ liệu giả in-memory) đã gỡ 2026-08-23 — hệ nhiệm vụ/giới thiệu THẬT ở /nhiem-vu và /profile (QuestsPanel, ReferralSection) */}
 
         {/* ── TẦNG 2: CÁC KHÔNG GIAN BỘ MÔN & MIỀN CHUYÊN BIỆT (Platform Domain Hubs) ── */}
         <section aria-label="Danh mục Không gian & Bộ môn" className="space-y-4 pt-1">

@@ -6,7 +6,6 @@ import {
   type PvPQuestionItem,
   type PvPRoundAction,
   type PvPMatchState,
-  type PvPLeaderboardEntry,
 } from '@dhcb/core-contracts/pvpArena'
 
 // Bảng câu hỏi mẫu chất lượng cao phân chia theo chế độ đấu
@@ -384,70 +383,4 @@ export function finalizePvPMatch(match: PvPMatchState): PvPMatchState {
     rewardExp,
     updatedAt: new Date().toISOString(),
   }
-}
-
-export function getWeeklyLeaderboard(currentUserId = 'user-me'): PvPLeaderboardEntry[] {
-  const sampleLeaderboard: PvPLeaderboardEntry[] = [
-    {
-      rank: 1,
-      playerId: 'lead-1',
-      name: 'Nguyen Hoang Long',
-      avatar: '👑',
-      eloRating: 2450,
-      rankTier: 'master',
-      winStreak: 12,
-      winRate: 84.5,
-    },
-    {
-      rank: 2,
-      playerId: 'lead-2',
-      name: 'Elena Vu',
-      avatar: '💎',
-      eloRating: 2280,
-      rankTier: 'master',
-      winStreak: 8,
-      winRate: 79.2,
-    },
-    {
-      rank: 3,
-      playerId: 'lead-3',
-      name: 'Tran Minh Tri',
-      avatar: '🌟',
-      eloRating: 2150,
-      rankTier: 'diamond',
-      winStreak: 6,
-      winRate: 75.0,
-    },
-    {
-      rank: 4,
-      playerId: 'lead-4',
-      name: 'Pham Anh Thu',
-      avatar: '⚡',
-      eloRating: 1980,
-      rankTier: 'diamond',
-      winStreak: 5,
-      winRate: 71.8,
-    },
-    {
-      rank: 5,
-      playerId: 'lead-5',
-      name: 'Cyber Rival',
-      avatar: '🤖',
-      eloRating: 1850,
-      rankTier: 'platinum',
-      winStreak: 4,
-      winRate: 68.0,
-    },
-    {
-      rank: 6,
-      playerId: currentUserId,
-      name: 'Bạn (Learner)',
-      avatar: '🦁',
-      eloRating: 1420,
-      rankTier: 'gold',
-      winStreak: 3,
-      winRate: 65.4,
-    },
-  ]
-  return sampleLeaderboard
 }

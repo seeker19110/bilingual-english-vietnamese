@@ -109,4 +109,40 @@ describe('/api/feedback', () => {
     const resp = await handler(req)
     expect(resp.status).toBe(204)
   })
+
+  // ── Bổ sung phủ nhánh (2026-08-23): rate-limit, khách vãng lai, trường tuỳ chọn rỗng ──
+  it('trả 429 khi vượt rate limit', async () => {
+    rateLimitOk = false
+    const resp = await handler(new Request('http://localhost/api/feedback', { method: 'GET' }))
+    expect(resp.status).toBe(429)
+  })
+
+  it('POST khách vãng lai (không đăng nhập) — user_id null, các trường tuỳ chọn null', async () => {
+    authUser = null
+    const resp = await handler(
+      new Request('http://localhost/api/feedback', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ category: 'bug', message: 'Nút lưu không hoạt động trên mobile.' }),
+      }),
+    )
+    expect(resp.status).toBe(201)
+    const params = query.mock.calls[0]?.[1] as unknown[]
+    expect(params[0]).toBeNull() // auth?.userId ?? null
+    expect(params[2]).toBeNull() // rating ?? null
+    expect(params[3]).toBeNull() // title ?? null
+    expect(params[5]).toBeNull() // contactEmail ?? null
+    expect(params[6]).toBe(JSON.stringify({})) // contextInfo ?? {}
+  })
+
+  it('POST body sai schema → 400', async () => {
+    const resp = await handler(
+      new Request('http://localhost/api/feedback', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ category: 'bug' }), // thiếu message
+      }),
+    )
+    expect(resp.status).toBe(400)
+  })
 })

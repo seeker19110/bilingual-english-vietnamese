@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { RealtimeSessionTelemetry } from '@dhcb/core-contracts/meshTelemetry'
 import { fetchMeshTelemetry, MeshStatusSummary } from '../../lib/meshTelemetryApi.js'
-import RealtimeCostTelemetryBadge from './RealtimeCostTelemetryBadge'
 import MeshHealthMonitorModal from './MeshHealthMonitorModal'
 
 export default function RealtimeTelemetryBar() {
@@ -39,7 +38,8 @@ export default function RealtimeTelemetryBar() {
         </span>
       </div>
 
-      <RealtimeCostTelemetryBadge telemetry={telemetry} onClick={() => setModalOpen(true)} />
+      {/* Badge chi phí USD đã gỡ khỏi UI người dùng cuối (việc quyết định #3, 2026-08-23) —
+          số USD là ước tính nội bộ, chỉ admin xem qua /api/admin-usage-stats */}
 
       <MeshHealthMonitorModal
         isOpen={modalOpen}

@@ -42,7 +42,7 @@ export default function AgentOrchestratorCard() {
                 </span>
               </div>
               <p className="text-xs text-zinc-400">
-                Vòng lặp tự trị đa bước với lá chắn kiểm soát chi phí USD & tokens
+                Vòng lặp tự trị đa bước với lá chắn kiểm soát ngân sách tokens
               </p>
             </div>
           </div>
@@ -76,7 +76,7 @@ export default function AgentOrchestratorCard() {
 
             <div className="flex items-center justify-between text-xs text-zinc-400 pt-1">
               <span>Đã dùng: {latestSession.totalTokensUsed} tokens</span>
-              <span>Chi phí: ${latestSession.totalCostUsd} USD</span>
+              <span>Tokens: {latestSession.totalTokensUsed}</span>
               <span>{latestSession.steps.length} bước thực thi</span>
             </div>
           </div>

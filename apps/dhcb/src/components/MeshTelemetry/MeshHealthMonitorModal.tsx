@@ -104,7 +104,7 @@ export default function MeshHealthMonitorModal({
             <span className="text-[10px] text-zinc-400 block mb-1">Chi Phí Tích Lũy</span>
             <div className="flex items-baseline gap-1">
               <span className="text-lg font-bold text-emerald-400 font-mono">
-                ${telemetry.accumulatedCostUsd.toFixed(4)}
+                {telemetry.totalTokens} tokens
               </span>
             </div>
           </div>
@@ -116,9 +116,7 @@ export default function MeshHealthMonitorModal({
               <ShieldCheck className="w-4 h-4 text-cyan-400" />
               <span>Budget Quota Guard (Circuit Breaker)</span>
             </div>
-            <span className="text-[10px] text-zinc-400 font-mono">
-              Cap: ${telemetry.costCapUsd}
-            </span>
+            <span className="text-[10px] text-zinc-400 font-mono">Hạn mức phiên: theo gói</span>
           </div>
 
           <p className="text-[11px] text-zinc-400">

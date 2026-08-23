@@ -7,6 +7,35 @@ vi.mock('@dhcb/core-auth/security', () => ({
   getCorsHeaders: vi.fn().mockReturnValue({}),
 }))
 
+// [N3] Handler đã chuyển state sang platform.feature_state — mock bằng Map in-memory
+// (hành vi giống hệt Map cấp module cũ: state sống suốt file test).
+const store = new Map<string, unknown>()
+vi.mock('@dhcb/core-db/featureState', () => ({
+  getFeatureState: vi.fn(async (u: string, f: string) => store.get(u + '|' + f) ?? null),
+  setFeatureState: vi.fn(async (u: string, f: string, st: unknown) => {
+    store.set(u + '|' + f, st)
+  }),
+}))
+
+// pgPool: truy vấn leaderboard đọc từ store; truy vấn tên trả tên test.
+vi.mock('@dhcb/core-db/pgPool', () => ({
+  getPgPool: () => ({
+    query: vi.fn(async (sql: string) => {
+      if (sql.includes('feature_state')) {
+        const rows = [...store.entries()]
+          .filter(([k]) => k.endsWith('|pvp_profile'))
+          .map(([k, state]) => ({
+            user_id: k.split('|')[0],
+            state,
+            display_name: k.startsWith('u-anon') ? null : 'Player Test',
+          }))
+        return { rows }
+      }
+      return { rows: [{ display_name: 'Player Test' }] }
+    }),
+  }),
+}))
+
 describe('api/pvp-arena endpoint', () => {
   it('handles GET request returning user profile and leaderboard', async () => {
     const req = new Request('http://localhost/api/pvp-arena', { method: 'GET' })
@@ -222,5 +251,103 @@ describe('api/pvp-arena endpoint', () => {
     })
     const res = await handler(req)
     expect(res.status).toBe(400)
+  })
+
+  // ── [N3] Nhánh persistence mới: hoàn tất trận → Elo/hồ sơ cập nhật thật ──
+  it('completes a full match and updates stored profile (Elo K=32, wins, streak)', async () => {
+    store.clear()
+    const makeRes = await handler(
+      new Request('http://localhost/api/pvp-arena?action=matchmake', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}), // mode mặc định (nhánh body.mode || ...)
+      }),
+    )
+    const { match } = await makeRes.json()
+    let last: { isMatchCompleted?: boolean; match?: { winnerId?: string } } = {}
+    for (let i = 0; i < match.totalRounds; i++) {
+      const res = await handler(
+        new Request('http://localhost/api/pvp-arena?action=submit_round', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            matchId: match.matchId,
+            roundIndex: i,
+            selectedOption: match.questions[i].correctIndex,
+            responseTimeMs: 800,
+          }),
+        }),
+      )
+      last = await res.json()
+    }
+    expect(last.isMatchCompleted).toBe(true)
+    const profile = store.get('u-test-123|pvp_profile') as {
+      eloRating: number
+      totalMatches: number
+      wins: number
+      winStreak: number
+    }
+    expect(profile.totalMatches).toBe(1)
+    // Trả lời đúng 100% + nhanh → thắng Ghost → Elo tăng, streak = 1
+    expect(profile.wins).toBe(1)
+    expect(profile.winStreak).toBe(1)
+    expect(profile.eloRating).not.toBe(1250)
+    // Trận đã completed → submit tiếp trả 404 (nhánh match.status === 'completed')
+    const again = await handler(
+      new Request('http://localhost/api/pvp-arena?action=submit_round', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ matchId: match.matchId, roundIndex: 0, selectedOption: 0 }),
+      }),
+    )
+    expect(again.status).toBe(404)
+  })
+
+  it('leaderboard handles người chơi mới: winRate 0, thiếu avatar/tên → fallback', async () => {
+    store.clear()
+    store.set('u-x|pvp_profile', { eloRating: 1300, winStreak: 0, totalMatches: 0, wins: 0 })
+    const res = await handler(
+      new Request('http://localhost/api/pvp-arena?action=leaderboard', { method: 'GET' }),
+    )
+    const { leaderboard } = await res.json()
+    expect(leaderboard[0].winRate).toBe(0)
+    expect(leaderboard[0].avatar).toBe('🦁') // nhánh state.avatar || '🦁'
+  })
+
+  it('submit_round với roundIndex vượt số câu → 400 (nhánh Invalid roundIndex)', async () => {
+    store.clear()
+    const makeRes = await handler(
+      new Request('http://localhost/api/pvp-arena?action=matchmake', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode: 'vocab_speed_duel' }),
+      }),
+    )
+    const { match } = await makeRes.json()
+    const res = await handler(
+      new Request('http://localhost/api/pvp-arena?action=submit_round', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ matchId: match.matchId, roundIndex: 99, selectedOption: 0 }),
+      }),
+    )
+    expect(res.status).toBe(400)
+  })
+
+  it('leaderboard fallback tên "Học viên" khi user không có nickname/tên', async () => {
+    store.clear()
+    store.set('u-anon|pvp_profile', {
+      avatar: '🐧',
+      eloRating: 1400,
+      winStreak: 2,
+      totalMatches: 4,
+      wins: 3,
+    })
+    const res = await handler(
+      new Request('http://localhost/api/pvp-arena?action=leaderboard', { method: 'GET' }),
+    )
+    const { leaderboard } = await res.json()
+    expect(leaderboard[0].name).toBe('Học viên')
+    expect(leaderboard[0].winRate).toBe(75)
   })
 })

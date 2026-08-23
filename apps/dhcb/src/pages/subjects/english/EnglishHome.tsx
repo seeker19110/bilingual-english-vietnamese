@@ -24,8 +24,6 @@ import {
 import Layout from '../../../components/Layout.js'
 import PricePromoBanner from '../../../components/PricePromoBanner.js'
 import RewardTipBanner from '../../../components/RewardTipBanner.js'
-import DailyQuestsCard from '../../../components/DailyQuests/DailyQuestsCard.js'
-import ReferralVipBanner from '../../../components/ReferralVip/ReferralVipBanner.js'
 import { getDirection } from '../../../lib/storage'
 import type { Direction } from '../../../types'
 import { useAuth } from '../../../context/useAuth'
@@ -264,11 +262,7 @@ export default function EnglishHome() {
           </button>
         )}
 
-        {/* ── NHIỆM VỤ HÀNG NGÀY & RƯƠNG BÍ ẨN ── */}
-        <DailyQuestsCard />
-
-        {/* ── CHƯƠNG TRÌNH MỜI BẠN NHẬN VIP ── */}
-        <ReferralVipBanner />
+        {/* DailyQuestsCard + ReferralVipBanner (dữ liệu giả in-memory) đã gỡ 2026-08-23 — hệ nhiệm vụ/giới thiệu THẬT ở /nhiem-vu và /profile (QuestsPanel, ReferralSection) */}
 
         {/* ── GIA SƯ 4 KỸ NĂNG AI ── */}
         <section aria-label="Gia Sư 4 Kỹ Năng AI" className="space-y-3">
