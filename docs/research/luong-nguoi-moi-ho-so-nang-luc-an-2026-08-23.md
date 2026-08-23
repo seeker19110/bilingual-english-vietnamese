@@ -41,8 +41,11 @@ hình chính, không có thông báo, không có huy hiệu, không có biểu �
 trong Cài đặt, sau một thao tác có chủ ý. Điều này giữ trọn tinh thần yêu cầu của bạn mà không
 biến hệ thống thành hộp đen.
 
-> **Nếu bạn vẫn muốn ẩn tuyệt đối**, tôi sẽ làm theo — nhưng đề nghị tối thiểu giữ nút "Xoá dữ
-> liệu đánh giá về tôi". Không có nó thì đây là rủi ro thật, không phải lo xa.
+> **✅ ĐÃ CHỐT (người dùng, 2026-08-23):** phương án **ẩn nhưng xem được khi hỏi**. Bổ sung: việc
+> XEM hồ sơ ẩn được **khoá thêm bằng 2FA** — chi tiết ở
+> `dac-ta-ma-hoa-du-lieu-va-2fa-2026-08-23.md`. Toàn bộ dữ liệu nhạy cảm (T2) được **mã hoá**
+> trong DB. Nút "Xoá dữ liệu đánh giá về tôi" **không** cần 2FA — không bao giờ được cản người
+> dùng xoá dữ liệu của chính họ.
 
 ---
 
@@ -71,6 +74,8 @@ biến hệ thống thành hộp đen.
 ---
 
 ## 3. Lớp HỎI — 5 câu, 90 giây
+
+> **✅ ĐÃ CHỐT (người dùng, 2026-08-23):** bộ 5 câu dưới đây được duyệt nguyên trạng.
 
 Nguyên tắc: **mỗi câu làm hai việc** — với người dùng nó là câu hỏi về họ; với hệ thống nó là tín
 hiệu. Không câu nào có đáp án đúng/sai.
@@ -240,11 +245,11 @@ ielts`, số phút mỗi ngày. Chỉ có **nhóm tuổi** là dữ liệu cấp
 
 Chèn vào chuỗi C0 → C1 → …:
 
-| PR              | Nội dung                                                                                                                                                                                                        |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **C1b** _(mới)_ | Tách lớp onboarding nền tảng khỏi onboarding môn Anh; chuyển `age_group` lên platform; hoàn tất bước `0036` để ngỏ. **Đụng màn onboarding của mọi người dùng đang hoạt động → cần test kỹ + kế hoạch rollback** |
-| **C2b**         | 5 câu + bảng suy luận + luật ngôn ngữ mục 5 thành dữ liệu/cấu hình                                                                                                                                              |
-| **C3b** _(mới)_ | Bộ lọc ngôn ngữ + test bất biến ở mục 9                                                                                                                                                                         |
+| PR              | Nội dung                                                                                                                                                                                                                                                                                                                                  |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **C1b**         | ✅ **ĐÃ LÀM 2026-08-23.** Tách ranh giới nền tảng/môn ở tầng dữ liệu: migration `0059` + `/api/profile` dual-write trong transaction, đọc ưu tiên `english.user_profile`; `age_group` chốt là dữ liệu NỀN TẢNG (sửa phân loại sai của `0036`). Rollback = revert code, không đụng dữ liệu. Phần UI 5 câu là **C1b-2**, làm sau khi có 2FA |
+| **C2b**         | 5 câu + bảng suy luận + luật ngôn ngữ mục 5 thành dữ liệu/cấu hình                                                                                                                                                                                                                                                                        |
+| **C3b** _(mới)_ | Bộ lọc ngôn ngữ + test bất biến ở mục 9                                                                                                                                                                                                                                                                                                   |
 
 ---
 
@@ -279,7 +284,7 @@ trong tuần đầu, họ đã có bằng chứng rằng DHCB có ích — và �
 
 ---
 
-## 11. Câu cần bạn chốt
+## 11. Câu cần bạn chốt — ✅ đã chốt hết 2026-08-23
 
 1. **Ẩn tuyệt đối hay ẩn-nhưng-xem-được-khi-hỏi?** Tôi đề xuất phương án 2 (mục 1.2). Nếu bạn chọn
    ẩn tuyệt đối, đề nghị tối thiểu giữ nút xoá dữ liệu.
