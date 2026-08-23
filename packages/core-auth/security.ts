@@ -101,7 +101,10 @@ return count
 // Client Redis dùng chung, khởi tạo lười (chỉ tạo ở lần gọi đầu có REDIS_URL).
 // `null` = đã kiểm tra và không dùng Redis; `undefined` = chưa kiểm tra lần nào.
 let redisClient: Redis | null | undefined
-let warnedRedisFallback = false
+// `true` = đang ở trạng thái suy giảm (đã báo). Dùng để log ĐÚNG MỘT lần MỖI LẦN CHUYỂN
+// TRẠNG THÁI, không phải một lần rồi câm vĩnh viễn — xem chú thích ở noteRedisDegraded().
+let redisDegraded = false
+let lastRedisError = ''
 
 function getRedis(): Redis | null {
   if (redisClient !== undefined) return redisClient
@@ -120,26 +123,72 @@ function getRedis(): Redis | null {
       connectTimeout: 2000,
     })
     // Bắt sự kiện 'error' để lỗi kết nối nền không làm process crash (unhandled error).
-    redisClient.on('error', (err: Error) => warnRedisFallbackOnce(err))
+    redisClient.on('error', (err: Error) => noteRedisDegraded(err))
+    redisClient.on('ready', () => noteRedisRecovered())
   } catch (err) {
-    warnRedisFallbackOnce(err)
+    noteRedisDegraded(err)
     redisClient = null
   }
   return redisClient
 }
 
-// Chỉ log cảnh báo MỘT lần — tránh spam log mỗi request khi Redis chết.
-function warnRedisFallbackOnce(err: unknown): void {
-  if (warnedRedisFallback) return
-  warnedRedisFallback = true
+// Ghi nhận Redis hỏng. Log MỘT lần mỗi LẦN CHUYỂN TRẠNG THÁI (đang tốt → hỏng), không spam
+// mỗi request.
+//
+// [2026-08-23] Trước đây cờ này latch `true` VĨNH VIỄN sau lần hỏng đầu: Redis chết lại lần sau
+// thì log câm, mà Redis sống lại cũng không ai biết — nhìn log không phân biệt nổi "trục trặc
+// thoáng qua lúc khởi động" với "Redis chết cả ngày". Nay có cả chiều phục hồi.
+function noteRedisDegraded(err: unknown): void {
   const message = err instanceof Error ? err.message : String(err)
+  lastRedisError = message
+  if (redisDegraded) return
+  redisDegraded = true
   console.warn(
     `[Security] Redis lỗi (${message}) — rate limit tạm dùng Map in-memory mỗi instance.`,
   )
 }
 
+function noteRedisRecovered(): void {
+  if (!redisDegraded) return
+  redisDegraded = false
+  lastRedisError = ''
+  console.warn('[Security] Redis đã hoạt động trở lại — rate limit dùng chung toàn cluster.')
+}
+
+/** Trạng thái Redis cho health check (xem apps/server/src/api/platform/healthDeep.ts). */
+export function getRedisRuntimeStatus(): {
+  configured: boolean
+  state: string
+  degraded: boolean
+  lastError: string
+} {
+  const configured = Boolean(process.env.REDIS_URL)
+  const client = configured ? getRedis() : null
+  return {
+    configured,
+    state: client?.status ?? 'disabled',
+    degraded: redisDegraded,
+    lastError: lastRedisError,
+  }
+}
+
+/** PING Redis thật để health check biết nó SỐNG hay CHẾT, không đoán theo biến môi trường. */
+export async function pingRedis(): Promise<{ ok: boolean; latencyMs?: number; error?: string }> {
+  const client = getRedis()
+  if (!client) return { ok: false, error: 'REDIS_URL chưa cấu hình' }
+  const startedAt = Date.now()
+  try {
+    await client.ping()
+    noteRedisRecovered()
+    return { ok: true, latencyMs: Date.now() - startedAt }
+  } catch (err) {
+    noteRedisDegraded(err)
+    return { ok: false, error: err instanceof Error ? err.message : String(err) }
+  }
+}
+
 // Cảnh báo LÚC KHỞI ĐỘNG (gọi 1 lần từ server.ts) nếu chạy dưới PM2 mà CHƯA đặt
-// REDIS_URL — khác với warnRedisFallbackOnce ở trên (chỉ bắn khi Redis THỰC SỰ lỗi
+// REDIS_URL — khác với noteRedisDegraded() ở trên (chỉ bắn khi Redis THỰC SỰ lỗi
 // kết nối). Thiếu cấu hình REDIS_URL thì getRedis() âm thầm dùng Map in-memory, KHÔNG
 // đi qua nhánh lỗi nên không có cảnh báo nào — lỗ hổng im lặng: chạy cluster nhiều
 // instance mà quên Redis, rate limit lỏng gấp N lần (N = số instance) mà log không hề
@@ -171,15 +220,20 @@ export async function checkRateLimit(
   const key = `${bucket}:${ip}`
 
   const redis = getRedis()
-  if (redis) {
+  // CHỈ dùng khi kết nối đã sẵn sàng. `enableOfflineQueue: false` nghĩa là gọi lệnh lúc client
+  // còn 'connecting'/'reconnecting' sẽ ném ngay "Stream isn't writeable…" — đúng lỗi thấy trong
+  // log production sau mỗi lần PM2 restart. Rơi về Map trong cửa sổ kết nối là đúng và im lặng;
+  // báo động chỉ dành cho lỗi thật.
+  if (redis && redis.status === 'ready') {
     try {
       // Script Lua chạy nguyên khối trên Redis → INCR và PEXPIRE không bị chen giữa
       // (tránh race: hai request cùng lúc đều thấy key mới và cùng đặt hạn dùng).
       const count = (await redis.eval(RATE_LIMIT_LUA, 1, key, String(WINDOW_MS))) as number
+      noteRedisRecovered()
       return count <= maxPerMin
     } catch (err) {
-      // Redis hỏng → KHÔNG làm vỡ request, chỉ cảnh báo 1 lần rồi dùng Map in-memory.
-      warnRedisFallbackOnce(err)
+      // Redis hỏng → KHÔNG làm vỡ request, chỉ cảnh báo rồi dùng Map in-memory.
+      noteRedisDegraded(err)
     }
   }
 

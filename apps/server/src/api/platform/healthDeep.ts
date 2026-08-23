@@ -1,5 +1,5 @@
 // api/healthDeep.ts — Endpoint kiểm tra sức khỏe chuyên sâu của hệ thống (/api/health/deep)
-// Kiểm tra trạng thái sống của CSDL PostgreSQL, Storage R2/Local, Memory, Uptime.
+// Kiểm tra trạng thái sống của CSDL PostgreSQL, Storage R2/Local, CACHE Redis, Memory, Uptime.
 // Trả về 200 (Healthy) hoặc 503 (Degraded/Down) cho monitoring và uptime alerts.
 
 import { getPgPool } from '@dhcb/core-db/pgPool'
@@ -9,6 +9,7 @@ import {
   checkRateLimit,
   validateAuth,
   logSecurityEvent,
+  pingRedis,
 } from '@dhcb/core-auth/security'
 import { isAdminEmail } from '@dhcb/core-auth/adminAuth'
 import { getUserById } from '@dhcb/core-auth/authService'
@@ -39,8 +40,10 @@ export interface DeepHealthCheckResult {
       driver: string
     }
     cache: {
-      status: 'up'
+      status: 'up' | 'down' | 'unconfigured'
       type: string
+      latencyMs?: number
+      error?: string
     }
   }
 }
@@ -66,8 +69,10 @@ export async function checkSystemHealth(): Promise<{
         status: process.env.STORAGE_DRIVER ? 'up' : 'unconfigured',
         driver: process.env.STORAGE_DRIVER || 'local',
       },
+      // Đặt tạm 'down'; mục 3 bên dưới PING thật rồi ghi đè. KHÔNG mặc định 'up' —
+      // xem chú thích ở mục 3.
       cache: {
-        status: 'up',
+        status: 'down',
         type: process.env.REDIS_URL ? 'redis' : 'in-memory',
       },
     },
@@ -95,6 +100,24 @@ export async function checkSystemHealth(): Promise<{
       status: 'down',
       error: err instanceof Error ? err.message : String(err),
     }
+  }
+
+  // 3. Kiểm CACHE (Redis) — PING THẬT.
+  //
+  // [2026-08-23] Trước đây trường này ghi cứng `status: 'up'` và chỉ đọc biến môi trường để
+  // đoán "redis" hay "in-memory". Nghĩa là Redis chết hoàn toàn thì health check VẪN BÁO "up,
+  // redis" — đúng loại lỗi im lặng khiến sự cố nằm im: log production đầy dòng
+  // "[Security] Redis lỗi (Stream isn't writeable…)" mà mọi cổng giám sát đều xanh.
+  //
+  // Redis hỏng KHÔNG làm cả hệ thống 'unhealthy' (rate limit tự rơi về Map in-memory, app vẫn
+  // phục vụ) — nhưng phải HIỆN RA, vì trong cluster nhiều instance nó khiến hạn mức lỏng gấp N.
+  if (!process.env.REDIS_URL) {
+    result.checks.cache = { status: 'unconfigured', type: 'in-memory' }
+  } else {
+    const ping = await pingRedis()
+    result.checks.cache = ping.ok
+      ? { status: 'up', type: 'redis', latencyMs: ping.latencyMs }
+      : { status: 'down', type: 'redis', error: ping.error }
   }
 
   const statusCode = result.status === 'healthy' ? 200 : 503
