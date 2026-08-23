@@ -74,12 +74,10 @@ export default defineConfig({
         'apps/dhcb/src/lib/useOneHandedDrag.ts',
         'apps/dhcb/src/lib/useApiThrottle.ts',
         'apps/dhcb/src/lib/useChat.ts',
-        'apps/dhcb/src/lib/useAudioDsp.ts',
         'apps/dhcb/src/lib/useMountedRef.ts',
         'apps/dhcb/src/lib/useRealtimeVoice.ts',
         'apps/dhcb/src/lib/edgeAi/useEdgeAi.ts',
         // Worker & lưu trữ nhị phân trình duyệt (OPFS/IndexedDB).
-        'apps/dhcb/src/lib/audioDspWorker.ts',
         'apps/dhcb/src/lib/edgeAi/edgeModelStorage.ts',
         'apps/dhcb/src/lib/edgeAi/edgeAiService.ts',
         // Gửi-rồi-quên / khởi tạo SDK ngoài.

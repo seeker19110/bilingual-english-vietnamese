@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const OUT_DIR = join(__dirname, '..', 'src', 'data', 'patterns')
+const OUT_DIR = join(__dirname, '..', '..', 'src', 'data', 'patterns')
 const SENTENCES_PER_SUBJECT = 100
 const SUBJECTS_PER_CHUNK = 8
 

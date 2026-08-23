@@ -17,7 +17,7 @@ import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { PDFDocument, rgb, type PDFFont, type PDFPage } from 'pdf-lib'
 import fontkit from '@pdf-lib/fontkit'
-import type { DictEntry } from '../apps/dhcb/src/types.ts'
+import type { DictEntry } from '../../apps/dhcb/src/types.ts'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DICT_DIR = path.join(ROOT, 'apps/dhcb/public/data/dictionary')

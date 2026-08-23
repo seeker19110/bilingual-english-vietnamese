@@ -21,11 +21,11 @@
 // Chạy: npx tsx scripts/gen-a1b2-extra-vocab.ts   (an toàn để chạy lại — ghi đè)
 
 import * as fs from 'node:fs'
-import { writeJsonPretty } from './lib/writeJson.ts'
+import { writeJsonPretty } from '../lib/writeJson.ts'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import type { DictEntry } from '../apps/dhcb/src/types.ts'
-import { wordKey, buildLevelGroups } from './lib/vocabTopics.ts'
+import type { DictEntry } from '../../apps/dhcb/src/types.ts'
+import { wordKey, buildLevelGroups } from '../lib/vocabTopics.ts'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DICT_DIR = path.join(ROOT, 'apps/dhcb/public/data/dictionary')
