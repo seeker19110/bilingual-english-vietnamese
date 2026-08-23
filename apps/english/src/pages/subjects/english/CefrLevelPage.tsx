@@ -63,7 +63,7 @@ import { getDialogues } from '../../../data/dialoguesLoader'
 import { useAuth } from '../../../context/useAuth'
 import { getDirection } from '../../../lib/storage'
 import { getLearnedWords, getDifficultWords } from '../../../lib/vocab'
-import { getDueWords, getDueGrammarLessonIds } from '../../../lib/srs'
+import { getDueWords, getDueGrammarLessonIds, getLeechWords } from '../../../lib/srs'
 import {
   loadCurriculum,
   isCurriculumReady,
@@ -273,10 +273,17 @@ export default function CefrLevelPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [uid, allWordsPool, refresh],
   )
+  // Khớp ĐÚNG logic tab "Từ khó" thật (StudyTabs.tsx HardWords) — hợp của 2 tập: từ đánh
+  // dấu ⭐ thủ công VÀ leech tự động (≥3 lần "Quên"). Trước đây badge chỉ đếm ⭐ nên hiện
+  // "0" trong khi tab có hàng chục từ leech — đúng nhóm cần chú ý nhất lại bị badge giấu
+  // đi (audit toàn diện 2026-08-23).
   const hardCount = useMemo(() => {
     if (!uid) return 0
     const hard = getDifficultWords(uid)
-    return studyPool.filter((w) => hard.has(w.word.toLowerCase())).length
+    const leechKeys = new Set(getLeechWords(uid, studyPool).map((w) => w.word.toLowerCase()))
+    return studyPool.filter(
+      (w) => hard.has(w.word.toLowerCase()) || leechKeys.has(w.word.toLowerCase()),
+    ).length
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uid, studyPool, refresh])
 

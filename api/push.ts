@@ -202,8 +202,11 @@ export async function sendReminders(
     for (const uid of notStudiedIds) {
       const activeDays = activeDaysByUser.get(uid) ?? new Set<string>()
       const progress = progressByUser.get(uid)
-      const srsDue = Object.values(progress?.srs ?? {}).filter(
-        (c) => typeof c?.due === 'number' && c.due <= nowMs,
+      // Loại thẻ `grammar:*` (dùng chung kho FSRS với từ vựng, xem srs.ts) — nội dung
+      // push nói "N từ cần ôn", không nên đếm cả bài ngữ pháp vào đó (audit 2026-08-23,
+      // cùng lỗi với getSRSStats() phía client).
+      const srsDue = Object.entries(progress?.srs ?? {}).filter(
+        ([key, c]) => !key.startsWith('grammar:') && typeof c?.due === 'number' && c.due <= nowMs,
       ).length
       const weeklyGoal =
         typeof progress?.weekly_goal?.goal === 'number'

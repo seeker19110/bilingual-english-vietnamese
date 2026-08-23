@@ -27,6 +27,8 @@ import {
   compareByFreq,
   isQuizPass,
   QUIZ_PASS_THRESHOLD_PCT,
+  getSkippedToday,
+  addSkippedToday,
 } from './curriculum'
 import { loadCefr } from '../data/cefrLoader'
 import { FOUNDATION } from '../data/curriculum'
@@ -156,6 +158,21 @@ describe('getTodayBatchFrom — batch theo pool tùy chọn (từ vựng 1 cấp
   it('pool rỗng → batch rỗng (đã thuộc hết từ của cấp)', () => {
     expect(getTodayBatchFrom([], new Set())).toEqual([])
   })
+
+  it('defer (từ "Để sau"): hoãn xuống CUỐI hàng đợi thay vì loại hẳn — không đứng đầu batch, nhưng vẫn có mặt nếu còn chỗ', () => {
+    // Pool nhỏ tự dựng (không dùng pool A1 thật — quá lớn, "hoãn cuối hàng đợi" trên pool
+    // hàng nghìn từ không bao giờ kịp quay lại trong CÙNG 1 batch nhỏ để test được).
+    const pool: DictEntry[] = ['a', 'b', 'c'].map((w) => ({ word: w }) as DictEntry)
+    const batch = getTodayBatchFrom(pool, new Set(), 3, new Set(['a']))
+    // 'a' bị hoãn nên KHÔNG đứng đầu — 'b', 'c' (không bị hoãn) chiếm 2 vị trí đầu trước.
+    expect(batch.map((e) => e.word)).toEqual(['b', 'c', 'a'])
+  })
+
+  it('defer nhưng batch đã đầy TRƯỚC khi tới lượt từ bị hoãn → từ đó rơi ra ngoài batch NÀY (sẽ có mặt ở batch kế)', () => {
+    const pool: DictEntry[] = ['a', 'b', 'c'].map((w) => ({ word: w }) as DictEntry)
+    const batch = getTodayBatchFrom(pool, new Set(), 1, new Set(['a']))
+    expect(batch.map((e) => e.word)).toEqual(['b'])
+  })
 })
 
 describe('getPathProgress', () => {
@@ -205,6 +222,28 @@ describe('bộ đếm học trong ngày', () => {
   it('đếm tách biệt theo user', () => {
     bumpDailyLearned('u1')
     expect(getDailyLearned('u2')).toBe(0)
+  })
+})
+
+describe('Từ "Để sau" trong ngày (getSkippedToday/addSkippedToday)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('chưa bấm "Để sau" lần nào → tập rỗng', () => {
+    expect(getSkippedToday('u1')).toEqual(new Set())
+  })
+
+  it('bấm "Để sau" nhiều từ → tất cả có mặt, không phân biệt hoa/thường (khớp wordKey)', () => {
+    addSkippedToday('u1', 'Apple')
+    addSkippedToday('u1', 'banana')
+    const skipped = getSkippedToday('u1')
+    expect(skipped.has('apple')).toBe(true)
+    expect(skipped.has('banana')).toBe(true)
+    expect(skipped.size).toBe(2)
+  })
+
+  it('tách biệt theo user', () => {
+    addSkippedToday('u1', 'apple')
+    expect(getSkippedToday('u2').size).toBe(0)
   })
 })
 
@@ -274,9 +313,8 @@ describe('isQuizPass — ngưỡng đạt để mở thêm từ mới', () => {
     expect(isQuizPass(18, 20)).toBe(true) // 90%
   })
 
-  it('dưới ngưỡng dù chỉ 1 câu → không đạt', () => {
-    expect(isQuizPass(8, 10)).toBe(false) // 80%
-    expect(isQuizPass(4, 5)).toBe(false) // 80% — quiz 5 câu cần đúng cả 5
+  it('sai quá 1 câu ở batch ≥10 câu (đúng ngưỡng % cũ) → không đạt', () => {
+    expect(isQuizPass(8, 10)).toBe(false) // 80%, sai 2 câu > cho phép 1
   })
 
   it('đúng 100% → luôn đạt', () => {
@@ -290,6 +328,12 @@ describe('isQuizPass — ngưỡng đạt để mở thêm từ mới', () => {
 
   it('0 câu đúng → không đạt', () => {
     expect(isQuizPass(0, 10)).toBe(false)
+  })
+
+  it('batch nhỏ (<10 câu — tốc độ 5 từ/ngày, comeback 3 từ) LUÔN được sai tối thiểu 1 câu, không bắt buộc 100%', () => {
+    expect(isQuizPass(4, 5)).toBe(true) // 80%, sai 1/5 — trước đây bắt buộc đúng cả 5
+    expect(isQuizPass(2, 3)).toBe(true) // comeback: sai 1/3 vẫn đạt
+    expect(isQuizPass(3, 5)).toBe(false) // sai 2/5 — vượt quá 1 câu cho phép
   })
 })
 

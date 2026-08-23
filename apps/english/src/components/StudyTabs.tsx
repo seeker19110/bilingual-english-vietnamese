@@ -75,6 +75,8 @@ import {
   getDailyAllowance,
   getDailySpeed,
   getDailyMax,
+  getSkippedToday,
+  addSkippedToday,
   findCircleOfWord,
   getCircleProgress,
   getCefrLevelOfCircle,
@@ -465,7 +467,7 @@ export function TodayLesson({
     return 'learning'
   })
   const [batch, setBatch] = useState<DictEntry[]>(() =>
-    getTodayBatchFrom(pool, getLearnedWords(uid), initialBatchSize),
+    getTodayBatchFrom(pool, getLearnedWords(uid), initialBatchSize, getSkippedToday(uid)),
   )
   const [idx, setIdx] = useState(0)
   const [dailyStart] = useState(() => getDailyLearned(uid))
@@ -535,6 +537,7 @@ export function TodayLesson({
 
   function skip() {
     haptics.tap()
+    if (card) addSkippedToday(uid, card.word) // hoãn xuống cuối hàng đợi trong ngày, không mất hẳn
     const nextIdx = idx + 1
     if (nextIdx >= batch.length) {
       const totalToday = getDailyLearned(uid)
@@ -588,7 +591,7 @@ export function TodayLesson({
 
   function unlockNextBatch() {
     bumpDailyQuizPasses(uid)
-    const newBatch = getTodayBatchFrom(pool, getLearnedWords(uid), speed)
+    const newBatch = getTodayBatchFrom(pool, getLearnedWords(uid), speed, getSkippedToday(uid))
     setBatch(newBatch)
     setIdx(0)
     setPhase('learning')
@@ -596,7 +599,13 @@ export function TodayLesson({
   }
 
   // ── Đã thuộc hết từ vựng của cấp này ──────────────────────────────────
-  if (batch.length === 0 && phase === 'learning') {
+  // Trước đây chỉ kiểm `phase === 'learning'` — nhưng batch.length === 0 CHỈ có thể xảy ra
+  // khi pool đã học hết (getTodayBatchFrom lọc từ CHƯA thuộc, độc lập với giới hạn/lượt
+  // ngày). Người đã thuộc hết pool VÀ vừa hết lượt hôm nay (phase khởi tạo = 'batch-done')
+  // trước đây rơi thẳng vào BatchDoneView với batch rỗng → "Hoàn thành! Đã học 0 từ trong
+  // lượt này" + CTA "Luyện 0 từ này" vô nghĩa (audit toàn diện 2026-08-23). `phase ===
+  // 'daily-max'` KHÔNG cần sửa — màn hình đó đã đúng và không phụ thuộc `batch`.
+  if (batch.length === 0 && (phase === 'learning' || phase === 'batch-done')) {
     return (
       <div className="glass rounded-xl p-8 text-center animate-fade-in">
         <Trophy className="w-10 h-10 text-amber-400 mx-auto mb-3" />

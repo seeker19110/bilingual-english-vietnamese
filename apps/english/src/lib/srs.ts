@@ -65,20 +65,45 @@ function toStored(card: FsrsCard): SRSCard {
 const KEY = (uid: string) => `srs_${uid}`
 const MS = 86_400_000 // 1 ngày tính bằng ms
 
+// Cache trong bộ nhớ — nguồn sự thật cho PHIÊN hiện tại. localStorage chỉ là lớp
+// PERSIST (giữ qua lần tải lại trang). Lý do: trước đây khi `localStorage.setItem`
+// ném lỗi hết quota, `save()` nuốt lỗi và KHÔNG có nơi nào giữ lại bản dữ liệu vừa
+// ghi — `load()` lần sau đọc lại bản CŨ trong localStorage, coi như mọi lượt ôn vừa
+// xong chưa từng xảy ra, rồi còn đẩy bản cũ đó đè lên server qua `pushProgress`. Với
+// người học lâu năm (~12k từ ≈ 2MB, sát trần 5MB localStorage) đây là mất dữ liệu
+// THẬT, không có tín hiệu báo (audit toàn diện 2026-08-23). Giữ cache ở đây đảm bảo
+// `load()` trong cùng phiên luôn thấy đúng bản mới nhất, bất kể `localStorage.setItem`
+// có thành công hay không.
+const memCache = new Map<string, Record<string, SRSCard>>()
+
+// Chỉ dùng trong test: mỗi test cần bắt đầu sạch, khớp với `localStorage.clear()` ở
+// `beforeEach` — nếu không, cache module-level này sẽ giữ dữ liệu rò từ test trước
+// sang test sau dù localStorage đã sạch (memCache không tự biết localStorage vừa bị xoá).
+export function _resetSrsMemCacheForTests(): void {
+  memCache.clear()
+}
+
 function load(uid: string): Record<string, SRSCard> {
+  const cached = memCache.get(uid)
+  if (cached) return cached
+  let data: Record<string, SRSCard> = {}
   try {
     const raw = localStorage.getItem(KEY(uid))
-    return raw ? JSON.parse(raw) : {}
+    if (raw) data = JSON.parse(raw)
   } catch {
-    return {}
+    /* localStorage lỗi hoặc JSON hỏng — coi như chưa có dữ liệu */
   }
+  memCache.set(uid, data)
+  return data
 }
 
 function save(uid: string, data: Record<string, SRSCard>) {
+  memCache.set(uid, data)
   try {
     localStorage.setItem(KEY(uid), JSON.stringify(data))
   } catch {
-    /* hết quota localStorage — IndexedDB dự phòng ở dưới */
+    /* hết quota localStorage — dữ liệu vẫn đúng trong memCache cho phiên này;
+       IndexedDB dự phòng ở dưới cho lần tải lại sau */
   }
   void saveSrsToIndexedDB(uid, data)
 }
@@ -89,10 +114,11 @@ export async function syncSrsFromIndexedDB(uid: string): Promise<Record<string, 
   if (Object.keys(current).length > 0) return current
   const fromIdb = await loadSrsFromIndexedDB(uid)
   if (fromIdb && Object.keys(fromIdb).length > 0) {
+    memCache.set(uid, fromIdb)
     try {
       localStorage.setItem(KEY(uid), JSON.stringify(fromIdb))
     } catch {
-      /* bỏ qua */
+      /* bỏ qua — memCache đã có bản đúng cho phiên này */
     }
     return fromIdb
   }
@@ -186,11 +212,16 @@ export function getLeechWords(uid: string, words: DictEntry[]): DictEntry[] {
   return words.filter((w) => (data[w.word.toLowerCase()]?.lapses ?? 0) >= LEECH_THRESHOLD)
 }
 
-// Thống kê SRS của user
+// Thống kê SRS của user — CHỈ TỪ VỰNG (loại thẻ `grammar:*`, dùng chung 1 kho FSRS
+// nhưng không phải "từ"). Trước đây đếm cả thẻ ngữ pháp vào đây, khiến Dashboard/push
+// notification hiện "N từ cần ôn" bị phồng lên tới 78 (số bài ngữ pháp), lệch với tab
+// "Ôn SRS" (vốn đã lọc đúng theo `allWordsPool`) — audit toàn diện 2026-08-23.
 export function getSRSStats(uid: string): { total: number; due: number } {
   const data = load(uid)
   const now = Date.now()
-  const entries = Object.values(data)
+  const entries = Object.entries(data)
+    .filter(([key]) => !key.startsWith('grammar:'))
+    .map(([, card]) => card)
   return {
     total: entries.length,
     due: entries.filter((c) => c.due <= now).length,

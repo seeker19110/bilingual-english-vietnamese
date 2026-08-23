@@ -23,6 +23,7 @@ import {
   isExamEligible,
   findNextStep,
 } from './cefrProgress'
+import { _resetSrsMemCacheForTests } from './srs'
 import type { CefrLevel, CefrUnit, GrammarLesson } from '../data/cefr'
 import type { Circle } from '../data/curriculum'
 import type { DictEntry } from '../types'
@@ -79,6 +80,7 @@ const A2 = level('A2', [unit('u3', ['g4'], ['c3'])])
 
 beforeEach(() => {
   localStorage.clear()
+  _resetSrsMemCacheForTests()
   vi.clearAllMocks()
 })
 

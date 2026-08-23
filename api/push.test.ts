@@ -199,6 +199,32 @@ describe('sendReminders — nội dung theo ngữ cảnh (② M3: streak/SRS/m�
     })()
   })
 
+  it('thẻ grammar:* đến hạn KHÔNG được tính vào "N từ cần ôn" (dùng chung kho FSRS với từ vựng, xem srs.ts)', () => {
+    return (async () => {
+      mockedGetPool.mockReturnValue(
+        mockPool({
+          subs: [sub('u-grammar')],
+          usageRows: [],
+          challengeRows: [],
+          progressRows: [
+            {
+              user_id: 'u-grammar',
+              srs: {
+                apple: { due: 1 },
+                'grammar:a1-be': { due: 1 },
+                'grammar:a1-articles': { due: 1 },
+              },
+            },
+          ],
+        }),
+      )
+      const result = await sendReminders(13)
+      expect(result.sent).toBe(1)
+      const payload = JSON.parse(mockedSend.mock.calls[0]?.[1] as string)
+      expect(payload.body).toContain('1') // chỉ đếm 'apple' — 2 thẻ grammar: bị loại
+    })()
+  })
+
   it('không streak, không SRS, gần đạt mục tiêu tuần (còn 1 ngày) → nhắc mục tiêu tuần', () => {
     return (async () => {
       mockedGetPool.mockReturnValue(

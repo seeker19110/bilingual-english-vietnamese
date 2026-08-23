@@ -249,15 +249,29 @@ export function getBeyondCefrWords(ageGroup?: AgeGroup): DictEntry[] {
 
 // ── Mục tiêu hôm nay: 20 từ KẾ TIẾP chưa thuộc ─────────────────────────
 // Bản tổng quát: lấy từ 1 danh sách bất kỳ (pool = từ của 1 cấp, hoặc cả lộ trình).
+// `defer`: từ bị bấm "Để sau" hôm nay (xem getSkippedToday) — HOÃN xuống cuối hàng đợi
+// trong ngày thay vì loại hẳn. Trước đây "Để sau" không ghi lại gì nên batch kế tiếp lấy
+// đúng N từ CHƯA thuộc đầu tiên theo thứ tự pool — từ vừa bấm "Để sau" (vẫn chưa thuộc)
+// lại đứng đầu danh sách đó, quay lại ngay vị trí số 1 (audit toàn diện 2026-08-23).
 export function getTodayBatchFrom(
   pool: DictEntry[],
   learned: Set<string>,
   size = DAILY_GOAL,
+  defer?: Set<string>,
 ): DictEntry[] {
   const batch: DictEntry[] = []
+  const deferred: DictEntry[] = []
   for (const e of pool) {
+    if (learned.has(wordKey(e.word)) || learned.has(e.word)) continue
+    if (defer?.has(wordKey(e.word))) {
+      deferred.push(e)
+      continue
+    }
+    if (batch.length < size) batch.push(e)
+  }
+  for (const e of deferred) {
     if (batch.length >= size) break
-    if (!learned.has(wordKey(e.word)) && !learned.has(e.word)) batch.push(e)
+    batch.push(e)
   }
   return batch
 }
@@ -327,6 +341,26 @@ export function bumpDailyLearned(uid: string): number {
   return next
 }
 
+// ── Từ bị bấm "Để sau" trong ngày — dùng làm `defer` cho getTodayBatchFrom ───────
+const SKIPPED_KEY = (uid: string) => `et_skipped_daily_${uid}`
+
+export function getSkippedToday(uid: string): Set<string> {
+  try {
+    const raw = localStorage.getItem(SKIPPED_KEY(uid))
+    if (!raw) return new Set()
+    const obj = JSON.parse(raw) as { date: string; words: string[] }
+    return obj.date === todayStr() ? new Set(obj.words) : new Set()
+  } catch {
+    return new Set()
+  }
+}
+
+export function addSkippedToday(uid: string, word: string): void {
+  const current = getSkippedToday(uid)
+  current.add(wordKey(word))
+  localStorage.setItem(SKIPPED_KEY(uid), JSON.stringify({ date: todayStr(), words: [...current] }))
+}
+
 // ── Số lần pass quiz để mở batch mới trong ngày ──────────────────────────
 const QUIZ_PASS_KEY = (uid: string) => `et_quiz_pass_${uid}`
 
@@ -360,7 +394,14 @@ export function getDailyAllowance(uid: string): number {
 // đạt ≥ ngưỡng này ở bài nào cũng tính là 1 lần "pass" (bumpDailyQuizPasses).
 export const QUIZ_PASS_THRESHOLD_PCT = 90
 
+// Số câu SAI tối đa vẫn tính "đạt" — tối thiểu LUÔN là 1, dù batch nhỏ tới đâu. Trước đây
+// dùng thẳng % nên quiz càng ít câu càng khắt: tốc độ 5 từ/ngày (mặc định người mới) hay
+// comeback (3 từ) phải đúng TUYỆT ĐỐI 100% mới đạt — đúng nhóm người mới/vừa quay lại sau
+// khi bỏ bẵng lại rơi vào bài "khó nhất", ngược hẳn ý đồ "phiên nhẹ nhàng hơn" của luồng
+// comeback (audit toàn diện 2026-08-23). Từ 10 câu trở lên, hành vi giữ nguyên như cũ.
 export function isQuizPass(score: number, total: number): boolean {
   if (total <= 0) return false
-  return Math.round((score / total) * 100) >= QUIZ_PASS_THRESHOLD_PCT
+  const wrong = total - score
+  const maxWrongAllowed = Math.max(1, Math.floor((total * (100 - QUIZ_PASS_THRESHOLD_PCT)) / 100))
+  return wrong <= maxWrongAllowed
 }

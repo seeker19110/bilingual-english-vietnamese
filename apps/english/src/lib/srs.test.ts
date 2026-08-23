@@ -16,13 +16,17 @@ import {
   addGrammarToSRS,
   reviewGrammar,
   getDueGrammarLessonIds,
+  _resetSrsMemCacheForTests,
 } from './srs'
 import type { DictEntry } from '../types'
 
 const W = (word: string): DictEntry => ({ word }) as DictEntry
 
 describe('SRS — FSRS', () => {
-  beforeEach(() => localStorage.clear())
+  beforeEach(() => {
+    localStorage.clear()
+    _resetSrsMemCacheForTests()
+  })
 
   it('addToSRS tạo thẻ mặc định — KHÔNG đến hạn ngay, đến hạn sau 4h (E4)', () => {
     vi.useFakeTimers()
@@ -136,7 +140,10 @@ describe('SRS — FSRS', () => {
 })
 
 describe('SRS ngữ pháp (đề xuất E) — dùng chung kho FSRS, khoá tiền tố grammar:', () => {
-  beforeEach(() => localStorage.clear())
+  beforeEach(() => {
+    localStorage.clear()
+    _resetSrsMemCacheForTests()
+  })
 
   it('addGrammarToSRS: KHÔNG đến hạn ngay, đến hạn sau 4h giống thẻ từ vựng', () => {
     vi.useFakeTimers()
