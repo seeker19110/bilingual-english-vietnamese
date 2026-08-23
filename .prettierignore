@@ -14,8 +14,8 @@ package-lock.json
 apps/dhcb/public/data/
 
 # Data blob lớn (nguồn dữ liệu, không phải code) — bỏ qua để diff format gọn
-src/data/lessons.json
-src/data/dictionary.backup.json
+apps/dhcb/src/data/lessons.json
+apps/dhcb/src/data/dictionary.backup.json
 
 # File build/cache tạm
 vite.config.ts.timestamp-*.mjs
