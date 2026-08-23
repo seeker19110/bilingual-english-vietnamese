@@ -6,8 +6,12 @@ coverage
 # Lockfile do npm tự quản lý
 package-lock.json
 
-# Dữ liệu sinh tự động khi build (scripts/gen-data-manifest.mjs ...) — không format
-public/data/
+# Dữ liệu sinh tự động khi build (scripts/gen-data-manifest.mjs, gen-stories-json.mjs)
+# — KHÔNG format. Prettier in lại JSON theo kiểu xuống dòng đẹp, còn generator ghi dạng
+# rút gọn 1 dòng → hai bên đá nhau, mỗi lần build là bẩn cây git 131 file.
+# Đường dẫn phải có tiền tố apps/dhcb/ (mẫu chứa dấu / được neo từ gốc repo): trước PR-S2
+# thư mục nằm ở gốc, sau khi dời mà quên sửa ở đây thì mẫu này KHÔNG khớp gì nữa.
+apps/dhcb/public/data/
 
 # Data blob lớn (nguồn dữ liệu, không phải code) — bỏ qua để diff format gọn
 src/data/lessons.json

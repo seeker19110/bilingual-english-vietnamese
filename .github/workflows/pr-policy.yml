@@ -44,10 +44,50 @@ jobs:
             }
 
             if (/^feat(\(|:)/.test(title)) {
-              const specLink = /docs\/specs\/\d{4}-\d{2}-\d{2}-[a-z0-9-]+\.md/;
-              if (!specLink.test(body)) {
-                core.setFailed("PR feat phải liên kết spec tại docs/specs/YYYY-MM-DD-slug.md.");
+              // Chấp nhận CẢ HAI nơi đặt đặc tả của dự án:
+              //   docs/specs/YYYY-MM-DD-slug.md  — spec theo tính năng (khuôn có sẵn)
+              //   docs/research/<slug>.md        — đặc tả/nghiên cứu lộ trình lớn, vd
+              //                                    dac-ta-kien-truc-platform-dhcb-2026-08-23.md
+              // Trước đây cổng CHỈ nhận docs/specs/, trong khi CLAUDE.md mục 2 lại chỉ định
+              // docs/research/*.md là nguồn thi hành — nên PR feat làm theo lộ trình luôn bị
+              // chặn oan và phải viết spec bù cho qua cổng (xem PR #630).
+              const specLink =
+                /docs\/(?:specs\/\d{4}-\d{2}-\d{2}-[a-z0-9-]+|research\/[a-z0-9._-]+)\.md/g;
+              const paths = [...body.matchAll(specLink)].map((m) => m[0]);
+
+              if (paths.length === 0) {
+                core.setFailed(
+                  "PR feat phải liên kết đặc tả tại docs/specs/YYYY-MM-DD-slug.md hoặc docs/research/<slug>.md."
+                );
+              } else {
+                // Bù lại chỗ nới lỏng: KIỂM FILE CÓ THẬT. Trước đây cổng chỉ dò chuỗi trong mô
+                // tả PR nên gõ một đường dẫn không tồn tại vẫn qua — nới nơi đặt mà không kiểm
+                // sự tồn tại thì cổng thành hình thức.
+                const found = [];
+                for (const path of [...new Set(paths)]) {
+                  try {
+                    await github.rest.repos.getContent({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      path,
+                      ref: pr.head.sha,
+                    });
+                    found.push(path);
+                  } catch (err) {
+                    if (err.status !== 404) {
+                      // Lỗi mạng/quyền — KHÔNG chặn oan một PR vốn hợp lệ, chỉ cảnh báo.
+                      core.warning(`Không kiểm được ${path} (${err.status}): coi như hợp lệ.`);
+                      found.push(path);
+                    }
+                  }
+                }
+                if (found.length === 0) {
+                  core.setFailed(
+                    `Đặc tả liên kết trong mô tả PR KHÔNG tồn tại trong nhánh này: ${[...new Set(paths)].join(", ")}`
+                  );
+                }
               }
+
               if (!/Approved for implementation/i.test(body)) {
                 core.setFailed("PR feat phải xác nhận spec đã Approved for implementation.");
               }
