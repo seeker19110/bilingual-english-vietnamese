@@ -98,8 +98,6 @@ import memoryPalaceHandler from './api/learning/memory-palace.js'
 import lifeSynthesisHandler from './api/personal/life-synthesis.js'
 import agentOrchestratorHandler from './api/platform/agent-orchestrator.js'
 import pvpArenaHandler from './api/platform/pvp-arena.js'
-import referralVipHandler from './api/platform/referral-vip.js'
-import dailyQuestsHandler from './api/platform/daily-quests.js'
 import coLearningAudioHandler from './api/learning/co-learning-audio.js'
 import geminiLiveHandler from './api/platform/gemini-live.js'
 
@@ -321,10 +319,6 @@ export function registerApiRoutes(app: express.Express): void {
   app.all('/api/agent-orchestrator', wrapEdge(agentOrchestratorHandler))
   // Live 1v1 PvP Arena & Ghost Matchmaking — Speed Vocab, Grammar Clash & Elo Rank.
   app.all('/api/pvp-arena', wrapEdge(pvpArenaHandler))
-  // Referral VIP Booster & Viral Share Studio — 7-day VIP rewards & Milestones.
-  app.all('/api/referral-vip', wrapEdge(referralVipHandler))
-  // Daily Quests & Mystery Streak Vault — Adaptive 3 quests & Streak Freeze.
-  app.all('/api/daily-quests', wrapEdge(dailyQuestsHandler))
   // Multiplayer Audio Co-Learning Room (Platform V7.1) — Realtime Live Audio Study Rooms & Socratic Moderator.
   app.all('/api/co-learning-audio', wrapEdge(coLearningAudioHandler))
   // Gemini Live Bidirectional Streaming Gateway (Platform V7.2) — Full-Duplex PCM & Audio Streaming.

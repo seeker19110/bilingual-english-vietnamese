@@ -98,11 +98,12 @@ zero-downtime deploy (PM2 wait_ready).
 
 **Còn thiếu so với "cao nhất của ngành" (cập nhật trạng thái 2026-08-23 cuối ngày):**
 
-1. Persistence 33 API in-memory — **ĐANG TRẢ DẦN**: đã có nền `platform.feature_state`
-   (migration 0058 + `core-db/featureState.ts`) và chuyển lô đầu 5 handler nhóm B
-   (memory-palace, metacognitive-reflection, neural-curriculum, action-canvas,
-   avatar-embodiment). Còn: nhóm A gộp/xoá (daily-quests/referral-vip/leaderboard giả),
-   nhóm C state phiên tạm (trận PvP, phòng audio, realtime…) → lô sau.
+1. Persistence 33 API in-memory — **ĐÃ TRẢ PHẦN LỚN**: nền `platform.feature_state`
+   (0058) + lô B (5 handler per-user, PR #625) + **N3 (2026-08-23): nhóm A đã GỘP/XOÁ**
+   (daily-quests + referral-vip xoá hẳn, leaderboard giả xoá) và **PvP chuyển feature_state**
+   (Elo thật K=32, trận vs Ghost per-user). Còn nhóm C multi-user realtime (phòng
+   co-learning, WS session, mesh-telemetry, debate/stem/orchestrator session) — cần shared
+   store khi dùng thật, đã ghi ở PROGRESS.
 2. ~~Đếm lượt/rate-limit đủ 100% đường AI trả tiền~~ **ĐÃ XONG** (B3): companion/
    vision-solve/ambient-vision trừ `chat` + refund; gemini-live rate-limit + trừ `speaking`;
    co-learning rate-limit. Kèm B1 (bỏ fallback u-default), B2 (health/deep gate admin),

@@ -1,12 +1,19 @@
 // api/pvp-arena.ts — REST handler cho Đấu Trường Đối Kháng 1v1 PvP & Ghost Matchmaking.
+//
+// [N3, 2026-08-23] Hết in-memory + hardcode: hồ sơ Elo/thắng-thua và trận đấu đang chơi lưu
+// ở `platform.feature_state` (per-user — trận PvP là đấu với Ghost bot mô phỏng nên state
+// thuộc về đúng 1 người chơi). Elo cập nhật THẬT sau mỗi trận (K=32, `calculateEloDelta`
+// trong finalizePvPMatch). Leaderboard là truy vấn thật top Elo từ feature_state (trước đây
+// hardcode "Nguyen Hoang Long, Elena Vu…" cho mọi user).
 import { jsonResponse } from '@dhcb/core-http/http'
 import { validateAuth, getCorsHeaders } from '@dhcb/core-auth/security'
+import { getFeatureState, setFeatureState } from '@dhcb/core-db/featureState'
+import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
   createPvPMatch,
   finalizePvPMatch,
   simulateGhostAction,
   calculatePoints,
-  getWeeklyLeaderboard,
   getRankTierFromElo,
 } from '@dhcb/core-ai/pvpArenaService'
 import {
@@ -14,10 +21,97 @@ import {
   type PvPPlayerProfile,
   type PvPGameMode,
   type PvPRoundAction,
+  type PvPLeaderboardEntry,
 } from '@dhcb/core-contracts/pvpArena'
 
-// In-memory match store
-const activeMatches = new Map<string, PvPMatchState>()
+const PROFILE_FEATURE = 'pvp_profile'
+const MATCH_FEATURE = 'pvp_match'
+
+// Phần hồ sơ được LƯU (không gồm các trường suy ra được như rankTier/name — tính lúc đọc).
+interface StoredPvPProfile {
+  avatar: string
+  eloRating: number
+  winStreak: number
+  totalMatches: number
+  wins: number
+}
+
+const DEFAULT_PROFILE: StoredPvPProfile = {
+  avatar: '🦁',
+  eloRating: 1250,
+  winStreak: 0,
+  totalMatches: 0,
+  wins: 0,
+}
+
+// Đọc hồ sơ đã lưu; người chơi mới nhận mặc định (ghi ngay để có mặt trên leaderboard).
+async function loadProfile(userId: string): Promise<StoredPvPProfile> {
+  const stored = await getFeatureState<StoredPvPProfile>(userId, PROFILE_FEATURE)
+  if (stored) return stored
+  await setFeatureState(userId, PROFILE_FEATURE, DEFAULT_PROFILE)
+  return DEFAULT_PROFILE
+}
+
+// Tên hiển thị: ưu tiên nickname (profiles), rồi tên tài khoản (users), rồi nhãn chung.
+async function displayName(userId: string): Promise<string> {
+  try {
+    const pool = getPgPool()
+    const { rows } = await pool.query<{ display_name: string | null }>(
+      `select coalesce(p.nickname, u.name) as display_name
+         from public.users u
+         left join public.profiles p on p.user_id = u.id
+        where u.id = $1`,
+      [userId],
+    )
+    return rows[0]?.display_name || 'Học viên'
+  } catch {
+    return 'Học viên'
+  }
+}
+
+function toApiProfile(userId: string, name: string, p: StoredPvPProfile): PvPPlayerProfile {
+  return {
+    id: userId,
+    name,
+    avatar: p.avatar,
+    eloRating: p.eloRating,
+    rankTier: getRankTierFromElo(p.eloRating),
+    winStreak: p.winStreak,
+    totalMatches: p.totalMatches,
+    wins: p.wins,
+    isGhostBot: false,
+  }
+}
+
+// Leaderboard THẬT: top 10 Elo từ feature_state (mọi người chơi từng vào PvP đều có dòng).
+async function realLeaderboard(): Promise<PvPLeaderboardEntry[]> {
+  const pool = getPgPool()
+  const { rows } = await pool.query<{
+    user_id: string
+    state: StoredPvPProfile
+    display_name: string | null
+  }>(
+    `select fs.user_id, fs.state, coalesce(p.nickname, u.name) as display_name
+       from platform.feature_state fs
+       join public.users u on u.id = fs.user_id
+       left join public.profiles p on p.user_id = fs.user_id
+      where fs.feature = $1
+      order by (fs.state->>'eloRating')::int desc, fs.updated_at asc
+      limit 10`,
+    [PROFILE_FEATURE],
+  )
+  return rows.map((r, i) => ({
+    rank: i + 1,
+    playerId: r.user_id,
+    name: r.display_name || 'Học viên',
+    avatar: r.state.avatar || '🦁',
+    eloRating: r.state.eloRating,
+    rankTier: getRankTierFromElo(r.state.eloRating),
+    winStreak: r.state.winStreak,
+    winRate:
+      r.state.totalMatches > 0 ? Math.round((r.state.wins / r.state.totalMatches) * 1000) / 10 : 0,
+  }))
+}
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
@@ -31,39 +125,35 @@ export default async function handler(req: Request): Promise<Response> {
     return jsonResponse({ error: 'Unauthorized' }, 401)
   }
   const userId = auth.userId
-  const userName = 'Learner'
 
   const url = new URL(req.url)
   const action = url.searchParams.get('action')
 
   if (req.method === 'GET') {
     if (action === 'leaderboard') {
-      const leaderboard = getWeeklyLeaderboard(userId)
+      const leaderboard = await realLeaderboard()
       return jsonResponse({ success: true, leaderboard }, 200)
     }
 
     if (action === 'get_match') {
       const matchId = url.searchParams.get('matchId')
       if (!matchId) return jsonResponse({ error: 'Missing matchId' }, 400)
-      const match = activeMatches.get(matchId)
-      if (!match) return jsonResponse({ error: 'Match not found' }, 404)
+      const match = await getFeatureState<PvPMatchState>(userId, MATCH_FEATURE)
+      if (!match || match.matchId !== matchId) {
+        return jsonResponse({ error: 'Match not found' }, 404)
+      }
       return jsonResponse({ success: true, match }, 200)
     }
 
-    // Default: Trả về hồ sơ PvP & leaderboard
-    const profile: PvPPlayerProfile = {
-      id: userId,
-      name: userName,
-      avatar: '🦁',
-      eloRating: 1250,
-      rankTier: getRankTierFromElo(1250),
-      winStreak: 2,
-      totalMatches: 8,
-      wins: 5,
-      isGhostBot: false,
-    }
-    const leaderboard = getWeeklyLeaderboard(userId)
-    return jsonResponse({ success: true, profile, leaderboard }, 200)
+    // Mặc định: hồ sơ PvP thật của user + leaderboard thật.
+    // loadProfile chạy TRƯỚC leaderboard: lần đầu vào PvP hồ sơ mặc định được ghi xong
+    // thì leaderboard mới đọc — người chơi mới thấy ngay mình trên bảng xếp hạng.
+    const stored = await loadProfile(userId)
+    const [name, leaderboard] = await Promise.all([displayName(userId), realLeaderboard()])
+    return jsonResponse(
+      { success: true, profile: toApiProfile(userId, name, stored), leaderboard },
+      200,
+    )
   }
 
   if (req.method === 'POST') {
@@ -72,20 +162,11 @@ export default async function handler(req: Request): Promise<Response> {
 
       if (action === 'matchmake') {
         const mode: PvPGameMode = body.mode || 'vocab_speed_duel'
-        const playerProfile: PvPPlayerProfile = body.playerProfile || {
-          id: userId,
-          name: userName,
-          avatar: '🦁',
-          eloRating: 1250,
-          rankTier: getRankTierFromElo(1250),
-          winStreak: 0,
-          totalMatches: 0,
-          wins: 0,
-          isGhostBot: false,
-        }
-
-        const match = createPvPMatch(playerProfile, mode)
-        activeMatches.set(match.matchId, match)
+        // Server-authoritative: hồ sơ lấy từ DB, KHÔNG tin body.playerProfile (client có thể
+        // tự khai Elo/thắng-thua tuỳ ý).
+        const [stored, name] = await Promise.all([loadProfile(userId), displayName(userId)])
+        const match = createPvPMatch(toApiProfile(userId, name, stored), mode)
+        await setFeatureState(userId, MATCH_FEATURE, match)
         return jsonResponse({ success: true, match }, 200)
       }
 
@@ -95,8 +176,8 @@ export default async function handler(req: Request): Promise<Response> {
           return jsonResponse({ error: 'Missing required parameters' }, 400)
         }
 
-        let match = activeMatches.get(matchId)
-        if (!match) {
+        let match = await getFeatureState<PvPMatchState>(userId, MATCH_FEATURE)
+        if (!match || match.matchId !== matchId || match.status === 'completed') {
           return jsonResponse({ error: 'Match not found or expired' }, 404)
         }
 
@@ -134,11 +215,23 @@ export default async function handler(req: Request): Promise<Response> {
         if (match.currentRound >= match.totalRounds) {
           match = finalizePvPMatch(match)
           isMatchCompleted = true
+
+          // Cập nhật hồ sơ THẬT sau trận: Elo (K=32), số trận, thắng, chuỗi thắng.
+          const stored = await loadProfile(userId)
+          const won = match.winnerId === userId
+          const updated: StoredPvPProfile = {
+            ...stored,
+            eloRating: Math.max(0, stored.eloRating + (match.eloChanges?.player1Delta ?? 0)),
+            totalMatches: stored.totalMatches + 1,
+            wins: stored.wins + (won ? 1 : 0),
+            winStreak: won ? stored.winStreak + 1 : 0,
+          }
+          await setFeatureState(userId, PROFILE_FEATURE, updated)
         } else {
           match.updatedAt = new Date().toISOString()
         }
 
-        activeMatches.set(matchId, match)
+        await setFeatureState(userId, MATCH_FEATURE, match)
 
         return jsonResponse(
           {

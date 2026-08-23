@@ -4,7 +4,6 @@ import { X, Zap, Flame, Timer, Sparkles, CheckCircle2, XCircle } from 'lucide-re
 import { useToast } from '@core/ToastProvider'
 import type { PvPMatchState, PvPRoundAction } from '@dhcb/core-contracts/pvpArena'
 import { submitPvPRoundAction } from '../../lib/pvpArenaApi.js'
-import { updateQuestProgress } from '../../lib/dailyQuestsApi.js'
 
 interface PvPBattlefieldModalProps {
   initialMatch: PvPMatchState
@@ -96,11 +95,6 @@ export default function PvPBattlefieldModal({
         if (res.isMatchCompleted || currentRound + 1 >= match.totalRounds) {
           setIsFinished(true)
           onMatchComplete?.(res.match)
-          if (res.match.scores.player1Score > res.match.scores.player2Score) {
-            updateQuestProgress('pvp_battle').catch(() => {
-              /* nhiệm vụ ngày là phần thưởng phụ — lỗi ở đây không chặn kết quả trận đấu */
-            })
-          }
         } else {
           setCurrentRound((r) => r + 1)
         }

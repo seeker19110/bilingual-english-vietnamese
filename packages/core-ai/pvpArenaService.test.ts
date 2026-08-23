@@ -9,7 +9,6 @@ import {
   simulateGhostAction,
   createPvPMatch,
   finalizePvPMatch,
-  getWeeklyLeaderboard,
 } from './pvpArenaService.js'
 import { type PvPPlayerProfile } from '@dhcb/core-contracts/pvpArena'
 
@@ -127,12 +126,5 @@ describe('pvpArenaService (1v1 PvP & Ghost Matchmaking Engine)', () => {
     expect(finalMatch.winnerId).toBe('p-1')
     expect(finalMatch.eloChanges?.player1Delta).toBeGreaterThan(0)
     expect(finalMatch.rewardExp).toBe(120)
-  })
-
-  it('retrieves weekly leaderboard with player position', () => {
-    const leaderboard = getWeeklyLeaderboard('user-me')
-    expect(leaderboard.length).toBeGreaterThanOrEqual(5)
-    expect(leaderboard[0]!.rank).toBe(1)
-    expect(leaderboard.some((e) => e.playerId === 'user-me')).toBe(true)
   })
 })

@@ -171,7 +171,7 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
               <div className="p-3.5 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 flex items-center justify-between text-xs text-zinc-400">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>Trần ngân sách: Tối đa 50.000 tokens / $0.1 USD</span>
+                  <span>Trần ngân sách: tối đa 50.000 tokens</span>
                 </div>
                 <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
                   Lá chắn bảo vệ
@@ -195,7 +195,7 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
                   </span>
                   <p className="text-xs text-zinc-400 mt-0.5">
                     Đã hoàn tất {activeSession.steps.length} bước tự trị · Dùng{' '}
-                    {activeSession.totalTokensUsed} tokens (${activeSession.totalCostUsd} USD)
+                    {activeSession.totalTokensUsed} tokens
                   </p>
                 </div>
                 <span className="flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-500/15 px-2.5 py-1 rounded-full border border-emerald-500/25">
@@ -226,9 +226,7 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
                             {step.actionDescription}
                           </span>
                         </div>
-                        <span className="text-[10px] text-zinc-500">
-                          {step.tokensUsed} tok (${step.costUsd})
-                        </span>
+                        <span className="text-[10px] text-zinc-500">{step.tokensUsed} tok</span>
                       </div>
 
                       {step.outputArtifact && (

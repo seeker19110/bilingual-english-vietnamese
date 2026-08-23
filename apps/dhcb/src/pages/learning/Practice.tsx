@@ -38,9 +38,7 @@ import {
 import Layout from '../../components/Layout.js'
 import PageHeader from '../../components/PageHeader.js'
 import PronunciationCheck from '../../components/PronunciationCheck.js'
-import DailyQuestsCard from '../../components/DailyQuests/DailyQuestsCard.js'
 import PvPArenaCard from '../../components/PvPArena/PvPArenaCard.js'
-import ReferralVipBanner from '../../components/ReferralVip/ReferralVipBanner.js'
 import { getDirection, getUsage, incrementUsage } from '../../lib/storage'
 import { useAuth } from '../../context/useAuth'
 import { loadCurriculum, getLearningPath } from '../../lib/curriculum'
@@ -1230,14 +1228,10 @@ export default function Practice() {
           </button>
         </div>
 
-        {/* ── NHIỆM VỤ HÀNG NGÀY & RƯƠNG BÍ ẨN ── */}
-        <DailyQuestsCard />
+        {/* DailyQuestsCard + ReferralVipBanner (dữ liệu giả in-memory) đã gỡ 2026-08-23 — hệ nhiệm vụ/giới thiệu THẬT ở /nhiem-vu và /profile (QuestsPanel, ReferralSection) */}
 
         {/* ── ĐẤU TRƯỜNG 1V1 PVP ARENA ── */}
         <PvPArenaCard />
-
-        {/* ── BANNER MỜI BẠN NHẬN VIP ── */}
-        <ReferralVipBanner />
 
         {/* ── TẦNG 1: LUYỆN TẬP 5 MÔN HỌC CỐT LÕI & GIẢI ĐỀ AI ── */}
         <section aria-label="Luyện tập 5 Môn học cốt lõi" className="space-y-3">
