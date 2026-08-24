@@ -63,6 +63,12 @@ describe('effectivePrice', () => {
     expect(effectivePrice(entry, NOW, 20)).toBe(32_000) // 40_000 * 0.8, KHÔNG phải 25_000
   })
 
+  it('giảm sâu làm tròn về 0 → chặn ở SÀN 1.000đ (đơn 0đ khiến webhook cấp gói cho mọi giao dịch)', () => {
+    const entry: PriceEntry = { priceVnd: 15_000, salePriceVnd: null, saleUntil: null }
+    // 15.000 × giảm 97% = 450 → làm tròn nghìn = 0 → phải chặn ở 1.000đ
+    expect(effectivePrice(entry, NOW, 97)).toBe(1_000)
+  })
+
   it('promoPercent = 0 hoặc null → bỏ qua, dùng logic sale_price_vnd/priceVnd cũ', () => {
     const entry: PriceEntry = { priceVnd: 40_000, salePriceVnd: null, saleUntil: null }
     expect(effectivePrice(entry, NOW, 0)).toBe(40_000)

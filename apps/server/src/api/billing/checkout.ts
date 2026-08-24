@@ -82,6 +82,12 @@ export default async function handler(req: Request): Promise<Response> {
     now,
     activePromoPercent(promo, now),
   )
+  // Lưới an toàn lớp 2 (effectivePrice đã có sàn 1.000đ): đơn 0đ tuyệt đối không được tạo —
+  // webhook so `transferAmount < amount_vnd` sẽ cấp gói cho mọi giao dịch chứa mã.
+  if (amountVnd <= 0) {
+    console.error(`[checkout] Giá tính ra ${amountVnd}đ cho ${plan}/${cycle} — chặn tạo đơn`)
+    return jsonResponse({ error: 'Thanh toán đang tạm gián đoạn, thử lại sau' }, 503, allHeaders)
+  }
   const pool = getPgPool()
   const expiresAt = new Date(Date.now() + CHECKOUT_EXPIRES_MS)
 

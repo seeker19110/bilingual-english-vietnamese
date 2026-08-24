@@ -11,7 +11,7 @@ import {
 import { getOrCreatePerson } from '@dhcb/core-personal/personService'
 import { generateProactiveBriefing } from '@dhcb/core-personal/proactiveBriefingService'
 import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
-import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { jsonResponse, getClientIp, internalErrorResponse } from '@dhcb/core-http/http'
 
 const BriefingQuerySchema = z.object({
   type: z.enum(['morning', 'evening']).optional(),
@@ -56,7 +56,6 @@ export default async function handler(req: Request): Promise<Response> {
     if (isAppError(err)) {
       return jsonResponse(toErrorBody(err), err.status, headers)
     }
-    const message = err instanceof Error ? err.message : String(err)
-    return jsonResponse({ error: 'Internal server error', message }, 500, headers)
+    return internalErrorResponse(err, headers, 'proactive-briefing')
   }
 }

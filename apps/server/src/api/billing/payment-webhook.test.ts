@@ -114,6 +114,32 @@ describe('/api/payment-webhook', () => {
     expect(query).toHaveBeenCalledTimes(1) // chỉ SELECT, không UPDATE
   })
 
+  it('đơn QUÁ HẠN (quá expires_at + ân hạn 24h) → success:true, giữ pending, KHÔNG cấp gói', async () => {
+    const expired = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) // hết hạn 2 ngày trước
+    query.mockResolvedValueOnce({ rows: [{ ...PENDING_PAYMENT, expires_at: expired }] })
+    const resp = await handler(
+      makeRequest({ id: 1, transferType: 'in', transferAmount: 40_000, content: 'ENVI7K2M9QRT' }),
+    )
+    expect(resp.status).toBe(200)
+    expect(granted.calls).toEqual([])
+    expect(query).toHaveBeenCalledTimes(1) // chỉ SELECT, không UPDATE
+  })
+
+  it('đơn hết hạn NHƯNG còn trong ân hạn 24h (chuyển khoản chậm) → vẫn cấp gói', async () => {
+    const justExpired = new Date(Date.now() - 60 * 60 * 1000) // hết hạn 1 giờ trước
+    query
+      .mockResolvedValueOnce({ rows: [{ ...PENDING_PAYMENT, expires_at: justExpired }] })
+      .mockResolvedValueOnce({
+        rowCount: 1,
+        rows: [{ user_id: 'user-1', plan: 'pro', cycle: 'month', years: 1 }],
+      })
+    const resp = await handler(
+      makeRequest({ id: 1, transferType: 'in', transferAmount: 40_000, content: 'ENVI7K2M9QRT' }),
+    )
+    expect(resp.status).toBe(200)
+    expect(granted.calls).toHaveLength(1)
+  })
+
   it('đơn ĐÃ paid (webhook lặp) → success:true, không cấp gói lần 2', async () => {
     query.mockResolvedValueOnce({ rows: [{ ...PENDING_PAYMENT, status: 'paid' }] })
     const resp = await handler(

@@ -187,6 +187,39 @@ export function getMistakeStats(userId: string): { total: number; due: number } 
 
 // ── Đồng bộ server ───────────────────────────────────────────────────────────
 
+// Hợp nhất 2 sổ lỗi theo khóa (câu sai → câu đúng, sau chuẩn hóa) — cùng luật với addMistake
+// và server: count/createdAt/reviewCount lấy giá trị lớn hơn, lastReviewedAt=null thắng
+// (nghĩa là "cần ôn lại"). Kết quả sắp theo độ mới và cắt trần MAX_MISTAKES.
+function mergeMistakeLists(base: Mistake[], extra: Mistake[]): Mistake[] {
+  const keyOf = (m: Mistake) => `${norm(m.wrong)}→${norm(m.corrected)}`
+  const byKey = new Map<string, Mistake>(base.map((m) => [keyOf(m), m]))
+  for (const m of extra) {
+    const k = keyOf(m)
+    const ex = byKey.get(k)
+    if (!ex) {
+      byKey.set(k, m)
+      continue
+    }
+    byKey.set(k, {
+      ...ex,
+      count: Math.max(ex.count, m.count),
+      createdAt: Math.max(ex.createdAt, m.createdAt),
+      reviewCount: Math.max(ex.reviewCount, m.reviewCount),
+      lastReviewedAt:
+        ex.lastReviewedAt == null || m.lastReviewedAt == null
+          ? null
+          : Math.max(ex.lastReviewedAt, m.lastReviewedAt),
+      explanation: ex.explanation || m.explanation,
+    })
+  }
+  const merged = [...byKey.values()].sort((a, b) => b.createdAt - a.createdAt)
+  if (merged.length > MAX_MISTAKES) {
+    merged.sort((a, b) => b.count - a.count || b.createdAt - a.createdAt)
+    merged.length = MAX_MISTAKES
+  }
+  return merged
+}
+
 // Đẩy sổ cục bộ lên server, nhận về sổ ĐÃ HỢP NHẤT (server gộp theo cùng luật với addMistake:
 // count/mốc thời gian lấy giá trị lớn hơn), rồi ghi đè localStorage bằng bản hợp nhất đó.
 //
@@ -205,8 +238,13 @@ export async function syncMistakes(userId: string): Promise<Mistake[]> {
     if (!res.ok) return local
     const data = (await res.json()) as { mistakes?: Mistake[] }
     if (!Array.isArray(data.mistakes)) return local
-    write(userId, data.mistakes)
-    return data.mistakes
+    // Hợp nhất lại với sổ cục bộ HIỆN TẠI trước khi ghi đè: trong lúc request đang bay,
+    // addMistake() có thể vừa ghi lỗi mới — ghi đè thẳng bằng bản server sẽ nuốt mất chúng
+    // (race hẹp nhưng xảy ra đúng lúc đang chat, audit 2026-08-24). Luật hợp nhất giống server:
+    // count/mốc thời gian lấy giá trị lớn hơn, lastReviewedAt=null (cần ôn lại) thắng.
+    const merged = mergeMistakeLists(data.mistakes, read(userId))
+    write(userId, merged)
+    return merged
   } catch {
     return local // ngoại tuyến — giữ nguyên bản cục bộ
   }

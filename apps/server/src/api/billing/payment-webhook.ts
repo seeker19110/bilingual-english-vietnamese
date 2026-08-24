@@ -14,7 +14,7 @@ import { withTransaction } from '@dhcb/core-db/transaction'
 import { logSecurityEvent } from '@dhcb/core-auth/security'
 import { extractPaymentCode, verifySepayApiKey } from '@dhcb/core-billing/sepay'
 import { grantPlanDays } from '@dhcb/core-billing/planGrant'
-import { CYCLE_DAYS, type PayableCycle } from '@dhcb/core-billing/prices'
+import { CYCLE_DAYS, type PayableCycle, type PayablePlan } from '@dhcb/core-billing/prices'
 import { readJsonBody, validateBody } from '@dhcb/core-http/validation'
 import { jsonResponse } from '@dhcb/core-http/http'
 
@@ -63,13 +63,14 @@ export default async function handler(req: Request): Promise<Response> {
   const { rows } = await pool.query<{
     id: string
     user_id: string
-    plan: 'pro' | 'vip'
+    plan: PayablePlan
     cycle: PayableCycle
     amount_vnd: number
     status: string
     years: number
+    expires_at: Date | null
   }>(
-    'select id, user_id, plan, cycle, amount_vnd, status, years from public.payments where payment_code = $1',
+    'select id, user_id, plan, cycle, amount_vnd, status, years, expires_at from public.payments where payment_code = $1',
     [paymentCode],
   )
   const payment = rows[0]
@@ -78,6 +79,21 @@ export default async function handler(req: Request): Promise<Response> {
     return ok(headers)
   }
   if (payment.status === 'paid') return ok(headers) // đã xử lý — idempotent, không log lỗi
+
+  // Đơn quá hạn: UI hết hạn sau 30 phút nhưng trước đây server không kiểm — người dùng có thể
+  // chuyển khoản NHIỀU THÁNG sau và vẫn được cấp gói với giá đã chốt lúc khuyến mãi (audit
+  // 2026-08-24). Cho ân hạn 24h (chuyển khoản liên ngân hàng có thể chậm); quá nữa thì giữ
+  // 'pending' để admin đối chiếu tay, KHÔNG tự cấp gói.
+  const LATE_GRACE_MS = 24 * 60 * 60 * 1000
+  if (payment.expires_at && Date.now() > new Date(payment.expires_at).getTime() + LATE_GRACE_MS) {
+    logSecurityEvent('SEPAY_PAYMENT_LATE', 'sepay', {
+      paymentId: payment.id,
+      txnId,
+      expiresAt: new Date(payment.expires_at).toISOString(),
+      transferAmount,
+    })
+    return ok(headers)
+  }
 
   if (transferAmount < payment.amount_vnd) {
     // Chuyển thiếu: KHÔNG cấp gói, giữ 'pending' để admin đối chiếu tay + người dùng có thể
@@ -105,7 +121,7 @@ export default async function handler(req: Request): Promise<Response> {
       // provider_txn_id là lớp chống trùng THỨ HAI cho ca hiếm hơn: cùng txnId khớp nhầm 2 đơn.
       const { rowCount, rows: updated } = await client.query<{
         user_id: string
-        plan: 'pro' | 'vip'
+        plan: PayablePlan
         cycle: PayableCycle
         years: number
       }>(
