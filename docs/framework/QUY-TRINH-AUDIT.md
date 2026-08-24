@@ -15,7 +15,7 @@
 
 ## 0. Khi nào chạy audit này
 
-> **Hai KIỂU audit, đừng lẫn.** Mục 1–4 dưới đây là audit **RỘNG**: quét toàn repo theo 7 tầng,
+> **Hai KIỂU audit, đừng lẫn.** Mục 1–4 dưới đây là audit **RỘNG**: quét toàn repo theo 11 tầng,
 > tìm vấn đề về cổng/bảo mật/vệ sinh/độ phủ. Nó KHÔNG bắt được lỗi tính toán sai âm thầm bên
 > trong một luồng nghiệp vụ (số hiển thị lệch số enforce, khoá ghi một đằng đọc một nẻo…) vì
 > mọi cổng vẫn xanh khi những lỗi đó tồn tại. Loại lỗi ấy cần audit **SÂU** theo một luồng dữ
@@ -44,9 +44,15 @@
 
 ---
 
-## 2. Bảy tầng audit
+## 2. Các tầng audit
 
 Chạy tuần tự. Mỗi tầng ghi rõ: **lệnh**, **tiêu chí đạt**, **nếu fail thì làm gì**, **ai xử lý**.
+
+> **Trước khi chạy bất cứ lệnh `grep` nào trong tài liệu này:** xác nhận đường dẫn trong lệnh CÒN
+> TỒN TẠI. Thư mục đã đổi tên (`apps/english` → `apps/dhcb`, gốc repo → `apps/server/src`) khiến
+> `grep` trả 0 dòng vì **không có thư mục**, rồi bị chấm nhầm là "✅ 0 vi phạm" — âm tính giả, đã
+> xảy ra thật (audit 2026-08-24). Kiểm nhanh: `ls apps/ packages/ | head`. Cột "Đã biết đạt" là
+> **ghi chép có ngày tháng** — đường dẫn trong đó phản ánh cấu trúc lúc ghi, không cập nhật theo.
 
 ### Tầng 1 — Cổng tự động (bắt buộc, luôn chạy)
 
@@ -61,19 +67,46 @@ Chạy tuần tự. Mỗi tầng ghi rõ: **lệnh**, **tiêu chí đạt**, **n
 
 - **Nếu fail:** dừng, ghi lỗi cụ thể vào báo cáo. Đây là fail chặn (blocking).
 - **Ai xử lý:** AI tự sửa được (lỗi code/format).
-- **Lưu ý stderr "giả":** `apps/english/src/lib/ai.test.ts`/`packages/core-ai/ai.test.ts` in log lỗi có
+- **Ngân sách bundle: ghi cả BIÊN ĐỘ CÒN LẠI, không chỉ đạt/không đạt.** `size-limit` chỉ nói
+  pass/fail, nên "còn 0,3 kB" và "còn 40 kB" trông giống hệt nhau trong báo cáo. Tính
+  `còn lại = ngưỡng − thực đo` và ghi kèm %; **≥ 95% ngưỡng → cảnh báo trong báo cáo** (tính năng
+  nhỏ kế tiếp sẽ làm CI đỏ). Đo 2026-08-24: JS 120,72/123 kB (98,1%) · CSS 15,72/16 kB (98,3%).
+
+**1b. Test KHÔNG ỔN ĐỊNH (flaky) — một lượt xanh KHÔNG chứng minh được gì:**
+
+CI chạy `npm test` đúng **một** lượt. Test đỏ ngẫu nhiên 1/10 lượt vẫn lọt qua mọi cổng suốt
+nhiều tuần, rồi đỏ đúng hôm cần merge gấp — và bị coi nhầm là "lỗi mới của PR này".
+
+- **Lệnh:** chạy `npm test` **≥ 3 lượt liên tiếp**, ghi lại số lượt xanh/tổng số lượt.
+- **Tiêu chí đạt:** 3/3 xanh với cùng số test. Bất kỳ lượt nào đỏ → sang bước phân loại.
+- **Phân loại đỏ là flaky hay lỗi thật:** chạy RIÊNG file đó ≥ 5 lượt
+  (`npx vitest run <đường-dẫn-file>`). Xanh hết → flaky (chỉ đỏ dưới tải/khi chạy chung).
+  Đỏ lại → lỗi thật, xử lý như fail chặn.
+- **Không được kết luận "flake" mà không có nguyên nhân.** Phải chỉ ra cơ chế, và chứng minh
+  bằng số. Bốn nguồn hay gặp trong dự án này:
+  1. `Math.random()`/`Date.now()` nằm trong chính code được test → tính xác suất fail rồi **đo
+     thực nghiệm** để đối chiếu (đợt 2026-08-24: khẳng định 1000 ID 8 ký tự hex không trùng ⇒
+     không gian 2³² ⇒ nghịch lý sinh nhật cho ~0,012%/lượt, đo 2000 vòng khớp lý thuyết).
+  2. Phụ thuộc thứ tự test / trạng thái dùng chung giữa các test trong cùng file.
+  3. Timeout quá sát khi máy chịu tải (chạy kèm coverage chậm hơn hẳn).
+  4. Ranh giới ngày/múi giờ (test chạy đúng lúc qua nửa đêm giờ VN).
+- **Cách vá đúng:** sửa **TEST**, không sửa code sản phẩm, khi bản thân code không sai —
+  ví dụ trên: `createRequestId()` chỉ dùng để nối log, trùng 1/8.600 lượt là chấp nhận được;
+  cái sai là test đòi hỏi bất biến mạnh hơn thứ hàm cam kết.
+- **Ai xử lý:** AI tự sửa được.
+- **Lưu ý stderr "giả":** `apps/dhcb/src/lib/ai.test.ts`/`packages/core-ai/ai.test.ts` in log lỗi có
   chủ đích (test nhánh xử lý lỗi). Đó KHÔNG phải
   test fail — chỉ đọc dòng `Test Files … passed` / `Tests … passed` để kết luận.
 
 ### Tầng 2 — Bảo mật
 
-| Mục                     | Cách kiểm                                                                                                                                                                                                                                                       | Tiêu chí đạt                                                    |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| Secret hardcode         | Quét `sk-…`, `AIza…`, `api_key=…` trong `apps/*/src`/`api`/`packages`/`server.ts` (trừ `*.test.*`)                                                                                                                                                              | 0 khớp                                                          |
-| `.env` bị track         | `git ls-files \| grep -E "^\.env($\|\.)"`                                                                                                                                                                                                                       | chỉ `.env.example`                                              |
-| Lỗ hổng dependency      | `npm audit --omit=dev`                                                                                                                                                                                                                                          | 0 mức high/critical (low/moderate: ghi nhận, cân nhắc)          |
-| Logic nhạy cảm ở server | Rà `api/` + `server.ts`: kiểm quyền (`validateAuth`), đếm lượt, gọi AI đều ở server                                                                                                                                                                             | không có logic nhạy cảm chạy ở client                           |
-| Kiểm quyền mỗi handler  | Đối chiếu `api/*.ts` — mọi endpoint đọc/sửa dữ liệu người dùng đều gọi `validateAuth()` (dự án đã rời Supabase, không còn RLS — xem `docs/migration-thoat-ly-supabase.md`); endpoint công khai có chủ đích (vd `app-settings.ts`) phải có comment giải thích rõ | mọi handler chạm dữ liệu riêng tư đều kiểm `user_id` khớp token |
+| Mục                     | Cách kiểm                                                                                                                                                                                                                                                                          | Tiêu chí đạt                                                    |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Secret hardcode         | Quét `sk-…`, `AIza…`, `api_key=…` trong `apps/*/src`/`apps/server/src`/`packages` (trừ `*.test.*`)                                                                                                                                                                                 | 0 khớp                                                          |
+| `.env` bị track         | `git ls-files \| grep -E "^\.env($\|\.)"`                                                                                                                                                                                                                                          | chỉ `.env.example`                                              |
+| Lỗ hổng dependency      | `npm audit --omit=dev`                                                                                                                                                                                                                                                             | 0 mức high/critical (low/moderate: ghi nhận, cân nhắc)          |
+| Logic nhạy cảm ở server | Rà `apps/server/src/api/` + `apps/server/src/server.ts`: kiểm quyền (`validateAuth`), đếm lượt, gọi AI đều ở server                                                                                                                                                                | không có logic nhạy cảm chạy ở client                           |
+| Kiểm quyền mỗi handler  | Đối chiếu `apps/server/src/api/**/*.ts` — mọi endpoint đọc/sửa dữ liệu người dùng đều gọi `validateAuth()` (dự án đã rời Supabase, không còn RLS — xem `docs/migration-thoat-ly-supabase.md`); endpoint công khai có chủ đích (vd `app-settings.ts`) phải có comment giải thích rõ | mọi handler chạm dữ liệu riêng tư đều kiểm `user_id` khớp token |
 
 - **Nếu fail:** secret lộ = fail chặn, xử lý NGAY (xoay key nếu đã đẩy lên remote). `npm audit` high/critical =
   ghi vào báo cáo + đề xuất nâng phiên bản.
@@ -101,22 +134,22 @@ Chạy tuần tự. Mỗi tầng ghi rõ: **lệnh**, **tiêu chí đạt**, **n
 **Cách chạy:** đọc code thật (`Grep`/`Read`), KHÔNG đoán. Với mỗi dòng ❌ → ghi vào báo cáo, phân loại
 AI tự sửa được hay cần người dùng. Không chạy `npm audit`/`eval:tutor` lại ở đây (đã có Tầng 2/4).
 
-| #   | Nhóm (theo WSTG)                     | Kiểm tra cụ thể                                                                                                                                                                 | Cách kiểm trong repo này                                                                                                                                                                                                    | Đã biết đạt (xác nhận 2026-08-04, lượt audit thật đầu tiên sau khi thêm Tầng 2b)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| --- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Injection — SQLi                     | Mọi câu Postgres dùng tham số hoá (`$1, $2…`), không nối chuỗi trực tiếp                                                                                                        | `grep -rn "pool.query\|client.query" api/ packages/core-db --include=*.ts \| grep -v "\.test\."` rồi soát các query có nối chuỗi (`+`, template literal chèn biến chưa qua `$n`)                                            | ✅ 0 query nối chuỗi — soát lại mỗi lần thêm handler mới                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| 2   | Injection — Command/Path             | Không có `child_process.exec`/`fs` ghép trực tiếp input người dùng vào đường dẫn                                                                                                | `grep -rn "exec(\|execSync\|readFile.*req\.\|path.join.*req\." api/ server.ts`                                                                                                                                              | ✅ 0 kết quả — STT/TTS ghi file cache theo hash, không theo tên người dùng gửi lên                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| 3   | XSS                                  | Không dùng `dangerouslySetInnerHTML` với dữ liệu chưa qua sanitize; React tự escape phần còn lại                                                                                | `grep -rn "dangerouslySetInnerHTML" apps/english/src`                                                                                                                                                                       | ✅ 0 kết quả — React escape mặc định đủ dùng, giữ nguyên, không thêm `dangerouslySetInnerHTML` khi chưa có lý do + sanitize (DOMPurify)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| 4   | CSRF                                 | Endpoint đổi trạng thái (POST/PUT/DELETE) yêu cầu Bearer token riêng (không chỉ dựa cookie tự động gửi) → giảm rủi ro CSRF theo thiết kế token-based hiện tại                   | Xác nhận `validateAuth()` đọc header `Authorization`, không phải cookie session                                                                                                                                             | ✅ Bearer token qua header, không cookie — CSRF cổ điển không áp dụng. Webhook thanh toán (`packages/core-billing/payment-webhook.ts`) xác minh chữ ký riêng qua `verifySepayApiKey`, không dựa "đăng nhập"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| 5   | Auth — brute force / enumeration     | Endpoint login/đăng ký không lộ "email tồn tại hay không" qua message khác nhau; có giới hạn số lần thử                                                                         | Đọc `packages/core-auth/auth.ts` + `packages/core-auth/authService.ts`, đối chiếu message lỗi + rate limit áp dụng cho `/api/auth*`                                                                                         | ✅ Message lỗi gộp chung "Email hoặc mật khẩu không đúng" (không lộ email tồn tại), có rate limit 429 "Quá nhiều yêu cầu"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| 6   | Session/Token                        | Token có hạn dùng (expiry), không log token ra console/Sentry, đăng xuất thu hồi được                                                                                           | `grep -rn "console.log.*token\|Bearer " api/ packages/ server.ts --include=*.ts \| grep -v test`                                                                                                                            | ✅ 0 chỗ log token. Sentry client (`apps/english/src/lib/errorTracking.ts`) và server (`api/_lib/sentry.ts`) đều KHÔNG bật request-handler/tracing tự động — chỉ `captureException`/`captureServerException` thủ công với `extra` tối giản (path, method, context) → không có đường nào Authorization header lọt vào Sentry                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| 7   | Authorization / IDOR                 | Mọi handler đọc/sửa dữ liệu theo `id` từ URL/body đều đối chiếu `user_id` lấy từ token, không tin `user_id` client gửi lên                                                      | Đã có ở Tầng 2 gốc ("Kiểm quyền mỗi handler") — bổ sung: rà riêng các handler có tham số `:id`/`userId` trong query string (VD `history.ts`, `progress.ts`, `profile.ts`) xem có so khớp `req.user.id` hay dùng thẳng param | ✅ `history.ts`/`progress.ts`/`profile.ts` đều lấy `user_id` từ `validateAuth()` rồi mới query (`where user_id = $1`) — không có handler nào tin `id`/`userId` từ query string client                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| 8   | File upload (STT audio)              | Giới hạn kích thước + loại file audio nhận vào `/api/stt`; không cho ghi ra ngoài thư mục cache dự kiến                                                                         | Đọc `packages/core-ai/stt.ts`: có giới hạn `bodyParser`/base64 size không, có validate mime/độ dài trước khi gửi Whisper                                                                                                    | ✅ `server.ts:102` giới hạn `express.json({ limit: '10mb' })` riêng cho `/api/stt`; `stt.ts` có `checkRateLimit(clientIp, 15)` riêng                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| 9   | Security headers                     | CSP, `X-Content-Type-Options`, `Referrer-Policy` đã có (`server.ts`); còn thiếu `X-Frame-Options`/`frame-ancestors`, `Strict-Transport-Security`, `Permissions-Policy`          | `grep -n "X-Frame\|Strict-Transport\|Permissions-Policy\|frame-ancestors" server.ts`                                                                                                                                        | ✅ **XONG (2026-08-04).** CSP (kèm `frame-ancestors 'self'`) + nosniff + Referrer-Policy có ở Express (`server.ts` ~144-174, phủ mọi request vì cả 2 block Nginx đều proxy thẳng về Express, không tách static). `Strict-Transport-Security` + `Permissions-Policy` phát hiện thiếu qua đối chiếu `/etc/nginx/sites-available/{default,en-vi}` thật trên VPS → người dùng đã thêm `add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;` + `add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;` vào block HTTPS `.org` trong `default`, `nginx -t && systemctl reload nginx` — **xác nhận sống qua `curl -sI https://www.donghanhcungban.org` cùng ngày, cả 2 header đều có**. `nginx/en-vi.conf` trong repo vẫn là file mẫu/lịch sử cố ý giữ `.com` (xem `docs/doi-ten-mien-chinh-org.md` mục "Không nằm trong phạm vi này") — không sửa file mẫu |
-| 10  | CORS                                 | Nếu có bật CORS cho origin khác domain chính, danh sách origin phải whitelist rõ, không `*` khi có credentials                                                                  | `grep -rn "Access-Control-Allow" server.ts api/`                                                                                                                                                                            | ✅ Same-origin SPA — 0 middleware CORS mở rộng trong `server.ts`/`api/`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| 11  | Rate limiting / anti-automation      | Endpoint tốn tài nguyên (AI, STT, TTS, auth) có giới hạn lượt/IP hoặc /user, tách biệt đếm lượt nghiệp vụ (Free/Pro) và rate-limit chống spam kỹ thuật                          | Đọc `packages/core-ai/{ai,stt,tts}.ts` — xác nhận có áp cho `/api/auth`, `/api/agent`, `/api/stt`, `/api/tts`, không chỉ đếm lượt nghiệp vụ                                                                                 | ✅ `checkRateLimit` áp riêng theo IP cho cả 4: `ai.ts` (5), `stt.ts` (15), `tts.ts` (60, 2 điểm chặn), `auth.ts` (429 riêng) — tách biệt hoàn toàn với đếm lượt nghiệp vụ Free/Pro                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| 12  | Business logic (đếm lượt/thanh toán) | Không thể gọi API AI vượt giới hạn bằng cách gọi song song (race condition đếm lượt), webhook thanh toán xác minh chữ ký + idempotent (không cộng tiền 2 lần nếu SePay gửi lại) | Đã có phần trong Tầng 5b ("Async race / idempotency… `0004_refund_usage`") — bổ sung riêng cho `payment-webhook`: xác nhận có kiểm tra "đã xử lý giao dịch này chưa" trước khi cộng plan                                    | ✅ `packages/core-billing/payment-webhook.ts:79` — `if (payment.status === 'paid') return ok(...)` chặn xử lý lại trước khi cộng plan → idempotent                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| 13  | Error handling / thông tin lộ        | Response lỗi cho client không kèm stack trace / chi tiết nội bộ (tên bảng, path server) ở production                                                                            | `grep -rn "err.stack\|error.stack" api/ server.ts \| grep -v test` rồi xác nhận không trả thẳng ra response                                                                                                                 | ✅ 0 kết quả — không có response nào trả thẳng `.stack` ra client                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| 14  | Sensitive data ở client              | Không có API key/secret nào lộ trong bundle client (`apps/english/src`) — chỉ biến `VITE_*` public (site URL, Google client ID publishable)                                     | `grep -rn "process.env\." apps/english/src \| grep -v VITE_` (phải rỗng — code client không được đọc biến server)                                                                                                           | ✅ 0 kết quả — chạy grep này mỗi audit                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| #   | Nhóm (theo WSTG)                     | Kiểm tra cụ thể                                                                                                                                                                         | Cách kiểm trong repo này                                                                                                                                                                                                                                                                                                                                  | Đã biết đạt (xác nhận 2026-08-04, lượt audit thật đầu tiên sau khi thêm Tầng 2b)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| --- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Injection — SQLi                     | Mọi câu Postgres dùng tham số hoá (`$1, $2…`), không nối chuỗi trực tiếp                                                                                                                | `grep -rnE "(pool\|client\|db)\.query\(\s*\`" apps/server/src packages --include=*.ts \| grep -v "\.test\." \| grep -E '\$\{'`— bắt mọi query dùng template literal có chèn biến. Mỗi kết quả phải xác minh biến chèn vào là **định danh** (tên bảng/cột) đến từ hằng số trong code, KHÔNG phải giá trị từ người dùng (giá trị luôn phải đi qua`$1, $2…`) | ✅ 0 query nối chuỗi — soát lại mỗi lần thêm handler mới                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| 2   | Injection — Command/Path             | Không có `child_process.exec`/`fs` ghép trực tiếp input người dùng vào đường dẫn                                                                                                        | `grep -rnE "exec\(                                                                                                                                                                                                                                                                                                                                        | execSync                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | spawn\( | path\.join\(._req\." apps/server/src packages --include=_.ts` | ✅ 0 kết quả — STT/TTS ghi file cache theo hash, không theo tên người dùng gửi lên |
+| 3   | XSS                                  | Không dùng `dangerouslySetInnerHTML` với dữ liệu chưa qua sanitize; React tự escape phần còn lại                                                                                        | `grep -rn "dangerouslySetInnerHTML" apps/dhcb/src apps/hub/src`                                                                                                                                                                                                                                                                                           | ✅ 0 kết quả — React escape mặc định đủ dùng, giữ nguyên, không thêm `dangerouslySetInnerHTML` khi chưa có lý do + sanitize (DOMPurify)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| 4   | CSRF                                 | Endpoint đổi trạng thái (POST/PUT/DELETE) yêu cầu Bearer token riêng (không chỉ dựa cookie tự động gửi) → giảm rủi ro CSRF theo thiết kế token-based hiện tại                           | Xác nhận `validateAuth()` đọc header `Authorization`, không phải cookie session                                                                                                                                                                                                                                                                           | ✅ Bearer token qua header, không cookie — CSRF cổ điển không áp dụng. Webhook thanh toán (`apps/server/src/api/billing/payment-webhook.ts`) xác minh chữ ký riêng qua `verifySepayApiKey`, không dựa "đăng nhập"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| 5   | Auth — brute force / enumeration     | Endpoint login/đăng ký không lộ "email tồn tại hay không" qua message khác nhau; có giới hạn số lần thử                                                                                 | Đọc `packages/core-auth/auth.ts` + `packages/core-auth/authService.ts`, đối chiếu message lỗi + rate limit áp dụng cho `/api/auth*`                                                                                                                                                                                                                       | ✅ Message lỗi gộp chung "Email hoặc mật khẩu không đúng" (không lộ email tồn tại), có rate limit 429 "Quá nhiều yêu cầu"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| 6   | Session/Token                        | Token có hạn dùng (expiry), không log token ra console/Sentry, đăng xuất thu hồi được                                                                                                   | `grep -rnE "console\.(log\|info\|debug).*([Tt]oken\|[Aa]uthorization\|password)" apps/*/src apps/server/src packages --include=*.ts --include=*.tsx \| grep -v "\.test\."`                                                                                                                                                                                | ✅ 0 chỗ log token. Sentry client (`apps/dhcb/src/lib/errorTracking.ts`) và server (`apps/server/src/api/_lib/sentry.ts`) đều KHÔNG bật request-handler/tracing tự động — chỉ `captureException`/`captureServerException` thủ công với `extra` tối giản (path, method, context) → không có đường nào Authorization header lọt vào Sentry                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| 7   | Authorization / IDOR                 | Mọi handler đọc/sửa dữ liệu theo `id` từ URL/body đều đối chiếu `user_id` lấy từ token, không tin `user_id` client gửi lên                                                              | Đã có ở Tầng 2 gốc ("Kiểm quyền mỗi handler") — bổ sung: rà riêng các handler có tham số `:id`/`userId` trong query string (VD `history.ts`, `progress.ts`, `profile.ts`) xem có so khớp `req.user.id` hay dùng thẳng param                                                                                                                               | ✅ `history.ts`/`progress.ts`/`profile.ts` đều lấy `user_id` từ `validateAuth()` rồi mới query (`where user_id = $1`) — không có handler nào tin `id`/`userId` từ query string client                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| 8   | File upload (STT audio)              | Giới hạn kích thước + loại file audio nhận vào `/api/stt`; không cho ghi ra ngoài thư mục cache dự kiến                                                                                 | Đọc `packages/core-ai/stt.ts`: có giới hạn `bodyParser`/base64 size không, có validate mime/độ dài trước khi gửi Whisper                                                                                                                                                                                                                                  | ✅ `server.ts:102` giới hạn `express.json({ limit: '10mb' })` riêng cho `/api/stt`; `stt.ts` có `checkRateLimit(clientIp, 15)` riêng                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| 9   | Security headers                     | CSP, `X-Content-Type-Options`, `Referrer-Policy` đã có (`server.ts`); còn thiếu `X-Frame-Options`/`frame-ancestors`, `Strict-Transport-Security`, `Permissions-Policy`                  | `grep -rnE "X-Frame\|Strict-Transport\|Permissions-Policy\|frame-ancestors\|Content-Security-Policy" apps/server/src packages/core-auth/security.ts`                                                                                                                                                                                                      | ✅ **XONG (2026-08-04).** CSP (kèm `frame-ancestors 'self'`) + nosniff + Referrer-Policy có ở Express (`server.ts` ~144-174, phủ mọi request vì cả 2 block Nginx đều proxy thẳng về Express, không tách static). `Strict-Transport-Security` + `Permissions-Policy` phát hiện thiếu qua đối chiếu `/etc/nginx/sites-available/{default,en-vi}` thật trên VPS → người dùng đã thêm `add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;` + `add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;` vào block HTTPS `.org` trong `default`, `nginx -t && systemctl reload nginx` — **xác nhận sống qua `curl -sI https://www.donghanhcungban.org` cùng ngày, cả 2 header đều có**. `nginx/en-vi.conf` trong repo vẫn là file mẫu/lịch sử cố ý giữ `.com` (xem `docs/doi-ten-mien-chinh-org.md` mục "Không nằm trong phạm vi này") — không sửa file mẫu |
+| 10  | CORS                                 | Nếu có bật CORS cho origin khác domain chính, danh sách origin phải whitelist rõ, không `*` khi có credentials                                                                          | `grep -rn "Access-Control-Allow" apps/server/src packages/core-auth/security.ts`                                                                                                                                                                                                                                                                          | ✅ Same-origin SPA — 0 middleware CORS mở rộng trong `server.ts`/`api/`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| 11  | Rate limiting / anti-automation      | Endpoint tốn tài nguyên (AI, STT, TTS, auth) có giới hạn lượt/IP hoặc /user, tách biệt đếm lượt nghiệp vụ (Free/Pro) và rate-limit chống spam kỹ thuật                                  | Đọc `packages/core-ai/{ai,stt,tts}.ts` — xác nhận có áp cho `/api/auth`, `/api/agent`, `/api/stt`, `/api/tts`, không chỉ đếm lượt nghiệp vụ                                                                                                                                                                                                               | ✅ `checkRateLimit` áp riêng theo IP cho cả 4: `ai.ts` (5), `stt.ts` (15), `tts.ts` (60, 2 điểm chặn), `auth.ts` (429 riêng) — tách biệt hoàn toàn với đếm lượt nghiệp vụ Free/Pro                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| 12  | Business logic (đếm lượt/thanh toán) | Không thể gọi API AI vượt giới hạn bằng cách gọi song song (race condition đếm lượt), webhook thanh toán xác minh chữ ký + idempotent (không cộng tiền 2 lần nếu SePay gửi lại)         | Đã có phần trong Tầng 5b ("Async race / idempotency… `0004_refund_usage`") — bổ sung riêng cho `payment-webhook`: xác nhận có kiểm tra "đã xử lý giao dịch này chưa" trước khi cộng plan                                                                                                                                                                  | ✅ `apps/server/src/api/billing/payment-webhook.ts:79` — `if (payment.status === 'paid') return ok(...)` chặn xử lý lại trước khi cộng plan → idempotent                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| 13  | Error handling / thông tin lộ        | Response lỗi cho client không kèm stack trace / chi tiết nội bộ (tên bảng, path server) ở production                                                                                    | `grep -rn "\.stack" apps/server/src packages --include=*.ts \| grep -v "\.test\."` rồi xác nhận không trả thẳng ra response                                                                                                                                                                                                                               | ✅ 0 kết quả — không có response nào trả thẳng `.stack` ra client                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| 14  | Sensitive data ở client              | Không có API key/secret nào lộ trong bundle client (`apps/dhcb/src`, `apps/hub/src` — KHÔNG tính `apps/server/src`) — chỉ biến `VITE_*` public (site URL, Google client ID publishable) | `grep -rn "process\.env\." apps/dhcb/src apps/hub/src \| grep -v VITE_` — liệt kê TƯỜNG MINH từng app client, **đừng dùng `apps/*/src`** vì glob đó nuốt luôn `apps/server/src` (code server được phép đọc biến môi trường) → 94 dòng dương tính giả (phải rỗng — code client không được đọc biến server)                                                 | ✅ 0 kết quả — chạy grep này mỗi audit                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 
 **Ghi chú phạm vi:** danh mục trên ưu tiên các lớp lỗ hổng OWASP Top 10 còn _chưa_ có dòng kiểm tra rõ
 trong Tầng 1–2 gốc (CSRF, headers, rate limiting, error leak, file upload, IDOR theo param, secret lộ ở
@@ -130,19 +163,56 @@ client). Các lớp đã có sẵn (secret hardcode, `.env`, `npm audit`, `valid
 
 ### Tầng 3 — Vệ sinh code
 
-| Mục                     | Cách kiểm                                                 | Tiêu chí đạt                                                   |
-| ----------------------- | --------------------------------------------------------- | -------------------------------------------------------------- |
-| `console.log` rác       | Quét `apps/*/src`/`api`/`packages` (trừ `*.test.*`)       | 0 (log khởi động chủ đích trong `server.ts` KHÔNG tính là rác) |
-| TODO/FIXME/XXX sót      | Quét `apps/*/src`/`api`/`packages`/`server.ts` (trừ test) | 0, hoặc mỗi cái có issue/ghi chú trong PROGRESS                |
-| `any` lọt lưới          | Quét `: any` / `as any` ngoài test                        | 0 mới (mục 4.1 CLAUDE.md)                                      |
-| Code chết / import thừa | Lint đã bắt phần lớn (`no-unused-vars`)                   | không còn cảnh báo                                             |
+| Mục                     | Cách kiểm                                                       | Tiêu chí đạt                                                   |
+| ----------------------- | --------------------------------------------------------------- | -------------------------------------------------------------- |
+| `console.log` rác       | Quét `apps/*/src`/`apps/server/src`/`packages` (trừ `*.test.*`) | 0 (log khởi động chủ đích trong `server.ts` KHÔNG tính là rác) |
+| TODO/FIXME/XXX sót      | Quét `apps/*/src`/`apps/server/src`/`packages` (trừ test)       | 0, hoặc mỗi cái có issue/ghi chú trong PROGRESS                |
+| `any` lọt lưới          | Quét `: any` / `as any` ngoài test                              | 0 mới (mục 4.1 CLAUDE.md)                                      |
+| Code chết / import thừa | Lint đã bắt phần lớn (`no-unused-vars`)                         | không còn cảnh báo                                             |
+| Chu trình import        | `npm run codemap -- cycles`                                     | "Không có chu trình import"                                    |
+| File không ai import    | `npm run codemap -- orphans` (xem bước lọc bên dưới)            | 0 file mồ côi THẬT                                             |
+| Đánh số migration       | xem bước kiểm bên dưới                                          | 0 số bị trùng, 0 số bị nhảy cóc                                |
 
-- **Ai xử lý:** AI tự sửa được.
+**Lọc kết quả `orphans` (bắt buộc — nếu không sẽ toàn báo động giả).** Lệnh trả cả trăm file vì
+test, script chạy tay và trang route **vốn dĩ** không ai import. Lọc rồi mới soi phần còn lại:
+
+```bash
+npm run codemap -- orphans | grep -vE "test\.ts|scripts/archive|main\.tsx"
+```
+
+Mỗi file còn lại: xác nhận bằng `grep -rn "<TênFile>" apps packages --include=*.ts --include=*.tsx`
+(loại chính nó). 0 kết quả = code chết thật → **báo cáo, KHÔNG tự xoá** (xoá cần người dùng xác
+nhận, theo Bước bổ sung ở cuối mục 2). Đợt 2026-08-24 bắt được 201 dòng theo cách này.
+
+**Kiểm đánh số migration.** Chuỗi migration là thứ tự thi hành trên DB thật — số trùng làm thứ tự
+giữa 2 file trở thành may rủi theo alphabet; số nhảy cóc thường là dấu hiệu một file bị mất khi
+rebase:
+
+```bash
+ls postgres/migrations/*.sql | xargs -n1 basename | sed -E 's/^([0-9]+)_.*/\1/' | sort | uniq -d   # phải rỗng
+```
+
+> **Số trùng KHÔNG làm bỏ sót migration** — `scripts/run-pg-migrations.ts` theo dõi theo **tên
+> file**, không theo số (đã kiểm chứng bằng lượt chạy thật 2026-08-24). Vấn đề là **thứ tự**: hai
+> file trùng số mà có phụ thuộc lẫn nhau thì chạy đúng hay sai là do tình cờ. Gặp số trùng → kiểm
+> 2 file có chạm cùng bảng không; không chạm nhau thì ghi nhận là nợ quy ước, có chạm nhau thì
+> **đổi số ngay** (fail chặn).
+
+- **Ai xử lý:** AI tự sửa được (xoá code chết: cần người dùng xác nhận trước).
 
 ### Tầng 4 — Chất lượng AI (chỉ khi liên quan)
 
-- **Kích hoạt khi:** audit chạy sau khi có thay đổi `apps/english/src/prompts/*` hoặc
-  `packages/core-ai/aiConfig.ts` kể từ lần eval gần nhất.
+- **Kích hoạt khi:** `apps/dhcb/src/prompts/*` hoặc `packages/core-ai/aiConfig.ts` đổi NỘI DUNG kể từ
+  lần cập nhật baseline gần nhất. Xác định bằng lệnh, đừng đoán:
+
+  ```bash
+  git log -1 --format=%ad --date=short -- apps/dhcb/src/prompts packages/core-ai/aiConfig.ts
+  git log -1 --format=%ad --date=short -- docs/research/eval-tutor-baseline.md
+  ```
+
+  Ngày đầu MỚI HƠN ngày sau → baseline đã cũ, phải chạy lại. Lưu ý phân biệt đổi **nội dung** với
+  **di chuyển file** (đợt cải tổ cấu trúc): xem `git show --stat <commit>` trước khi kết luận.
+
 - **Lệnh:** `npm run eval:tutor` (cần key AI trong `.env`).
 - **Tiêu chí đạt:** recall/precision **không tụt** so với `docs/research/eval-tutor-baseline.md`.
 - **Nếu fail:** không được merge thay đổi prompt/model; dán bảng so sánh vào báo cáo (mục 8 CLAUDE.md).
@@ -156,20 +226,31 @@ client). Các lớp đã có sẵn (secret hardcode, `.env`, `npm audit`, `valid
 
 - **Lệnh:** `npm run test:coverage`.
 - **Tiêu chí đạt:** vượt ngưỡng SÀN trong `vitest.config.ts` (cơ chế "ratchet" — không tệ hơn hiện tại).
-  Ngưỡng cấu hình (đọc lại `vitest.config.ts`, xác nhận 2026-08-04): statements 93 · branches 89 ·
-  functions 96 · lines 93. Đo thực tế cùng ngày: statements 93.79% · branches 89.51% · functions
-  96.32% · lines 93.79% — đúng sát sàn (đã nâng nhiều đợt từ 2026-08-01, còn ít dư địa nâng tiếp).
-  Chỉ đo LOGIC THUẦN (`apps/*/src/lib/**`, `api/**`, `packages/**`), không đo UI.
+  **Đọc ngưỡng từ `vitest.config.ts` mỗi lượt, ĐỪNG chép số vào đây** — số chép tay trong tài liệu
+  sẽ lệch với cấu hình thật (đã xảy ra: tài liệu ghi 93/89/96/93 trong khi cấu hình là 90/90/90/90,
+  phát hiện 2026-08-24):
+
+  ```bash
+  grep -A5 "thresholds" vitest.config.ts
+  ```
+
+  Đo thực tế 2026-08-24: statements 93,27% · branches 90,17% · functions 96,48% · lines 93,27%
+  (sàn cấu hình 90 cả 4). **Ghi cả biên độ dư** — branches chỉ dư 0,17 điểm, thêm một nhánh
+  chưa test là CI đỏ.
+
+- **Cảnh báo ratchet ngược:** nếu ngưỡng trong `vitest.config.ts` THẤP HƠN lần audit trước, đó là
+  ratchet đi lùi — ghi vào báo cáo kèm commit đã hạ nó, đừng lặng lẽ chấp nhận.
+  Chỉ đo LOGIC THUẦN (`apps/*/src/lib/**`, `apps/server/src/**`, `packages/**`), không đo UI.
 - **Khi thêm test mới:** NÂNG DẦN các ngưỡng này (đừng để trôi xuống). Ghi mốc mới vào PROGRESS.
 
 **5b. Rà vùng thiếu test (định tính — theo mục 9 CLAUDE.md "chống lỗi logic"):**
 
-Mở báo cáo coverage HTML (`coverage/index.html`) và soi các file `apps/*/src/lib/**`/`packages/**` + `api/**` có nhánh chưa phủ.
+Mở báo cáo coverage HTML (`coverage/index.html`) và soi các file `apps/*/src/lib/**`/`packages/**` + `apps/server/src/**` có nhánh chưa phủ.
 Với mỗi hàm logic phức tạp, đối chiếu checklist:
 
 - [ ] **Ca biên / rỗng:** mảng rỗng, chuỗi rỗng, `undefined`, giá trị 0.
 - [ ] **`null` vs 0:** phân biệt "chưa có" và "bằng không" (đếm lượt, điểm, streak).
-- [ ] **Async race / idempotency:** gọi 2 lần, gọi song song, retry — đặc biệt đếm lượt (`api/_lib/usage.ts`)
+- [ ] **Async race / idempotency:** gọi 2 lần, gọi song song, retry — đặc biệt đếm lượt (`packages/core-billing/usage.ts`)
       và hoàn lượt (`0004_refund_usage`).
 - [ ] **Thời gian UTC:** ranh giới ngày, đổi múi giờ, reset lượt theo ngày.
 - [ ] **Nhánh lỗi:** mọi thao tác mạng/DB/AI có test cho nhánh thất bại.
@@ -193,11 +274,41 @@ test** vào báo cáo (KHÔNG tự viết test trong lượt audit — đó là 
 | Migration Postgres tự host | Đọc `postgres/migrations/README.md` (danh sách file) — **tự động áp khi deploy** (`scripts/deploy.sh` gọi `npm run migrate:pg` mỗi lượt, deploy tự chạy khi push lên `main`) nên KHÔNG cần thao tác tay như Supabase cũ; vẫn nên xác nhận qua log deploy nếu vừa đổi schema | biết mọi migration đã merge có nằm trong lần deploy gần nhất; **đọc file thật, không tin hook đầu phiên** |
 | Nợ kỹ thuật                | Đối chiếu danh sách nợ trong CLAUDE.md/PROGRESS với thực tế                                                                                                                                                                                                                 | mỗi nợ còn đúng, phân loại ai xử lý                                                                       |
 
+**6b. Tài liệu ĐIỀU HÀNH có nói đúng thực tế không (bổ sung 2026-08-24).**
+
+Khác dòng "PROGRESS.md khớp thực tế" ở trên (soát _tính năng_), mục này soát các tài liệu mà **AI
+đọc rồi hành động theo** — sai ở đây thì sai lan sang mọi phiên sau, không tự lộ ra bao giờ:
+
+| Mục                        | Cách kiểm                                                                                                      | Tiêu chí đạt                       |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| Hook đầu phiên             | Đọc `.claude/report-status.sh`, đối chiếu từng khẳng định với CLAUDE.md mục 13 + PROGRESS "Nợ kỹ thuật còn mở" | 0 khẳng định ghi cứng đã lỗi thời  |
+| Đường dẫn trong đặc tả     | `grep -oE "(apps\|packages\|docs\|scripts)/[A-Za-z0-9_./*-]+" <file.md> \| sort -u` rồi `ls` từng cái          | mọi đường dẫn THẬT còn tồn tại     |
+| Cấu trúc thư mục CLAUDE.md | `ls apps/ packages/` đối chiếu mục 6 "Cấu trúc" của CLAUDE.md                                                  | mọi app/gói thật đều được nhắc tới |
+
+> **Hai loại kết quả cần bỏ qua khi chạy lệnh trên** (không phải đường dẫn chết thật): mẫu có `*`
+> (vd `apps/*/src`), và chuỗi bị cắt giữa chừng vì dính chữ tiếng Việt ngay sau dấu `/` — vd
+> "Quét scripts/tính năng" cho ra `scripts/t`. Ngoài ra `apps/english` xuất hiện có chủ đích
+> trong chính lời cảnh báo về đợt đổi tên — đó là ví dụ, không phải đường dẫn đang dùng.
+
+**Vì sao cần:** hook `.claude/report-status.sh` là dòng chữ **mọi phiên đọc đầu tiên**. Đợt
+2026-08-24 nó vẫn ghi cứng "VPS 1 vCPU nên chưa có lợi ích song song thật" trong khi VPS đã nâng
+**3 vCPU** từ 2026-08-21 và PM2 chạy thật 3 instance — mọi phiên sau đó đều khởi động với một
+tiền đề sai. Cùng lượt: `apps/hub/` (app thứ 3, có build riêng trong `npm run build`) không được
+nhắc ở bất kỳ đâu trong CLAUDE.md; và chính file QUY-TRÌNH-AUDIT này còn 8 chỗ trỏ `apps/english`.
+
+> Nguyên tắc: **tài liệu điều hành sai nguy hiểm hơn code sai** — code sai làm đỏ cổng, tài liệu
+> sai thì im lặng và được tin tưởng.
+
 - **Ai xử lý:** AI đối chiếu + báo cáo; chạy migration production / rebase = cần người dùng xác nhận.
 
 ### Tầng 7 — Báo cáo & phân loại
 
-Xuất báo cáo theo **mẫu mục 10 CLAUDE.md**, rồi thêm phần phân loại việc (xem §3).
+Xuất báo cáo theo **mẫu ở §3 bên dưới** (mở rộng từ mẫu mục 10 CLAUDE.md), rồi thêm phần phân
+loại việc.
+
+> **Số thứ tự KHÔNG phải thứ tự chạy.** Tầng 7 là bước CUỐI CÙNG dù mang số 7 — các tầng 8–11
+> được thêm về sau nên nhận số lớn hơn, nhưng phải chạy XONG hết rồi mới viết báo cáo. Thứ tự
+> chạy thực tế: 1 → 1b → 2 → 2b → 3 → 4 → 5 → 6 → 6b → 8 → 9 → 10 → 11 → Bước bổ sung → **7**.
 
 ### Tầng 8 — Hiệu năng thực đo (Core Web Vitals)
 
@@ -216,6 +327,117 @@ Xuất báo cáo theo **mẫu mục 10 CLAUDE.md**, rồi thêm phần phân lo�
 - **Tiêu chí đạt:** không có lỗi Sentry mới chưa xem xét; PM2 không có restart loop; ổ đĩa còn đủ chỗ.
 - **Nếu fail:** ghi vào báo cáo, phân loại xử lý theo `docs/ke-hoach-khoi-phuc-su-co-server.md` nếu là sự cố thật.
 - **Ai xử lý:** AI đọc log qua SSH nếu có quyền; xử lý sự cố thật ưu tiên theo runbook khôi phục.
+
+### Tầng 10 — Tính đúng của logic NGẪU NHIÊN & thống kê (bổ sung 2026-08-24)
+
+> **Vì sao phải có tầng riêng:** đây là loại lỗi mà **KHÔNG cổng nào bắt được**. Build xanh,
+> typecheck xanh, lint xanh, test xanh, coverage 100% — mà phân bố kết quả vẫn sai, và người dùng
+> là bên duy nhất chịu hậu quả. Nó khác Tầng 5b ("ca biên") ở chỗ: không có đầu vào cụ thể nào
+> sai cả; chỉ khi chạy **hàng trăm nghìn lượt rồi đếm** thì cái sai mới hiện ra.
+
+**Cách chạy:** liệt kê trước, đo sau. Đừng đọc code rồi phán "trông có vẻ ngẫu nhiên".
+
+```bash
+grep -rn "Math.random" apps/*/src packages --include=*.ts --include=*.tsx | grep -v "\.test\."
+```
+
+Với mỗi kết quả, đối chiếu 3 cờ đỏ:
+
+| #   | Cờ đỏ                                                       | Vì sao sai                                                                                                                                                                      |
+| --- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R1  | `sort(() => Math.random() - 0.5)`                           | **KHÔNG phải thuật toán trộn.** Hàm so sánh không nhất quán → kết quả phụ thuộc thuật toán sort của engine, phân bố lệch nặng. Bản đúng duy nhất: **Fisher–Yates**.             |
+| R2  | Đáp án đúng ghép vào mảng ở **vị trí cố định** rồi mới trộn | Nếu phép trộn lệch, vị trí đáp án đúng đoán được → người học ăn điểm bằng cách bấm theo vị trí, điểm số mất ý nghĩa. Dạng hay gặp: `options: [đúng, ...sai].sort(...)`.         |
+| R3  | Có **nhiều bản cài đặt trộn song song** trong repo          | Chỗ này Fisher–Yates, chỗ kia `sort(random)` → hai đường cùng mục đích cho hai kết quả khác nhau (thuộc "danh sách D" mục 5.3). Phải gom về **một hàm dùng chung được export**. |
+
+**Tiêu chí đạt — đo, không suy luận.** Với mọi phép trộn có ý nghĩa nghiệp vụ (đáp án trắc nghiệm,
+thứ tự câu hỏi, chọn mẫu ôn tập), chạy ≥ 100.000 lượt và đếm phân bố:
+
+```bash
+node -e "
+const N=400000, K=4;                       // K = số lựa chọn
+const pos=new Array(K).fill(0);
+for(let n=0;n<N;n++){
+  const a=['DUNG']; for(let i=1;i<K;i++) a.push('sai'+i);
+  pos[a.sort(()=>Math.random()-0.5).indexOf('DUNG')]++;
+}
+console.log(pos.map(p=>(p/N*100).toFixed(2)+'%').join(' | '), 'ky vong deu:', (100/K).toFixed(2)+'%');
+"
+```
+
+Mọi vị trí phải nằm trong **±1 điểm phần trăm** quanh `100/K`. Lệch hơn → **fail**, ghi số đo vào
+báo cáo.
+
+**Kết quả đo thật 2026-08-24 (lý do tầng này ra đời):**
+
+| Vị trí đáp án đúng (4 lựa chọn)   | 1         | 2     | 3     | 4         |
+| --------------------------------- | --------- | ----- | ----- | --------- |
+| `sort(() => Math.random() - 0.5)` | **36,0%** | 17,2% | 15,6% | **31,2%** |
+| Kỳ vọng (đều)                     | 25%       | 25%   | 25%   | 25%       |
+
+Bấm luôn ô đầu được **36% thay vì 25%**. Dính ở `apps/dhcb/src/components/StudyTabs.tsx` (tab
+Kiểm tra) và `CefrLessonViews.tsx` (test-out cuối vòng) — trong khi
+`apps/dhcb/src/lib/cefrExam.ts` đã có Fisher–Yates đúng từ trước (đúng cờ đỏ R3).
+
+**Test bất biến nên thêm kèm khi vá:** chạy hàm trộn N lần, khẳng định mỗi vị trí nằm trong
+`[1/K − ε, 1/K + ε]`. Đây là loại test rẻ nhất bắt được lỗi này, và nó sẽ **fail trước khi sửa,
+pass sau khi sửa** (điều kiện bắt buộc ở mục 5, Giai đoạn 3).
+
+**Phạm vi khác cùng loại (kiểm luôn khi rà):** chia nhóm A/B, chọn giọng đọc ngẫu nhiên, sinh khoá
+/ID ngẫu nhiên (kiểm không gian khoá đủ lớn — xem Tầng 1b nguồn flaky #1), lấy mẫu từ vựng ôn tập
+(mọi từ phải có cơ hội như nhau, không thì có từ không bao giờ được ôn).
+
+- **Ai xử lý:** AI tự sửa được. **Lưu ý:** vá phép trộn **làm đổi điểm số** người học nhận được —
+  theo mục 5.3 phải nêu rõ trong báo cáo, không lặng lẽ đổi.
+
+### Tầng 11 — Đường CÀI MỚI & tính lũy đẳng của migration (bổ sung 2026-08-24)
+
+> **Vì sao cần:** production nâng cấp bằng cách chạy **migration mới trên DB đã có**. Không ai
+> dựng lại từ DB rỗng, nên đường "cài mới" (`schema.sql` + TOÀN BỘ chuỗi migration) có thể hỏng âm
+> thầm hàng tháng mà không ai biết — cho tới lúc cần nhất: dựng lại server sau sự cố
+> (`docs/ke-hoach-khoi-phuc-su-co-server.md`), hoặc dựng môi trường staging.
+
+Container audit **chạy được việc này offline**, không cần VPS và không đụng dữ liệu thật:
+
+```bash
+# 1. Dựng cụm Postgres tạm (initdb TỪ CHỐI chạy bằng root → phải hạ quyền)
+export PATH=/usr/lib/postgresql/16/bin:$PATH
+D=/tmp/pgaudit; rm -rf $D; mkdir -p $D; chown -R nobody $D
+su -s /bin/bash nobody -c "PATH=$PATH initdb -U postgres -A trust -D $D/data"
+su -s /bin/bash nobody -c "PATH=$PATH pg_ctl -D $D/data -o '-p 5433 -k $D' -l $D/log start"
+psql -h $D -p 5433 -U postgres -c "create database dhcb_audit;"
+
+# 2. Chạy ĐÚNG runner thật của dự án (không viết lại logic áp migration)
+export DATABASE_URL="postgresql://postgres@localhost:5433/dhcb_audit"
+npx tsx scripts/run-pg-migrations.ts
+
+# 3. LŨY ĐẲNG: chạy lại lần 2 — phải báo "không có gì mới", không đụng gì thêm
+npx tsx scripts/run-pg-migrations.ts
+
+# 4. Server đã biên dịch có sống với DB đó không
+PORT=3999 NODE_ENV=production node dist-server/server.js &   # PORT tường minh để không đụng dev
+curl -s localhost:3999/api/health          # phải trả {"status":"ok",...}
+curl -s localhost:3999/api/health/deep     # phải trả {"status":"healthy",...}
+
+# 5. Dọn
+su -s /bin/bash nobody -c "PATH=$PATH pg_ctl -D $D/data stop"; rm -rf $D
+```
+
+**Tiêu chí đạt:**
+
+- Bước 2 áp hết **N/N** migration, exit 0 — N khớp `ls postgres/migrations/*.sql | wc -l`.
+- Bước 3 báo "Đã áp dụng đủ N migration lẻ — không có gì mới" (lũy đẳng).
+- Bước 4 `/api/health` trả 200.
+
+**Kết quả 2026-08-24:** `schema.sql` + **65/65** migration chạy sạch trên DB rỗng → 99 bảng / 9
+schema; lần 2 lũy đẳng; `/api/health` 200 và `/api/health/deep` "healthy".
+
+> **Đọc đúng kết quả:** `schema.sql` KHÔNG chứa bảng của các migration gần đây (0055–0062) —
+> **đó không phải drift**. Runner áp `schema.sql` TRƯỚC rồi mới tới toàn bộ migration, nên cài mới
+> vẫn hội tụ đúng trạng thái cuối. Đừng "sửa" `schema.sql` cho khớp; điều phải kiểm là **cả chuỗi
+> chạy được**, đúng như bước 2 ở trên.
+
+- **Ai xử lý:** AI chạy được toàn bộ offline. Chạm DB **production** thì tuyệt đối không —
+  tầng này chỉ dùng DB tạm trong container.
 
 ### Bước bổ sung — Quét scripts/ và tính năng chính (kèm mọi lượt audit toàn diện)
 
@@ -238,25 +460,32 @@ Không tự động hóa được bằng lệnh đơn — làm thủ công, nhan
 === BÁO CÁO AUDIT TOÀN DIỆN — <ngày giờ UTC> · nhánh <tên> ===
 
 TẦNG 1 — Cổng tự động
-Build ✅/❌ | Type ✅/❌ (lỗi:..) | Lint ✅/❌ (cảnh báo:..) | Format ✅/❌ | Test ✅/❌ (X/Y) | Size ✅/❌ (JS ../123kB · CSS ../9.7kB)
+Build ✅/❌ | Type ✅/❌ (lỗi:..) | Lint ✅/❌ (cảnh báo:..) | Format ✅/❌ | Test ✅/❌ (X/Y)
+Size ✅/❌ (JS ../<ngưỡng>kB = ..% · CSS ../<ngưỡng>kB = ..%)   ← ghi cả % dùng, cảnh báo nếu ≥ 95%
+
+TẦNG 1b — Test không ổn định (flaky)
+Số lượt chạy: X | Xanh: Y/X | Test đỏ ngẫu nhiên: [.. tên + cơ chế đã chứng minh + tỉ lệ đo được ..]
 
 TẦNG 2 — Bảo mật
-Secret hardcode ✅/❌ | .env sạch ✅/❌ | npm audit (high/critical: ..) | RLS ✅/❌
+Secret hardcode ✅/❌ | .env sạch ✅/❌ | npm audit (high/critical: ..) | Kiểm quyền handler ✅/❌ (X/Y handler có validateAuth, Z handler công khai có chủ đích)
 
 TẦNG 2b — Checklist OWASP mở rộng
 Dòng ❌ (14 mục, xem bảng Tầng 2b): [.. liệt kê # + mô tả ngắn, hoặc "0 — tất cả đạt/đã có bằng chứng"]
 
 TẦNG 3 — Vệ sinh code
-console.log rác ✅/❌ | TODO/FIXME ✅/❌ | any lọt lưới ✅/❌
+console.log rác ✅/❌ | TODO/FIXME ✅/❌ | any lọt lưới ✅/❌ | Chu trình import ✅/❌ | Code chết: [.. file + số dòng ..] | Số migration trùng/nhảy cóc: [..]
 
 TẦNG 4 — Chất lượng AI
-(Chạy nếu đụng prompt/model) eval:tutor ✅/❌ vs baseline | hoặc "N/A — không đổi prompt/model"
+(Chạy nếu prompt/model đổi NỘI DUNG sau baseline) eval:tutor ✅/❌ vs baseline | hoặc "N/A — không đổi" | hoặc "CẦN CHẠY TAY — không có key trong môi trường audit, baseline cũ hơn model từ <ngày>"
 
 TẦNG 5 — Độ phủ test
-Coverage gate ✅/❌ (stmts/branches/funcs/lines) | E2E+a11y ✅/❌ | Vùng thiếu test đề xuất: [..]
+Coverage gate ✅/❌ (stmts/branches/funcs/lines + biên độ dư so với sàn) | E2E+a11y ✅/❌ (X/Y) | Vùng thiếu test đề xuất: [..]
 
-TẦNG 6 — Đối chiếu tài liệu
+TẦNG 6 — Đối chiếu tài liệu & hạ tầng
 Git: ahead X / behind Y | Working tree ✅/❌ | PROGRESS khớp ✅/❌ | Migration chưa áp: [..] | Nợ kỹ thuật: [..]
+
+TẦNG 6b — Tài liệu điều hành có nói đúng thực tế
+Hook .claude/report-status.sh ✅/❌ | Đường dẫn trong đặc tả còn sống ✅/❌ | CLAUDE.md nhắc đủ app/gói ✅/❌
 
 TẦNG 8 — Hiệu năng thực đo (nếu chạy)
 LCP .. | INP .. | CLS .. | hoặc "N/A — không đo lượt này"
@@ -264,11 +493,20 @@ LCP .. | INP .. | CLS .. | hoặc "N/A — không đo lượt này"
 TẦNG 9 — Vận hành production (nếu chạy)
 Sentry ✅/❌ (lỗi mới: ..) | PM2 ✅/❌ (restart bất thường: ..) | Ổ đĩa ✅/❌ | hoặc "N/A — không có quyền truy cập VPS lượt này"
 
+TẦNG 10 — Logic ngẫu nhiên & thống kê
+Phép trộn dùng Fisher-Yates ✅/❌ | Phân bố đo được (N lượt): [.. so với kỳ vọng đều ..] | Bản trộn song song lệch nhau: [..]
+
+TẦNG 11 — Đường cài mới & lũy đẳng migration
+schema.sql + N/N migration trên DB rỗng ✅/❌ | Lũy đẳng lần 2 ✅/❌ | Boot + /api/health ✅/❌
+
 Quét scripts/tính năng: script mồ côi: [..] | tính năng chính còn hoạt động đúng ✅/❌
+
+--- ĐÃ RÀ VÀ KHÔNG CÓ LỖI (ghi lại để lần sau khỏi rà lại) ---
+[.. kết quả âm tính là BẰNG CHỨNG đã rà, không phải chỗ bỏ trống — xem mục 5.2 Giai đoạn 1 ..]
 
 --- PHÂN LOẠI VIỆC ---
 AI tự làm được: [..]
-Cần người dùng thao tác tay: [.. VD: điền SENTRY_DSN/SUPABASE_DB_URL trên VPS, chạy migration production ..]
+Cần người dùng thao tác tay: [.. VD: điền secret trên VPS, chạy eval:tutor có key AI, quyết định nâng ngưỡng bundle ..]
 
 Rủi ro/ảnh hưởng: ..
 Góp ý cải tiến: ..
@@ -284,7 +522,10 @@ Bất kỳ mục ❌ ở Tầng 1–2 (chặn) → nêu rõ trong kết luận l
 - **Cài dependency trước:** môi trường sạch cần `npm ci` trước khi chạy các tầng (kiểm `node_modules` tồn tại).
 - **Song song hóa:** các lệnh độc lập (typecheck / lint / format:check) có thể chạy song song để nhanh hơn;
   build + size phải chạy tuần tự (size đọc `dist/`).
-- **Không cần key:** Tầng 1, 2, 2b, 3, 5a, 6 chạy được offline không cần secret. Tầng 4 (eval) và một số E2E cần key/mạng.
+- **Không cần key:** Tầng 1, 1b, 2, 2b, 3, 5a, 6, 6b, 10, 11 chạy được offline không cần secret (Tầng 11
+  cần `initdb`/`pg_ctl` — có sẵn trong container audit). Tầng 4 (eval) và một số E2E cần key/mạng.
+- **Tầng tốn thời gian nhất:** 1b (≥ 3 lượt `npm test`, ~1,5 phút/lượt) và 5c (E2E ~7 phút). Chạy
+  E2E ở NỀN rồi làm tầng khác trong lúc chờ — chúng độc lập nhau.
 - **Lịch định kỳ:** có thể dùng `send_later` / trigger để tự hẹn chạy lại audit (đã dùng trong thực tế).
 - **Không tự thêm CI/script trong đặc tả này** (quyết định phạm vi 2026-07-17: chỉ tài liệu). Nếu sau này muốn
   gộp Tầng 1–3 thành `npm run audit` hoặc job CI hàng tuần → mở thay đổi riêng, cập nhật file này.
@@ -304,12 +545,12 @@ cho người học vẫn sai.
 Chọn TRƯỚC một luồng, đừng rà "tất cả". Điền vào chỗ trống rồi giao nguyên văn prompt ở 5.2.
 Ví dụ luồng có thật trong dự án:
 
-| Luồng                    | Đầu vào                                    | Đầu ra                                      |
-| ------------------------ | ------------------------------------------ | ------------------------------------------- |
-| SRS + đếm lượt           | Hành động học (local + hàng chờ offline)   | Lịch ôn SRS, streak, số lượt còn lại ở DB   |
-| Từ điển & nhãn CEFR/freq | Dữ liệu nguồn (CEFR-J, SUBTLEX, dict JSON) | `apps/english/src/data/*.json` cho lộ trình |
-| Audio TTS/STT + cache    | Text / giọng nói                           | File audio mã hoá AES-256-GCM, phát lại     |
-| Thanh toán SePay         | Webhook chuyển khoản                       | Gói Pro/VIP + hạn dùng                      |
+| Luồng                    | Đầu vào                                    | Đầu ra                                                              |
+| ------------------------ | ------------------------------------------ | ------------------------------------------------------------------- |
+| SRS + đếm lượt           | Hành động học (local + hàng chờ offline)   | Lịch ôn SRS, streak, số lượt còn lại ở DB                           |
+| Từ điển & nhãn CEFR/freq | Dữ liệu nguồn (CEFR-J, SUBTLEX, dict JSON) | `apps/dhcb/src/data/*.json` + `apps/dhcb/public/data/` cho lộ trình |
+| Audio TTS/STT + cache    | Text / giọng nói                           | File audio mã hoá AES-256-GCM, phát lại                             |
+| Thanh toán SePay         | Webhook chuyển khoản                       | Gói Pro/VIP + hạn dùng                                              |
 
 > Một luồng một lượt. Gộp nhiều luồng vào một lượt là cách chắc chắn nhất để không luồng nào
 > được rà đến nơi đến chốn.
@@ -394,8 +635,10 @@ Chỉ được dừng khi ĐỒNG THỜI:
 - **Danh sách D là chỗ sinh lỗi nhiều nhất.** Dự án có nhiều cặp đường song song bắt buộc phải
   khớp nhau, sai là lệch số âm thầm: truy vấn HIỂN THỊ vs hàm SQL ENFORCE · `postgres/schema.sql`
   (cài mới) vs chuỗi `postgres/migrations/` (nâng cấp) · merge phía client
-  (`apps/english/src/lib/progressSync.ts`) vs merge phía server (`api/_lib/progressMerge.ts`) ·
-  `vnDateStr` bản client (`apps/english/src/lib/date.ts`) vs bản server (`packages/core-db/date.ts`).
+  (`apps/dhcb/src/lib/progressSync.ts`) vs merge phía server (`apps/server/src/api/_lib/progressMerge.ts`) ·
+  `vnDateStr` bản client (`apps/dhcb/src/lib/date.ts`) vs bản server (`packages/core-db/date.ts`) ·
+  hàm trộn ngẫu nhiên: Fisher–Yates ở `apps/dhcb/src/lib/cefrExam.ts` vs `sort(() => Math.random() - 0.5)`
+  ở `StudyTabs.tsx`/`CefrLessonViews.tsx` (đợt 2026-08-24 phát hiện hai bên KHÔNG cho cùng phân bố).
 - **Bất biến khép kín là loại rẻ nhất mà bắt được nhiều nhất ở đây** — ghi bằng hàm A, đọc lại
   bằng hàm B, phải ra đúng thứ vừa ghi. Đợt 2026-08-12 bắt được lỗi khoá SRS ngữ pháp
   (`addToSRS` hạ chữ thường khi ghi, `getDueGrammarLessonIds` không hạ khi đọc) đúng bằng cách này.
@@ -409,6 +652,7 @@ Chỉ được dừng khi ĐỒNG THỜI:
 
 ### 5.4. Tiền lệ đã chạy
 
-| Ngày       | Luồng          | Kết quả                                                                                                                                                            |
-| ---------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 2026-08-12 | SRS + đếm lượt | 2 lỗi tiềm ẩn đã sửa (khoá SRS ngữ pháp lệch hoa/thường · truy vấn hiển thị lượt Free thiếu lọc `subject`) + 3 việc để ngỏ chờ quyết. Xem `PROGRESS.md` cùng ngày. |
+| Ngày       | Luồng                   | Kết quả                                                                                                                                                                                                                                                      |
+| ---------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 2026-08-12 | SRS + đếm lượt          | 2 lỗi tiềm ẩn đã sửa (khoá SRS ngữ pháp lệch hoa/thường · truy vấn hiển thị lượt Free thiếu lọc `subject`) + 3 việc để ngỏ chờ quyết. Xem `PROGRESS.md` cùng ngày.                                                                                           |
+| 2026-08-24 | Trộn đáp án trắc nghiệm | Audit RỘNG bắt được (Tầng 10 ra đời từ đây): `sort(() => Math.random() - 0.5)` cho đáp án đúng rơi vào vị trí 1 hoặc 4 tới 67% thay vì 50% — đo 400.000 lượt. Ảnh hưởng chấm điểm `StudyTabs.tsx` + `CefrLessonViews.tsx`. Xem `PROGRESS.md` cùng ngày (F1). |
