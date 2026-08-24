@@ -21,6 +21,7 @@ import progressHandler from './api/core/progress.js'
 import usageSummaryHandler from './api/core/usage-summary.js'
 import historyHandler from './api/core/history.js'
 import challengeHandler from './api/subjects/english/challenge.js'
+import mistakesHandler from './api/subjects/english/mistakes.js'
 import tutorFeedbackHandler from './api/subjects/english/tutor-feedback.js'
 import feedbackHandler from './api/core/feedback.js'
 import adminSettingsHandler from './api/admin/admin-settings.js'
@@ -193,6 +194,7 @@ export function registerApiRoutes(app: express.Express): void {
   app.all('/api/pronunciation', wrapEdge(pronunciationHandler))
   app.all('/api/push', wrapEdge(pushHandler))
   app.all('/api/dictionary', wrapEdge(dictionaryHandler))
+  app.all('/api/mistakes', wrapEdge(mistakesHandler))
   app.all('/api/leaderboard', wrapEdge(leaderboardHandler))
   app.all('/api/auth', wrapEdge(authHandler))
   app.all('/api/profile', wrapEdge(profileHandler))

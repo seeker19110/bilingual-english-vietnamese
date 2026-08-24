@@ -9,9 +9,38 @@ import {
 import { checkAndConsumeUsage, refundUsage } from '@dhcb/core-billing/usage'
 import { DebateArenaService } from '@dhcb/core-ai/debateArenaService'
 import { DebateSessionConfig, DebateSessionState } from '@dhcb/core-contracts/debateArena'
+import { getFeatureState, setFeatureState } from '@dhcb/core-db/featureState'
 
-// In-memory cache cho các phiên tranh biện của user
-const activeSessions = new Map<string, DebateSessionState>()
+// [2026-08-24] Trước đây các phiên tranh biện nằm trong `new Map` cấp module — mất khi restart,
+// VỠ trong PM2 cluster 3 instance (đang tranh biện dở mà request rơi sang instance khác là mất
+// hết lượt đã nói), và Map khoá theo sessionId TOÀN CỤC nên ai biết id cũng đọc được phiên của
+// người khác. Nay lưu ở platform.feature_state THEO USER.
+const FEATURE = 'debate_arena'
+// Trần số phiên giữ lại mỗi người, để dòng JSONB không phình vô hạn.
+const MAX_SESSIONS = 20
+
+type SessionBook = Record<string, DebateSessionState>
+
+async function readSessions(userId: string): Promise<SessionBook> {
+  const state = await getFeatureState<SessionBook>(userId, FEATURE)
+  return state && typeof state === 'object' ? state : {}
+}
+
+// Ghi lại một phiên, cắt bớt phiên cũ nhất nếu vượt trần (theo updatedAt).
+async function saveSession(userId: string, book: SessionBook, session: DebateSessionState) {
+  book[session.id] = session
+  const ids = Object.keys(book)
+  if (ids.length > MAX_SESSIONS) {
+    const keep = ids
+      .sort((a, b) => (book[b]!.updatedAt ?? '').localeCompare(book[a]!.updatedAt ?? ''))
+      .slice(0, MAX_SESSIONS)
+    const trimmed: SessionBook = {}
+    for (const id of keep) trimmed[id] = book[id]!
+    await setFeatureState(userId, FEATURE, trimmed)
+    return
+  }
+  await setFeatureState(userId, FEATURE, book)
+}
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
@@ -42,7 +71,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'GET') {
     const sessionId = url.searchParams.get('sessionId')
     if (sessionId) {
-      const session = activeSessions.get(sessionId)
+      const session = (await readSessions(personId))[sessionId]
       if (!session) {
         return jsonResponse({ error: 'Session not found' }, 404)
       }
@@ -85,7 +114,7 @@ export default async function handler(req: Request): Promise<Response> {
         }
 
         const session = DebateArenaService.createDebateSession(personId, config)
-        activeSessions.set(session.id, session)
+        await saveSession(personId, await readSessions(personId), session)
         return jsonResponse({ success: true, session }, 200)
       }
 
@@ -95,7 +124,8 @@ export default async function handler(req: Request): Promise<Response> {
           return jsonResponse({ error: 'Missing sessionId or content' }, 400)
         }
 
-        let session = activeSessions.get(sessionId)
+        const book = await readSessions(personId)
+        let session = book[sessionId]
         if (!session) {
           // Khởi tạo fallback nếu session hết hạn
           session = DebateArenaService.createDebateSession(personId, {
@@ -107,7 +137,7 @@ export default async function handler(req: Request): Promise<Response> {
             maxRounds: 4,
           })
           session.id = sessionId
-          activeSessions.set(sessionId, session)
+          book[sessionId] = session
         }
 
         // 1. Phân tích lượt của user
@@ -160,7 +190,7 @@ export default async function handler(req: Request): Promise<Response> {
         }
 
         session.updatedAt = new Date().toISOString()
-        activeSessions.set(sessionId, session)
+        await saveSession(personId, book, session)
 
         return jsonResponse(
           {
@@ -175,13 +205,18 @@ export default async function handler(req: Request): Promise<Response> {
 
       if (action === 'evaluate_match') {
         const { sessionId } = body
-        const session = activeSessions.get(sessionId)
+        const book = await readSessions(personId)
+        const session = sessionId ? book[sessionId] : undefined
         if (!session) {
           return jsonResponse({ error: 'Session not found' }, 404)
         }
 
         session.status = 'completed'
         session.finalRubric = DebateArenaService.evaluateDebateMatch(session)
+        // Kết quả chấm phải được LƯU — trước đây chỉ nằm trong bộ nhớ rồi mất, nên mở lại phiên
+        // là thấy nó chưa hoàn thành và chưa có điểm.
+        session.updatedAt = new Date().toISOString()
+        await saveSession(personId, book, session)
         return jsonResponse({ success: true, rubric: session.finalRubric }, 200)
       }
 

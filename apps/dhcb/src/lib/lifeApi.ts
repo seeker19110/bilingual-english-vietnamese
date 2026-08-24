@@ -6,6 +6,8 @@ import type {
   HabitLog,
   WellbeingCheck,
   GrowthMilestone,
+  LifeWheelScores,
+  LifeWheelState,
 } from '@dhcb/core-contracts/lifeFoundation'
 
 export interface CreateLifePlanParams {
@@ -164,6 +166,34 @@ export async function listGrowthMilestones(): Promise<GrowthMilestone[]> {
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
   return res.json()
+}
+
+// Bánh Xe Cuộc Đời — đọc bản đánh giá đã lưu (null nếu chưa lưu lần nào).
+export async function getLifeWheel(): Promise<LifeWheelState | null> {
+  const headers = await getAuthHeader()
+  const res = await fetch('/api/life?kind=wheel', { headers })
+  if (!res.ok) {
+    const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
+    throw new Error(errorBody.error || `HTTP error ${res.status}`)
+  }
+  const data = (await res.json()) as { wheel: LifeWheelState | null }
+  return data.wheel
+}
+
+// Bánh Xe Cuộc Đời — lưu trọn bộ điểm 8 khía cạnh (ghi đè bản trước).
+export async function saveLifeWheel(scores: LifeWheelScores): Promise<LifeWheelState> {
+  const headers = await getAuthHeader()
+  const res = await fetch('/api/life', {
+    method: 'POST',
+    headers: { ...headers, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ kind: 'wheel', scores }),
+  })
+  if (!res.ok) {
+    const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
+    throw new Error(errorBody.error || `HTTP error ${res.status}`)
+  }
+  const data = (await res.json()) as { wheel: LifeWheelState }
+  return data.wheel
 }
 
 export async function createGrowthMilestone(

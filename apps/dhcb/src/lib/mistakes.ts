@@ -5,13 +5,16 @@
 // để học viên ÔN LẠI về sau dưới dạng thẻ. Đây là tài liệu ôn giá trị nhất và độc nhất của
 // từng người (lỗi thật của chính họ) — trước đây bị "bay hơi" sau mỗi phiên.
 //
-// Đợt đầu: CHỈ localStorage (giống "vé nghỉ streak") — CHƯA đồng bộ Supabase để KHÔNG phải
-// thêm migration (migration 0007/0008 còn đang treo ở production). Có thể lệch nhẹ giữa các
-// máy; chấp nhận được ở giai đoạn này. Đồng bộ cloud để đợt sau. Vì vậy module này KHÔNG
-// import supabase — chạy hoàn toàn cục bộ, mọi thao tác đều nuốt lỗi (không throw) để việc
-// lưu/ôn lỗi không bao giờ làm gãy luồng Chat/Viết/Nói.
+// [2026-08-24] ĐÃ ĐỒNG BỘ SERVER (Đợt 1 "Không nói dối", docs/research/nang-tam-du-an-2026-08-24.md).
+// Trước đây module này CHỈ dùng localStorage nên đổi máy/xoá cache là mất sạch sổ lỗi — thứ tài
+// liệu ôn giá trị nhất của từng người. Nay:
+//   * localStorage vẫn là nơi ghi/đọc TỨC THÌ (mọi hàm dưới đây giữ nguyên chữ ký đồng bộ, nên
+//     luồng Chat/Viết/Nói không phải đổi gì và vẫn chạy được khi mất mạng),
+//   * server (`/api/mistakes`) là NGUỒN SỰ THẬT — gọi syncMistakes() để hợp nhất hai phía.
+// Mọi thao tác vẫn nuốt lỗi (không throw) để việc lưu/ôn lỗi không bao giờ làm gãy luồng gọi.
 
 import type { Direction } from '../types'
+import { getAuthHeader } from '@core/authHeader'
 
 export type MistakeSource = 'chat' | 'writing' | 'speaking'
 
@@ -180,4 +183,63 @@ export function getMistakeStats(userId: string): { total: number; due: number } 
     (m) => m.lastReviewedAt == null || now - m.lastReviewedAt >= REVIEW_SPACING_MS,
   ).length
   return { total: all.length, due }
+}
+
+// ── Đồng bộ server ───────────────────────────────────────────────────────────
+
+// Đẩy sổ cục bộ lên server, nhận về sổ ĐÃ HỢP NHẤT (server gộp theo cùng luật với addMistake:
+// count/mốc thời gian lấy giá trị lớn hơn), rồi ghi đè localStorage bằng bản hợp nhất đó.
+//
+// Trả về sổ sau đồng bộ; nếu chưa đăng nhập hoặc mất mạng thì trả về sổ cục bộ và KHÔNG throw —
+// người dùng vẫn học bình thường, lần đồng bộ sau sẽ đẩy lên.
+export async function syncMistakes(userId: string): Promise<Mistake[]> {
+  if (!userId) return []
+  const local = read(userId)
+  try {
+    const headers = await getAuthHeader()
+    const res = await fetch('/api/mistakes', {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mistakes: local }),
+    })
+    if (!res.ok) return local
+    const data = (await res.json()) as { mistakes?: Mistake[] }
+    if (!Array.isArray(data.mistakes)) return local
+    write(userId, data.mistakes)
+    return data.mistakes
+  } catch {
+    return local // ngoại tuyến — giữ nguyên bản cục bộ
+  }
+}
+
+// Hẹn giờ đẩy sổ lên server, GOM NHÓM các lần ghi liên tiếp.
+//
+// Vì sao cần: Chat/Viết/Nói ghi lỗi bằng addMistake() (đồng bộ, chỉ localStorage). Nếu mỗi lỗi
+// đẩy lên ngay thì một phiên chat 20 tin nhắn thành 20 request gửi trọn sổ — quá nặng. Nếu KHÔNG
+// đẩy gì thì lỗi chỉ lên server lúc người dùng mở trang Sổ tay, mà họ có thể không bao giờ mở
+// trên máy đó rồi đổi máy là mất. Gom nhóm là điểm cân bằng: ghi cuối cùng của một cụm mới đẩy.
+let syncTimer: ReturnType<typeof setTimeout> | null = null
+const SYNC_DEBOUNCE_MS = 5_000
+
+export function scheduleMistakeSync(userId: string, delayMs: number = SYNC_DEBOUNCE_MS): void {
+  if (!userId) return
+  if (syncTimer) clearTimeout(syncTimer)
+  syncTimer = setTimeout(() => {
+    syncTimer = null
+    void syncMistakes(userId)
+  }, delayMs)
+}
+
+// Xoá một thẻ lỗi ở CẢ hai phía. Xoá cục bộ trước để giao diện phản hồi ngay, rồi báo server;
+// server lỗi thì thẻ sẽ quay lại ở lần syncMistakes() sau — chấp nhận được, đổi lại không bao
+// giờ mất dữ liệu do xoá nhầm lúc mạng chập chờn.
+export async function deleteMistakeSynced(userId: string, id: string): Promise<void> {
+  if (!userId) return
+  deleteMistake(userId, id)
+  try {
+    const headers = await getAuthHeader()
+    await fetch(`/api/mistakes?id=${encodeURIComponent(id)}`, { method: 'DELETE', headers })
+  } catch {
+    /* ngoại tuyến — bỏ qua, lần sync sau sẽ hoà lại */
+  }
 }

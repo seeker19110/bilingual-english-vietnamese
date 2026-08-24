@@ -17,7 +17,7 @@ import ComingSoonBanner from '../../../components/ComingSoonBanner'
 import EvaluationResultView from '../../../components/EvaluationResultView'
 import { saveSpeakingSession, getUsage, incrementUsage, getDirection } from '../../../lib/storage'
 import { checkNewAchievements, achievementMessage } from '../../../lib/achievements'
-import { addMistake } from '../../../lib/mistakes'
+import { addMistake, scheduleMistakeSync } from '../../../lib/mistakes'
 import { reportTutorFeedback } from '../../../lib/tutorFeedback'
 import { useAuth } from '../../../context/useAuth'
 import { useToast } from '@core/ToastProvider'
@@ -829,6 +829,7 @@ export default function Speaking() {
           source: 'speaking',
           dir,
         })
+        scheduleMistakeSync(user.id)
       }
       incrementUsage(user.id, 'speakingCount')
       // Đã rời trang trong lúc chờ AI trả lời — vẫn lưu phiên/lượt dùng ở trên, chỉ

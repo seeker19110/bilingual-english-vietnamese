@@ -31,6 +31,12 @@ const svc = vi.hoisted(() => ({
 }))
 vi.mock('@dhcb/core-domains/lifeFoundationService', () => ({ ...svc }))
 
+const featureState = vi.hoisted(() => ({
+  getFeatureState: vi.fn(),
+  setFeatureState: vi.fn(),
+}))
+vi.mock('@dhcb/core-db/featureState', () => ({ ...featureState }))
+
 import handler from './life.js'
 
 const PERSON_ID = '11111111-1111-4111-8111-111111111111'
@@ -180,6 +186,59 @@ describe('api/life', () => {
       }),
     )
     expect(resMilestone.status).toBe(201)
+  })
+
+  const WHEEL_SCORES = {
+    health: 8,
+    career: 7,
+    finance: 6,
+    relationships: 8,
+    mindset: 7,
+    environment: 9,
+    recreation: 6,
+    growth: 8,
+  }
+
+  it('GET ?kind=wheel returns saved state (or null when never saved)', async () => {
+    featureState.getFeatureState.mockResolvedValueOnce(null)
+    const resEmpty = await handler(req('GET', '?kind=wheel'))
+    expect(resEmpty.status).toBe(200)
+    expect((await resEmpty.json()).wheel).toBeNull()
+
+    const saved = { scores: WHEEL_SCORES, savedAt: '2026-08-24T00:00:00.000Z' }
+    featureState.getFeatureState.mockResolvedValueOnce(saved)
+    const res = await handler(req('GET', '?kind=wheel'))
+    expect(res.status).toBe(200)
+    expect((await res.json()).wheel).toEqual(saved)
+    expect(featureState.getFeatureState).toHaveBeenCalledWith('user-1', 'life_wheel')
+  })
+
+  it('POST wheel persists via feature_state and echoes saved state', async () => {
+    const res = await handler(req('POST', '', { kind: 'wheel', scores: WHEEL_SCORES }))
+    expect(res.status).toBe(200)
+    const j = await res.json()
+    expect(j.wheel.scores).toEqual(WHEEL_SCORES)
+    expect(typeof j.wheel.savedAt).toBe('string')
+    expect(featureState.setFeatureState).toHaveBeenCalledWith(
+      'user-1',
+      'life_wheel',
+      expect.objectContaining({ scores: WHEEL_SCORES }),
+    )
+  })
+
+  it('POST wheel rejects missing dimension, out-of-range score, extra key', async () => {
+    const missing = { ...WHEEL_SCORES } as Record<string, number>
+    delete missing.growth
+    expect((await handler(req('POST', '', { kind: 'wheel', scores: missing }))).status).toBe(400)
+    expect(
+      (await handler(req('POST', '', { kind: 'wheel', scores: { ...WHEEL_SCORES, health: 11 } })))
+        .status,
+    ).toBe(400)
+    expect(
+      (await handler(req('POST', '', { kind: 'wheel', scores: { ...WHEEL_SCORES, extra: 5 } })))
+        .status,
+    ).toBe(400)
+    expect(featureState.setFeatureState).not.toHaveBeenCalled()
   })
 
   it('POST invalid payload returns 400', async () => {

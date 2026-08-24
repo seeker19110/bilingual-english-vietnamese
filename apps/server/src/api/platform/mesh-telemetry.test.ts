@@ -3,6 +3,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import handler from './mesh-telemetry.js'
 import * as security from '@dhcb/core-auth/security'
 
+// Handler đã chuyển state sang platform.feature_state — mock bằng Map in-memory (hành vi giống
+// hệt Map cấp module cũ: state sống suốt file test), theo đúng khuôn pvp-arena.test.ts.
+const featureStore = new Map<string, unknown>()
+vi.mock('@dhcb/core-db/featureState', () => ({
+  getFeatureState: vi.fn(async (u: string, f: string) => featureStore.get(u + '|' + f) ?? null),
+  setFeatureState: vi.fn(async (u: string, f: string, st: unknown) => {
+    featureStore.set(u + '|' + f, st)
+  }),
+}))
+
 describe('Mesh Telemetry API Handler (/api/mesh-telemetry)', () => {
   beforeEach(() => {
     vi.restoreAllMocks()

@@ -12,7 +12,7 @@ import {
   incrementUsage,
   getDirection,
 } from '../../../lib/storage'
-import { addMistake } from '../../../lib/mistakes'
+import { addMistake, scheduleMistakeSync } from '../../../lib/mistakes'
 import { reportTutorFeedback } from '../../../lib/tutorFeedback'
 import { stopSpeaking } from '../../../lib/tts'
 import { useAuth } from '../../../context/useAuth'
@@ -518,6 +518,7 @@ export default function Chat() {
             source: 'chat',
             dir,
           })
+          scheduleMistakeSync(user.id)
         }
       }
       incrementUsage(user.id, 'chatCount')

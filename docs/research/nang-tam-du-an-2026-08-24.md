@@ -1,6 +1,6 @@
 # Nghiên cứu: nâng tầm dự án DHCB (2026-08-24)
 
-> **Loại tài liệu:** đề xuất — CHƯA phải quyết định. Cần chủ dự án chốt ở §6 trước khi làm bất cứ PR nào.
+> **Loại tài liệu:** đề xuất — **ĐÃ ĐƯỢC CHỦ DỰ ÁN CHỐT 2026-08-24** (đáp án 4 câu hỏi ở §6).
 > **Người viết:** phiên Claude Code, nhánh `claude/nang-tam-du-an-iiu2aj`.
 > **Cách đọc:** §1 là số đo thật (không phải cảm tính), §2 là ba khoảng cách lớn nhất, §3 định nghĩa
 > "nâng tầm" nghĩa là gì, §4 là lộ trình đề xuất, §5 nói rõ những gì **không** nên làm, §6 là câu hỏi chốt.
@@ -120,6 +120,8 @@ nút nào báo thành công mà không ghi gì.
 Chọn **đúng một** trong 4 trụ Career/Work/Startup/Life để làm sâu tới mức có người dùng thật quay
 lại hằng tuần — giống cách môn English đã được làm. Ba trụ còn lại **ẩn khỏi điều hướng** (giữ code,
 không xoá) cho tới khi trụ đầu tiên chứng minh được giá trị.
+_(Chốt 2026-08-24: trụ được chọn là **CAREER**; riêng đề xuất "ẩn 3 trụ còn lại" chủ dự án quyết
+**giữ nguyên**, không ẩn — xem §6.)_
 
 Lý do phải chọn một: 4 trụ × 900 dòng giao diện đã có sẵn nhưng không trụ nào đủ sâu để giữ chân
 người dùng. Chia đều nguồn lực cho 4 thứ dở còn tệ hơn dồn hết cho 1 thứ tốt.
@@ -147,13 +149,15 @@ dùng, và có ít nhất 5 người dùng thật quay lại lần thứ hai.
 
 ---
 
-## 6. Câu hỏi cần chủ dự án chốt (chặn mọi PR sau đây)
+## 6. Câu hỏi cần chủ dự án chốt — **ĐÃ CHỐT 2026-08-24**
 
 1. **Có đồng ý phương án B** (nâng tầm sản phẩm) thay vì A (hạ tầng) hay C (thêm môn) không?
-2. **Chọn trụ nào cho Đợt 2** — Career, Work, Startup hay Life? (Gợi ý cân nhắc: trụ nào bản thân
-   chủ dự án dùng hằng tuần thì trụ đó dễ làm đúng nhất, vì có người dùng đầu tiên là chính mình.)
-3. **Ba trụ còn lại: ẩn khỏi điều hướng hay giữ nguyên?** Đề xuất ẩn — giữ code, không xoá.
-4. **Bánh xe cuộc đời**: làm lưu thật hay gỡ nút "Lưu"?
+   → **✅ Đồng ý phương án B.**
+2. **Chọn trụ nào cho Đợt 2?** → **✅ CAREER** là mũi nhọn.
+3. **Ba trụ còn lại: ẩn khỏi điều hướng hay giữ nguyên?** → **✅ GIỮ NGUYÊN** (khác đề xuất ẩn —
+   quyết định của chủ dự án; hệ quả: Work/Startup/Life vẫn hiển thị, nên các điểm "nói dối" ở
+   chúng càng bắt buộc phải sửa trong Đợt 1, không được trì hoãn bằng cách ẩn đi).
+4. **Bánh xe cuộc đời**: làm lưu thật hay gỡ nút "Lưu"? → **✅ LƯU THẬT.**
 
 ---
 

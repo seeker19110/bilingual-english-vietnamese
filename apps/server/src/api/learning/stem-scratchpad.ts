@@ -5,9 +5,38 @@ import { StemScratchpadService } from '@dhcb/core-ai/stemScratchpadService'
 import { StemProblemState, StemSubjectType } from '@dhcb/core-contracts/stemScratchpad'
 import { filterStemQuestions, getStemQuestionById } from '@dhcb/core-ai/stemQuestionBank'
 import type { StemQuestion } from '@dhcb/core-ai/stemQuestionBank'
+import { getFeatureState, setFeatureState } from '@dhcb/core-db/featureState'
 
-// In-memory cache cho các bài tập STEM đang làm dở
-const activeProblems = new Map<string, StemProblemState>()
+// [2026-08-24] Trước đây các bài đang làm dở nằm trong `new Map` cấp module — mất khi restart,
+// VỠ trong PM2 cluster 3 instance, và Map khoá theo problemId TOÀN CỤC nên ai biết id cũng đọc
+// /sửa được bài của người khác. Nay lưu ở platform.feature_state THEO USER: vừa bền, vừa khép
+// kín theo người dùng (mỗi người chỉ thấy bài của chính mình).
+const FEATURE = 'stem_scratchpad'
+// Trần số bài giữ lại mỗi người, để dòng JSONB không phình vô hạn.
+const MAX_PROBLEMS = 30
+
+type ProblemBook = Record<string, StemProblemState>
+
+async function readProblems(userId: string): Promise<ProblemBook> {
+  const state = await getFeatureState<ProblemBook>(userId, FEATURE)
+  return state && typeof state === 'object' ? state : {}
+}
+
+// Ghi lại một bài, cắt bớt bài cũ nhất nếu vượt trần (theo updatedAt).
+async function saveProblem(userId: string, book: ProblemBook, prob: StemProblemState) {
+  book[prob.id] = prob
+  const ids = Object.keys(book)
+  if (ids.length > MAX_PROBLEMS) {
+    const keep = ids
+      .sort((a, b) => (book[b]!.updatedAt ?? '').localeCompare(book[a]!.updatedAt ?? ''))
+      .slice(0, MAX_PROBLEMS)
+    const trimmed: ProblemBook = {}
+    for (const id of keep) trimmed[id] = book[id]!
+    await setFeatureState(userId, FEATURE, trimmed)
+    return
+  }
+  await setFeatureState(userId, FEATURE, book)
+}
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
@@ -29,7 +58,7 @@ export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'GET') {
     const problemId = url.searchParams.get('problemId')
     if (problemId) {
-      const prob = activeProblems.get(problemId)
+      const prob = (await readProblems(personId))[problemId]
       if (!prob) {
         return jsonResponse({ error: 'Problem not found' }, 404)
       }
@@ -98,7 +127,7 @@ export default async function handler(req: Request): Promise<Response> {
           problemStatement,
           problemLatex,
         })
-        activeProblems.set(prob.id, prob)
+        await saveProblem(personId, await readProblems(personId), prob)
         return jsonResponse({ success: true, problem: prob }, 200)
       }
 
@@ -108,7 +137,8 @@ export default async function handler(req: Request): Promise<Response> {
           return jsonResponse({ error: 'Missing latexInput' }, 400)
         }
 
-        let prob = problemId ? activeProblems.get(problemId) : undefined
+        const book = await readProblems(personId)
+        let prob = problemId ? book[problemId] : undefined
         if (!prob) {
           prob = StemScratchpadService.createProblemSession({
             personId,
@@ -118,7 +148,7 @@ export default async function handler(req: Request): Promise<Response> {
             problemLatex: latexInput,
           })
           if (problemId) prob.id = problemId
-          activeProblems.set(prob.id, prob)
+          book[prob.id] = prob
         }
 
         const validation = StemScratchpadService.validateStep(prob.subject, latexInput, prob.steps)
@@ -142,7 +172,7 @@ export default async function handler(req: Request): Promise<Response> {
         }
 
         prob.updatedAt = new Date().toISOString()
-        activeProblems.set(prob.id, prob)
+        await saveProblem(personId, book, prob)
 
         return jsonResponse(
           {
@@ -158,19 +188,24 @@ export default async function handler(req: Request): Promise<Response> {
 
       if (action === 'get_hint') {
         const { problemId } = body
-        const prob = activeProblems.get(problemId)
+        const book = await readProblems(personId)
+        const prob = problemId ? book[problemId] : undefined
         if (!prob) {
           return jsonResponse({ error: 'Problem not found' }, 404)
         }
 
         prob.hintsUsed += 1
         const hint = StemScratchpadService.generateMicroHint(prob)
+        // Số gợi ý đã dùng phải được LƯU — trước đây chỉ tăng trong bộ nhớ rồi mất, nên người
+        // dùng có thể xin gợi ý vô hạn mà bộ đếm luôn về 1 sau mỗi lần restart/đổi instance.
+        await saveProblem(personId, book, prob)
         return jsonResponse({ success: true, hint, hintsUsed: prob.hintsUsed }, 200)
       }
 
       if (action === 'submit_solution') {
         const { problemId, finalAnswer } = body
-        const prob = activeProblems.get(problemId)
+        const book = await readProblems(personId)
+        const prob = problemId ? book[problemId] : undefined
         if (!prob) {
           return jsonResponse({ error: 'Problem not found' }, 404)
         }
@@ -180,7 +215,7 @@ export default async function handler(req: Request): Promise<Response> {
           prob.isSolved || (question && finalAnswer?.includes(question.solutionLatex?.slice(0, 10)))
         prob.isSolved = !!isCorrect
         prob.updatedAt = new Date().toISOString()
-        activeProblems.set(prob.id, prob)
+        await saveProblem(personId, book, prob)
         return jsonResponse(
           {
             success: true,

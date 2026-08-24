@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Eye, Check, Trash2, RotateCcw, Sparkles, ArrowRight, BookMarked } from 'lucide-react'
 import Layout from '../../components/Layout'
@@ -10,7 +10,8 @@ import {
   getMistakes,
   getDueMistakes,
   markReviewed,
-  deleteMistake,
+  deleteMistakeSynced,
+  syncMistakes,
   type Mistake,
   type MistakeSource,
 } from '../../lib/mistakes'
@@ -197,6 +198,31 @@ export default function MistakeBank() {
   const totalDue = deck.length
   const current = deck[pos]
 
+  // Hợp nhất sổ cục bộ với sổ trên server một lần khi mở trang — nhờ vậy lỗi ghi ở máy khác
+  // cũng hiện ra ở đây. Ngoại tuyến thì syncMistakes() trả về sổ cục bộ, không có gì đổi.
+  useEffect(() => {
+    let cancelled = false
+    void syncMistakes(user.id).then((merged) => {
+      if (cancelled) return
+      setAll(merged)
+      // Chỉ nạp lại bộ ôn khi người dùng chưa bắt đầu ôn, để thứ tự thẻ không nhảy giữa chừng.
+      setPos((p) => {
+        if (p === 0) setDeck(getDueMistakes(user.id))
+        return p
+      })
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [user.id])
+
+  // Đẩy kết quả ôn lên server MỘT LẦN khi hết bộ, thay vì mỗi thẻ một request — markReviewed()
+  // ghi localStorage tức thì, còn đây là lúc gom cả phiên ôn gửi lên.
+  const deckFinished = deck.length > 0 && pos >= deck.length
+  useEffect(() => {
+    if (deckFinished) void syncMistakes(user.id)
+  }, [deckFinished, user.id])
+
   const advance = useCallback(() => setPos((p) => p + 1), [])
 
   const handleRemembered = useCallback(() => {
@@ -205,14 +231,14 @@ export default function MistakeBank() {
   }, [current, user.id, advance])
 
   const handleDeleteInDeck = useCallback(() => {
-    if (current) deleteMistake(user.id, current.id)
+    if (current) void deleteMistakeSynced(user.id, current.id)
     setAll(getMistakes(user.id))
     advance()
   }, [current, user.id, advance])
 
   const handleDeleteInList = useCallback(
     (id: string) => {
-      deleteMistake(user.id, id)
+      void deleteMistakeSynced(user.id, id)
       setDeck((d) => d.filter((m) => m.id !== id))
       setAll((a) => a.filter((m) => m.id !== id))
     },
