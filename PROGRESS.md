@@ -8,6 +8,16 @@
 
 ## Giai đoạn hiện tại
 
+### refactor(cefr): tách side effect khỏi render — computeLockedMapPersisted thành hàm thuần (2026-08-24)
+
+Trả món nợ vừa ghi ở PR #657: `computeLockedMapPersisted` (`apps/dhcb/src/lib/cefrProgress.ts`)
+trước đây GHI localStorage + `pushProgress` ngay trong lúc render (gọi từ useMemo/render của 4
+trang). Nay tách đôi: compute THUẦN (giữ nguyên tên + kết quả y hệt — grandfather vẫn đúng) và
+`persistUnlockedLevels()` mới đảm nhận phần ghi nhớ cấp vừa mở (idempotent — không đổi thì không
+ghi/không push), gọi từ `useEffect` ở cả 4 nơi dùng: `RoadmapTab`, `CefrLevelPage`, `Home`,
+`EnglishHome`. Test `cefrProgress.test.ts` cập nhật theo hợp đồng mới (23/23 xanh) — thêm khẳng
+định compute không tự ghi. Cổng: lint · typecheck · test 5181/5181 · build (bundle không đổi).
+
 ### refactor(lint): trả nợ 2026-08-18 — nâng eslint-plugin-react-hooks 4.6.2 → 7.1.1 + sửa 95 lỗi React Compiler (2026-08-24)
 
 Món nợ "ghim tạm plugin về 4.6.2" nay ĐÃ TRẢ: nâng lên 7.1.1 và sửa ĐÚNG BẢN CHẤT toàn bộ
@@ -35,9 +45,8 @@ Các mẫu sửa chính (để lần sau viết code khỏi tái phạm):
 Cổng: lint 0 lỗi 0 cảnh báo (plugin 7.1.1) · typecheck · format · test 5181/5181 · build. Bundle
 không đổi (208.58 kB).
 
-**Nợ mới ghi nhận (thấp):** `computeLockedMapPersisted` (`apps/dhcb/src/lib/cefrProgress.ts`) có
-side effect ghi localStorage/pushProgress chạy trong lúc render — nên tách phần ghi ra khỏi
-đường render (root cause khiến Home/EnglishHome phải bỏ useMemo).
+**Nợ mới ghi nhận (thấp):** ~~`computeLockedMapPersisted` có side effect trong render~~ — **ĐÃ
+TRẢ ngay trong ngày**, xem mục "refactor(cefr)" ở trên.
 
 ### fix: Quét sâu toàn dự án — vá 8 lỗi audit + nâng cấp 13 gói trong dải semver (2026-08-24)
 

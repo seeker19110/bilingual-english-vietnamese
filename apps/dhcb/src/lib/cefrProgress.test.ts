@@ -19,6 +19,7 @@ import {
   levelGrammarCounts,
   computeLockedMap,
   computeLockedMapPersisted,
+  persistUnlockedLevels,
   getUnlockedLevels,
   isExamEligible,
   findNextStep,
@@ -184,15 +185,18 @@ describe('computeLockedMap — mở khóa cấp sau khi THI ĐẠT cấp trướ
 })
 
 describe('computeLockedMapPersisted — grandfather: đã mở thì không khóa lại', () => {
-  it('mở khóa A2 và ghi nhớ lại khi vừa thi đạt A1', () => {
+  it('mở khóa A2 (compute thuần) và persistUnlockedLevels ghi nhớ lại khi vừa thi đạt A1', () => {
     const map = computeLockedMapPersisted('u1', [A1, A2], new Set(['A1']))
     expect(map.get('A2')).toBe(false)
+    // compute THUẦN — không tự ghi; phần ghi nhớ là việc của persistUnlockedLevels.
+    expect(getUnlockedLevels('u1').has('A2')).toBe(false)
+    persistUnlockedLevels('u1', [A1, A2], new Set(['A1']))
     expect(getUnlockedLevels('u1').has('A2')).toBe(true)
   })
 
   it('KHÔNG khóa lại A2 dù sau này không còn trong tập thi đạt (grandfather)', () => {
     // Lần 1: A1 thi đạt → A2 mở + ghi nhớ
-    computeLockedMapPersisted('u1', [A1, A2], new Set(['A1']))
+    persistUnlockedLevels('u1', [A1, A2], new Set(['A1']))
     expect(computeLockedMap([A1, A2], new Set()).get('A2')).toBe(true) // tính sống: khóa
 
     // Lần 2: dù examPassed rỗng (vd dữ liệu chưa đồng bộ) → vẫn mở nhờ grandfather
@@ -208,9 +212,10 @@ describe('computeLockedMapPersisted — grandfather: đã mở thì không khóa
   })
 
   it('không ghi/đồng bộ thừa khi trạng thái không đổi giữa 2 lần gọi', () => {
-    computeLockedMapPersisted('u1', [A1, A2], new Set(['A1']))
+    persistUnlockedLevels('u1', [A1, A2], new Set(['A1']))
     const afterFirst = [...JSON.parse(localStorage.getItem('et_cefr_unlocked_u1') ?? '[]')].sort()
 
+    persistUnlockedLevels('u1', [A1, A2], new Set(['A1']))
     const map = computeLockedMapPersisted('u1', [A1, A2], new Set(['A1']))
     const afterSecond = [...JSON.parse(localStorage.getItem('et_cefr_unlocked_u1') ?? '[]')].sort()
 

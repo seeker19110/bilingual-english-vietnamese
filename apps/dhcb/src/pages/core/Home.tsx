@@ -33,6 +33,7 @@ import { getLearnedWords } from '../../lib/vocab'
 import {
   getDoneGrammar,
   computeLockedMapPersisted,
+  persistUnlockedLevels,
   findNextStep,
   circleDoneCount,
 } from '../../lib/cefrProgress'
@@ -86,9 +87,13 @@ export default function Home() {
     [uid, cefrLevels, examPassed],
   )
 
-  // Không bọc useMemo: lockedMap sinh từ hàm có side effect (computeLockedMapPersisted ghi
-  // localStorage) nên React Compiler không bảo toàn được memo thủ công ở đây
-  // (luật preserve-manual-memoization). Phép tính thuần, rẻ (≤6 cấp) — tính lại mỗi render.
+  // Ghi nhớ cấp VỪA mở khóa (grandfather) — side effect tách khỏi render, xem cefrProgress.ts.
+  useEffect(() => {
+    persistUnlockedLevels(uid, cefrLevels, examPassed)
+  }, [uid, cefrLevels, examPassed])
+
+  // Không bọc useMemo: phép tính thuần, rẻ (≤6 cấp) — tính lại mỗi render, compiler tự memo.
+  // (computeLockedMapPersisted nay đã THUẦN — phần ghi tách sang persistUnlockedLevels ở trên.)
   const continueLevel = (() => {
     for (const lv of cefrLevels) {
       if (lockedMap.get(lv.id)) continue

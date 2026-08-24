@@ -29,6 +29,7 @@ import { getLearnedWords } from '../lib/vocab'
 import {
   getDoneGrammar,
   computeLockedMapPersisted,
+  persistUnlockedLevels,
   levelVocabCounts,
   levelGrammarCounts,
 } from '../lib/cefrProgress'
@@ -68,6 +69,11 @@ export default function RoadmapTab({ uid, isA }: { uid: string; isA: boolean }) 
     () => computeLockedMapPersisted(uid, levels, examPassed),
     [uid, levels, examPassed],
   )
+
+  // Ghi nhớ cấp VỪA mở khóa (grandfather) — side effect tách khỏi render, xem cefrProgress.ts.
+  useEffect(() => {
+    persistUnlockedLevels(uid, levels, examPassed)
+  }, [uid, levels, examPassed])
 
   if (!ready) {
     return (
