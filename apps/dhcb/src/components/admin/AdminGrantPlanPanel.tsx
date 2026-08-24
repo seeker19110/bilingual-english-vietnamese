@@ -3,7 +3,7 @@
 // dùng trong lúc chưa nối cổng thanh toán thật): admin nhập email + chọn gói + số ngày,
 // gọi POST để cấp; có nút "Tra cứu" gọi GET để xem gói hiện tại của 1 user trước khi cấp.
 // Shape request/response lấy đúng theo GrantSchema trong api/admin-grant-plan.ts, không đoán field.
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Loader2, Search, ShieldCheck } from 'lucide-react'
 import { useToast } from '@core/ToastProvider'
 import { getAuthHeader } from '@core/authHeader'
@@ -38,11 +38,14 @@ export default function AdminGrantPlanPanel({
   emailSuggestions,
 }: AdminGrantPlanPanelProps) {
   const toast = useToast()
-  const [email, setEmail] = useState('')
-
-  useEffect(() => {
+  // Điền sẵn email từ prop ngay lần mount đầu; khi prop đổi (bấm dòng khác ở bảng "Người
+  // dùng") thì đồng bộ lại bằng mẫu "setState trong lúc render" chuẩn React thay cho effect.
+  const [email, setEmail] = useState(prefillEmail ?? '')
+  const [prevPrefill, setPrevPrefill] = useState(prefillEmail)
+  if (prefillEmail !== prevPrefill) {
+    setPrevPrefill(prefillEmail)
     if (prefillEmail) setEmail(prefillEmail)
-  }, [prefillEmail])
+  }
   const [plan, setPlan] = useState<Plan>('pro')
   const [unlimited, setUnlimited] = useState(true)
   const [days, setDays] = useState(30)

@@ -33,6 +33,7 @@ import { getLearnedWords } from '../../lib/vocab'
 import {
   getDoneGrammar,
   computeLockedMapPersisted,
+  persistUnlockedLevels,
   findNextStep,
   circleDoneCount,
 } from '../../lib/cefrProgress'
@@ -66,25 +67,41 @@ export default function Home() {
   }, [])
 
   const uid = user?.id ?? ''
-  /* eslint-disable react-hooks/exhaustive-deps */
-  const learned = useMemo(() => getLearnedWords(uid), [uid, syncVersion])
-  const doneGrammar = useMemo(() => getDoneGrammar(uid), [uid, syncVersion])
-  const examPassed = useMemo(() => getPassedExamLevels(uid), [uid, syncVersion])
-  /* eslint-enable react-hooks/exhaustive-deps */
+  // syncVersion tăng khi cloud sync xong → tham chiếu nó trong thân memo (void) để
+  // dependency là "thật" (đọc lại localStorage đúng lúc), không cần eslint-disable.
+  const learned = useMemo(() => {
+    void syncVersion
+    return getLearnedWords(uid)
+  }, [uid, syncVersion])
+  const doneGrammar = useMemo(() => {
+    void syncVersion
+    return getDoneGrammar(uid)
+  }, [uid, syncVersion])
+  const examPassed = useMemo(() => {
+    void syncVersion
+    return getPassedExamLevels(uid)
+  }, [uid, syncVersion])
 
   const lockedMap = useMemo(
     () => computeLockedMapPersisted(uid, cefrLevels, examPassed),
     [uid, cefrLevels, examPassed],
   )
 
-  const continueLevel = useMemo(() => {
+  // Ghi nhớ cấp VỪA mở khóa (grandfather) — side effect tách khỏi render, xem cefrProgress.ts.
+  useEffect(() => {
+    persistUnlockedLevels(uid, cefrLevels, examPassed)
+  }, [uid, cefrLevels, examPassed])
+
+  // Không bọc useMemo: phép tính thuần, rẻ (≤6 cấp) — tính lại mỗi render, compiler tự memo.
+  // (computeLockedMapPersisted nay đã THUẦN — phần ghi tách sang persistUnlockedLevels ở trên.)
+  const continueLevel = (() => {
     for (const lv of cefrLevels) {
       if (lockedMap.get(lv.id)) continue
       const next = findNextStep(lv, circleById, learned, doneGrammar)
       if (next) return { level: lv, next }
     }
     return null
-  }, [cefrLevels, circleById, learned, doneGrammar, lockedMap])
+  })()
 
   const showComeback = !comebackClosed && !!continueLevel && shouldShowComeback(uid)
   const daysAway = showComeback ? comebackDaysAway(uid) : 0

@@ -51,10 +51,9 @@ export default function WordFormsBlock({ forms, base, word, isA, onPick }: Props
   // early-return bên dưới để tuân thủ quy tắc hook của React.
   const [formEx, setFormEx] = useState<Record<string, [ExPair, ExPair]>>(_formExCache ?? {})
   useEffect(() => {
-    if (_formExCache) {
-      setFormEx(_formExCache)
-      return
-    }
+    // Cache đã có → state đã nhận sẵn qua initializer ở trên, không cần setState
+    // đồng bộ trong effect. Chỉ nạp lười khi chưa có cache (setState trong .then là async).
+    if (_formExCache) return
     loadFormExamples()
       .then((d) => {
         _formExCache = d

@@ -1,5 +1,5 @@
 // apps/dhcb/src/components/FeedbackModal.tsx — Hộp thoại Tiếp nhận Ý kiến Đóng góp & Phản hồi Người dùng
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { X, Send, Loader2, Star, MessageSquareHeart, CheckCircle2, HelpCircle } from 'lucide-react'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
@@ -27,20 +27,27 @@ export default function FeedbackModal({ isOpen, onClose, initialCategory = 'feat
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
 
-  useEffect(() => {
-    if (user?.email) {
-      setEmail(user.email)
-    }
-  }, [user])
+  // Điền sẵn email khi thông tin user tới — mẫu "so sánh prev trong render"
+  // (React cho phép setState có điều kiện ngay trong render để dẫn xuất từ prop,
+  // thay cho setState đồng bộ trong effect trước đây).
+  const [prevUserEmail, setPrevUserEmail] = useState(user?.email)
+  if (user?.email !== prevUserEmail) {
+    setPrevUserEmail(user?.email)
+    if (user?.email) setEmail(user.email)
+  }
 
-  useEffect(() => {
+  // Reset form mỗi lần mở modal (hoặc đổi initialCategory khi đang mở) — cùng mẫu trên.
+  const [prevOpenKey, setPrevOpenKey] = useState(`${isOpen}|${initialCategory}`)
+  const openKey = `${isOpen}|${initialCategory}`
+  if (openKey !== prevOpenKey) {
+    setPrevOpenKey(openKey)
     if (isOpen) {
       setSuccess(false)
       setMessage('')
       setTitle('')
       setCategory(initialCategory)
     }
-  }, [isOpen, initialCategory])
+  }
 
   if (!isOpen) return null
 

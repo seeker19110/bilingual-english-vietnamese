@@ -96,7 +96,10 @@ export default function Dictionary() {
   const posRefs = useRef<Record<string, HTMLElement | null>>({})
   const touchStart = useRef({ x: 0, y: 0 })
 
-  const [learnedWords, setLearnedWords] = useState<Set<string>>(new Set())
+  // Từ đã thuộc — đọc thẳng từ localStorage mỗi render (learnedKey tăng → re-render
+  // → tự đọc bản mới), thay cho state + effect (tránh setState đồng bộ trong effect).
+  void learnedKey
+  const learnedWords: Set<string> = user ? getLearnedWords(user.id) : new Set<string>()
 
   // Kết quả tìm kiếm lấy TỪ SERVER (không tải cả từ điển về máy).
   const [searchResults, setSearchResults] = useState<DictEntry[]>([])
@@ -126,21 +129,36 @@ export default function Dictionary() {
       })
   }, [])
 
-  // Gọi API tìm kiếm mỗi khi từ khóa đổi (deferredQuery đã được React hoãn để gõ mượt).
-  // Hủy request cũ khi gõ tiếp để tránh kết quả về trễ ghi đè kết quả mới.
-  useEffect(() => {
-    const q = deferredQuery.trim()
-    if (!q) {
+  // Khi từ khóa/bộ lọc đổi: reset trang + bật spinner (hoặc xoá kết quả nếu ô trống)
+  // NGAY TRONG RENDER (pattern so-sánh-prev, không setState đồng bộ trong effect).
+  const pageKey = JSON.stringify([deferredQuery, posFilter])
+  const [prevPageKey, setPrevPageKey] = useState(pageKey)
+  if (pageKey !== prevPageKey) {
+    setPrevPageKey(pageKey)
+    setPage(0) // reset trang khi query / bộ lọc thay đổi (không reset khi bấm "thử lại")
+  }
+  const searchKey = JSON.stringify([deferredQuery, posFilter, retryKey])
+  const [prevSearchKey, setPrevSearchKey] = useState(searchKey)
+  if (searchKey !== prevSearchKey) {
+    setPrevSearchKey(searchKey)
+    if (deferredQuery.trim()) {
+      setSearching(true)
+      setSearchError(false)
+    } else {
       setSearchResults([])
       setSearchPosGroups([])
       setSearchMatched(0)
       setSearchMatchedForm(null)
       setSearchError(false)
-      return
     }
+  }
+
+  // Gọi API tìm kiếm mỗi khi từ khóa đổi (deferredQuery đã được React hoãn để gõ mượt).
+  // Hủy request cũ khi gõ tiếp để tránh kết quả về trễ ghi đè kết quả mới.
+  useEffect(() => {
+    const q = deferredQuery.trim()
+    if (!q) return
     const ctrl = new AbortController()
-    setSearching(true)
-    setSearchError(false)
     // Truyền posFilter để server lọc đúng theo loại từ (số khớp với chip kể cả >200 từ).
     searchDictionary(q, ctrl.signal, posFilter)
       .then((r) => {
@@ -167,15 +185,6 @@ export default function Dictionary() {
       })
     return () => ctrl.abort()
   }, [deferredQuery, posFilter, retryKey])
-
-  useEffect(() => {
-    if (user) setLearnedWords(getLearnedWords(user.id))
-  }, [user, learnedKey])
-
-  // Reset trang khi query / bộ lọc thay đổi
-  useEffect(() => {
-    setPage(0)
-  }, [deferredQuery, posFilter])
 
   useEffect(() => {
     if (tab !== 'pos' || !jumpPos) return

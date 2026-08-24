@@ -3,7 +3,7 @@
 // tuần (lib/weeklyGoal.ts). Mỗi ngày quay 1 video ngắn theo chủ đề gợi ý → audio gửi
 // /api/stt nhận diện → AI (prompts/challenge.ts) khen + sửa lỗi + gợi ý câu nâng cấp.
 // Video KHÔNG upload — chỉ lưu trên máy (IndexedDB, lib/challengeVideo.ts).
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Video, Mic, RotateCcw, Send, Square, Type, Trophy, Check, Volume2 } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
@@ -321,10 +321,8 @@ export default function Challenge() {
   const todayStr = vnDateStr()
   const todaysEntry = challenge ? entryForDay(challenge, todayStr) : null
   // 7 ô của tuần hiện tại (Thứ 2 → CN) — nguồn duy nhất cho bảng + tổng kết tuần.
-  const cells = useMemo(
-    () => (challenge ? getWeekCells(challenge, todayStr) : []),
-    [challenge, todayStr],
-  )
+  // (tính trực tiếp mỗi render — hàm thuần, rẻ; React Compiler tự memo hóa)
+  const cells = challenge ? getWeekCells(challenge, todayStr) : []
   const weekCount = cells.filter((c) => c.entry).length
   const totalSubmitted = challenge ? getTotalSubmitted(challenge) : 0
   // Chủ đề xoay vòng theo TỔNG số bài đã nộp (hết 30 chủ đề thì quay lại từ đầu);
@@ -335,7 +333,7 @@ export default function Challenge() {
 
   // Tổng kết tuần (hiện vào Chủ nhật): số ngày nộp + nhịp nói đầu tuần → cuối tuần.
   const isSunday = cells[6]?.isToday ?? false
-  const weekStats = useMemo(() => {
+  const weekStats = (() => {
     const entries = cells.filter((c) => c.entry).map((c) => c.entry as ChallengeEntryLocal)
     const first = entries[0]
     const last = entries[entries.length - 1]
@@ -347,7 +345,7 @@ export default function Challenge() {
       firstWpm: calcWpm(first.wordCount, first.durationSec),
       lastWpm: calcWpm(last.wordCount, last.durationSec),
     }
-  }, [cells])
+  })()
 
   // ── Ghi hình ──────────────────────────────────────────────────────────────
   const canRecord = isChallengeRecordingSupported()
@@ -378,33 +376,22 @@ export default function Challenge() {
     [], // eslint-disable-line react-hooks/exhaustive-deps
   )
 
-  // Đếm ngược 3-2-1 rồi tự bắt đầu ghi.
-  useEffect(() => {
-    if (stage !== 'countdown') return
-    if (countdown <= 0) {
-      void beginRecording()
-      return
+  // (khai báo TRƯỚC effect đếm ngược bên dưới — effect gọi trực tiếp hàm này)
+  async function stopRecording() {
+    if (timerRef.current) {
+      clearInterval(timerRef.current)
+      timerRef.current = null
     }
-    const t = setTimeout(() => setCountdown((c) => c - 1), 700)
-    return () => clearTimeout(t)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stage, countdown])
-
-  // Gắn live stream vào <video> khi vừa có handle (đợi render xong).
-  useEffect(() => {
-    if (stage === 'recording' && handleRef.current && livePreviewRef.current) {
-      livePreviewRef.current.srcObject = handleRef.current.stream
-    }
-  }, [stage])
-
-  function startCountdown() {
-    setSubmitError('')
-    if (!canRecord) {
-      setStage('typed')
-      return
-    }
-    setCountdown(3)
-    setStage('countdown')
+    const handle = handleRef.current
+    if (!handle) return
+    handleRef.current = null
+    haptics.stop()
+    const result = await handle.stop()
+    const url = URL.createObjectURL(result.videoBlob ?? result.audioBlob)
+    setPreviewUrl(url)
+    setRecording(result)
+    transcriptCacheRef.current = null // bản ghi mới — bỏ transcript cache của lần trước
+    setStage('reviewing')
   }
 
   async function beginRecording() {
@@ -452,21 +439,35 @@ export default function Challenge() {
     }
   }
 
-  async function stopRecording() {
-    if (timerRef.current) {
-      clearInterval(timerRef.current)
-      timerRef.current = null
+  // Đếm ngược 3-2-1 rồi tự bắt đầu ghi.
+  useEffect(() => {
+    if (stage !== 'countdown' || countdown <= 0) return
+    // Bắt đầu ghi từ TRONG callback của setTimeout (không setState đồng bộ trong effect):
+    // đếm 3 → 2 → 1 → 0 rồi gọi beginRecording — thời điểm y hệt trước đây.
+    const t = setTimeout(() => {
+      const next = countdown - 1
+      setCountdown(next)
+      if (next <= 0) void beginRecording()
+    }, 700)
+    return () => clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage, countdown])
+
+  // Gắn live stream vào <video> khi vừa có handle (đợi render xong).
+  useEffect(() => {
+    if (stage === 'recording' && handleRef.current && livePreviewRef.current) {
+      livePreviewRef.current.srcObject = handleRef.current.stream
     }
-    const handle = handleRef.current
-    if (!handle) return
-    handleRef.current = null
-    haptics.stop()
-    const result = await handle.stop()
-    const url = URL.createObjectURL(result.videoBlob ?? result.audioBlob)
-    setPreviewUrl(url)
-    setRecording(result)
-    transcriptCacheRef.current = null // bản ghi mới — bỏ transcript cache của lần trước
-    setStage('reviewing')
+  }, [stage])
+
+  function startCountdown() {
+    setSubmitError('')
+    if (!canRecord) {
+      setStage('typed')
+      return
+    }
+    setCountdown(3)
+    setStage('countdown')
   }
 
   function discardRecording() {

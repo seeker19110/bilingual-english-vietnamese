@@ -8,17 +8,18 @@ export default function RealtimeTelemetryBar() {
   const [meshStatus, setMeshStatus] = useState<MeshStatusSummary | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
 
-  const loadTelemetry = async () => {
-    try {
-      const data = await fetchMeshTelemetry()
-      setTelemetry(data.telemetry)
-      setMeshStatus(data.meshStatus)
-    } catch {
-      // im lặng
-    }
-  }
-
+  // Nạp telemetry lúc mount + mỗi 15s — hàm async định nghĩa TRONG effect, mọi
+  // setState nằm sau await (không setState đồng bộ trong thân effect).
   useEffect(() => {
+    const loadTelemetry = async () => {
+      try {
+        const data = await fetchMeshTelemetry()
+        setTelemetry(data.telemetry)
+        setMeshStatus(data.meshStatus)
+      } catch {
+        // im lặng
+      }
+    }
     void loadTelemetry()
     const interval = setInterval(() => {
       void loadTelemetry()

@@ -296,18 +296,24 @@ function SentenceScramble({
   const [idx, setIdx] = useState(0)
   const [score, setScore] = useState(0)
   const [built, setBuilt] = useState<string[]>([])
-  const [bank, setBank] = useState<string[]>([])
-  const [checked, setChecked] = useState<boolean | null>(null)
 
   const target = sentences[idx]
 
-  useEffect(() => {
+  // Sang câu mới (target đổi) → xáo lại ngân hàng từ + xóa phần đã ghép — pattern
+  // so-sánh-prev ngay trong render, thay cho setState đồng bộ trong effect.
+  const [bank, setBank] = useState<string[]>(() =>
+    target ? shuffle(target.trim().split(/\s+/)) : [],
+  )
+  const [checked, setChecked] = useState<boolean | null>(null)
+  const [prevTarget, setPrevTarget] = useState(target)
+  if (target !== prevTarget) {
+    setPrevTarget(target)
     if (target) {
       setBank(shuffle(target.trim().split(/\s+/)))
       setBuilt([])
       setChecked(null)
     }
-  }, [target])
+  }
 
   if (sentences.length < 3) {
     return (

@@ -1,7 +1,7 @@
 // src/components/admin/AdminAchievementRewardsPanel.tsx — Tab "Thưởng huy hiệu" trong /admin-s.
 // Cấu hình phần thưởng (bật/tắt + gói Pro/VIP + số ngày) cho TỪNG huy hiệu & mốc (migration
 // 0026), áp dụng NGAY cho toàn bộ người dùng. Gọi thẳng api/admin-achievement-rewards.ts.
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Loader2, Save } from 'lucide-react'
 import { useToast } from '@core/ToastProvider'
 import { getAuthHeader } from '@core/authHeader'
@@ -40,11 +40,15 @@ function RewardRowEditor({ row, onReload }: { row: RewardRow; onReload: () => Pr
   const [rewardDays, setRewardDays] = useState(row.config.rewardDays)
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => {
+  // Đồng bộ lại state cục bộ khi dữ liệu hàng đổi (sau khi reload từ server) — dùng mẫu
+  // "setState trong lúc render" chuẩn React thay cho effect, tránh render thừa.
+  const [prevRow, setPrevRow] = useState(row)
+  if (prevRow !== row) {
+    setPrevRow(row)
     setEnabled(row.config.enabled)
     setRewardPlan(row.config.rewardPlan)
     setRewardDays(row.config.rewardDays)
-  }, [row])
+  }
 
   async function save() {
     setSaving(true)
@@ -110,25 +114,35 @@ function RewardRowEditor({ row, onReload }: { row: RewardRow; onReload: () => Pr
 
 export default function AdminAchievementRewardsPanel() {
   const toast = useToast()
+  // toast (object context) đổi identity mỗi render của provider; .error là useCallback ổn định
+  // — dùng làm dependency cho load để effect không chạy lại vô ích.
+  const toastError = toast.error
   const [rows, setRows] = useState<RewardRow[] | null>(null)
   const [loading, setLoading] = useState(true)
 
-  async function load() {
-    setLoading(true)
+  // Không setLoading(true) đồng bộ ở đây — lúc mount loading đã là true sẵn; khi reload từ
+  // handler thì hàm reload() bên dưới lo phần bật spinner.
+  const load = useCallback(async () => {
     try {
       const data = (await api('GET')) as { rewards: RewardRow[] }
       setRows(data.rewards)
     } catch (err) {
-      toast.error(`Tải cấu hình thất bại: ${(err as Error).message}`)
+      toastError(`Tải cấu hình thất bại: ${(err as Error).message}`)
     } finally {
       setLoading(false)
     }
+  }, [toastError])
+
+  // Gọi từ handler (nút Lưu của từng hàng) — setState trong handler là hợp lệ.
+  async function reload() {
+    setLoading(true)
+    await load()
   }
 
   useEffect(() => {
-    void load()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    // Hoãn sang microtask để KHÔNG setState đồng bộ trong thân effect (luật react-hooks 7).
+    void Promise.resolve().then(load)
+  }, [load])
 
   return (
     <div className="space-y-3">
@@ -146,7 +160,7 @@ export default function AdminAchievementRewardsPanel() {
 
       {!loading &&
         rows &&
-        rows.map((row) => <RewardRowEditor key={row.achievementId} row={row} onReload={load} />)}
+        rows.map((row) => <RewardRowEditor key={row.achievementId} row={row} onReload={reload} />)}
     </div>
   )
 }

@@ -53,9 +53,12 @@ const editorHighlight = HighlightStyle.define([
 export default function CodeEditor({ value, onChange, ariaLabel }: Props) {
   const hostRef = useRef<HTMLDivElement | null>(null)
   const viewRef = useRef<EditorView | null>(null)
-  // Giữ onChange mới nhất trong ref để không phải dựng lại editor mỗi lần re-render.
+  // Giữ onChange mới nhất trong ref để không phải dựng lại editor mỗi lần re-render
+  // (cập nhật trong effect, không gán lúc render — rule react-hooks/refs).
   const onChangeRef = useRef(onChange)
-  onChangeRef.current = onChange
+  useEffect(() => {
+    onChangeRef.current = onChange
+  }, [onChange])
 
   useEffect(() => {
     if (!hostRef.current) return

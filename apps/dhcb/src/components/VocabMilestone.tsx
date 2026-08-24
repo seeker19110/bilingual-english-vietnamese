@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Trophy, Target } from 'lucide-react'
 import { getLearnedCount } from '../lib/vocab'
 
@@ -21,10 +21,14 @@ const GOAL = MILESTONES[MILESTONES.length - 1]!.count // mốc cuối = 8000 (m�
 export default function VocabMilestone({ userId, refreshKey }: Props) {
   const [learned, setLearned] = useState(() => getLearnedCount(userId))
 
-  // Tính lại khi userId hoặc refreshKey đổi (sau khi học flashcard)
-  useEffect(() => {
+  // Tính lại khi userId hoặc refreshKey đổi (sau khi học flashcard) — mẫu
+  // "so sánh prev trong render" thay cho setState đồng bộ trong effect.
+  const recomputeKey = `${userId}|${refreshKey ?? ''}`
+  const [prevKey, setPrevKey] = useState(recomputeKey)
+  if (recomputeKey !== prevKey) {
+    setPrevKey(recomputeKey)
     setLearned(getLearnedCount(userId))
-  }, [userId, refreshKey])
+  }
 
   // % vị trí trên thanh (giới hạn tối đa 100%)
   const pct = Math.min(100, (learned / GOAL) * 100)

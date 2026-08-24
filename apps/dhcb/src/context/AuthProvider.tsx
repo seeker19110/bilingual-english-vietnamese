@@ -28,7 +28,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
-    refresh().finally(() => setLoading(false))
+    // Gọi qua then() để mọi setState chạy trong callback bất đồng bộ
+    // (luật react-hooks/set-state-in-effect — không setState đồng bộ trong effect).
+    void Promise.resolve()
+      .then(refresh)
+      .finally(() => setLoading(false))
 
     // Bearer token không tự "hết hạn giữa chừng" như cookie — chỉ cần đồng bộ lại giữa các
     // tab khi 1 tab đăng xuất/đăng nhập (localStorage 'storage' event chỉ bắn ở TAB KHÁC).

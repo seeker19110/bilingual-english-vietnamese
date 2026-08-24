@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Search, MessageSquarePlus, Users, UserPlus } from 'lucide-react'
 import type { RoomSummary } from '../../lib/chatApi'
@@ -35,16 +35,20 @@ export default function ChatList({
     return rooms.filter((r) => r.peer.name.toLowerCase().includes(q))
   }, [rooms, search])
 
-  // Tải danh sách bạn bè khi mở Friends Picker
-  useEffect(() => {
-    if (showFriendsPicker && friends.length === 0) {
+  // Bật/tắt Friends Picker; tải danh sách bạn bè NGAY TRONG handler khi mở
+  // (setState trong handler/callback promise là hợp lệ — trước đây nằm ở effect
+  // và bị rule set-state-in-effect chặn vì setLoadingFriends đồng bộ).
+  function toggleFriendsPicker() {
+    const next = !showFriendsPicker
+    setShowFriendsPicker(next)
+    if (next && friends.length === 0) {
       setLoadingFriends(true)
       fetchFriendsState().then((state) => {
         if (state) setFriends(state.friends)
         setLoadingFriends(false)
       })
     }
-  }, [showFriendsPicker, friends.length])
+  }
 
   return (
     <aside className="flex flex-col h-full bg-zinc-900/60 border-r border-white/10 w-full sm:w-80 lg:w-96 flex-shrink-0">
@@ -59,7 +63,7 @@ export default function ChatList({
 
         <button
           type="button"
-          onClick={() => setShowFriendsPicker(!showFriendsPicker)}
+          onClick={toggleFriendsPicker}
           aria-label="Tạo cuộc trò chuyện mới"
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 border border-blue-500/30 text-xs font-semibold transition-colors min-h-[36px]"
           title="Bắt đầu chat với bạn bè"

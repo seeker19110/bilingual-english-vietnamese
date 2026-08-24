@@ -1,5 +1,5 @@
 // apps/dhcb/src/pages/EnglishHome.tsx — Không gian Chuyên Sâu Môn Tiếng Anh (English Studio Hub)
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   MessageCircle,
@@ -36,6 +36,7 @@ import { getLearnedWords, getRecentlyLearnedWords } from '../../../lib/vocab'
 import {
   getDoneGrammar,
   computeLockedMapPersisted,
+  persistUnlockedLevels,
   findNextStep,
   circleDoneCount,
 } from '../../../lib/cefrProgress'
@@ -71,25 +72,31 @@ export default function EnglishHome() {
   }, [])
 
   const uid = user?.id ?? ''
-  /* eslint-disable react-hooks/exhaustive-deps */
-  const learned = useMemo(() => getLearnedWords(uid), [uid, syncVersion])
-  const doneGrammar = useMemo(() => getDoneGrammar(uid), [uid, syncVersion])
-  const examPassed = useMemo(() => getPassedExamLevels(uid), [uid, syncVersion])
-  /* eslint-enable react-hooks/exhaustive-deps */
+  // Đọc từ localStorage mỗi render — bỏ useMemo thủ công vì React Compiler không
+  // bảo toàn được (hàm ngoài opaque); compiler tự memo phần nó chứng minh được.
+  // syncVersion tăng (đồng bộ cloud xong) → re-render → tự đọc lại bản mới.
+  void syncVersion
+  const learned = getLearnedWords(uid)
+  const doneGrammar = getDoneGrammar(uid)
+  const examPassed = getPassedExamLevels(uid)
 
-  const lockedMap = useMemo(
-    () => computeLockedMapPersisted(uid, cefrLevels, examPassed),
-    [uid, cefrLevels, examPassed],
-  )
+  const lockedMap = computeLockedMapPersisted(uid, cefrLevels, examPassed)
 
-  const continueLevel = useMemo(() => {
+  // Ghi nhớ cấp VỪA mở khóa (grandfather) — side effect tách khỏi render, xem cefrProgress.ts.
+  // examPassed là Set mới mỗi render → effect chạy mỗi render, nhưng persist idempotent
+  // (không đổi thì không ghi, không push) nên vô hại.
+  useEffect(() => {
+    persistUnlockedLevels(uid, cefrLevels, examPassed)
+  })
+
+  const continueLevel = (() => {
     for (const lv of cefrLevels) {
       if (lockedMap.get(lv.id)) continue
       const next = findNextStep(lv, circleById, learned, doneGrammar)
       if (next) return { level: lv, next }
     }
     return null
-  }, [cefrLevels, circleById, learned, doneGrammar, lockedMap])
+  })()
 
   const showComeback = !comebackClosed && !!continueLevel && shouldShowComeback(uid)
   const daysAway = showComeback ? comebackDaysAway(uid) : 0
@@ -100,11 +107,6 @@ export default function EnglishHome() {
 
   const recentWords = getRecentlyLearnedWords(uid, RECENT_WORDS_FOR_SPEAKING)
 
-  if (!user) return null
-
-  const srsDue = getSRSStats(user.id).due
-  const dailyLearned = getDailyLearned(user.id)
-  const dailyMax = getDailyMax(user.id)
   const isA = dir === 'A'
 
   let nextLabel = ''
@@ -121,6 +123,12 @@ export default function EnglishHome() {
       if (g) nextLabel = isA ? g.titleVi : g.titleEn
     }
   }
+
+  if (!user) return null
+
+  const srsDue = getSRSStats(user.id).due
+  const dailyLearned = getDailyLearned(user.id)
+  const dailyMax = getDailyMax(user.id)
 
   function goToNextStep() {
     if (!continueLevel) return

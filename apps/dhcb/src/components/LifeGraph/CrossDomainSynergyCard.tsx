@@ -33,6 +33,7 @@ export const CrossDomainSynergyCard: React.FC = () => {
   const [data, setData] = useState<CrossDomainSynergyReport | null>(null)
   const [loading, setLoading] = useState(true)
 
+  // Handler nút "Làm mới" — setLoading(true) đồng bộ trong handler là hợp lệ.
   const fetchSynergy = async () => {
     try {
       setLoading(true)
@@ -48,8 +49,22 @@ export const CrossDomainSynergyCard: React.FC = () => {
     }
   }
 
+  // Nạp phân tích 1 lần lúc mount — hàm async định nghĩa TRONG effect, mọi
+  // setState nằm sau await (không setState đồng bộ trong thân effect);
+  // `loading` khởi tạo mặc định true nên không cần setLoading(true).
   useEffect(() => {
-    void fetchSynergy()
+    const initialFetch = async () => {
+      const res = await fetch('/api/life-graph?kind=synergy')
+      if (res.ok) {
+        const json = await res.json()
+        setData(json)
+      }
+    }
+    initialFetch()
+      .catch((err) => {
+        console.error('Lỗi khi tải phân tích cộng hưởng đa miền:', err)
+      })
+      .finally(() => setLoading(false))
   }, [])
 
   if (loading) {

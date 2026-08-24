@@ -1,7 +1,7 @@
 // src/components/LeagueSection.tsx — Giải đấu tuần (② M5): bảng xếp hạng + opt-in nickname.
 // Dùng trong trang Challenge (nộp challenge = hoạt động ghi điểm cao nhất của giải, ② M5b).
 // Điểm/hạng luôn đọc từ /api/leaderboard (server) — component này KHÔNG tự tính gì.
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Trophy, LogOut } from 'lucide-react'
 import {
   fetchLeaderboard,
@@ -43,7 +43,23 @@ export default function LeagueSection({ isA }: { isA: boolean }) {
       .finally(() => setLoading(false))
   }
 
-  useEffect(load, []) // eslint-disable-line react-hooks/exhaustive-deps
+  // Lần nạp đầu lúc mount: loading/error đã ở giá trị khởi tạo (true / '') nên
+  // không cần setState đồng bộ; mọi setState nằm trong callback promise (async).
+  // Ref chặn nạp lại khi effect re-chạy vì isA đổi (giữ đúng hành vi cũ: chỉ nạp 1 lần).
+  const didInitialLoad = useRef(false)
+  useEffect(() => {
+    if (didInitialLoad.current) return
+    didInitialLoad.current = true
+    fetchLeaderboard()
+      .then((res) => {
+        setData(res)
+        setNickname(res.me.nickname ?? '')
+      })
+      .catch((e: unknown) => {
+        setError(e instanceof Error ? e.message : isA ? 'Lỗi tải dữ liệu' : 'Failed to load')
+      })
+      .finally(() => setLoading(false))
+  }, [isA])
 
   async function join() {
     const trimmed = nickname.trim()

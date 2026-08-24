@@ -82,6 +82,46 @@ mới" của đặc tả kiến trúc platform. Điểm chốt đề xuất (CH�
 - Phân đợt PR-L0..L6 + DoD + rủi ro. Việc tiếp theo: người dùng duyệt đặc tả (hoặc yêu cầu
   soạn mẫu trọn 1 unit P1-U4 "Tính tiền điện EVN" để duyệt khuôn trước).
 
+### refactor(cefr): tách side effect khỏi render — computeLockedMapPersisted thành hàm thuần (2026-08-24)
+
+Trả món nợ vừa ghi ở PR #657: `computeLockedMapPersisted` (`apps/dhcb/src/lib/cefrProgress.ts`)
+trước đây GHI localStorage + `pushProgress` ngay trong lúc render (gọi từ useMemo/render của 4
+trang). Nay tách đôi: compute THUẦN (giữ nguyên tên + kết quả y hệt — grandfather vẫn đúng) và
+`persistUnlockedLevels()` mới đảm nhận phần ghi nhớ cấp vừa mở (idempotent — không đổi thì không
+ghi/không push), gọi từ `useEffect` ở cả 4 nơi dùng: `RoadmapTab`, `CefrLevelPage`, `Home`,
+`EnglishHome`. Test `cefrProgress.test.ts` cập nhật theo hợp đồng mới (23/23 xanh) — thêm khẳng
+định compute không tự ghi. Cổng: lint · typecheck · test 5181/5181 · build (bundle không đổi).
+
+### refactor(lint): trả nợ 2026-08-18 — nâng eslint-plugin-react-hooks 4.6.2 → 7.1.1 + sửa 95 lỗi React Compiler (2026-08-24)
+
+Món nợ "ghim tạm plugin về 4.6.2" nay ĐÃ TRẢ: nâng lên 7.1.1 và sửa ĐÚNG BẢN CHẤT toàn bộ
+95 lỗi rule mới trên ~64 file (68 `set-state-in-effect` · 12 `purity` · 11 `exhaustive-deps` ·
+9 `immutability` · 3 `preserve-manual-memoization` · 2 `globals` · 1 `refs`) — **0 eslint-disable
+mới**, còn gỡ được ~10 dòng disable cũ. Chia 4 nhóm file rời nhau giao 4 subagent song song theo
+cẩm nang sửa chung, phiên chính soát lại diff các luồng nhạy (Chat/Speaking/useChat/AuthProvider/
+ThemeProvider) trước khi commit.
+
+Các mẫu sửa chính (để lần sau viết code khỏi tái phạm):
+
+- `set-state-in-effect`: effect mount-only đọc localStorage → `useState(() => ...)` lazy init;
+  `setLoading(true)` đồng bộ đầu effect → khởi tạo mặc định `true`, chỉ set từ handler refetch;
+  reset state khi prop đổi → mẫu chuẩn React "so sánh prev prop trong render"; loader gọi từ
+  effect → `void Promise.resolve().then(load)` để mọi setState nằm trong callback bất đồng bộ.
+- `purity`: `crypto.randomUUID`/`Date.now`/`Math.random` không gọi trong render/useMemo — tách
+  helper module-level (`newMessage()` ở Chat/Speaking) hoặc lazy initializer.
+- `immutability`: khai báo trước khi dùng; biến closure gán trong render → `useRef` (vd
+  `connectWsRef` trong `useChat.ts`, mảng offset `unitLessonStarts` ở CefrLevelPage).
+- `preserve-manual-memoization`: useMemo compiler không bảo toàn được → BỎ memo thủ công cho hàm
+  thuần rẻ (EnglishHome/Home/Challenge), compiler tự lo.
+- `ThemeProvider` tái cấu trúc đúng bản chất: theme hiển thị = derived `locked ? kid : theme`,
+  state luôn giữ lựa chọn thật của user; effect chỉ đồng bộ DOM.
+
+Cổng: lint 0 lỗi 0 cảnh báo (plugin 7.1.1) · typecheck · format · test 5181/5181 · build. Bundle
+không đổi (208.58 kB).
+
+**Nợ mới ghi nhận (thấp):** ~~`computeLockedMapPersisted` có side effect trong render~~ — **ĐÃ
+TRẢ ngay trong ngày**, xem mục "refactor(cefr)" ở trên.
+
 ### fix: Quét sâu toàn dự án — vá 8 lỗi audit + nâng cấp 13 gói trong dải semver (2026-08-24)
 
 Quét theo yêu cầu "quét sâu, vá lỗi và nâng cấp": 3 lượt rà song song (bảo mật API server ·
@@ -5996,7 +6036,10 @@ purple/orange/amber/sky-300` thiếu biến thể `theme-light:text-*-800` nên 
   `gemini-2.0-flash-exp`, Google hay đổi tên/khả dụng model Live), (3) thử 1 phiên thật qua
   `/ws/gemini-live`, (4) audit lại các file "V6.x/V7.0" khác cùng thời điểm với `cf44362` xem có
   scaffolding giả tương tự không (chưa rà — người dùng đã được báo, quyết định xử lý riêng sau).
-- 🟡 **[2026-08-18, cập nhật khi fix PR #603] `eslint-plugin-react-hooks` đã ghim TẠM về lại
+- 🟢 **[ĐÃ TRẢ 2026-08-24 — xem mục "Giai đoạn hiện tại"]** Nâng lại plugin lên `7.1.1` + sửa
+  đúng bản chất 95 lỗi (danh sách 73 lỗi cũ đã phình theo code mới), 0 eslint-disable mới.
+  Ghi chú gốc giữ lại bên dưới để tra cứu:
+- ~~🟡~~ **[2026-08-18, cập nhật khi fix PR #603] `eslint-plugin-react-hooks` đã ghim TẠM về lại
   `^4.6.2`** (đúng bản trước PR #574) để CI/lint xanh trở lại ngay — bản `7.1.1` mà PR #574 bump
   lên mang theo 5 rule React Compiler mới, làm lộ **73 lỗi trải trên 45+ file**: `set-state-in-effect`
   (48 lỗi — vd `Work.tsx:103`, `WorkKanban.tsx:53`, `packages/core-ui/ThemeProvider.tsx:36`, phần

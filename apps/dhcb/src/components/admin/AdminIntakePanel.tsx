@@ -10,7 +10,7 @@
 // nó (đưa lựa chọn thật), chỉ là thứ tự xếp chưa chuẩn. Ghi thẳng lên giao diện để không ai vội
 // kết luận sai.
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Compass, Loader2, ShieldAlert, RefreshCw } from 'lucide-react'
 import { getAuthHeader } from '@core/authHeader'
 import { formatRate } from '../../lib/statFormat'
@@ -55,11 +55,13 @@ export default function AdminIntakePanel() {
   const [forbidden, setForbidden] = useState(false)
   const [error, setError] = useState('')
 
-  async function load() {
-    setLoading(true)
-    setError('')
+  const load = useCallback(async () => {
     try {
       const headers = await getAuthHeader()
+      // Bật spinner SAU await đầu tiên — setState đồng bộ trong effect bị cấm (react-hooks 7);
+      // lúc mount loading đã là true sẵn nên không đổi hành vi.
+      setLoading(true)
+      setError('')
       const res = await fetch(`/api/admin-intake-stats?days=${days}`, { headers })
       if (res.status === 403) {
         setForbidden(true)
@@ -72,12 +74,12 @@ export default function AdminIntakePanel() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [days])
 
   useEffect(() => {
-    void load()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [days])
+    // Hoãn sang microtask để KHÔNG setState đồng bộ trong thân effect (luật react-hooks 7).
+    void Promise.resolve().then(load)
+  }, [load])
 
   if (forbidden) {
     return (
