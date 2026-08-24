@@ -17,6 +17,7 @@ export default function NeuralMicroCurriculumCard() {
   const [drillModalOpen, setDrillModalOpen] = useState(false)
   const [generating, setGenerating] = useState(false)
 
+  // Dùng lại được từ handler (hoàn thành drill xong nạp lại).
   const loadState = async () => {
     try {
       const data = await fetchNeuralCurriculum()
@@ -28,8 +29,20 @@ export default function NeuralMicroCurriculumCard() {
     }
   }
 
+  // Nạp lần đầu lúc mount — hàm async định nghĩa TRONG effect, mọi setState
+  // nằm sau await (không setState đồng bộ trong thân effect).
   useEffect(() => {
-    void loadState()
+    const load = async () => {
+      try {
+        const data = await fetchNeuralCurriculum()
+        setState(data)
+      } catch {
+        // im lặng nếu offline
+      } finally {
+        setLoading(false)
+      }
+    }
+    void load()
   }, [])
 
   const handleGenerate = async (topic: string) => {

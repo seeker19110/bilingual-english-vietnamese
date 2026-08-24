@@ -40,6 +40,9 @@ export function useChat(options?: UseChatOptions) {
   const pingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const typingTimerMapRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({})
   const lastTypingSentRef = useRef<number>(0)
+  // Giữ bản mới nhất của connectWs để timer reconnect gọi lại được mà không
+  // tham chiếu biến trước khi khai báo (luật react-hooks immutability).
+  const connectWsRef = useRef<(() => void) | null>(null)
 
   // 1. Tải danh sách phòng từ REST API
   const refreshRooms = useCallback(async () => {
@@ -51,7 +54,9 @@ export function useChat(options?: UseChatOptions) {
   }, [currentUserId])
 
   useEffect(() => {
-    void refreshRooms()
+    // Gọi qua then() để mọi setState chạy trong callback bất đồng bộ
+    // (luật react-hooks/set-state-in-effect — không setState đồng bộ trong effect).
+    void Promise.resolve().then(refreshRooms)
   }, [refreshRooms])
 
   // 2. Tải tin nhắn khi đổi activeRoomId
@@ -87,7 +92,8 @@ export function useChat(options?: UseChatOptions) {
 
   useEffect(() => {
     if (activeRoomId) {
-      void loadMessagesForRoom(activeRoomId)
+      // setState phải nằm trong callback bất đồng bộ (luật react-hooks/set-state-in-effect).
+      void Promise.resolve().then(() => loadMessagesForRoom(activeRoomId))
     }
   }, [activeRoomId, loadMessagesForRoom])
 
@@ -224,7 +230,7 @@ export function useChat(options?: UseChatOptions) {
         // Tự động kết nối lại sau 3s
         if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current)
         reconnectTimerRef.current = setTimeout(() => {
-          connectWs()
+          connectWsRef.current?.()
         }, 3000)
       }
 
@@ -237,9 +243,16 @@ export function useChat(options?: UseChatOptions) {
   }, [currentUserId, activeRoomId, refreshRooms])
 
   useEffect(() => {
-    connectWs()
+    connectWsRef.current = connectWs
+    // Kết nối qua then() để setWsStatus không chạy đồng bộ trong effect
+    // (luật react-hooks/set-state-in-effect); cờ alive chặn kết nối sau khi cleanup.
+    let alive = true
+    void Promise.resolve().then(() => {
+      if (alive) connectWs()
+    })
     const timers = typingTimerMapRef.current
     return () => {
+      alive = false
       if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current)
       if (pingIntervalRef.current) clearInterval(pingIntervalRef.current)
       Object.values(timers).forEach(clearTimeout)
@@ -332,9 +345,10 @@ export function useChat(options?: UseChatOptions) {
   }, [activeRoom, presence])
 
   const isPeerTyping = useMemo(() => {
+    // Không đọc Date.now() trong render (luật purity) — việc hết hạn "đang gõ" do
+    // timer 3s trong onmessage đảm nhận: hết hạn thì entry bị xoá khỏi typingMap.
     if (!activeRoomId) return false
-    const typingInfo = typingMap[activeRoomId]
-    return !!typingInfo && typingInfo.expiresAt > Date.now()
+    return !!typingMap[activeRoomId]
   }, [activeRoomId, typingMap])
 
   return {

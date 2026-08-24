@@ -2,7 +2,7 @@
 // badge/tagline + thêm/sửa/xoá từng gạch đầu dòng (tính năng/lợi ích) hiển thị ở trang Nâng
 // cấp (UpgradeSection.tsx). Gọi thẳng api/admin-plan-marketing.ts. Khác tab "Tính năng theo
 // gói" (bật/tắt TRUY CẬP) — đây thuần là NỘI DUNG QUẢNG CÁO.
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Loader2, Plus, Trash2, Save } from 'lucide-react'
 import { useToast } from '@core/ToastProvider'
 import { getAuthHeader } from '@core/authHeader'
@@ -61,12 +61,16 @@ function PlanSection({ entry, onReload }: { entry: PlanEntry; onReload: () => Pr
   const [newEn, setNewEn] = useState('')
   const [adding, setAdding] = useState(false)
 
-  useEffect(() => {
+  // Đồng bộ lại state cục bộ khi dữ liệu gói đổi (sau khi reload từ server) — dùng mẫu
+  // "setState trong lúc render" chuẩn React thay cho effect, tránh render thừa.
+  const [prevEntry, setPrevEntry] = useState(entry)
+  if (prevEntry !== entry) {
+    setPrevEntry(entry)
     setBadge(entry.badge)
     setTaglineVi(entry.taglineVi)
     setTaglineEn(entry.taglineEn)
     setRows(entry.bullets)
-  }, [entry])
+  }
 
   async function saveInfo() {
     setSavingInfo(true)
@@ -251,24 +255,33 @@ function PlanSection({ entry, onReload }: { entry: PlanEntry; onReload: () => Pr
 
 export default function AdminPlanMarketingPanel() {
   const toast = useToast()
+  // .error là useCallback ổn định trong ToastProvider — dùng làm dependency cho load.
+  const toastError = toast.error
   const [data, setData] = useState<MarketingData | null>(null)
   const [loading, setLoading] = useState(true)
 
-  async function load() {
-    setLoading(true)
+  // Không setLoading(true) đồng bộ ở đây — lúc mount loading đã là true sẵn; khi reload từ
+  // handler thì hàm reload() bên dưới lo phần bật spinner.
+  const load = useCallback(async () => {
     try {
       setData((await api('GET')) as MarketingData)
     } catch (err) {
-      toast.error(`Tải nội dung thất bại: ${(err as Error).message}`)
+      toastError(`Tải nội dung thất bại: ${(err as Error).message}`)
     } finally {
       setLoading(false)
     }
+  }, [toastError])
+
+  // Gọi từ handler (các nút Lưu/Thêm/Xoá trong PlanSection) — setState trong handler là hợp lệ.
+  async function reload() {
+    setLoading(true)
+    await load()
   }
 
   useEffect(() => {
-    void load()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    // Hoãn sang microtask để KHÔNG setState đồng bộ trong thân effect (luật react-hooks 7).
+    void Promise.resolve().then(load)
+  }, [load])
 
   return (
     <div className="space-y-4">
@@ -286,7 +299,7 @@ export default function AdminPlanMarketingPanel() {
       {!loading &&
         data &&
         PLAN_SECTIONS.map(({ key }) => (
-          <PlanSection key={key} entry={data.plans[key]} onReload={load} />
+          <PlanSection key={key} entry={data.plans[key]} onReload={reload} />
         ))}
     </div>
   )

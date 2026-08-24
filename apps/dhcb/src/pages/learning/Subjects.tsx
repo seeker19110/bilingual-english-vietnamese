@@ -77,8 +77,15 @@ export default function Subjects() {
   const [searchQuery, setSearchQuery] = useState('')
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  // Đổi bộ lọc → bật lại spinner NGAY TRONG RENDER (pattern so-sánh-prev, không
+  // setState đồng bộ trong effect); mount đầu đã mặc định loading=true.
+  const [prevFilter, setPrevFilter] = useState(filter)
+  if (filter !== prevFilter) {
+    setPrevFilter(filter)
     setLoading(true)
+  }
+
+  useEffect(() => {
     listSubjects(filter === 'all' ? undefined : filter)
       .then(setSubjects)
       .catch(() => setSubjects([]))

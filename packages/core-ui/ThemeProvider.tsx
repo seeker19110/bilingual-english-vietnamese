@@ -17,6 +17,8 @@ export interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children, locked = false, settled = true }: ThemeProviderProps) {
+  // `theme` = lựa chọn THẬT của user (đọc từ localStorage) — KHÔNG bị ghi đè khi khoá
+  // Nhi đồng, nên bỏ khoá là quay lại đúng theme đã chọn (không hề bị mất).
   const [theme, setThemeState] = useState<Theme>(getTheme)
 
   function setTheme(t: Theme) {
@@ -25,26 +27,22 @@ export function ThemeProvider({ children, locked = false, settled = true }: Them
     setThemeState(t)
   }
 
-  // Tự áp/gỡ theme "Nhi đồng" ngay khi biết chắc ageGroup. CHỦ Ý dùng applyTheme() (chỉ đổi
-  // DOM/hiển thị) thay vì persistTheme() ở đây — KHÔNG ghi đè localStorage (ui_theme) để giữ
-  // nguyên lựa chọn theme thật của user; nếu sau này đổi lại nhóm tuổi khác nhi_dong, đọc lại
-  // đúng theme đã chọn trước đó qua getTheme() (không hề bị mất).
+  // Theme HIỂN THỊ suy ra từ props (derived state — không setState trong effect,
+  // luật react-hooks/set-state-in-effect): bị khoá → luôn "Nhi đồng".
+  const effectiveTheme: Theme = locked ? KID_THEME.value : theme
+
+  // Effect chỉ còn đồng bộ DOM (data-theme trên <html>) — CHỦ Ý dùng applyTheme() thay vì
+  // persistTheme(): KHÔNG ghi đè localStorage (ui_theme) khi áp theme Nhi đồng.
+  // Trong lúc CHƯA rõ có khoá hay không (!settled && !locked) thì không đụng DOM —
+  // tránh giật theme trước khi biết chắc (giữ nguyên hành vi cũ).
   useEffect(() => {
-    if (locked) {
-      if (theme !== KID_THEME.value) {
-        applyTheme(KID_THEME.value)
-        setThemeState(KID_THEME.value)
-      }
-    } else if (settled && theme === KID_THEME.value) {
-      // Đổi nhóm tuổi ra khỏi Nhi đồng — quay lại đúng theme thật đã lưu trong localStorage.
-      const stored = getTheme()
-      applyTheme(stored)
-      setThemeState(stored)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [locked, settled])
+    if (!locked && !settled) return
+    applyTheme(effectiveTheme)
+  }, [effectiveTheme, locked, settled])
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, locked }}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider value={{ theme: effectiveTheme, setTheme, locked }}>
+      {children}
+    </ThemeContext.Provider>
   )
 }

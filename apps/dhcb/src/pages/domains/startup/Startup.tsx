@@ -90,7 +90,9 @@ export default function Startup() {
   }, [toast, selectedVentureId])
 
   useEffect(() => {
-    loadVentures()
+    // Gọi qua then() để mọi setState chạy trong callback bất đồng bộ
+    // (luật react-hooks/set-state-in-effect — không setState đồng bộ trong effect).
+    void Promise.resolve().then(loadVentures)
   }, [loadVentures])
 
   const loadVentureDetails = useCallback(
@@ -114,7 +116,8 @@ export default function Startup() {
 
   useEffect(() => {
     if (selectedVentureId) {
-      loadVentureDetails(selectedVentureId)
+      // setState phải nằm trong callback bất đồng bộ (luật react-hooks/set-state-in-effect).
+      void Promise.resolve().then(() => loadVentureDetails(selectedVentureId))
     }
   }, [selectedVentureId, loadVentureDetails])
 

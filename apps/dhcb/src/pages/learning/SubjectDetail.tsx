@@ -103,8 +103,11 @@ export default function SubjectDetail() {
       })
   }, [subjectId, nav])
 
-  // Handle URL query parameters (e.g. ?q=... from Home search)
-  useEffect(() => {
+  // Handle URL query parameters (e.g. ?q=... from Home search) — pattern so-sánh-prev
+  // ngay trong render (không setState đồng bộ trong effect), chạy cả lần mount đầu.
+  const [prevSearch, setPrevSearch] = useState<string | null>(null)
+  if (location.search !== prevSearch) {
+    setPrevSearch(location.search)
     const params = new URLSearchParams(location.search)
     const qParam = params.get('q')
     const gradeParam = params.get('grade')
@@ -113,7 +116,7 @@ export default function SubjectDetail() {
       setProblemInput(qParam)
       setActiveTab('solver')
     }
-  }, [location.search])
+  }
 
   const curriculumList = subjectId ? STEM_CURRICULUM[subjectId] || [] : []
   const currentGradeData =

@@ -68,13 +68,21 @@ export default function Profile() {
   const [questsOpen, setQuestsOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
 
-  // Backfill huy hiệu
+  // Backfill huy hiệu — chạy trong callback bất đồng bộ để không setState đồng bộ
+  // trong effect (luật react-hooks/set-state-in-effect).
   useEffect(() => {
     if (!user) return
-    const fresh = checkNewAchievements(user.id)
-    if (fresh.length > 0) {
-      setEarned(getEarnedAchievements(user.id))
-      for (const a of fresh) toast.success(achievementMessage(a, isA))
+    let alive = true
+    void Promise.resolve().then(() => {
+      if (!alive) return
+      const fresh = checkNewAchievements(user.id)
+      if (fresh.length > 0) {
+        setEarned(getEarnedAchievements(user.id))
+        for (const a of fresh) toast.success(achievementMessage(a, isA))
+      }
+    })
+    return () => {
+      alive = false
     }
   }, [user, isA, toast])
 

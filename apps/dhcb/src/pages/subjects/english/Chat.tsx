@@ -342,6 +342,18 @@ function TypingDots() {
   )
 }
 
+// Tạo Message mới kèm id ngẫu nhiên + mốc thời gian — đặt NGOÀI component để
+// React Compiler không coi crypto.randomUUID/Date.now là gọi trong lúc render
+// (các hàm này chỉ chạy trong event handler async).
+function newMessage(role: Message['role'], content: string): Message {
+  return { id: crypto.randomUUID(), role, content, timestamp: Date.now() }
+}
+
+// Mốc thời gian hiện tại (ms) — tách ra ngoài component, lý do như newMessage.
+function currentTimeMs(): number {
+  return Date.now()
+}
+
 // ── Main Chat page ────────────────────────────────────────────────────────────
 export default function Chat() {
   const user = useAuth().user! // RequireAuth đã đảm bảo có user trước khi vào trang
@@ -430,10 +442,8 @@ export default function Chat() {
         userId: user.id,
         situation,
         level,
-        messages: [
-          { id: crypto.randomUUID(), role: 'assistant', content: reply, timestamp: Date.now() },
-        ],
-        createdAt: Date.now(),
+        messages: [newMessage('assistant', reply)],
+        createdAt: currentTimeMs(),
         ...(targets ? { targetWords: targets } : {}),
       }
       saveChatSession(newSession)
@@ -473,12 +483,7 @@ export default function Chat() {
       setLimitHit(true)
       return
     }
-    const userMsg: Message = {
-      id: crypto.randomUUID(),
-      role: 'user',
-      content: text,
-      timestamp: Date.now(),
-    }
+    const userMsg: Message = newMessage('user', text)
     const updated = { ...session, messages: [...session.messages, userMsg] }
     setSession(updated)
     saveChatSession(updated)
@@ -498,12 +503,7 @@ export default function Chat() {
     )
     try {
       const reply = await callClaude(history, sys)
-      const assistantMsg: Message = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: reply,
-        timestamp: Date.now(),
-      }
+      const assistantMsg: Message = newMessage('assistant', reply)
       const final = { ...updated, messages: [...updated.messages, assistantMsg] }
       saveChatSession(final)
       // Nếu gia sư có phần "✅ Nhận xét" → thu vào SỔ LỖI CÁ NHÂN. Chat không tách riêng

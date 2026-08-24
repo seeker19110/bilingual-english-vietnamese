@@ -75,14 +75,20 @@ export const AmbientScreenCopilot: React.FC = () => {
 
   // Tự động phân tích định kỳ nếu bật Auto-Capture
   useEffect(() => {
+    let kickoff: NodeJS.Timeout | null = null
     let timer: NodeJS.Timeout | null = null
     if (autoCapture && stream) {
-      captureAndAnalyze()
+      // Gọi lượt đầu qua setTimeout(0) — setState của captureAndAnalyze chạy trong
+      // callback timer (async), không đồng bộ trong thân effect.
+      kickoff = setTimeout(() => {
+        void captureAndAnalyze()
+      }, 0)
       timer = setInterval(() => {
-        captureAndAnalyze()
+        void captureAndAnalyze()
       }, 15_000)
     }
     return () => {
+      if (kickoff) clearTimeout(kickoff)
       if (timer) clearInterval(timer)
     }
   }, [autoCapture, stream, captureAndAnalyze])

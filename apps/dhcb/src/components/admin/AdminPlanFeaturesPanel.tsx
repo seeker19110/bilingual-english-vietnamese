@@ -2,7 +2,7 @@
 // Bảng ma trận: hàng = tính năng, cột = Free/Pro/VIP, mỗi ô là checkbox bật/tắt. Gọi thẳng
 // api/admin-plan-features.ts — thêm tính năng mới (mặc định bật cả 3 gói) + xoá hẳn 1 tính
 // năng khỏi danh mục.
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Loader2, Plus, Trash2 } from 'lucide-react'
 import { useToast } from '@core/ToastProvider'
 import { getAuthHeader } from '@core/authHeader'
@@ -30,6 +30,8 @@ const PLAN_COLS: { key: Plan; label: string }[] = [
 
 export default function AdminPlanFeaturesPanel() {
   const toast = useToast()
+  // .error là useCallback ổn định trong ToastProvider — dùng làm dependency cho load.
+  const toastError = toast.error
   const [matrix, setMatrix] = useState<Matrix | null>(null)
   const [loading, setLoading] = useState(true)
   const [togglingCell, setTogglingCell] = useState<string | null>(null)
@@ -38,10 +40,12 @@ export default function AdminPlanFeaturesPanel() {
   const [newLabel, setNewLabel] = useState('')
   const [adding, setAdding] = useState(false)
 
-  async function load() {
-    setLoading(true)
+  const load = useCallback(async () => {
     try {
       const headers = await getAuthHeader()
+      // Bật spinner SAU await đầu tiên — setState đồng bộ trong effect bị cấm (react-hooks 7);
+      // lúc mount loading đã là true sẵn nên không đổi hành vi.
+      setLoading(true)
       const res = await fetch('/api/admin-plan-features', { headers })
       if (!res.ok) {
         const data = (await res.json().catch(() => ({}))) as { error?: string }
@@ -49,16 +53,16 @@ export default function AdminPlanFeaturesPanel() {
       }
       setMatrix((await res.json()) as Matrix)
     } catch (err) {
-      toast.error(`Tải danh sách thất bại: ${(err as Error).message}`)
+      toastError(`Tải danh sách thất bại: ${(err as Error).message}`)
     } finally {
       setLoading(false)
     }
-  }
+  }, [toastError])
 
   useEffect(() => {
-    void load()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    // Hoãn sang microtask để KHÔNG setState đồng bộ trong thân effect (luật react-hooks 7).
+    void Promise.resolve().then(load)
+  }, [load])
 
   async function handleToggle(featureKey: string, plan: Plan, enabled: boolean) {
     const cellId = `${featureKey}:${plan}`

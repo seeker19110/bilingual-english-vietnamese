@@ -2,6 +2,28 @@ import { useState, useEffect } from 'react'
 import { Briefcase, Zap, CheckCircle2, Plus, BookOpen } from 'lucide-react'
 import type { HarvestedMistake, AutoSrsCard } from '@dhcb/core-contracts/workplaceErrorHarvester'
 
+// Fetch dữ liệu lỗi + thẻ SRS — helper thuần fetch NGOÀI component, để cả effect
+// mount lẫn handler dùng chung mà không dính rule set-state-in-effect.
+async function fetchWorkplaceData(): Promise<{
+  mistakes?: HarvestedMistake[]
+  cards?: AutoSrsCard[]
+}> {
+  const [mRes, cRes] = await Promise.all([
+    fetch('/api/workplace-insights'),
+    fetch('/api/workplace-insights?kind=srs_cards'),
+  ])
+  const result: { mistakes?: HarvestedMistake[]; cards?: AutoSrsCard[] } = {}
+  if (mRes.ok) {
+    const mData = await mRes.json()
+    if (mData.mistakes) result.mistakes = mData.mistakes
+  }
+  if (cRes.ok) {
+    const cData = await cRes.json()
+    if (cData.cards) result.cards = cData.cards
+  }
+  return result
+}
+
 export default function WorkplaceHarvesterCard() {
   const [mistakes, setMistakes] = useState<HarvestedMistake[]>([])
   const [srsCards, setSrsCards] = useState<AutoSrsCard[]>([])
@@ -10,27 +32,30 @@ export default function WorkplaceHarvesterCard() {
   const [convertingId, setConvertingId] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'mistakes' | 'cards'>('mistakes')
 
+  // Dùng lại được từ handler (harvest/convert xong nạp lại danh sách).
   const loadData = async () => {
     try {
-      const [mRes, cRes] = await Promise.all([
-        fetch('/api/workplace-insights'),
-        fetch('/api/workplace-insights?kind=srs_cards'),
-      ])
-      if (mRes.ok) {
-        const mData = await mRes.json()
-        if (mData.mistakes) setMistakes(mData.mistakes)
-      }
-      if (cRes.ok) {
-        const cData = await cRes.json()
-        if (cData.cards) setSrsCards(cData.cards)
-      }
+      const { mistakes: m, cards: c } = await fetchWorkplaceData()
+      if (m) setMistakes(m)
+      if (c) setSrsCards(c)
     } catch (err) {
       console.error('Failed to load workplace harvester data', err)
     }
   }
 
+  // Nạp lần đầu lúc mount — hàm async định nghĩa TRONG effect, mọi setState
+  // nằm sau await (không setState đồng bộ trong thân effect).
   useEffect(() => {
-    loadData()
+    const load = async () => {
+      try {
+        const { mistakes: m, cards: c } = await fetchWorkplaceData()
+        if (m) setMistakes(m)
+        if (c) setSrsCards(c)
+      } catch (err) {
+        console.error('Failed to load workplace harvester data', err)
+      }
+    }
+    void load()
   }, [])
 
   const handleHarvestText = async (e: React.FormEvent) => {

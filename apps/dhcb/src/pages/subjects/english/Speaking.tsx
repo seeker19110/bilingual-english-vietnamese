@@ -444,6 +444,18 @@ function TypingDots() {
   )
 }
 
+// Tạo Message mới kèm id ngẫu nhiên + mốc thời gian — đặt NGOÀI component để
+// React Compiler không coi crypto.randomUUID/Date.now là gọi trong lúc render
+// (các hàm này chỉ chạy trong event handler async).
+function newMessage(fields: Omit<Message, 'id' | 'timestamp'>): Message {
+  return { ...fields, id: crypto.randomUUID(), timestamp: Date.now() }
+}
+
+// Mốc thời gian hiện tại (ms) — tách ra ngoài component, lý do như newMessage.
+function currentTimeMs(): number {
+  return Date.now()
+}
+
 // ── Main Speaking page ──────────────────────────────────────────────────
 export default function Speaking() {
   const user = useAuth().user! // RequireAuth đã đảm bảo có user trước khi vào trang
@@ -634,22 +646,20 @@ export default function Speaking() {
     try {
       const raw = await callClaude([], sys, 1024, 'speaking')
       const ai = parseJson<AIResponse>(raw) ?? { speech: raw, feedback: '', corrected: '' }
-      const msg: Message = {
-        id: crypto.randomUUID(),
+      const msg: Message = newMessage({
         role: 'assistant',
         content: raw,
         speechEn: ai.speech,
         feedbackVi: ai.feedback,
         correctedEn: ai.corrected,
-        timestamp: Date.now(),
-      }
+      })
       const s: SpeakingSession = {
         id: crypto.randomUUID(),
         userId: user.id,
         situation,
         level,
         messages: [msg],
-        createdAt: Date.now(),
+        createdAt: currentTimeMs(),
         ...(targets ? { targetWords: targets } : {}),
       }
       saveSpeakingSession(s)
@@ -782,12 +792,7 @@ export default function Speaking() {
       setLimitHit(true)
       return
     }
-    const userMsg: Message = {
-      id: crypto.randomUUID(),
-      role: 'user',
-      content: text,
-      timestamp: Date.now(),
-    }
+    const userMsg: Message = newMessage({ role: 'user', content: text })
     const updated = { ...session, messages: [...session.messages, userMsg] }
     setSession(updated)
     saveSpeakingSession(updated)
@@ -809,15 +814,13 @@ export default function Speaking() {
     try {
       const raw = await callClaude(history, sys, 1024, 'speaking')
       const ai = parseJson<AIResponse>(raw) ?? { speech: raw, feedback: '', corrected: '' }
-      const aiMsg: Message = {
-        id: crypto.randomUUID(),
+      const aiMsg: Message = newMessage({
         role: 'assistant',
         content: raw,
         speechEn: ai.speech,
         feedbackVi: ai.feedback,
         correctedEn: ai.corrected,
-        timestamp: Date.now(),
-      }
+      })
       const final = { ...updated, messages: [...updated.messages, aiMsg] }
       saveSpeakingSession(final)
       // Nếu AI có sửa lỗi → thu vào SỔ LỖI CÁ NHÂN (câu sai = câu học viên vừa nói).

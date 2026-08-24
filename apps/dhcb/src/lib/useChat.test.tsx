@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { act } from 'react'
+import { act, useEffect } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { useChat, type UseChatOptions } from './useChat'
 import * as chatApi from './chatApi'
@@ -15,7 +15,12 @@ vi.mock('../context/useAuth.js', () => ({
 let hookState: ReturnType<typeof useChat> | undefined
 
 function TestChatConsumer({ options }: { options?: UseChatOptions }) {
-  hookState = useChat(options)
+  const state = useChat(options)
+  // Không gán biến module-scope trong lúc render (luật react-hooks globals) —
+  // chuyển vào effect, chạy sau mỗi lần commit nên test vẫn đọc được giá trị mới nhất.
+  useEffect(() => {
+    hookState = state
+  })
   return null
 }
 

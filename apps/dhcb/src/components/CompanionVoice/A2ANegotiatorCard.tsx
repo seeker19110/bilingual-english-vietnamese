@@ -11,6 +11,29 @@ import {
 } from 'lucide-react'
 import type { PeerStudyMatch, A2ANegotiationResult } from '@dhcb/core-contracts/a2aProtocol'
 
+// Dựng thông điệp bắt tay A2A — helper NGOÀI component (Date.now là hàm không
+// thuần, chỉ được gọi từ event handler, không được gọi trong lúc render).
+function buildHandshakeMessage(peer: PeerStudyMatch) {
+  const now = Date.now()
+  return {
+    messageId: crypto.randomUUID(),
+    senderDid: 'did:key:z6MkpMySelf',
+    recipientDid: peer.peerDid,
+    senderPersonId: '550e8400-e29b-41d4-a716-446655440001',
+    recipientPersonId: peer.peerPersonId,
+    purpose: 'study_partner_handshake',
+    payload: {
+      topic: peer.sharedSkill,
+      proposedWindow: new Date(now + 86400_000).toISOString(),
+      durationMinutes: 30,
+    },
+    signature: 'ed25519_sig_demo_handshake',
+    timestamp: new Date(now).toISOString(),
+    expiresAt: new Date(now + 3600_000).toISOString(),
+    schemaVersion: 'v3.0.0',
+  }
+}
+
 export const A2ANegotiatorCard: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [matches, setMatches] = useState<PeerStudyMatch[]>([])
@@ -18,9 +41,10 @@ export const A2ANegotiatorCard: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
 
-  const fetchData = async () => {
-    try {
-      setLoading(true)
+  // Nạp dữ liệu 1 lần lúc mount — mọi setState đều nằm SAU await (callback async),
+  // không setState đồng bộ trong thân effect. `loading` khởi tạo mặc định true.
+  useEffect(() => {
+    const fetchData = async () => {
       const [resMatches, resActive] = await Promise.all([
         fetch('/api/a2a?kind=matches'),
         fetch('/api/a2a?kind=active'),
@@ -34,37 +58,18 @@ export const A2ANegotiatorCard: React.FC = () => {
         const data = await resActive.json()
         if (data.negotiations) setNegotiations(data.negotiations)
       }
-    } catch {
-      // Bỏ qua lỗi
-    } finally {
-      setLoading(false)
     }
-  }
-
-  useEffect(() => {
     fetchData()
+      .catch(() => {
+        // Bỏ qua lỗi
+      })
+      .finally(() => setLoading(false))
   }, [])
 
   const handleStartHandshake = async (peer: PeerStudyMatch) => {
     try {
       setActionLoading(peer.peerPersonId)
-      const msg = {
-        messageId: crypto.randomUUID(),
-        senderDid: 'did:key:z6MkpMySelf',
-        recipientDid: peer.peerDid,
-        senderPersonId: '550e8400-e29b-41d4-a716-446655440001',
-        recipientPersonId: peer.peerPersonId,
-        purpose: 'study_partner_handshake',
-        payload: {
-          topic: peer.sharedSkill,
-          proposedWindow: new Date(Date.now() + 86400_000).toISOString(),
-          durationMinutes: 30,
-        },
-        signature: 'ed25519_sig_demo_handshake',
-        timestamp: new Date().toISOString(),
-        expiresAt: new Date(Date.now() + 3600_000).toISOString(),
-        schemaVersion: 'v3.0.0',
-      }
+      const msg = buildHandshakeMessage(peer)
 
       const res = await fetch('/api/a2a', {
         method: 'POST',

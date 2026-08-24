@@ -118,7 +118,9 @@ export default function Career() {
   }, [toast, selectedGoalId])
 
   useEffect(() => {
-    loadData()
+    // Gọi qua then() để mọi setState chạy trong callback bất đồng bộ
+    // (luật react-hooks/set-state-in-effect — không setState đồng bộ trong effect).
+    void Promise.resolve().then(loadData)
   }, [loadData])
 
   const loadSkillGap = useCallback(async (goalId: string) => {
@@ -134,11 +136,13 @@ export default function Career() {
   }, [])
 
   useEffect(() => {
-    if (selectedGoalId) {
-      loadSkillGap(selectedGoalId)
-    } else {
+    // setState phải nằm trong callback bất đồng bộ (luật react-hooks/set-state-in-effect).
+    void Promise.resolve().then(() => {
+      if (selectedGoalId) {
+        return loadSkillGap(selectedGoalId)
+      }
       setSkillGap(null)
-    }
+    })
   }, [selectedGoalId, loadSkillGap])
 
   // Người dùng tự chấm bậc thành thạo cho một kỹ năng, rồi tải lại bảng phân tích để thấy

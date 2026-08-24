@@ -64,9 +64,10 @@ export default function AdminTtsCachePanel() {
   const [msg, setMsg] = useState<string | null>(null)
 
   const fetchData = useCallback(async () => {
-    setError(null)
     try {
       const headers = await getAuthHeader()
+      // Xoá lỗi cũ SAU await đầu tiên — setState đồng bộ trong effect bị cấm (react-hooks 7).
+      setError(null)
       const res = await fetch('/api/admin-tts-cache?days=30', { headers })
       if (res.status === 401 || res.status === 403) {
         setError('Chỉ admin mới truy cập được')
@@ -82,7 +83,8 @@ export default function AdminTtsCachePanel() {
   }, [])
 
   useEffect(() => {
-    void fetchData()
+    // Hoãn sang microtask để KHÔNG setState đồng bộ trong thân effect (luật react-hooks 7).
+    void Promise.resolve().then(fetchData)
   }, [fetchData])
 
   // Quét đang chạy → tự hỏi lại mỗi 5s cho tới khi xong, để admin không phải bấm làm mới tay.

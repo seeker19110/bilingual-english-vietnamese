@@ -6,7 +6,7 @@
 // liên tiếp (streak). Khi bật, ta HỎI bạn muốn học lúc mấy giờ → server gửi nhắc đúng
 // giờ đó cho những ngày bạn chưa học (xem api/push.ts + bộ hẹn giờ trong server.ts).
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Share2, Route, Bell, BellOff, X, Clock } from 'lucide-react'
 import ShareProgress from './ShareProgress'
@@ -39,18 +39,14 @@ export default function QuickActions() {
   const { user } = useAuth()
   const userId = user?.id ?? ''
   const isA = getDirection() === 'A'
+  const supported = isPushSupported()
   const [showShare, setShare] = useState(false)
-  const [pushOn, setPushOn] = useState(false)
+  // Trạng thái quyền thông báo hiện tại — đọc 1 lần qua lazy initializer
+  // (thay cho setState đồng bộ trong effect trước đây; `supported` không đổi trong đời component).
+  const [pushOn, setPushOn] = useState(() => supported && getNotifPermission() === 'granted')
   const [pushLoading, setPushL] = useState(false)
   const [showTime, setShowTime] = useState(false)
   const [remindHour, setRemindHour] = useState(() => loadRemindHour(userId))
-  const supported = isPushSupported()
-
-  // Kiểm tra trạng thái quyền thông báo hiện tại
-  useEffect(() => {
-    if (!supported) return
-    setPushOn(getNotifPermission() === 'granted')
-  }, [supported])
 
   // Bấm nút Nhắc học: đang TẮT → mở hộp chọn giờ; đang BẬT → tắt nhắc.
   function onNotifClick() {

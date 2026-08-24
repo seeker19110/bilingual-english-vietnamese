@@ -57,10 +57,12 @@ export default function AdminFeatureStatusPanel() {
   const [error, setError] = useState<string | null>(null)
 
   const fetchStatus = useCallback(async () => {
-    setLoading(true)
-    setError(null)
     try {
       const headers = await getAuthHeader()
+      // Bật spinner SAU await đầu tiên — setState đồng bộ trong effect bị cấm (react-hooks 7);
+      // lúc mount loading đã là true sẵn nên không đổi hành vi.
+      setLoading(true)
+      setError(null)
       const res = await fetch('/api/admin-feature-status', { headers })
       if (res.status === 401 || res.status === 403) {
         setError('Chỉ admin mới truy cập được')
@@ -78,7 +80,8 @@ export default function AdminFeatureStatusPanel() {
   }, [])
 
   useEffect(() => {
-    fetchStatus()
+    // Hoãn sang microtask để KHÔNG setState đồng bộ trong thân effect (luật react-hooks 7).
+    void Promise.resolve().then(fetchStatus)
   }, [fetchStatus])
 
   const runCheckNow = async () => {

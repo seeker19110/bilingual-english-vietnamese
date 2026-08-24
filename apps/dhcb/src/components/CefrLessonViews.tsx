@@ -682,12 +682,21 @@ export function DialogueView({
   const [voiceB, setVoiceB] = useState<Voice>(initialVoices.voiceB)
   const voiceARef = useRef<Voice>(initialVoices.voiceA)
   const voiceBRef = useRef<Voice>(initialVoices.voiceB)
-  useEffect(() => {
+
+  // Reset giọng khi mở hội thoại khác — dùng mẫu "so sánh prev trong render"
+  // (React cho phép setState có điều kiện ngay trong render để dẫn xuất từ prop,
+  // thay cho setState đồng bộ trong effect trước đây).
+  const [prevInitialVoices, setPrevInitialVoices] = useState(initialVoices)
+  if (prevInitialVoices !== initialVoices) {
+    setPrevInitialVoices(initialVoices)
     setVoiceA(initialVoices.voiceA)
-    voiceARef.current = initialVoices.voiceA
     setVoiceB(initialVoices.voiceB)
-    voiceBRef.current = initialVoices.voiceB
-  }, [initialVoices])
+  }
+  // Đồng bộ ref (đọc trong vòng phát async) theo state — ghi ref trong effect, không trong render.
+  useEffect(() => {
+    voiceARef.current = voiceA
+    voiceBRef.current = voiceB
+  }, [voiceA, voiceB])
 
   function changeVoiceA(v: Voice) {
     setVoiceA(v)

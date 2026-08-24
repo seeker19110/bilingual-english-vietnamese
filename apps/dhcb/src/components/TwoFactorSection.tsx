@@ -42,9 +42,16 @@ export default function TwoFactorSection({ isA }: { isA: boolean }) {
     if (r.ok) setStatus(r.data)
   }, [])
 
+  // Nạp trạng thái 2FA lúc mount — hàm async định nghĩa TRONG effect, setState
+  // nằm sau await (không setState đồng bộ trong thân effect). `refresh` ở trên
+  // vẫn dùng cho các handler bật/tắt 2FA.
   useEffect(() => {
-    void refresh()
-  }, [refresh])
+    const init = async () => {
+      const r = await fetchTwoFactorStatus()
+      if (r.ok) setStatus(r.data)
+    }
+    void init()
+  }, [])
 
   // Dựng QR từ chuỗi otpauth. Lỗi thì bỏ qua — vẫn còn đường gõ tay secret bên dưới.
   useEffect(() => {

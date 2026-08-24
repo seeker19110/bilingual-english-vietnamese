@@ -18,21 +18,6 @@ export const NeuroAffectiveCard: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [toggling, setToggling] = useState<string | null>(null)
 
-  const fetchState = async () => {
-    try {
-      setLoading(true)
-      const res = await fetch('/api/neuro-affective')
-      if (res.ok) {
-        const data = await res.json()
-        if (data.state) setState(data.state)
-      }
-    } catch {
-      // Bỏ qua lỗi
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const handleToggleShield = async (shield: ActiveShield, currentlyEnabled: boolean) => {
     try {
       setToggling(shield)
@@ -56,8 +41,22 @@ export const NeuroAffectiveCard: React.FC = () => {
     }
   }
 
+  // Nạp trạng thái 1 lần lúc mount — hàm async định nghĩa TRONG effect, mọi
+  // setState nằm sau await (không setState đồng bộ trong thân effect);
+  // `loading` khởi tạo mặc định true nên không cần setLoading(true).
   useEffect(() => {
+    const fetchState = async () => {
+      const res = await fetch('/api/neuro-affective')
+      if (res.ok) {
+        const data = await res.json()
+        if (data.state) setState(data.state)
+      }
+    }
     fetchState()
+      .catch(() => {
+        // Bỏ qua lỗi
+      })
+      .finally(() => setLoading(false))
   }, [])
 
   if (loading && !state) return null

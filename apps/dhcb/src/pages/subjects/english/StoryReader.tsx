@@ -33,11 +33,18 @@ export default function StoryReader() {
   const [notFound, setNotFound] = useState(false)
   const [showTranslation, setShowTranslation] = useState(false) // mặc định ẨN — trang luyện nghe
 
+  // Đổi truyện (id đổi) → quay lại trạng thái đang tải — pattern so-sánh-prev ngay
+  // trong render (không setState đồng bộ trong effect). Mount lần đầu đã đúng mặc định.
+  const [prevId, setPrevId] = useState(id)
+  if (id !== prevId) {
+    setPrevId(id)
+    setLoading(true)
+    setNotFound(false)
+  }
+
   useEffect(() => {
     if (!id) return
     let alive = true
-    setLoading(true)
-    setNotFound(false)
     loadStory(id).then((s) => {
       if (!alive) return
       setLoading(false)
@@ -151,7 +158,14 @@ export default function StoryReader() {
   }
 
   const targetLang = isA ? 'en-US' : 'vi-VN'
-  let globalIdx = -1
+  // Chỉ số dòng toàn cục = offset cộng dồn của từng đoạn + vị trí trong đoạn —
+  // thay cho biến đếm bị gán dần trong JSX (React Compiler cấm reassign khi render).
+  const paraOffsets: number[] = []
+  let paraOffsetAcc = 0
+  for (const para of paragraphs) {
+    paraOffsets.push(paraOffsetAcc)
+    paraOffsetAcc += para.length
+  }
 
   return (
     <div className="min-h-dvh bg-zinc-950">
@@ -262,8 +276,7 @@ export default function StoryReader() {
           {paragraphs.map((para, pi) => (
             <div key={pi} className="space-y-2">
               {para.map((ln, li) => {
-                globalIdx += 1
-                const idx = globalIdx
+                const idx = (paraOffsets[pi] ?? 0) + li
                 const isActive = playing && activeIdx === idx
                 return (
                   <div
