@@ -152,11 +152,10 @@ Hệ thống được chuẩn hóa theo 10 bộ quy chuẩn SOTA chuyên biệt 
   solution file, compilerOptions chung ở `tsconfig.base.json`), `apps/server/` (gói `@dhcb/server` — Express: `src/server.ts` khởi tạo app/middleware/static/scheduler, `src/routes.ts` bảng gắn ~100 route API, `src/api/{core,billing,admin,personal,domains,learning,platform,subjects/english}/` handler chia theo trụ (PR-S4, URL không đổi) + `_lib/` hạ tầng; dời từ gốc ở PR-S3, output biên dịch VẪN là `dist-server/server.js`), `packages/`
   (15 gói npm workspace thật: `@dhcb/core-*` + `@dhcb/subject-english` (logic môn Anh); `core-domains` gộp 4 gói career/work/startup/life; đã xoá `core-grading` mồ côi, MỖI GÓI có `package.json` + `tsconfig.json`
   composite; gói mới `core-http` = hạ tầng http/validation/mailer tách từ `api/_lib`),
-  `apps/hub/` (gói `hub` — Vite app **riêng, tách khỏi `@dhcb/app`**: trang chủ/landing giới thiệu
-  nền tảng tại domain gốc, "Global Studio Switcher" chuyển nhanh giữa các miền/subject, `HubLogin`;
-  build qua `npm run build --workspace=hub` gọi trong script `build` gốc; **chưa đổi tên theo quy
-  ước `@dhcb/*` của các gói khác** — ghi nhận ở đây, chưa phải việc cần làm ngay), `postgres/`,
-  `scripts/`, `docs/`.
+  `apps/hub/` (gói `@dhcb/hub` — Vite app **riêng, tách khỏi `@dhcb/app`**: trang chủ/landing
+  giới thiệu nền tảng "Đồng Hành Cùng Bạn" tại domain gốc, "Global Studio Switcher" chuyển nhanh
+  giữa các miền/subject, `HubLogin`; build qua `npm run build --workspace=@dhcb/hub` gọi trong
+  script `build` gốc), `postgres/`, `scripts/`, `docs/`.
   **Import xuyên gói dùng tên gói `@dhcb/<gói>/<file>` (KHÔNG đuôi `.js`), import nội bộ gói
   dùng đường tương đối có đuôi `.js`.** Luật phụ thuộc (ESLint chặn): `packages/` không import
   `apps/` và không import `api/`. Build backend = `npm run build:packages` (`tsc -b` project
