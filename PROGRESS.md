@@ -6090,3 +6090,34 @@ deploy.yml` không còn tự inline các bước, nay gọi thẳng `bash script
       `getByText` không đủ cụ thể + phụ thuộc thời điểm phản hồi `/api/daily-quests` không mock
       trong test này). Đã sửa locator sang `getByRole('heading', { name: /Bạn Đồng Hành AI/ })` cho
       rõ ràng, không đổi sản phẩm.
+
+### Quét lại tài liệu + thống nhất thương hiệu "Đồng Hành Cùng Bạn" — PR #648 (2026-08-24, đã merge)
+
+Người dùng yêu cầu "quét lại toàn dự án và cập nhật thông tin, nhãn, title cho đúng". Phạm vi đã
+chọn qua `AskUserQuestion`: tài liệu trạng thái + metadata code/package + nhãn GitHub (không có
+open issue nào cần đổi nhãn tại thời điểm làm — đã xác nhận bằng `list_issues`).
+
+- **CLAUDE.md mục 6 "Cấu trúc"**: bổ sung `apps/hub/` (gói `@dhcb/hub`) — app này tồn tại thật,
+  build/deploy thật (`npm run build --workspace=@dhcb/hub`, PROGRESS.md nhắc rất nhiều lần: "Hub
+  workspace", "Bento Grid", "Global Studio Switcher"...) nhưng chưa từng được liệt kê ở CLAUDE.md,
+  khiến phiên trước đọc file không biết app này tồn tại.
+- **`apps/dhcb/index.html`**: viết lại `<title>`, meta description/keywords, Open Graph, Twitter
+  Card, JSON-LD (`WebApplication`, `EducationalOrganization`, `Course`, `FAQPage`) và
+  `apple-mobile-web-app-title` — trước đây chỉ ghi "Gia sư tiếng Anh AI", không nhắc gì tới nền
+  tảng "Đồng Hành Cùng Bạn" mà README.md/CLAUDE.md/PROGRESS.md đã dùng từ lâu. Nay đồng bộ với
+  `apps/hub/index.html` (đã có sẵn title đúng từ trước).
+- **`apps/dhcb/public/manifest.webmanifest`**: name/short_name/description PWA đồng bộ theo.
+- **Đổi tên gói `hub` → `@dhcb/hub`** (`apps/hub/package.json` + script `build` ở `package.json`
+  gốc) cho khớp quy ước `@dhcb/*` của 15 gói `packages/*` + `apps/dhcb` (`@dhcb/app`) + `apps/server`
+  (`@dhcb/server`) — trước đây là ngoại lệ duy nhất không theo quy ước. Đồng bộ lại
+  `package-lock.json` sau khi đổi tên, xác nhận `npm ci` sạch.
+- **Xác thực**: `npm run build` ✅ (client Vite + `build:server` + build `@dhcb/hub`) ·
+  `npm run typecheck` ✅ (4 tsconfig) · `npm run lint` ✅ (0 cảnh báo) · `npx prettier --check .`
+  phát hiện `apps/dhcb/index.html` lệch format sau khi sửa, đã `--write` lại. CI PR #648: cả 3
+  required check `quality` + `e2e` + `metadata` đều xanh.
+- **Ghi chú vận hành merge**: trong lúc chờ merge, `main` được merge liên tục bởi các PR khác
+  (#649, #650) khiến PR #648 bị đẩy vào trạng thái `mergeable_state: "behind"` 3 lần liên tiếp —
+  phải gọi `update_pull_request_branch` + chờ CI chạy lại từng lần trước khi merge được. Không
+  phải lỗi CI, chỉ là do nhiều PR merge cùng lúc vào `main`.
+- **Không đổi hành vi nghiệp vụ, không đổi route, không đổi schema DB.** Rủi ro thấp; rollback =
+  revert PR, không cần bước dọn dẹp thêm.
