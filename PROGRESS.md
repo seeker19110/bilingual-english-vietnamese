@@ -5497,6 +5497,32 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- 🟡 **[2026-08-24] Model chat Gemini đổi khẩn cấp sang `gemini-3.6-flash` — CHƯA xác nhận
+  hoạt động, CHƯA cập nhật baseline.** PR #647: Google đã khai tử hẳn `gemini-2.0-flash` (lỗi
+  404 thật khi chạy `npm run eval:tutor`, sửa ở 4 chỗ — `aiConfig.ts` GEMINI_CHAT_MODEL,
+  `visionSolverService.ts`, `ambientVisionService.ts`, `scripts/eval-tutor.ts`). Tên model mới
+  lấy trực tiếp từ thông báo lỗi của Google, **không phải suy đoán**, nhưng môi trường sửa lỗi
+  không có `GEMINI_API_KEY` nên chưa gọi thử được lần nào.
+
+  **Điều kiện gỡ nợ:** người có key thật chạy trên VPS:
+
+  ```bash
+  git pull origin main && npm run eval:tutor -- --write-baseline
+  ```
+
+  Hai khả năng: (a) chạy được → đối chiếu bảng recall/precision với baseline cũ
+  (`docs/research/eval-tutor-baseline.md`, ngày 2026-08-20) xác nhận không tụt chất lượng, rồi
+  merge bản `--write-baseline` mới; (b) vẫn lỗi 404 → `gemini-3.6-flash` cũng sai tên, cần đọc
+  thông báo lỗi mới (Google thường gợi ý tên đúng) và vá lại cả 4 chỗ.
+
+  Ngoài chat, 2 tính năng vision (`visionSolverService.ts` giải bài STEM bằng ảnh,
+  `ambientVisionService.ts`) dùng chung model — **chưa thử tay lần nào** với key thật, nên cũng
+  coi là chưa xác nhận cho tới khi gỡ nợ trên.
+
+  **Rủi ro nếu để lâu:** Gemini là fallback THỨ 3 trong chat (sau Groq, Anthropic) — sự cố chỉ lộ
+  ra khi cả hai provider chính cùng lúc gặp vấn đề, tức âm thầm mất một lớp dự phòng mà không ai
+  biết cho tới khi cần đến nó.
+
 - 🟡 **[2026-08-23] MÃ HOÁ DỮ LIỆU NGƯỜI DÙNG — ĐÃ BẬT cho dữ liệu MỚI; còn nợ dữ liệu CŨ.**
   _(Cập nhật cùng ngày: người dùng đảo quyết định — "phải mã hoá dữ liệu người dùng". Secret 2FA
   đã mã hoá thật ngay từ bản đầu, không có giai đoạn plaintext. Phần còn nợ là **viết lại dữ liệu
