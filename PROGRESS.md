@@ -94,10 +94,26 @@ thành công** (không rate-limit, không cần đăng nhập), **p95 = 293ms** 
 tiêu `<1000ms`). **0 lỗi 500 ở bất kỳ route nào** trong suốt bài test — không có bằng chứng nào
 cho thấy server quá tải ở mức 100 VU.
 
-**Việc tay còn nợ:** chạy lại `k6-baseline.js` đã sửa để có số đo `/api/app-settings` sạch
-(không lẫn `401`); sau đó tăng dần `VU_TARGET` (500 → 2.000…) theo đúng lộ trình thận trọng đã
-ghi trong chính file. Muốn đo trần thật (không bị IP rate-limit che khuất) cần nguồn tải nhiều
-IP — chưa có trong phạm vi này.
+**✅ [2026-08-24, cùng ngày] Đã chạy lại — số đo `/api/app-settings` SẠCH, xác nhận bản sửa
+đúng.** Cùng cấu hình (100 VU, 4 phút 33 giây, nhắm `www.donghanhcungban.org`), sau khi cài lại
+`k6` (bản snap trước đó tự hỏng, `/snap/bin/k6: No such file or directory` — gỡ rồi
+`sudo snap install k6` lại là xong) và lấy script đã sửa qua `git pull`:
+
+- `checks_succeeded: 100%`, `checks_failed: 0%` — **không còn `401` nào** (khác hẳn lần trước
+  3780×429 + 240×401), cả `health` lẫn `app-settings` luôn trả đúng `200` hoặc `429` như kỳ vọng.
+- `http_req_failed` **vẫn báo 48,74%** — đúng như comment đã thêm cảnh báo trước: `app-settings`
+  giới hạn 30 req/phút/IP (chặt hơn `dictionary` cũ 120/phút), test 1 IP vẫn chạm rate-limit sớm.
+  Đây KHÔNG phải điều bất ngờ, đã được viết rõ trong chính script trước khi chạy lại.
+- p95 cả 2 route ~260ms (health 264ms, app-settings 256ms) — dư sức dưới ngưỡng `<1000ms`.
+- **0 lỗi 500** trong suốt bài test.
+
+Đóng hẳn vòng lặp PR 3.2: script test đã đúng, số đo đã sạch, không còn gì bất thường cần điều
+tra thêm ở mức 100 VU.
+
+**Việc tay còn nợ:** tăng dần `VU_TARGET` (500 → 2.000…) theo đúng lộ trình thận trọng đã ghi
+trong chính file `k6-baseline.js`. Muốn đo trần thật (không bị IP rate-limit che khuất) cần
+nguồn tải nhiều IP (k6 Cloud, nhiều VPS, hoặc test có đăng nhập với nhiều tài khoản) — chưa có
+trong phạm vi này.
 
 ### fix: Đợt 3 "Dọn nhà" — gom 80 route trùng về 1 URL chính thức mỗi trang (2026-08-24)
 
