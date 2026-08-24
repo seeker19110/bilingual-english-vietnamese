@@ -27,6 +27,8 @@ const careerService = vi.hoisted(() => ({
   createCareerGoal: vi.fn(),
   listCareerGoals: vi.fn(),
   analyzeCareerSkillGap: vi.fn(),
+  getSkillSelfLevels: vi.fn(),
+  setSkillSelfLevel: vi.fn(),
 }))
 
 vi.mock('@dhcb/core-domains/careerService', () =>
@@ -174,5 +176,53 @@ describe('POST /api/career', () => {
 
     const resDelete = await handler(req('DELETE'))
     expect(resDelete.status).toBe(405)
+  })
+
+  // [2026-08-24, Đợt 2] Tự đánh giá bậc thành thạo B1–B5 — thứ làm bảng phân tích khoảng cách
+  // kỹ năng có nghĩa thay vì bịa cứng "In Progress".
+  it('GET ?resource=skill_levels trả danh sách bậc đã tự đánh giá', async () => {
+    careerService.getSkillSelfLevels.mockResolvedValueOnce({
+      sql: {
+        skill: 'SQL',
+        selfBand: 'B3',
+        targetBand: 'B3',
+        updatedAt: '2026-08-24T00:00:00.000Z',
+      },
+    })
+    const res = await handler(req('GET', '?resource=skill_levels'))
+    expect(res.status).toBe(200)
+    const j = await res.json()
+    expect(j.skillLevels).toHaveLength(1)
+    expect(j.skillLevels[0].selfBand).toBe('B3')
+    // Bậc gắn theo USER (token), không theo person id client gửi lên.
+    expect(careerService.getSkillSelfLevels).toHaveBeenCalledWith('user-1')
+  })
+
+  it('POST skill_level lưu bậc tự đánh giá', async () => {
+    careerService.setSkillSelfLevel.mockResolvedValueOnce({
+      skill: 'SQL',
+      selfBand: 'B4',
+      targetBand: 'B3',
+      updatedAt: '2026-08-24T00:00:00.000Z',
+    })
+    const res = await handler(
+      req('POST', '', { resource: 'skill_level', skill: 'SQL', selfBand: 'B4' }),
+    )
+    expect(res.status).toBe(200)
+    expect((await res.json()).skillLevel.selfBand).toBe('B4')
+    expect(careerService.setSkillSelfLevel).toHaveBeenCalledWith(
+      'user-1',
+      expect.objectContaining({ skill: 'SQL', selfBand: 'B4' }),
+    )
+  })
+
+  it('POST skill_level từ chối bậc ngoài thang B1–B5', async () => {
+    for (const selfBand of ['B0', 'B6', 'expert', 3]) {
+      const res = await handler(
+        req('POST', '', { resource: 'skill_level', skill: 'SQL', selfBand }),
+      )
+      expect(res.status).toBe(400)
+    }
+    expect(careerService.setSkillSelfLevel).not.toHaveBeenCalled()
   })
 })

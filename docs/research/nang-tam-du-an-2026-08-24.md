@@ -129,6 +129,20 @@ người dùng. Chia đều nguồn lực cho 4 thứ dở còn tệ hơn dồn 
 **Cổng ra:** trụ được chọn có lưu trữ thật, có Companion tham gia được bằng dữ liệu thật của người
 dùng, và có ít nhất 5 người dùng thật quay lại lần thứ hai.
 
+**✅ [2026-08-24] Đợt 2 đã làm xong phần CODE** (cổng "5 người dùng quay lại" còn chờ đo thật):
+
+- **Phòng Luyện Phỏng Vấn chạy AI thật.** Phát hiện khi khảo sát: `CareerInterview.tsx` là mô
+  phỏng GIẢ HOÀN TOÀN — 3 câu hỏi cứng, `setTimeout(700)` giả vờ phân tích, rồi trả **điểm 8.5
+  cứng** với nhận xét y hệt cho mọi câu trả lời của mọi người (gõ "abc" cũng được khen "cấu trúc
+  rõ ràng theo mô hình STAR"). Đây đúng là "Live Voice giả lập" phiên bản Career. Nay câu hỏi
+  sinh theo hồ sơ nghề nghiệp thật, câu trả lời được model thật chấm, có đếm lượt + hoàn lượt,
+  và khi AI hỏng thì **nói thẳng** thay vì bịa điểm.
+- **Bảng khoảng cách kỹ năng hết bịa "In Progress".** `analyzeCareerSkillGap` trước đây trả cứng
+  `currentMastery: 'In Progress'`, `isFulfilled: false` cho **mọi** kỹ năng ngoài tiếng Anh — ai
+  nhập mục tiêu gì cũng thấy y hệt một bảng vô nghĩa. Nay dùng thang **B1–B5** đã chốt ở đặc tả
+  năng lực; tiếng Anh vẫn ưu tiên dữ liệu học thật, kỹ năng khác lấy bậc người dùng tự đánh giá,
+  chưa đánh giá thì nói thật là chưa có dữ liệu.
+
 ### Đợt 3 — "Dọn nhà + kiểm chứng" (ước 2 PR)
 
 - **PR 3.1 — Gom 80 route về ~50.** Mỗi trang giữ **một** URL chính thức (ưu tiên tiếng Việt, hợp

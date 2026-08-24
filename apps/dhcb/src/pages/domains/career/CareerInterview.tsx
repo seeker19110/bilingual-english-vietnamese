@@ -1,120 +1,118 @@
-// apps/dhcb/src/pages/CareerInterview.tsx — Mock Interview Simulator (Career Sub-page)
+// apps/dhcb/src/pages/domains/career/CareerInterview.tsx — Phòng Luyện Phỏng Vấn.
+//
+// [2026-08-24, Đợt 2 "Một mũi nhọn thật"] Trang này TRƯỚC ĐÂY LÀ GIẢ HOÀN TOÀN: 3 câu hỏi cứng,
+// `setTimeout(700)` giả vờ đang phân tích, rồi trả điểm 8.5 cứng cùng bộ nhận xét y hệt cho mọi
+// câu trả lời của mọi người. Nay gọi `/api/career-interview` — câu hỏi sinh theo hồ sơ nghề
+// nghiệp thật, câu trả lời được model thật chấm, và khi AI không chạy được thì NÓI THẲNG với
+// người dùng (cờ isFallback) thay vì đưa nội dung mẫu ra như thể AI vừa nghĩ.
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Briefcase,
-  Send,
-  Sparkles,
-  CheckCircle2,
-  Award,
-  AlertTriangle,
-  RotateCcw,
   Bot,
   User,
+  Send,
+  Sparkles,
+  Award,
+  CheckCircle2,
+  AlertTriangle,
+  RotateCcw,
+  Briefcase,
+  Info,
 } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
-import { fetchCareerProfile } from '../../../lib/careerApi'
-import type { CareerProfile } from '@dhcb/core-contracts/career'
+import { useToast } from '@core/ToastProvider'
+import {
+  fetchLatestInterview,
+  startInterview,
+  submitInterviewAnswer,
+} from '../../../lib/careerInterviewApi'
+import {
+  PROFICIENCY_BAND_LABELS,
+  type InterviewKind,
+  type InterviewSession,
+} from '@dhcb/core-contracts/careerInterview'
 
-interface InterviewTurn {
-  id: string
-  question: string
-  answer?: string
-  feedback?: {
-    score: number
-    strengths: string[]
-    improvements: string[]
-    sampleAnswer: string
-  }
-}
-
-const DEFAULT_QUESTIONS = [
-  'Hãy giới thiệu tóm tắt về kinh nghiệm của bạn và một dự án nổi bật nhất mà bạn từng đảm nhiệm?',
-  'Hãy kể về một lần bạn gặp phải mâu thuẫn trong nhóm hoặc bế tắc kỹ thuật, bạn đã giải quyết tình huống đó thế nào?',
-  'Tại sao bạn lại quan tâm đến vị trí này và mục tiêu nghề nghiệp của bạn trong 2 năm tới là gì?',
+const KIND_LABELS: Array<{ value: InterviewKind; label: string }> = [
+  { value: 'behavioral', label: 'Hành vi (STAR)' },
+  { value: 'technical', label: 'Kỹ thuật & Chuyên môn' },
+  { value: 'situational', label: 'Tình huống xử lý' },
 ]
 
 export default function CareerInterview() {
   const nav = useNavigate()
-  const [profile, setProfile] = useState<CareerProfile | null>(null)
-  const [interviewType, setInterviewType] = useState<'behavioral' | 'technical' | 'situational'>(
-    'behavioral',
-  )
-  const [turns, setTurns] = useState<InterviewTurn[]>([])
-  const [currentTurnIndex, setCurrentTurnIndex] = useState(0)
+  const toast = useToast()
+  const [session, setSession] = useState<InterviewSession | null>(null)
+  const [kind, setKind] = useState<InterviewKind>('behavioral')
   const [answerInput, setAnswerInput] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [starting, setStarting] = useState(false)
   const [analyzing, setAnalyzing] = useState(false)
+  // AI không chạy được ở lượt gần nhất → nói thật với người dùng thay vì im lặng.
+  const [degraded, setDegraded] = useState(false)
 
+  // Mở lại buổi luyện gần nhất (nếu có) — người dùng thấy ngay mình đã luyện tới đâu.
   useEffect(() => {
-    fetchCareerProfile()
-      .then((p) => {
-        setProfile(p)
+    let cancelled = false
+    fetchLatestInterview()
+      .then((s) => {
+        if (cancelled) return
+        setSession(s)
+        if (s) setKind(s.kind)
       })
       .catch(() => null)
-
-    // Khởi tạo câu hỏi đầu tiên
-    setTurns([
-      {
-        id: '1',
-        question: DEFAULT_QUESTIONS[0]!,
-      },
-    ])
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
   }, [])
 
-  const handleSubmitAnswer = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!answerInput.trim()) return
-
-    setAnalyzing(true)
-    setTimeout(() => {
-      const currentTurn = turns[currentTurnIndex]
-      if (!currentTurn) return
-
-      const updatedTurns = [...turns]
-      updatedTurns[currentTurnIndex] = {
-        ...currentTurn,
-        answer: answerInput,
-        feedback: {
-          score: 8.5,
-          strengths: [
-            'Cấu trúc câu trả lời rõ ràng theo mô hình STAR (Situation - Task - Action - Result)',
-            'Nêu bật được vai trò chủ động cá nhân và kết quả định lượng cụ thể',
-          ],
-          improvements: [
-            'Có thể nhấn mạnh thêm bài học kinh nghiệm rút ra sau khi hoàn thành dự án',
-            'Sử dụng thêm các thuật ngữ chuyên ngành để khẳng định chuyên môn',
-          ],
-          sampleAnswer:
-            'Trong dự án gần nhất, tôi phụ trách kiến trúc hệ thống xử lý dữ liệu. Đối mặt với bài toán độ trễ cao, tôi đã tái cấu trúc pipeline lưu trữ và giảm 40% latency, qua đó nâng cao trải nghiệm cho 50.000 người dùng.',
-        },
-      }
-
-      // Mở câu hỏi tiếp theo nếu còn
-      if (currentTurnIndex < DEFAULT_QUESTIONS.length - 1) {
-        updatedTurns.push({
-          id: String(currentTurnIndex + 2),
-          question: DEFAULT_QUESTIONS[currentTurnIndex + 1]!,
-        })
-        setCurrentTurnIndex(currentTurnIndex + 1)
-      }
-
-      setTurns(updatedTurns)
+  const handleStart = async () => {
+    if (starting) return
+    setStarting(true)
+    try {
+      const { session: fresh, isFallback } = await startInterview(kind)
+      setSession(fresh)
+      setDegraded(isFallback)
       setAnswerInput('')
-      setAnalyzing(false)
-    }, 700)
+      if (isFallback) {
+        toast.info('Chưa kết nối được AI — đang dùng bộ câu hỏi mặc định, chưa tính lượt của bạn.')
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Không bắt đầu được buổi phỏng vấn')
+    } finally {
+      setStarting(false)
+    }
   }
 
-  const handleReset = () => {
-    setTurns([
-      {
-        id: '1',
-        question: DEFAULT_QUESTIONS[0]!,
-      },
-    ])
-    setCurrentTurnIndex(0)
-    setAnswerInput('')
+  // Câu đang chờ trả lời = câu chưa có answer đầu tiên.
+  const currentTurn = session?.turns.find((t) => !t.answer)
+
+  const handleSubmitAnswer = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!currentTurn || !answerInput.trim() || analyzing) return
+    setAnalyzing(true)
+    try {
+      const { session: updated, isFallback } = await submitInterviewAnswer({
+        questionId: currentTurn.question.id,
+        answer: answerInput.trim(),
+      })
+      setSession(updated)
+      setDegraded(isFallback)
+      setAnswerInput('')
+      if (isFallback) {
+        toast.info('Chưa chấm được câu trả lời — hãy thử lại sau, lượt của bạn chưa bị tính.')
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Không gửi được câu trả lời')
+    } finally {
+      setAnalyzing(false)
+    }
   }
+
+  const answeredCount = session?.turns.filter((t) => t.answer).length ?? 0
 
   return (
     <div className="min-h-dvh bg-zinc-950">
@@ -123,142 +121,186 @@ export default function CareerInterview() {
       <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
         <PageHeader
           title="Phòng Luyện Phỏng Vấn AI"
-          subtitle={`Mô phỏng phỏng vấn thực tế cho vị trí: ${profile?.targetRole || 'Chuyên viên'}`}
+          subtitle={
+            session
+              ? `Luyện phỏng vấn cho vị trí: ${session.targetRole}`
+              : 'Câu hỏi được soạn riêng theo hồ sơ nghề nghiệp của bạn'
+          }
         />
 
+        {degraded && (
+          <div
+            role="status"
+            className="flex items-start gap-2 rounded-2xl border border-amber-500/40 bg-amber-950/20 p-3.5 text-xs text-amber-200"
+          >
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+            <p className="leading-relaxed">
+              Hiện chưa kết nối được trợ lý AI. Nội dung bên dưới là bộ mặc định, KHÔNG phải do AI
+              soạn hay chấm riêng cho bạn — và lượt dùng của bạn chưa bị tính.
+            </p>
+          </div>
+        )}
+
         {/* Cấu hình dạng phỏng vấn */}
-        <section className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 flex items-center justify-between gap-3 flex-wrap">
+        <section className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4">
           <div className="flex items-center gap-2">
-            <Briefcase className="w-5 h-5 text-emerald-400" />
+            <Briefcase className="h-5 w-5 text-emerald-400" />
             <span className="text-sm font-semibold text-white">Chế độ phỏng vấn:</span>
           </div>
-          <div className="flex gap-2 flex-wrap">
-            <button
-              onClick={() => setInterviewType('behavioral')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium transition ${
-                interviewType === 'behavioral'
-                  ? 'bg-emerald-500 text-zinc-950 font-bold'
-                  : 'bg-zinc-950 border border-zinc-800 text-zinc-400'
-              }`}
-            >
-              Hành vi (STAR)
-            </button>
-            <button
-              onClick={() => setInterviewType('technical')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium transition ${
-                interviewType === 'technical'
-                  ? 'bg-emerald-500 text-zinc-950 font-bold'
-                  : 'bg-zinc-950 border border-zinc-800 text-zinc-400'
-              }`}
-            >
-              Kỹ thuật & Chuyên môn
-            </button>
-            <button
-              onClick={() => setInterviewType('situational')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium transition ${
-                interviewType === 'situational'
-                  ? 'bg-emerald-500 text-zinc-950 font-bold'
-                  : 'bg-zinc-950 border border-zinc-800 text-zinc-400'
-              }`}
-            >
-              Tình huống xử lý
-            </button>
+          <div className="flex flex-wrap gap-2">
+            {KIND_LABELS.map(({ value, label }) => (
+              <button
+                key={value}
+                onClick={() => setKind(value)}
+                className={`rounded-xl px-3 py-1.5 text-xs font-medium transition ${
+                  kind === value
+                    ? 'bg-emerald-500 font-bold text-[#09090b]'
+                    : 'border border-zinc-800 bg-zinc-950 text-zinc-400'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </section>
 
+        {loading && <p className="py-8 text-center text-sm text-zinc-400">Đang tải…</p>}
+
+        {/* Chưa có phiên nào → mời bắt đầu */}
+        {!loading && !session && (
+          <section className="space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900/80 p-6 text-center">
+            <p className="text-sm leading-relaxed text-zinc-300">
+              Người phỏng vấn AI sẽ đặt 3 câu hỏi bám đúng vị trí bạn đang nhắm tới, rồi nhận xét
+              từng câu trả lời của bạn.
+            </p>
+            <button
+              onClick={handleStart}
+              disabled={starting}
+              className="tap-44 inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-bold text-[#09090b] shadow-md shadow-emerald-500/20 transition hover:bg-emerald-400 active:scale-[0.98] disabled:opacity-60"
+            >
+              <Sparkles className={`h-4 w-4 ${starting ? 'animate-spin' : ''}`} />
+              <span>{starting ? 'Đang soạn câu hỏi…' : 'Bắt đầu buổi phỏng vấn'}</span>
+            </button>
+          </section>
+        )}
+
         {/* Luồng phỏng vấn theo lượt */}
-        <section className="space-y-4">
-          {turns.map((turn, index) => (
-            <div key={turn.id} className="space-y-3">
-              {/* Câu hỏi từ AI Interviewer */}
-              <div className="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-4 flex items-start gap-3 shadow-lg">
-                <div className="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center shrink-0">
-                  <Bot className="w-5 h-5 text-emerald-400" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+        {session && (
+          <section className="space-y-4">
+            {session.turns.map((turn, index) => (
+              <div key={turn.question.id} className="space-y-3">
+                {/* Câu hỏi từ người phỏng vấn AI */}
+                <div className="flex items-start gap-3 rounded-2xl border border-zinc-800 bg-zinc-900/90 p-4 shadow-lg">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-emerald-500/30 bg-emerald-500/15">
+                    <Bot className="h-5 w-5 text-emerald-400" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <span className="mb-1 block text-xs font-bold uppercase tracking-wider text-emerald-400">
                       Người phỏng vấn AI • Câu hỏi {index + 1}
                     </span>
-                  </div>
-                  <p className="text-sm text-white font-medium leading-relaxed">{turn.question}</p>
-                </div>
-              </div>
-
-              {/* Câu trả lời của ứng viên (nếu đã trả lời) */}
-              {turn.answer && (
-                <div className="bg-zinc-950 border border-zinc-800/80 rounded-2xl p-4 flex items-start gap-3 ml-6">
-                  <div className="w-8 h-8 rounded-xl bg-zinc-800 flex items-center justify-center shrink-0">
-                    <User className="w-4 h-4 text-zinc-300" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-xs text-zinc-400 font-semibold block mb-1">
-                      Bạn đã trả lời:
-                    </span>
-                    <p className="text-sm text-zinc-200 leading-relaxed whitespace-pre-line">
-                      {turn.answer}
+                    <p className="text-sm font-medium leading-relaxed text-white">
+                      {turn.question.question}
                     </p>
+                    {turn.question.focus && (
+                      <p className="mt-1 text-xs text-zinc-400">Đang soi: {turn.question.focus}</p>
+                    )}
                   </div>
                 </div>
-              )}
 
-              {/* Nhận xét & Đánh giá của AI */}
-              {turn.feedback && (
-                <div className="bg-emerald-950/20 border border-emerald-500/30 rounded-2xl p-4 ml-6 space-y-3 animate-fade-in">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Award className="w-4 h-4 text-amber-400" />
-                      <span className="text-xs font-bold text-white uppercase">
-                        Đánh giá & Chấm điểm
-                      </span>
+                {/* Câu trả lời của ứng viên */}
+                {turn.answer && (
+                  <div className="ml-6 flex items-start gap-3 rounded-2xl border border-zinc-800/80 bg-zinc-950 p-4">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-zinc-800">
+                      <User className="h-4 w-4 text-zinc-300" />
                     </div>
-                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold text-xs">
-                      {turn.feedback.score} / 10
-                    </span>
+                    <div className="min-w-0 flex-1">
+                      <span className="mb-1 block text-xs font-semibold text-zinc-400">
+                        Bạn đã trả lời:
+                      </span>
+                      <p className="whitespace-pre-line text-sm leading-relaxed text-zinc-200">
+                        {turn.answer}
+                      </p>
+                    </div>
                   </div>
+                )}
 
-                  {/* Điểm mạnh */}
-                  <div className="space-y-1">
-                    <span className="text-xs font-semibold text-emerald-400 flex items-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> Điểm mạnh:
-                    </span>
-                    <ul className="list-disc list-inside text-xs text-zinc-300 space-y-0.5 pl-1">
-                      {turn.feedback.strengths.map((s, i) => (
-                        <li key={i}>{s}</li>
-                      ))}
-                    </ul>
-                  </div>
+                {/* Nhận xét của AI */}
+                {turn.feedback && (
+                  <div
+                    className={`ml-6 space-y-3 rounded-2xl border p-4 ${
+                      turn.feedback.isFallback
+                        ? 'border-amber-500/30 bg-amber-950/20'
+                        : 'border-emerald-500/30 bg-emerald-950/20'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Award className="h-4 w-4 text-amber-400" />
+                        <span className="text-xs font-bold uppercase text-white">
+                          {turn.feedback.isFallback ? 'Chưa chấm được' : 'Đánh giá & Chấm điểm'}
+                        </span>
+                      </div>
+                      {!turn.feedback.isFallback && (
+                        <div className="flex items-center gap-2">
+                          {turn.feedback.bandSignal && (
+                            <span className="rounded-full border border-zinc-700 bg-zinc-950 px-2.5 py-0.5 text-xs font-medium text-zinc-300">
+                              {turn.feedback.bandSignal} ·{' '}
+                              {PROFICIENCY_BAND_LABELS[turn.feedback.bandSignal]}
+                            </span>
+                          )}
+                          <span className="rounded-full border border-emerald-500/40 bg-emerald-500/20 px-2.5 py-0.5 text-xs font-bold text-emerald-300">
+                            {turn.feedback.score} / 10
+                          </span>
+                        </div>
+                      )}
+                    </div>
 
-                  {/* Cần cải thiện */}
-                  <div className="space-y-1">
-                    <span className="text-xs font-semibold text-amber-400 flex items-center gap-1">
-                      <AlertTriangle className="w-3.5 h-3.5" /> Gợi ý cải thiện:
-                    </span>
-                    <ul className="list-disc list-inside text-xs text-zinc-300 space-y-0.5 pl-1">
-                      {turn.feedback.improvements.map((imp, i) => (
-                        <li key={i}>{imp}</li>
-                      ))}
-                    </ul>
-                  </div>
+                    {turn.feedback.strengths.length > 0 && (
+                      <div className="space-y-1">
+                        <span className="flex items-center gap-1 text-xs font-semibold text-emerald-400">
+                          <CheckCircle2 className="h-3.5 w-3.5" /> Điểm mạnh:
+                        </span>
+                        <ul className="list-inside list-disc space-y-0.5 pl-1 text-xs text-zinc-300">
+                          {turn.feedback.strengths.map((s, i) => (
+                            <li key={i}>{s}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
-                  {/* Câu trả lời mẫu */}
-                  <div className="p-3 rounded-xl bg-zinc-950/80 border border-zinc-800 text-xs text-zinc-300">
-                    <span className="text-accent-400 font-semibold block mb-1">
-                      💡 Gợi ý câu trả lời mẫu:
-                    </span>
-                    <p className="italic leading-relaxed">{turn.feedback.sampleAnswer}</p>
+                    {turn.feedback.improvements.length > 0 && (
+                      <div className="space-y-1">
+                        <span className="flex items-center gap-1 text-xs font-semibold text-amber-400">
+                          <AlertTriangle className="h-3.5 w-3.5" /> Gợi ý cải thiện:
+                        </span>
+                        <ul className="list-inside list-disc space-y-0.5 pl-1 text-xs text-zinc-300">
+                          {turn.feedback.improvements.map((imp, i) => (
+                            <li key={i}>{imp}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {turn.feedback.sampleAnswer && (
+                      <div className="rounded-xl border border-zinc-800 bg-zinc-950/80 p-3 text-xs text-zinc-300">
+                        <span className="mb-1 block font-semibold text-accent-400">
+                          💡 Gợi ý câu trả lời mẫu:
+                        </span>
+                        <p className="italic leading-relaxed">{turn.feedback.sampleAnswer}</p>
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </section>
+                )}
+              </div>
+            ))}
+          </section>
+        )}
 
         {/* Khung nhập câu trả lời hiện tại */}
-        {turns[currentTurnIndex] && !turns[currentTurnIndex]?.answer && (
-          <section className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 space-y-3">
-            <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-accent-400" />
+        {currentTurn && (
+          <section className="space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4">
+            <h3 className="flex items-center gap-2 text-sm font-semibold text-white">
+              <Sparkles className="h-4 w-4 text-accent-400" />
               <span>Nhập câu trả lời của bạn:</span>
             </h3>
 
@@ -268,22 +310,23 @@ export default function CareerInterview() {
                 onChange={(e) => setAnswerInput(e.target.value)}
                 placeholder="Trả lời theo cấu trúc tình huống, hành động và kết quả (STAR)..."
                 rows={4}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3.5 text-sm text-white focus:outline-none focus:border-accent-500 leading-relaxed placeholder:text-zinc-600 resize-none"
+                maxLength={5000}
+                className="w-full resize-none rounded-xl border border-zinc-800 bg-zinc-950 p-3.5 text-sm leading-relaxed text-white placeholder:text-zinc-600 focus:border-accent-500 focus:outline-none"
               />
               <div className="flex justify-end">
                 <button
                   type="submit"
                   disabled={analyzing || !answerInput.trim()}
-                  className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-zinc-950 font-bold text-sm transition shadow-md shadow-emerald-500/20 active:scale-[0.98]"
+                  className="tap-44 inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-bold text-[#09090b] shadow-md shadow-emerald-500/20 transition hover:bg-emerald-400 active:scale-[0.98] disabled:opacity-50"
                 >
                   {analyzing ? (
                     <>
-                      <Sparkles className="w-4 h-4 animate-spin" />
+                      <Sparkles className="h-4 w-4 animate-spin" />
                       <span>AI đang chấm điểm…</span>
                     </>
                   ) : (
                     <>
-                      <Send className="w-4 h-4" />
+                      <Send className="h-4 w-4" />
                       <span>Gửi câu trả lời & Nhận xét</span>
                     </>
                   )}
@@ -293,15 +336,20 @@ export default function CareerInterview() {
           </section>
         )}
 
-        {/* Nút làm lại buổi phỏng vấn */}
-        {turns.some((t) => t.answer) && (
-          <div className="flex justify-center pt-2">
+        {/* Đã trả lời hết → mời luyện buổi mới */}
+        {session && !currentTurn && (
+          <div className="flex flex-col items-center gap-2 pt-2">
+            <p className="text-sm text-zinc-300">
+              Bạn đã hoàn thành {answeredCount}/{session.turns.length} câu. Luyện thêm một buổi nữa
+              chứ?
+            </p>
             <button
-              onClick={handleReset}
-              className="tap-44 flex items-center gap-2 px-4 py-2 rounded-xl border border-zinc-800 bg-zinc-900 text-xs text-zinc-400 hover:text-white transition"
+              onClick={handleStart}
+              disabled={starting}
+              className="tap-44 flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-2 text-xs text-zinc-300 transition hover:text-white disabled:opacity-60"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Bắt đầu lại buổi phỏng vấn mới</span>
+              <RotateCcw className={`h-3.5 w-3.5 ${starting ? 'animate-spin' : ''}`} />
+              <span>{starting ? 'Đang soạn câu hỏi…' : 'Bắt đầu buổi phỏng vấn mới'}</span>
             </button>
           </div>
         )}

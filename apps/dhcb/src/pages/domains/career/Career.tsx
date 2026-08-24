@@ -26,6 +26,7 @@ import {
   listCareerGoals,
   createCareerGoal,
   fetchCareerSkillGap,
+  saveSkillSelfLevel,
 } from '../../../lib/careerApi'
 import type {
   CareerProfile,
@@ -33,6 +34,11 @@ import type {
   CareerGoal,
   CareerSkillGapAnalysis,
 } from '@dhcb/core-contracts/career'
+import { PROFICIENCY_BAND_LABELS, type ProficiencyBand } from '@dhcb/core-contracts/careerInterview'
+
+// Thang bậc dùng chung toàn nền tảng (Dreyfus) — xem
+// docs/research/dac-ta-nang-luc-ca-nhan-theo-do-tuoi-2026-08-23.md mục 6.2.
+const BANDS = Object.keys(PROFICIENCY_BAND_LABELS) as ProficiencyBand[]
 
 export default function Career() {
   const nav = useNavigate()
@@ -44,6 +50,8 @@ export default function Career() {
   const [skillGap, setSkillGap] = useState<CareerSkillGapAnalysis | null>(null)
   const [loading, setLoading] = useState(true)
   const [skillGapLoading, setSkillGapLoading] = useState(false)
+  // Kỹ năng đang được lưu bậc — chặn bấm liên tiếp và cho người dùng thấy phản hồi.
+  const [savingSkill, setSavingSkill] = useState<string | null>(null)
 
   // Modals
   const [showProfileModal, setShowProfileModal] = useState(false)
@@ -132,6 +140,24 @@ export default function Career() {
       setSkillGap(null)
     }
   }, [selectedGoalId, loadSkillGap])
+
+  // Người dùng tự chấm bậc thành thạo cho một kỹ năng, rồi tải lại bảng phân tích để thấy
+  // khoảng cách cập nhật ngay.
+  const handleSetSkillBand = useCallback(
+    async (skill: string, selfBand: ProficiencyBand) => {
+      if (savingSkill) return
+      setSavingSkill(skill)
+      try {
+        await saveSkillSelfLevel({ skill, selfBand })
+        if (selectedGoalId) await loadSkillGap(selectedGoalId)
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'Không lưu được mức thành thạo')
+      } finally {
+        setSavingSkill(null)
+      }
+    },
+    [savingSkill, selectedGoalId, loadSkillGap, toast],
+  )
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -400,44 +426,79 @@ export default function Career() {
                       {skillGap.gaps.map((item, idx) => (
                         <div
                           key={idx}
-                          className="p-3.5 rounded-xl bg-zinc-900 border border-zinc-800/80 flex items-center justify-between"
+                          className="p-3.5 rounded-xl bg-zinc-900 border border-zinc-800/80 space-y-2.5"
                         >
-                          <div className="flex items-center gap-3">
-                            {item.isFulfilled ? (
-                              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-                            ) : (
-                              <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
-                            )}
-                            <div>
-                              <div className="text-sm font-semibold text-zinc-200">
-                                {item.skill}
-                              </div>
-                              <div className="text-xs text-zinc-400">
-                                Yêu cầu:{' '}
-                                <span className="text-zinc-300 font-medium">
-                                  {item.requiredLevel}
-                                </span>
-                                {item.currentMastery && (
-                                  <>
-                                    {' '}
-                                    • Đã đạt:{' '}
-                                    <span className="text-emerald-400 font-medium">
-                                      {item.currentMastery}
-                                    </span>
-                                  </>
-                                )}
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3 min-w-0">
+                              {item.isFulfilled ? (
+                                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                              ) : (
+                                <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
+                              )}
+                              <div className="min-w-0">
+                                <div className="text-sm font-semibold text-zinc-200">
+                                  {item.skill}
+                                </div>
+                                <div className="text-xs text-zinc-400">
+                                  Yêu cầu:{' '}
+                                  <span className="text-zinc-300 font-medium">
+                                    {item.requiredLevel}
+                                  </span>
+                                  {item.currentMastery ? (
+                                    <>
+                                      {' '}
+                                      • Đã đạt:{' '}
+                                      <span className="text-emerald-400 font-medium">
+                                        {item.currentMastery}
+                                      </span>
+                                      {/* Nói rõ con số đến từ đâu — dữ liệu học thật hay tự khai. */}
+                                      <span className="text-zinc-500">
+                                        {item.source === 'learning_data'
+                                          ? ' (theo dữ liệu học của bạn)'
+                                          : item.source === 'self_assessment'
+                                            ? ' (bạn tự đánh giá)'
+                                            : ''}
+                                      </span>
+                                    </>
+                                  ) : (
+                                    <> • Chưa có dữ liệu</>
+                                  )}
+                                </div>
                               </div>
                             </div>
+                            <span
+                              className={`text-xs px-2.5 py-1 rounded-full font-medium border shrink-0 ${
+                                item.isFulfilled
+                                  ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/40'
+                                  : 'bg-amber-950/60 text-amber-400 border-amber-800/40'
+                              }`}
+                            >
+                              {item.isFulfilled ? 'Đã đáp ứng' : 'Cần trau dồi'}
+                            </span>
                           </div>
-                          <span
-                            className={`text-xs px-2.5 py-1 rounded-full font-medium border ${
-                              item.isFulfilled
-                                ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/40'
-                                : 'bg-amber-950/60 text-amber-400 border-amber-800/40'
-                            }`}
-                          >
-                            {item.isFulfilled ? 'Đã đáp ứng' : 'Cần trau dồi'}
-                          </span>
+
+                          {/* Tự chấm bậc thành thạo. Tiếng Anh đã đo được bằng dữ liệu học thật
+                              nên không cần tự khai. */}
+                          {item.source !== 'learning_data' && (
+                            <div className="flex items-center gap-1.5 flex-wrap pl-8">
+                              <span className="text-xs text-zinc-500">Bạn đang ở bậc:</span>
+                              {BANDS.map((band) => (
+                                <button
+                                  key={band}
+                                  onClick={() => handleSetSkillBand(item.skill, band)}
+                                  disabled={savingSkill === item.skill}
+                                  title={`${band} — ${PROFICIENCY_BAND_LABELS[band]}`}
+                                  className={`tap-44 px-2 py-1 rounded-lg text-xs font-medium border transition disabled:opacity-50 ${
+                                    item.selfBand === band
+                                      ? 'bg-accent-500 text-[#09090b] border-accent-500 font-bold'
+                                      : 'bg-zinc-950 text-zinc-400 border-zinc-800 hover:text-white'
+                                  }`}
+                                >
+                                  {band}
+                                </button>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
