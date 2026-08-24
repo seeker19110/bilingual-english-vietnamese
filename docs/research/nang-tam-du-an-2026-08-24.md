@@ -151,7 +151,12 @@ dùng, và có ít nhất 5 người dùng thật quay lại lần thứ hai.
 - **PR 3.2 — Chạy k6 lần đầu tiên**, dù chỉ ở mức 200–500 người đồng thời. Mục đích không phải để
   scale, mà để **biết con số thật** — thay cho 993 dòng tài liệu đang dựa hoàn toàn vào ước lượng.
 
-**✅ [2026-08-24] PR 3.1 đã làm xong.** ⚠️ **PR 3.2 chưa làm được trong phiên này** — xem §7.
+**✅ [2026-08-24] PR 3.1 đã làm xong. PR 3.2 (chạy k6 lần đầu) ĐÃ CHẠY THẬT trên production** —
+100 VU, 4 phút 30 giây. Kết quả `/api/health` (không rate-limit, không cần đăng nhập): **100%
+thành công, p95 = 293ms**, 0 lỗi 500 ở mọi route. `http_req_failed` báo đỏ 50% ban đầu gây hiểu
+lầm — điều tra bằng `nginx access.log` cho thấy đây là 2 lỗi PHƯƠNG PHÁP TEST (rate-limit theo
+IP khi test từ 1 máy + kịch bản gọi nhầm route cần đăng nhập), không phải server quá tải. Chi
+tiết + bản sửa kịch bản: `PROGRESS.md` mục "PR 3.2 — lần chạy k6 baseline ĐẦU TIÊN".
 
 ---
 
@@ -188,9 +193,8 @@ thuật còn mở":
 2. **Khoá gốc mã hoá dữ liệu người dùng (`USER_DATA_MASTER_KEY`) chưa chốt nơi cất.** Hạ tầng mã hoá
    đã viết xong và có 18 test, nhưng đang "ngủ". Lưu ý: bản dump PostgreSQL và backup trên Cloudflare
    R2 hiện **vẫn là văn bản thuần**.
-3. **PR 3.2 (chạy k6 lần đầu) chưa làm được trong phiên sửa lỗi** — sandbox không có `k6` cài sẵn,
-   không có `DATABASE_URL`/`REDIS_URL` thật, và không nối được tới VPS production. Kịch bản khởi
-   điểm đã có sẵn (`scripts/load-test/k6-baseline.js`, 2 route nhẹ). **Việc cần làm trên VPS:**
-   `k6 run scripts/load-test/k6-baseline.js` ở mức 200–500 VU trước, ghi lại p95/lỗi thật, rồi
-   nới dần — đừng nhảy thẳng lên nghìn VU. Đây chính là điều kiện đóng PR 3.2 và đóng luôn cổng
-   "biết con số thật" của Đợt 3.
+3. **✅ ĐÃ ĐÓNG — PR 3.2 chạy k6 lần đầu, script đã sửa.** Kết quả và bản sửa kịch bản (route
+   `/api/dictionary` cần đăng nhập bị dùng nhầm, đã đổi sang `/api/app-settings`) xem
+   `PROGRESS.md`. **Còn lại (không chặn, chỉ là bước tiếp theo):** chạy lại kịch bản đã sửa để
+   có số đo `/api/app-settings` sạch, rồi tăng dần `VU_TARGET` (500 → 2.000…) theo đúng lộ trình
+   thận trọng đã ghi trong chính file kịch bản.
