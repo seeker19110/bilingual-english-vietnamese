@@ -1,31 +1,37 @@
 # Đổi tên miền chính sang donghanhcungban.org — checklist chuẩn bị
 
-> ## ⚠️ CẢNH BÁO — KHẲNG ĐỊNH BÊN DƯỚI KHÔNG KHỚP THỰC TẾ (đo lại 2026-08-24)
+> ## Điều hướng canonical — ĐÃ SỬA VÀ ĐO THẬT (2026-08-24)
 >
-> Tài liệu này khẳng định apex `donghanhcungban.org` và cả 2 domain `.com` đều **301 redirect** về
-> `www.donghanhcungban.org`. **Đo thật trên VPS ngày 2026-08-24 cho kết quả ngược lại** — cả 5
-> domain đều trả `HTTP/2 200`, tức KHÔNG có redirect nào:
+> Tài liệu này từng khẳng định apex + `.com` đã 301 về `www` từ 2026-07-31. **Đo lại 2026-08-24
+> cho thấy điều đó SAI**: cả 6 domain trả `HTTP/2 200`, tức apex và `www` cùng phục vụ một nội
+> dung ở hai URL suốt gần một tháng.
+>
+> **Nguyên nhân:** file đang chạy `/etc/nginx/sites-available/dhcb` (symlink duy nhất trong
+> `sites-enabled/`) chỉ có **MỘT** block `listen 443` nhận cả 6 `server_name` → phục vụ tất,
+> không redirect gì. Ba file `donghanhcungban`, `en-vi`, `default` trong `sites-available/`
+> **không được bật** — đừng sửa nhầm vào đó (đã suýt xảy ra).
+>
+> **Đã sửa:** tách thành block phục vụ (2 domain) + 2 block redirect, dùng chung cert `.org`
+> (cert này phủ đủ 6 SAN). Bản đầy đủ lưu ở `nginx/dhcb.conf` trong repo.
+>
+> **Bằng chứng sau khi reload nginx (2026-08-24):**
 >
 > ```
-> donghanhcungban.org              HTTP/2 200     ← lẽ ra phải 301
-> www.donghanhcungban.org          HTTP/2 200     ← đúng (phục vụ)
-> donghanhcungban.com              HTTP/2 200     ← lẽ ra phải 301
-> www.donghanhcungban.com          HTTP/2 200     ← lẽ ra phải 301
-> en-vi.donghanhcungban.org        HTTP/2 200     ← đúng (phục vụ)
+> donghanhcungban.org         HTTP/2 301  location: https://www.donghanhcungban.org/
+> donghanhcungban.com         HTTP/2 301  location: https://www.donghanhcungban.org/
+> www.donghanhcungban.com     HTTP/2 301  location: https://www.donghanhcungban.org/
+> en-vi.donghanhcungban.com   HTTP/2 301  location: https://en-vi.donghanhcungban.org/
+> www.donghanhcungban.org     HTTP/2 200
+> en-vi.donghanhcungban.org   HTTP/2 200
 > ```
 >
-> Hệ quả: **2 URL cùng phục vụ một nội dung** (apex và `www`) — đúng thứ mà mục "tránh trùng nội
-> dung, tốt cho SEO" bên dưới nói là đã xử lý. Chưa xác định được nguyên nhân (redirect chưa từng
-> được đặt / bị ghi đè / chỉ đặt ở tầng Cloudflare nên đo từ trong VPS không thấy). `scripts/deploy.sh`
-> **không** đụng tới nginx nên không phải do deploy ghi đè.
->
-> Đây đúng loại lỗi mà Tầng 6b của `docs/framework/QUY-TRINH-AUDIT.md` sinh ra để bắt: tài liệu
-> điều hành khẳng định một trạng thái hạ tầng mà không ai đo lại. **Đừng tin phần "ĐÃ HOÀN TẤT"
-> bên dưới cho tới khi đo lại bằng `curl -sI`.**
+> **Bài học (Tầng 6b, `docs/framework/QUY-TRINH-AUDIT.md`):** một khẳng định hạ tầng trong tài
+> liệu điều hành sống gần một tháng mà không ai đo lại. Trạng thái hạ tầng phải ghi kèm **lệnh
+> đo được và kết quả đo**, không chỉ một câu "đã xong".
 >
 > ---
 >
-> **Trạng thái (tự khai 2026-07-31, CHƯA được xác nhận lại):** `.org` giờ là domain mặc định — đã xác nhận
+> **Ghi chép gốc 2026-07-31 (giữ làm lịch sử — phần redirect trong đó KHÔNG đúng thực tế):** `.org` giờ là domain mặc định — đã xác nhận
 > đăng nhập Google + thanh toán SePay (tiền tố mới `DHCB`) chạy thật trên `en-vi.donghanhcungban.org`;
 > `www.donghanhcungban.org` là domain chuẩn duy nhất cho trang hub — `donghanhcungban.com`,
 > `www.donghanhcungban.com`, VÀ `donghanhcungban.org` (apex, không `www`) đều 301 redirect sang
