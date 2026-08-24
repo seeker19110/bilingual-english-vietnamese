@@ -8,6 +8,41 @@
 
 ## Giai đoạn hiện tại
 
+### docs(research): nghiên cứu "nâng tầm dự án" — chẩn đoán bằng số đo thật (2026-08-24)
+
+**Tài liệu mới: `docs/research/nang-tam-du-an-2026-08-24.md`** — bản ĐỀ XUẤT (chưa quyết định), trả
+lời câu hỏi "nâng tầm dự án" bằng số đo trực tiếp trên `main` thay vì cảm tính. Chỉ thêm tài liệu,
+KHÔNG đụng một dòng mã nào.
+
+**Số đo nền (đo lại ngày 2026-08-24, không lấy từ tài liệu cũ):** 145.404 dòng TS/TSX (không tính
+test) · 401 file test · 80 route frontend / 50 trang thật · 18 người dùng thật ⇒ **~8.000 dòng mã
+cho mỗi người dùng**. Kết luận: nút thắt hiện tại KHÔNG phải thiếu tính năng.
+
+**Ba khoảng cách phát hiện (đều kiểm chứng lại tại chỗ, không chép lại đề xuất cũ):**
+
+1. **Bề rộng ≫ độ sâu** — 4 trụ `domains/` có 6.004 dòng giao diện nhưng mỗi trụ chỉ **2 chỗ chạm
+   DB** (`apps/server/src/api/domains/*.ts`). Chỉ môn English là sâu thật.
+2. **Giao diện nói dối, VẪN CHƯA SỬA** (nêu từ 2026-08-23, phiên này xác nhận còn nguyên):
+   `LifeWheel.tsx:110` `handleSaveAssessment()` chỉ gọi `toast.success('Đã lưu…')` — không `fetch`,
+   không API, không `localStorage`, tải lại trang mất trắng. **Sổ tay lỗi sai** (`lib/mistakes.ts`,
+   183 dòng) chỉ nằm `localStorage` — grep xác nhận 0 lệnh `fetch`, 0 đường `/api/`, và `postgres/`
+   không có bảng `mistake` nào. Còn **4 file API giữ `new Map` cấp module**
+   (`agent-orchestrator`, `mesh-telemetry`, `stem-scratchpad`, `debate-arena`) — vỡ trong PM2
+   cluster 3 instance.
+3. **80 route / 50 trang** — mỗi trụ có tới **4 URL cùng render một component, không redirect**
+   (vd `/su-nghiep-cua-toi`, `/hoc-su-nghiep`, `/career`, `/su-nghiep` → `<Career />`). Đúng loại
+   lỗi trùng nội dung vừa sửa ở tầng domain (PR #645), nhưng ở tầng route ứng dụng.
+
+**Khuyến nghị:** nâng tầm SẢN PHẨM (làm thật cái đang hiển thị + khoét sâu 1 mũi nhọn), KHÔNG nâng
+tầm hạ tầng (993 dòng tài liệu scale 50k–1M mà chưa chạy k6 lần nào, thực tế 18 người dùng), CHƯA mở
+môn học mới. Lộ trình 3 đợt: ① "Không nói dối" (3 PR: sổ tay lỗi sai lên server · bánh xe cuộc đời
+lưu thật hoặc gỡ nút · 4 `new Map` → `platform.feature_state`) → ② "Một mũi nhọn thật" (chọn ĐÚNG 1
+trong 4 trụ làm sâu, ẩn 3 trụ còn lại) → ③ "Dọn nhà + kiểm chứng" (gom route · chạy k6 lần đầu).
+
+**⛔ Chặn: 4 câu hỏi cần chủ dự án chốt trước khi làm PR nào** (§6 của tài liệu): (1) đồng ý phương
+án sản phẩm? (2) chọn trụ nào cho Đợt 2? (3) ẩn 3 trụ còn lại? (4) bánh xe cuộc đời — lưu thật hay
+gỡ nút "Lưu"?
+
 ### refactor(companion): bỏ "Live Voice" giả lập, chuyển sang STT → LLM → TTS thật (2026-08-24)
 
 **Phát hiện:** chế độ "Đàm thoại Trực tiếp (Live Voice)" của Bạn Đồng Hành (`/companion`,
@@ -1187,7 +1222,7 @@ sau N3** (đã ghi vào ADR-0004 mục 6).
 **Đã làm (S6):**
 
 3. **Archive 24 script one-off** vào `scripts/archive/` (gen-_, ocr-_, patch-_, split-_,
-   codex-cloud-*…) — sửa import/đường dẫn theo độ sâu mới, 4 npm script trỏ theo
+   codex-cloud-\*…) — sửa import/đường dẫn theo độ sâu mới, 4 npm script trỏ theo
    (`gen:word-forms`, `gen:form-examples`, `extract:words-cefr`, `rank:patterns`).
    `scripts/` giờ chỉ còn script vận hành thật.
 4. **ADR-0004** (`docs/adr/0004-cai-to-cau-truc-platform-2026-08.md`): ghi trọn bộ quyết định
@@ -1214,7 +1249,7 @@ N3 (hợp nhất referral/quest/leaderboard + persistence nhóm C + Elo ra Postg
    acoustic/articulatory-phonetics, avatar-visemes) · `domains/` (career, work, startup,
    life) · `personal/` (18 handler Personal OS/companion) · `learning/` (12 handler công nghệ
    học đa môn) · `platform/` (21 còn lại: health, app-settings, gamification, realtime, tích
-   hợp ngoài). _*URL /api/* GIỮ NGUYÊN 100%_* — routes.ts + API_ROUTES dev middleware + test
+   hợp ngoài). \_*URL /api/\_ GIỮ NGUYÊN 100%\_\_ — routes.ts + API_ROUTES dev middleware + test
    gác route (quét đệ quy) cập nhật theo.
 2. **Gói MỚI `@dhcb/subject-english`** (mảnh "logic môn" của khuôn môn học): cefrTagging,
    cefrjLookup, wordsCefrDataset, wordFreq, dictionaryData (+test) tách từ `api/_lib`.
@@ -1317,7 +1352,7 @@ nâng cấp — hướng PLATFORM. Đặc tả kiến trúc mới:
    đa môn; phần riêng môn Anh chỉ là `src/pages/subjects/english/` + data/prompts).
 2. Cập nhật MỌI chuỗi đường dẫn `apps/english` trong code/config đang sống (2 dạng:
    `apps/english` và `'apps', 'english'`): tsconfig 4 file, vite/vitest config, package.json,
-   scripts/ (seed/gen/deploy), e2e, api/_lib, codemap scanRoots, hub vite.config, CI không đổi.
+   scripts/ (seed/gen/deploy), e2e, api/\_lib, codemap scanRoots, hub vite.config, CI không đổi.
 3. **Xoá hẳn alias `@english/*`** (đo thật: 0 nơi import — không giữ khái niệm chết) khỏi
    tsconfig.base/vite/vitest; alias còn lại: `@dhcb/*` (workspace) + `@core` (core-ui).
 4. CLAUDE.md viết lại mục 1 (định nghĩa platform DHCB, english = môn trong trụ Learning) +
@@ -5571,7 +5606,7 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
   **Việc còn lại + câu hỏi chưa có đáp án — **cất khoá gốc `USER_DATA_MASTER_KEY` ở đâu?** Khoá phải nằm KHÁC chỗ với backup DB (cất chung thì mã hoá vô
   nghĩa: ai lấy được backup lấy luôn khoá), mà **mất khoá = mất vĩnh viễn toàn bộ dữ liệu đã mã
-  hoá, không có đường khôi phục**. Bật mã hoá khi chưa chốt chỗ cất khoá là tự tạo rủi ro mất dữ
+  hoá, không có đường khôi phục\*\*. Bật mã hoá khi chưa chốt chỗ cất khoá là tự tạo rủi ro mất dữ
   liệu lớn hơn rủi ro nó định phòng.
 
   **Điều kiện gỡ nợ:** người dùng chốt nơi cất + cách sao lưu khoá gốc. Xong việc đó thì làm theo
@@ -5603,7 +5638,7 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 purple/orange/amber/sky-300` thiếu biến thể `theme-light:text-*-800` nên nhạt trên 3 theme
      sáng; (b) nút nền `bg-accent-500`/`bg-emerald-500` dùng `text-zinc-950` — token `--z-950`
      BỊ ĐẢO CHIỀU ở theme sáng (nhạt nhất thay vì đậm nhất, xem PROGRESS.md đợt vá PR #616) nên
-     chữ gần trắng trên nền sáng → sửa bằng màu cố định `text-[#09090b]` (không qua token z-*,
+     chữ gần trắng trên nền sáng → sửa bằng màu cố định `text-[#09090b]` (không qua token z-\*,
      đã tính contrast ≥ 5.9:1 trên cả 5 theme accent màu khác nhau) thay vì `text-zinc-950`.
      Xác nhận: `npx playwright test e2e/a11y.spec.ts e2e/bottomnav.spec.ts e2e/comeback.spec.ts`
      134/134 pass cục bộ; build/typecheck/lint/format/`npm test` (5019/5019) đều xanh.
