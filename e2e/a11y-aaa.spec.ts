@@ -49,6 +49,7 @@ const ROUTES = [
   '/lap-trinh', // môn Lập trình: tổng quan P1–P6 (PR-L1)
   '/lap-trinh/p1', // trang một bậc (6 bậc dùng chung layout)
   '/lap-trinh/chay-thu', // sandbox chạy Python (PR-L2)
+  '/lap-trinh/bai-hoc/p1-u4-l1', // bài học 8 bước (PR-L3)
 ] as const
 
 // Đếm số phần tử vi phạm NẰM TRONG phần nội dung/tiêu đề (bỏ phần vỏ giao diện).

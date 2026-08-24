@@ -172,6 +172,19 @@ export default defineConfig(({ mode }) => {
             if (id.includes('node_modules/@sentry')) {
               return 'vendor-sentry'
             }
+            // Nhóm riêng: CodeMirror (editor môn Lập trình) — chỉ trang /lap-trinh/* dùng
+            // (lazy). Nếu rơi vào vendor-misc (tải eager lúc khởi động) thì +~130KB brotli
+            // vào bundle đầu → vỡ ngân sách size-limit (bài học CI 2026-08-24, PR #659).
+            if (
+              id.includes('node_modules/@codemirror') ||
+              id.includes('node_modules/codemirror') ||
+              id.includes('node_modules/@lezer') ||
+              id.includes('node_modules/crelt') ||
+              id.includes('node_modules/style-mod') ||
+              id.includes('node_modules/w3c-keyname')
+            ) {
+              return 'vendor-codemirror'
+            }
             // Nhóm 1: React + Router (core framework)
             if (
               id.includes('node_modules/react') ||
