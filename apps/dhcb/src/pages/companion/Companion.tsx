@@ -8,7 +8,8 @@ import StudioLoadingSkeleton from '../../components/CompanionStudios/StudioLoadi
 import { lazyWithRetry } from '../../lib/lazyWithRetry'
 import { fetchProactiveAgentState } from '../../lib/proactiveAgentApi'
 import type { ProactiveAgentState } from '@dhcb/core-contracts/proactiveAgent'
-import { useRealtimeVoice } from '../../lib/useRealtimeVoice'
+import { startRecording, isRecordingSupported, type Recorder } from '../../lib/sttServer'
+import { speak, stopSpeaking } from '../../lib/tts'
 import { useAuth } from '../../context/useAuth'
 import { useToast } from '@core/ToastProvider'
 import {
@@ -19,7 +20,11 @@ import {
 import type { ProposedAction } from '@dhcb/core-contracts/proposedAction'
 import type { ContextPackage } from '@dhcb/core-contracts/contextPackage'
 import { EmbodimentMode } from '../../components/Companion3D/AvatarEmbodimentSelector'
-import type { ChatMessage, StudioTab } from '../../components/CompanionStudios/studioTypes'
+import type {
+  ChatMessage,
+  StudioTab,
+  CompanionVoiceState,
+} from '../../components/CompanionStudios/studioTypes'
 import { DOMAIN_OPTIONS, STUDIO_TABS_CONFIG } from '../../components/CompanionStudios/studioTypes'
 
 // Nạp lười (Lazy-loading) từng Studio để giảm mạnh Initial Bundle Size
@@ -66,11 +71,71 @@ export default function Companion() {
       .catch(() => {})
   }, [])
 
-  const realtimeVoice = useRealtimeVoice({
-    onError: (err) => {
-      toast.error(err)
+  // ── Chế độ giọng nói: STT → LLM → TTS (KHÔNG "live" — ghi âm xong mới gửi từng bước) ──
+  const [voiceState, setVoiceState] = useState<CompanionVoiceState>('idle')
+  const [voiceError, setVoiceError] = useState<string | null>(null)
+  const voiceRecorderRef = useRef<Recorder | null>(null)
+  const voiceSupported = isRecordingSupported()
+
+  useEffect(
+    () => () => {
+      voiceRecorderRef.current?.cancel()
+      stopSpeaking()
     },
-  })
+    [],
+  )
+
+  const startVoiceRecording = async () => {
+    if (voiceState !== 'idle') return
+    setVoiceError(null)
+    try {
+      voiceRecorderRef.current = await startRecording('vi')
+      setVoiceState('recording')
+    } catch {
+      setVoiceError('Không truy cập được micro. Hãy cho phép quyền micro trong trình duyệt.')
+    }
+  }
+
+  const stopVoiceRecording = async () => {
+    const rec = voiceRecorderRef.current
+    if (!rec) return
+    voiceRecorderRef.current = null
+    setVoiceState('transcribing')
+    let text = ''
+    try {
+      text = await rec.stop()
+    } catch (e) {
+      setVoiceState('idle')
+      setVoiceError(
+        e instanceof Error && e.message === 'EMPTY_RECORDING'
+          ? 'Không nghe rõ, thử nói lại nhé.'
+          : e instanceof Error
+            ? e.message
+            : 'Lỗi nhận diện giọng nói',
+      )
+      return
+    }
+    if (!text.trim()) {
+      setVoiceState('idle')
+      setVoiceError('Không nghe rõ, thử nói lại nhé.')
+      return
+    }
+    await handleSend(text, true)
+  }
+
+  const cancelVoiceRecording = () => {
+    voiceRecorderRef.current?.cancel()
+    voiceRecorderRef.current = null
+    setVoiceState('idle')
+  }
+
+  // Dừng phiên giọng nói hiện tại (đang ghi âm hoặc AI đang đọc) — về idle ngay.
+  const stopVoiceSession = () => {
+    voiceRecorderRef.current?.cancel()
+    voiceRecorderRef.current = null
+    stopSpeaking()
+    setVoiceState('idle')
+  }
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -85,9 +150,10 @@ export default function Companion() {
     }
   }, [messages, loading, activeStudio])
 
-  const handleSend = async (customText?: string) => {
+  const handleSend = async (customText?: string, viaVoice = false) => {
     const textToSend = (customText || input).trim()
     if (!textToSend || loading) return
+    if (viaVoice) setVoiceState('thinking')
 
     const userMsg: ChatMessage = {
       id: `usr-${Date.now()}`,
@@ -157,6 +223,14 @@ export default function Companion() {
                   : m,
               ),
             )
+            if (viaVoice && finalResp.reply.trim()) {
+              setVoiceState('speaking')
+              void speak(finalResp.reply, 'vi-VN').finally(() => {
+                setVoiceState((s) => (s === 'speaking' ? 'idle' : s))
+              })
+            } else if (viaVoice) {
+              setVoiceState('idle')
+            }
           },
         },
       )
@@ -170,6 +244,7 @@ export default function Companion() {
             : m,
         ),
       )
+      if (viaVoice) setVoiceState('idle')
     } finally {
       setLoading(false)
     }
@@ -279,7 +354,15 @@ export default function Companion() {
               setViewMode={setViewMode}
               embodimentMode={embodimentMode}
               setEmbodimentMode={setEmbodimentMode}
-              realtimeVoice={realtimeVoice}
+              voice={{
+                state: voiceState,
+                error: voiceError,
+                supported: voiceSupported,
+                start: startVoiceRecording,
+                stop: stopVoiceRecording,
+                cancel: cancelVoiceRecording,
+                stopSession: stopVoiceSession,
+              }}
               handleSend={handleSend}
               handleConfirmAction={handleConfirmAction}
               handleRejectAction={handleRejectAction}

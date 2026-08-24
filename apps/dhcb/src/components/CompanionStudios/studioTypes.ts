@@ -16,6 +16,10 @@ import type { ContextPackage } from '@dhcb/core-contracts/contextPackage'
 
 export type StudioTab = 'dialogue' | 'cognitive' | 'labs' | 'proactive' | 'synthesis'
 
+// Trạng thái chế độ giọng nói của Companion — pipeline STT → LLM → TTS (KHÔNG streaming
+// audio "live"): ghi âm xong mới gửi nhận diện, gửi AI, rồi đọc câu trả lời.
+export type CompanionVoiceState = 'idle' | 'recording' | 'transcribing' | 'thinking' | 'speaking'
+
 export interface ChatMessage {
   id: string
   sender: 'user' | 'companion'
@@ -65,7 +69,7 @@ export const QUICK_PROMPTS = [
 ]
 
 export const STUDIO_TABS_CONFIG = [
-  { id: 'dialogue' as const, label: 'Đối thoại & Voice', icon: MessageSquare, badge: 'Live' },
+  { id: 'dialogue' as const, label: 'Đối thoại & Voice', icon: MessageSquare, badge: 'Voice' },
   { id: 'cognitive' as const, label: 'Nhận thức & Ký ức', icon: Brain, badge: 'Socratic' },
   { id: 'labs' as const, label: 'Đấu trường & Labs', icon: Swords, badge: 'STEM' },
   { id: 'proactive' as const, label: 'Tự trị & Lộ trình', icon: Target, badge: 'Autopilot' },
