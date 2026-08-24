@@ -93,6 +93,7 @@ const AUTHED_ROUTES = [
   '/thu-thach', // màn "chưa bắt đầu thử thách" — các trạng thái khác quét riêng bên dưới
   '/lap-trinh', // môn Lập trình: tổng quan P1–P6 + dự án xuyên suốt (PR-L1)
   '/lap-trinh/p1', // trang một bậc (6 bậc dùng chung layout)
+  '/lap-trinh/chay-thu', // sandbox chạy Python (PR-L2) — quét màn tĩnh, không chạy Pyodide
 ]
 for (const route of AUTHED_ROUTES) {
   for (const theme of THEMES) {

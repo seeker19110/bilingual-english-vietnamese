@@ -2,7 +2,7 @@
 // PR-L1: khung môn (đặc tả docs/research/dac-ta-mon-lap-trinh-2026-08-24.md). Nội dung bài
 // học chi tiết vào ở PR-L3/L4 — các bậc hiện là khung "sắp mở" trừ phần xem đề cương.
 import { useNavigate } from 'react-router-dom'
-import { Code2, Rocket, Store, Lock, ChevronRight, Languages, Clock } from 'lucide-react'
+import { Code2, Rocket, Store, Lock, ChevronRight, Languages, Clock, Play } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { PROGRAMMING_LEVELS, PROJECT_TRACKS } from '@dhcb/subject-programming/curriculum'
@@ -19,6 +19,15 @@ export default function ProgrammingHome() {
           title="Môn Lập trình"
           subtitle="Từ số 0 tới sản phẩm chạy thật trên Internet — Python, JavaScript/TypeScript, SQL. Hoàn thành môn là hoàn thành luôn dự án của chính bạn."
         />
+
+        {/* Chạy thử ngay — sandbox Python trong trình duyệt (PR-L2) */}
+        <button
+          onClick={() => nav('/lap-trinh/chay-thu')}
+          className="tap-44 w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition shadow-md shadow-accent-500/20 active:scale-[0.98]"
+        >
+          <Play className="w-4 h-4" />
+          <span>Chạy thử Python ngay trong trình duyệt</span>
+        </button>
 
         {/* Dự án xuyên suốt */}
         <section className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 space-y-3 shadow-sm">

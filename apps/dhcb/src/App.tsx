@@ -79,6 +79,9 @@ const ProgrammingHome = lazyWithRetry(() => import('./pages/subjects/programming
 const ProgrammingLevelPage = lazyWithRetry(
   () => import('./pages/subjects/programming/ProgrammingLevelPage'),
 )
+const ProgrammingPlayground = lazyWithRetry(
+  () => import('./pages/subjects/programming/ProgrammingPlayground'),
+)
 const ChatPage = lazyWithRetry(() => import('./pages/subjects/english/ChatPage'))
 
 // Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang.
@@ -330,6 +333,14 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <ProgrammingHome />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/lap-trinh/chay-thu"
+                        element={
+                          <RequireAuth>
+                            <ProgrammingPlayground />
                           </RequireAuth>
                         }
                       />
