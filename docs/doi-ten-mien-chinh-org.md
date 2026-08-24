@@ -86,8 +86,27 @@ Sau khi đổi: `.com` nên **301 redirect toàn site sang `.org`** (không tắ
 thêm `server` block Nginx riêng cho `.com` chỉ làm `return 301 https://$host_org$request_uri;`
 (việc tay, không có trong PR-7).
 
-## Không nằm trong phạm vi này
+## File mẫu trong repo
 
-Đổi domain trong `nginx/en-vi.conf`, `docs/nginx-hub-apex.md` (các file mẫu hiện dùng `.com`) —
-chỉ đổi khi thực sự cắt lịch chuyển đổi, tránh 2 bộ tài liệu mẫu gây nhầm domain nào đang thật sự
-dùng.
+**[Cập nhật 2026-08-24]** `nginx/en-vi.conf` ĐÃ đổi sang `.org` và đã được **sửa lại một lỗi
+nguy hiểm**: bản trước (commit `7bbb1a7`) xếp `en-vi.donghanhcungban.org` vào nhóm 301 redirect
+về `www.donghanhcungban.org` — tức là copy file đó lên VPS thì **app tiếng Anh chết**, vì subdomain
+phục vụ nó bị đẩy hết về hub. Nay file mẫu ghi rõ 2 nhóm tách bạch:
+
+| Nhóm                                                                             | Hành vi                                   |
+| -------------------------------------------------------------------------------- | ----------------------------------------- |
+| `www.donghanhcungban.org` · `en-vi.donghanhcungban.org`                          | **PHỤC VỤ** (không bao giờ redirect đi)   |
+| `donghanhcungban.org` (apex) · `donghanhcungban.com` · `www.donghanhcungban.com` | 301 → `https://www.donghanhcungban.org`   |
+| `en-vi.donghanhcungban.com`                                                      | 301 → `https://en-vi.donghanhcungban.org` |
+
+Hai điểm dễ sai khi áp lên VPS:
+
+1. **Block HTTP :80 của domain phục vụ phải dùng `$host`**, không ép cứng `www` — ép cứng thì
+   `en-vi...` truy cập qua HTTP sẽ bị mất subdomain.
+2. **Block redirect của `.com` phải dùng chứng chỉ phủ `.com`**, không dùng cert `.org`: bắt tay
+   TLS xảy ra TRƯỚC HTTP, nên cert sai thì trình duyệt báo lỗi bảo mật trước khi kịp đọc redirect.
+
+`docs/nginx-hub-apex.md` vẫn còn `.com` — là tài liệu lịch sử, chưa rà lại.
+
+> Cấu hình ĐANG CHẠY THẬT vẫn nằm trên VPS (`/etc/nginx/sites-available/{default,en-vi}`), không
+> phải file mẫu này. Sửa file mẫu KHÔNG tự động đổi gì trên production.
