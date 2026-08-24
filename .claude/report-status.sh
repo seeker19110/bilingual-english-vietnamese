@@ -38,6 +38,9 @@ echo "   3. 🟢 Facebook/Apple/Microsoft OAuth tạm hoãn thêm domain .org (�
 echo "   4. 🟢 PM2 cluster mode ĐÃ chạy song song thật — VPS nâng lên 3 vCPU / 3GB RAM" \
      "(2026-08-21), 3 instance khai thác đủ 3 core. Việc tách Postgres/Redis ra máy riêng vẫn" \
      "thuộc GĐ2 kế hoạch scale."
+echo "   5. 🟡 [2026-08-24] Model Gemini đổi khẩn cấp sang gemini-3.6-flash (PR #647, Google gỡ" \
+     "gemini-2.0-flash) — CHƯA xác nhận hoạt động, CHƯA cập nhật baseline eval:tutor. Cần chạy" \
+     "tay: npm run eval:tutor -- --write-baseline với key thật trên VPS."
 
 # Git status
 echo ""
