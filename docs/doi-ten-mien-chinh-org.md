@@ -1,6 +1,31 @@
 # Đổi tên miền chính sang donghanhcungban.org — checklist chuẩn bị
 
-> **Trạng thái: ĐÃ HOÀN TẤT chuyển đổi (2026-07-31).** `.org` giờ là domain mặc định — đã xác nhận
+> ## ⚠️ CẢNH BÁO — KHẲNG ĐỊNH BÊN DƯỚI KHÔNG KHỚP THỰC TẾ (đo lại 2026-08-24)
+>
+> Tài liệu này khẳng định apex `donghanhcungban.org` và cả 2 domain `.com` đều **301 redirect** về
+> `www.donghanhcungban.org`. **Đo thật trên VPS ngày 2026-08-24 cho kết quả ngược lại** — cả 5
+> domain đều trả `HTTP/2 200`, tức KHÔNG có redirect nào:
+>
+> ```
+> donghanhcungban.org              HTTP/2 200     ← lẽ ra phải 301
+> www.donghanhcungban.org          HTTP/2 200     ← đúng (phục vụ)
+> donghanhcungban.com              HTTP/2 200     ← lẽ ra phải 301
+> www.donghanhcungban.com          HTTP/2 200     ← lẽ ra phải 301
+> en-vi.donghanhcungban.org        HTTP/2 200     ← đúng (phục vụ)
+> ```
+>
+> Hệ quả: **2 URL cùng phục vụ một nội dung** (apex và `www`) — đúng thứ mà mục "tránh trùng nội
+> dung, tốt cho SEO" bên dưới nói là đã xử lý. Chưa xác định được nguyên nhân (redirect chưa từng
+> được đặt / bị ghi đè / chỉ đặt ở tầng Cloudflare nên đo từ trong VPS không thấy). `scripts/deploy.sh`
+> **không** đụng tới nginx nên không phải do deploy ghi đè.
+>
+> Đây đúng loại lỗi mà Tầng 6b của `docs/framework/QUY-TRINH-AUDIT.md` sinh ra để bắt: tài liệu
+> điều hành khẳng định một trạng thái hạ tầng mà không ai đo lại. **Đừng tin phần "ĐÃ HOÀN TẤT"
+> bên dưới cho tới khi đo lại bằng `curl -sI`.**
+>
+> ---
+>
+> **Trạng thái (tự khai 2026-07-31, CHƯA được xác nhận lại):** `.org` giờ là domain mặc định — đã xác nhận
 > đăng nhập Google + thanh toán SePay (tiền tố mới `DHCB`) chạy thật trên `en-vi.donghanhcungban.org`;
 > `www.donghanhcungban.org` là domain chuẩn duy nhất cho trang hub — `donghanhcungban.com`,
 > `www.donghanhcungban.com`, VÀ `donghanhcungban.org` (apex, không `www`) đều 301 redirect sang
