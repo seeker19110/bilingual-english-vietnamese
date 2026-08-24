@@ -76,6 +76,11 @@ export default function Companion() {
   const [voiceError, setVoiceError] = useState<string | null>(null)
   const voiceRecorderRef = useRef<Recorder | null>(null)
   const voiceSupported = isRecordingSupported()
+  // Ref phản chiếu `loading`: handler async đọc state qua closure có thể bị CŨ (stale) sau await
+  // — dùng ref để kiểm chính xác lúc chạy (fix bug kẹt 'transcribing', audit 2026-08-24).
+  const loadingRef = useRef(false)
+  // Bấm "Dừng" phải hủy cả phần TTS sắp phát khi stream LLM về xong SAU đó (fix bug audit).
+  const voiceCancelledRef = useRef(false)
 
   useEffect(
     () => () => {
@@ -120,6 +125,12 @@ export default function Companion() {
       setVoiceError('Không nghe rõ, thử nói lại nhé.')
       return
     }
+    if (loadingRef.current) {
+      // AI còn đang trả lời câu trước — handleSend sẽ từ chối im lặng, đừng để kẹt 'transcribing'.
+      setVoiceState('idle')
+      setVoiceError('Bạn Đồng Hành đang trả lời câu trước — chờ xong rồi nói tiếp nhé.')
+      return
+    }
     await handleSend(text, true)
   }
 
@@ -133,6 +144,7 @@ export default function Companion() {
   const stopVoiceSession = () => {
     voiceRecorderRef.current?.cancel()
     voiceRecorderRef.current = null
+    voiceCancelledRef.current = true // stream LLM đang bay về sau cũng KHÔNG được cất tiếng nữa
     stopSpeaking()
     setVoiceState('idle')
   }
@@ -152,8 +164,11 @@ export default function Companion() {
 
   const handleSend = async (customText?: string, viaVoice = false) => {
     const textToSend = (customText || input).trim()
-    if (!textToSend || loading) return
-    if (viaVoice) setVoiceState('thinking')
+    if (!textToSend || loadingRef.current) return
+    if (viaVoice) {
+      voiceCancelledRef.current = false
+      setVoiceState('thinking')
+    }
 
     const userMsg: ChatMessage = {
       id: `usr-${Date.now()}`,
@@ -179,6 +194,7 @@ export default function Companion() {
       },
     ])
     if (!customText) setInput('')
+    loadingRef.current = true
     setLoading(true)
 
     try {
@@ -223,7 +239,9 @@ export default function Companion() {
                   : m,
               ),
             )
-            if (viaVoice && finalResp.reply.trim()) {
+            if (viaVoice && voiceCancelledRef.current) {
+              // Người dùng đã bấm Dừng trong lúc chờ — không đọc, không đổi trạng thái.
+            } else if (viaVoice && finalResp.reply.trim()) {
               setVoiceState('speaking')
               void speak(finalResp.reply, 'vi-VN').finally(() => {
                 setVoiceState((s) => (s === 'speaking' ? 'idle' : s))
@@ -246,6 +264,7 @@ export default function Companion() {
       )
       if (viaVoice) setVoiceState('idle')
     } finally {
+      loadingRef.current = false
       setLoading(false)
     }
   }

@@ -17,6 +17,13 @@ export const MODEL_PRICING_REGISTRY: Record<string, ModelPricing> = {
     promptCostPer1MTokensUsd: 0.1,
     completionCostPer1MTokensUsd: 0.4,
   },
+  // [2026-08-24] Model Gemini mặc định mới (aiConfig.ts đổi ở PR #647). Giá KHUYẾN MÃI công bố
+  // đến 31/12/2026: $0.75/1M input · $3.75/1M output; từ 01/01/2027 tăng lên $1.5/$7.5 — nhớ
+  // cập nhật lại khi qua năm.
+  'gemini-3.6-flash': {
+    promptCostPer1MTokensUsd: 0.75,
+    completionCostPer1MTokensUsd: 3.75,
+  },
   'llama-3.3-70b-versatile': {
     promptCostPer1MTokensUsd: 0.59,
     completionCostPer1MTokensUsd: 0.79,

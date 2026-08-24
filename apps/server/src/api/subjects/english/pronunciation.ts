@@ -41,7 +41,7 @@ import {
   validateAuth,
   logSecurityEvent,
 } from '@dhcb/core-auth/security'
-import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { jsonResponse, getClientIp, internalErrorResponse } from '@dhcb/core-http/http'
 
 // Regex cho phép chữ (mọi ngôn ngữ, gồm chữ CÓ DẤU như sauté/café/naïve và tiếng Việt),
 // dấu phụ tổ hợp, số, dấu cách, gạch nối, dấu nháy (don't), dấu chấm (Mr.), và dấu câu
@@ -160,7 +160,7 @@ export default async function handler(req: Request): Promise<Response> {
   try {
     pool = getPgPool()
   } catch (err) {
-    return jsonResponse({ error: (err as Error).message }, 500, allHeaders)
+    return internalErrorResponse(err, allHeaders, 'pronunciation:getPgPool')
   }
 
   // ── BƯỚC 1: Kiểm tra cache (theo bộ ba word + voice + lang) ─────────

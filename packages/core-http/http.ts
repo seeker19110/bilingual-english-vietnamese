@@ -12,6 +12,19 @@ export function jsonResponse(
   })
 }
 
+// Trả 500 AN TOÀN: log chi tiết lỗi ở server (console.error → PM2/Sentry bắt được),
+// nhưng response cho client KHÔNG kèm err.message — message của pg/fetch có thể lộ
+// tên bảng, host DB, cấu hình hạ tầng (phát hiện audit 2026-08-24).
+export function internalErrorResponse(
+  err: unknown,
+  headers: Record<string, string> = {},
+  context = '',
+): Response {
+  const message = err instanceof Error ? err.message : String(err)
+  console.error(`[500]${context ? ` ${context}` : ''} ${message}`)
+  return jsonResponse({ error: 'Internal server error' }, 500, headers)
+}
+
 // Lấy IP client từ header X-Forwarded-For (đặt bởi Nginx/Cloudflare) — dùng cho rate limit
 // + log bảo mật. Xem ghi chú real_ip ở api/_lib/security.ts.
 export function getClientIp(req: Request): string {

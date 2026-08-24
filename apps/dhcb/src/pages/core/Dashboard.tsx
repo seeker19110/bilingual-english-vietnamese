@@ -384,7 +384,7 @@ export default function Dashboard() {
                 {weeklyLine(stats.weekly, vi)}
               </p>
               <button
-                onClick={() => nav('/profile')}
+                onClick={() => nav('/trang-ca-nhan')}
                 className="text-xs font-medium text-accent-400 theme-light:text-accent-800 hover:underline mt-1.5 inline-flex items-center gap-1"
               >
                 {vi ? 'Đổi mục tiêu ở Hồ sơ →' : 'Change goal in Profile →'}

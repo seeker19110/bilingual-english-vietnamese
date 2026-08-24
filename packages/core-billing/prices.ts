@@ -128,7 +128,9 @@ export function effectivePrice(
 ): number {
   if (promoPercent != null && promoPercent > 0) {
     // Làm tròn về đơn vị 1.000đ — giá lẻ dưới nghìn không hợp lý cho chuyển khoản ngân hàng VN.
-    return Math.round((entry.priceVnd * (100 - promoPercent)) / 100 / 1000) * 1000
+    // SÀN 1.000đ: giảm sâu (vd 97% của 15.000đ → 450 → làm tròn = 0đ) không được phép ra 0 —
+    // đơn 0đ khiến webhook cấp gói cho BẤT KỲ giao dịch nào chứa mã (audit 2026-08-24).
+    return Math.max(1000, Math.round((entry.priceVnd * (100 - promoPercent)) / 100 / 1000) * 1000)
   }
   if (
     entry.salePriceVnd != null &&

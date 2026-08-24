@@ -1244,7 +1244,7 @@ export default function Practice() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {/* Toán Học */}
             <button
-              onClick={() => nav('/phong-hoc/mathematics')}
+              onClick={() => nav('/mon-hoc/mathematics')}
               className="tap-44 p-4 rounded-3xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-blue-500/30 hover:border-blue-500/60 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex flex-col justify-between"
             >
               <div className="flex items-start gap-3 mb-2">
@@ -1271,7 +1271,7 @@ export default function Practice() {
 
             {/* Vật Lý */}
             <button
-              onClick={() => nav('/phong-hoc/physics')}
+              onClick={() => nav('/mon-hoc/physics')}
               className="tap-44 p-4 rounded-3xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-cyan-500/30 hover:border-cyan-500/60 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex flex-col justify-between"
             >
               <div className="flex items-start gap-3 mb-2">
@@ -1298,7 +1298,7 @@ export default function Practice() {
 
             {/* Hóa Học */}
             <button
-              onClick={() => nav('/phong-hoc/chemistry')}
+              onClick={() => nav('/mon-hoc/chemistry')}
               className="tap-44 p-4 rounded-3xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-amber-500/30 hover:border-amber-500/60 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex flex-col justify-between"
             >
               <div className="flex items-start gap-3 mb-2">
@@ -1325,7 +1325,7 @@ export default function Practice() {
 
             {/* Sinh Học */}
             <button
-              onClick={() => nav('/phong-hoc/biology')}
+              onClick={() => nav('/mon-hoc/biology')}
               className="tap-44 p-4 rounded-3xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-emerald-500/30 hover:border-emerald-500/60 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex flex-col justify-between"
             >
               <div className="flex items-start gap-3 mb-2">
