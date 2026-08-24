@@ -24,12 +24,24 @@ export function getCorsHeaders(req: Request): Record<string, string> {
 
   let allowOrigin = '*'
   let allowCredentials = false
-  if (allowedOrigins) {
-    const customList = allowedOrigins
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean)
-    const list = Array.from(new Set([...customList, ...DEFAULT_ALLOWED_ORIGINS]))
+  // FAIL-SAFE (audit 2026-08-24, F9): ở production mà QUÊN đặt ALLOWED_ORIGINS thì trước đây
+  // CORS lặng lẽ về '*' — không lỗi, không cảnh báo, chỉ âm thầm mở rộng hơn ý muốn. Bearer
+  // token qua header nên chưa khai thác được ngay, nhưng "mặc định an toàn" phải là đóng chứ
+  // không phải mở. Dev (không đặt NODE_ENV=production) vẫn giữ '*' cho tiện.
+  const list = allowedOrigins
+    ? Array.from(
+        new Set([
+          ...allowedOrigins
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean),
+          ...DEFAULT_ALLOWED_ORIGINS,
+        ]),
+      )
+    : process.env.NODE_ENV === 'production'
+      ? DEFAULT_ALLOWED_ORIGINS
+      : null
+  if (list) {
     if (origin && list.includes(origin)) {
       // Origin nằm trong whitelist → phản chiếu đúng origin + cho phép credentials
       allowOrigin = origin

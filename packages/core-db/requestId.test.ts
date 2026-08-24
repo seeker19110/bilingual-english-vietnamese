@@ -16,8 +16,19 @@ describe('createRequestId', () => {
     expect(a).not.toBe(b)
   })
 
-  it('gọi nhiều lần không trùng nhau (xác suất trùng cực thấp)', () => {
+  // ── Vì sao KHÔNG khẳng định "1000 lần gọi không bao giờ trùng" (vá F2, audit 2026-08-24) ──
+  //
+  // ID chỉ dài 8 ký tự hex = 32 bit, tức không gian 2^32 ≈ 4,29 tỷ. Theo nghịch lý sinh nhật,
+  // 1000 mẫu có xác suất trùng ≈ 1 − exp(−1000²/2·2^32) ≈ 0,012% MỖI LƯỢT CHẠY — tức khoảng
+  // 1/8.600 lần chạy sẽ đỏ. Test cũ khẳng định `size === 1000` nên đã làm CI đỏ ngẫu nhiên.
+  //
+  // Bản thân `createRequestId()` KHÔNG sai: nó chỉ dùng để nối các dòng log của cùng một
+  // request (xem chú thích đầu requestId.ts), không phải khoá định danh lâu dài — trùng
+  // 1/8.600 là hoàn toàn chấp nhận được. Cái sai là TEST đòi hỏi bất biến mạnh hơn thứ hàm
+  // cam kết. Ngưỡng ≥ 999/1000 phản ánh đúng cam kết thật ("gần như luôn khác nhau") và chỉ
+  // đỏ khi có ≥ 2 lần trùng trong cùng một lượt — xác suất ~7e-9, tức không bao giờ.
+  it('1000 lần gọi gần như luôn khác nhau (cho phép tối đa 1 lần trùng)', () => {
     const ids = new Set(Array.from({ length: 1000 }, () => createRequestId()))
-    expect(ids.size).toBe(1000)
+    expect(ids.size).toBeGreaterThanOrEqual(999)
   })
 })

@@ -9,6 +9,7 @@ import {
   simulateGhostAction,
   createPvPMatch,
   finalizePvPMatch,
+  trailingCorrectStreak,
 } from './pvpArenaService.js'
 import { type PvPPlayerProfile } from '@dhcb/core-contracts/pvpArena'
 
@@ -126,5 +127,64 @@ describe('pvpArenaService (1v1 PvP & Ghost Matchmaking Engine)', () => {
     expect(finalMatch.winnerId).toBe('p-1')
     expect(finalMatch.eloChanges?.player1Delta).toBeGreaterThan(0)
     expect(finalMatch.rewardExp).toBe(120)
+  })
+})
+
+describe('trailingCorrectStreak (vá F2 — chuỗi đúng liên tiếp TRONG TRẬN)', () => {
+  const act = (playerId: string, roundIndex: number, isCorrect: boolean) => ({
+    roundIndex,
+    playerId,
+    selectedOption: 0,
+    responseTimeMs: 800,
+    isCorrect,
+    pointsEarned: isCorrect ? 100 : 0,
+  })
+
+  it('chưa đánh lượt nào → 0', () => {
+    expect(trailingCorrectStreak([], 'p1')).toBe(0)
+  })
+
+  it('đếm chuỗi đúng liên tiếp tính NGƯỢC từ lượt gần nhất', () => {
+    const actions = [act('p1', 0, true), act('p1', 1, true), act('p1', 2, true)]
+    expect(trailingCorrectStreak(actions, 'p1')).toBe(3)
+  })
+
+  it('gặp lượt SAI là dừng — không đếm tiếp phần trước đó', () => {
+    const actions = [act('p1', 0, true), act('p1', 1, false), act('p1', 2, true)]
+    expect(trailingCorrectStreak(actions, 'p1')).toBe(1)
+  })
+
+  it('lượt sai ở cuối → chuỗi về 0', () => {
+    const actions = [act('p1', 0, true), act('p1', 1, true), act('p1', 2, false)]
+    expect(trailingCorrectStreak(actions, 'p1')).toBe(0)
+  })
+
+  it('BỎ QUA lượt của người khác — hai bên đếm chuỗi độc lập', () => {
+    // Lượt xen kẽ như trận thật: p1 đúng hết, ghost sai giữa chừng.
+    const actions = [
+      act('p1', 0, true),
+      act('ghost', 0, true),
+      act('p1', 1, true),
+      act('ghost', 1, false),
+      act('p1', 2, true),
+      act('ghost', 2, true),
+    ]
+    expect(trailingCorrectStreak(actions, 'p1')).toBe(3)
+    expect(trailingCorrectStreak(actions, 'ghost')).toBe(1)
+  })
+
+  it('người chơi lạ (chưa có lượt nào trong danh sách) → 0', () => {
+    expect(trailingCorrectStreak([act('p1', 0, true)], 'khong-ton-tai')).toBe(0)
+  })
+
+  // Bất biến bảo vệ chính lỗi F2: hai bên cùng chuỗi thì bên TRẢ LỜI NHANH HƠN phải được
+  // điểm cao hơn. Trước khi vá, Ghost được hệ số 1,2 còn người mới 1,0 nên bên chậm hơn vẫn
+  // có thể thắng.
+  it('cùng chuỗi đúng → ai nhanh hơn người đó điểm cao hơn', () => {
+    for (const streak of [0, 1, 2, 3, 4, 5]) {
+      const nhanh = calculatePoints(true, 800, 15, streak + 1)
+      const cham = calculatePoints(true, 3600, 15, streak + 1)
+      expect(nhanh).toBeGreaterThan(cham)
+    }
   })
 })

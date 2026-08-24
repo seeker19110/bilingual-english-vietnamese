@@ -35,8 +35,9 @@ echo "   2. 🟡 restore:all: mới kiểm chứng nhánh AN TOÀN (tải về);
      "DB thật) chưa test thật"
 echo "   3. 🟢 Facebook/Apple/Microsoft OAuth tạm hoãn thêm domain .org (đăng nhập Google/email" \
      "vẫn OK) — xem docs/doi-ten-mien-chinh-org.md"
-echo "   4. 🟢 PM2 cluster mode đúng cơ chế nhưng VPS 1 vCPU nên chưa có lợi ích song song thật" \
-     "(cần thêm phần cứng, GĐ2 kế hoạch scale)"
+echo "   4. 🟢 PM2 cluster mode ĐÃ chạy song song thật — VPS nâng lên 3 vCPU / 3GB RAM" \
+     "(2026-08-21), 3 instance khai thác đủ 3 core. Việc tách Postgres/Redis ra máy riêng vẫn" \
+     "thuộc GĐ2 kế hoạch scale."
 
 # Git status
 echo ""

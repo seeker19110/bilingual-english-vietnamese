@@ -273,6 +273,31 @@ export function matchmakeGhostRival(
   }
 }
 
+/**
+ * Chuỗi trả lời ĐÚNG LIÊN TIẾP TRONG TRẬN của một người chơi, tính từ lượt gần nhất trở về trước
+ * (gặp lượt sai là dừng). Đây mới là con số `calculatePoints` cần ở tham số `streak` — "chuỗi
+ * đúng liên tiếp", chứ KHÔNG phải `winStreak` trong hồ sơ (chuỗi THẮNG TRẬN của cả sự nghiệp).
+ *
+ * VÌ SAO CÓ HÀM NÀY (audit 2026-08-24, phát hiện F2): handler trước đây truyền
+ * `match.player1.winStreak` cho người chơi nhưng truyền hằng số `1` cho Ghost. Người mới có
+ * `winStreak = 0` → hệ số 1,0; Ghost luôn được +1 rồi thành streak 2 → hệ số 1,2. Kết quả: người
+ * mới trả lời ĐÚNG 100% và nhanh hơn hẳn vẫn thua/hoà 2,25% số trận (đo 200.000 trận) — vừa là
+ * bất công với người chơi, vừa làm test `pvp-arena` đỏ ngẫu nhiên.
+ */
+export function trailingCorrectStreak(
+  actions: readonly PvPRoundAction[],
+  playerId: string,
+): number {
+  let streak = 0
+  for (let i = actions.length - 1; i >= 0; i--) {
+    const a = actions[i]
+    if (!a || a.playerId !== playerId) continue
+    if (!a.isCorrect) break
+    streak++
+  }
+  return streak
+}
+
 export function calculatePoints(
   isCorrect: boolean,
   responseTimeMs: number,

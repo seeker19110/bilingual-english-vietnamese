@@ -14,6 +14,7 @@ import {
   finalizePvPMatch,
   simulateGhostAction,
   calculatePoints,
+  trailingCorrectStreak,
   getRankTierFromElo,
 } from '@dhcb/core-ai/pvpArenaService'
 import {
@@ -187,11 +188,16 @@ export default async function handler(req: Request): Promise<Response> {
         }
 
         const isCorrect = selectedOption === currentQ.correctIndex
+        // Hệ số nhân dùng chuỗi đúng liên tiếp TRONG TRẬN của chính người chơi — KHÔNG dùng
+        // `match.player1.winStreak` (chuỗi THẮNG TRẬN của cả sự nghiệp, người mới luôn = 0).
+        // Trước đây người chơi nhận hệ số 1,0 còn Ghost nhận 1,2 vì được truyền cứng streak = 1,
+        // nên người mới trả lời đúng 100% và nhanh hơn vẫn thua 2,25% số trận (audit F2).
+        const p1Streak = trailingCorrectStreak(match.actions, match.player1.id)
         const p1Points = calculatePoints(
           isCorrect,
           responseTimeMs,
           currentQ.timeLimitSec,
-          match.player1.winStreak,
+          isCorrect ? p1Streak + 1 : 0,
         )
 
         const p1Action: PvPRoundAction = {
@@ -203,8 +209,14 @@ export default async function handler(req: Request): Promise<Response> {
           pointsEarned: p1Points,
         }
 
-        // Mô phỏng lượt của đối thủ Ghost Rival
-        const p2Action = simulateGhostAction(currentQ, match.player2, roundIndex, 1)
+        // Mô phỏng lượt của đối thủ Ghost Rival — cũng dùng chuỗi TRONG TRẬN của chính nó,
+        // để hai bên chịu đúng một luật tính điểm.
+        const p2Action = simulateGhostAction(
+          currentQ,
+          match.player2,
+          roundIndex,
+          trailingCorrectStreak(match.actions, match.player2.id),
+        )
 
         match.scores.player1Score += p1Points
         match.scores.player2Score += p2Action.pointsEarned

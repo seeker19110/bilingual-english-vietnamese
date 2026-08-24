@@ -37,3 +37,43 @@ describe('postgres/migrations/README.md', () => {
     expect(orphan, `README nhắc file không còn tồn tại: ${orphan.join(', ')}`).toEqual([])
   })
 })
+
+// ── Chốt chặn số thứ tự migration (audit 2026-08-24, F7) ─────────────────────────────────────
+//
+// Chuỗi migration LÀ thứ tự thi hành trên DB thật. Hai file cùng số thì thứ tự giữa chúng do
+// alphabet của phần đuôi quyết định — tình cờ đúng chứ không phải có chủ đích. Số bị nhảy cóc
+// thường là dấu hiệu một file rơi mất khi rebase.
+//
+// VÌ SAO KHÔNG ĐỔI TÊN 3 CẶP ĐANG CÓ: `scripts/run-pg-migrations.ts` theo dõi migration đã áp
+// bằng TÊN FILE (bảng `public._schema_migrations`). Đổi tên một file đã chạy trên production
+// khiến runner tưởng nó chưa chạy và CHẠY LẠI trên dữ liệu thật — rủi ro không đáng, chỉ để
+// làm đẹp con số. Nên 3 cặp cũ được ghi nhận (grandfather) ở đây, còn từ nay cặp trùng MỚI sẽ
+// làm đỏ CI ngay.
+const TRUNG_SO_DA_BIET = new Set(['0026', '0027', '0059'])
+
+describe('đánh số file migration', () => {
+  const soThuTu = readdirSync(MIGRATIONS_DIR)
+    .filter((f) => f.endsWith('.sql'))
+    .map((f) => f.slice(0, 4))
+
+  it('không phát sinh số TRÙNG mới', () => {
+    const dem = new Map<string, number>()
+    for (const so of soThuTu) dem.set(so, (dem.get(so) ?? 0) + 1)
+    const trungMoi = [...dem.entries()]
+      .filter(([so, n]) => n > 1 && !TRUNG_SO_DA_BIET.has(so))
+      .map(([so, n]) => `${so} (${n} file)`)
+    expect(
+      trungMoi,
+      `Số migration bị trùng — đổi số file MỚI trước khi merge: ${trungMoi.join(', ')}`,
+    ).toEqual([])
+  })
+
+  it('không có số bị nhảy cóc', () => {
+    const duy = [...new Set(soThuTu)].map(Number).sort((a, b) => a - b)
+    const thieu: string[] = []
+    for (let n = duy[0] ?? 1; n <= (duy[duy.length - 1] ?? 0); n++) {
+      if (!duy.includes(n)) thieu.push(String(n).padStart(4, '0'))
+    }
+    expect(thieu, `Thiếu số migration (file rơi mất khi rebase?): ${thieu.join(', ')}`).toEqual([])
+  })
+})
