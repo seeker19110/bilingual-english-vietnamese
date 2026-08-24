@@ -21,10 +21,10 @@ export default function AvatarEmbodimentSelector({
     },
     {
       id: 'live_orb' as const,
-      label: 'Live Audio Orb',
+      label: 'Audio Orb',
       icon: Radio,
-      desc: 'Quả cầu năng lượng sóng âm đa sắc thái',
-      badge: 'Full-Duplex',
+      desc: 'Quả cầu hiệu ứng theo trạng thái ghi âm/trả lời',
+      badge: 'Voice',
     },
     {
       id: 'minimal' as const,

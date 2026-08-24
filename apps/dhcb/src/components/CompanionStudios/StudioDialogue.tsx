@@ -18,13 +18,23 @@ import {
 } from 'lucide-react'
 import CompanionLiveOrb from '../CompanionVoice/CompanionLiveOrb'
 import VoiceWaveformVisualizer from '../CompanionVoice/VoiceWaveformVisualizer'
-import RealtimeMultimodalLiveOrb from '../CompanionVoice/RealtimeMultimodalLiveOrb'
 import CyberTutorAvatar3D from '../Companion3D/CyberTutorAvatar3D'
 import AvatarEmbodimentSelector, { EmbodimentMode } from '../Companion3D/AvatarEmbodimentSelector'
 import EdgeAiIndicator from '../EdgeAi/EdgeAiIndicator'
 import type { ProposedAction } from '@dhcb/core-contracts/proposedAction'
 import type { ContextPackage } from '@dhcb/core-contracts/contextPackage'
-import { ChatMessage, DOMAIN_OPTIONS, QUICK_PROMPTS } from './studioTypes'
+import { ChatMessage, CompanionVoiceState, DOMAIN_OPTIONS, QUICK_PROMPTS } from './studioTypes'
+
+// Ánh xạ trạng thái pipeline STT→LLM→TTS sang state hiển thị của CompanionLiveOrb (quả cầu
+// hiệu ứng — không phụ thuộc audio "live" nào, chỉ vẽ theo state truyền vào).
+function orbStateFor(
+  state: CompanionVoiceState,
+): 'idle' | 'listening' | 'thinking' | 'speaking' | 'interrupted' {
+  if (state === 'recording') return 'listening'
+  if (state === 'transcribing' || state === 'thinking') return 'thinking'
+  if (state === 'speaking') return 'speaking'
+  return 'idle'
+}
 
 interface StudioDialogueProps {
   loading: boolean
@@ -37,17 +47,19 @@ interface StudioDialogueProps {
   setViewMode: (mode: 'chat' | 'voice') => void
   embodimentMode: EmbodimentMode
   setEmbodimentMode: (mode: EmbodimentMode) => void
-  realtimeVoice: {
-    isConnected: boolean
-    voiceState: 'idle' | 'listening' | 'thinking' | 'speaking' | 'interrupted'
-    audioLevel: number
-    userTranscript: string
-    companionTranscript: string
-    startSession: () => void
+  // Chế độ giọng nói — pipeline STT → LLM → TTS: ghi âm xong mới gửi nhận diện, gửi AI, rồi
+  // đọc câu trả lời. KHÔNG còn WebSocket "live" (đã bỏ vì không có backend, chỉ là giao diện
+  // giả lập trước đây).
+  voice: {
+    state: CompanionVoiceState
+    error: string | null
+    supported: boolean
+    start: () => void
+    stop: () => void
+    cancel: () => void
     stopSession: () => void
-    interrupt: () => void
   }
-  handleSend: (customText?: string) => Promise<void>
+  handleSend: (customText?: string, viaVoice?: boolean) => Promise<void>
   handleConfirmAction: (action: ProposedAction) => Promise<void>
   handleRejectAction: (action: ProposedAction) => Promise<void>
   actionLoadingMap: Record<string, boolean>
@@ -68,7 +80,7 @@ export default function StudioDialogue({
   setViewMode,
   embodimentMode,
   setEmbodimentMode,
-  realtimeVoice,
+  voice,
   handleSend,
   handleConfirmAction,
   handleRejectAction,
@@ -78,6 +90,8 @@ export default function StudioDialogue({
   messagesEndRef,
   inputRef,
 }: StudioDialogueProps) {
+  const lastUserMsg = [...messages].reverse().find((m) => m.sender === 'user')
+  const lastCompanionMsg = [...messages].reverse().find((m) => m.sender === 'companion')
   return (
     <div className="space-y-4 flex-1 flex flex-col">
       {/* Avatar & Multimodal Embodiment Section */}
@@ -99,7 +113,11 @@ export default function StudioDialogue({
           />
         )}
 
-        {embodimentMode === 'live_orb' && <RealtimeMultimodalLiveOrb />}
+        {embodimentMode === 'live_orb' && (
+          <div className="flex items-center justify-center py-6">
+            <CompanionLiveOrb state={orbStateFor(voice.state)} audioLevel={0} />
+          </div>
+        )}
       </div>
 
       {/* View Mode Switcher (Chat vs Live Voice) */}
@@ -125,7 +143,7 @@ export default function StudioDialogue({
             }`}
           >
             <Radio className="w-3.5 h-3.5" />
-            Đàm thoại Trực tiếp (Live Voice)
+            Đàm thoại Giọng nói
           </button>
         </div>
 
@@ -133,11 +151,11 @@ export default function StudioDialogue({
           <div className="flex items-center gap-1.5 pr-2 text-xs font-medium">
             <span
               className={`w-2 h-2 rounded-full ${
-                realtimeVoice.isConnected ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-600'
+                voice.state !== 'idle' ? 'bg-emerald-400 animate-pulse' : 'bg-zinc-600'
               }`}
             />
             <span className="text-zinc-300">
-              {realtimeVoice.isConnected ? 'Đang kết nối' : 'Sẵn sàng'}
+              {voice.state === 'idle' ? 'Sẵn sàng' : 'Đang xử lý'}
             </span>
           </div>
         ) : (
@@ -148,27 +166,29 @@ export default function StudioDialogue({
       </div>
 
       {viewMode === 'voice' ? (
-        /* Live Voice Mode Panel */
+        /* Voice Mode Panel — pipeline STT → LLM → TTS: ghi âm → nhận diện → gửi AI → đọc trả lời */
         <div className="flex-1 flex flex-col items-center justify-center py-6 px-4 space-y-6">
           <div className="text-center space-y-1">
             <h3 className="text-lg font-bold text-white tracking-tight">
-              Không Gian Đàm Thoại Thời Gian Thực
+              Đàm Thoại Bằng Giọng Nói
             </h3>
             <p className="text-xs text-zinc-400 max-w-md">
-              Trò chuyện trực tiếp bằng giọng nói tự nhiên với Bạn Đồng Hành. Hỗ trợ ngắt lời
-              (barge-in) và phản hồi tức thì.
+              Nhấn mic để nói, Companion sẽ nghe, trả lời và đọc câu trả lời cho bạn.
             </p>
           </div>
 
-          <CompanionLiveOrb
-            state={realtimeVoice.voiceState}
-            audioLevel={realtimeVoice.audioLevel}
-            className="my-2"
-          />
+          {!voice.supported && (
+            <div className="text-amber-400 theme-light:text-amber-800 text-xs bg-amber-500/10 border border-amber-500/25 rounded-2xl px-4 py-3 text-center max-w-sm">
+              Trình duyệt không hỗ trợ ghi âm. Dùng <strong>Chrome</strong> hoặc{' '}
+              <strong>Edge</strong>, hoặc chuyển sang Hội thoại Văn bản.
+            </div>
+          )}
+
+          <CompanionLiveOrb state={orbStateFor(voice.state)} audioLevel={0} className="my-2" />
 
           <VoiceWaveformVisualizer
-            audioLevel={realtimeVoice.audioLevel}
-            active={realtimeVoice.isConnected}
+            audioLevel={0.5}
+            active={voice.state === 'recording'}
             className="w-48"
           />
 
@@ -176,67 +196,74 @@ export default function StudioDialogue({
             <div className="flex items-center justify-between text-xs pb-2 border-b border-zinc-800">
               <span className="text-zinc-400 font-medium">Trạng thái Companion:</span>
               <span className="font-semibold uppercase tracking-wider text-accent-400 bg-accent-500/10 px-2 py-0.5 rounded-full">
-                {realtimeVoice.voiceState === 'listening'
+                {voice.state === 'recording'
                   ? 'Đang nghe bạn...'
-                  : realtimeVoice.voiceState === 'thinking'
-                    ? 'Đang suy nghĩ...'
-                    : realtimeVoice.voiceState === 'speaking'
-                      ? 'Đang trả lời...'
-                      : realtimeVoice.voiceState === 'interrupted'
-                        ? 'Đã ngắt lời'
+                  : voice.state === 'transcribing'
+                    ? 'Đang nhận diện giọng nói...'
+                    : voice.state === 'thinking'
+                      ? 'Đang suy nghĩ...'
+                      : voice.state === 'speaking'
+                        ? 'Đang trả lời...'
                         : 'Chưa kích hoạt'}
               </span>
             </div>
 
             <div className="min-h-[60px] text-xs space-y-1.5">
-              {realtimeVoice.userTranscript && (
+              {lastUserMsg && (
                 <div className="text-sky-300">
                   <span className="font-semibold text-zinc-400 mr-1.5">Bạn:</span>
-                  {realtimeVoice.userTranscript}
+                  {lastUserMsg.text}
                 </div>
               )}
-              {realtimeVoice.companionTranscript && (
+              {lastCompanionMsg && (
                 <div className="text-zinc-200">
                   <span className="font-semibold text-accent-400 mr-1.5">Đồng Hành:</span>
-                  {realtimeVoice.companionTranscript}
+                  {lastCompanionMsg.text}
                 </div>
               )}
-              {!realtimeVoice.userTranscript && !realtimeVoice.companionTranscript && (
+              {!lastUserMsg && !lastCompanionMsg && (
                 <p className="text-zinc-400 italic text-center py-2">
-                  {realtimeVoice.isConnected
-                    ? 'Hãy nói bất cứ điều gì để bắt đầu cuộc đàm thoại...'
-                    : 'Nhấn nút bên dưới để kết nối micro và trò chuyện'}
+                  Nhấn nút mic bên dưới để bắt đầu nói...
                 </p>
               )}
+              {voice.error && <p className="text-rose-400 text-center py-1">{voice.error}</p>}
             </div>
           </div>
 
           <div className="flex items-center gap-3 pt-2">
-            {!realtimeVoice.isConnected ? (
+            {voice.state === 'idle' ? (
               <button
-                onClick={realtimeVoice.startSession}
-                className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-sky-500/25 transition-all transform hover:scale-105"
+                onClick={voice.start}
+                disabled={!voice.supported}
+                className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 disabled:opacity-50 text-white font-bold text-sm shadow-xl shadow-sky-500/25 transition-all transform hover:scale-105"
               >
                 <Mic className="w-5 h-5" />
-                Bắt Đầu Đàm Thoại
+                Nhấn Để Nói
               </button>
-            ) : (
+            ) : voice.state === 'recording' ? (
               <>
                 <button
-                  onClick={realtimeVoice.interrupt}
+                  onClick={voice.cancel}
                   className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold transition"
                 >
-                  <Volume2 className="w-4 h-4 text-amber-400" />
-                  Ngắt lời
+                  Huỷ
                 </button>
                 <button
-                  onClick={realtimeVoice.stopSession}
-                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-rose-600/90 hover:bg-rose-500 text-white text-xs font-bold shadow-lg shadow-rose-600/20 transition"
+                  onClick={voice.stop}
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-rose-600/90 hover:bg-rose-500 text-white text-xs font-bold shadow-lg shadow-rose-600/20 transition animate-pulse"
                 >
                   <MicOff className="w-4 h-4" />
-                  Dừng Hội Thoại
+                  Dừng Ghi Âm
                 </button>
               </>
+            ) : (
+              <button
+                onClick={voice.stopSession}
+                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold transition"
+              >
+                <Volume2 className="w-4 h-4 text-amber-400" />
+                Dừng
+              </button>
             )}
           </div>
         </div>
