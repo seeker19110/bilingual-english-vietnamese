@@ -91,6 +91,8 @@ const AUTHED_ROUTES = [
   '/luyen-noi',
   '/cai-dat',
   '/thu-thach', // màn "chưa bắt đầu thử thách" — các trạng thái khác quét riêng bên dưới
+  '/lap-trinh', // môn Lập trình: tổng quan P1–P6 + dự án xuyên suốt (PR-L1)
+  '/lap-trinh/p1', // trang một bậc (6 bậc dùng chung layout)
 ]
 for (const route of AUTHED_ROUTES) {
   for (const theme of THEMES) {

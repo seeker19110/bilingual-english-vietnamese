@@ -35,12 +35,13 @@ describe('subjectRegistry', () => {
 
   it('lists subjects by category', () => {
     const stemSubjects = listSupportedSubjects('stem')
-    expect(stemSubjects.length).toBe(4)
+    expect(stemSubjects.length).toBe(5)
     expect(stemSubjects.map((s) => s.id)).toEqual([
       'mathematics',
       'physics',
       'chemistry',
       'biology',
+      'programming',
     ])
 
     const languageSubjects = listSupportedSubjects('language')
@@ -54,15 +55,25 @@ describe('subjectRegistry', () => {
     expect(isValidSubjectLevel('mathematics', 'grade_12')).toBe(true)
     expect(isValidSubjectLevel('mathematics', 'B2')).toBe(false)
   })
+
+  it('retrieves Programming manifest (thang P1–P6, dự án xuyên suốt)', () => {
+    const programming = getSubjectManifest('programming')
+    expect(programming.category).toBe('stem')
+    expect(programming.taxonomyKind).toBe('topic_hierarchy')
+    expect(programming.standardLevels).toEqual(['p1', 'p2', 'p3', 'p4', 'p5', 'p6'])
+    expect(programming.questionTypes).toContain('project_milestone')
+    expect(isValidSubjectLevel('programming', 'p1')).toBe(true)
+    expect(isValidSubjectLevel('programming', 'grade_10')).toBe(false)
+  })
 })
 
 describe('subjectRegistry — nhánh biên', () => {
   it('liệt kê toàn bộ môn khi không truyền category', () => {
     const all = listSupportedSubjects()
-    expect(all.length).toBe(5)
+    expect(all.length).toBe(6)
     // Trả về BẢN SAO: sửa mảng nhận được không đụng tới registry gốc.
     all.pop()
-    expect(listSupportedSubjects().length).toBe(5)
+    expect(listSupportedSubjects().length).toBe(6)
   })
 
   it('category không có môn nào → mảng rỗng', () => {

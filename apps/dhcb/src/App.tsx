@@ -75,6 +75,10 @@ const WordDetail = lazyWithRetry(() => import('./pages/subjects/english/WordDeta
 const Lessons = lazyWithRetry(() => import('./pages/subjects/english/Lessons'))
 const Learn = lazyWithRetry(() => import('./pages/subjects/english/Learn'))
 const CefrLevelPage = lazyWithRetry(() => import('./pages/subjects/english/CefrLevelPage'))
+const ProgrammingHome = lazyWithRetry(() => import('./pages/subjects/programming/ProgrammingHome'))
+const ProgrammingLevelPage = lazyWithRetry(
+  () => import('./pages/subjects/programming/ProgrammingLevelPage'),
+)
 const ChatPage = lazyWithRetry(() => import('./pages/subjects/english/ChatPage'))
 
 // Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang.
@@ -312,6 +316,28 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <Subjects />
+                          </RequireAuth>
+                        }
+                      />
+                      {/* Môn Lập trình có không gian riêng (như English) — đặt TRƯỚC
+                          route param :subjectId để 'programming' không rơi vào SubjectDetail */}
+                      <Route
+                        path="/mon-hoc/programming"
+                        element={<Navigate to="/lap-trinh" replace />}
+                      />
+                      <Route
+                        path="/lap-trinh"
+                        element={
+                          <RequireAuth>
+                            <ProgrammingHome />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/lap-trinh/:levelId"
+                        element={
+                          <RequireAuth>
+                            <ProgrammingLevelPage />
                           </RequireAuth>
                         }
                       />

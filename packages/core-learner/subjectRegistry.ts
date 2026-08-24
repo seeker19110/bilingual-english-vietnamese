@@ -91,6 +91,18 @@ export const SUPPORTED_SUBJECTS: SubjectManifest[] = [
     evaluationModes: ['step_analysis', 'rubric_ai', 'discrete_check'],
     schemaVersion: SUBJECT_MANIFEST_SCHEMA_VERSION,
   }),
+  SubjectManifestSchema.parse({
+    id: 'programming',
+    label: 'Lập trình',
+    description:
+      'Học lập trình từ số 0 tới sản phẩm chạy thật: Python, JavaScript/TypeScript, SQL — thang bậc P1→P6, dự án xuyên suốt',
+    category: 'stem',
+    taxonomyKind: 'topic_hierarchy',
+    standardLevels: ['p1', 'p2', 'p3', 'p4', 'p5', 'p6'],
+    questionTypes: ['predict_output', 'parsons_ordering', 'code_writing', 'project_milestone'],
+    evaluationModes: ['discrete_check', 'rubric_ai'],
+    schemaVersion: SUBJECT_MANIFEST_SCHEMA_VERSION,
+  }),
 ]
 
 const subjectMap = new Map<string, SubjectManifest>(SUPPORTED_SUBJECTS.map((s) => [s.id, s]))
