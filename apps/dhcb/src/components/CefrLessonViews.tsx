@@ -70,6 +70,7 @@ import { effectivePlan } from '../lib/promo'
 import { isFeatureEnabled } from '../lib/planFeatures'
 import { getLimits } from '../lib/appSettings'
 import { useApiThrottle } from '../lib/useApiThrottle'
+import { shuffle } from '@dhcb/core-contracts/shuffle'
 
 // ── Chi tiết 1 bài ngữ pháp ───────────────────────────────────────────────────
 export function GrammarDetail({
@@ -295,17 +296,14 @@ interface TestOutQ {
 
 function buildTestOutQuiz(circleWords: DictEntry[], pool: DictEntry[]): TestOutQ[] {
   const size = Math.min(TESTOUT_QUIZ_SIZE, circleWords.length)
-  const qs = [...circleWords].sort(() => Math.random() - 0.5).slice(0, size)
+  const qs = shuffle(circleWords).slice(0, size)
   const meanings = pool.map((w) => w.vi)
   return qs.map((q) => {
-    const wrongs = meanings
-      .filter((m) => m !== q.vi)
-      .sort(() => Math.random() - 0.5)
-      .slice(0, TESTOUT_CHOICES - 1)
+    const wrongs = shuffle(meanings.filter((m) => m !== q.vi)).slice(0, TESTOUT_CHOICES - 1)
     return {
       word: q.word,
       correct: q.vi,
-      options: [q.vi, ...wrongs].sort(() => Math.random() - 0.5),
+      options: shuffle([q.vi, ...wrongs]),
     }
   })
 }

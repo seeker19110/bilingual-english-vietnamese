@@ -638,9 +638,10 @@ BASE_URL=https://en-vi.donghanhcungban.com npm run prefetch:tts-patterns -- --fo
 ## GĐ2 (kế hoạch scale 50k concurrent): tách Postgres/Redis ra VPS riêng
 
 > Xem bối cảnh đầy đủ: `docs/research/ke-hoach-scale-30k-concurrent.md` (mục 4.1/5.1/5.2) +
-> `docs/research/dac-ta-gd2-scale-50k.md`. Bắt buộc phải làm TRƯỚC khi traffic thật tăng cao —
-> log deploy 2026-07-25 đã xác nhận VPS app hiện tại chỉ có 1 vCPU (xem `PROGRESS.md`), không đủ
-> chỗ chạy thêm Postgres/Redis nặng.
+> `docs/research/dac-ta-gd2-scale-50k.md`. Bắt buộc phải làm TRƯỚC khi traffic thật tăng cao:
+> VPS app hiện tại là **3 vCPU / 3GB RAM** (nâng 2026-08-21 — con số "1 vCPU" trong log deploy
+> 2026-07-25 đã lỗi thời), đủ chạy 3 instance PM2 nhưng vẫn KHÔNG đủ chỗ cho Postgres/Redis
+> nặng chạy chung.
 >
 > ⚠️ Đây là **việc phải làm TAY** (mua máy, SSH, không tự động hoá được qua CI) — làm cẩn thận
 > từng bước, đừng xoá dữ liệu cũ cho tới khi xác nhận máy mới chạy ổn định.

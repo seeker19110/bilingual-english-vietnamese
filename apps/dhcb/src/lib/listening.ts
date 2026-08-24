@@ -13,6 +13,7 @@
 import type { DictEntry } from '../types'
 import type { Dialogue } from '../data/dialogues'
 import type { CefrId } from './placement'
+import { shuffle } from '@dhcb/core-contracts/shuffle'
 
 // Tốc độ phát MẶC ĐỊNH của bài luyện nghe theo cấp — người mới cần chậm hơn để
 // tách được từng âm, cấp cao nghe tốc độ gần tự nhiên. KHÁC RateToggle (0.75/1/
@@ -50,15 +51,6 @@ function wordCount(text: string): number {
 function isDictationLength(text: string): boolean {
   const n = wordCount(text)
   return n >= DICTATION_MIN_WORDS && n <= DICTATION_MAX_WORDS
-}
-
-function shuffle<T>(arr: readonly T[]): T[] {
-  const a = [...arr]
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[a[i], a[j]] = [a[j] as T, a[i] as T]
-  }
-  return a
 }
 
 // Câu từ hội thoại của cấp — nguồn CHÍNH: tự nhiên, có ngữ cảnh hội thoại thật.

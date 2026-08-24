@@ -335,6 +335,15 @@ export async function erasePersonData(
       table: string,
       column = 'person_id',
     ): Promise<number> {
+      // Tên schema/bảng/cột KHÔNG thể tham số hoá bằng $1 (Postgres chỉ nhận tham số ở vị trí
+      // GIÁ TRỊ), nên phải nối chuỗi. Mọi lời gọi hiện tại đều truyền hằng số trong code, nhưng
+      // chặn ngay tại đây để một lần sửa sau này vô tình nối biến từ người dùng vào là NỔ NGAY
+      // thay vì thành lỗ SQL injection im lặng (audit 2026-08-24, F9). `personId` vẫn đi qua $1.
+      for (const ident of [schema, table, column]) {
+        if (!/^[a-z_][a-z0-9_]*$/.test(ident)) {
+          throw new Error(`Định danh SQL không hợp lệ: ${JSON.stringify(ident)}`)
+        }
+      }
       const res = await client.query(`DELETE FROM ${schema}.${table} WHERE ${column} = $1`, [
         personId,
       ])
