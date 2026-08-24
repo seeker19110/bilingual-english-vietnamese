@@ -81,6 +81,7 @@ import {
   levelVocabCounts,
   levelGrammarCounts,
   computeLockedMapPersisted,
+  persistUnlockedLevels,
   findNextStep,
   isExamEligible,
   UNLOCK_PCT,
@@ -204,6 +205,11 @@ export default function CefrLevelPage() {
     () => computeLockedMapPersisted(uid, levels, examPassed),
     [uid, levels, examPassed],
   )
+
+  // Ghi nhớ cấp VỪA mở khóa (grandfather) — side effect tách khỏi render, xem cefrProgress.ts.
+  useEffect(() => {
+    persistUnlockedLevels(uid, levels, examPassed)
+  }, [uid, levels, examPassed])
 
   // Số thứ tự "Bài N" liên tục trong cả cấp (ổn định dù có ẩn bài đã xong).
   const lessonNumberOf = useMemo(() => {

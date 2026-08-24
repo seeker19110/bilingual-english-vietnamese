@@ -192,6 +192,9 @@ export function getUnlockedLevels(uid: string): Set<string> {
   return readSet(UNLOCKED_KEY(uid))
 }
 
+// [2026-08-24] Tách làm 2 hàm — trả nợ ghi ở PROGRESS.md: hàm compute phải THUẦN
+// (gọi được trong render/useMemo, React Compiler bảo toàn memo được); phần GHI
+// localStorage + pushProgress tách sang persistUnlockedLevels, gọi từ useEffect.
 export function computeLockedMapPersisted(
   uid: string,
   levels: CefrLevel[],
@@ -200,6 +203,25 @@ export function computeLockedMapPersisted(
   const everUnlocked = getUnlockedLevels(uid)
   const liveMap = computeLockedMap(levels, examPassed)
   const result = new Map<CefrLevel['id'], boolean>()
+  for (const l of levels) {
+    const liveLocked = liveMap.get(l.id) ?? false
+    // Cấp đang mở theo luật sống HOẶC đã từng mở (grandfather) → không khóa.
+    result.set(l.id, liveLocked && !everUnlocked.has(l.id))
+  }
+  return result
+}
+
+// Ghi nhớ các cấp VỪA mở theo luật sống vào et_cefr_unlocked_* (chống hồi tố về sau)
+// + đồng bộ cloud. Idempotent: không đổi gì thì không ghi, không push. Gọi từ
+// useEffect ở các trang dùng computeLockedMapPersisted — KHÔNG gọi trong render.
+export function persistUnlockedLevels(
+  uid: string,
+  levels: CefrLevel[],
+  examPassed: Set<string>,
+): void {
+  if (!uid) return
+  const everUnlocked = getUnlockedLevels(uid)
+  const liveMap = computeLockedMap(levels, examPassed)
   let changed = false
   for (const l of levels) {
     const liveLocked = liveMap.get(l.id) ?? false
@@ -207,13 +229,11 @@ export function computeLockedMapPersisted(
       everUnlocked.add(l.id)
       changed = true
     }
-    result.set(l.id, liveLocked && !everUnlocked.has(l.id))
   }
-  if (uid && changed) {
+  if (changed) {
     writeSet(UNLOCKED_KEY(uid), everUnlocked)
     pushProgress(uid) // đồng bộ lên Supabase
   }
-  return result
 }
 
 // ── Mục học tiếp theo trong 1 cấp ───────────────────────────────────────
