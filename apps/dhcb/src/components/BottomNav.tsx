@@ -45,6 +45,7 @@ const COMPANION_PATHS = [
   '/action-canvas',
 ]
 const PROFILE_PATHS = [
+  '/trang-ca-nhan',
   '/profile',
   '/cai-dat',
   '/tien-do',
@@ -218,7 +219,7 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
 
         {/* Tab 5: Profile */}
         <Link
-          to="/profile"
+          to="/trang-ca-nhan"
           aria-current={isProfile ? 'page' : undefined}
           className={`tap-44 relative flex flex-col items-center justify-center gap-1 text-center text-xs font-medium transition-all duration-200 group ${
             isProfile

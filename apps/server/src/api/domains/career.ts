@@ -24,7 +24,7 @@ import {
 import { ProficiencyBandSchema } from '@dhcb/core-contracts/careerInterview'
 import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
 import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
-import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { jsonResponse, getClientIp, internalErrorResponse } from '@dhcb/core-http/http'
 import { UuidSchema } from '@dhcb/core-contracts/shared'
 
 const PostCareerSchema = z.discriminatedUnion('resource', [
@@ -173,7 +173,6 @@ export default async function handler(req: Request): Promise<Response> {
     if (isAppError(err)) {
       return jsonResponse(toErrorBody(err), err.status, headers)
     }
-    const message = err instanceof Error ? err.message : String(err)
-    return jsonResponse({ error: 'Internal server error', message }, 500, headers)
+    return internalErrorResponse(err, headers, 'career')
   }
 }

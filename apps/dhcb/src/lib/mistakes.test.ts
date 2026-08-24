@@ -174,9 +174,13 @@ describe('Mistake Bank (sổ lỗi cá nhân)', () => {
       vi.stubGlobal('fetch', fetchMock)
 
       const out = await syncMistakes('u1')
-      expect(out).toEqual(merged)
-      // localStorage phải mang bản hợp nhất, không còn bản cục bộ cũ.
-      expect(getMistakes('u1')).toEqual(merged)
+      // [2026-08-24] Hợp đồng mới: bản server được HỢP NHẤT LẠI với sổ cục bộ hiện tại (không
+      // ghi đè thẳng) — lỗi ghi bằng addMistake trong lúc request đang bay không được mất.
+      // Ở đây sổ cục bộ có M2, server trả 1 thẻ khác → kết quả phải chứa CẢ HAI.
+      expect(out).toHaveLength(2)
+      expect(out.map((m) => m.wrong).sort()).toEqual(['from server', M2().wrong].sort())
+      expect(out.find((m) => m.wrong === 'from server')?.count).toBe(9)
+      expect(getMistakes('u1')).toEqual(out)
       const [url, init] = fetchMock.mock.calls[0]!
       expect(url).toBe('/api/mistakes')
       expect(JSON.parse(init.body).mistakes).toHaveLength(1)

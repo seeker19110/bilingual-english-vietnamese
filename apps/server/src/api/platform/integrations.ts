@@ -11,7 +11,7 @@ import { syncToGoogleCalendar } from '@dhcb/core-integrations/googleCalendar'
 import { exportToNotion } from '@dhcb/core-integrations/notion'
 import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
 import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
-import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
+import { jsonResponse, getClientIp, internalErrorResponse } from '@dhcb/core-http/http'
 
 export default async function handler(req: Request): Promise<Response> {
   const headers = { ...getCorsHeaders(req), ...SECURITY_HEADERS }
@@ -78,7 +78,6 @@ export default async function handler(req: Request): Promise<Response> {
     if (isAppError(err)) {
       return jsonResponse(toErrorBody(err), err.status, headers)
     }
-    const message = err instanceof Error ? err.message : String(err)
-    return jsonResponse({ error: 'Internal server error', message }, 500, headers)
+    return internalErrorResponse(err, headers, 'integrations')
   }
 }

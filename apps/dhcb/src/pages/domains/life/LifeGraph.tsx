@@ -314,7 +314,7 @@ export default function LifeGraph() {
   if (loading) {
     return (
       <div className="min-h-dvh bg-zinc-950 text-zinc-100 flex flex-col">
-        <Layout onBack={() => nav('/profile')} title="Mạng lưới & Ký ức" />
+        <Layout onBack={() => nav('/trang-ca-nhan')} title="Mạng lưới & Ký ức" />
         <main className="max-w-4xl mx-auto px-4 pt-12 pb-12 flex flex-col items-center justify-center flex-1">
           <Loader2 className="w-8 h-8 animate-spin text-accent-400 mb-3" />
           <p className="text-zinc-400 text-sm">Đang tải cấu trúc tri thức cá nhân...</p>
@@ -325,7 +325,7 @@ export default function LifeGraph() {
 
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100 flex flex-col">
-      <Layout onBack={() => nav('/profile')} title="Mạng lưới & Ký ức" />
+      <Layout onBack={() => nav('/trang-ca-nhan')} title="Mạng lưới & Ký ức" />
 
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-6 pb-20 space-y-6">
         {/* Top Header & Privacy Toolbar */}

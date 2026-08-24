@@ -204,7 +204,8 @@ async function classifyBatch(
   if (provider === 'gemini') {
     raw = await callGemini(
       key,
-      process.env.GEMINI_MODEL || 'gemini-2.0-flash',
+      // [2026-08-24] Google đã gỡ gemini-2.0-flash (404) — dùng model mặc định mới, xem aiConfig.ts.
+      process.env.GEMINI_MODEL || 'gemini-3.6-flash',
       system,
       [{ role: 'user', content: user }],
       2000,
