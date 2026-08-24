@@ -120,7 +120,7 @@ export default function HomeAiBriefingCard({
 
         {/* Live Voice Shortcut */}
         <button
-          onClick={() => nav('/agent-ban-dong-hanh')}
+          onClick={() => nav('/ban-dong-hanh')}
           className="tap-44 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent-500/15 hover:bg-accent-500/25 border border-accent-500/30 text-accent-300 text-xs font-semibold transition-all shadow-sm active:scale-95 shrink-0"
           aria-label="Mở Không Gian Bạn Đồng Hành"
         >
@@ -253,7 +253,7 @@ export default function HomeAiBriefingCard({
           </button>
         ) : (
           <button
-            onClick={() => nav('/phong-hoc')}
+            onClick={() => nav('/mon-hoc')}
             className="tap-44 flex items-center justify-between p-3 rounded-2xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 hover:border-blue-500/50 text-left transition-all duration-200 active:scale-[0.98] group shadow-sm"
           >
             <div className="flex items-center gap-3 min-w-0">

@@ -116,7 +116,7 @@ export default function StartupCanvas() {
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout onBack={() => nav('/startup')} />
+      <Layout onBack={() => nav('/khoi-nghiep')} />
 
       <main className="max-w-7xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
         <PageHeader

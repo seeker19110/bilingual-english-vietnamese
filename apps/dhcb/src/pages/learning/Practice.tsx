@@ -1233,7 +1233,7 @@ export default function Practice() {
               1. Luyện Tập 5 Môn Học & Giải Đề Từng Bước
             </h2>
             <button
-              onClick={() => nav('/phong-hoc')}
+              onClick={() => nav('/mon-hoc')}
               className="text-[11px] text-zinc-400 hover:text-blue-300 transition flex items-center gap-1 font-medium"
             >
               <span>Xem tất cả môn</span>

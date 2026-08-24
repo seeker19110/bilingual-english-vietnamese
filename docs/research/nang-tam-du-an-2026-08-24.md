@@ -151,6 +151,8 @@ dùng, và có ít nhất 5 người dùng thật quay lại lần thứ hai.
 - **PR 3.2 — Chạy k6 lần đầu tiên**, dù chỉ ở mức 200–500 người đồng thời. Mục đích không phải để
   scale, mà để **biết con số thật** — thay cho 993 dòng tài liệu đang dựa hoàn toàn vào ước lượng.
 
+**✅ [2026-08-24] PR 3.1 đã làm xong.** ⚠️ **PR 3.2 chưa làm được trong phiên này** — xem §7.
+
 ---
 
 ## 5. Những gì đề xuất KHÔNG làm
@@ -177,7 +179,8 @@ dùng, và có ít nhất 5 người dùng thật quay lại lần thứ hai.
 
 ## 7. Nợ kỹ thuật đang chặn, cần xử lý song song (việc tay, AI không làm được)
 
-Hai món này cần máy có khoá API thật, đã ghi ở `PROGRESS.md` mục "Nợ kỹ thuật còn mở":
+Ba món này cần máy có khoá API thật / mạng thật / DB thật, đã ghi ở `PROGRESS.md` mục "Nợ kỹ
+thuật còn mở":
 
 1. **Model Gemini `gemini-3.6-flash` chưa được xác nhận hoạt động lần nào** (PR #647). Chạy trên VPS:
    `npm run eval:tutor -- --write-baseline`. Đây là lớp dự phòng thứ 3 của chat — hỏng âm thầm, chỉ
@@ -185,3 +188,9 @@ Hai món này cần máy có khoá API thật, đã ghi ở `PROGRESS.md` mục 
 2. **Khoá gốc mã hoá dữ liệu người dùng (`USER_DATA_MASTER_KEY`) chưa chốt nơi cất.** Hạ tầng mã hoá
    đã viết xong và có 18 test, nhưng đang "ngủ". Lưu ý: bản dump PostgreSQL và backup trên Cloudflare
    R2 hiện **vẫn là văn bản thuần**.
+3. **PR 3.2 (chạy k6 lần đầu) chưa làm được trong phiên sửa lỗi** — sandbox không có `k6` cài sẵn,
+   không có `DATABASE_URL`/`REDIS_URL` thật, và không nối được tới VPS production. Kịch bản khởi
+   điểm đã có sẵn (`scripts/load-test/k6-baseline.js`, 2 route nhẹ). **Việc cần làm trên VPS:**
+   `k6 run scripts/load-test/k6-baseline.js` ở mức 200–500 VU trước, ghi lại p95/lỗi thật, rồi
+   nới dần — đừng nhảy thẳng lên nghìn VU. Đây chính là điều kiện đóng PR 3.2 và đóng luôn cổng
+   "biết con số thật" của Đợt 3.

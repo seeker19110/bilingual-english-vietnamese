@@ -357,7 +357,7 @@ test.describe('Platform V2 Specialized Domain Hubs & Companion E2E', () => {
   test('Luồng Bạn Đồng Hành AI: gửi tin nhắn, nhận phản hồi và duyệt Proposed Action', async ({
     page,
   }) => {
-    await page.goto('/dong-hanh')
+    await page.goto('/ban-dong-hanh')
     await expect(page.getByText('Bạn Đồng Hành Đa Lĩnh Vực')).toBeVisible()
 
     // Chọn Domain Sự nghiệp
@@ -382,7 +382,7 @@ test.describe('Platform V2 Specialized Domain Hubs & Companion E2E', () => {
   test('Luồng Career Hub: hiển thị thông tin hồ sơ, mục tiêu và phân tích khoảng cách kỹ năng', async ({
     page,
   }) => {
-    await page.goto('/career')
+    await page.goto('/su-nghiep')
     await expect(page.getByText('Không Gian Sự Nghiệp (Career Hub)')).toBeVisible()
     await expect(page.getByText('Staff AI Engineer')).toBeVisible()
     await expect(page.getByText('6 năm kinh nghiệm')).toBeVisible()
@@ -395,7 +395,7 @@ test.describe('Platform V2 Specialized Domain Hubs & Companion E2E', () => {
   test('Luồng Work Hub: chuyển đổi giữa các tab Công việc, Dự án, Cuộc họp và Tài liệu', async ({
     page,
   }) => {
-    await page.goto('/work')
+    await page.goto('/cong-viec')
     await expect(page.getByText('Không Gian Công Việc (Work Hub)')).toBeVisible()
 
     // Tab 1: Công việc
@@ -415,7 +415,7 @@ test.describe('Platform V2 Specialized Domain Hubs & Companion E2E', () => {
   })
 
   test('Luồng Startup Hub: xem Lean Canvas và Nhật ký Bằng chứng', async ({ page }) => {
-    await page.goto('/startup')
+    await page.goto('/khoi-nghiep')
     await expect(page.getByText('Không Gian Khởi Nghiệp (Startup Hub)')).toBeVisible()
     await expect(page.getByText('Trợ lý học tập và phát triển cá nhân hóa')).toBeVisible()
     await expect(page.getByText('Người đi làm khó duy trì kỷ luật học tiếng Anh')).toBeVisible()
@@ -430,7 +430,7 @@ test.describe('Platform V2 Specialized Domain Hubs & Companion E2E', () => {
   test('Luồng Life Foundation Hub: xem chuỗi thói quen, check-in sức khỏe và kế hoạch', async ({
     page,
   }) => {
-    await page.goto('/life')
+    await page.goto('/cuoc-song')
     await expect(page.getByText('Nền Tảng Cuộc Sống (Life Foundation)')).toBeVisible()
 
     // Tab Thói quen

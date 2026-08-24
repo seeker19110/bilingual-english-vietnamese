@@ -33,19 +33,19 @@ test.describe('BottomNav (U-5)', () => {
     await expect(page.locator('nav[aria-label]')).toHaveCount(0)
   })
 
-  test('tab Luyện tập: luôn vào trang hub /phong-luyen-tap, kể cả khi vừa ở /luyen-noi', async ({
+  test('tab Luyện tập: luôn vào trang hub /luyen-tap, kể cả khi vừa ở /luyen-noi', async ({
     page,
   }) => {
     await mockLogin(page, 'vi')
     await page.goto('/')
     await page.getByRole('link', { name: /Luyện tập/ }).click()
-    await expect(page).toHaveURL(/\/phong-luyen-tap$/)
+    await expect(page).toHaveURL(/\/luyen-tap$/)
 
     await page.goto('/luyen-noi')
     await expect(page.getByRole('heading', { name: /Luyện nói song ngữ/ }).first()).toBeVisible()
     await page.goto('/')
     await page.getByRole('link', { name: /Luyện tập/ }).click()
-    await expect(page).toHaveURL(/\/phong-luyen-tap$/)
+    await expect(page).toHaveURL(/\/luyen-tap$/)
   })
 
   test('Chat: input không bị BottomNav che (nằm trên đường viền nav)', async ({ page }) => {

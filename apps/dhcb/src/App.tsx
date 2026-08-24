@@ -1,5 +1,5 @@
 import { Suspense, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom'
 import { LangProvider } from './context/LangProvider'
 import { AppThemeProvider as ThemeProvider } from './context/AppThemeProvider'
 import { AuthProvider } from './context/AuthProvider'
@@ -167,6 +167,12 @@ function usePrefetchPages() {
 // gần như miễn phí và không cần thêm gì ở server.
 const APP_SETTINGS_POLL_MS = 60 * 60 * 1000
 
+// Chuyển hướng URL cũ của trang chi tiết môn học về URL chính thức, GIỮ NGUYÊN mã môn.
+function SubjectRedirect() {
+  const { subjectId } = useParams()
+  return <Navigate to={`/mon-hoc/${subjectId ?? ''}`} replace />
+}
+
 export default function App() {
   usePrefetchPages()
   // Kéo toàn bộ nội dung trang xuống 1 tay (Reachability) — xem lib/useOneHandedDrag.ts
@@ -220,14 +226,6 @@ export default function App() {
                       <Route path="/onboarding" element={<Onboarding />} />
                       <Route path="/placement" element={<Placement />} />
                       <Route
-                        path="/profile"
-                        element={
-                          <RequireAuth>
-                            <Profile />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
                         path="/trang-ca-nhan"
                         element={
                           <RequireAuth>
@@ -244,31 +242,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/agent-ban-dong-hanh"
-                        element={
-                          <RequireAuth>
-                            <Companion />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
                         path="/ban-dong-hanh"
-                        element={
-                          <RequireAuth>
-                            <Companion />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/dong-hanh"
-                        element={
-                          <RequireAuth>
-                            <Companion />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/companion"
                         element={
                           <RequireAuth>
                             <Companion />
@@ -301,58 +275,10 @@ export default function App() {
                       />
                       {/* V2 Specialized Domain Hubs & Hoc-* Routes */}
                       <Route
-                        path="/su-nghiep-cua-toi"
-                        element={
-                          <RequireAuth>
-                            <Career />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/hoc-su-nghiep"
-                        element={
-                          <RequireAuth>
-                            <Career />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/career"
-                        element={
-                          <RequireAuth>
-                            <Career />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
                         path="/su-nghiep"
                         element={
                           <RequireAuth>
                             <Career />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/cong-viec-cua-toi"
-                        element={
-                          <RequireAuth>
-                            <Work />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/hoc-cong-viec"
-                        element={
-                          <RequireAuth>
-                            <Work />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/work"
-                        element={
-                          <RequireAuth>
-                            <Work />
                           </RequireAuth>
                         }
                       />
@@ -365,58 +291,10 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/toi-khoi-nghiep"
-                        element={
-                          <RequireAuth>
-                            <Startup />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/hoc-khoi-nghiep"
-                        element={
-                          <RequireAuth>
-                            <Startup />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/startup"
-                        element={
-                          <RequireAuth>
-                            <Startup />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
                         path="/khoi-nghiep"
                         element={
                           <RequireAuth>
                             <Startup />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/cuoc-song-cua-toi"
-                        element={
-                          <RequireAuth>
-                            <Life />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/hoc-cuoc-song"
-                        element={
-                          <RequireAuth>
-                            <Life />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/life"
-                        element={
-                          <RequireAuth>
-                            <Life />
                           </RequireAuth>
                         }
                       />
@@ -430,38 +308,6 @@ export default function App() {
                       />
                       {/* V2 Multi-Subject Learning Hub & Sub-pages */}
                       <Route
-                        path="/phong-hoc"
-                        element={
-                          <RequireAuth>
-                            <Subjects />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/phong-hoc/:subjectId"
-                        element={
-                          <RequireAuth>
-                            <SubjectDetail />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/hoc-mon-hoc"
-                        element={
-                          <RequireAuth>
-                            <Subjects />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/subjects"
-                        element={
-                          <RequireAuth>
-                            <Subjects />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
                         path="/mon-hoc"
                         element={
                           <RequireAuth>
@@ -471,22 +317,6 @@ export default function App() {
                       />
                       <Route
                         path="/mon-hoc/:subjectId"
-                        element={
-                          <RequireAuth>
-                            <SubjectDetail />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/hoc-mon-hoc/:subjectId"
-                        element={
-                          <RequireAuth>
-                            <SubjectDetail />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/subjects/:subjectId"
                         element={
                           <RequireAuth>
                             <SubjectDetail />
@@ -518,14 +348,6 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/workspace"
-                        element={
-                          <RequireAuth>
-                            <ActionCanvas />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
                         path="/action-canvas"
                         element={
                           <RequireAuth>
@@ -542,39 +364,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/life/wheel-of-life"
-                        element={
-                          <RequireAuth>
-                            <LifeWheel />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
                         path="/ung-dung-thuc-te"
-                        element={
-                          <RequireAuth>
-                            <AppliedKnowledge />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/applied-knowledge"
-                        element={
-                          <RequireAuth>
-                            <AppliedKnowledge />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/mo-phong"
-                        element={
-                          <RequireAuth>
-                            <AppliedKnowledge />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/simulators"
                         element={
                           <RequireAuth>
                             <AppliedKnowledge />
@@ -591,22 +381,6 @@ export default function App() {
                       />
                       <Route
                         path="/hoc-tieng-anh"
-                        element={
-                          <RequireAuth>
-                            <EnglishHome />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/tieng-anh"
-                        element={
-                          <RequireAuth>
-                            <EnglishHome />
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/english"
                         element={
                           <RequireAuth>
                             <EnglishHome />
@@ -640,14 +414,6 @@ export default function App() {
                             <FeatureGate featureKey="speaking">
                               <Speaking />
                             </FeatureGate>
-                          </RequireAuth>
-                        }
-                      />
-                      <Route
-                        path="/phong-luyen-tap"
-                        element={
-                          <RequireAuth>
-                            <Practice />
                           </RequireAuth>
                         }
                       />
@@ -819,6 +585,76 @@ export default function App() {
                           </RequireAuth>
                         }
                       />
+                      {/* ── Gom URL trùng (Đợt 3, docs/research/nang-tam-du-an-2026-08-24.md §4) ──
+                          Trước đây mỗi trang có tới 4 URL cùng render một component, không
+                          redirect — đúng loại lỗi trùng nội dung vừa sửa ở tầng tên miền (PR #645),
+                          nhưng ở tầng route. Nay mỗi trang có MỘT URL chính thức (tiếng Việt);
+                          các URL cũ vẫn sống, chỉ chuyển hướng — không ai mất bookmark. */}
+                      <Route path="/career" element={<Navigate to="/su-nghiep" replace />} />
+                      <Route
+                        path="/su-nghiep-cua-toi"
+                        element={<Navigate to="/su-nghiep" replace />}
+                      />
+                      <Route path="/hoc-su-nghiep" element={<Navigate to="/su-nghiep" replace />} />
+                      <Route path="/work" element={<Navigate to="/cong-viec" replace />} />
+                      <Route
+                        path="/cong-viec-cua-toi"
+                        element={<Navigate to="/cong-viec" replace />}
+                      />
+                      <Route path="/hoc-cong-viec" element={<Navigate to="/cong-viec" replace />} />
+                      <Route path="/startup" element={<Navigate to="/khoi-nghiep" replace />} />
+                      <Route
+                        path="/toi-khoi-nghiep"
+                        element={<Navigate to="/khoi-nghiep" replace />}
+                      />
+                      <Route
+                        path="/hoc-khoi-nghiep"
+                        element={<Navigate to="/khoi-nghiep" replace />}
+                      />
+                      <Route path="/life" element={<Navigate to="/cuoc-song" replace />} />
+                      <Route
+                        path="/cuoc-song-cua-toi"
+                        element={<Navigate to="/cuoc-song" replace />}
+                      />
+                      <Route path="/hoc-cuoc-song" element={<Navigate to="/cuoc-song" replace />} />
+                      <Route path="/companion" element={<Navigate to="/ban-dong-hanh" replace />} />
+                      <Route path="/dong-hanh" element={<Navigate to="/ban-dong-hanh" replace />} />
+                      <Route
+                        path="/agent-ban-dong-hanh"
+                        element={<Navigate to="/ban-dong-hanh" replace />}
+                      />
+                      <Route path="/subjects" element={<Navigate to="/mon-hoc" replace />} />
+                      <Route path="/phong-hoc" element={<Navigate to="/mon-hoc" replace />} />
+                      <Route path="/hoc-mon-hoc" element={<Navigate to="/mon-hoc" replace />} />
+                      <Route
+                        path="/applied-knowledge"
+                        element={<Navigate to="/ung-dung-thuc-te" replace />}
+                      />
+                      <Route
+                        path="/mo-phong"
+                        element={<Navigate to="/ung-dung-thuc-te" replace />}
+                      />
+                      <Route
+                        path="/simulators"
+                        element={<Navigate to="/ung-dung-thuc-te" replace />}
+                      />
+                      <Route path="/tieng-anh" element={<Navigate to="/hoc-tieng-anh" replace />} />
+                      <Route path="/english" element={<Navigate to="/hoc-tieng-anh" replace />} />
+                      <Route path="/profile" element={<Navigate to="/trang-ca-nhan" replace />} />
+                      <Route
+                        path="/phong-luyen-tap"
+                        element={<Navigate to="/luyen-tap" replace />}
+                      />
+                      <Route path="/workspace" element={<Navigate to="/action-canvas" replace />} />
+                      <Route
+                        path="/life/wheel-of-life"
+                        element={<Navigate to="/life/wheel" replace />}
+                      />
+                      {/* Route có tham số: <Navigate to> không tự thay ":subjectId", phải đọc
+                          params thật rồi dựng đường dẫn đích. */}
+                      <Route path="/subjects/:subjectId" element={<SubjectRedirect />} />
+                      <Route path="/phong-hoc/:subjectId" element={<SubjectRedirect />} />
+                      <Route path="/hoc-mon-hoc/:subjectId" element={<SubjectRedirect />} />
                       <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                   </Suspense>

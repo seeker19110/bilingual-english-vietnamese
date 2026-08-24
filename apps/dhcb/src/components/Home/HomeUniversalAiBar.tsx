@@ -71,7 +71,7 @@ const PROMPT_CHIPS: PromptChip[] = [
     label: '🧠 Socratic & Trí nhớ',
     icon: Brain,
     query: 'Cách xây dựng Cung điện Trí nhớ (Memory Palace) để học từ vựng',
-    route: '/agent-ban-dong-hanh',
+    route: '/ban-dong-hanh',
     badgeColor:
       'hover:border-accent-500/50 hover:bg-accent-500/10 text-accent-300 theme-light:text-accent-800',
   },
@@ -104,7 +104,7 @@ export default function HomeUniversalAiBar() {
     setQuickAnswerLoading(true)
 
     // Analyze intent domain
-    let route = '/agent-ban-dong-hanh'
+    let route = '/ban-dong-hanh'
     let domainName = 'Bạn Đồng Hành'
     let summary = ''
     let socraticPoint = ''
@@ -192,7 +192,7 @@ export default function HomeUniversalAiBar() {
         'Mẹo phản xạ: Hãy luyện tập với phương pháp Echo Shadowing - nói đè theo giọng người bản xứ với độ trễ 0.2s.'
       formulaOrKey = 'IPA Target Formants: F1 (Độ mở hàm) & F2 (Vị trí lưỡi trước/sau)'
     } else {
-      route = '/agent-ban-dong-hanh'
+      route = '/ban-dong-hanh'
       domainName = 'Bạn Đồng Hành'
       summary = `Bạn Đồng Hành đã ghi nhận câu hỏi: "${rawQuery}". AI có thể đồng hành cùng bạn phân tích sâu hơn về học tập, lập kế hoạch công việc hoặc phản tỉnh nhận thức.`
       socraticPoint =

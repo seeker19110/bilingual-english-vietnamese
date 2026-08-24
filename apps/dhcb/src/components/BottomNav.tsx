@@ -142,7 +142,7 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
 
         {/* Tab 2: Phòng Học */}
         <Link
-          to="/phong-hoc"
+          to="/mon-hoc"
           aria-current={isLearning ? 'page' : undefined}
           className={`tap-44 relative flex flex-col items-center justify-center gap-1 text-center text-xs font-medium transition-all duration-200 group ${
             isLearning
@@ -166,7 +166,7 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
 
         {/* Tab 3: Agent Bạn Đồng Hành (Nút tâm điểm Orb Glow) */}
         <Link
-          to="/agent-ban-dong-hanh"
+          to="/ban-dong-hanh"
           aria-current={isCompanion ? 'page' : undefined}
           className="tap-44 relative flex flex-col items-center justify-center -mt-3.5 text-center text-xs font-medium transition-all duration-200 group"
           title="Agent Bạn Đồng Hành"
@@ -192,7 +192,7 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
 
         {/* Tab 4: Hub Luyện tập */}
         <Link
-          to="/phong-luyen-tap"
+          to="/luyen-tap"
           aria-current={isPractice ? 'page' : undefined}
           className={`tap-44 relative flex flex-col items-center justify-center gap-1 text-center text-xs font-medium transition-all duration-200 group ${
             isPractice

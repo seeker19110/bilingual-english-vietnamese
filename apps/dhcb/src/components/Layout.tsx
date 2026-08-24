@@ -38,7 +38,7 @@ const STUDIOS = [
     id: 'companion',
     title: 'Bạn Đồng Hành',
     subtitle: 'Live Voice, 3D Avatar & Socratic AI',
-    to: '/agent-ban-dong-hanh',
+    to: '/ban-dong-hanh',
     icon: Sparkles,
     badge: 'Executive',
     color: 'text-amber-400 bg-amber-500/10 border-amber-500/30 hover:border-amber-500/60',
@@ -56,7 +56,7 @@ const STUDIOS = [
     id: 'practice',
     title: 'Phòng Luyện Tập',
     subtitle: 'Đa Môn · Bài Tập · Sửa Lỗi · 4 Kỹ Năng',
-    to: '/phong-luyen-tap',
+    to: '/luyen-tap',
     icon: Dumbbell,
     badge: 'Đa Môn AI',
     color: 'text-sky-400 bg-sky-500/10 border-sky-500/30 hover:border-sky-500/60',
@@ -65,7 +65,7 @@ const STUDIOS = [
     id: 'subjects',
     title: 'Phòng Học & STEM',
     subtitle: 'Toán, Lý, Hóa, Sinh & Simulators',
-    to: '/phong-hoc',
+    to: '/mon-hoc',
     icon: Calculator,
     badge: 'Vision OCR',
     color: 'text-blue-400 bg-blue-500/10 border-blue-500/30 hover:border-blue-500/60',
@@ -74,7 +74,7 @@ const STUDIOS = [
     id: 'career',
     title: 'Sự Nghiệp Của Tôi',
     subtitle: 'Phỏng vấn STAR & Kanban Board',
-    to: '/su-nghiep-cua-toi',
+    to: '/su-nghiep',
     icon: Briefcase,
     badge: 'Work OS',
     color: 'text-purple-400 bg-purple-500/10 border-purple-500/30 hover:border-purple-500/60',
@@ -83,7 +83,7 @@ const STUDIOS = [
     id: 'life',
     title: 'Cuộc Sống Của Tôi',
     subtitle: 'Bánh xe cuộc đời & Life Graph',
-    to: '/cuoc-song-cua-toi',
+    to: '/cuoc-song',
     icon: Heart,
     badge: 'Life OS',
     color: 'text-rose-400 bg-rose-500/10 border-rose-500/30 hover:border-rose-500/60',
@@ -261,7 +261,7 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
 
         {/* Nút truy cập nhanh Bạn Đồng Hành AI toàn cục */}
         <button
-          onClick={() => nav('/dong-hanh')}
+          onClick={() => nav('/ban-dong-hanh')}
           aria-label="Mở Bạn Đồng Hành AI"
           title="Bạn Đồng Hành AI (Live Voice & Executive Suite)"
           className="tap-44 relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-accent-500/15 hover:bg-accent-500/25 border border-accent-500/30 text-accent-300 theme-light:text-accent-800 text-xs font-semibold transition-all active:scale-95 group shadow-sm shrink-0"
