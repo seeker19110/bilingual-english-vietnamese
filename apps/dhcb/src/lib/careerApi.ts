@@ -1,5 +1,6 @@
 // apps/dhcb/src/lib/careerApi.ts — Client API wrapper for Career Domain (V2-13)
 import { getAuthHeader } from '@core/authHeader'
+import type { ProficiencyBand } from '@dhcb/core-contracts/careerInterview'
 import type {
   CareerProfile,
   CareerExperience,
@@ -118,4 +119,24 @@ export async function fetchCareerSkillGap(goalId: string): Promise<CareerSkillGa
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
   return res.json()
+}
+
+// Người dùng tự đánh giá bậc thành thạo (B1–B5) cho một kỹ năng. Đây là thứ làm bảng phân tích
+// khoảng cách kỹ năng có nghĩa — trước 2026-08-24 mọi kỹ năng ngoài tiếng Anh đều bị hiển thị
+// cứng là "In Progress / chưa đạt".
+export async function saveSkillSelfLevel(params: {
+  skill: string
+  selfBand: ProficiencyBand
+  targetBand?: ProficiencyBand
+}): Promise<void> {
+  const headers = await getAuthHeader()
+  const res = await fetch('/api/career', {
+    method: 'POST',
+    headers: { ...headers, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ resource: 'skill_level', ...params }),
+  })
+  if (!res.ok) {
+    const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
+    throw new Error(errorBody.error || `HTTP error ${res.status}`)
+  }
 }

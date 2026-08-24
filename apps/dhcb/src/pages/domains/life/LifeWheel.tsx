@@ -1,13 +1,15 @@
 // apps/dhcb/src/pages/LifeWheel.tsx — Wheel of Life Assessment (Life Sub-page)
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Activity, Save } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { useToast } from '@core/ToastProvider'
+import { getLifeWheel, saveLifeWheel } from '../../../lib/lifeApi'
+import type { LifeWheelDimensionId, LifeWheelScores } from '@dhcb/core-contracts/lifeFoundation'
 
 interface Dimension {
-  id: string
+  id: LifeWheelDimensionId
   label: string
   score: number
   color: string
@@ -77,6 +79,23 @@ export default function LifeWheel() {
   const nav = useNavigate()
   const toast = useToast()
   const [dimensions, setDimensions] = useState<Dimension[]>(DEFAULT_DIMENSIONS)
+  const [saving, setSaving] = useState(false)
+
+  // Tải bản đánh giá đã lưu trên server (nếu có) — lỗi mạng thì giữ điểm mặc định, không chặn trang.
+  useEffect(() => {
+    let cancelled = false
+    getLifeWheel()
+      .then((wheel) => {
+        if (cancelled || !wheel) return
+        setDimensions((prev) => prev.map((d) => ({ ...d, score: wheel.scores[d.id] ?? d.score })))
+      })
+      .catch(() => {
+        /* chưa đăng nhập / lỗi mạng — dùng điểm mặc định */
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const handleScoreChange = (id: string, newScore: number) => {
     setDimensions((prev) => prev.map((d) => (d.id === id ? { ...d, score: newScore } : d)))
@@ -108,13 +127,26 @@ export default function LifeWheel() {
     })
     .join(' ')
 
-  const handleSaveAssessment = () => {
-    toast.success('Đã lưu kết quả Đánh giá Bánh xe cuộc đời thành công! 🎉')
+  // Lưu THẬT lên server (bảng platform.feature_state) — chỉ báo thành công sau khi server xác nhận.
+  const handleSaveAssessment = async () => {
+    if (saving) return
+    setSaving(true)
+    try {
+      const scores = Object.fromEntries(
+        dimensions.map((d) => [d.id, d.score]),
+      ) as unknown as LifeWheelScores
+      await saveLifeWheel(scores)
+      toast.success('Đã lưu kết quả Đánh giá Bánh xe cuộc đời thành công! 🎉')
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Không lưu được — thử lại sau')
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout onBack={() => nav('/life')} />
+      <Layout onBack={() => nav('/cuoc-song')} />
 
       <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
         <PageHeader
@@ -216,10 +248,11 @@ export default function LifeWheel() {
 
             <button
               onClick={handleSaveAssessment}
-              className="tap-44 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-bold text-xs transition shadow-md shadow-rose-500/20 active:scale-[0.98]"
+              disabled={saving}
+              className="tap-44 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-bold text-xs transition shadow-md shadow-rose-500/20 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <Save className="w-4 h-4" />
-              <span>Lưu kết quả đánh giá</span>
+              <span>{saving ? 'Đang lưu…' : 'Lưu kết quả đánh giá'}</span>
             </button>
           </div>
         </section>

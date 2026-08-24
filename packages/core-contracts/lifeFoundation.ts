@@ -102,3 +102,36 @@ export type Habit = z.infer<typeof HabitSchema>
 export type HabitLog = z.infer<typeof HabitLogSchema>
 export type WellbeingCheck = z.infer<typeof WellbeingCheckSchema>
 export type GrowthMilestone = z.infer<typeof GrowthMilestoneSchema>
+
+// ── Bánh Xe Cuộc Đời (Wheel of Life) ─────────────────────────────────────────
+// 8 khía cạnh cố định — client (LifeWheel.tsx) và server (api/domains/life.ts)
+// cùng dùng danh sách này nên thêm/bớt khía cạnh chỉ sửa MỘT chỗ.
+export const LIFE_WHEEL_DIMENSION_IDS = [
+  'health',
+  'career',
+  'finance',
+  'relationships',
+  'mindset',
+  'environment',
+  'recreation',
+  'growth',
+] as const
+
+export type LifeWheelDimensionId = (typeof LIFE_WHEEL_DIMENSION_IDS)[number]
+
+const wheelScoreShape = Object.fromEntries(
+  LIFE_WHEEL_DIMENSION_IDS.map((id) => [id, z.number().int().min(1).max(10)]),
+) as Record<LifeWheelDimensionId, z.ZodNumber>
+
+// Điểm 1–10 cho ĐỦ 8 khía cạnh — thiếu hoặc thừa khoá đều bị từ chối (.strict()).
+export const LifeWheelScoresSchema = z.object(wheelScoreShape).strict()
+
+export const LifeWheelStateSchema = z
+  .object({
+    scores: LifeWheelScoresSchema,
+    savedAt: IsoDateTimeSchema,
+  })
+  .strict()
+
+export type LifeWheelScores = z.infer<typeof LifeWheelScoresSchema>
+export type LifeWheelState = z.infer<typeof LifeWheelStateSchema>

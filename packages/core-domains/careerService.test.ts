@@ -23,6 +23,16 @@ vi.mock('@dhcb/core-db/transaction', () => ({
     fn(mockClient),
 }))
 
+// Kho bậc tự đánh giá (platform.feature_state) — mock bằng Map in-memory, theo khuôn đã dùng
+// ở pvp-arena.test.ts. Mặc định RỖNG: người dùng chưa tự đánh giá kỹ năng nào.
+const featureStore = new Map<string, unknown>()
+vi.mock('@dhcb/core-db/featureState', () => ({
+  getFeatureState: vi.fn(async (u: string, f: string) => featureStore.get(u + '|' + f) ?? null),
+  setFeatureState: vi.fn(async (u: string, f: string, st: unknown) => {
+    featureStore.set(u + '|' + f, st)
+  }),
+}))
+
 const getLearningReadModel = vi.fn()
 vi.mock('@dhcb/core-learner/learningReadModelService', () => ({
   getLearningReadModel: (...a: unknown[]) => getLearningReadModel(...a),
@@ -309,6 +319,130 @@ describe('Career Experience & Goal Management', () => {
 })
 
 describe('analyzeCareerSkillGap', () => {
+  // [2026-08-24, Đợt 2] Trước đây MỌI kỹ năng ngoài tiếng Anh đều bị trả cứng
+  // currentMastery: 'In Progress' / isFulfilled: false — bảng phân tích vô nghĩa với mọi
+  // người dùng. Bốn test dưới canh gác hành vi mới.
+  it('kỹ năng ngoài tiếng Anh CHƯA tự đánh giá → nói thật là chưa có dữ liệu, KHÔNG bịa "In Progress"', async () => {
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: GOAL_ID,
+          person_id: PERSON_ID,
+          target_title: 'Product Manager',
+          skills_required: ['SQL', 'Figma'],
+        },
+      ],
+    })
+    getLearningReadModel.mockResolvedValueOnce({ currentLevel: 'B1' })
+
+    const analysis = await analyzeCareerSkillGap(pool, PERSON_ID, GOAL_ID, 'user-1')
+    for (const gap of analysis.gaps) {
+      expect(gap.currentMastery).toBeNull()
+      expect(gap.currentMastery).not.toBe('In Progress')
+      expect(gap.selfBand).toBeNull()
+      expect(gap.source).toBe('unknown')
+      expect(gap.isFulfilled).toBe(false)
+    }
+  })
+
+  it('kỹ năng ĐÃ tự đánh giá → dùng bậc B1–B5 thật, đánh dấu nguồn là tự khai', async () => {
+    featureStore.set('user-1|career_skill_levels', {
+      sql: {
+        skill: 'SQL',
+        selfBand: 'B4',
+        targetBand: 'B3',
+        updatedAt: '2026-08-24T00:00:00.000Z',
+      },
+      figma: {
+        skill: 'Figma',
+        selfBand: 'B1',
+        targetBand: 'B3',
+        updatedAt: '2026-08-24T00:00:00.000Z',
+      },
+    })
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: GOAL_ID,
+          person_id: PERSON_ID,
+          target_title: 'Product Manager',
+          skills_required: ['SQL', 'Figma'],
+        },
+      ],
+    })
+    getLearningReadModel.mockResolvedValueOnce({ currentLevel: 'B1' })
+
+    const analysis = await analyzeCareerSkillGap(pool, PERSON_ID, GOAL_ID, 'user-1')
+    const sql = analysis.gaps.find((g) => g.skill === 'SQL')!
+    const figma = analysis.gaps.find((g) => g.skill === 'Figma')!
+
+    // B4 (Thành thục) đã vượt mục tiêu B3 (Thạo việc) → đạt.
+    expect(sql.selfBand).toBe('B4')
+    expect(sql.isFulfilled).toBe(true)
+    expect(sql.currentMastery).toContain('Thành thục')
+    expect(sql.source).toBe('self_assessment')
+    // B1 (Tập sự) còn dưới mục tiêu B3 → chưa đạt.
+    expect(figma.selfBand).toBe('B1')
+    expect(figma.isFulfilled).toBe(false)
+    featureStore.clear()
+  })
+
+  it('so khớp kỹ năng bỏ qua hoa/thường và khoảng trắng thừa', async () => {
+    featureStore.set('user-1|career_skill_levels', {
+      sql: {
+        skill: 'SQL',
+        selfBand: 'B3',
+        targetBand: 'B3',
+        updatedAt: '2026-08-24T00:00:00.000Z',
+      },
+    })
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: GOAL_ID,
+          person_id: PERSON_ID,
+          target_title: 'Data Analyst',
+          skills_required: ['  sql  '],
+        },
+      ],
+    })
+    getLearningReadModel.mockResolvedValueOnce({ currentLevel: null })
+
+    const analysis = await analyzeCareerSkillGap(pool, PERSON_ID, GOAL_ID, 'user-1')
+    expect(analysis.gaps[0]!.selfBand).toBe('B3')
+    expect(analysis.gaps[0]!.isFulfilled).toBe(true)
+    featureStore.clear()
+  })
+
+  it('tiếng Anh vẫn ưu tiên DỮ LIỆU HỌC THẬT, không dùng lời tự khai', async () => {
+    featureStore.set('user-1|career_skill_levels', {
+      'english communication': {
+        skill: 'English Communication',
+        selfBand: 'B5',
+        targetBand: 'B3',
+        updatedAt: '2026-08-24T00:00:00.000Z',
+      },
+    })
+    mockQuery.mockResolvedValueOnce({
+      rows: [
+        {
+          id: GOAL_ID,
+          person_id: PERSON_ID,
+          target_title: 'Global PM',
+          skills_required: ['English Communication'],
+        },
+      ],
+    })
+    // Dữ liệu học thật nói A1, dù người dùng tự khai B5 (Chuyên gia).
+    getLearningReadModel.mockResolvedValueOnce({ currentLevel: 'A1' })
+
+    const analysis = await analyzeCareerSkillGap(pool, PERSON_ID, GOAL_ID, 'user-1')
+    expect(analysis.gaps[0]!.currentMastery).toBe('A1')
+    expect(analysis.gaps[0]!.source).toBe('learning_data')
+    expect(analysis.gaps[0]!.isFulfilled).toBe(false)
+    featureStore.clear()
+  })
+
   it('analyzes skill gaps using Learning Read Model without direct learning DB access', async () => {
     mockQuery.mockResolvedValueOnce({
       rows: [
@@ -414,7 +548,7 @@ describe('analyzeCareerSkillGap', () => {
     getLearningReadModel.mockResolvedValueOnce({ currentLevel: undefined })
     const nullAnalysis = await analyzeCareerSkillGap(pool, PERSON_ID, GOAL_ID, 'user-1')
     expect(nullAnalysis.gaps[0]?.isFulfilled).toBe(false)
-    expect(nullAnalysis.gaps[0]?.currentMastery).toBe('Chưa đánh giá')
+    expect(nullAnalysis.gaps[0]?.currentMastery).toBeNull()
   })
 })
 
@@ -658,7 +792,7 @@ describe('CareerService — nhánh biên', () => {
 
     const none = await analyzeCareerSkillGap(pool, PERSON_ID, GOAL_ID, 'user-1')
     expect(none.gaps[0]!.isFulfilled).toBe(false)
-    expect(none.gaps[0]!.currentMastery).toBe('Chưa đánh giá')
+    expect(none.gaps[0]!.currentMastery).toBeNull()
   })
 
   it('goal không có skills_required → danh sách gaps rỗng', async () => {

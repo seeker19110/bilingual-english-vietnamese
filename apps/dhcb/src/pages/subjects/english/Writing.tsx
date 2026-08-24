@@ -3,7 +3,7 @@ import { PenLine, Send, RotateCcw, ChevronDown, Trophy } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { saveWritingSub, getUsage, incrementUsage, getDirection } from '../../../lib/storage'
-import { addMistakes } from '../../../lib/mistakes'
+import { addMistakes, scheduleMistakeSync } from '../../../lib/mistakes'
 import { checkNewAchievements, achievementMessage } from '../../../lib/achievements'
 import { useAuth } from '../../../context/useAuth'
 import { useToast } from '@core/ToastProvider'
@@ -330,6 +330,7 @@ export default function Writing() {
           dir,
         })),
       )
+      scheduleMistakeSync(user.id)
       setResult(sub)
       incrementUsage(user.id, 'writingCount')
       throttle() // Rate limit sau lần gọi thành công

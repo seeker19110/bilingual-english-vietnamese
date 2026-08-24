@@ -8,6 +8,197 @@
 
 ## Giai đoạn hiện tại
 
+### fix: Đợt 3 "Dọn nhà" — gom 80 route trùng về 1 URL chính thức mỗi trang (2026-08-24)
+
+**PR 3.1 xong. PR 3.2 (chạy k6 lần đầu) CHƯA làm được — cần VPS thật, xem "⚠️ Cần làm tay" bên dưới.**
+
+**Phát hiện khi đo lại (đo trực tiếp `App.tsx`, không đoán):** 80 route khai báo nhưng chỉ 50
+trang thật — 14 component có tới **4 URL cùng render y hệt nội dung, không redirect**. Ví dụ
+`/su-nghiep-cua-toi`, `/hoc-su-nghiep`, `/career`, `/su-nghiep` cùng render `<Career />`. Đúng loại
+lỗi trùng nội dung PR #645 vừa sửa ở tầng tên miền (apex/`www` cùng phục vụ một nội dung, phải
+301), nhưng tầng route trong ứng dụng vẫn còn nguyên vấn đề y hệt.
+
+**Đã sửa: mỗi trang giữ ĐÚNG MỘT URL chính thức** (chọn tiếng Việt, đúng nghĩa nhất — vd
+`/su-nghiep` thay vì `/career`). 30 route trùng đổi thành `<Route element={<Navigate replace />}>`
+— **không xoá URL nào**, ai có bookmark cũ vẫn vào được, chỉ chuyển hướng ngay lập tức. Route có
+tham số (`/subjects/:subjectId` v.v.) cần xử lý riêng vì `<Navigate to>` không tự thay `:param` —
+thêm component nhỏ `SubjectRedirect` đọc `useParams()` rồi dựng đường dẫn đích đúng mã môn.
+
+**Đồng thời rà và sửa TOÀN BỘ điểm điều hướng nội bộ** (không chỉ gỡ route) — nếu chỉ thêm redirect
+mà giữ nguyên các nút bấm trỏ URL cũ thì mỗi cú click vẫn tốn thêm 1 vòng redirect vô ích:
+`BottomNav.tsx` (3 tab), `Layout.tsx` (nav phụ), `Profile.tsx` (4 thẻ hub), `Home.tsx` (nhiều thẻ),
+`HomeAiBriefingCard.tsx`, `HomeUniversalAiBar.tsx`, `ProactiveBriefingCard.tsx`,
+`StudioSynthesis.tsx`, `CareerInterview.tsx`/`WorkKanban.tsx`/`StartupCanvas.tsx`/`LifeWheel.tsx`
+(nút "quay lại"), `Practice.tsx`, `SubjectDetail.tsx`, `EnglishHome.tsx`, và test
+`e2e/v2-hubs.spec.ts`. Rà bằng grep toàn diện theo mọi khuôn gọi (`nav()`, `navigate()`, `to=`,
+`to:`, `route:`, `path:`, `goto()`) — xác nhận cuối cùng: **0 điểm điều hướng nào còn trỏ URL không
+chính thức**.
+
+**Cổng ra (theo đúng khuôn "Đợt ra sao đo vậy" của tài liệu nghiên cứu):**
+
+- Tổng route path trong `App.tsx` vẫn 80 (không mất URL nào), nhưng 0 component nào còn nhiều URL.
+- 1 test `e2e/bottomnav.spec.ts` kỳ vọng URL cũ `/phong-luyen-tap` → sửa theo URL chính thức mới
+  `/luyen-tap`, đổi luôn tên test cho khớp thực tế.
+- **Chạy TOÀN BỘ 14 file E2E** (không chỉ file "có vẻ liên quan") vì route ảnh hưởng xuyên suốt
+  app: **219/219 test xanh** (a11y 122 + a11y-aaa/2fa/admin-intake/intake 123 + v2-hubs/bottomnav/
+  chat/listening/continue-viewing/admin/smoke/authenticated/comeback 87 — một số spec trùng số
+  đếm do chạy theo đợt).
+
+Build ✅ | Type ✅ | Lint ✅ (0 cảnh báo) | Format ✅ | Test ✅ **5178/5178** (418 file — Đợt 3 không
+thêm test unit mới, chỉ sửa route + 1 kỳ vọng E2E). Không đổi API, không đổi schema.
+
+**⚠️ Cần làm tay (không làm được trong sandbox sửa lỗi):** PR 3.2 — chạy
+`k6 run scripts/load-test/k6-baseline.js` trên VPS thật (200–500 VU trước, ghi lại p95/tỷ lệ lỗi,
+rồi mới nới dần). Sandbox không có `k6`, không có `DATABASE_URL`/`REDIS_URL` thật, không nối được
+production. Đây là điều kiện duy nhất còn thiếu để đóng trọn Đợt 3.
+
+**Đến đây, cả 3 đợt của tài liệu `nang-tam-du-an-2026-08-24.md` đã có code** (Đợt 1 lưu thật ×3,
+Đợt 2 trụ Career hết giả ×2, Đợt 3 gom route). Việc còn mở toàn bộ chỉ còn là việc tay trên VPS
+(migration 0063, k6, 2 món nợ Gemini/khoá mã hoá cũ) và đo cổng "5 người dùng quay lại" sau deploy.
+
+### feat: Đợt 2 "Một mũi nhọn thật" — trụ CAREER hết giả (2026-08-24)
+
+Mũi nhọn do chủ dự án chọn: **CAREER**. Khảo sát trước khi làm cho thấy tầng API/DB của trụ này
+thực ra đã thật (hồ sơ · kinh nghiệm · mục tiêu đều lưu Postgres, trang đã nối API) — **hai chỗ
+GIẢ nằm ở phần "thông minh" nhất**, đúng phần người dùng tìm đến:
+
+**1. 🔴 "Phòng Luyện Phỏng Vấn AI" là GIẢ HOÀN TOÀN.** `CareerInterview.tsx` có 3 câu hỏi CỨNG,
+`setTimeout(700)` giả vờ đang phân tích, rồi trả **điểm 8.5 cứng** kèm bộ nhận xét y hệt cho MỌI
+câu trả lời của MỌI người — gõ "abc" cũng được khen _"cấu trúc rõ ràng theo mô hình STAR"_. Cùng
+loại lỗi với "Live Voice giả lập" vừa gỡ ở PR #650, chỉ khác chỗ.
+
+**Đã thay bằng pipeline thật:** `packages/core-ai/careerInterviewService.ts` dùng
+`generateChatText` (Groq → Anthropic → Gemini, đúng chuỗi dự phòng dùng chung) sinh câu hỏi theo
+**hồ sơ nghề nghiệp thật** (vị trí đang nhắm, vị trí hiện tại, ngành, kỹ năng mục tiêu) và chấm
+câu trả lời thật. API mới `/api/career-interview` (`api/domains/career-interview.ts`) — vì đây là
+**đường AI trả tiền** nên có đủ rate-limit + `checkAndConsumeUsage('chat')` + **hoàn lượt khi AI
+không chạy được** (khuôn `/api/debate-arena`). Phiên lưu ở `platform.feature_state`, mở lại trang
+là thấy buổi luyện trước.
+
+**Nguyên tắc giữ xuyên suốt — không bao giờ bịa:** khi không provider nào dùng được,
+`fallbackFeedback()` trả **điểm 0 + cờ `isFallback`** và nói thẳng "câu trả lời của bạn CHƯA được
+chấm", giao diện hiện băng cảnh báo màu hổ phách, lượt dùng được hoàn. Tuyệt đối không đưa nhận
+xét mẫu ra như thể AI vừa nghĩ.
+
+Giọng và ranh giới bám **8 luật hành xử của Companion** (`dong-hanh-va-phat-trien-nang-khieu`
+mục 2): tối đa 3 điểm mạnh / 3 điểm cải thiện (luật 3), nói thật kèm đường đi tiếp (luật 6), so
+với yêu cầu vị trí chứ không so người khác (luật 4), nhận xét câu trả lời chứ không phán xét con
+người (luật 7). Prompt cấm hỏi tuổi/giới tính/hôn nhân/con cái/tôn giáo/quê quán — có test canh gác.
+
+**2. 🔴 Bảng "Phân tích khoảng cách kỹ năng" bịa cứng "In Progress".** `analyzeCareerSkillGap`
+trả `currentMastery: 'In Progress'`, `isFulfilled: false`, `requiredLevel: 'Proficient'` cho
+**mọi** kỹ năng không phải tiếng Anh — nghĩa là ai nhập mục tiêu gì (SQL, Figma, quản lý dự
+án…) cũng thấy y hệt một bảng "đang tiến hành / chưa đạt", vô nghĩa hoàn toàn.
+
+**Đã thay bằng thang B1–B5** (Dreyfus) đã chốt ở `dac-ta-nang-luc-ca-nhan-theo-do-tuoi` mục 6.2 —
+cố ý dùng BẬC chứ không dùng "số năm kinh nghiệm" (mục 6.1: mười năm lặp lại một việc không bằng
+mười năm tích luỹ). Ba nguồn dữ liệu, và **luôn nói rõ con số đến từ đâu** (`source`):
+
+- `learning_data` — tiếng Anh vẫn ưu tiên **dữ liệu học thật** trong hệ thống, kể cả khi người
+  dùng tự khai cao hơn (có test canh gác: tự khai B5 nhưng dữ liệu nói A1 thì lấy A1).
+- `self_assessment` — người dùng tự chấm bậc ngay tại bảng (nút B1–B5 mỗi dòng kỹ năng), lưu qua
+  `POST /api/career {resource:'skill_level'}` vào `platform.feature_state`.
+- `unknown` — chưa đánh giá thì `currentMastery: null` + hiện "Chưa có dữ liệu", **không bịa**.
+
+Build ✅ | Type ✅ | Lint ✅ (0 cảnh báo) | Format ✅ | Test ✅ **5178/5178** (418 file, +36 test mới).
+`codemap impact` cho `core-contracts/career.ts` và `core-domains/careerService.ts`: mọi file bị
+ảnh hưởng đều nằm trong bộ test đang xanh. **Không cần migration mới** — dùng
+`platform.feature_state` (0058) đã có.
+
+**Còn lại của Đợt 2:** cổng ra "ít nhất 5 người dùng thật quay lại lần thứ hai" chỉ đo được sau
+khi deploy — chưa đóng được bằng code.
+
+### feat: Đợt 1 "Không nói dối" — 3 chỗ giao diện nói dối nay lưu THẬT (2026-08-24)
+
+**Chủ dự án đã chốt 4 câu hỏi của tài liệu nâng tầm (2026-08-24):** ① đồng ý phương án **nâng tầm
+SẢN PHẨM** (không phải hạ tầng, không mở môn mới) · ② mũi nhọn Đợt 2 = **CAREER** · ③ **GIỮ NGUYÊN**
+cả 4 trụ, KHÔNG ẩn 3 trụ còn lại (khác đề xuất — hệ quả: các điểm "nói dối" ở Work/Startup/Life
+càng phải sửa ngay, không được trì hoãn bằng cách ẩn đi) · ④ Bánh xe cuộc đời **lưu thật**.
+
+Đợt 1 làm trọn cả 3 việc trong một PR (mỗi việc độc lập, đều nhỏ):
+
+**1. Bánh Xe Cuộc Đời lưu thật.** `LifeWheel.tsx:110` trước đây bấm "Lưu" chỉ gọi
+`toast.success('Đã lưu…')` rồi thôi — không một lệnh ghi nào. Nay: contract dùng chung
+`LifeWheelScoresSchema`/`LifeWheelStateSchema` (`packages/core-contracts/lifeFoundation.ts`, 8 khía
+cạnh khai báo MỘT chỗ cho cả client lẫn server, `.strict()` nên thiếu/thừa khoá hay điểm ngoài
+1–10 đều bị từ chối) → `/api/life?kind=wheel` GET/POST lưu qua `platform.feature_state` (hạ tầng
+migration 0058 có sẵn, không cần bảng mới) → client `getLifeWheel`/`saveLifeWheel` trong
+`lifeApi.ts`, trang tải lại điểm đã lưu khi mở và chỉ báo thành công SAU KHI server xác nhận, nút
+có trạng thái "Đang lưu…" + báo lỗi thật khi hỏng.
+
+**2. Sổ tay lỗi sai lên server** — món DUY NHẤT trong danh sách có nguy cơ mất dữ liệu thật của
+người dùng thật. Migration **0063** (`english.mistakes`): khoá tự nhiên `(user_id, dedupe_key)`
+dùng ĐÚNG khoá gộp lỗi trùng của client (`norm(wrong)→norm(corrected)`) nên đồng bộ hai chiều
+không sinh bản trùng. Handler `api/subjects/english/mistakes.ts` (GET/POST/DELETE).
+**Quyết định thiết kế quan trọng — hợp nhất lấy `greatest()`, KHÔNG cộng dồn:** client gửi lên
+tổng tích luỹ của máy đó chứ không phải phần tăng thêm, cộng dồn sẽ thổi phồng số lần mắc lỗi
+mỗi lần đồng bộ (có test canh gác). `localStorage` vẫn là nơi ghi/đọc tức thì (mọi hàm giữ nguyên
+chữ ký đồng bộ → luồng Chat/Viết/Nói không đổi, vẫn chạy khi mất mạng), server là nguồn sự thật.
+Đẩy lên bằng `scheduleMistakeSync()` **gom nhóm 5 giây** — nếu đẩy mỗi lỗi thì một phiên chat 20
+tin nhắn thành 20 request gửi trọn sổ; nếu không đẩy gì thì lỗi chỉ lên server lúc mở trang Sổ
+tay, mà người dùng có thể không bao giờ mở trên máy đó rồi đổi máy là mất.
+
+**3. Bốn handler cuối còn giữ `new Map` cấp module** → `platform.feature_state`:
+`agent-orchestrator`, `mesh-telemetry`, `stem-scratchpad`, `debate-arena`. Grep xác nhận
+`apps/server/src/api/` nay **KHÔNG CÒN** `new Map` cấp module nào.
+**Vá thêm 3 lỗi thật lộ ra trong lúc chuyển, không chỉ là đổi chỗ lưu:**
+
+- 🔴 **Lỗ hổng quyền:** `stem-scratchpad` và `debate-arena` khoá Map theo `problemId`/`sessionId`
+  **TOÀN CỤC** — ai biết id là đọc/sửa được bài làm và phiên tranh biện của người khác. Lưu theo
+  user vá luôn lỗ hổng này.
+- `stem-scratchpad` `get_hint`: số gợi ý đã dùng chỉ tăng trong bộ nhớ rồi mất → xin gợi ý vô hạn
+  mà bộ đếm luôn về 1 sau mỗi restart/đổi instance. Nay được lưu.
+- `debate-arena` `evaluate_match`: kết quả chấm không được lưu → mở lại phiên thấy chưa hoàn thành
+  và chưa có điểm. Nay được lưu.
+  Mỗi kho state đều có trần (50 phiên orchestrator · 30 bài STEM · 20 phiên tranh biện) để dòng
+  JSONB không phình vô hạn.
+
+Build ✅ | Type ✅ | Lint ✅ (0 cảnh báo) | Format ✅ | Test ✅ **5142/5142** (416 file, +22 test mới;
+chạy sau `npm ci` để khớp lockfile). `codemap impact` cho 2 file dùng chung
+(`core-contracts/lifeFoundation.ts` 13 file · `lib/mistakes.ts` 8 file): mọi file bị ảnh hưởng đều
+nằm trong bộ test đang xanh.
+
+⚠️ **VIỆC TAY trước khi deploy:** chạy `npm run migrate:pg` trên VPS để tạo bảng
+`english.mistakes` (migration 0063). Bánh xe cuộc đời và 4 handler kia dùng bảng
+`platform.feature_state` đã có sẵn từ 0058, không cần gì thêm.
+
+**Tiếp theo:** Đợt 2 — làm sâu trụ **Career** (chờ chủ dự án duyệt PR này trước, theo CLAUDE.md mục 3).
+
+### docs(research): nghiên cứu "nâng tầm dự án" — chẩn đoán bằng số đo thật (2026-08-24)
+
+**Tài liệu mới: `docs/research/nang-tam-du-an-2026-08-24.md`** — bản ĐỀ XUẤT (chưa quyết định), trả
+lời câu hỏi "nâng tầm dự án" bằng số đo trực tiếp trên `main` thay vì cảm tính. Chỉ thêm tài liệu,
+KHÔNG đụng một dòng mã nào.
+
+**Số đo nền (đo lại ngày 2026-08-24, không lấy từ tài liệu cũ):** 145.404 dòng TS/TSX (không tính
+test) · 401 file test · 80 route frontend / 50 trang thật · 18 người dùng thật ⇒ **~8.000 dòng mã
+cho mỗi người dùng**. Kết luận: nút thắt hiện tại KHÔNG phải thiếu tính năng.
+
+**Ba khoảng cách phát hiện (đều kiểm chứng lại tại chỗ, không chép lại đề xuất cũ):**
+
+1. **Bề rộng ≫ độ sâu** — 4 trụ `domains/` có 6.004 dòng giao diện nhưng mỗi trụ chỉ **2 chỗ chạm
+   DB** (`apps/server/src/api/domains/*.ts`). Chỉ môn English là sâu thật.
+2. **Giao diện nói dối, VẪN CHƯA SỬA** (nêu từ 2026-08-23, phiên này xác nhận còn nguyên):
+   `LifeWheel.tsx:110` `handleSaveAssessment()` chỉ gọi `toast.success('Đã lưu…')` — không `fetch`,
+   không API, không `localStorage`, tải lại trang mất trắng. **Sổ tay lỗi sai** (`lib/mistakes.ts`,
+   183 dòng) chỉ nằm `localStorage` — grep xác nhận 0 lệnh `fetch`, 0 đường `/api/`, và `postgres/`
+   không có bảng `mistake` nào. Còn **4 file API giữ `new Map` cấp module**
+   (`agent-orchestrator`, `mesh-telemetry`, `stem-scratchpad`, `debate-arena`) — vỡ trong PM2
+   cluster 3 instance.
+3. **80 route / 50 trang** — mỗi trụ có tới **4 URL cùng render một component, không redirect**
+   (vd `/su-nghiep-cua-toi`, `/hoc-su-nghiep`, `/career`, `/su-nghiep` → `<Career />`). Đúng loại
+   lỗi trùng nội dung vừa sửa ở tầng domain (PR #645), nhưng ở tầng route ứng dụng.
+
+**Khuyến nghị:** nâng tầm SẢN PHẨM (làm thật cái đang hiển thị + khoét sâu 1 mũi nhọn), KHÔNG nâng
+tầm hạ tầng (993 dòng tài liệu scale 50k–1M mà chưa chạy k6 lần nào, thực tế 18 người dùng), CHƯA mở
+môn học mới. Lộ trình 3 đợt: ① "Không nói dối" (3 PR: sổ tay lỗi sai lên server · bánh xe cuộc đời
+lưu thật hoặc gỡ nút · 4 `new Map` → `platform.feature_state`) → ② "Một mũi nhọn thật" (chọn ĐÚNG 1
+trong 4 trụ làm sâu, ẩn 3 trụ còn lại) → ③ "Dọn nhà + kiểm chứng" (gom route · chạy k6 lần đầu).
+
+**⛔ Chặn: 4 câu hỏi cần chủ dự án chốt trước khi làm PR nào** (§6 của tài liệu): (1) đồng ý phương
+án sản phẩm? (2) chọn trụ nào cho Đợt 2? (3) ẩn 3 trụ còn lại? (4) bánh xe cuộc đời — lưu thật hay
+gỡ nút "Lưu"?
+
 ### refactor(companion): bỏ "Live Voice" giả lập, chuyển sang STT → LLM → TTS thật (2026-08-24)
 
 **Phát hiện:** chế độ "Đàm thoại Trực tiếp (Live Voice)" của Bạn Đồng Hành (`/companion`,
@@ -1187,7 +1378,7 @@ sau N3** (đã ghi vào ADR-0004 mục 6).
 **Đã làm (S6):**
 
 3. **Archive 24 script one-off** vào `scripts/archive/` (gen-_, ocr-_, patch-_, split-_,
-   codex-cloud-*…) — sửa import/đường dẫn theo độ sâu mới, 4 npm script trỏ theo
+   codex-cloud-\*…) — sửa import/đường dẫn theo độ sâu mới, 4 npm script trỏ theo
    (`gen:word-forms`, `gen:form-examples`, `extract:words-cefr`, `rank:patterns`).
    `scripts/` giờ chỉ còn script vận hành thật.
 4. **ADR-0004** (`docs/adr/0004-cai-to-cau-truc-platform-2026-08.md`): ghi trọn bộ quyết định
@@ -1214,7 +1405,7 @@ N3 (hợp nhất referral/quest/leaderboard + persistence nhóm C + Elo ra Postg
    acoustic/articulatory-phonetics, avatar-visemes) · `domains/` (career, work, startup,
    life) · `personal/` (18 handler Personal OS/companion) · `learning/` (12 handler công nghệ
    học đa môn) · `platform/` (21 còn lại: health, app-settings, gamification, realtime, tích
-   hợp ngoài). _*URL /api/* GIỮ NGUYÊN 100%_* — routes.ts + API_ROUTES dev middleware + test
+   hợp ngoài). \_*URL /api/\_ GIỮ NGUYÊN 100%\_\_ — routes.ts + API_ROUTES dev middleware + test
    gác route (quét đệ quy) cập nhật theo.
 2. **Gói MỚI `@dhcb/subject-english`** (mảnh "logic môn" của khuôn môn học): cefrTagging,
    cefrjLookup, wordsCefrDataset, wordFreq, dictionaryData (+test) tách từ `api/_lib`.
@@ -1317,7 +1508,7 @@ nâng cấp — hướng PLATFORM. Đặc tả kiến trúc mới:
    đa môn; phần riêng môn Anh chỉ là `src/pages/subjects/english/` + data/prompts).
 2. Cập nhật MỌI chuỗi đường dẫn `apps/english` trong code/config đang sống (2 dạng:
    `apps/english` và `'apps', 'english'`): tsconfig 4 file, vite/vitest config, package.json,
-   scripts/ (seed/gen/deploy), e2e, api/_lib, codemap scanRoots, hub vite.config, CI không đổi.
+   scripts/ (seed/gen/deploy), e2e, api/\_lib, codemap scanRoots, hub vite.config, CI không đổi.
 3. **Xoá hẳn alias `@english/*`** (đo thật: 0 nơi import — không giữ khái niệm chết) khỏi
    tsconfig.base/vite/vitest; alias còn lại: `@dhcb/*` (workspace) + `@core` (core-ui).
 4. CLAUDE.md viết lại mục 1 (định nghĩa platform DHCB, english = môn trong trụ Learning) +
@@ -5571,7 +5762,7 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
   **Việc còn lại + câu hỏi chưa có đáp án — **cất khoá gốc `USER_DATA_MASTER_KEY` ở đâu?** Khoá phải nằm KHÁC chỗ với backup DB (cất chung thì mã hoá vô
   nghĩa: ai lấy được backup lấy luôn khoá), mà **mất khoá = mất vĩnh viễn toàn bộ dữ liệu đã mã
-  hoá, không có đường khôi phục**. Bật mã hoá khi chưa chốt chỗ cất khoá là tự tạo rủi ro mất dữ
+  hoá, không có đường khôi phục\*\*. Bật mã hoá khi chưa chốt chỗ cất khoá là tự tạo rủi ro mất dữ
   liệu lớn hơn rủi ro nó định phòng.
 
   **Điều kiện gỡ nợ:** người dùng chốt nơi cất + cách sao lưu khoá gốc. Xong việc đó thì làm theo
@@ -5603,7 +5794,7 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 purple/orange/amber/sky-300` thiếu biến thể `theme-light:text-*-800` nên nhạt trên 3 theme
      sáng; (b) nút nền `bg-accent-500`/`bg-emerald-500` dùng `text-zinc-950` — token `--z-950`
      BỊ ĐẢO CHIỀU ở theme sáng (nhạt nhất thay vì đậm nhất, xem PROGRESS.md đợt vá PR #616) nên
-     chữ gần trắng trên nền sáng → sửa bằng màu cố định `text-[#09090b]` (không qua token z-*,
+     chữ gần trắng trên nền sáng → sửa bằng màu cố định `text-[#09090b]` (không qua token z-\*,
      đã tính contrast ≥ 5.9:1 trên cả 5 theme accent màu khác nhau) thay vì `text-zinc-950`.
      Xác nhận: `npx playwright test e2e/a11y.spec.ts e2e/bottomnav.spec.ts e2e/comeback.spec.ts`
      134/134 pass cục bộ; build/typecheck/lint/format/`npm test` (5019/5019) đều xanh.

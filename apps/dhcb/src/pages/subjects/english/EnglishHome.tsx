@@ -160,7 +160,7 @@ export default function EnglishHome() {
             </div>
             {srsDue > 0 && (
               <button
-                onClick={() => nav('/phong-luyen-tap')}
+                onClick={() => nav('/luyen-tap')}
                 className="tap-44 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/30 text-xs text-sky-300 font-semibold transition"
               >
                 <Brain className="w-3.5 h-3.5" />

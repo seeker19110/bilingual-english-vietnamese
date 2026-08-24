@@ -21,6 +21,7 @@ import progressHandler from './api/core/progress.js'
 import usageSummaryHandler from './api/core/usage-summary.js'
 import historyHandler from './api/core/history.js'
 import challengeHandler from './api/subjects/english/challenge.js'
+import mistakesHandler from './api/subjects/english/mistakes.js'
 import tutorFeedbackHandler from './api/subjects/english/tutor-feedback.js'
 import feedbackHandler from './api/core/feedback.js'
 import adminSettingsHandler from './api/admin/admin-settings.js'
@@ -69,6 +70,7 @@ import decisionLedgerHandler from './api/personal/decision-ledger.js'
 import learningReadModelHandler from './api/learning/learning-read-model.js'
 import subjectsHandler from './api/learning/subjects.js'
 import careerHandler from './api/domains/career.js'
+import careerInterviewHandler from './api/domains/career-interview.js'
 import workHandler from './api/domains/work.js'
 import startupHandler from './api/domains/startup.js'
 import lifeHandler from './api/domains/life.js'
@@ -193,6 +195,7 @@ export function registerApiRoutes(app: express.Express): void {
   app.all('/api/pronunciation', wrapEdge(pronunciationHandler))
   app.all('/api/push', wrapEdge(pushHandler))
   app.all('/api/dictionary', wrapEdge(dictionaryHandler))
+  app.all('/api/mistakes', wrapEdge(mistakesHandler))
   app.all('/api/leaderboard', wrapEdge(leaderboardHandler))
   app.all('/api/auth', wrapEdge(authHandler))
   app.all('/api/profile', wrapEdge(profileHandler))
@@ -262,6 +265,7 @@ export function registerApiRoutes(app: express.Express): void {
   app.all('/api/subjects', wrapEdge(subjectsHandler))
   // Career Domain (V2-13) — Profile, experiences, goals & skill gap analysis.
   app.all('/api/career', wrapEdge(careerHandler))
+  app.all('/api/career-interview', wrapEdge(careerInterviewHandler))
   // Work Domain (V2-15) — Projects, tasks, meetings, documents, deadlines.
   app.all('/api/work', wrapEdge(workHandler))
   // Startup Domain (V2-16) — Ventures, problems, hypotheses, evidence (claims require provenance).

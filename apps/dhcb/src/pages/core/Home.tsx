@@ -288,7 +288,7 @@ export default function Home() {
               {/* Lối tắt con trong STEM */}
               <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-zinc-800/80">
                 <button
-                  onClick={() => nav('/phong-hoc')}
+                  onClick={() => nav('/mon-hoc')}
                   className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-blue-300 transition text-center truncate"
                 >
                   4 Môn Toán Lý Hóa Sinh
@@ -302,7 +302,7 @@ export default function Home() {
               </div>
 
               <button
-                onClick={() => nav('/phong-hoc')}
+                onClick={() => nav('/mon-hoc')}
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-blue-500/15 hover:bg-blue-500/25 text-blue-300 theme-light:text-blue-800 border border-blue-500/30 font-semibold text-xs transition active:scale-[0.98]"
               >
                 <span>Vào Không Gian Phòng Học & STEM</span>
@@ -339,7 +339,7 @@ export default function Home() {
                   Phỏng Vấn STAR
                 </button>
                 <button
-                  onClick={() => nav('/cong-viec-cua-toi')}
+                  onClick={() => nav('/cong-viec')}
                   className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-purple-300 transition text-center truncate"
                 >
                   Công Việc Của Tôi
@@ -347,7 +347,7 @@ export default function Home() {
               </div>
 
               <button
-                onClick={() => nav('/su-nghiep-cua-toi')}
+                onClick={() => nav('/su-nghiep')}
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 theme-light:text-purple-800 border border-purple-500/30 font-semibold text-xs transition active:scale-[0.98]"
               >
                 <span>Vào Không Gian Sự Nghiệp Của Tôi</span>
@@ -384,7 +384,7 @@ export default function Home() {
                   Lean Canvas
                 </button>
                 <button
-                  onClick={() => nav('/cuoc-song-cua-toi')}
+                  onClick={() => nav('/cuoc-song')}
                   className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-pink-300 transition text-center truncate"
                 >
                   Bánh Xe Cuộc Đời
@@ -392,7 +392,7 @@ export default function Home() {
               </div>
 
               <button
-                onClick={() => nav('/toi-khoi-nghiep')}
+                onClick={() => nav('/khoi-nghiep')}
                 className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 theme-light:text-orange-800 border border-orange-500/30 font-semibold text-xs transition active:scale-[0.98]"
               >
                 <span>Vào Không Gian Tôi Khởi Nghiệp</span>
@@ -419,7 +419,7 @@ export default function Home() {
           </div>
 
           <button
-            onClick={() => nav('/agent-ban-dong-hanh')}
+            onClick={() => nav('/ban-dong-hanh')}
             className="tap-44 w-full sm:w-auto px-5 py-2.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-[#09090b] font-bold text-xs shadow-md shadow-accent-500/25 transition active:scale-95 shrink-0 flex items-center justify-center gap-1.5"
           >
             <Bot className="w-4 h-4" />

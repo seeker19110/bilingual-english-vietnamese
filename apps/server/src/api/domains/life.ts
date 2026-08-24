@@ -27,7 +27,10 @@ import {
   HabitTypeSchema,
   HabitFrequencySchema,
   GrowthAreaSchema,
+  LifeWheelScoresSchema,
+  type LifeWheelState,
 } from '@dhcb/core-contracts/lifeFoundation'
+import { getFeatureState, setFeatureState } from '@dhcb/core-db/featureState'
 import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
 import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
 import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
@@ -81,13 +84,20 @@ const MilestoneSchema = z
   })
   .strict()
 
+// Bánh Xe Cuộc Đời: lưu trọn bộ điểm 8 khía cạnh mỗi lần bấm "Lưu" (ghi đè bản trước).
+const WheelSchema = z.object({ kind: z.literal('wheel'), scores: LifeWheelScoresSchema }).strict()
+
 const PostSchema = z.discriminatedUnion('kind', [
   CreatePlanSchema,
   CreateHabitSchema,
   LogHabitSchema,
   WellbeingSchema,
   MilestoneSchema,
+  WheelSchema,
 ])
+
+// Khoá feature trong bảng platform.feature_state (theo user, không theo person).
+const WHEEL_FEATURE = 'life_wheel'
 const PatchSchema = z.discriminatedUnion('kind', [UpdatePlanSchema])
 
 export default async function handler(req: Request): Promise<Response> {
@@ -127,6 +137,10 @@ export default async function handler(req: Request): Promise<Response> {
           headers,
         )
       }
+      if (kind === 'wheel') {
+        const wheel = await getFeatureState<LifeWheelState>(auth.userId, WHEEL_FEATURE)
+        return jsonResponse({ wheel }, 200, headers)
+      }
       if (kind === 'milestones') {
         const area = (url.searchParams.get('area') ?? undefined) as Parameters<
           typeof listGrowthMilestones
@@ -158,6 +172,11 @@ export default async function handler(req: Request): Promise<Response> {
         return jsonResponse(await recordWellbeingCheck(pool, person.id, body), 201, headers)
       if (body.kind === 'milestone')
         return jsonResponse(await createGrowthMilestone(pool, person.id, body), 201, headers)
+      if (body.kind === 'wheel') {
+        const wheel: LifeWheelState = { scores: body.scores, savedAt: new Date().toISOString() }
+        await setFeatureState(auth.userId, WHEEL_FEATURE, wheel)
+        return jsonResponse({ wheel }, 200, headers)
+      }
     }
 
     if (req.method === 'PATCH') {

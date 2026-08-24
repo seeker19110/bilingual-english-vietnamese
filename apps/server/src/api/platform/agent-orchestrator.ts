@@ -6,8 +6,18 @@ import type {
   AutonomousAgentRole,
   AgentExecutionSession,
 } from '@dhcb/core-contracts/agentOrchestrator'
+import { getFeatureState, setFeatureState } from '@dhcb/core-db/featureState'
 
-const sessionsMap = new Map<string, AgentExecutionSession[]>()
+// [2026-08-24] Trước đây danh sách phiên nằm trong `new Map` cấp module — mất khi restart và VỠ
+// trong PM2 cluster 3 instance (mỗi tiến trình một bản sao). Nay lưu ở platform.feature_state.
+const FEATURE = 'agent_orchestrator'
+// Trần số phiên giữ lại mỗi người, để dòng JSONB không phình vô hạn.
+const MAX_SESSIONS = 50
+
+async function readSessions(userId: string): Promise<AgentExecutionSession[]> {
+  const state = await getFeatureState<AgentExecutionSession[]>(userId, FEATURE)
+  return Array.isArray(state) ? state : []
+}
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
@@ -30,7 +40,7 @@ export default async function handler(req: Request): Promise<Response> {
   const sessionId = url.searchParams.get('sessionId')
 
   if (req.method === 'GET') {
-    const userSessions = sessionsMap.get(personId) || []
+    const userSessions = await readSessions(personId)
     if (sessionId) {
       const found = userSessions.find((s) => s.sessionId === sessionId)
       if (!found) {
@@ -73,9 +83,9 @@ export default async function handler(req: Request): Promise<Response> {
         budgetGuardrail,
       })
 
-      const userSessions = sessionsMap.get(personId) || []
+      const userSessions = await readSessions(personId)
       userSessions.unshift(session)
-      sessionsMap.set(personId, userSessions)
+      await setFeatureState(personId, FEATURE, userSessions.slice(0, MAX_SESSIONS))
 
       return jsonResponse({ success: true, session }, 200)
     } catch (err: unknown) {

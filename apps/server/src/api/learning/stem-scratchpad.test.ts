@@ -3,6 +3,16 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import handler from './stem-scratchpad.js'
 import * as security from '@dhcb/core-auth/security'
 
+// Handler đã chuyển state sang platform.feature_state — mock bằng Map in-memory (hành vi giống
+// hệt Map cấp module cũ: state sống suốt file test), theo đúng khuôn pvp-arena.test.ts.
+const featureStore = new Map<string, unknown>()
+vi.mock('@dhcb/core-db/featureState', () => ({
+  getFeatureState: vi.fn(async (u: string, f: string) => featureStore.get(u + '|' + f) ?? null),
+  setFeatureState: vi.fn(async (u: string, f: string, st: unknown) => {
+    featureStore.set(u + '|' + f, st)
+  }),
+}))
+
 describe('STEM Scratchpad API Handler (/api/stem-scratchpad)', () => {
   beforeEach(() => {
     vi.restoreAllMocks()

@@ -89,7 +89,7 @@ export default function WorkKanban() {
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout onBack={() => nav('/work')} />
+      <Layout onBack={() => nav('/cong-viec')} />
 
       <main className="max-w-6xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
         <PageHeader

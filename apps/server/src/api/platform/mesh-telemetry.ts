@@ -7,8 +7,22 @@ import {
   MESH_TELEMETRY_VERSION,
 } from '@dhcb/core-contracts/meshTelemetry'
 import { MeshTelemetryService } from '@dhcb/core-ai/meshTelemetryService'
+import { getFeatureState, setFeatureState } from '@dhcb/core-db/featureState'
 
-const inMemorySessionTelemetry = new Map<string, RealtimeSessionTelemetry>()
+// [2026-08-24] Trước đây telemetry nằm trong `new Map` cấp module — mất khi restart và VỠ trong
+// PM2 cluster 3 instance (mỗi tiến trình một bản sao, số liệu chi phí đọc ra tuỳ instance nào
+// nhận request). Nay lưu ở platform.feature_state.
+const FEATURE = 'mesh_telemetry'
+
+// Đọc telemetry đang có, hoặc dựng bản mặc định nếu người này chưa có phiên nào.
+async function readOrCreate(personId: string): Promise<RealtimeSessionTelemetry> {
+  const saved = await getFeatureState<RealtimeSessionTelemetry>(personId, FEATURE)
+  if (saved) return saved
+  return MeshTelemetryService.createDefaultSessionTelemetry({
+    sessionId: `40000000-0000-4000-8000-${Date.now().toString().slice(-12).padStart(12, '0')}`,
+    personId,
+  })
+}
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
@@ -28,13 +42,8 @@ export default async function handler(req: Request): Promise<Response> {
   const action = url.searchParams.get('action')
 
   if (req.method === 'GET') {
-    const existing =
-      inMemorySessionTelemetry.get(personId) ||
-      MeshTelemetryService.createDefaultSessionTelemetry({
-        sessionId: `40000000-0000-4000-8000-${Date.now().toString().slice(-12).padStart(12, '0')}`,
-        personId,
-      })
-    inMemorySessionTelemetry.set(personId, existing)
+    const existing = await readOrCreate(personId)
+    await setFeatureState(personId, FEATURE, existing)
 
     return jsonResponse(
       {
@@ -55,12 +64,7 @@ export default async function handler(req: Request): Promise<Response> {
       const body = await req.json()
 
       if (action === 'record_metric') {
-        const current =
-          inMemorySessionTelemetry.get(personId) ||
-          MeshTelemetryService.createDefaultSessionTelemetry({
-            sessionId: `40000000-0000-4000-8000-${Date.now().toString().slice(-12).padStart(12, '0')}`,
-            personId,
-          })
+        const current = await readOrCreate(personId)
 
         const updated = MeshTelemetryService.trackLiveSessionCost({
           current,
@@ -70,17 +74,12 @@ export default async function handler(req: Request): Promise<Response> {
           latencyMs: Number(body.latencyMs || 50),
         })
 
-        inMemorySessionTelemetry.set(personId, updated)
+        await setFeatureState(personId, FEATURE, updated)
         return jsonResponse({ success: true, telemetry: updated }, 200)
       }
 
       if (action === 'reset_budget') {
-        const current =
-          inMemorySessionTelemetry.get(personId) ||
-          MeshTelemetryService.createDefaultSessionTelemetry({
-            sessionId: `40000000-0000-4000-8000-${Date.now().toString().slice(-12).padStart(12, '0')}`,
-            personId,
-          })
+        const current = await readOrCreate(personId)
 
         const newCap = Math.max(0.01, Number(body.costCapUsd || 0.1))
         const resetState: RealtimeSessionTelemetry = {
@@ -92,7 +91,7 @@ export default async function handler(req: Request): Promise<Response> {
           updatedAt: new Date().toISOString(),
         }
 
-        inMemorySessionTelemetry.set(personId, resetState)
+        await setFeatureState(personId, FEATURE, resetState)
         return jsonResponse({ success: true, telemetry: resetState }, 200)
       }
 
@@ -106,7 +105,7 @@ export default async function handler(req: Request): Promise<Response> {
         return jsonResponse({ error: 'invalid_request', details: parseResult.error.format() }, 400)
       }
 
-      inMemorySessionTelemetry.set(personId, parseResult.data)
+      await setFeatureState(personId, FEATURE, parseResult.data)
       return jsonResponse({ success: true, telemetry: parseResult.data }, 200)
     } catch (err) {
       return jsonResponse({ error: 'Invalid payload', details: String(err) }, 400)

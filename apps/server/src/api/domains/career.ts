@@ -18,7 +18,10 @@ import {
   createCareerGoal,
   listCareerGoals,
   analyzeCareerSkillGap,
+  getSkillSelfLevels,
+  setSkillSelfLevel,
 } from '@dhcb/core-domains/careerService'
+import { ProficiencyBandSchema } from '@dhcb/core-contracts/careerInterview'
 import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
 import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
 import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
@@ -55,6 +58,17 @@ const PostCareerSchema = z.discriminatedUnion('resource', [
       targetCompanyType: z.string().max(200).optional(),
       timeframe: z.string().max(100).optional(),
       skillsRequired: z.array(z.string().min(1).max(100)).min(1),
+    })
+    .strict(),
+  // Người dùng tự đánh giá bậc thành thạo một kỹ năng (thang B1–B5). Đây là thứ làm bảng phân
+  // tích khoảng cách kỹ năng có nghĩa — trước 2026-08-24 nó bịa cứng "In Progress" cho mọi kỹ
+  // năng ngoài tiếng Anh.
+  z
+    .object({
+      resource: z.literal('skill_level'),
+      skill: z.string().min(1).max(100),
+      selfBand: ProficiencyBandSchema,
+      targetBand: ProficiencyBandSchema.optional(),
     })
     .strict(),
 ])
@@ -99,6 +113,11 @@ export default async function handler(req: Request): Promise<Response> {
         return jsonResponse({ goals }, 200, headers)
       }
 
+      if (resource === 'skill_levels') {
+        const levels = await getSkillSelfLevels(auth.userId)
+        return jsonResponse({ skillLevels: Object.values(levels) }, 200, headers)
+      }
+
       if (resource === 'skill_gap') {
         const goalId = url.searchParams.get('goalId')
         const goalIdParsed = UuidSchema.safeParse(goalId)
@@ -141,6 +160,11 @@ export default async function handler(req: Request): Promise<Response> {
       if (data.resource === 'goal') {
         const goal = await createCareerGoal(pool, person.id, data)
         return jsonResponse({ goal }, 201, headers)
+      }
+
+      if (data.resource === 'skill_level') {
+        const skillLevel = await setSkillSelfLevel(auth.userId, data)
+        return jsonResponse({ skillLevel }, 200, headers)
       }
     }
 

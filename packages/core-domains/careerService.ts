@@ -16,6 +16,54 @@ import {
   type CareerSkillGapAnalysis,
 } from '@dhcb/core-contracts/career'
 import { getLearningReadModel } from '@dhcb/core-learner/learningReadModelService'
+import { SkillSelfLevelSchema, type SkillSelfLevel } from '@dhcb/core-contracts/career'
+import { PROFICIENCY_BAND_LABELS, type ProficiencyBand } from '@dhcb/core-contracts/careerInterview'
+import { getFeatureState, setFeatureState } from '@dhcb/core-db/featureState'
+
+// Kho bậc tự đánh giá nằm ở platform.feature_state (theo user) — cùng khuôn với các tính năng
+// khác đã chuyển khỏi state in-memory, không cần bảng mới.
+const SKILL_LEVELS_FEATURE = 'career_skill_levels'
+
+type SkillLevelBook = Record<string, SkillSelfLevel>
+
+// Khoá so khớp kỹ năng: bỏ hoa/thường và khoảng trắng thừa, để "SQL" và " sql " là một.
+function normalizeSkillKey(skill: string): string {
+  return skill.trim().toLowerCase().replace(/\s+/g, ' ')
+}
+
+// Thứ hạng của bậc, để so "đã đạt bậc mục tiêu chưa".
+function bandRank(band: ProficiencyBand): number {
+  return Number(band.slice(1))
+}
+
+export async function getSkillSelfLevels(userId: string): Promise<SkillLevelBook> {
+  const state = await getFeatureState<SkillLevelBook>(userId, SKILL_LEVELS_FEATURE)
+  if (!state || typeof state !== 'object') return {}
+  // Lọc qua schema: dữ liệu cũ/hỏng bị bỏ chứ không làm gãy cả bảng phân tích.
+  const out: SkillLevelBook = {}
+  for (const [key, value] of Object.entries(state)) {
+    const parsed = SkillSelfLevelSchema.safeParse(value)
+    if (parsed.success) out[key] = parsed.data
+  }
+  return out
+}
+
+// Ghi (hoặc cập nhật) bậc tự đánh giá cho MỘT kỹ năng.
+export async function setSkillSelfLevel(
+  userId: string,
+  input: { skill: string; selfBand: ProficiencyBand; targetBand?: ProficiencyBand },
+): Promise<SkillSelfLevel> {
+  const book = await getSkillSelfLevels(userId)
+  const level = SkillSelfLevelSchema.parse({
+    skill: input.skill.trim(),
+    selfBand: input.selfBand,
+    targetBand: input.targetBand ?? 'B3',
+    updatedAt: new Date().toISOString(),
+  })
+  book[normalizeSkillKey(input.skill)] = level
+  await setFeatureState(userId, SKILL_LEVELS_FEATURE, book)
+  return level
+}
 
 export interface UpdateCareerProfileInput {
   targetRole: string
@@ -322,8 +370,13 @@ export async function analyzeCareerSkillGap(
     subject: 'english',
   })
 
+  // Bậc người dùng tự đánh giá cho từng kỹ năng (nếu đã đánh giá).
+  const selfLevels = await getSkillSelfLevels(userId)
+
   const requiredSkills = parseJsonArray(goal.skills_required)
   const gaps = requiredSkills.map((skillName) => {
+    // Tiếng Anh là kỹ năng DUY NHẤT hệ thống đo được bằng dữ liệu học thật — ưu tiên nó hơn
+    // lời tự khai, đúng tinh thần "xác định bằng bằng chứng" (đặc tả năng lực mục 10).
     const isEnglishSkill = /english|tiếng anh|ielts|toeic/i.test(skillName)
     if (isEnglishSkill) {
       const currentLevel = learningModel.currentLevel
@@ -331,15 +384,38 @@ export async function analyzeCareerSkillGap(
       return {
         skill: skillName,
         requiredLevel: 'B2',
-        currentMastery: currentLevel ?? 'Chưa đánh giá',
+        currentMastery: currentLevel ?? null,
         isFulfilled,
+        selfBand: null,
+        targetBand: null,
+        source: currentLevel ? ('learning_data' as const) : ('unknown' as const),
+      }
+    }
+
+    // [2026-08-24] Trước đây MỌI kỹ năng ngoài tiếng Anh đều bị trả cứng
+    // `currentMastery: 'In Progress'`, `isFulfilled: false` — nghĩa là ai nhập mục tiêu gì cũng
+    // thấy y hệt một bảng "đang tiến hành / chưa đạt", hoàn toàn vô nghĩa. Nay đọc bậc người
+    // dùng TỰ đánh giá; chưa đánh giá thì nói thật là chưa có dữ liệu thay vì bịa.
+    const self = selfLevels[normalizeSkillKey(skillName)]
+    if (!self) {
+      return {
+        skill: skillName,
+        requiredLevel: PROFICIENCY_BAND_LABELS.B3,
+        currentMastery: null,
+        isFulfilled: false,
+        selfBand: null,
+        targetBand: null,
+        source: 'unknown' as const,
       }
     }
     return {
       skill: skillName,
-      requiredLevel: 'Proficient',
-      currentMastery: 'In Progress',
-      isFulfilled: false,
+      requiredLevel: `${self.targetBand} · ${PROFICIENCY_BAND_LABELS[self.targetBand]}`,
+      currentMastery: `${self.selfBand} · ${PROFICIENCY_BAND_LABELS[self.selfBand]}`,
+      isFulfilled: bandRank(self.selfBand) >= bandRank(self.targetBand),
+      selfBand: self.selfBand,
+      targetBand: self.targetBand,
+      source: 'self_assessment' as const,
     }
   })
 

@@ -114,7 +114,7 @@ export default function Profile() {
 
   const SPECIAL_HUBS = [
     {
-      path: '/career',
+      path: '/su-nghiep',
       title: isA ? 'Sự nghiệp' : 'Career Hub',
       desc: isA ? 'Hồ sơ, mục tiêu & phân tích kỹ năng' : 'Profile, goals & skill gap analysis',
       icon: Briefcase,
@@ -122,7 +122,7 @@ export default function Profile() {
       bg: 'bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/60',
     },
     {
-      path: '/work',
+      path: '/cong-viec',
       title: isA ? 'Công việc' : 'Work Hub',
       desc: isA ? 'Dự án, công việc & biên bản cuộc họp' : 'Projects, tasks & meeting minutes',
       icon: FolderKanban,
@@ -130,7 +130,7 @@ export default function Profile() {
       bg: 'bg-blue-500/10 border-blue-500/30 hover:border-blue-500/60',
     },
     {
-      path: '/startup',
+      path: '/khoi-nghiep',
       title: isA ? 'Khởi nghiệp' : 'Startup Hub',
       desc: isA
         ? 'Lean discovery canvas & kiểm chứng giả thuyết'
@@ -140,7 +140,7 @@ export default function Profile() {
       bg: 'bg-purple-500/10 border-purple-500/30 hover:border-purple-500/60',
     },
     {
-      path: '/life',
+      path: '/cuoc-song',
       title: isA ? 'Đời sống' : 'Life Foundation',
       desc: isA ? 'Thói quen, sức khỏe & kế hoạch cuộc sống' : 'Habits, wellbeing & life plans',
       icon: Heart,
@@ -158,7 +158,7 @@ export default function Profile() {
       bg: 'bg-indigo-500/10 border-indigo-500/30 hover:border-indigo-500/60',
     },
     {
-      path: '/phong-hoc',
+      path: '/mon-hoc',
       title: isA ? 'Phòng học & STEM' : 'Multi-Subject Learning Room',
       desc: isA
         ? 'Toán học, Vật lý, Hóa học, Sinh học & Tiếng Anh'
@@ -168,7 +168,7 @@ export default function Profile() {
       bg: 'bg-amber-500/10 border-amber-500/30 hover:border-amber-500/60',
     },
     {
-      path: '/agent-ban-dong-hanh',
+      path: '/ban-dong-hanh',
       title: isA ? 'Bạn Đồng Hành' : 'AI Companion',
       desc: isA
         ? 'Trợ lý đàm thoại & đề xuất đa lĩnh vực'

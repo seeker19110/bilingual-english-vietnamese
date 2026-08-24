@@ -1,4 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
+
+vi.mock('@core/authHeader', () => ({ getAuthHeader: vi.fn().mockResolvedValue({}) }))
+
 import {
   addMistake,
   addMistakes,
@@ -7,6 +10,8 @@ import {
   getMistakeStats,
   markReviewed,
   deleteMistake,
+  syncMistakes,
+  scheduleMistakeSync,
   type MistakeInput,
 } from './mistakes'
 
@@ -135,5 +140,92 @@ describe('Mistake Bank (sổ lỗi cá nhân)', () => {
     expect(all.length).toBeLessThanOrEqual(200)
     expect(all.find((m) => m.wrong === 'sticky')).toBeTruthy()
     vi.useRealTimers()
+  })
+
+  describe('đồng bộ server', () => {
+    const M2 = (over: Partial<MistakeInput> = {}): MistakeInput => ({
+      wrong: 'I go yesterday',
+      corrected: 'I went yesterday',
+      explanation: 'quá khứ đơn',
+      source: 'writing',
+      dir: 'A',
+      ...over,
+    })
+
+    it('syncMistakes gửi sổ cục bộ lên rồi ghi đè bằng bản hợp nhất của server', async () => {
+      addMistake('u1', M2())
+      const merged = [
+        {
+          id: '11111111-1111-4111-8111-111111111111',
+          wrong: 'from server',
+          corrected: 'fixed',
+          explanation: '',
+          source: 'chat' as const,
+          dir: 'A' as const,
+          createdAt: 1,
+          count: 9,
+          lastReviewedAt: null,
+          reviewCount: 0,
+        },
+      ]
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValue({ ok: true, json: async () => ({ mistakes: merged }) })
+      vi.stubGlobal('fetch', fetchMock)
+
+      const out = await syncMistakes('u1')
+      expect(out).toEqual(merged)
+      // localStorage phải mang bản hợp nhất, không còn bản cục bộ cũ.
+      expect(getMistakes('u1')).toEqual(merged)
+      const [url, init] = fetchMock.mock.calls[0]!
+      expect(url).toBe('/api/mistakes')
+      expect(JSON.parse(init.body).mistakes).toHaveLength(1)
+      vi.unstubAllGlobals()
+    })
+
+    it('server lỗi hoặc mất mạng → giữ nguyên sổ cục bộ, KHÔNG throw', async () => {
+      addMistake('u1', M2())
+      const local = getMistakes('u1')
+
+      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 500 }))
+      expect(await syncMistakes('u1')).toEqual(local)
+
+      vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')))
+      expect(await syncMistakes('u1')).toEqual(local)
+      expect(getMistakes('u1')).toEqual(local)
+      vi.unstubAllGlobals()
+    })
+
+    it('scheduleMistakeSync gom nhiều lần ghi liên tiếp thành MỘT request', async () => {
+      vi.useFakeTimers()
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValue({ ok: true, json: async () => ({ mistakes: [] }) })
+      vi.stubGlobal('fetch', fetchMock)
+
+      addMistake('u1', M2())
+      scheduleMistakeSync('u1', 100)
+      addMistake('u1', M2({ wrong: 'another' }))
+      scheduleMistakeSync('u1', 100)
+      scheduleMistakeSync('u1', 100)
+
+      expect(fetchMock).not.toHaveBeenCalled() // chưa tới hạn
+      await vi.advanceTimersByTimeAsync(150)
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+
+      vi.unstubAllGlobals()
+      vi.useRealTimers()
+    })
+
+    it('scheduleMistakeSync bỏ qua khi userId rỗng', async () => {
+      vi.useFakeTimers()
+      const fetchMock = vi.fn()
+      vi.stubGlobal('fetch', fetchMock)
+      scheduleMistakeSync('', 10)
+      await vi.advanceTimersByTimeAsync(50)
+      expect(fetchMock).not.toHaveBeenCalled()
+      vi.unstubAllGlobals()
+      vi.useRealTimers()
+    })
   })
 })
