@@ -7,6 +7,7 @@ import {
   type PvPRoundAction,
   type PvPMatchState,
 } from '@dhcb/core-contracts/pvpArena'
+import { shuffle } from '@dhcb/core-contracts/shuffle'
 
 // Bảng câu hỏi mẫu chất lượng cao phân chia theo chế độ đấu
 const QUESTION_BANK: Record<PvPGameMode, PvPQuestionItem[]> = {
@@ -244,7 +245,7 @@ export function calculateEloDelta(
 export function generatePvPQuestions(mode: PvPGameMode, count = 5): PvPQuestionItem[] {
   const pool = QUESTION_BANK[mode] || QUESTION_BANK.vocab_speed_duel
   // Trộn ngẫu nhiên câu hỏi
-  const shuffled = [...pool].sort(() => Math.random() - 0.5)
+  const shuffled = shuffle(pool)
   return shuffled.slice(0, Math.min(count, shuffled.length))
 }
 

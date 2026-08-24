@@ -93,6 +93,7 @@ import ExamQuestionCard from './ExamQuestionCard'
 import { scorePronunciation, scoreWords, type WordScore } from '../lib/pronounceScore'
 import { buildDictationItems, listeningRateForLevel, type DictationItem } from '../lib/listening'
 import type { CefrId } from '../lib/placement'
+import { shuffle } from '@dhcb/core-contracts/shuffle'
 
 // ── Quiz (tab Kiểm tra) ──────────────────────────────────────────────────────
 const QUIZ_SIZE = 10
@@ -135,10 +136,7 @@ function buildQuiz(
   )
   const due = grammarPool.filter((g) => dueLessonIds.has(g.lessonId))
   const rest = grammarPool.filter((g) => !dueLessonIds.has(g.lessonId))
-  const chosenGrammar = [
-    ...[...due].sort(() => Math.random() - 0.5),
-    ...[...rest].sort(() => Math.random() - 0.5),
-  ].slice(0, GRAMMAR_QUIZ_COUNT)
+  const chosenGrammar = [...shuffle(due), ...shuffle(rest)].slice(0, GRAMMAR_QUIZ_COUNT)
   const grammarQs: QuizQuestion[] = chosenGrammar.map(({ lessonId, item }) => ({
     kind: 'grammar',
     prompt: item.q,
@@ -149,7 +147,7 @@ function buildQuiz(
 
   const vocabSize = Math.max(QUIZ_SIZE - grammarQs.length, 0)
   const learned = getLearnedWords(userId)
-  const shuffled = [...pool].sort(() => Math.random() - 0.5)
+  const shuffled = shuffle(pool)
   const learnedPool = shuffled.filter(
     (w) => learned.has(w.word) || learned.has(w.word.toLowerCase()),
   )
@@ -159,19 +157,16 @@ function buildQuiz(
       : [...learnedPool, ...shuffled.slice(0, vocabSize - learnedPool.length)]
   const meanings = pool.map((w) => w.vi)
   const vocabQs: QuizQuestion[] = cands.slice(0, vocabSize).map((q) => {
-    const wrongs = meanings
-      .filter((m) => m !== q.vi)
-      .sort(() => Math.random() - 0.5)
-      .slice(0, CHOICES - 1)
+    const wrongs = shuffle(meanings.filter((m) => m !== q.vi)).slice(0, CHOICES - 1)
     return {
       kind: 'vocab',
       prompt: q.word,
       correct: q.vi,
-      options: [q.vi, ...wrongs].sort(() => Math.random() - 0.5),
+      options: shuffle([q.vi, ...wrongs]),
     }
   })
 
-  return [...vocabQs, ...grammarQs].sort(() => Math.random() - 0.5)
+  return shuffle([...vocabQs, ...grammarQs])
 }
 
 // ── Tab Hôm nay ───────────────────────────────────────────────────────────────
@@ -193,33 +188,27 @@ interface MiniQuizQ {
 function buildMiniQuiz(batch: DictEntry[], pool: DictEntry[]): MiniQuizQ[] {
   const allMeanings = pool.map((w) => w.vi)
   const allWords = pool.map((w) => w.word)
-  const qs = [...batch].sort(() => Math.random() - 0.5)
+  const qs = shuffle(batch)
   return qs.map((q, i) => {
     // Xen kẽ 2 chiều theo thứ tự đã xáo trộn — mỗi từ chỉ hỏi 1 chiều/lượt.
     const direction: QuizDirection = i % 2 === 0 ? 'en-vi' : 'vi-en'
     if (direction === 'en-vi') {
-      const wrongs = allMeanings
-        .filter((m) => m !== q.vi)
-        .sort(() => Math.random() - 0.5)
-        .slice(0, MINI_QUIZ_CHOICES - 1)
+      const wrongs = shuffle(allMeanings.filter((m) => m !== q.vi)).slice(0, MINI_QUIZ_CHOICES - 1)
       return {
         word: q.word,
         direction,
         prompt: q.word,
         correct: q.vi,
-        options: [q.vi, ...wrongs].sort(() => Math.random() - 0.5),
+        options: shuffle([q.vi, ...wrongs]),
       }
     }
-    const wrongs = allWords
-      .filter((w) => w !== q.word)
-      .sort(() => Math.random() - 0.5)
-      .slice(0, MINI_QUIZ_CHOICES - 1)
+    const wrongs = shuffle(allWords.filter((w) => w !== q.word)).slice(0, MINI_QUIZ_CHOICES - 1)
     return {
       word: q.word,
       direction,
       prompt: q.vi,
       correct: q.word,
-      options: [q.word, ...wrongs].sort(() => Math.random() - 0.5),
+      options: shuffle([q.word, ...wrongs]),
     }
   })
 }

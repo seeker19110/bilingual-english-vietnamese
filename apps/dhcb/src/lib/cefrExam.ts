@@ -21,6 +21,7 @@ import type { Dialogue } from '../data/dialogues'
 import type { Voice } from './tts'
 import { VOICE_OPTIONS } from './voiceTiers'
 import { pushProgress } from './progressSync'
+import { shuffle } from '@dhcb/core-contracts/shuffle'
 
 // Ngưỡng đạt: ≥70% tổng điểm (đồng bộ với UNLOCK_PCT của lộ trình).
 export const EXAM_PASS_PCT = 0.7
@@ -156,16 +157,6 @@ export interface BuildExamParams {
   grammar: GrammarExamSource[] // câu quiz ngữ pháp của cấp
   dialogues: Dialogue[] // hội thoại của cấp
   plan?: ExamPlan
-}
-
-// Xáo trộn 1 mảng (bản sao, không đụng mảng gốc).
-function shuffle<T>(arr: readonly T[]): T[] {
-  const a = [...arr]
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[a[i], a[j]] = [a[j] as T, a[i] as T]
-  }
-  return a
 }
 
 // 14 giọng ngẫu nhiên cho câu Nghe — thi lại (đề mới) nghe giọng khác, chống

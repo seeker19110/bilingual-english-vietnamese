@@ -6,6 +6,7 @@ import {
   NeuralCurriculumState,
   NEURAL_CURRICULUM_VERSION,
 } from '@dhcb/core-contracts/neuralCurriculum'
+import { shuffle } from '@dhcb/core-contracts/shuffle'
 
 export class NeuralCurriculumService {
   /**
@@ -27,9 +28,7 @@ export class NeuralCurriculumService {
       targetCollocationId: col.id,
       promptEn: col.exampleSentenceEn.replace(col.phraseEn.split(' ')[0] || '', '_____'),
       promptVi: col.exampleSentenceVi,
-      options: [col.phraseEn.split(' ')[0] || 'make', 'give', 'take', 'put'].sort(
-        () => Math.random() - 0.5,
-      ),
+      options: shuffle([col.phraseEn.split(' ')[0] || 'make', 'give', 'take', 'put']),
       correctAnswer: col.phraseEn.split(' ')[0] || 'make',
       explanationVi: `Cụm tự nhiên chuẩn bản xứ là '${col.phraseEn}' (nghĩa: ${col.meaningVi}).`,
     }))

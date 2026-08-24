@@ -53,6 +53,7 @@ import { effectivePlan } from '../../lib/promo'
 import { getLimits } from '../../lib/appSettings'
 import { CHALLENGE_TOPICS } from '../../data/challengeTopics'
 import type { DictEntry, User } from '../../types'
+import { shuffle } from '@dhcb/core-contracts/shuffle'
 
 type Mode =
   | 'hub'
@@ -67,15 +68,6 @@ type Mode =
 
 const SESSION_SIZE = 8
 const INTERVIEW_ROUNDS = 5
-
-function shuffle<T>(arr: readonly T[]): T[] {
-  const a = [...arr]
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[a[i], a[j]] = [a[j] as T, a[i] as T]
-  }
-  return a
-}
 
 // Rút câu ví dụ (ex_en/ex_vi) từ 1 pool từ vựng, lọc theo độ dài — dùng chung
 // cho Sắp xếp câu và Shadowing.
