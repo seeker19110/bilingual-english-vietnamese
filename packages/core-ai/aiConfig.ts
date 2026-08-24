@@ -8,8 +8,19 @@
 // Model Anthropic được SERVER quyết định, không tin client (tránh gọi model đắt).
 export const ALLOWED_MODEL = 'claude-haiku-4-5-20251001'
 
-// Model chat của Gemini (ưu tiên nếu có GEMINI_API_KEY). Đổi qua biến môi trường.
-export const GEMINI_CHAT_MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash'
+// Model chat của Gemini (fallback thứ 3 sau Groq/Anthropic — xem thứ tự thật trong ai.ts).
+// Đổi qua biến môi trường GEMINI_MODEL.
+// [2026-08-24] Đổi mặc định từ 'gemini-2.0-flash' — Google đã gỡ hẳn model này (xác nhận qua lỗi
+// 404 THẬT khi chạy `npm run eval:tutor` trên VPS production: "This model models/gemini-2.0-flash
+// is no longer available. Please update your code to use models/gemini-3.6-flash"). Cùng dòng
+// deprecation ghi ở packages/core-contracts/geminiLive.ts (2026-08-23: "Gemini 2.0 Flash NGỪNG
+// PHỤC VỤ 31/03/2026") nhưng bản vá đó chỉ sửa Gemini Live, BỎ SÓT model chat text này.
+// Đây là vá khẩn cấp do NHÀ CUNG CẤP gỡ model (không phải đổi ý thích chủ quan) — CHƯA chạy lại
+// được `npm run eval:tutor` để so baseline sau khi đổi (môi trường sửa lỗi không có key AI thật,
+// đúng tình huống ghi ở GROQ_CHAT_MODEL bên dưới). Cần người có key thật chạy
+// `npm run eval:tutor -- --write-baseline` để xác nhận chất lượng + cập nhật
+// docs/research/eval-tutor-baseline.md.
+export const GEMINI_CHAT_MODEL = process.env.GEMINI_MODEL || 'gemini-3.6-flash'
 
 // Model chat của Groq (FREE, nếu có GROQ_API_KEY). Đổi qua biến môi trường.
 // [2026-08-22] Đổi mặc định từ llama-3.3-70b-versatile — Groq đã gỡ model này khỏi danh

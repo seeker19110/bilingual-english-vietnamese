@@ -130,7 +130,10 @@ Hãy trả về DUY NHẤT một JSON hợp lệ dạng:
 }
 \`\`\``
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`
+  // [2026-08-24] Đổi từ 'gemini-2.0-flash' — Google đã gỡ hẳn model này (xác nhận qua lỗi 404
+  // thật khi chạy npm run eval:tutor, xem aiConfig.ts GEMINI_CHAT_MODEL). CHƯA verify được với
+  // key thật ở đây — cần người có key chạy thử trước khi tin tưởng hoàn toàn.
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`
   const body = {
     contents: [
       {

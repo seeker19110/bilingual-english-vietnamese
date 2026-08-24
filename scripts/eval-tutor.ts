@@ -7,7 +7,8 @@
 // feedback đúng tiếng Việt.
 //
 // ⚠️ CHẠY TAY, TỐN PHÍ API — KHÔNG đưa vào CI. Cần 1 trong: GEMINI_API_KEY / GROQ_API_KEY /
-// ANTHROPIC_API_KEY (ưu tiên theo đúng thứ tự như api/ai.ts). Đặt trong .env ở gốc dự án.
+// ANTHROPIC_API_KEY (ưu tiên Groq → Anthropic → Gemini, ĐÚNG thứ tự packages/core-ai/ai.ts).
+// Đặt trong .env ở gốc dự án.
 //
 // Dùng:
 //   npm run eval:tutor                          # chế độ chat, in bảng ra stdout
@@ -68,15 +69,20 @@ const WRITE_BASELINE = args.includes('--write-baseline')
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
 
-// ─── Chọn provider — GIỐNG thứ tự ưu tiên api/ai.ts (Gemini → Groq → Anthropic) ──
+// ─── Chọn provider — GIỐNG thứ tự ưu tiên packages/core-ai/ai.ts.
+// [2026-08-24] Sửa: comment cũ ghi "Gemini → Groq → Anthropic" nhưng ai.ts đã đổi thứ tự thành
+// "Groq → Anthropic → Gemini" từ 2026-08-06 (xem comment ai.ts) — script eval LỆCH so với
+// production suốt từ đó, nên số liệu eval trước đây (nếu có) có thể đo NHẦM provider so với cái
+// người dùng thật gặp. Phát hiện khi chạy `npm run eval:tutor` thật: script chọn Gemini dù .env
+// có đủ GROQ_API_KEY, trong khi production lẽ ra ưu tiên Groq trước.
 const GEMINI_KEY = process.env.GEMINI_API_KEY
 const GROQ_KEY = process.env.GROQ_API_KEY
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY
 
 function providerLabel(): string {
-  if (GEMINI_KEY) return `Gemini · ${GEMINI_CHAT_MODEL}`
   if (GROQ_KEY) return `Groq · ${GROQ_CHAT_MODEL}`
   if (ANTHROPIC_KEY) return `Anthropic · ${ALLOWED_MODEL}`
+  if (GEMINI_KEY) return `Gemini · ${GEMINI_CHAT_MODEL}`
   return 'none'
 }
 
@@ -126,9 +132,9 @@ async function callAnthropic(system: string, messages: Msg[]): Promise<string> {
 
 async function callProvider(system: string, userText: string): Promise<string> {
   const messages: Msg[] = [{ role: 'user', content: userText }]
-  if (GEMINI_KEY) return callGemini(GEMINI_KEY, GEMINI_CHAT_MODEL, system, messages, MAX_TOKENS)
   if (GROQ_KEY) return callGroq(system, messages)
   if (ANTHROPIC_KEY) return callAnthropic(system, messages)
+  if (GEMINI_KEY) return callGemini(GEMINI_KEY, GEMINI_CHAT_MODEL, system, messages, MAX_TOKENS)
   throw new Error('Chưa cấu hình GEMINI_API_KEY / GROQ_API_KEY / ANTHROPIC_API_KEY')
 }
 
