@@ -16,7 +16,7 @@
   },
   "scripts": {
     "dev": "vite --config apps/dhcb/vite.config.ts",
-    "build": "node scripts/gen-data-manifest.mjs && node scripts/gen-stories-json.mjs && tsc -p apps/dhcb/tsconfig.json && tsc -p tsconfig.api.json && vite build --config apps/dhcb/vite.config.ts && npm run build:server && npm run build --workspace=hub",
+    "build": "node scripts/gen-data-manifest.mjs && node scripts/gen-stories-json.mjs && tsc -p apps/dhcb/tsconfig.json && tsc -p tsconfig.api.json && vite build --config apps/dhcb/vite.config.ts && npm run build:server && npm run build --workspace=@dhcb/hub",
     "build:server": "node -e \"require('fs').rmSync('dist-server',{recursive:true,force:true})\" && npm run build:packages && tsc -p tsconfig.server.json",
     "build:packages": "tsc -b tsconfig.packages.json",
     "typecheck": "tsc -p apps/dhcb/tsconfig.json && tsc -p tsconfig.api.json && tsc -p tsconfig.e2e.json && tsc -p apps/hub/tsconfig.json",

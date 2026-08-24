@@ -1,7 +1,7 @@
 {
-  "name": "Gia sư tiếng Anh AI",
-  "short_name": "Gia sư AI",
-  "description": "Học tiếng Anh cùng gia sư AI — luyện nói, viết, và nhận phản hồi bằng tiếng Việt",
+  "name": "Đồng Hành Cùng Bạn — Gia Sư Tiếng Anh AI",
+  "short_name": "Đồng Hành AI",
+  "description": "Đồng Hành Cùng Bạn — học tiếng Anh cùng gia sư AI: luyện nói, viết, và nhận phản hồi bằng tiếng Việt",
   "lang": "vi",
   "start_url": "/",
   "scope": "/",
