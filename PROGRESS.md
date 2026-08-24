@@ -8,6 +8,29 @@
 
 ## Giai đoạn hiện tại
 
+### docs(research): định vị "nền tảng nâng đỡ" — tuyên ngôn hợp nhất + nền móng tương lai (2026-08-24)
+
+Người dùng chốt hướng định vị: _"nền tảng nâng đỡ mọi người… nâng cao nền tảng của họ… trình độ
+vượt trội… góp phần phát triển xã hội"_ và yêu cầu nghiên cứu sâu rộng để đặt nền móng. Kết quả:
+**`docs/research/dinh-vi-nen-tang-nang-do-2026-08-24.md`** (BẢN ĐỀ XUẤT — chờ duyệt):
+
+- **Phát hiện khi rà soát:** dự án có 3 lớp tuyên ngôn lệch nhau (kế hoạch nền tảng · MASTER_SPEC
+  · marketing) và 8 khoảng trống về sứ mệnh xã hội (chưa có tuyên ngôn thành văn, chưa có chỉ số
+  tác động, mâu thuẫn miễn phí ↔ thanh toán chưa hoà giải, chiều cộng đồng bị cấm trong khi vòng
+  kèm cặp cần nó, chưa có chính sách trẻ em…).
+- **Nội dung đề xuất:** tuyên ngôn 1 đoạn + 3 lời hứa (nâng NỀN · mở ĐỈNH · trả lại XÃ HỘI) + 3
+  câu "không phải"; nền móng lý thuyết có nguồn (capability approach Sen, Bloom 2-sigma với số
+  liệu trung thực 2025–2026, protégé effect, SDT + nguyên tắc **rút giàn giáo**, bối cảnh chuyển
+  đổi số giáo dục VN); **bậc thang đóng góp Đ0–Đ3** gắn vào mốc năng lực đã có (N2/N3, PRO-04,
+  B4–B5); **5 nguyên tắc hoà giải P1–P5** (P1 tầng miễn phí đủ dùng thật vĩnh viễn; P4 ranh giới
+  kèm cặp ≠ mạng xã hội; P5 an toàn trẻ em đi trước tính năng); **chỉ số Bắc Đẩu** = số người
+  LÊN BẬC thật/quý (bằng chứng E1–E3) + 4 chỉ số sứ mệnh + anti-metrics; lộ trình 3 chân trời
+  H1–H3 **không thêm tính năng ngoài C0–C7** (chỉ xếp thứ tự + điều kiện mở; bổ sung duy nhất:
+  contract rỗng vòng kèm cặp trong C1).
+- **Chờ người dùng quyết (mục 8 của tài liệu):** duyệt tuyên ngôn · chốt P1–P5 · chốt chỉ số ·
+  3 câu hỏi mở của tài liệu đồng hành (đề xuất: C0 trước C1 — có; đường đỉnh — mọi lứa tuổi;
+  C7 — dựng contract ở C1, bật ở H3). Chưa sửa CLAUDE.md/marketing — chỉ sửa sau khi duyệt.
+
 ### refactor(companion): bỏ "Live Voice" giả lập, chuyển sang STT → LLM → TTS thật (2026-08-24)
 
 **Phát hiện:** chế độ "Đàm thoại Trực tiếp (Live Voice)" của Bạn Đồng Hành (`/companion`,
