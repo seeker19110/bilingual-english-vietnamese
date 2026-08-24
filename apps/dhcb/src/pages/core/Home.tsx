@@ -66,25 +66,37 @@ export default function Home() {
   }, [])
 
   const uid = user?.id ?? ''
-  /* eslint-disable react-hooks/exhaustive-deps */
-  const learned = useMemo(() => getLearnedWords(uid), [uid, syncVersion])
-  const doneGrammar = useMemo(() => getDoneGrammar(uid), [uid, syncVersion])
-  const examPassed = useMemo(() => getPassedExamLevels(uid), [uid, syncVersion])
-  /* eslint-enable react-hooks/exhaustive-deps */
+  // syncVersion tăng khi cloud sync xong → tham chiếu nó trong thân memo (void) để
+  // dependency là "thật" (đọc lại localStorage đúng lúc), không cần eslint-disable.
+  const learned = useMemo(() => {
+    void syncVersion
+    return getLearnedWords(uid)
+  }, [uid, syncVersion])
+  const doneGrammar = useMemo(() => {
+    void syncVersion
+    return getDoneGrammar(uid)
+  }, [uid, syncVersion])
+  const examPassed = useMemo(() => {
+    void syncVersion
+    return getPassedExamLevels(uid)
+  }, [uid, syncVersion])
 
   const lockedMap = useMemo(
     () => computeLockedMapPersisted(uid, cefrLevels, examPassed),
     [uid, cefrLevels, examPassed],
   )
 
-  const continueLevel = useMemo(() => {
+  // Không bọc useMemo: lockedMap sinh từ hàm có side effect (computeLockedMapPersisted ghi
+  // localStorage) nên React Compiler không bảo toàn được memo thủ công ở đây
+  // (luật preserve-manual-memoization). Phép tính thuần, rẻ (≤6 cấp) — tính lại mỗi render.
+  const continueLevel = (() => {
     for (const lv of cefrLevels) {
       if (lockedMap.get(lv.id)) continue
       const next = findNextStep(lv, circleById, learned, doneGrammar)
       if (next) return { level: lv, next }
     }
     return null
-  }, [cefrLevels, circleById, learned, doneGrammar, lockedMap])
+  })()
 
   const showComeback = !comebackClosed && !!continueLevel && shouldShowComeback(uid)
   const daysAway = showComeback ? comebackDaysAway(uid) : 0

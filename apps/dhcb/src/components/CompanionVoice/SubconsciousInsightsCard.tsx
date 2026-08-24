@@ -8,23 +8,6 @@ export const SubconsciousInsightsCard: React.FC = () => {
   const [triggering, setTriggering] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const fetchLatestThought = async () => {
-    try {
-      setLoading(true)
-      const res = await fetch('/api/subconscious')
-      if (res.ok) {
-        const data = await res.json()
-        if (data.thought) {
-          setThought(data.thought)
-        }
-      }
-    } catch {
-      // Bỏ qua lỗi kết nối
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const triggerConsolidation = async () => {
     try {
       setTriggering(true)
@@ -42,8 +25,24 @@ export const SubconsciousInsightsCard: React.FC = () => {
     }
   }
 
+  // Nạp suy nghĩ ngầm mới nhất 1 lần lúc mount — hàm async định nghĩa TRONG
+  // effect, mọi setState nằm sau await (không setState đồng bộ trong effect);
+  // `loading` khởi tạo mặc định true nên không cần setLoading(true).
   useEffect(() => {
+    const fetchLatestThought = async () => {
+      const res = await fetch('/api/subconscious')
+      if (res.ok) {
+        const data = await res.json()
+        if (data.thought) {
+          setThought(data.thought)
+        }
+      }
+    }
     fetchLatestThought()
+      .catch(() => {
+        // Bỏ qua lỗi kết nối
+      })
+      .finally(() => setLoading(false))
   }, [])
 
   if (loading) {

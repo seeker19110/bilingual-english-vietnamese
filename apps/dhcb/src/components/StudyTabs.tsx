@@ -254,26 +254,30 @@ function BatchDoneView({
   }, [batch])
 
   // Hội thoại của vòng hiện tại — chọn circle có NHIỀU từ nhất trong batch.
-  const [dialogue, setDialogue] = useState<Dialogue | null>(null)
-  useEffect(() => {
+  // topId dẫn xuất thuần từ batch (useMemo); effect chỉ còn phần nạp async
+  // (setState trong callback promise — không setState đồng bộ trong effect).
+  const topCircleId = useMemo(() => {
     const counts = new Map<string, number>()
     for (const e of batch) {
       const c = findCircleOfWord(e.word)
       if (c) counts.set(c.id, (counts.get(c.id) ?? 0) + 1)
     }
-    const topId = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0]
-    if (!topId) {
-      setDialogue(null)
-      return
-    }
+    return [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0]
+  }, [batch])
+
+  const [loadedDialogue, setLoadedDialogue] = useState<Dialogue | null>(null)
+  useEffect(() => {
+    if (!topCircleId) return
     let alive = true
-    getDialogues(topId).then((ds) => {
-      if (alive) setDialogue(ds[ds.length - 1] ?? null)
+    getDialogues(topCircleId).then((ds) => {
+      if (alive) setLoadedDialogue(ds[ds.length - 1] ?? null)
     })
     return () => {
       alive = false
     }
-  }, [batch])
+  }, [topCircleId])
+  // Không có circle → không hiện hội thoại (thay cho setDialogue(null) đồng bộ cũ).
+  const dialogue = topCircleId ? loadedDialogue : null
 
   return (
     <div className="animate-fade-in space-y-4">

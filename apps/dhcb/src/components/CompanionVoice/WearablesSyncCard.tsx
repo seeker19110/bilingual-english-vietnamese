@@ -12,21 +12,22 @@ export default function WearablesSyncCard() {
   const [isSyncing, setIsSyncing] = useState<boolean>(false)
   const [selectedSource, setSelectedSource] = useState<WearableSource>('apple_health')
 
-  const loadData = async () => {
-    try {
-      const res = await fetch('/api/wearables-sync')
-      if (res.ok) {
-        const data = await res.json()
-        if (data.bio) setBio(data.bio)
-        if (data.window) setWindow(data.window)
-      }
-    } catch (err) {
-      console.error('Failed to load wearables bio data', err)
-    }
-  }
-
+  // Nạp dữ liệu sinh trắc 1 lần lúc mount — hàm async định nghĩa TRONG effect,
+  // mọi setState nằm sau await (không setState đồng bộ trong thân effect).
   useEffect(() => {
-    loadData()
+    const loadData = async () => {
+      try {
+        const res = await fetch('/api/wearables-sync')
+        if (res.ok) {
+          const data = await res.json()
+          if (data.bio) setBio(data.bio)
+          if (data.window) setWindow(data.window)
+        }
+      } catch (err) {
+        console.error('Failed to load wearables bio data', err)
+      }
+    }
+    void loadData()
   }, [])
 
   const handleSyncNow = async () => {

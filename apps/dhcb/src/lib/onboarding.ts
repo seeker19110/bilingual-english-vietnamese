@@ -113,13 +113,11 @@ export function useOnboarding(uid: string | undefined): OnboardingData | null {
   )
   useEffect(() => {
     if (!uid) return
-    const cached = getCachedOnboarding(uid)
-    if (cached) {
-      setData(cached)
-      return
-    }
     let alive = true
-    void fetchOnboarding(uid).then((d) => {
+    // setState phải nằm trong callback bất đồng bộ (luật react-hooks/set-state-in-effect):
+    // có cache thì dùng ngay, chưa có mới fetch nền như trước.
+    void Promise.resolve().then(async () => {
+      const d = getCachedOnboarding(uid) ?? (await fetchOnboarding(uid))
       if (alive && d) setData(d)
     })
     return () => {

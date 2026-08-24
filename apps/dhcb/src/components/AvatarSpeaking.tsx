@@ -34,10 +34,9 @@ export default function AvatarSpeaking({ audioEl, timeline, isPlaying }: AvatarS
   const rafRef = useRef<number | null>(null)
 
   useEffect(() => {
-    if (!isPlaying || !audioEl || timeline.length === 0) {
-      setViseme('REST')
-      return
-    }
+    // Không setState đồng bộ ở đây — khi không phát, phần render bên dưới tự
+    // hiển thị REST (giá trị dẫn xuất), state cũ giữ nguyên cũng không sao.
+    if (!isPlaying || !audioEl || timeline.length === 0) return
 
     const tick = () => {
       const timeMs = audioEl.currentTime * 1000
@@ -51,11 +50,14 @@ export default function AvatarSpeaking({ audioEl, timeline, isPlaying }: AvatarS
     }
   }, [audioEl, timeline, isPlaying])
 
-  const mouth = MOUTH_LEDS[viseme]
+  // Viseme hiển thị là GIÁ TRỊ DẪN XUẤT: chỉ dùng state khi đang phát thật sự,
+  // ngược lại luôn là REST (thay cho setState đồng bộ trong effect trước đây).
+  const shownViseme: Viseme = isPlaying && audioEl && timeline.length > 0 ? viseme : 'REST'
+  const mouth = MOUTH_LEDS[shownViseme]
   const mouthX = 50 - mouth.width / 2
   const mouthY = 64 - mouth.height / 2
   const barWidth = mouth.width / mouth.bars
-  const isSpeaking = viseme !== 'REST'
+  const isSpeaking = shownViseme !== 'REST'
 
   return (
     <svg

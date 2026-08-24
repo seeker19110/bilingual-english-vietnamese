@@ -8,6 +8,9 @@ export default function EchoShadowingCard() {
   const [isRecording, setIsRecording] = useState<boolean>(false)
   const [sessionResult, setSessionResult] = useState<ShadowingSession | null>(null)
   const [isEvaluating, setIsEvaluating] = useState<boolean>(false)
+  // Độ "nhiễu" trang trí cho 28 thanh sóng âm — random 1 LẦN qua lazy initializer
+  // (Math.random là hàm không thuần, không được gọi trực tiếp trong lúc render).
+  const [barJitter] = useState<number[]>(() => Array.from({ length: 28 }, () => Math.random() * 30))
 
   useEffect(() => {
     async function loadPassages() {
@@ -140,7 +143,7 @@ export default function EchoShadowingCard() {
                     key={i}
                     className="w-1.5 bg-gradient-to-t from-sky-500 to-emerald-400 rounded-full animate-pulse"
                     style={{
-                      height: `${Math.max(15, Math.sin(i * 0.5) * 55 + Math.random() * 30)}px`,
+                      height: `${Math.max(15, Math.sin(i * 0.5) * 55 + (barJitter[i] ?? 0))}px`,
                       animationDelay: `${i * 60}ms`,
                     }}
                   />

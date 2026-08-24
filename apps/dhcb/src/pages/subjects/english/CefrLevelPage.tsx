@@ -440,8 +440,14 @@ export default function CefrLevelPage() {
   const nextLevel = levels[levelIdx + 1]
   const prevLevel = levelIdx > 0 ? levels[levelIdx - 1] : undefined
 
-  // Đánh số bài ngữ pháp liên tục trong cả cấp (Bài 1, Bài 2, …)
-  let lessonStart = 0
+  // Đánh số bài ngữ pháp liên tục trong cả cấp (Bài 1, Bài 2, …) — offset cộng dồn
+  // tính TRƯỚC theo từng unit, thay biến đếm gán dần trong JSX (React Compiler cấm).
+  const unitLessonStarts: number[] = []
+  let lessonStartAcc = 0
+  for (const u of level.units) {
+    unitLessonStarts.push(lessonStartAcc)
+    lessonStartAcc += u.grammar.length
+  }
 
   // Cấp còn khóa → chỉ hiện màn khóa (không có thanh tab / tab học).
   const activeTab: StudyTab = locked ? 'lessons' : tab
@@ -845,8 +851,7 @@ export default function CefrLevelPage() {
               {/* Danh sách unit — "Phần 1..n", trình tự: từ vựng → ngữ pháp → hội thoại */}
               <div className="space-y-3">
                 {level.units.map((unit, ui) => {
-                  const start = lessonStart
-                  lessonStart += unit.grammar.length
+                  const start = unitLessonStarts[ui] ?? 0
                   return (
                     <UnitSection
                       key={unit.id}

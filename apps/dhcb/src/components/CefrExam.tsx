@@ -53,48 +53,43 @@ export default function CefrExam({
 }) {
   const toast = useToast()
 
-  // Nạp hội thoại của tất cả unit trong cấp (cho phần Đọc) — async.
-  const [dialogues, setDialogues] = useState<Dialogue[] | null>(null)
-  useEffect(() => {
-    let alive = true
-    Promise.all(level.units.map((u) => getDialogues(u.id))).then((lists) => {
-      if (alive) setDialogues(lists.flat())
-    })
-    return () => {
-      alive = false
-    }
-  }, [level])
-
   const grammarSources = useMemo(() => levelGrammarSources(level), [level])
 
   // Bộ đếm để dựng lại đề MỚI mỗi lần "Thi lại".
   const [attempt, setAttempt] = useState(0)
   const [questions, setQuestions] = useState<ExamQuestion[] | null>(null)
-
-  // Dựng đề khi có đủ dữ liệu (hoặc khi bấm thi lại).
-  useEffect(() => {
-    if (dialogues == null) return
-    const qs = buildExam({
-      isA,
-      words: getLevelWords(level.id, ageGroup),
-      learned: getLearnedWords(uid),
-      grammar: grammarSources,
-      dialogues,
-    })
-    setQuestions(qs)
-    setCurrent(0)
-    setSelected(null)
-    setAnswers([])
-    setDone(false)
-    setSavedPct(null)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dialogues, attempt])
-
   const [current, setCurrent] = useState(0)
   const [selected, setSelected] = useState<string | null>(null)
   const [answers, setAnswers] = useState<boolean[]>([])
   const [done, setDone] = useState(false)
   const [savedPct, setSavedPct] = useState<number | null>(null)
+
+  // Nạp hội thoại của tất cả unit trong cấp (cho phần Đọc) rồi dựng đề luôn
+  // trong callback async — setState trong callback async là hợp lệ với rule
+  // set-state-in-effect (không còn effect setState đồng bộ như trước).
+  useEffect(() => {
+    let alive = true
+    Promise.all(level.units.map((u) => getDialogues(u.id))).then((lists) => {
+      if (!alive) return
+      const dialogues: Dialogue[] = lists.flat()
+      const qs = buildExam({
+        isA,
+        words: getLevelWords(level.id, ageGroup),
+        learned: getLearnedWords(uid),
+        grammar: grammarSources,
+        dialogues,
+      })
+      setQuestions(qs)
+      setCurrent(0)
+      setSelected(null)
+      setAnswers([])
+      setDone(false)
+      setSavedPct(null)
+    })
+    return () => {
+      alive = false
+    }
+  }, [level, attempt, isA, uid, ageGroup, grammarSources])
 
   const q = questions?.[current]
 

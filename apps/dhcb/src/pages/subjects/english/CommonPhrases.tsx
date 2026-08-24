@@ -237,9 +237,14 @@ export default function CommonPhrases() {
 
   const sorted = useMemo(() => interleave(filtered), [filtered])
 
-  useEffect(() => {
+  // Đổi bộ lọc/tìm kiếm → thu về trang đầu — pattern so-sánh-prev ngay trong render
+  // (không setState đồng bộ trong effect).
+  const filterKey = JSON.stringify([activeStruct, deferredSearch])
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey)
+  if (filterKey !== prevFilterKey) {
+    setPrevFilterKey(filterKey)
     setVisible(PAGE_SIZE)
-  }, [activeStruct, deferredSearch])
+  }
 
   // Lazy load bằng IntersectionObserver — cuộn tới sentinel thì load thêm 7
   useEffect(() => {

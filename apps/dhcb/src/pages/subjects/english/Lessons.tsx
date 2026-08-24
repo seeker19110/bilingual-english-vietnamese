@@ -182,43 +182,43 @@ export default function Lessons() {
   const [selectedMeta, setSelectedMeta] = useState<LessonMeta | null>(null)
   const [lesson, setLesson] = useState<Lesson | null>(null)
   const [loadingLesson, setLoadingLesson] = useState(false)
-  // Khóa invalidation thủ công cho Set "đã xem" (đọc từ localStorage) — bump()
-  // sau khi đánh dấu 1 bài để CTA "Tiếp tục bài N" tính lại đúng khi quay lại danh sách.
-  const [viewedRefresh, setViewedRefresh] = useState(0)
-
   useEffect(() => {
     loadIndex().then(setIndex)
   }, [])
 
+  // Đổi bài đang chọn → bật/tắt trạng thái tải NGAY TRONG RENDER (pattern so-sánh-prev,
+  // không setState đồng bộ trong effect); phần async tải bài vẫn nằm ở effect dưới.
+  const [prevSelectedMeta, setPrevSelectedMeta] = useState(selectedMeta)
+  if (selectedMeta !== prevSelectedMeta) {
+    setPrevSelectedMeta(selectedMeta)
+    if (!selectedMeta) setLesson(null)
+    else setLoadingLesson(true)
+  }
+
   useEffect(() => {
-    if (!selectedMeta) {
-      setLesson(null)
-      return
-    }
+    if (!selectedMeta) return
     let alive = true
-    setLoadingLesson(true)
     loadLesson(selectedMeta).then((l) => {
       if (alive) {
         setLesson(l)
         setLoadingLesson(false)
       }
     })
-    if (uid) {
-      markViewed('lessons', uid, String(selectedMeta.id))
-      setViewedRefresh((k) => k + 1)
-    }
+    // Đánh dấu "đã xem" vào localStorage — CTA "Tiếp tục bài N" đọc trực tiếp
+    // localStorage mỗi render nên khi quay lại danh sách sẽ tự tính lại đúng.
+    if (uid) markViewed('lessons', uid, String(selectedMeta.id))
     return () => {
       alive = false
     }
   }, [selectedMeta, uid])
 
   // Bài đầu tiên (theo thứ tự danh sách) CHƯA xem — gợi ý "Tiếp tục bài N".
-  const nextUnviewed = useMemo(() => {
+  // Đọc trực tiếp localStorage mỗi render (bỏ khóa invalidation viewedRefresh cũ).
+  const nextUnviewed = (() => {
     if (!uid || index.length === 0) return null
     const viewed = getViewedIds('lessons', uid)
     return index.find((m) => !viewed.has(String(m.id))) ?? null
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [uid, index, viewedRefresh])
+  })()
 
   // ── Màn hình chi tiết bài học ─────────────────────────────────────────────
   if (selectedMeta) {
@@ -374,9 +374,12 @@ function LessonList({
     )
   }, [query, lessons])
 
-  useEffect(() => {
+  // Đổi từ khóa tìm kiếm → thu về trang đầu — pattern so-sánh-prev ngay trong render.
+  const [prevQuery, setPrevQuery] = useState(query)
+  if (query !== prevQuery) {
+    setPrevQuery(query)
     setVisible(PAGE_SIZE)
-  }, [query])
+  }
 
   useEffect(() => {
     const el = sentinelRef.current
@@ -480,10 +483,16 @@ function LessonView({
   const [voiceB, setVoiceB] = useState<Voice>(initialVoices.voiceB)
   const voiceARef = useRef<Voice>(initialVoices.voiceA)
   const voiceBRef = useRef<Voice>(initialVoices.voiceB)
-  useEffect(() => {
+  // Đổi bài học → nhận cặp giọng random mới: state reset bằng pattern so-sánh-prev
+  // ngay trong render (không setState đồng bộ trong effect); ref đồng bộ ở effect dưới.
+  const [prevInitialVoices, setPrevInitialVoices] = useState(initialVoices)
+  if (initialVoices !== prevInitialVoices) {
+    setPrevInitialVoices(initialVoices)
     setVoiceA(initialVoices.voiceA)
-    voiceARef.current = initialVoices.voiceA
     setVoiceB(initialVoices.voiceB)
+  }
+  useEffect(() => {
+    voiceARef.current = initialVoices.voiceA
     voiceBRef.current = initialVoices.voiceB
   }, [initialVoices])
 

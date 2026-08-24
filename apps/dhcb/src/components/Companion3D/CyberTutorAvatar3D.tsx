@@ -25,7 +25,12 @@ export default function CyberTutorAvatar3D({
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const [gaze, setGaze] = useState({ x: 0, y: 0 })
-  const [activeViseme, setActiveViseme] = useState<Oculus15Viseme>('sil')
+  // Viseme đang hoạt động là GIÁ TRỊ DẪN XUẤT thuần từ props — không cần state
+  // + effect (tránh setState đồng bộ trong effect gây render dây chuyền).
+  const activeViseme: Oculus15Viseme =
+    isSpeaking && currentIpaPhoneme
+      ? VisemeMorphingService.mapIpaToViseme(currentIpaPhoneme)
+      : 'sil'
   const [fps, setFps] = useState(60)
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -42,15 +47,6 @@ export default function CyberTutorAvatar3D({
   const handlePointerLeave = () => {
     setGaze({ x: 0, y: 0 })
   }
-
-  useEffect(() => {
-    if (isSpeaking && currentIpaPhoneme) {
-      const mapped = VisemeMorphingService.mapIpaToViseme(currentIpaPhoneme)
-      setActiveViseme(mapped)
-    } else {
-      setActiveViseme('sil')
-    }
-  }, [isSpeaking, currentIpaPhoneme])
 
   useEffect(() => {
     const canvas = canvasRef.current

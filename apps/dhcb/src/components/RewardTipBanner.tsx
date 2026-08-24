@@ -9,11 +9,14 @@ import { shouldShowRewardTip, dismissRewardTip } from '../lib/rewardTip'
 const AUTO_HIDE_MS = 12000
 
 export default function RewardTipBanner({ uid, isA }: { uid: string; isA: boolean }) {
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
+  // Đọc trạng thái "đã xem" 1 lần qua lazy initializer; khi uid đổi thì tính lại
+  // bằng mẫu "so sánh prev trong render" (thay cho setState đồng bộ trong effect).
+  const [visible, setVisible] = useState(() => shouldShowRewardTip(uid))
+  const [prevUid, setPrevUid] = useState(uid)
+  if (uid !== prevUid) {
+    setPrevUid(uid)
     setVisible(shouldShowRewardTip(uid))
-  }, [uid])
+  }
 
   useEffect(() => {
     if (!visible) return

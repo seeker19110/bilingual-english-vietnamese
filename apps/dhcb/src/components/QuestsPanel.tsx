@@ -52,14 +52,22 @@ export default function QuestsPanel({ isA, userId }: { isA: boolean; userId?: st
   const [loading, setLoading] = useState(true)
   const [claiming, setClaiming] = useState<string | null>(null)
 
+  // Dùng lại được từ handler (nhận thưởng xong nạp lại) — setLoading(true) đồng bộ
+  // trong handler là hợp lệ.
   async function load() {
     setLoading(true)
     setStatus(await fetchQuestsStatus())
     setLoading(false)
   }
 
+  // Nạp lần đầu lúc mount — mọi setState nằm sau await (không setState đồng bộ
+  // trong thân effect); `loading` khởi tạo mặc định true nên không cần setLoading(true).
   useEffect(() => {
-    void load()
+    const initialLoad = async () => {
+      setStatus(await fetchQuestsStatus())
+      setLoading(false)
+    }
+    void initialLoad()
   }, [])
 
   async function handleClaimStreak() {

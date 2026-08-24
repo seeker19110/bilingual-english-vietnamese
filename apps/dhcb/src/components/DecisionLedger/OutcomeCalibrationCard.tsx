@@ -34,6 +34,7 @@ export const OutcomeCalibrationCard: React.FC = () => {
   const [data, setData] = useState<OutcomeCalibrationReport | null>(null)
   const [loading, setLoading] = useState(true)
 
+  // Handler nút "Làm mới" — setLoading(true) đồng bộ trong handler là hợp lệ.
   const fetchCalibration = async () => {
     try {
       setLoading(true)
@@ -49,8 +50,22 @@ export const OutcomeCalibrationCard: React.FC = () => {
     }
   }
 
+  // Nạp báo cáo 1 lần lúc mount — hàm async định nghĩa TRONG effect, mọi
+  // setState nằm sau await (không setState đồng bộ trong thân effect);
+  // `loading` khởi tạo mặc định true nên không cần setLoading(true).
   useEffect(() => {
-    void fetchCalibration()
+    const initialFetch = async () => {
+      const res = await fetch('/api/decision-ledger?kind=calibration')
+      if (res.ok) {
+        const json = await res.json()
+        setData(json.calibration)
+      }
+    }
+    initialFetch()
+      .catch((err) => {
+        console.error('Lỗi khi tải báo cáo hiệu chuẩn quyết định:', err)
+      })
+      .finally(() => setLoading(false))
   }, [])
 
   if (loading) {

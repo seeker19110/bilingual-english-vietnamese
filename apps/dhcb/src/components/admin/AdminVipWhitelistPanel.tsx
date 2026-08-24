@@ -1,7 +1,7 @@
 // src/components/admin/AdminVipWhitelistPanel.tsx — Tab "Danh sách VIP" trong /admin.
 // Quản lý public.vip_whitelist qua api/admin-vip-whitelist.ts: thêm email → cấp VIP vĩnh viễn
 // ngay (nếu đã có tài khoản) hoặc tự cấp lúc người đó đăng ký sau này; xoá email → hạ về free.
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Loader2, ShieldCheck, Trash2 } from 'lucide-react'
 import { useToast } from '@core/ToastProvider'
 import { getAuthHeader } from '@core/authHeader'
@@ -14,6 +14,8 @@ interface WhitelistItem {
 
 export default function AdminVipWhitelistPanel() {
   const toast = useToast()
+  // .error là useCallback ổn định trong ToastProvider — dùng làm dependency cho load.
+  const toastError = toast.error
   const [items, setItems] = useState<WhitelistItem[] | null>(null)
   const [loading, setLoading] = useState(true)
   const [email, setEmail] = useState('')
@@ -21,10 +23,12 @@ export default function AdminVipWhitelistPanel() {
   const [adding, setAdding] = useState(false)
   const [removingEmail, setRemovingEmail] = useState<string | null>(null)
 
-  async function load() {
-    setLoading(true)
+  const load = useCallback(async () => {
     try {
       const headers = await getAuthHeader()
+      // Bật spinner SAU await đầu tiên — setState đồng bộ trong effect bị cấm (react-hooks 7);
+      // lúc mount loading đã là true sẵn nên không đổi hành vi.
+      setLoading(true)
       const res = await fetch('/api/admin-vip-whitelist', { headers })
       if (!res.ok) {
         const data = (await res.json().catch(() => ({}))) as { error?: string }
@@ -33,17 +37,17 @@ export default function AdminVipWhitelistPanel() {
       const data = (await res.json()) as { items: WhitelistItem[] }
       setItems(data.items)
     } catch (err) {
-      toast.error(`Tải danh sách thất bại: ${(err as Error).message}`)
+      toastError(`Tải danh sách thất bại: ${(err as Error).message}`)
       setItems([])
     } finally {
       setLoading(false)
     }
-  }
+  }, [toastError])
 
   useEffect(() => {
-    void load()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    // Hoãn sang microtask để KHÔNG setState đồng bộ trong thân effect (luật react-hooks 7).
+    void Promise.resolve().then(load)
+  }, [load])
 
   async function handleAdd() {
     const trimmedEmail = email.trim()

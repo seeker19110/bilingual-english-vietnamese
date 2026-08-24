@@ -34,16 +34,24 @@ export default function PvPBattlefieldModal({
 
   const currentQ = match.questions[currentRound]
 
-  // Reset timer on new round
+  // Reset state hiển thị khi sang vòng mới — mẫu "so sánh prev trong render"
+  // (React cho phép setState có điều kiện ngay trong render, thay cho setState
+  // đồng bộ trong effect trước đây). Lần mount (vòng 0) các state đã đúng giá trị khởi tạo.
+  const [prevRound, setPrevRound] = useState(currentRound)
+  if (prevRound !== currentRound) {
+    setPrevRound(currentRound)
+    if (currentQ) setTimeLeft(currentQ.timeLimitSec)
+    setSelectedOption(null)
+    setRoundResult(null)
+    setIsSubmitting(false)
+  }
+
+  // Reset timer on new round — effect chỉ còn quản lý ref + interval (external system)
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     if (isFinished || !currentQ) return
 
     startTimeRef.current = Date.now()
-    setTimeLeft(currentQ.timeLimitSec)
-    setSelectedOption(null)
-    setRoundResult(null)
-    setIsSubmitting(false)
 
     if (timerRef.current) clearInterval(timerRef.current)
 

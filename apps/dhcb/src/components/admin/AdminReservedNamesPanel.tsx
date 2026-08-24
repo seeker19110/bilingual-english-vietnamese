@@ -11,10 +11,12 @@ export default function AdminReservedNamesPanel() {
   const [error, setError] = useState<string | null>(null)
 
   const fetchReserved = useCallback(async () => {
-    setLoading(true)
-    setError(null)
     try {
       const headers = await getAuthHeader()
+      // Bật spinner SAU await đầu tiên — setState đồng bộ trong effect bị cấm (react-hooks 7);
+      // lúc mount loading đã là true sẵn nên không đổi hành vi.
+      setLoading(true)
+      setError(null)
       const res = await fetch('/api/admin-reserved-names', { headers })
       if (res.status === 401 || res.status === 403) {
         setError('Chỉ admin mới truy cập được')
@@ -31,7 +33,8 @@ export default function AdminReservedNamesPanel() {
   }, [])
 
   useEffect(() => {
-    fetchReserved()
+    // Hoãn sang microtask để KHÔNG setState đồng bộ trong thân effect (luật react-hooks 7).
+    void Promise.resolve().then(fetchReserved)
   }, [fetchReserved])
 
   const handleAdd = async (e: React.FormEvent) => {

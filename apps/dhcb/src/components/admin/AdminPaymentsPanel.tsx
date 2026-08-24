@@ -27,14 +27,16 @@ export default function AdminPaymentsPanel() {
   const [submittingMatch, setSubmittingMatch] = useState(false)
 
   const fetchPayments = useCallback(async () => {
-    setLoading(true)
-    setError(null)
     try {
       const params = new URLSearchParams()
       if (statusFilter !== 'all') params.set('status', statusFilter)
       if (searchQuery.trim()) params.set('q', searchQuery.trim())
 
       const headers = await getAuthHeader()
+      // Bật spinner SAU await đầu tiên — setState đồng bộ trong effect bị cấm (react-hooks 7);
+      // lúc mount loading đã là true sẵn nên không đổi hành vi.
+      setLoading(true)
+      setError(null)
       const res = await fetch(`/api/admin-payments?${params.toString()}`, { headers })
       if (res.status === 401 || res.status === 403) {
         setError('Chỉ admin mới truy cập được')
@@ -52,7 +54,8 @@ export default function AdminPaymentsPanel() {
   }, [statusFilter, searchQuery])
 
   useEffect(() => {
-    fetchPayments()
+    // Hoãn sang microtask để KHÔNG setState đồng bộ trong thân effect (luật react-hooks 7).
+    void Promise.resolve().then(fetchPayments)
   }, [fetchPayments])
 
   const handleOpenMatchModal = (pay: AdminPaymentRow) => {

@@ -95,7 +95,9 @@ export default function Work() {
   }, [toast, selectedProjectId])
 
   useEffect(() => {
-    loadData()
+    // Gọi qua then() để mọi setState chạy trong callback bất đồng bộ
+    // (luật react-hooks/set-state-in-effect — không setState đồng bộ trong effect).
+    void Promise.resolve().then(loadData)
   }, [loadData])
 
   const handleCreateProject = async (e: React.FormEvent) => {

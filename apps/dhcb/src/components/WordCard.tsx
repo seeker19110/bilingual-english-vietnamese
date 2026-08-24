@@ -37,10 +37,9 @@ export default function WordCard({
   )
 
   useEffect(() => {
-    if (_extraCache) {
-      setExtraExamples(_extraCache)
-      return
-    }
+    // Cache đã có → state đã nhận sẵn qua initializer ở trên, không cần setState
+    // đồng bộ trong effect. Chỉ nạp lười khi chưa có cache (setState trong .then là async).
+    if (_extraCache) return
     loadExtraExamples().then((d) => {
       _extraCache = d
       setExtraExamples(d)

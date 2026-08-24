@@ -35,8 +35,6 @@ export default function AdminFeedbackPanel() {
   const [error, setError] = useState<string | null>(null)
 
   const fetchFeedback = useCallback(async () => {
-    setLoading(true)
-    setError(null)
     try {
       const params = new URLSearchParams()
       params.set('type', activeTab)
@@ -49,6 +47,10 @@ export default function AdminFeedbackPanel() {
       }
 
       const headers = await getAuthHeader()
+      // Bật spinner SAU await đầu tiên — setState đồng bộ trong effect bị cấm (react-hooks 7);
+      // lúc mount loading đã là true sẵn nên không đổi hành vi.
+      setLoading(true)
+      setError(null)
       const res = await fetch(`/api/admin-feedback?${params.toString()}`, { headers })
       if (res.status === 401 || res.status === 403) {
         setError('Chỉ admin mới truy cập được')
@@ -69,7 +71,8 @@ export default function AdminFeedbackPanel() {
   }, [activeTab, categoryFilter, statusFilter, sourceFilter])
 
   useEffect(() => {
-    fetchFeedback()
+    // Hoãn sang microtask để KHÔNG setState đồng bộ trong thân effect (luật react-hooks 7).
+    void Promise.resolve().then(fetchFeedback)
   }, [fetchFeedback])
 
   async function handleStatusChange(id: string, newStatus: UserFeedbackStatus) {

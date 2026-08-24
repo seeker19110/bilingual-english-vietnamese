@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { act } from 'react'
+import { act, useEffect } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { useMountedRef } from './useMountedRef'
 
@@ -8,7 +8,12 @@ import { useMountedRef } from './useMountedRef'
 let mountedRefFromConsumer: { current: boolean } | undefined
 
 function Consumer() {
-  mountedRefFromConsumer = useMountedRef()
+  const ref = useMountedRef()
+  // Không gán biến module-scope trong lúc render (luật react-hooks globals) —
+  // ref ổn định giữa các render nên gán trong effect vẫn giữ nguyên ý nghĩa test.
+  useEffect(() => {
+    mountedRefFromConsumer = ref
+  }, [ref])
   return null
 }
 

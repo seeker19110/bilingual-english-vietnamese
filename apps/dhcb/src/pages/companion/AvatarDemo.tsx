@@ -2,7 +2,7 @@
 // Trang DEMO ẨN — chỉ vào được qua URL trực tiếp (/avatar-demo), KHÔNG có trong menu/BottomNav,
 // KHÔNG gắn vào luồng Luyện nói thật. Xem docs/research/dac-ta-avatar-ai-noi-chuyen-2026-07-28.md
 // (mục 5, bước 1 "PoC nhỏ") — chứng minh cơ chế viseme animation chạy đúng trước khi mở rộng.
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import ComingSoonBanner from '../../components/ComingSoonBanner'
@@ -39,7 +39,9 @@ async function fetchWordVisemes(text: string): Promise<Viseme[][] | null> {
 }
 
 export default function AvatarDemo() {
-  const audioRef = useRef<HTMLAudioElement | null>(null)
+  // Dùng state (không dùng ref) vì phần tử audio được TRUYỀN XUỐNG AvatarSpeaking lúc render
+  // — luật react-hooks refs cấm đọc ref.current trong render.
+  const [audioEl, setAudioEl] = useState<HTMLAudioElement | null>(null)
   const [timeline, setTimeline] = useState<VisemeFrame[]>([])
   const [isPlaying, setIsPlaying] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -61,8 +63,8 @@ export default function AvatarDemo() {
       const wordVisemes = serverTimeline ? null : await fetchWordVisemes(DEMO_SENTENCE)
       const blobUrl = bufferToBlobUrl(buffer)
 
-      const audio = audioRef.current ?? new Audio()
-      audioRef.current = audio
+      const audio = audioEl ?? new Audio()
+      setAudioEl(audio)
       audio.src = blobUrl
 
       if (serverTimeline && serverTimeline.length > 0) {
@@ -111,7 +113,7 @@ export default function AvatarDemo() {
           note="Avatar AI nói chuyện đang ở giai đoạn thử nghiệm (PoC): mới chứng minh cơ chế khẩu hình chạy đúng, chưa nối vào luồng Luyện nói thật. Bản hoàn chỉnh sẽ ra mắt sau."
         />
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 flex flex-col items-center gap-5">
-          <AvatarSpeaking audioEl={audioRef.current} timeline={timeline} isPlaying={isPlaying} />
+          <AvatarSpeaking audioEl={audioEl} timeline={timeline} isPlaying={isPlaying} />
           <p className="text-sm text-zinc-400 text-center max-w-sm">{DEMO_SENTENCE}</p>
           <button
             type="button"
