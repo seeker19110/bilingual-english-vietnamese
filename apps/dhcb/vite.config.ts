@@ -51,6 +51,12 @@ export default defineConfig(({ mode }) => {
     // root = thư mục app (chứa index.html) — KHÔNG phụ thuộc cwd, để chạy được từ gốc repo
     // qua `vite --config apps/dhcb/vite.config.ts` (npm script gốc giữ nguyên tên lệnh).
     root: appDir,
+    // envDir = gốc repo (nơi có .env thật) — Vite mặc định tìm .env ngay tại `root`
+    // (apps/dhcb/), nhưng file .env thật luôn ở gốc repo. THIẾU dòng này thì mọi biến
+    // VITE_* (VITE_GOOGLE_CLIENT_ID, VITE_SENTRY_DSN...) đều rỗng lúc build production —
+    // đây là nguyên nhân lỗi "Không kết nối được Google" sau đợt dời apps/english → apps/dhcb
+    // (PR-S2, 2026-08-23): nút Google ném lỗi "Thiếu VITE_GOOGLE_CLIENT_ID" ngay khi bấm.
+    envDir: repoRoot,
     resolve: {
       alias: [
         // @dhcb/<gói>/<file> -> packages/<gói>/<file> (source) — workspace thật, xem tsconfig paths
