@@ -94,7 +94,10 @@ export function parseVisionSolutionText(
 export async function solveProblemWithVision(
   request: VisionSolveRequest,
   apiKey?: string,
-  model = 'gemini-2.0-flash',
+  // [2026-08-24] Đổi từ 'gemini-2.0-flash' — Google đã gỡ hẳn model này (xác nhận qua lỗi 404
+  // thật khi chạy npm run eval:tutor, xem aiConfig.ts GEMINI_CHAT_MODEL). CHƯA verify được bằng
+  // ảnh thật với key thật ở đây — cần người có key chạy thử trước khi tin tưởng hoàn toàn.
+  model = 'gemini-3.6-flash',
 ): Promise<VisionSolveResponse> {
   const effectiveKey = apiKey || process.env.GEMINI_API_KEY
   const { data, mimeType } = cleanBase64(request.imageBase64)
