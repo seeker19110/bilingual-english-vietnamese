@@ -57,9 +57,10 @@ describe('programming lessons', () => {
   it('tra cứu theo unit và theo id', () => {
     expect(getLessonsByUnit('p1-u4').map((l) => l.id)).toContain('p1-u4-l1')
     expect(getLessonsByUnit('p2-u4').map((l) => l.id)).toContain('p2-u4-l1')
-    // Unit của bậc CHƯA soạn nội dung → rỗng (UI hiện "Sắp mở"). P3 là bậc kế tiếp trong
-    // hàng đợi soạn (P2 đã có bài từ PR-L6), dùng làm mốc kiểm nhánh rỗng.
-    expect(getLessonsByUnit('p3-u1')).toEqual([])
+    expect(getLessonsByUnit('p3-u2').map((l) => l.id)).toContain('p3-u2-l1')
+    // Unit của bậc CHƯA soạn nội dung → rỗng (UI hiện "Sắp mở"). P3 mới mở 3 unit đầu ở
+    // PR-L7 (U1–U3 thuần Python); P4 là bậc kế tiếp trong hàng đợi, dùng làm mốc nhánh rỗng.
+    expect(getLessonsByUnit('p4-u1')).toEqual([])
     expect(getLesson('p9-u9-l9')).toBeUndefined()
   })
 })
