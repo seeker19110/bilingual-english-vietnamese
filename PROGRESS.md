@@ -8,7 +8,7 @@
 
 ## Giai đoạn hiện tại
 
-### feat(programming): PR-L5 — AI phản hồi code + gợi ý Socratic (mode `code_feedback`) (2026-08-25)
+### feat(programming): PR-L5 — AI phản hồi code + gợi ý Socratic (mode `code_feedback`) — PR #661 (2026-08-25)
 
 Đợt cuối của MVP môn Lập trình theo phân đợt đặc tả. AI vào môn **đúng một cửa**, có đếm lượt:
 
