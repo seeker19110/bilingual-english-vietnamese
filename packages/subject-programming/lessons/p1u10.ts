@@ -119,5 +119,15 @@ print(f"Tong doanh thu: {tong_doanh_thu} dong")`,
     },
     homework:
       'Về nhà mở rộng máy bán nước: thêm một loại nước thứ 4 tuỳ bạn đặt tên và giá, rồi mời một người thân "làm khách" mua thử — nhập số liệu y như một cái máy bán nước thật ở trường hoặc công ty. Ghi lại xem chương trình có bị "bối rối" ở tình huống nào không (ví dụ khách đưa đúng 0 đồng).',
+    srsCards: [
+      {
+        hoi: 'Vì sao nên in KẾT QUẢ TỔNG sau khi vòng lặp đã chạy xong, không in ở trong vòng lặp?',
+        dap: 'Vì bên trong vòng lặp dữ liệu CHƯA ĐẦY ĐỦ — biến tích luỹ mới cộng được một phần, in ra lúc đó sẽ ra số sai (chưa phải tổng cuối cùng).',
+      },
+      {
+        hoi: 'Khuôn "biến tích luỹ + vòng lặp + if bên trong" dùng để giải quyết dạng bài nào?',
+        dap: 'Dạng bài lặp qua nhiều lượt, mỗi lượt nhận dữ liệu rồi rẽ nhánh xử lý khác nhau, và cần CỘNG DỒN kết quả qua các lượt — ví dụ tính tổng doanh thu.',
+      },
+    ],
   },
 ]

@@ -113,5 +113,19 @@ export const P3U5_LESSONS: ProgrammingLesson[] = [
     },
     homework:
       'Về nhà: mở trang CV bạn viết ở bài trước và làm đẹp nó — nhưng thử theo thứ tự này: thu cửa sổ trình duyệt còn hẹp như điện thoại TRƯỚC, làm cho vừa mắt ở khổ đó, rồi mới kéo rộng ra. Đó chính là mobile-first. Xong thì bấm Ctrl và cuộn để phóng to 200%: chữ có còn đọc được, nút có còn bấm được không? Nếu vỡ, đó là bài học đáng giá hơn mọi lời khuyên về màu sắc.',
+    srsCards: [
+      {
+        hoi: 'Trong mô hình hộp CSS, padding và margin khác nhau ở chỗ nào?',
+        dap: 'padding là khoảng đệm BÊN TRONG viền của một hộp (chữ chạm sát viền thì thêm padding), margin là khoảng cách BÊN NGOÀI giữa hộp này với các hộp khác (hai khối dính nhau thì thêm margin).',
+      },
+      {
+        hoi: '"Mobile-first" trong CSS nghĩa là viết luật cho màn hình nào trước?',
+        dap: 'Viết CSS mặc định cho màn hình NHỎ (điện thoại) trước, sau đó dùng @media (min-width: ...) để thêm phần dành riêng cho màn hình lớn hơn.',
+      },
+      {
+        hoi: 'display: flex đặt lên một thẻ cha thì các thẻ con trực tiếp của nó thay đổi thế nào?',
+        dap: 'Các con trực tiếp tự động xếp thành HÀNG NGANG thay vì mỗi cái một dòng; gap thêm khoảng cách giữa chúng, flex-wrap: wrap cho xuống dòng khi chật thay vì tràn ra ngoài.',
+      },
+    ],
   },
 ]

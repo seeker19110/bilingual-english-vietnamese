@@ -98,5 +98,19 @@ print(statistics.median.__doc__.splitlines()[0])   # dòng mô tả đầu tiên
     },
     homework:
       'Về nhà (làm trên MÁY THẬT, không làm trong trang web vì sandbox không có mạng): mở cửa sổ dòng lệnh, gõ "pip install requests", rồi viết 10 dòng lấy tỷ giá USD→VND từ một API công khai và in ra. Trước khi viết, mở tài liệu requests và tự trả lời 4 câu hỏi trong bài: get() nhận gì, trả về gì, ném lỗi khi nào, ví dụ ở đâu. Xong thì tạo file requirements.txt ghi "requests" vào — đó là thói quen của dự án thật.',
+    srsCards: [
+      {
+        hoi: 'Thư viện chuẩn (statistics, json, csv...) và thư viện ngoài (requests, pandas...) khác nhau ở chỗ nào khi cài đặt?',
+        dap: 'Thư viện chuẩn đã cài sẵn cùng Python, import là dùng ngay. Thư viện ngoài phải cài thêm bằng lệnh pip install <ten> ở cửa sổ dòng lệnh trước khi import được.',
+      },
+      {
+        hoi: 'Gặp một hàm thư viện lạ lần đầu, bạn nên tự hỏi những gì trước khi dùng nó?',
+        dap: 'Bốn câu: hàm nhận vào cái gì, trả về cái gì, có thể ném lỗi khi nào, và có ví dụ chạy được để chép ra thử không.',
+      },
+      {
+        hoi: 'Vì sao nên tránh viết "from thu_vien import *"?',
+        dap: 'Vì nó kéo về hết mọi tên trong thư viện, dễ đè lên biến hoặc hàm bạn đã đặt cùng tên mà không hề báo lỗi, rất khó phát hiện.',
+      },
+    ],
   },
 ]

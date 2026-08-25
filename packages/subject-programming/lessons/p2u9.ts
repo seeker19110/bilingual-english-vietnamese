@@ -87,5 +87,19 @@ main()                               # chương trình bắt đầu chạy từ 
     },
     homework:
       'Về nhà: trên máy tính của bạn, tách đúng chương trình này thành 3 file thật — logic.py (tinh_tien), giao_dien.py (doc_don, in_hoa_don) và main.py (import hai file kia rồi gọi). Chạy python main.py và xem import hoạt động thế nào.',
+    srsCards: [
+      {
+        hoi: 'Định nghĩa def chao(): ... nhưng không gọi chao() ở đâu cả thì phần thân hàm có chạy không?',
+        dap: 'Không. def chỉ "dạy máy cách làm", chưa "bảo máy làm". Phải có dòng gọi chao() thì thân hàm mới thực sự chạy — thiếu dòng gọi là chương trình im lặng, lỗi rất hay gặp khi mới dùng main().',
+      },
+      {
+        hoi: 'Nguyên tắc chia vai trò (separation of concerns) nghĩa là gì?',
+        dap: 'Mỗi hàm chỉ làm MỘT loại việc: hàm GIAO DIỆN chỉ input/print, hàm LOGIC chỉ tính toán thuần (không input/print), hàm LƯU TRỮ chỉ đọc/ghi dữ liệu. Tách vậy dễ đọc, dễ sửa, và hàm logic dễ kiểm thử nhất vì cùng đầu vào luôn ra cùng đầu ra.',
+      },
+      {
+        hoi: 'Hàm main() đóng vai trò gì trong một chương trình chia vai trò?',
+        dap: 'Là "nhạc trưởng" — gọi lần lượt các hàm khác theo đúng trình tự, bản thân không tính toán nhiều. Đọc main() là hiểu ngay chương trình làm gì, như đọc mục lục.',
+      },
+    ],
   },
 ]

@@ -109,6 +109,20 @@ git log --oneline`,
     },
     homework:
       'Về nhà (làm trên máy thật, ngoài sandbox): cài Git, tạo tài khoản GitHub, rồi đưa dự án cửa hàng bạn đã làm ở chặng P3 lên đó — git init, commit, tạo repo trên GitHub và git push. Sandbox này không có mạng nên bước push phải làm ở máy thật; hướng dẫn từng bước nằm ngay trang tạo repo mới của GitHub. Có link repo rồi thì bạn đã có thứ đầu tiên để dán vào CV.',
+    srsCards: [
+      {
+        hoi: 'Ba nơi code của bạn nằm trong Git là gì?',
+        dap: 'THƯ MỤC LÀM VIỆC (file đang gõ dở) → VÙNG CHỜ/staging (thứ đã git add, được chọn cho bản chụp tới) → LỊCH SỬ (các commit đã chốt). Hiểu ba nơi này là hiểu 80% Git.',
+      },
+      {
+        hoi: 'Vì sao Git có vùng chờ ở giữa, không chụp thẳng cả thư mục?',
+        dap: 'Vì một buổi làm việc thường sửa nhiều thứ chẳng liên quan nhau. Vùng chờ cho bạn gói chúng thành từng commit RIÊNG, mỗi commit một ý — sau này đọc lịch sử là hiểu, muốn bỏ riêng một thay đổi cũng được.',
+      },
+      {
+        hoi: 'Tạo file mới rồi gõ thẳng git commit -m "..." thì chuyện gì xảy ra?',
+        dap: 'Không có gì được chốt: file chưa git add nên vùng chờ rỗng, Git báo không có gì để commit. Đây là lỗi số một của người mới — gõ git status trước khi commit cho quen tay.',
+      },
+    ],
   },
   {
     id: 'p3-u10-l2',
@@ -231,5 +245,19 @@ git log --oneline`,
     },
     homework:
       'Về nhà: trên repo GitHub bạn vừa tạo ở bài trước, thử luồng làm việc thật của nghề — tạo nhánh mới, sửa một thứ nhỏ, push nhánh đó lên GitHub rồi mở một Pull Request và tự merge. Pull Request là chỗ người khác đọc và góp ý code TRƯỚC khi nó vào nhánh chính; mọi công ty phần mềm đều chạy bằng cơ chế này, và giờ bạn đã dùng qua một lần.',
+    srsCards: [
+      {
+        hoi: 'Đang ở nhánh phụ, tạo file rồi commit; quay về main gõ ls thì file đâu?',
+        dap: 'File không hiện — và nó KHÔNG mất. Thư mục làm việc luôn là ảnh chụp của nhánh bạn đang đứng; switch lại sang nhánh phụ là thấy nó ngay.',
+      },
+      {
+        hoi: 'Tua nhanh (fast-forward) khác commit gộp ở chỗ nào?',
+        dap: 'Tua nhanh: trong lúc bạn làm nhánh phụ, nhánh chính KHÔNG có commit mới, Git chỉ dời con trỏ tới trước, không tạo commit nào. Commit gộp: cả hai nhánh đều có commit mới nên Git tạo thêm một commit có HAI cha.',
+      },
+      {
+        hoi: 'Xung đột (conflict) xảy ra khi nào?',
+        dap: 'Khi hai nhánh sửa CÙNG một chỗ trong CÙNG một file — Git không đoán hộ được ai đúng nên dừng lại, chèn dấu <<<<<<< ======= >>>>>>> vào file và bắt bạn tự chọn, rồi git add + git commit.',
+      },
+    ],
   },
 ]

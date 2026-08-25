@@ -31,6 +31,7 @@ import { useAuth } from '../../../context/useAuth'
 import { runLessonCode, resetLessonRunners } from '../../../lib/codeRunner'
 import { HtmlPreview } from '../../../components/HtmlPreview'
 import { saveLessonProgress } from '../../../lib/programmingProgress'
+import { addLessonCardsToSrs } from '../../../lib/programmingSrs'
 import { MAX_HINT_LEVEL } from '@dhcb/subject-programming/feedbackPrompt'
 import {
   requestCodeFeedback,
@@ -134,6 +135,10 @@ export default function ProgrammingLessonPage() {
     setGrading(false)
     if (allTestsPassed(out) && user) {
       void saveLessonProgress(user.id, lesson.id, 'completed')
+      // ⑧ Thẻ SRS vào vòng ôn NGAY khi đạt bài (PR-L10): đó là lúc học viên vừa hiểu, nên
+      // lịch ôn đầu tiên tính từ đây mới đúng. Gọi nhiều lần cũng vô hại — addToSRS bỏ qua
+      // thẻ đã có trong kho, không đặt lại lịch của thẻ đang ôn dở.
+      addLessonCardsToSrs(user.id, lesson.id)
     }
   }
 

@@ -98,5 +98,19 @@ print(f"Con lai: {con_lai} dong")`,
     },
     homework:
       'Về nhà: mở lại một bài Make bạn đã làm ở các unit trước (ví dụ bài tiền điện U4), CỐ TÌNH gõ sai một tên biến (đổi hoa/thường) hoặc xoá một chỗ int(), chạy thử xem Python báo lỗi gì — rồi tự sửa lại. Càng quen mặt các lỗi này, sau này gặp lại bạn sẽ sửa trong vài giây.',
+    srsCards: [
+      {
+        hoi: 'Python coi "So_du" và "so_du" là một biến hay hai biến?',
+        dap: 'HAI biến khác nhau hoàn toàn — Python phân biệt HOA/THƯỜNG trong tên biến. Gõ nhầm hoa/thường gây lỗi NameError.',
+      },
+      {
+        hoi: 'Vì sao "5" + "3" không ra 8?',
+        dap: 'Vì "5" và "3" ở đây là CHUỖI (chưa ép kiểu int), nên + là GHÉP chuỗi, cho ra "53" chứ không phải phép cộng số học.',
+      },
+      {
+        hoi: 'TRACE CODE nghĩa là làm gì?',
+        dap: 'Chạy chương trình bằng mắt và tay trên giấy: đọc từng dòng theo thứ tự, ghi lại giá trị từng biến sau mỗi dòng, y như máy tính làm.',
+      },
+    ],
   },
 ]

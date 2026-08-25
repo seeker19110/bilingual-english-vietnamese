@@ -79,5 +79,19 @@ print(f"Tong doanh thu: {tong} dong")`,
     },
     homework:
       'Về nhà: đổi chế độ ghi thành "a" rồi chạy chương trình 3 lần — mở file bằng Excel/Google Sheets xem dữ liệu dồn lại thế nào. Đó chính xác là cách sổ bán hàng thật lưu đơn: ghi thêm, không ghi đè.',
+    srsCards: [
+      {
+        hoi: 'Mở file bằng open(..., "w") mà file đã có nội dung từ trước thì chuyện gì xảy ra?',
+        dap: 'Nội dung cũ bị XOÁ TRẮNG ngay khi mở, rồi mới ghi nội dung mới vào. Muốn giữ dữ liệu cũ và ghi thêm phải dùng chế độ "a" (append) thay vì "w".',
+      },
+      {
+        hoi: 'Đọc từng dòng từ file lên rồi cộng số trong đó, vì sao phải int(...) trước khi cộng?',
+        dap: 'Vì mọi thứ đọc ra từ file luôn là CHUỖI (kể cả trông giống số), không tự động là số. Cộng thẳng chuỗi sẽ nối chuỗi hoặc báo lỗi — phải ép kiểu int(dong) trước khi tính toán.',
+      },
+      {
+        hoi: 'Vì sao nên dùng câu lệnh with khi mở file thay vì open() rồi tự đóng?',
+        dap: 'with tự động ĐÓNG file ngay cả khi giữa chừng có lỗi xảy ra — tránh rò rỉ tài nguyên hoặc file bị khoá dở dang. Đây là cách viết chuẩn, luôn dùng khi làm việc với file.',
+      },
+    ],
   },
 ]

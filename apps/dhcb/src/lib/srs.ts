@@ -190,16 +190,31 @@ export function reviewWord(uid: string, word: string, rating: Rating) {
 // cảm giác ngợp khi danh sách due dồn lại sau vài ngày nghỉ (chỉ áp khi gọi có
 // limit, ví dụ phiên ôn thật trong SRSReview).
 export function getDueWords(uid: string, words: DictEntry[], limit?: number): DictEntry[] {
+  return getDueBy(uid, words, (w) => w.word, limit)
+}
+
+/**
+ * Lõi CHUNG của mọi loại thẻ đến hạn (PR-L10): từ vựng, bài ngữ pháp, thẻ môn Lập trình —
+ * ba mạch trước đây chép lại cùng một đoạn lọc + sắp xếp. `khoaCua` nói cho hàm biết lấy
+ * khoá SRS từ phần tử ra sao; phần còn lại (lọc đến hạn, ưu tiên quá hạn lâu nhất rồi khó
+ * nhất, cap số lượng) chỉ tồn tại MỘT bản.
+ */
+export function getDueBy<T>(
+  uid: string,
+  items: T[],
+  khoaCua: (item: T) => string,
+  limit?: number,
+): T[] {
   const data = load(uid)
   const now = Date.now()
-  const due = words.filter((w) => {
-    const c = data[w.word.toLowerCase()]
+  const due = items.filter((it) => {
+    const c = data[khoaCua(it).toLowerCase()]
     return c && c.due <= now
   })
   if (limit == null) return due
   const sorted = [...due].sort((a, b) => {
-    const ca = data[a.word.toLowerCase()]!
-    const cb = data[b.word.toLowerCase()]!
+    const ca = data[khoaCua(a).toLowerCase()]!
+    const cb = data[khoaCua(b).toLowerCase()]!
     return ca.due - cb.due || cb.difficulty - ca.difficulty
   })
   return sorted.slice(0, limit)
@@ -216,11 +231,18 @@ export function getLeechWords(uid: string, words: DictEntry[]): DictEntry[] {
 // nhưng không phải "từ"). Trước đây đếm cả thẻ ngữ pháp vào đây, khiến Dashboard/push
 // notification hiện "N từ cần ôn" bị phồng lên tới 78 (số bài ngữ pháp), lệch với tab
 // "Ôn SRS" (vốn đã lọc đúng theo `allWordsPool`) — audit toàn diện 2026-08-23.
+/** Tiền tố khoá của các loại thẻ KHÔNG phải từ vựng tiếng Anh (xem getSRSStats). */
+const NAMESPACE_KHONG_PHAI_TU_VUNG = ['grammar:', 'prog:']
+
 export function getSRSStats(uid: string): { total: number; due: number } {
   const data = load(uid)
   const now = Date.now()
+  // Kho `srs_${uid}` chứa CHUNG mọi loại thẻ, phân biệt bằng tiền tố khoá. Thống kê này là
+  // của TỪ VỰNG tiếng Anh (hiện trên Dashboard/trang tiến độ môn English), nên phải loại mọi
+  // namespace khác. Thêm loại thẻ mới ⇒ thêm tiền tố vào đây, nếu không con số từ vựng phồng
+  // lên im lặng (đúng lỗi PR-L10 suýt gây ra với thẻ `prog:`).
   const entries = Object.entries(data)
-    .filter(([key]) => !key.startsWith('grammar:'))
+    .filter(([key]) => !NAMESPACE_KHONG_PHAI_TU_VUNG.some((tienTo) => key.startsWith(tienTo)))
     .map(([, card]) => card)
   return {
     total: entries.length,
@@ -260,17 +282,5 @@ export function reviewGrammar(uid: string, lessonId: string, rating: Rating) {
 // Các bài ngữ pháp đến hạn ôn trong số `lessonIds` đã học xong — cùng thứ tự ưu tiên
 // (quá hạn lâu nhất trước) như getDueWords.
 export function getDueGrammarLessonIds(uid: string, lessonIds: string[], limit?: number): string[] {
-  const data = load(uid)
-  const now = Date.now()
-  const due = lessonIds.filter((id) => {
-    const c = data[grammarKey(id)]
-    return c && c.due <= now
-  })
-  if (limit == null) return due
-  const sorted = [...due].sort((a, b) => {
-    const ca = data[grammarKey(a)]!
-    const cb = data[grammarKey(b)]!
-    return ca.due - cb.due || cb.difficulty - ca.difficulty
-  })
-  return sorted.slice(0, limit)
+  return getDueBy(uid, lessonIds, grammarKey, limit)
 }

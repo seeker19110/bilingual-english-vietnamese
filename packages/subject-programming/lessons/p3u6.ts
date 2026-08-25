@@ -105,5 +105,19 @@ console.log("5" == 5, "5" === 5);        // true false — luôn dùng ===`,
     },
     homework:
       'Về nhà: mở lại 3 bài Python bạn thấy dễ nhất ở bậc P1 (bảng cửu chương, đoán số, lọc điểm đậu/rớt) và viết lại bằng JavaScript. Đừng nhìn bản Python khi viết — nhìn xong mới đối chiếu. Chỗ nào bạn phải dừng lại nghĩ chính là chỗ khác biệt thật giữa hai ngôn ngữ, đáng ghi vào sổ tay hơn mọi bảng đối chiếu chép sẵn.',
+    srsCards: [
+      {
+        hoi: '"5" + 3 trong JavaScript ra kết quả gì? Vì sao?',
+        dap: '"53" — vì một bên là chuỗi nên dấu + thực hiện NỐI CHUỖI, không cộng số. Đây là bẫy khác Python (Python sẽ ném TypeError), luôn phải Number() trước khi tính.',
+      },
+      {
+        hoi: 'Nên mặc định khai báo biến JavaScript bằng const hay let?',
+        dap: 'Mặc định dùng const. Chỉ đổi sang let khi thật sự cần GÁN LẠI giá trị cho biến đó về sau — const là cái phanh giúp tránh lỡ tay ghi đè biến.',
+      },
+      {
+        hoi: 'So sánh "5" == 5 và "5" === 5 trong JavaScript, cái nào cho true?',
+        dap: '"5" == 5 cho true vì == tự đổi kiểu trước khi so; "5" === 5 cho false vì === so cả giá trị lẫn kiểu. Luật của dự án: luôn dùng === và !==, không dùng ==.',
+      },
+    ],
   },
 ]

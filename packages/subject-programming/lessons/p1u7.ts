@@ -90,5 +90,15 @@ print(f"So lan lon: {so_lan_lon}, so lan nho: {so_lan_nho}")`,
     },
     homework:
       'Về nhà: lấy điểm của cả tổ/nhóm bạn (hỏi từng bạn một điểm môn nào đó), chạy chương trình để đếm đậu/rớt thật. Thử mở rộng: thêm nhánh thứ ba "Gioi" cho điểm >= 8 (lồng if/elif/else, đếm 3 biến riêng).',
+    srsCards: [
+      {
+        hoi: 'Khi lồng if vào bên trong for, dòng if phải thụt lề như thế nào?',
+        dap: 'Thụt lề THÊM MỘT BẬC so với dòng for; phần lệnh bên trong if lại thụt thêm một bậc nữa — nên nằm SÂU HAI BẬC so với dòng for.',
+      },
+      {
+        hoi: 'Vì sao "lồng if vào for" lại hay dùng để đếm theo nhiều loại?',
+        dap: 'Vì mỗi vòng lặp cần XÉT TỪNG phần tử rồi QUYẾT ĐỊNH cộng dồn vào biến đếm nào tuỳ điều kiện — ví dụ đếm riêng số đậu, số rớt.',
+      },
+    ],
   },
 ]

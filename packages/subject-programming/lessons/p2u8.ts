@@ -89,5 +89,19 @@ print(f"Can bac hai cua 81: {math.sqrt(81)}")`,
     },
     homework:
       'Về nhà: đổi mốc thành date.today() rồi tính số ngày còn lại tới sinh nhật bạn — nếu sinh nhật năm nay đã qua thì cộng thêm 1 năm. Thêm module random để mỗi lần chạy in một câu động viên khác nhau.',
+    srsCards: [
+      {
+        hoi: 'math.ceil, math.floor và round() khác nhau ở đâu?',
+        dap: 'ceil luôn làm tròn LÊN (7.1 → 8), floor luôn làm tròn XUỐNG (7.9 → 7), round làm tròn về số GẦN NHẤT. Chọn nhầm hàm là lệch số tiền, lệch số ngày — phải chọn đúng cái đề bài cần.',
+      },
+      {
+        hoi: 'Vì sao khi cần kết quả kiểm tra được (test tự động), ta dùng một mốc ngày cố định thay vì date.today()?',
+        dap: 'Vì date.today() đổi giá trị theo ngày chạy chương trình, nên kết quả không ổn định để so sánh với đáp án cố định. Dùng date(2026, 1, 1) làm mốc thì kết quả luôn giống nhau mỗi lần chạy.',
+      },
+      {
+        hoi: 'Trừ hai đối tượng date cho nhau (thi - moc) ra kiểu dữ liệu gì, và làm sao lấy được số ngày?',
+        dap: 'Ra một timedelta, không phải số nguyên. Phải lấy thuộc tính .days của nó: (thi - moc).days mới ra số ngày để in hoặc tính toán tiếp.',
+      },
+    ],
   },
 ]

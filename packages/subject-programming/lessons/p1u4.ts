@@ -97,5 +97,19 @@ print(f"Gửi {so_gio} giờ, trả {tien} đồng")`,
     },
     homework:
       'Về nhà: lấy hoá đơn tiền điện THẬT của nhà bạn (hoặc hỏi bố mẹ số kWh tháng trước), sửa chương trình theo đủ 6 bậc giá thật của EVN rồi so kết quả với hoá đơn. Lệch bao nhiêu? Vì sao (gợi ý: VAT 8%)?',
+    srsCards: [
+      {
+        hoi: 'Python chạy bao nhiêu nhánh trong một khối if/elif/else?',
+        dap: 'CHỈ MỘT — nhánh ĐẦU TIÊN có điều kiện đúng, tính từ trên xuống. Các nhánh sau đó bị bỏ qua dù điều kiện của chúng cũng đúng.',
+      },
+      {
+        hoi: 'Vì sao tính bậc thang phải kiểm bậc THẤP trước, bậc CAO sau?',
+        dap: 'Vì Python chỉ chạy nhánh đầu tiên đúng — nếu kiểm bậc cao trước, mọi trường hợp thoả bậc cao sẽ "nuốt" luôn các bậc thấp hơn nó.',
+      },
+      {
+        hoi: '== và = khác nhau thế nào trong Python?',
+        dap: '= là GÁN giá trị cho biến; == là SO SÁNH hai giá trị có bằng nhau không, cho kết quả True/False.',
+      },
+    ],
   },
 ]

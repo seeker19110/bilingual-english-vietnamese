@@ -76,5 +76,19 @@ print("Tong tien:", tong_tien, "dong")`,
     },
     homework:
       'Về nhà: liệt kê 3 món đồ THẬT bạn hay mua (ví dụ: nước ngọt, kẹo, thẻ điện thoại), gán mỗi món một biến giá tiền và một biến số lượng, rồi viết chương trình tính tổng tiền của cả 3 món bằng biến.',
+    srsCards: [
+      {
+        hoi: 'Dấu = trong Python nghĩa là gì?',
+        dap: 'Là GÁN (đặt giá trị vào biến), KHÔNG phải "bằng" như trong toán học. Ví dụ x = 5 nghĩa là tạo biến x, bỏ số 5 vào đó.',
+      },
+      {
+        hoi: 'Tên biến ở Việt Nam nên viết như thế nào?',
+        dap: 'KHÔNG DẤU tiếng Việt và KHÔNG có khoảng trắng — dùng gạch dưới _ thay khoảng trắng. Ví dụ gia_rau, không phải "gia rau".',
+      },
+      {
+        hoi: 'Phép / và phép // khác nhau chỗ nào?',
+        dap: '/ chia ra kết quả THẬP PHÂN (7/2 = 3.5), còn // chia lấy PHẦN NGUYÊN, bỏ phần dư (7//2 = 3).',
+      },
+    ],
   },
 ]

@@ -104,5 +104,19 @@ print(json.dumps(doc_lai["items"][1], ensure_ascii=False))`,
     },
     homework:
       'Về nhà: mở lại sổ chi tiêu CSV của bậc P2 và chuyển sang JSON. Mỗi khoản là một dict {"ngay": ..., "muc": ..., "so_tien": ...}, cả sổ là một list, ghi bằng json.dump(..., ensure_ascii=False, indent=2). Chạy thử: thêm khoản mới, lưu, tắt chương trình, mở lại — dữ liệu còn nguyên và bạn MỞ FILE RA ĐỌC BẰNG MẮT được. Đó là lý do JSON thắng CSV khi dữ liệu bắt đầu lồng nhau.',
+    srsCards: [
+      {
+        hoi: 'json.loads(json.dumps({1: "a"})) rồi lấy khoá ra, khoá còn là số nguyên 1 không?',
+        dap: 'Không. JSON bắt buộc khoá là chuỗi, nên khi dumps Python tự đổi 1 thành "1"; đọc lại nhận khoá chuỗi "1", tra bằng số nguyên sẽ ném KeyError.',
+      },
+      {
+        hoi: 'Vì sao json.loads() báo lỗi với chuỗi dùng nháy đơn như "{\'a\': 1}"?',
+        dap: 'Chuẩn JSON chỉ chấp nhận nháy kép cho chuỗi và khoá. Nháy đơn không hợp lệ theo cú pháp JSON dù Python cho phép viết chuỗi bằng nháy đơn.',
+      },
+      {
+        hoi: 'JSON phù hợp hơn CSV ở tình huống dữ liệu nào?',
+        dap: 'Dữ liệu LỒNG NHAU — ví dụ một đơn hàng có nhiều món, mỗi món nhiều thuộc tính. CSV chỉ là bảng phẳng, không diễn tả nổi cấu trúc dict/list bên trong dict/list.',
+      },
+    ],
   },
 ]

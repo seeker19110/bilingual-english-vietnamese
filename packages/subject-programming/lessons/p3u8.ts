@@ -66,5 +66,19 @@ SELECT ten, gia FROM mon WHERE ten LIKE 'Ca phe%';`,
     },
     homework:
       'Về nhà: mở lại file CSV bán hàng bạn làm ở bài P3-U3 và viết ra giấy 5 câu hỏi bạn thật sự muốn biết ("món nào bán dưới 10 lần?", "ngày nào đông nhất?"). Với mỗi câu, viết thử câu SELECT tương ứng trên kho dữ liệu của bài này. Chưa cần đúng hết — điều đáng giá là tập DIỄN ĐẠT câu hỏi kinh doanh thành câu truy vấn, đó mới là kỹ năng người ta trả tiền.',
+    srsCards: [
+      {
+        hoi: 'Trong SQL, chuỗi bọc nháy đơn còn nháy kép có nghĩa là gì?',
+        dap: 'Nháy đơn bọc CHUỖI, ví dụ \'uong\'. Nháy kép trong SQL nghĩa là TÊN CỘT, nên viết "uong" sẽ báo lỗi không có cột uong — nhầm loại nháy là bẫy hay gặp nhất.',
+      },
+      {
+        hoi: 'Viết WHERE cot = NULL để lọc dòng thiếu dữ liệu có đúng không? Vì sao?',
+        dap: 'Sai — luôn cho kết quả rỗng. NULL nghĩa là "không có dữ liệu", không so sánh bằng = được; phải dùng IS NULL hoặc IS NOT NULL.',
+      },
+      {
+        hoi: 'Bốn mảnh FROM, WHERE, ORDER BY, LIMIT trong một câu SELECT làm việc gì?',
+        dap: 'FROM chọn bảng, WHERE lọc dòng, ORDER BY sắp xếp kết quả, LIMIT chỉ giữ lại n dòng đầu — dùng đúng thứ tự này khi viết câu truy vấn.',
+      },
+    ],
   },
 ]

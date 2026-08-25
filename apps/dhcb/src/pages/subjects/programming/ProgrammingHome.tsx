@@ -2,7 +2,17 @@
 // PR-L1: khung môn (đặc tả docs/research/dac-ta-mon-lap-trinh-2026-08-24.md). Nội dung bài
 // học chi tiết vào ở PR-L3/L4 — các bậc hiện là khung "sắp mở" trừ phần xem đề cương.
 import { useNavigate } from 'react-router-dom'
-import { Code2, Rocket, Store, Lock, ChevronRight, Languages, Clock, Play } from 'lucide-react'
+import {
+  Code2,
+  Rocket,
+  Store,
+  Lock,
+  ChevronRight,
+  Languages,
+  Clock,
+  Play,
+  Brain,
+} from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { PROGRAMMING_LEVELS, PROJECT_TRACKS } from '@dhcb/subject-programming/curriculum'
@@ -34,9 +44,18 @@ export default function ProgrammingHome() {
             className="tap-44 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-zinc-900 border border-accent-500/40 hover:border-accent-500 text-white font-semibold text-sm transition active:scale-[0.98]"
           >
             <Store className="w-4 h-4 text-accent-400" />
-            <span>Dự án của tôi (P1 → P2)</span>
+            <span>Dự án của tôi (P1 → P3)</span>
           </button>
         </div>
+
+        {/* Ôn thẻ (PR-L10) — bước ⑧ của khuôn bài học, giữ lại khái niệm cốt lõi đã học */}
+        <button
+          onClick={() => nav('/lap-trinh/on-tap')}
+          className="tap-44 w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-accent-500/60 text-white font-semibold text-sm transition active:scale-[0.98]"
+        >
+          <Brain className="w-4 h-4 text-accent-400" />
+          <span>Ôn thẻ — khái niệm cốt lõi đã học</span>
+        </button>
 
         {/* Dự án xuyên suốt */}
         <section className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 space-y-3 shadow-sm">

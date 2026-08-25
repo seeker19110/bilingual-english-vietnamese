@@ -82,5 +82,19 @@ for i in range(1, 11):     # range(1, 11) sinh 1, 2, ..., 10 (biết trước đ
     },
     homework:
       'Về nhà: lấy điểm 5 môn học kỳ này của chính bạn, chạy chương trình để tính tổng điểm. Thử sửa chương trình để tính ĐIỂM TRUNG BÌNH (tổng chia cho số môn) thay vì chỉ tổng — chú ý phép chia lấy số thực (dùng dấu /).',
+    srsCards: [
+      {
+        hoi: 'range(5) sinh ra những số nào?',
+        dap: '0, 1, 2, 3, 4 — đúng 5 số, BẮT ĐẦU từ 0 và KHÔNG có số 5 (số cuối luôn bị loại).',
+      },
+      {
+        hoi: 'Nên dùng for khi nào thay vì while?',
+        dap: 'Khi BIẾT TRƯỚC số lần cần lặp — ví dụ lặp đúng n lần, lặp qua từng phần tử của danh sách.',
+      },
+      {
+        hoi: 'Cộng dồn (tích luỹ) trong vòng lặp cần khởi tạo biến tổng ở đâu?',
+        dap: 'TRƯỚC vòng lặp, bằng 0 (ví dụ tong = 0). Nếu khởi tạo lại bên trong vòng lặp thì giá trị cũ bị xoá mất mỗi lần lặp.',
+      },
+    ],
   },
 ]

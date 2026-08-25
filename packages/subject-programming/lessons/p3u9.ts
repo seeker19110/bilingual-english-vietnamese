@@ -72,5 +72,19 @@ JOIN mon m ON ct.mon_id = m.id;`,
     },
     homework:
       'Về nhà: viết tiếp 2 câu báo cáo trên chính kho dữ liệu này — (1) doanh thu theo NGÀY (nối thêm bảng don_hang), (2) những món có doanh thu trên 25.000đ (dùng HAVING, không dùng WHERE — hãy thử cả hai để tận mắt thấy vì sao WHERE không làm được). Sau đó tự hỏi: nếu quán có 50.000 dòng bán hàng, đoạn Python bậc P2 của bạn và câu SQL này, cái nào bạn muốn phải sửa khi sếp đổi câu hỏi?',
+    srsCards: [
+      {
+        hoi: 'Sau khi JOIN chi_tiet với mon, COUNT(*) đếm ra số dòng gì — số đơn hay số dòng đã nối?',
+        dap: 'Đếm số DÒNG ĐÃ NỐI, không phải số đơn — một đơn có nhiều món thì nở ra nhiều dòng. Muốn đếm đúng số đơn phải dùng COUNT(DISTINCT don_hang.id).',
+      },
+      {
+        hoi: 'WHERE và HAVING khác nhau ở thời điểm lọc nào trong câu truy vấn GROUP BY?',
+        dap: 'WHERE lọc TỪNG DÒNG trước khi gom nhóm; HAVING lọc TỪNG NHÓM sau khi đã gom, nên HAVING mới dùng được kết quả của SUM/COUNT còn WHERE thì không.',
+      },
+      {
+        hoi: 'Vì sao dữ liệu bán hàng thường tách ra nhiều bảng (chi_tiet chỉ ghi mon_id) thay vì chép luôn tên và giá món vào từng dòng?',
+        dap: 'Để không lặp lại dữ liệu — nếu mỗi dòng bán hàng đều chép tên/giá món, đổi giá một món phải sửa hàng nghìn dòng và chỉ sót một dòng là số liệu sai vĩnh viễn.',
+      },
+    ],
   },
 ]

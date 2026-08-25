@@ -82,5 +82,19 @@ print(f"Cam on {ten_khach}, ban can tra {tong_tien} dong")`,
     },
     homework:
       'Về nhà: viết chương trình hỏi CÂN NẶNG (kg) và CHIỀU CAO (mét) của bạn bằng input(), tính chỉ số BMI = cân nặng / (chiều cao * chiều cao), in ra bằng f-string và làm tròn tới 1 chữ số sau dấu phẩy bằng round().',
+    srsCards: [
+      {
+        hoi: 'input() luôn trả về kiểu dữ liệu gì?',
+        dap: 'Luôn là CHUỖI (str), kể cả khi người dùng gõ số. Muốn tính toán phải ép kiểu: int(input("So: ")) hoặc float(...).',
+      },
+      {
+        hoi: 'f-string dùng để làm gì và viết ra sao?',
+        dap: 'Để ghép biến vào câu chữ gọn gàng: thêm chữ f trước dấu ngoặc kép, đặt biến trong cặp {}. Ví dụ: print(f"Ban {tuoi} tuoi")',
+      },
+      {
+        hoi: 'Hàm round(so, 2) dùng để làm gì?',
+        dap: 'Làm tròn số thập phân tới đúng số chữ số sau dấu phẩy được chỉ định. round(33.333, 2) cho 33.33.',
+      },
+    ],
   },
 ]

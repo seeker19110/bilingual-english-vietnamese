@@ -80,5 +80,19 @@ print(f"Ma tra cuu: {chuan.lower().replace(' ', '_')}")`,
     },
     homework:
       'Về nhà: lấy danh sách tên trong nhóm chat lớp/gia đình, dán vào một chuỗi ngăn cách bằng dấu phẩy rồi dùng .split(",") + .strip() để dọn từng tên. Bạn vừa làm đúng việc mà mọi phần mềm nhập liệu đều phải làm.',
+    srsCards: [
+      {
+        hoi: 'Gọi ten.strip() mà không gán lại thì biến ten có đổi không? Vì sao?',
+        dap: 'Không đổi. Chuỗi trong Python bất biến — mọi phương thức như strip()/lower()/upper() trả về chuỗi MỚI, không sửa chuỗi cũ. Phải viết ten = ten.strip() mới cập nhật được.',
+      },
+      {
+        hoi: 'Cách gọn nhất để dọn sạch mọi khoảng trắng thừa (đầu, cuối, và thừa ở giữa) trong một chuỗi tên?',
+        dap: '" ".join(ten.split()) — split() không tham số tự gộp mọi khoảng trắng liên tiếp thành một, rồi join lại với đúng một dấu cách giữa các từ.',
+      },
+      {
+        hoi: 'Vì sao nên .lower() dữ liệu trước khi so sánh hai chuỗi?',
+        dap: 'Vì so sánh chuỗi phân biệt hoa/thường — "Tra Da" khác "tra da" theo Python dù người đọc thấy giống nhau. .lower() cả hai vế trước khi so thì mới khớp đúng ý người dùng.',
+      },
+    ],
   },
 ]

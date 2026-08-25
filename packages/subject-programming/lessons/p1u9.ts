@@ -109,5 +109,19 @@ print(f"Ket qua: {ket_qua}")`,
     },
     homework:
       'Về nhà: đổi random.seed(7) thành một số khác (ví dụ ngày sinh của bạn), chạy chương trình vài lần và quan sát máy luôn ra CÙNG một lựa chọn (vì seed cố định). Sau đó thử XOÁ hẳn dòng random.seed(...) đi rồi chạy lại nhiều lần — máy có đổi lựa chọn thật sự ngẫu nhiên không? Giải thích vì sao khi CHẤM BÀI ta bắt buộc phải cố định seed.',
+    srsCards: [
+      {
+        hoi: 'MODULE trong Python là gì?',
+        dap: 'Một "hộp công cụ" đã viết sẵn, chỉ cần import để dùng — không phải tự viết lại. Gọi công cụ bên trong bằng dấu chấm, ví dụ random.randint(...).',
+      },
+      {
+        hoi: 'random.seed(số) dùng để làm gì?',
+        dap: 'Cố định "hạt giống" của bộ sinh số ngẫu nhiên — cùng seed thì mọi lần chạy lại luôn ra CÙNG một chuỗi kết quả (tất định), dễ kiểm tra/chấm bài.',
+      },
+      {
+        hoi: 'random.randint(1, 6) và random.choice(list) khác nhau chỗ nào?',
+        dap: 'randint(a, b) trả về một SỐ NGUYÊN ngẫu nhiên từ a đến b; choice(list) trả về một PHẦN TỬ ngẫu nhiên được chọn từ một danh sách cho sẵn.',
+      },
+    ],
   },
 ]
