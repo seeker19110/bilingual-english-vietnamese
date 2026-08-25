@@ -30,6 +30,9 @@ interface RunRequest {
   code: string
   /** Các dòng người học điền sẵn cho input() — đọc tuần tự, hết thì báo lỗi rõ ràng. */
   stdinLines: string[]
+  /** Workspace nhiều file (PR-L6b): path → nội dung. Được ghi ra hệ thống file trong bộ
+   *  nhớ của Pyodide TRƯỚC khi chạy `code`, nên `import logic` của học viên hoạt động thật. */
+  files?: Record<string, string>
 }
 
 const scope = self as unknown as {
@@ -76,11 +79,41 @@ _dhcb_make_input(_dhcb_stdin_lines)
 del _dhcb_make_input
 `
 
+// Dựng workspace nhiều file trong FS bộ nhớ của Pyodide rồi chuyển thư mục làm việc vào đó.
+// Ba việc BẮT BUỘC vì worker sống qua nhiều lượt chạy (chấm nhiều ca liên tiếp):
+//   1. xoá sạch file cũ  — lượt trước để lại don_hang.csv thì lượt sau chấm sai;
+//   2. gỡ module đã import — Python nhớ bản cũ trong sys.modules, sửa logic.py sẽ không ăn;
+//   3. os.chdir vào thư mục — để open("don_hang.csv") của học viên nằm trong workspace.
+const PREL_WORKSPACE = `
+import json, os, pathlib, shutil, sys, importlib
+
+_dhcb_dir = "/home/pyodide/dhcb_ws"
+_dhcb_p = pathlib.Path(_dhcb_dir)
+# Rời khỏi thư mục TRƯỚC khi xoá: lượt chạy trước đã chdir vào đây, xoá thư mục đang đứng
+# thì Pyodide báo "Resource busy" và cả lượt chấm hỏng.
+os.chdir("/home/pyodide")
+if _dhcb_p.exists():
+    shutil.rmtree(_dhcb_p)
+_dhcb_p.mkdir(parents=True, exist_ok=True)
+
+_dhcb_map = json.loads(_dhcb_files_json)
+for _name, _content in _dhcb_map.items():
+    (_dhcb_p / _name).write_text(_content, encoding="utf-8")
+    if _name.endswith(".py"):
+        sys.modules.pop(_name[:-3], None)
+
+if _dhcb_dir in sys.path:
+    sys.path.remove(_dhcb_dir)
+sys.path.insert(0, _dhcb_dir)
+importlib.invalidate_caches()
+os.chdir(_dhcb_dir)
+`
+
 scope.onmessage = (e: MessageEvent<RunRequest>) => {
   const msg = e.data
   if (msg.type !== 'run') return
   void (async () => {
-    const { id, code, stdinLines } = msg
+    const { id, code, stdinLines, files } = msg
     try {
       if (!pyodidePromise) scope.postMessage({ type: 'loading', id })
       const pyodide = await getPyodide()
@@ -90,6 +123,11 @@ scope.onmessage = (e: MessageEvent<RunRequest>) => {
       pyodide.globals.set('_dhcb_stdin_lines', stdinLines)
       const start = Date.now()
       await pyodide.runPythonAsync(PREL_INPUT)
+      if (files && Object.keys(files).length > 0) {
+        // Truyền qua JSON string: đơn giản và không phụ thuộc cách Pyodide bọc object JS.
+        pyodide.globals.set('_dhcb_files_json', JSON.stringify(files))
+        await pyodide.runPythonAsync(PREL_WORKSPACE)
+      }
       await pyodide.runPythonAsync(code)
       scope.postMessage({ type: 'done', id, durationMs: Date.now() - start })
     } catch (err) {

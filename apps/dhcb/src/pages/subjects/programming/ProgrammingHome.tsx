@@ -34,7 +34,7 @@ export default function ProgrammingHome() {
             className="tap-44 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-zinc-900 border border-accent-500/40 hover:border-accent-500 text-white font-semibold text-sm transition active:scale-[0.98]"
           >
             <Store className="w-4 h-4 text-accent-400" />
-            <span>Dự án của tôi (chặng P1)</span>
+            <span>Dự án của tôi (P1 → P2)</span>
           </button>
         </div>
 

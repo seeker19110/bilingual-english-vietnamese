@@ -21,6 +21,8 @@ export interface PythonRunOptions {
   onOutput?: (textSoFar: string) => void
   /** Gọi khi bắt đầu tải Pyodide lần đầu (~13MB) — để UI hiện "đang tải môi trường". */
   onLoading?: () => void
+  /** Workspace nhiều file (PR-L6b): path → nội dung, ghi vào FS Pyodide trước khi chạy. */
+  files?: Record<string, string>
 }
 
 const DEFAULT_TIMEOUT_MS = 10_000
@@ -61,7 +63,7 @@ export function runPython(code: string, options: PythonRunOptions = {}): Promise
     })
   }
   busy = true
-  const { stdinLines = [], timeoutMs = DEFAULT_TIMEOUT_MS, onOutput, onLoading } = options
+  const { stdinLines = [], timeoutMs = DEFAULT_TIMEOUT_MS, onOutput, onLoading, files } = options
   const id = nextRunId++
   const w = getWorker()
 
@@ -131,6 +133,6 @@ export function runPython(code: string, options: PythonRunOptions = {}): Promise
       { once: true },
     )
     armTimeout()
-    w.postMessage({ type: 'run', id, code, stdinLines })
+    w.postMessage({ type: 'run', id, code, stdinLines, files })
   })
 }
