@@ -180,6 +180,113 @@ git merge phu`)
     expect(r.output).not.toContain('Tren nhanh main')
   })
 
+  // Nhóm dưới đây phủ nốt các NHÁNH còn lại của engine. Không phải test cho đủ số: mỗi ca là
+  // một đường học viên thật sự đi (gõ thiếu tham số, gõ nhầm tên nhánh, xem log dạng dài…),
+  // và engine mô phỏng chỉ đáng tin khi mọi lối rẽ đều được chạy ít nhất một lần.
+  it('git log dạng đầy đủ in mã commit, nhánh và lời nhắn', () => {
+    const r = chayLenh(
+      'git init\necho "a" > a.txt\ngit add .\ngit commit -m "loi nhan day du"\ngit log',
+    )
+    expect(r.output).toContain('commit c1')
+    expect(r.output).toContain('Nhanh: main')
+    expect(r.output).toContain('loi nhan day du')
+  })
+
+  it('git log khi kho chưa có commit nào', () => {
+    expect(chayLenh('git init\ngit log').output).toContain('Chua co commit nao')
+  })
+
+  it('git branch: liệt kê có dấu * ở nhánh hiện tại; tạo nhánh trùng tên thì báo lỗi', () => {
+    const r = chayLenh(
+      'git init\necho "a" > a.txt\ngit add .\ngit commit -m "c"\ngit branch phu\ngit branch',
+    )
+    expect(r.output).toContain('* main')
+    expect(r.output).toContain('  phu')
+    expect(chayLenh('git init\ngit branch main').error).toContain('da ton tai')
+  })
+
+  it('git switch: thiếu tên nhánh · nhánh không tồn tại · tạo trùng tên', () => {
+    expect(chayLenh('git init\ngit switch').error).toContain('Thieu ten nhanh')
+    expect(chayLenh('git init\ngit switch khong-co').error).toContain('Khong co nhanh')
+    expect(chayLenh('git init\ngit switch -c main').error).toContain('da ton tai')
+  })
+
+  it('git checkout -b làm đúng việc như git switch -c (lệnh cũ vẫn gặp nhiều)', () => {
+    expect(chayLenh('git init\ngit checkout -b thu').output).toContain('Da chuyen sang nhanh moi')
+  })
+
+  it('git init hai lần thì nói kho đã có, không tạo lại (không mất lịch sử)', () => {
+    const r = chayLenh(
+      'git init\necho "a" > a.txt\ngit add .\ngit commit -m "c"\ngit init\ngit log --oneline',
+    )
+    expect(r.output).toContain('da la kho git roi')
+    expect(r.output).toContain('c1 c')
+  })
+
+  it('git add: thiếu tên file · file không tồn tại', () => {
+    expect(chayLenh('git init\ngit add').error).toContain('Thieu ten file')
+    expect(chayLenh('git init\ngit add khong-co.txt').error).toContain('Khong co file')
+  })
+
+  it('git merge: thiếu tên · nhánh lạ · gộp chính nó · nhánh chưa có commit', () => {
+    const nen = 'git init\necho "a" > a.txt\ngit add .\ngit commit -m "c"\n'
+    expect(chayLenh(`${nen}git merge`).error).toContain('Thieu ten nhanh')
+    expect(chayLenh(`${nen}git merge khong-co`).error).toContain('Khong co nhanh')
+    expect(chayLenh(`${nen}git merge main`).error).toContain('chinh no')
+    // Nhánh tạo trên kho CHƯA có commit thì không có gì để gộp.
+    const rong = chayLenh('git init\ngit branch phu\ngit merge phu')
+    expect(rong.error).toContain('chua co commit nao')
+  })
+
+  it('git status khi thư mục sạch (vừa commit xong)', () => {
+    const r = chayLenh('git init\necho "a" > a.txt\ngit add .\ngit commit -m "c"\ngit status')
+    expect(r.output).toContain('thu muc lam viec sach')
+  })
+
+  it('git không kèm lệnh con thì nhắc ví dụ; lệnh git lạ nêu các lệnh dùng được', () => {
+    expect(chayLenh('git').error).toContain('Thieu lenh git')
+    expect(chayLenh('git init\ngit bisect').error).toContain('chua ho tro')
+  })
+
+  it('rebase/stash nói rõ không nằm trong bài học này', () => {
+    expect(chayLenh('git init\ngit rebase main').error).toContain('khong nam trong bai hoc')
+    expect(chayLenh('git init\ngit stash').error).toContain('khong nam trong bai hoc')
+  })
+
+  it('shell: pwd · cat thiếu tên · cat file lạ · rm · mkdir/cd nói rõ giới hạn', () => {
+    expect(chayLenh('pwd').output).toContain('/home/ban/du-an')
+    expect(chayLenh('cat').error).toContain('Thieu ten file')
+    expect(chayLenh('cat khong-co.txt').error).toContain('Khong co file')
+    expect(chayLenh('echo "a" > a.txt\nrm a.txt\nls').output).toContain('(thu muc rong)')
+    expect(chayLenh('rm').error).toContain('Thieu ten file')
+    expect(chayLenh('rm khong-co.txt').error).toContain('Khong co file')
+    expect(chayLenh('mkdir src').output).toContain('khong tao cay thu muc that')
+    expect(chayLenh('cd src').output).toContain('khong tao cay thu muc that')
+  })
+
+  it('echo không chuyển hướng thì chỉ in ra; thiếu tên file sau > thì báo lỗi', () => {
+    expect(chayLenh('echo "xin chao"').output).toContain('xin chao')
+    expect(chayLenh('echo "xin chao" >').error).toContain('Thieu ten file')
+  })
+
+  it('dòng trống và dòng chú thích (#) bị bỏ qua — code khởi đầu của bài có chúng', () => {
+    const r = chayLenh('git init\n\n# day la chu thich\nls')
+    expect(r.output).not.toContain('# day la chu thich')
+    expect(r.output).toContain('(thu muc rong)')
+  })
+
+  it('lệnh chuẩn bị SAI thì báo rõ là lỗi bối cảnh (lỗi của người soạn bài, không phải học viên)', () => {
+    const r = chayLenh('ls', ['git commit -m "chua init"'])
+    expect(r.error).toContain('Loi khi dung boi canh')
+    expect(r.output).toBe('')
+  })
+
+  it('nháy đơn cũng được chấp nhận cho lời nhắn commit', () => {
+    expect(
+      chayLenh('git init\necho "a" > a.txt\ngit add .\ngit commit -m \'loi nhan nhay don\'').output,
+    ).toContain('loi nhan nhay don')
+  })
+
   it('lệnh chuẩn bị dựng bối cảnh nhưng KHÔNG in ra', () => {
     const r = chayLenh('git log --oneline', [
       'git init',
