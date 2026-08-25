@@ -335,6 +335,8 @@ export default function Subjects() {
                     onClick={() => {
                       if (sub.id === 'english') {
                         nav('/hoc-tieng-anh')
+                      } else if (sub.id === 'programming') {
+                        nav('/lap-trinh')
                       } else {
                         nav(`/mon-hoc/${sub.id}`)
                       }
@@ -349,7 +351,9 @@ export default function Subjects() {
                     <span>
                       {sub.id === 'english'
                         ? 'Vào Không Gian Học Tiếng Anh'
-                        : 'Vào phòng học & Giải đề AI'}
+                        : sub.id === 'programming'
+                          ? 'Vào Lộ Trình Lập Trình'
+                          : 'Vào phòng học & Giải đề AI'}
                     </span>
                     <ChevronRight className="w-4 h-4" />
                   </button>

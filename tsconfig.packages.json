@@ -42,6 +42,9 @@
     },
     {
       "path": "./packages/subject-english"
+    },
+    {
+      "path": "./packages/subject-programming"
     }
   ]
 }

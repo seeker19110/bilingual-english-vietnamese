@@ -3,6 +3,9 @@ import { defineConfig, loadEnv, type Plugin, type ViteDevServer } from 'vite'
 import react from '@vitejs/plugin-react'
 import { visualizer } from 'rollup-plugin-visualizer'
 import compress from 'vite-plugin-compression'
+import { cp, mkdir } from 'node:fs/promises'
+import { createReadStream, existsSync } from 'node:fs'
+import path from 'node:path'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 
 // Alias CHỈ áp dụng cho src/ (frontend, do Vite bundle) — KHÔNG áp dụng cho api/.
@@ -19,6 +22,53 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 const appDir = fileURLToPath(new URL('.', import.meta.url))
 const repoRoot = fileURLToPath(new URL('../..', import.meta.url))
 const coreUiDir = fileURLToPath(new URL('../../packages/core-ui', import.meta.url))
+
+// Các file lõi của Pyodide cần cho loadPyodide() — đủ chạy Python thuần + stdlib.
+// (KHÔNG copy cả gói: console.html, *.d.ts… không cần cho runtime.)
+const PYODIDE_FILES = [
+  'pyodide.js',
+  'pyodide.js.map',
+  'pyodide.mjs',
+  'pyodide.mjs.map',
+  'pyodide.asm.mjs',
+  'pyodide.asm.wasm',
+  'python_stdlib.zip',
+  'pyodide-lock.json',
+]
+const pyodideSrcDir = fileURLToPath(new URL('../../node_modules/pyodide', import.meta.url))
+
+function pyodideSelfHostPlugin(): Plugin {
+  return {
+    name: 'dhcb-pyodide-self-host',
+    // Build production: copy phẳng vào dist/pyodide/ (outDir của app là dist/ ở gốc repo).
+    async closeBundle() {
+      const outDir = path.join(repoRoot, 'dist', 'pyodide')
+      await mkdir(outDir, { recursive: true })
+      for (const f of PYODIDE_FILES) {
+        await cp(path.join(pyodideSrcDir, f), path.join(outDir, f))
+      }
+    },
+    // Dev/preview: phục vụ /pyodide/* thẳng từ node_modules (không cần build trước).
+    configureServer(server) {
+      server.middlewares.use('/pyodide', (req, res, next) => {
+        const name = (req.url || '').split('?')[0]?.replace(/^\//, '') || ''
+        if (!PYODIDE_FILES.includes(name)) return next()
+        const file = path.join(pyodideSrcDir, name)
+        if (!existsSync(file)) return next()
+        const types: Record<string, string> = {
+          '.js': 'text/javascript',
+          '.mjs': 'text/javascript',
+          '.wasm': 'application/wasm',
+          '.zip': 'application/zip',
+          '.json': 'application/json',
+          '.map': 'application/json',
+        }
+        res.setHeader('Content-Type', types[path.extname(name)] ?? 'application/octet-stream')
+        createReadStream(file).pipe(res)
+      })
+    },
+  }
+}
 
 export default defineConfig(({ mode }) => {
   // Đọc các biến môi trường server-only trực tiếp từ file .env (Node) —
@@ -76,6 +126,11 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       apiEdgeDevMiddleware(),
+      // Tự host Pyodide (Python chạy trong trình duyệt cho môn Lập trình — PR-L2):
+      // copy asset từ node_modules vào dist/pyodide/ để nginx phục vụ như file tĩnh,
+      // KHÔNG dùng CDN ngoài. Worker nạp qua importScripts('/pyodide/pyodide.js') và chỉ
+      // tải khi học viên bấm "Chạy" lần đầu — không ảnh hưởng bundle chính.
+      pyodideSelfHostPlugin(),
       // Gzip + Brotli compression cho production
       compress({
         gzip: {
@@ -116,6 +171,19 @@ export default defineConfig(({ mode }) => {
             // (.size-limit.json chỉ đo index/vendor-core/vendor-supabase/vendor-ui/vendor-misc).
             if (id.includes('node_modules/@sentry')) {
               return 'vendor-sentry'
+            }
+            // Nhóm riêng: CodeMirror (editor môn Lập trình) — chỉ trang /lap-trinh/* dùng
+            // (lazy). Nếu rơi vào vendor-misc (tải eager lúc khởi động) thì +~130KB brotli
+            // vào bundle đầu → vỡ ngân sách size-limit (bài học CI 2026-08-24, PR #659).
+            if (
+              id.includes('node_modules/@codemirror') ||
+              id.includes('node_modules/codemirror') ||
+              id.includes('node_modules/@lezer') ||
+              id.includes('node_modules/crelt') ||
+              id.includes('node_modules/style-mod') ||
+              id.includes('node_modules/w3c-keyname')
+            ) {
+              return 'vendor-codemirror'
             }
             // Nhóm 1: React + Router (core framework)
             if (

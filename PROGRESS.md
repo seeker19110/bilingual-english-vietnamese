@@ -8,6 +8,103 @@
 
 ## Giai đoạn hiện tại
 
+### feat(programming): PR-L3 — engine bài học 8 bước + fix vỡ size budget (2026-08-24, cùng PR #659)
+
+- **Khuôn dữ liệu bài học** (`subject-programming/lessonTypes.ts`, Zod chặn CI khi soạn sai) +
+  **engine chấm THUẦN** (`grading.ts`: chuẩn hoá output, chấm contains/exact, ca ẩn không lộ
+  chi tiết, kiểm Parsons, xáo trộn deterministic theo seed) — 20 test ca biên; test số học
+  bài mẫu bắt được 1 lỗi tính tay khi soạn (150 kWh: 305.850 → 306.000đ).
+- **Bài học mẫu trọn khuôn 8 bước**: P1-U4 "Rẽ nhánh if — tiền điện bậc thang EVN" (đúng bài
+  đặc tả chỉ định làm mẫu): móc thực tế → khái niệm → ví dụ mẫu chạy được (gửi xe bậc thang)
+  → Predict 4 lựa chọn → Parsons 7 dòng → Make 5 test-case (3 hiện + 2 ẩn, có ca biên ranh
+  giới bậc và 0 kWh) + gợi ý bậc thang 3 mức + phao "Xem code mẫu" → bài về nhà hoá đơn thật.
+- **Trang bài học** `/lap-trinh/bai-hoc/:lessonId` (6 màn phủ 8 bước, thanh bước, chấm từng
+  ca hiện dần); trang bậc hiện nút "Học bài" + badge hoàn thành theo tiến độ server.
+- **API tiến độ** `/api/programming/progress` (GET/POST, validateAuth + rate-limit, kiểm bài
+  tồn tại thật, bất biến completed-không-kéo-lùi cả server lẫn client) — 6 test handler;
+  client `lib/programmingProgress.ts` cache localStorage + lạc quan, server là nguồn sự thật.
+- **Fix CI quality đỏ (bài học thật):** CodeMirror rơi vào `vendor-misc` (chunk tải eager) →
+  Initial JS 250,6 kB vượt trần 123 kB. Local từng "xanh giả" vì `npm run size | tail` nuốt
+  exit code — từ nay chạy size KHÔNG pipe. Vá: tách nhóm `vendor-codemirror` trong
+  manualChunks (chỉ trang /lap-trinh/* kéo) → 122,59/123 kB.
+- Kiểm chứng: e2e luồng 1 bài end-to-end 2/2 (predict → parsons xếp đúng/sai → make chấm
+  Pyodide thật đạt/rớt) + sandbox 3/3 + a11y 20/20 trang bài học; test 5217/5217.
+- **Tiếp theo:** PR-L3b (workspace dự án + milestone check) → PR-L4 (nội dung P1 đầy đủ).
+
+### feat(programming): PR-L2 — sandbox Python trong trình duyệt (2026-08-24, cùng PR #659)
+
+- **Pyodide TỰ HOST** (gói npm `pyodide`, plugin vite `pyodideSelfHostPlugin` copy 8 file lõi
+  vào `dist/pyodide/` + serve ở dev) — KHÔNG dùng CDN ngoài (đúng tinh thần tự chủ hạ tầng;
+  CDN cũng bị chặn trong môi trường CI). Chạy trong **Web Worker module** (`workers/
+pyodideWorker.ts`), nạp lười ~13MB chỉ khi bấm Chạy lần đầu; bundle chính KHÔNG đổi.
+- **`lib/pythonRunner.ts`**: timeout cứng 10s (terminate worker — cách duy nhất ngắt vòng lặp
+  vô hạn WASM; đếm giờ SAU khi môi trường nạp xong qua message `ready`), stdout stream, nút
+  Dừng; `input()` đọc từ ô "Dữ liệu nhập" điền sẵn (patch builtins.input, hết dòng báo EOF
+  tiếng Việt); traceback rút gọn từ `<exec>` cho dễ đọc.
+- **Trang `/lap-trinh/chay-thu`**: editor CodeMirror 6 (chunk lazy, nền tối cố định + bảng màu
+  syntax đạt AA trên mọi theme), 10 bài mẫu P1 (`subject-programming/samplesP1.ts`, khớp 1-1
+  unit P1, bối cảnh VN: tiền điện EVN, chia tiền ăn, máy bán nước…), console kết quả +
+  khung lỗi. Nút vào từ trang tổng quan môn.
+- **Kiểm chứng THẬT**: e2e chức năng `programming-playground.spec.ts` 3/3 xanh (chạy Python
+  thật trong Chromium, offline — in lời chào · input() tính đúng 480000/4=120.000đ · code lỗi
+  hiện NameError); a11y 30/30 xanh (3 trang lập trình × 5 theme × A/AA+AAA — đã sửa: nút
+  accent-500 dùng `text-black` theo khuôn StudyTabs, syntax màu GitHub-Dark). Bài học sửa lỗi:
+  Vite dev KHÔNG hỗ trợ classic worker → worker module + dynamic import `pyodide.mjs`.
+- Cổng: typecheck · lint 0 cảnh báo · format · test 5190/5190 · build · size 15.63/16 kB.
+- **Tiếp theo:** PR-L3 (engine bài học 8 bước: Predict/Parsons/Make chấm test-case + tiến độ DB).
+
+### feat(programming): PR-L1 — KHUNG môn Lập trình (2026-08-24)
+
+Người dùng duyệt 2 đặc tả môn Lập trình ("ok triển khai") → thi hành PR-L1 theo khuôn 5 mảnh:
+
+- **Khai báo môn:** manifest `programming` vào `subjectRegistry` (`core-learner`) — category
+  stem, taxonomy `topic_hierarchy`, standardLevels `p1..p6`; tự hiện trong trang `/mon-hoc`.
+- **Gói môn mới `packages/subject-programming/`** (workspace + project references + lockfile):
+  `curriculum.ts` — khung 6 bậc P1–P6, 55 unit (đề cương + bước dự án trục T1 mỗi unit),
+  3 track dự án (MVP chỉ mở T1); có test bất biến (id unit duy nhất, mỗi bậc có milestone).
+- **Migration `0064_programming_schema.sql`** (idempotent, đã ghi README): schema
+  `programming` — `learner_state` (bậc + track), `lesson_progress`, `project_files`
+  (workspace dự án per-user, 256KB/file), `project_snapshots` (chốt theo milestone).
+- **UI:** `/lap-trinh` (tổng quan P1–P6 + dự án xuyên suốt) + `/lap-trinh/:levelId` (trang
+  bậc: chặng dự án + đề cương unit, nhãn "sắp mở"); redirect `/mon-hoc/programming`;
+  nút riêng ở trang Môn học. 2 trang vào danh sách quét a11y A/AA + AAA — chạy thật
+  20/20 xanh cả 5 theme (đã vá 2 lỗi tương phản theme sáng bằng `theme-light:accent-800`
+  - `zinc-400`).
+- Cổng: typecheck · lint 0 cảnh báo · format · test 5187/5187 · build app+packages+server.
+- **Tiếp theo:** PR-L2 (sandbox Pyodide + editor) → PR-L3 (engine bài học 8 bước) →
+  PR-L3b (workspace dự án) → PR-L4 (nội dung P1). Việc tay khi deploy: `npm run migrate:pg`.
+
+### docs(research): Bổ sung DỰ ÁN XUYÊN SUỐT cho môn Lập trình (2026-08-24)
+
+Theo yêu cầu tiếp của người dùng ("tạo dự án hoàn chỉnh và dạy trên đó, hoàn thành khoá =
+hoàn thành luôn dự án"), soạn `docs/research/dac-ta-du-an-xuyen-suot-mon-lap-trinh-2026-08-24.md`
+bổ sung đặc tả môn Lập trình cùng ngày. Điểm chốt đề xuất (CHỜ DUYỆT):
+
+- **Mô hình 2 làn** (căn cứ PBL + spiral curriculum): làn LUYỆN giữ khuôn bài 8 bước; làn
+  DỰ ÁN — mỗi unit xây tiếp MỘT dự án trục lớn dần P1→P5, tỷ lệ 70/30 đầu khoá đảo 30/70 cuối.
+- **Dự án trục T1 "Cửa hàng của tôi"** (quản lý bán hàng nhỏ, mặc định; T2 quỹ lớp / T3 sổ
+  học tập đồng hình, mở sau): console P1 → file/CSV P2 → web+SQL+Git P3 → OOP/API/test/TS P4 →
+  deploy Internet thật P5 = milestone cuối, chính là capstone/portfolio.
+- **Cơ chế kỹ thuật mới:** workspace dự án per-user (`programming.project_files` +
+  `project_snapshots`, quota ~2MB), milestone check chấm HÀNH VI (không chấm giống mẫu), xuất
+  GitHub từ P3, kiểm URL deploy sống ở P5. Thêm PR-L3b vào phân đợt.
+
+### docs(research): Đặc tả môn LẬP TRÌNH — nghiên cứu giáo trình A→Z (2026-08-24)
+
+Theo yêu cầu người dùng, soạn `docs/research/dac-ta-mon-lap-trinh-2026-08-24.md` — đặc tả
+research-first cho môn học mới **Lập trình** (trụ Learning), bám khuôn 5 mảnh "thêm môn học
+mới" của đặc tả kiến trúc platform. Điểm chốt đề xuất (CHỜ NGƯỜI DÙNG DUYỆT, chưa code):
+
+- **Ngôn ngữ bền ≥10 năm, 3 tầng:** lõi = Python + JS/TypeScript + SQL (MVP chỉ 3 ngôn ngữ
+  này); tầng nghề = Java/C#/Go (chọn nhánh); nâng cao = C/C++/Rust. Không dạy framework làm lõi.
+- **Thang bậc P1→P6** (tương tự CEFR A1–C2, ánh xạ CS2023/K-12 CS Framework/SFIA), tái dùng
+  khuôn trang `CefrLevelPage`; đề cương chi tiết P1–P5 (~250 bài, unit + dự án mini thực tế VN).
+- **Khuôn bài học 8 bước chuẩn** (PRIMM + worked example + Parsons + chấm test-case + SRS).
+- **Sandbox chạy code TRONG TRÌNH DUYỆT** (Pyodide WASM/Web Worker, sql.js) — 0đ hạ tầng;
+  AI chỉ dùng cho feedback với mode đếm lượt mới `code_feedback`.
+- Phân đợt PR-L0..L6 + DoD + rủi ro. Việc tiếp theo: người dùng duyệt đặc tả (hoặc yêu cầu
+  soạn mẫu trọn 1 unit P1-U4 "Tính tiền điện EVN" để duyệt khuôn trước).
+
 ### refactor(cefr): tách side effect khỏi render — computeLockedMapPersisted thành hàm thuần (2026-08-24)
 
 Trả món nợ vừa ghi ở PR #657: `computeLockedMapPersisted` (`apps/dhcb/src/lib/cefrProgress.ts`)
