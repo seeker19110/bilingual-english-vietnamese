@@ -5,6 +5,7 @@ export const P2U9_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p2-u9-l1',
     unitId: 'p2-u9',
+    language: 'python',
     title: 'Chia vai trò và hàm main() — code lớn mà vẫn đọc được',
     hook: 'Chương trình của bạn giờ đã dài cả trăm dòng, sửa một chỗ là hồi hộp không biết có vỡ chỗ khác không. Cách chữa của dân chuyên nghiệp: chia code thành các phần có VAI TRÒ rõ ràng, và có một hàm main() đứng ra chỉ huy.',
     theory:

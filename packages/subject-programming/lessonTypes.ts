@@ -28,6 +28,10 @@ export const LessonSchema = z
     id: z.string().regex(/^p[1-6]-u\d+-l\d+$/),
     /** Unit chứa bài — phải tồn tại trong curriculum.ts (test kiểm chéo). */
     unitId: z.string().regex(/^p[1-6]-u\d+$/),
+    /** Ngôn ngữ của bài (PR-L7b1) — quyết định bộ chạy ở trình duyệt VÀ cổng CI nào chấm
+     *  bài. KHÔNG có giá trị mặc định ngầm: người soạn phải ghi rõ, vì chọn sai ngôn ngữ
+     *  nghĩa là bài không được cổng nào chấm. 'sql' chừa sẵn cho PR-L7b2. */
+    language: z.enum(['python', 'javascript', 'sql']),
     title: z.string().min(1).max(120),
     /** ① Móc thực tế (≤ 3 câu). */
     hook: z.string().min(1).max(600),

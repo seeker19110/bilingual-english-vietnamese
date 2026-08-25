@@ -5,6 +5,7 @@ export const P1U1_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p1-u1-l1',
     unitId: 'p1-u1',
+    language: 'python',
     title: 'Chương trình đầu tiên — máy tính làm gì và lệnh print',
     hook: 'Bạn bấm vào app ngân hàng, màn hình hiện số dư — ai "bảo" máy tính hiện đúng con số đó? Không phải phép màu, mà là một chuỗi LỆNH ai đó đã viết sẵn. Hôm nay bạn viết lệnh đầu tiên trong đời.',
     theory:

@@ -28,7 +28,7 @@ import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import CodeEditor from '../../../components/CodeEditor'
 import { useAuth } from '../../../context/useAuth'
-import { runPython, resetPythonWorker } from '../../../lib/pythonRunner'
+import { runLessonCode, resetLessonRunners } from '../../../lib/codeRunner'
 import { saveLessonProgress } from '../../../lib/programmingProgress'
 import { MAX_HINT_LEVEL } from '@dhcb/subject-programming/feedbackPrompt'
 import {
@@ -91,17 +91,17 @@ export default function ProgrammingLessonPage() {
   // Lỗi runtime đầu tiên trong lần chấm gần nhất — có thì mới mời "giải thích lỗi".
   const firstError = results?.find((r) => r.error)?.error ?? ''
 
-  // Ghi "đang học" khi vào bài; rời trang huỷ worker Python.
+  // Ghi "đang học" khi vào bài; rời trang huỷ mọi worker chạy code (Python/JavaScript).
   useEffect(() => {
     if (user && lesson) void saveLessonProgress(user.id, lesson.id, 'in_progress')
-    return () => resetPythonWorker()
+    return () => resetLessonRunners()
   }, [user, lesson])
 
   if (!lesson) return <Navigate to="/lap-trinh" replace />
 
   const runExample = async () => {
     setExampleRunning(true)
-    const r = await runPython(lesson.workedExample.code, {
+    const r = await runLessonCode(lesson.language, lesson.workedExample.code, {
       stdinLines: lesson.workedExample.stdinLines,
       onOutput: setExampleOutput,
     })
@@ -115,7 +115,9 @@ export default function ProgrammingLessonPage() {
     setResults(null)
     const out: TestCaseResult[] = []
     for (const testCase of lesson.make.testCases) {
-      const r = await runPython(code, { stdinLines: testCase.stdinLines })
+      const r = await runLessonCode(lesson.language, code, {
+        stdinLines: testCase.stdinLines,
+      })
       out.push(
         gradeTestCase(testCase, r.output, r.error ?? (r.timedOut ? 'Quá thời gian' : undefined)),
       )

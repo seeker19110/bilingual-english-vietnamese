@@ -10,6 +10,7 @@ export const P3U1_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p3-u1-l1',
     unitId: 'p3-u1',
+    language: 'python',
     title: 'Thư viện — đứng lên vai người đi trước thay vì tự viết lại',
     hook: 'Muốn tính trung bình cộng bạn tự viết vòng lặp cũng được. Nhưng tính trung vị, độ lệch chuẩn, làm tròn tiền tệ, gọi API thời tiết... tự viết hết thì hết đời. Người ta viết sẵn rồi, đóng gói thành THƯ VIỆN — việc của bạn là biết tìm và biết đọc tài liệu.',
     theory:

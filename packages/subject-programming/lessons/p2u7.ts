@@ -5,6 +5,7 @@ export const P2U7_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p2-u7-l1',
     unitId: 'p2-u7',
+    language: 'python',
     title: 'try/except — chương trình không sập vì khách gõ bậy',
     hook: 'Bạn viết int(input(...)) và yên tâm. Rồi một hôm khách gõ "hai ly" thay vì "2" — chương trình sập giữa lúc đang tính tiền, mất luôn cả phiên bán hàng. Phần mềm dùng được thật là phần mềm KHÔNG SẬP.',
     theory:
