@@ -2,6 +2,7 @@
 import { getAuthHeader } from '@core/authHeader'
 import type { ContextPackage } from '@dhcb/core-contracts/contextPackage'
 import type { ProposedAction } from '@dhcb/core-contracts/proposedAction'
+import type { InteractiveQuestion } from '@dhcb/core-contracts/interactiveQuestion'
 
 export interface CompanionExecutionSummary {
   plannedSteps: number
@@ -17,6 +18,9 @@ export interface CompanionResponse {
   contextPackage: ContextPackage
   proposedActions: ProposedAction[]
   executionSummary: CompanionExecutionSummary
+  // Câu hỏi tick chọn kèm lượt trả lời — server luôn trả mảng, nhưng để optional để client vẫn
+  // chạy được với bản server cũ chưa có trường này.
+  interactiveQuestions?: InteractiveQuestion[]
 }
 
 export interface SendCompanionMessageParams {
@@ -33,6 +37,7 @@ export interface CompanionStreamCallbacks {
     proposedActions: ProposedAction[]
     executionSummary: CompanionExecutionSummary
   }) => void
+  onQuestions?: (questions: InteractiveQuestion[]) => void
   onDone?: (response: CompanionResponse) => void
   onError?: (error: Error) => void
 }
@@ -128,6 +133,8 @@ export async function sendCompanionMessageStream(
           callbacks.onChunk?.(parsed.delta)
         } else if (eventType === 'actions') {
           callbacks.onActions?.(parsed)
+        } else if (eventType === 'questions') {
+          callbacks.onQuestions?.(parsed.interactiveQuestions)
         } else if (eventType === 'done') {
           finalResponse = parsed as CompanionResponse
           callbacks.onDone?.(finalResponse)

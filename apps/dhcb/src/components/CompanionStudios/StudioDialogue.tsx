@@ -21,6 +21,7 @@ import VoiceWaveformVisualizer from '../CompanionVoice/VoiceWaveformVisualizer'
 import CyberTutorAvatar3D from '../Companion3D/CyberTutorAvatar3D'
 import AvatarEmbodimentSelector, { EmbodimentMode } from '../Companion3D/AvatarEmbodimentSelector'
 import EdgeAiIndicator from '../EdgeAi/EdgeAiIndicator'
+import InteractiveQuestionCard from './InteractiveQuestionCard'
 import type { ProposedAction } from '@dhcb/core-contracts/proposedAction'
 import type { ContextPackage } from '@dhcb/core-contracts/contextPackage'
 import { ChatMessage, CompanionVoiceState, DOMAIN_OPTIONS, QUICK_PROMPTS } from './studioTypes'
@@ -345,6 +346,15 @@ export default function StudioDialogue({
                     <div className="text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap">
                       {msg.text}
                     </div>
+
+                    {/* Câu hỏi tick chọn — trả lời bằng cách bấm thay vì gõ tay */}
+                    {isBot && msg.interactiveQuestions && msg.interactiveQuestions.length > 0 && (
+                      <InteractiveQuestionCard
+                        questions={msg.interactiveQuestions}
+                        onSubmit={(answerText) => void handleSend(answerText)}
+                        disabled={loading}
+                      />
+                    )}
 
                     {/* Proposed Actions Section */}
                     {isBot && msg.proposedActions && msg.proposedActions.length > 0 && (

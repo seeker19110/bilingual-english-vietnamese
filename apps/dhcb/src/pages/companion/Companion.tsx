@@ -224,6 +224,11 @@ export default function Companion() {
               prev.map((m) => (m.id === botMsgId ? { ...m, proposedActions: botActions } : m)),
             )
           },
+          onQuestions: (questions) => {
+            setMessages((prev) =>
+              prev.map((m) => (m.id === botMsgId ? { ...m, interactiveQuestions: questions } : m)),
+            )
+          },
           onDone: (finalResp) => {
             setMessages((prev) =>
               prev.map((m) =>
@@ -235,6 +240,7 @@ export default function Companion() {
                       domain: finalResp.targetDomain,
                       contextPackage: finalResp.contextPackage,
                       proposedActions: finalResp.proposedActions,
+                      interactiveQuestions: finalResp.interactiveQuestions ?? [],
                     }
                   : m,
               ),

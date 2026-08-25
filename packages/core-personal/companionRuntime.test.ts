@@ -7,6 +7,7 @@ import {
   synthesizeReply,
   synthesizeCompanionReply,
   executeCompanionTurn,
+  streamCompanionTurn,
 } from './companionRuntime.js'
 
 const PERSON_ID = '11111111-1111-4111-8111-111111111111'
@@ -599,5 +600,112 @@ describe('synthesizeCompanionReply with shared AI models', () => {
 
     expect(reply).toContain('Đồng Hành đã nhận được tin nhắn: "Xin chào bạn".')
     expect(reply).toContain('[Sử dụng 10/2000 token ngữ cảnh]')
+  })
+})
+
+describe('executeCompanionTurn — câu hỏi tick chọn (interactiveQuestions)', () => {
+  const QUESTION_BLOCK =
+    '```dhcb-questions\n' +
+    JSON.stringify({
+      schemaVersion: 1,
+      questions: [
+        {
+          id: 'linh_vuc',
+          text: 'Bạn muốn khám phá lĩnh vực nào nhất?',
+          multi: true,
+          options: [
+            { id: 'ngon_ngu', label: 'Học một ngôn ngữ mới' },
+            { id: 'cong_nghe', label: 'Công nghệ, lập trình' },
+          ],
+          allowFreeText: true,
+        },
+      ],
+    }) +
+    '\n```'
+
+  beforeEach(() => {
+    process.env.GROQ_API_KEY = 'test-groq-key'
+  })
+
+  it('tách khối câu hỏi khỏi lời văn — người dùng KHÔNG bao giờ thấy JSON thô', async () => {
+    chatProvidersMock.callGroqChatWithKeyPool.mockResolvedValueOnce({
+      kind: 'success',
+      text: 'Mình tò mò muốn hỏi bạn:\n\n' + QUESTION_BLOCK,
+      latencyMs: 100,
+    })
+
+    const res = await executeCompanionTurn(pool, {
+      personId: PERSON_ID,
+      userMessage: 'Xin chào',
+    })
+
+    expect(res.reply).toBe('Mình tò mò muốn hỏi bạn:')
+    expect(res.reply).not.toContain('dhcb-questions')
+    expect(res.reply).not.toContain('schemaVersion')
+    expect(res.interactiveQuestions).toHaveLength(1)
+    expect(res.interactiveQuestions[0]?.options).toHaveLength(2)
+    delete process.env.GROQ_API_KEY
+  })
+
+  it('lượt trả lời thường (không có khối) vẫn giữ nguyên chữ, mảng câu hỏi rỗng', async () => {
+    chatProvidersMock.callGroqChatWithKeyPool.mockResolvedValueOnce({
+      kind: 'success',
+      text: 'Chào bạn, hôm nay bạn thấy thế nào?',
+      latencyMs: 100,
+    })
+
+    const res = await executeCompanionTurn(pool, {
+      personId: PERSON_ID,
+      userMessage: 'Xin chào',
+    })
+
+    expect(res.reply).toBe('Chào bạn, hôm nay bạn thấy thế nào?')
+    expect(res.interactiveQuestions).toEqual([])
+    delete process.env.GROQ_API_KEY
+  })
+
+  it('stream phát sự kiện "questions" và KHÔNG stream chữ của khối JSON', async () => {
+    chatProvidersMock.callGroqChatWithKeyPool.mockResolvedValueOnce({
+      kind: 'success',
+      text: 'Mình hỏi bạn nhé:\n\n' + QUESTION_BLOCK,
+      latencyMs: 100,
+    })
+
+    const events: string[] = []
+    let streamedText = ''
+    let questionCount = 0
+    for await (const ev of streamCompanionTurn(pool, {
+      personId: PERSON_ID,
+      userMessage: 'Xin chào',
+    })) {
+      events.push(ev.type)
+      if (ev.type === 'chunk') streamedText += ev.data.delta
+      if (ev.type === 'questions') questionCount = ev.data.interactiveQuestions.length
+    }
+
+    expect(events).toContain('questions')
+    expect(questionCount).toBe(1)
+    expect(streamedText).toBe('Mình hỏi bạn nhé:')
+    expect(streamedText).not.toContain('dhcb-questions')
+    delete process.env.GROQ_API_KEY
+  })
+
+  it('KHÔNG phát sự kiện "questions" khi lượt đó không có câu hỏi', async () => {
+    chatProvidersMock.callGroqChatWithKeyPool.mockResolvedValueOnce({
+      kind: 'success',
+      text: 'Chào bạn!',
+      latencyMs: 100,
+    })
+
+    const events: string[] = []
+    for await (const ev of streamCompanionTurn(pool, {
+      personId: PERSON_ID,
+      userMessage: 'Xin chào',
+    })) {
+      events.push(ev.type)
+    }
+
+    expect(events).not.toContain('questions')
+    delete process.env.GROQ_API_KEY
   })
 })

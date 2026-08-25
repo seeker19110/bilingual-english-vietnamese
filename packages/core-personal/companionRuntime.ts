@@ -10,6 +10,11 @@ import { proposeAction, type ProposeActionInput } from './proposedActionService.
 import type { ContextPackage } from '@dhcb/core-contracts/contextPackage'
 import type { ProposedAction } from '@dhcb/core-contracts/proposedAction'
 import {
+  extractInteractiveQuestions,
+  INTERACTIVE_QUESTION_PROMPT_GUIDE,
+  type InteractiveQuestion,
+} from '@dhcb/core-contracts/interactiveQuestion'
+import {
   getLearningReadModel,
   formatLearningReadModelForContext,
 } from '@dhcb/core-learner/learningReadModelService'
@@ -75,6 +80,12 @@ export interface CompanionResponse {
   contextPackage: ContextPackage
   proposedActions: ProposedAction[]
   executionSummary: CompanionExecutionSummary
+  /**
+   * Câu hỏi tick chọn kèm theo lượt trả lời (rỗng khi LLM chỉ trả lời bằng lời văn). Giao diện
+   * dựng thành checkbox/radio để người dùng khỏi phải gõ tay — xem
+   * `packages/core-contracts/interactiveQuestion.ts`.
+   */
+  interactiveQuestions: InteractiveQuestion[]
 }
 
 /**
@@ -317,7 +328,7 @@ export async function synthesizeCompanionReply(
 
   const systemPrompt = `${COMPANION_SYSTEM_PROMPT}\n${domainContext}${
     contextDetails ? `\nThông tin ngữ cảnh người dùng trích xuất:\n${contextDetails}` : ''
-  }${actionsSummary}\n\nHãy trả lời người dùng với giọng điệu tự nhiên, ấm áp, thông tuệ và truyền cảm hứng dựa trên ngữ cảnh.`
+  }${actionsSummary}${INTERACTIVE_QUESTION_PROMPT_GUIDE}\n\nHãy trả lời người dùng với giọng điệu tự nhiên, ấm áp, thông tuệ và truyền cảm hứng dựa trên ngữ cảnh.`
 
   const messages = [{ role: 'user', content: userMessage }]
 
@@ -508,7 +519,7 @@ export async function executeCompanionTurn(
   }
 
   // Step 6: Synthesize Read Model / Intelligent LLM Response
-  const reply = await synthesizeCompanionReply(
+  const rawReply = await synthesizeCompanionReply(
     userMessage,
     intent,
     domain,
@@ -516,8 +527,13 @@ export async function executeCompanionTurn(
     contextPackage,
   )
 
+  // Step 7: Tách khối câu hỏi tick chọn (nếu có) ra khỏi lời văn — khối JSON không bao giờ được
+  // lọt xuống giao diện dưới dạng chữ thô.
+  const { text: reply, questions: interactiveQuestions } = extractInteractiveQuestions(rawReply)
+
   return {
     reply,
+    interactiveQuestions,
     intent,
     targetDomain: domain,
     contextPackage,
@@ -541,6 +557,7 @@ export type CompanionStreamEvent =
         executionSummary: CompanionExecutionSummary
       }
     }
+  | { type: 'questions'; data: { interactiveQuestions: InteractiveQuestion[] } }
   | { type: 'done'; data: CompanionResponse }
   | { type: 'error'; data: { message: string } }
 
@@ -582,6 +599,14 @@ export async function* streamCompanionTurn(
       proposedActions: response.proposedActions,
       executionSummary: response.executionSummary,
     },
+  }
+
+  // 3b. Emit câu hỏi tick chọn (chỉ khi có) — sự kiện riêng để client cũ bỏ qua được an toàn.
+  if (response.interactiveQuestions.length > 0) {
+    yield {
+      type: 'questions',
+      data: { interactiveQuestions: response.interactiveQuestions },
+    }
   }
 
   // 4. Emit final done event
