@@ -6183,8 +6183,57 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
-- 🟡 **[2026-08-24] Model chat Gemini đổi khẩn cấp sang `gemini-3.6-flash` — CHƯA xác nhận
-  hoạt động, CHƯA cập nhật baseline.** PR #647: Google đã khai tử hẳn `gemini-2.0-flash` (lỗi
+- 🟡 **[2026-08-25] `nginx/en-vi.conf` đã sửa trong repo nhưng CHƯA áp lên VPS thật.** Audit
+  2026-08-25 (F5) phát hiện bản `Content-Security-Policy-Report-Only` trong nginx còn whitelist
+  `*.supabase.co` dù dự án rời Supabase từ 2026-07-20, lại thiếu facebook/apple/microsoft,
+  `media-src blob:` và `frame-src accounts.google.com` so với CSP thật — nên nó chỉ sinh báo cáo
+  vi phạm GIẢ. Đã xoá hẳn ở PR #664 (giữ đúng MỘT nguồn CSP là Express).
+
+  **Điều kiện gỡ nợ:** copy file lên VPS rồi:
+
+  ```bash
+  sudo nginx -t && sudo systemctl reload nginx
+  ```
+
+  **Vì sao chưa gỡ được từ đây:** repo chỉ chứa BẢN SAO cấu hình; file thi hành thật nằm trên
+  server. Sửa trong repo mà quên áp = tài liệu nói một đằng, server chạy một nẻo — đúng loại
+  lệch mà Tầng 6b của quy trình audit sinh ra để bắt.
+
+- 🟡 **[2026-08-25] Biên độ ngân sách chất lượng đã MỎNG — bundle JS 99,7%, coverage branches
+  dư 0,13 điểm.** Audit 2026-08-25 (F3). Số đo thật: JS 122,65/123 kB · CSS 15,64/16 kB ·
+  coverage branches 90,13% trên sàn 90. Lần audit 2026-08-24 branches còn dư 0,17 điểm ⇒ biên độ
+  đang **hẹp dần**, không phải đứng yên.
+
+  Chưa đỏ, nên KHÔNG chặn việc gì hôm nay. Cái đáng lo là ai gánh: tính năng nhỏ kế tiếp sẽ làm
+  CI đỏ, và người viết PR đó lãnh trọn cái nợ mà các PR trước đã tiêu dần.
+
+  **Đo lại bất cứ lúc nào:** `npm run build && npm run test:coverage && npm run budget`
+  (`scripts/check-budget-margin.ts`, thêm ở PR #664 — in biên độ còn lại thành số, cảnh báo khi
+  bundle ≥95% ngân sách hoặc coverage dư <1 điểm).
+
+  **Điều kiện gỡ nợ — chọn một, KHÔNG lặng lẽ nâng ngưỡng:** (a) giảm bundle thật
+  (code-splitting thêm, bỏ dependency eager) và bổ sung test cho các file nhánh phủ thấp
+  (`geminiLiveService.ts` 14 nhánh thiếu · `co-learning-audio.ts` 12 · `neuroAffectiveService.ts`
+  8 · `redisChat.ts` 8); hoặc (b) nâng ngưỡng CÓ CHỦ ĐÍCH kèm lý do ghi vào chính mục này.
+
+- 🟡 **[2026-08-25] Tầng 8 (Core Web Vitals) và Tầng 9 (vận hành production) CHƯA kiểm được
+  trong lượt audit toàn diện 2026-08-25.** Proxy của container chặn
+  `en-vi.donghanhcungban.org` (403 CONNECT tunnel). Hai tầng này được ghi **TRỐNG**, không chấm
+  đạt — một lượt audit thiếu 2/13 tầng thì không được coi là đã phủ hết.
+
+  **Điều kiện gỡ nợ:** từ máy có mạng tới server — chạy Lighthouse trên trang chủ + Dictionary +
+  1 trang CEFR (ngân sách LCP ≤ 2,5s · INP ≤ 200ms · CLS ≤ 0,1), và đọc Sentry (lỗi mới chưa
+  xem xét) + `pm2 logs`/số lần restart + dung lượng ổ đĩa.
+
+- 🔴 **[2026-08-24 · XÁC NHẬN LẠI 2026-08-25 qua audit toàn diện] Model chat Gemini đổi khẩn
+  cấp sang `gemini-3.6-flash` — VẪN CHƯA xác nhận hoạt động, CHƯA cập nhật baseline.**
+  _Audit 2026-08-25 chấm Tầng 4 **FAIL** bằng lệnh, không đoán:_ `git log -1` trên
+  `apps/dhcb/src/prompts` + `packages/core-ai/aiConfig.ts` cho **2026-08-24**, còn trên
+  `docs/research/eval-tutor-baseline.md` cho **2026-08-21** — ngày đổi MỚI HƠN ngày baseline
+  ⇒ baseline đã cũ. (Nội dung tài liệu baseline ghi "2026-08-20", commit là 2026-08-21; lệch
+  1 ngày này không đổi kết luận.) Container audit không có `.env` nên vẫn không chạy được.
+
+  _Bối cảnh gốc (2026-08-24):_ PR #647 — Google đã khai tử hẳn `gemini-2.0-flash` (lỗi
   404 thật khi chạy `npm run eval:tutor`, sửa ở 4 chỗ — `aiConfig.ts` GEMINI_CHAT_MODEL,
   `visionSolverService.ts`, `ambientVisionService.ts`, `scripts/eval-tutor.ts`). Tên model mới
   lấy trực tiếp từ thông báo lỗi của Google, **không phải suy đoán**, nhưng môi trường sửa lỗi
