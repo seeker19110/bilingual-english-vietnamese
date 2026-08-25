@@ -5,7 +5,7 @@
 // Giao thức message giống các worker kia:
 //  vào : { type: 'run', id, html, code, hanhDong }
 //  ra  : { type: 'ready'|'stdout'|'done'|'error', id, ... }
-import { chayBaiFetch } from '@dhcb/subject-programming/fetchPrelude'
+import { chayBaiFetch, type FetchApi } from '@dhcb/subject-programming/fetchPrelude'
 
 interface RunRequest {
   type: 'run'
@@ -13,6 +13,8 @@ interface RunRequest {
   html: string
   code: string
   hanhDong: string[]
+  /** Bộ dữ liệu API mẫu: bài học P3-U7 (thời tiết, mặc định) hay dự án trục P3 (menu quán). */
+  api?: FetchApi
 }
 
 const scope = self as unknown as {
@@ -21,11 +23,11 @@ const scope = self as unknown as {
 }
 
 scope.onmessage = (e: MessageEvent<RunRequest>) => {
-  const { id, html, code, hanhDong } = e.data
+  const { id, html, code, hanhDong, api } = e.data
   scope.postMessage({ type: 'ready', id })
   const batDau = Date.now()
 
-  void chayBaiFetch(html, code, hanhDong).then((r) => {
+  void chayBaiFetch(html, code, hanhDong, api).then((r) => {
     if (r.error) {
       scope.postMessage({ type: 'error', id, message: r.error })
       return

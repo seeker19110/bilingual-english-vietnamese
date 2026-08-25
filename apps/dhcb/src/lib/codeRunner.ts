@@ -9,8 +9,10 @@ import { runPython, resetPythonWorker } from './pythonRunner'
 import { runJavaScript, resetJsWorker } from './jsRunner'
 import { runSql, resetSqlWorker } from './sqlRunner'
 import { runHtml } from './htmlRunner'
+import { runGit } from './gitRunner'
 import { runDom, resetDomWorker } from './domRunner'
 import { runFetchLesson, resetFetchWorker } from './fetchRunner'
+import type { FetchApi } from '@dhcb/subject-programming/fetchPrelude'
 
 export type LessonLanguage = ProgrammingLesson['language']
 
@@ -23,6 +25,9 @@ export interface LessonRunOptions {
   files?: Record<string, string>
   /** Bài 'dom': trang HTML có sẵn mà script của học viên tác động lên (bắt buộc với 'dom'). */
   domHtml?: string
+  /** Bài/bước 'fetch': API mẫu nào phục vụ lượt chạy — bài học P3-U7 dùng API thời tiết
+   *  (mặc định), dự án trục chặng P3 dùng API menu cửa hàng của chính dự án. */
+  fetchApi?: FetchApi
 }
 
 export function runLessonCode(
@@ -38,7 +43,7 @@ export function runLessonCode(
     })
   }
   if (language === 'dom' || language === 'fetch') {
-    const { stdinLines, onOutput, domHtml } = options
+    const { stdinLines, onOutput, domHtml, fetchApi } = options
     if (!domHtml) {
       // Bài 'dom' không có trang thì không chấm được — nói thẳng thay vì chạy ra kết quả rỗng.
       return Promise.resolve({
@@ -48,13 +53,21 @@ export function runLessonCode(
         durationMs: 0,
       })
     }
-    // Bài 'fetch' = bài DOM cộng fetch giả lập — worker riêng, cùng khuôn chạy.
-    const runPage = language === 'fetch' ? runFetchLesson : runDom
-    return runPage(code, {
+    const chung = {
       html: domHtml,
       ...(stdinLines ? { hanhDong: stdinLines } : {}),
       ...(onOutput ? { onOutput } : {}),
-    })
+    }
+    // Bài 'fetch' = bài DOM cộng fetch giả lập — worker riêng, cùng khuôn chạy.
+    return language === 'fetch'
+      ? runFetchLesson(code, { ...chung, ...(fetchApi ? { api: fetchApi } : {}) })
+      : runDom(code, chung)
+  }
+  if (language === 'git') {
+    // Bài Git/dòng lệnh: "code" là DANH SÁCH LỆNH học viên gõ; `stdinLines` mang lệnh dựng
+    // bối cảnh (kho đã có sẵn vài commit…), tái dùng đúng ô có sẵn như bài DOM đã làm.
+    const { stdinLines } = options
+    return runGit(code, { ...(stdinLines ? { lenhChuanBi: stdinLines } : {}) })
   }
   if (language === 'html') {
     // Bài HTML/CSS không có input() và không chạy script — "chạy" nghĩa là dựng cây DOM rồi

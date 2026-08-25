@@ -14,6 +14,9 @@ export interface PageRunOptions {
   timeoutMs?: number
   onOutput?: (textSoFar: string) => void
   onLoading?: () => void
+  /** Trường phụ gửi kèm nguyên văn vào message của worker (fetchRunner dùng để chọn API mẫu).
+   *  Giữ khuôn chung không phải biết về từng worker cụ thể. */
+  extra?: Record<string, unknown>
 }
 
 export interface PageWorkerRunner {
@@ -54,7 +57,7 @@ export function taoPageWorkerRunner(taoWorker: () => Worker): PageWorkerRunner {
       })
     }
     busy = true
-    const { html, hanhDong = [], timeoutMs = DEFAULT_TIMEOUT_MS, onOutput } = options
+    const { html, hanhDong = [], timeoutMs = DEFAULT_TIMEOUT_MS, onOutput, extra } = options
     const id = nextRunId++
     const w = getWorker()
 
@@ -116,7 +119,7 @@ export function taoPageWorkerRunner(taoWorker: () => Worker): PageWorkerRunner {
         { once: true },
       )
       armTimeout()
-      w.postMessage({ type: 'run', id, html, code, hanhDong })
+      w.postMessage({ type: 'run', id, html, code, hanhDong, ...extra })
     })
   }
 

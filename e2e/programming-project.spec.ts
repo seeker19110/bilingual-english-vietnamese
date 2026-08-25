@@ -94,3 +94,84 @@ test('chặng P2: khoá khi chưa xong P1; mở ra thì bước tách 3 file ch�
   })
   await expect(page.getByText(/Hoàn thành Chặng P2/)).toBeVisible()
 })
+
+// Chặng P3 (PR-L8) — phần rủi ro nhất đợt này: MỖI BƯỚC MỘT NGÔN NGỮ (html → html/CSS → dom
+// → sql → fetch). Cổng CI (projectStepsP3.test.ts) đã chấm nội dung bằng happy-dom/linkedom/
+// sql.js ở Node; test này chốt thứ cổng kia không thấy: trang dự án chọn ĐÚNG bộ chạy theo
+// `language` của bước, và 4 worker khác nhau đều nạp được trong trình duyệt thật.
+test('chặng P3: cả 5 bước (HTML → CSS → DOM → SQL → fetch) chấm được trong trình duyệt', async ({
+  page,
+}) => {
+  test.setTimeout(300_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+
+  // Giả lập đã xong trọn P1 + P2 để chặng P3 mở.
+  const done = [...Array(5)]
+    .flatMap((_, i) => [`p1-s${i + 1}`, `p2-s${i + 1}`])
+    .map((lessonId) => ({
+      lessonId,
+      status: 'completed',
+      completedAt: 1,
+    }))
+  await page.route('**/api/programming/progress', (route) =>
+    route.request().method() === 'GET'
+      ? route.fulfill({ status: 200, body: JSON.stringify({ lessons: done }) })
+      : route.fulfill({ status: 200, body: '{}' }),
+  )
+  await page.route('**/api/programming/project', (route) =>
+    route.request().method() === 'GET'
+      ? route.fulfill({ status: 200, body: JSON.stringify({ files: [], snapshots: [] }) })
+      : route.fulfill({ status: 200, body: '{}' }),
+  )
+
+  await page.goto('/lap-trinh/du-an?chang=p3', { waitUntil: 'domcontentloaded' })
+
+  for (let buoc = 1; buoc <= 5; buoc++) {
+    await page.getByRole('button', { name: 'Xem code mẫu bước này' }).click()
+    await page.getByRole('button', { name: 'Kiểm tra bước' }).click()
+    if (buoc < 5) {
+      await expect(page.getByRole('button', { name: `Sang bước ${buoc + 1}` })).toBeVisible({
+        timeout: 180_000,
+      })
+      await page.getByRole('button', { name: `Sang bước ${buoc + 1}` }).click()
+    }
+  }
+
+  // Bước 5 (fetch, milestone): menu lấy từ API cửa hàng — món 'ca phe sua' CHỈ có trong API,
+  // nên ca này xanh chứng minh dữ liệu thật sự đi qua fetch giả chứ không phải bảng gõ cứng.
+  await expect(
+    page.getByText('Món CHỈ có trong API cũng hiện ra (menu thật từ máy chủ)'),
+  ).toBeVisible({ timeout: 180_000 })
+  await expect(page.getByText(/Hoàn thành Chặng P3/)).toBeVisible()
+})
+
+test('chặng P3 bước HTML: khung xem trang hiện ngay trang học viên đang viết', async ({ page }) => {
+  test.setTimeout(180_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+
+  const done = [...Array(5)]
+    .flatMap((_, i) => [`p1-s${i + 1}`, `p2-s${i + 1}`])
+    .map((lessonId) => ({
+      lessonId,
+      status: 'completed',
+      completedAt: 1,
+    }))
+  await page.route('**/api/programming/progress', (route) =>
+    route.request().method() === 'GET'
+      ? route.fulfill({ status: 200, body: JSON.stringify({ lessons: done }) })
+      : route.fulfill({ status: 200, body: '{}' }),
+  )
+  await page.route('**/api/programming/project', (route) =>
+    route.request().method() === 'GET'
+      ? route.fulfill({ status: 200, body: JSON.stringify({ files: [], snapshots: [] }) })
+      : route.fulfill({ status: 200, body: '{}' }),
+  )
+
+  await page.goto('/lap-trinh/du-an?chang=p3', { waitUntil: 'domcontentloaded' })
+  await page.getByRole('button', { name: 'Xem code mẫu bước này' }).click()
+
+  // Bước HTML là trang TĨNH nên khung xem hiện luôn theo nội dung đang soạn (không cần bấm).
+  const khung = page.frameLocator('iframe[title="Xem trước trang web bạn vừa viết"]')
+  await expect(khung.locator('h1')).toHaveText('Quan cua toi')
+  await expect(khung.locator('.menu li').first()).toHaveText('Tra da - 5000')
+})

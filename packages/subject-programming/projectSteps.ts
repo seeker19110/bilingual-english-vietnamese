@@ -6,46 +6,21 @@
 // (in KHÔNG DẤU các dòng chấm điểm — tránh lệch dấu tiếng Việt khi so chuỗi) và bộ check
 // tái dùng TestCaseSchema + engine grading.ts. Bước sau GIỮ nguyên các dòng in của bước
 // trước để code tiến hoá chứ không đập đi viết lại.
-import { z } from 'zod'
 import { TestCaseSchema, type ProgrammingTestCase } from './lessonTypes.js'
+// Schema/kiểu/helper của MỘT BƯỚC nằm ở projectStepTypes.ts — file này và projectStepsP3.ts
+// cùng import xuống đó, nên không có chu trình import (cổng `codemap -- cycles` chặn CI).
+import type { ProjectStep } from './projectStepTypes.js'
+import { P3_PROJECT_STEPS } from './projectStepsP3.js'
 
-/** File làm việc của chặng P1 (P2 trở đi mới chia nhiều file). */
-export const PROJECT_MAIN_FILE = 'cua_hang.py'
-
-export const ProjectStepSchema = z
-  .object({
-    /** id ổn định `p<bậc>-s<số>` — khoá tiến độ (cùng bảng lesson_progress). */
-    id: z.string().regex(/^p[1-6]-s\d+$/),
-    title: z.string().min(1).max(120),
-    /** Unit cung cấp kiến thức cho bước (tham chiếu curriculum). */
-    unitId: z.string().regex(/^p[1-6]-u\d+$/),
-    /** Yêu cầu bước — nói rõ hợp đồng nhập/xuất để chấm được. */
-    requirement: z.string().min(1).max(2000),
-    /** Gợi ý khi kẹt (1 mức — gợi ý bậc thang đầy đủ nằm ở bài học unit tương ứng). */
-    hint: z.string().min(1).max(500),
-    /** Code tham chiếu của bước (phao — mở được, đánh dấu đã xem). */
-    referenceCode: z.string().min(1).max(6000),
-    /** Milestone check: đạt HẾT thì mở bước sau. */
-    checks: z.array(TestCaseSchema).min(1).max(8),
-    /** true = bước cuối chặng: đạt xong thì chốt snapshot milestone. */
-    isMilestone: z.boolean().default(false),
-    /** Các file workspace bước này dùng — phần tử ĐẦU là file chạy chính (PR-L6b).
-     *  Chặng P1 chỉ một file; chặng P2 tách 3 file ở bước cuối. */
-    files: z
-      .array(z.string().regex(/^[a-z0-9_][a-z0-9_.-]{0,99}$/))
-      .min(1)
-      .max(6)
-      .optional(),
-    /** Nội dung mẫu của các file PHỤ (ngoài file chính) — "phao" như referenceCode. */
-    referenceFiles: z.record(z.string(), z.string().min(1).max(6000)).optional(),
-    /** Code CHẤM chạy thay cho file chính: import module của học viên rồi gọi hàm.
-     *  Dùng khi cần ép tách file thật (chấm hành vi qua ranh giới module), vì chỉ chạy
-     *  file chính thì code gộp một file vẫn cho output y hệt. */
-    probeCode: z.string().max(2000).optional(),
-  })
-  .strict()
-
-export type ProjectStep = z.infer<typeof ProjectStepSchema>
+export {
+  PROJECT_MAIN_FILE,
+  ProjectStepSchema,
+  getStepLanguage,
+  getStepFiles,
+  getStepMainFile,
+  type ProjectStep,
+} from './projectStepTypes.js'
+export { P3_PROJECT_STEPS } from './projectStepsP3.js'
 
 /** Code khởi đầu khi mở dự án lần đầu. */
 export const PROJECT_STARTER_CODE = `# cua_hang.py — Cửa hàng của tôi (dự án xuyên suốt, chặng P1)
@@ -675,21 +650,13 @@ print(f"So moi: {so_don} {doanh_thu}")`,
   },
 ]
 
-/** Danh sách file của bước — bước không khai báo thì chỉ dùng file chính của chặng P1. */
-export function getStepFiles(step: ProjectStep): string[] {
-  return step.files ?? [PROJECT_MAIN_FILE]
-}
-
-/** File CHẠY CHÍNH của bước (phần tử đầu trong `files`). */
-export function getStepMainFile(step: ProjectStep): string {
-  return getStepFiles(step)[0]!
-}
-
 /** Các chặng dự án đã mở (theo bậc) — UI đọc bảng này để dựng thanh chọn chặng. */
-export const PROJECT_STAGES: { level: 'p1' | 'p2'; title: string; steps: ProjectStep[] }[] = [
-  { level: 'p1', title: 'Chặng P1 — Máy tính tiền', steps: P1_PROJECT_STEPS },
-  { level: 'p2', title: 'Chặng P2 — Sổ sách tử tế', steps: P2_PROJECT_STEPS },
-]
+export const PROJECT_STAGES: { level: 'p1' | 'p2' | 'p3'; title: string; steps: ProjectStep[] }[] =
+  [
+    { level: 'p1', title: 'Chặng P1 — Máy tính tiền', steps: P1_PROJECT_STEPS },
+    { level: 'p2', title: 'Chặng P2 — Sổ sách tử tế', steps: P2_PROJECT_STEPS },
+    { level: 'p3', title: 'Chặng P3 — Lên web', steps: P3_PROJECT_STEPS },
+  ]
 
 const stepMap = new Map(PROJECT_STAGES.flatMap((stage) => stage.steps).map((s) => [s.id, s]))
 
