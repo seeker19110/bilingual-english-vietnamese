@@ -30,6 +30,15 @@ jobs:
               return;
             }
 
+            // PR của dependabot: body do bot sinh (changelog upstream), không thể có 6 mục
+            // evidence — trước đây mọi PR deps đều đỏ metadata và phải viết lại body tay
+            // (xem PR #641). Chỉ giữ cổng tiêu đề Conventional Commits (đã kiểm ở trên);
+            // an toàn thực chất do required check quality + e2e đảm nhiệm.
+            if (pr.user.login === "dependabot[bot]") {
+              core.info("PR dependabot: bỏ qua cổng evidence, chỉ kiểm tiêu đề.");
+              return;
+            }
+
             const required = [
               "## Tóm tắt",
               "## Issue / outcome",
