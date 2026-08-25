@@ -48,6 +48,20 @@ là học tiếp được ngay, không gặp ô "Sắp mở" giữa đường.
 - **Tiếp theo:** PR-L6b (dự án trục chặng P2) hoặc PR-L7 (nội dung P3 — cần thêm sandbox JS +
   SQL WASM). Vẫn còn treo: chạy `npm run eval:code-feedback` và `eval:tutor` với key thật.
 
+### chore(ci): chống lặp lỗi PR dependabot (2026-08-25)
+
+Xử lý 2 PR dependabot #641/#656 lộ ra 3 lỗi hệ thống, PR này chặn từ gốc:
+
+- **#656 (eslint-plugin-react-refresh 0.4.26→0.5.4) ĐÓNG** — bản 0.5.x đòi ESLint 9 + flat
+  config, xung đột stack ghim ESLint 8 (`npm ci` fail ngay). Đã `@dependabot ignore this
+dependency`. → `dependabot.yml` thêm khối `ignore` cho toàn bộ stack ghim cứng (React/TS/
+  Tailwind/ESLint và các plugin ESLint) để dependabot không mở PR chắc chắn bị từ chối nữa.
+- **#641 (eslint-config-prettier 9→10.1.8) NHẬN** — 10.x vẫn CJS/eslintrc, quality+e2e xanh;
+  chỉ đỏ `metadata` vì body bot không có 6 mục evidence, phải viết lại tay. → `pr-policy.yml`
+  bỏ qua cổng evidence cho `dependabot[bot]` (vẫn kiểm tiêu đề; an toàn do quality+e2e gác).
+- **Dependabot than thiếu label `dependencies` ở mọi PR** — repo chưa tạo label đó. → bỏ cấu
+  hình `labels` trong `dependabot.yml` (muốn dùng lại thì tạo label trên GitHub trước).
+
 ### refactor(worklife): gộp trụ WORK + LIFE thành MỘT trụ "Công việc & Đời sống" (2026-08-25)
 
 Người dùng chốt: **gộp sâu cả dữ liệu**, không chỉ gộp hiển thị. Lý do sản phẩm: việc hằng
@@ -383,7 +397,7 @@ PR #659 (đặc tả + L1 + L2 + L3) đã MERGE (squash, auto-merge sau khi CI x
 - **Fix CI quality đỏ (bài học thật):** CodeMirror rơi vào `vendor-misc` (chunk tải eager) →
   Initial JS 250,6 kB vượt trần 123 kB. Local từng "xanh giả" vì `npm run size | tail` nuốt
   exit code — từ nay chạy size KHÔNG pipe. Vá: tách nhóm `vendor-codemirror` trong
-  manualChunks (chỉ trang /lap-trinh/* kéo) → 122,59/123 kB.
+  manualChunks (chỉ trang /lap-trinh/\* kéo) → 122,59/123 kB.
 - Kiểm chứng: e2e luồng 1 bài end-to-end 2/2 (predict → parsons xếp đúng/sai → make chấm
   Pyodide thật đạt/rớt) + sandbox 3/3 + a11y 20/20 trang bài học; test 5217/5217.
 - **Tiếp theo:** PR-L3b (workspace dự án + milestone check) → PR-L4 (nội dung P1 đầy đủ).
