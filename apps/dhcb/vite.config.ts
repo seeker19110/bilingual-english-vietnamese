@@ -168,7 +168,7 @@ export default defineConfig(({ mode }) => {
             // trong lib/errorTracking.ts, chỉ chạy khi có VITE_SENTRY_DSN). Tách chunk riêng
             // để KHÔNG bị gộp vào vendor-misc (đang tải eager lúc khởi động) — nếu gộp chung,
             // Sentry sẽ luôn nằm trong bundle đầu tiên dù không dùng, vượt ngân sách size-limit
-            // (.size-limit.json chỉ đo index/vendor-core/vendor-supabase/vendor-ui/vendor-misc).
+            // (.size-limit.json chỉ đo index/vendor-core/vendor-ui/vendor-misc).
             if (id.includes('node_modules/@sentry')) {
               return 'vendor-sentry'
             }
@@ -192,10 +192,6 @@ export default defineConfig(({ mode }) => {
               id.includes('node_modules/react-router')
             ) {
               return 'vendor-core'
-            }
-            // Nhóm 2: Supabase
-            if (id.includes('node_modules/@supabase')) {
-              return 'vendor-supabase'
             }
             // Nhóm 3: UI library
             if (id.includes('node_modules/lucide-react')) {

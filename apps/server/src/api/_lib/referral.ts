@@ -4,6 +4,7 @@
 // Vì sao tách khỏi api/referral.ts: điểm trao thưởng nằm ở luồng lưu lịch sử học
 // (api/history.ts), không phải ở endpoint referral — 2 nơi cùng dùng nên logic phải ở 1 chỗ.
 
+import { randomInt } from 'node:crypto'
 import { getPgPool } from '@dhcb/core-db/pgPool'
 import { grantPlanDays } from '@dhcb/core-billing/planGrant'
 import { logSecurityEvent } from '@dhcb/core-auth/security'
@@ -20,10 +21,14 @@ const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
 const CODE_LENGTH = 6
 const MAX_CODE_ATTEMPTS = 8
 
+// randomInt của node:crypto — ngẫu nhiên an toàn, KHÔNG dùng Math.random. Mã mời gắn với
+// phần thưởng thật (7 ngày Pro cho cả hai bên) nên phải đoán không ra; hai chỗ sinh mã khác
+// trong dự án (emailVerification.ts, sepay.ts) đã dùng crypto từ trước — thống nhất nốt chỗ
+// này (audit 2026-08-25, F7). randomInt còn tránh luôn lệch phân bố do modulo.
 function randomCode(): string {
   let out = ''
   for (let i = 0; i < CODE_LENGTH; i++) {
-    out += CODE_ALPHABET[Math.floor(Math.random() * CODE_ALPHABET.length)]
+    out += CODE_ALPHABET[randomInt(CODE_ALPHABET.length)]
   }
   return out
 }
