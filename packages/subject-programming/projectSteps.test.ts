@@ -93,7 +93,8 @@ describe('P2 project steps (PR-L6b)', () => {
 
 describe('PROJECT_STAGES', () => {
   it('liệt kê đúng các chặng đã mở, id bước không trùng nhau giữa các chặng', () => {
-    expect(PROJECT_STAGES.map((s) => s.level)).toEqual(['p1', 'p2'])
+    // Chặng P3 thêm ở PR-L8 (nội dung + cổng riêng: projectStepsP3.test.ts).
+    expect(PROJECT_STAGES.map((s) => s.level)).toEqual(['p1', 'p2', 'p3'])
     expect(PROJECT_STAGES[0]!.steps).toBe(P1_PROJECT_STEPS)
     expect(PROJECT_STAGES[1]!.steps).toBe(P2_PROJECT_STEPS)
     const ids = PROJECT_STAGES.flatMap((s) => s.steps).map((s) => s.id)

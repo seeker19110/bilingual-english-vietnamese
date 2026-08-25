@@ -8,6 +8,11 @@
 // trước để code tiến hoá chứ không đập đi viết lại.
 import { z } from 'zod'
 import { TestCaseSchema, type ProgrammingTestCase } from './lessonTypes.js'
+// Chặng P3 ở file riêng (nội dung dài, mỗi bước một ngôn ngữ). Chiều ngược lại chỉ là
+// `import type` nên không có vòng phụ thuộc lúc chạy.
+import { P3_PROJECT_STEPS } from './projectStepsP3.js'
+
+export { P3_PROJECT_STEPS } from './projectStepsP3.js'
 
 /** File làm việc của chặng P1 (P2 trở đi mới chia nhiều file). */
 export const PROJECT_MAIN_FILE = 'cua_hang.py'
@@ -19,6 +24,13 @@ export const ProjectStepSchema = z
     title: z.string().min(1).max(120),
     /** Unit cung cấp kiến thức cho bước (tham chiếu curriculum). */
     unitId: z.string().regex(/^p[1-6]-u\d+$/),
+    /** Ngôn ngữ của bước (PR-L8) — quyết định bộ chạy nào chấm. Bỏ trống = 'python' (đọc qua
+     *  getStepLanguage(), cùng khuôn với getStepFiles): chặng P1/P2 thuần Python nên không
+     *  phải sửa 23 bước cũ, còn bước web/SQL của chặng P3 thì ghi rõ. */
+    language: z.enum(['python', 'html', 'dom', 'sql', 'fetch']).optional(),
+    /** Bước 'dom'/'fetch': trang HTML có sẵn mà script của học viên tác động lên. Bắt buộc với
+     *  hai ngôn ngữ đó, cấm với các ngôn ngữ khác (refine bên dưới kiểm). */
+    domHtml: z.string().max(6000).optional(),
     /** Yêu cầu bước — nói rõ hợp đồng nhập/xuất để chấm được. */
     requirement: z.string().min(1).max(2000),
     /** Gợi ý khi kẹt (1 mức — gợi ý bậc thang đầy đủ nằm ở bài học unit tương ứng). */
@@ -44,6 +56,15 @@ export const ProjectStepSchema = z
     probeCode: z.string().max(2000).optional(),
   })
   .strict()
+  .refine((s) => (s.language === 'dom' || s.language === 'fetch') === (s.domHtml !== undefined), {
+    message: "bước 'dom'/'fetch' phải có domHtml; ngôn ngữ khác thì không được có",
+  })
+  // `?? 'python'` chứ không so thẳng: bước chặng P1/P2 bỏ trống `language` nghĩa là Python
+  // (xem getStepLanguage) — so thẳng sẽ đánh trượt oan chính những bước cũ đang dùng probeCode.
+  .refine((s) => (s.language ?? 'python') === 'python' || s.probeCode === undefined, {
+    // probeCode = "chạy code chấm thay file chính để ép tách module" — chỉ có nghĩa với Python.
+    message: "probeCode chỉ dùng cho bước 'python'",
+  })
 
 export type ProjectStep = z.infer<typeof ProjectStepSchema>
 
@@ -675,6 +696,11 @@ print(f"So moi: {so_don} {doanh_thu}")`,
   },
 ]
 
+/** Ngôn ngữ của bước — bỏ trống nghĩa là Python (chặng P1/P2 thuần Python, xem schema). */
+export function getStepLanguage(step: ProjectStep): NonNullable<ProjectStep['language']> {
+  return step.language ?? 'python'
+}
+
 /** Danh sách file của bước — bước không khai báo thì chỉ dùng file chính của chặng P1. */
 export function getStepFiles(step: ProjectStep): string[] {
   return step.files ?? [PROJECT_MAIN_FILE]
@@ -686,10 +712,12 @@ export function getStepMainFile(step: ProjectStep): string {
 }
 
 /** Các chặng dự án đã mở (theo bậc) — UI đọc bảng này để dựng thanh chọn chặng. */
-export const PROJECT_STAGES: { level: 'p1' | 'p2'; title: string; steps: ProjectStep[] }[] = [
-  { level: 'p1', title: 'Chặng P1 — Máy tính tiền', steps: P1_PROJECT_STEPS },
-  { level: 'p2', title: 'Chặng P2 — Sổ sách tử tế', steps: P2_PROJECT_STEPS },
-]
+export const PROJECT_STAGES: { level: 'p1' | 'p2' | 'p3'; title: string; steps: ProjectStep[] }[] =
+  [
+    { level: 'p1', title: 'Chặng P1 — Máy tính tiền', steps: P1_PROJECT_STEPS },
+    { level: 'p2', title: 'Chặng P2 — Sổ sách tử tế', steps: P2_PROJECT_STEPS },
+    { level: 'p3', title: 'Chặng P3 — Lên web', steps: P3_PROJECT_STEPS },
+  ]
 
 const stepMap = new Map(PROJECT_STAGES.flatMap((stage) => stage.steps).map((s) => [s.id, s]))
 

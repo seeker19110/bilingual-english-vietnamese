@@ -6,6 +6,10 @@
 // mẫu cố định (weatherData.ts). Học viên viết code y như gọi API thật; thứ duy nhất khác là
 // dữ liệu nằm sẵn trong máy.
 //
+// PR-L8: dự án trục chặng P3 cũng cần fetch, nhưng gọi API MENU CỬA HÀNG của chính dự án chứ
+// không phải API thời tiết của bài học — nên chayBaiFetch() nhận thêm tham số `api` chọn bộ
+// dữ liệu. Hai bộ đi qua CÙNG một hàm giả lập (taoFetchBang), không đẻ nhánh hành vi riêng.
+//
 // Fetch giả lập nằm ở fetchGia.ts (file này chỉ import, KHÔNG chứa) — chủ ý: trang bài học
 // cần FETCH_SHIM_JS cho khung xem trang, mà file này kéo theo linkedom (~94KB gzip); tách ra
 // thì linkedom chỉ nằm trong worker/cổng CI, không lọt vào bundle chính (ngân sách Initial JS).
@@ -16,9 +20,20 @@ import { parseHTML } from 'linkedom'
 import { moTaCayDom, type ElementLike } from './htmlPrelude.js'
 import { thucHien, type DomLike } from './domPrelude.js'
 import { THOI_TIET_63_TINH } from './weatherData.js'
-import { taoFetchGia } from './fetchGia.js'
+import { MENU_CUA_HANG } from './shopData.js'
+import { taoFetchGia, taoFetchCuaHang } from './fetchGia.js'
 
-export { taoFetchGia, FETCH_SHIM_JS, type ResponseGia } from './fetchGia.js'
+export {
+  taoFetchBang,
+  taoFetchGia,
+  taoFetchCuaHang,
+  FETCH_SHIM_JS,
+  FETCH_SHIM_CUA_HANG_JS,
+  type ResponseGia,
+} from './fetchGia.js'
+
+/** API mẫu nào phục vụ lượt chạy này: bài học P3-U7 (thời tiết) hay dự án trục (menu quán). */
+export type FetchApi = 'thoi-tiet' | 'cua-hang'
 
 /** Kết quả một lượt chạy — cùng hình dạng với DomRunResult của bài DOM. */
 export interface FetchRunResult {
@@ -45,11 +60,13 @@ export async function chayBaiFetch(
   html: string,
   js: string,
   hanhDong: string[] = [],
+  api: FetchApi = 'thoi-tiet',
 ): Promise<FetchRunResult> {
   try {
     const { document, window } = parseHTML(html)
     const EventCtor = (window as unknown as { Event: new (t: string) => unknown }).Event
-    const fetchGia = taoFetchGia(THOI_TIET_63_TINH)
+    const fetchGia =
+      api === 'cua-hang' ? taoFetchCuaHang(MENU_CUA_HANG) : taoFetchGia(THOI_TIET_63_TINH)
     // Gắn cả lên window cho ai viết window.fetch(...) — cùng một hàm, không lệch hành vi.
     ;(window as unknown as Record<string, unknown>).fetch = fetchGia
 

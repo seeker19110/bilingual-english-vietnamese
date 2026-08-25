@@ -1,8 +1,10 @@
-// ProgrammingProjectPage — DỰ ÁN TRỤC T1 "Cửa hàng của tôi" (PR-L3b, mở rộng ở PR-L6b).
-// Học viên xây cửa hàng của mình lớn dần qua các CHẶNG (P1 "Máy tính tiền" → P2 "Sổ sách
-// tử tế"); mỗi chặng 5 bước, mỗi bước có milestone check chấm HÀNH VI (test-case chạy
-// Pyodide) — đạt hết mở bước sau; bước cuối chặng chốt snapshot.
+// ProgrammingProjectPage — DỰ ÁN TRỤC T1 "Cửa hàng của tôi" (PR-L3b; P2 ở PR-L6b, P3 ở PR-L8).
+// Học viên xây cửa hàng của mình lớn dần qua các CHẶNG (P1 "Máy tính tiền" → P2 "Sổ sách tử
+// tế" → P3 "Lên web"); mỗi chặng 5 bước, mỗi bước có milestone check chấm HÀNH VI — đạt hết
+// mở bước sau; bước cuối chặng chốt snapshot.
 // Chặng P2 làm việc với NHIỀU FILE (giao diện / logic / lưu trữ) nên trang có thanh file.
+// Chặng P3 mỗi bước MỘT NGÔN NGỮ (html → CSS → dom → sql → fetch): bộ chạy do `language` của
+// bước quyết định qua runLessonCode — y hệt trang bài học, nên hai nơi không chấm lệch nhau.
 // Workspace bền server (lib/programmingProject), tiến độ bước dùng chung bảng tiến độ bài học.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -23,7 +25,11 @@ import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import CodeEditor from '../../../components/CodeEditor'
 import { useAuth } from '../../../context/useAuth'
-import { runPython, resetPythonWorker } from '../../../lib/pythonRunner'
+import { runLessonCode, resetLessonRunners } from '../../../lib/codeRunner'
+import { HtmlPreview } from '../../../components/HtmlPreview'
+// fetchGia chứ KHÔNG phải fetchPrelude: prelude kéo theo linkedom (~94KB gzip), thư viện đó
+// chỉ được sống trong worker (xem ghi chú cùng nội dung ở ProgrammingLessonPage).
+import { FETCH_SHIM_CUA_HANG_JS } from '@dhcb/subject-programming/fetchGia'
 import {
   loadProjectFiles,
   saveProjectFileAt,
@@ -38,6 +44,7 @@ import {
   PROJECT_STAGES,
   getStepFiles,
   getStepMainFile,
+  getStepLanguage,
 } from '@dhcb/subject-programming/projectSteps'
 import {
   gradeTestCase,
@@ -65,6 +72,9 @@ export default function ProgrammingProjectPage() {
   const [hintShown, setHintShown] = useState(false)
   const [refViewed, setRefViewed] = useState(false)
   const [loaded, setLoaded] = useState(false)
+  // Bước web của chặng P3: bản chụp code để xem trang chạy (null = chưa bấm xem lần nào).
+  // Bước 'dom'/'fetch' KHÔNG xem theo từng phím gõ — script dở dang sẽ chạy ngay trong khung.
+  const [previewScript, setPreviewScript] = useState<string | null>(null)
   // Bản chụp tiến độ dùng để ĐẶT bước ban đầu. Cố ý KHÔNG đưa doneSteps vào deps của effect
   // bên dưới: chấm đạt một bước sẽ đổi doneSteps, mà nhảy bước ngay lúc đó thì cuốn mất
   // bảng kết quả xanh và nút "Sang bước tiếp" — trái nhịp thong thả đã chốt ở PR-L3b.
@@ -94,7 +104,7 @@ export default function ProgrammingProjectPage() {
         setLoaded(true)
       },
     )
-    return () => resetPythonWorker()
+    return () => resetLessonRunners()
   }, [user])
 
   // Đổi chặng (hoặc nạp xong tiến độ) → nhảy tới bước đầu tiên chưa xong của chặng đó.
@@ -104,6 +114,7 @@ export default function ProgrammingProjectPage() {
     setResults(null)
     setHintShown(false)
     setRefViewed(false)
+    setPreviewScript(null)
   }, [stageIndex, loaded, steps])
 
   const activeIndex = Math.max(
@@ -113,6 +124,7 @@ export default function ProgrammingProjectPage() {
   const activeStep = steps[activeIndex]!
   const stepFiles = useMemo(() => getStepFiles(activeStep), [activeStep])
   const mainFile = getStepMainFile(activeStep)
+  const stepLanguage = getStepLanguage(activeStep)
   // File đang soạn phải thuộc bước hiện tại — đổi bước thì quay về file chính.
   // (Thanh file dựng bằng nav + aria-current chứ KHÔNG dùng role="tablist"/"tab": vai trò
   //  tab kéo theo hợp đồng bàn phím mũi tên trái/phải mà ta chưa cài — khai mà không làm
@@ -153,7 +165,16 @@ export default function ProgrammingProjectPage() {
     ) as Record<string, string>
     const out: TestCaseResult[] = []
     for (const check of activeStep.checks) {
-      const r = await runPython(entry, { stdinLines: check.stdinLines, files: workspace })
+      // Bộ chạy do `language` của bước quyết định (chặng P3 mỗi bước một ngôn ngữ) — đi qua
+      // runLessonCode y như bài học, nên bước dự án và bài học không thể chấm lệch nhau.
+      const r = await runLessonCode(getStepLanguage(activeStep), entry, {
+        stdinLines: check.stdinLines,
+        files: workspace,
+        ...(activeStep.domHtml ? { domHtml: activeStep.domHtml } : {}),
+        // Bước fetch của DỰ ÁN gọi API menu của chính cửa hàng, không phải API thời tiết
+        // của bài học P3-U7.
+        fetchApi: 'cua-hang',
+      })
       out.push(
         gradeTestCase(check, r.output, r.error ?? (r.timedOut ? 'Quá thời gian' : undefined)),
       )
@@ -195,7 +216,7 @@ export default function ProgrammingProjectPage() {
       <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-5">
         <PageHeader
           title="Dự án: Cửa hàng của tôi"
-          subtitle="Một sản phẩm duy nhất lớn dần qua từng chặng: máy tính tiền chạy chữ (P1) → sổ sách tử tế có file dữ liệu (P2). Đạt hết test của bước là mở bước sau."
+          subtitle="Một sản phẩm duy nhất lớn dần qua từng chặng: máy tính tiền chạy chữ (P1) → sổ sách tử tế có file dữ liệu (P2) → cửa hàng lên web, có trang đặt hàng và kho dữ liệu SQL (P3). Đạt hết test của bước là mở bước sau."
         />
 
         {/* Thanh chọn chặng */}
@@ -242,6 +263,7 @@ export default function ProgrammingProjectPage() {
                   setResults(null)
                   setHintShown(false)
                   setRefViewed(false)
+                  setPreviewScript(null)
                 }}
                 aria-current={s.id === activeStepId ? 'step' : undefined}
                 className={`tap-44 shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition ${
@@ -311,6 +333,34 @@ export default function ProgrammingProjectPage() {
               onChange={onCodeChange}
               ariaLabel={`File dự án ${shownFile}`}
             />
+          )}
+
+          {/* Bước HTML/CSS: thấy ngay trang mình đang viết — thứ khiến người mới bám trụ được
+              với web. Trang tĩnh nên xem theo từng lần gõ được (script bị tắt trong khung). */}
+          {files !== null && stepLanguage === 'html' && (
+            <HtmlPreview html={files[shownFile] ?? ''} />
+          )}
+
+          {/* Bước DOM/fetch: chỉ chạy khi BẤM — script dở dang (vòng lặp vô hạn đang gõ nửa
+              chừng) mà tự chạy là tự bắn vào chân. Bước fetch nhúng thêm fetch giả của API
+              cửa hàng, vì khung xem trang không có mạng thật. */}
+          {files !== null && activeStep.domHtml && (
+            <div className="space-y-2">
+              <button
+                onClick={() =>
+                  setPreviewScript(
+                    (stepLanguage === 'fetch' ? FETCH_SHIM_CUA_HANG_JS : '') +
+                      (files[shownFile] ?? ''),
+                  )
+                }
+                className="tap-44 inline-flex items-center px-4 py-2 rounded-2xl border border-zinc-700 hover:border-zinc-500 text-sm text-zinc-200 transition"
+              >
+                Xem trang chạy
+              </button>
+              {previewScript !== null && (
+                <HtmlPreview html={activeStep.domHtml} script={previewScript} />
+              )}
+            </div>
           )}
         </section>
 
@@ -405,6 +455,8 @@ export default function ProgrammingProjectPage() {
                   setResults(null)
                   setHintShown(false)
                   setRefViewed(false)
+                  setPreviewScript(null)
+                  setPreviewScript(null)
                 }
               }}
               className="tap-44 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition"

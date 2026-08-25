@@ -17,7 +17,7 @@ import { mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { PROGRAMMING_LESSONS } from './lessons.js'
-import { PROJECT_STAGES, type ProjectStep } from './projectSteps.js'
+import { PROJECT_STAGES, getStepLanguage, type ProjectStep } from './projectSteps.js'
 import { gradeTestCase, allTestsPassed } from './grading.js'
 import type { ProgrammingTestCase } from './lessonTypes.js'
 
@@ -119,10 +119,16 @@ describe.skipIf(!hasPython)('nội dung môn Lập trình chạy THẬT bằng p
     expect(wrongMatches, `Bài ${lesson.id}: lựa chọn sai lại khớp output`).toEqual([])
   })
 
-  // Bước dự án của MỌI chặng đã mở. Bước nhiều file (milestone P2) được dựng thành thư mục
-  // thật rồi chạy: `referenceFiles` ghi ra đĩa, entry là `probeCode` nếu bước có (bộ chấm
-  // import module của học viên) — đúng cách sandbox trình duyệt mount workspace.
-  const ALL_STEPS: ProjectStep[] = PROJECT_STAGES.flatMap((stage) => stage.steps)
+  // Bước dự án THUẦN PYTHON của mọi chặng đã mở. Bước nhiều file (milestone P2) được dựng
+  // thành thư mục thật rồi chạy: `referenceFiles` ghi ra đĩa, entry là `probeCode` nếu bước
+  // có (bộ chấm import module của học viên) — đúng cách sandbox trình duyệt mount workspace.
+  //
+  // LỌC THEO NGÔN NGỮ (PR-L8): từ chặng P3, dự án có bước HTML/DOM/SQL/fetch — chúng chạy
+  // bằng engine khác và có cổng riêng (projectStepsP3.test.ts). Đưa chúng vào python3 thì
+  // chỉ nhận về SyntaxError vô nghĩa.
+  const ALL_STEPS: ProjectStep[] = PROJECT_STAGES.flatMap((stage) => stage.steps).filter(
+    (s) => getStepLanguage(s) === 'python',
+  )
 
   it.each(ALL_STEPS)('$id — code tham chiếu đạt HẾT milestone check', (step) => {
     const dir = mkdtempSync(join(tmpdir(), `dhcb-step-${step.id}-`))
