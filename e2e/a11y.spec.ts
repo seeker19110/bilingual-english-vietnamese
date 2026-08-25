@@ -95,6 +95,7 @@ const AUTHED_ROUTES = [
   '/lap-trinh/p1', // trang một bậc (6 bậc dùng chung layout)
   '/lap-trinh/chay-thu', // sandbox chạy Python (PR-L2) — quét màn tĩnh, không chạy Pyodide
   '/lap-trinh/bai-hoc/p1-u4-l1', // bài học 8 bước (PR-L3) — màn Khái niệm
+  '/lap-trinh/du-an', // dự án trục chặng P1 (PR-L3b)
 ]
 for (const route of AUTHED_ROUTES) {
   for (const theme of THEMES) {

@@ -21,13 +21,22 @@ export default function ProgrammingHome() {
         />
 
         {/* Chạy thử ngay — sandbox Python trong trình duyệt (PR-L2) */}
-        <button
-          onClick={() => nav('/lap-trinh/chay-thu')}
-          className="tap-44 w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition shadow-md shadow-accent-500/20 active:scale-[0.98]"
-        >
-          <Play className="w-4 h-4" />
-          <span>Chạy thử Python ngay trong trình duyệt</span>
-        </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button
+            onClick={() => nav('/lap-trinh/chay-thu')}
+            className="tap-44 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition shadow-md shadow-accent-500/20 active:scale-[0.98]"
+          >
+            <Play className="w-4 h-4" />
+            <span>Chạy thử Python ngay</span>
+          </button>
+          <button
+            onClick={() => nav('/lap-trinh/du-an')}
+            className="tap-44 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-zinc-900 border border-accent-500/40 hover:border-accent-500 text-white font-semibold text-sm transition active:scale-[0.98]"
+          >
+            <Store className="w-4 h-4 text-accent-400" />
+            <span>Dự án của tôi (chặng P1)</span>
+          </button>
+        </div>
 
         {/* Dự án xuyên suốt */}
         <section className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 space-y-3 shadow-sm">
