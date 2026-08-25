@@ -42,6 +42,12 @@ c2…`, không `Date.now()`, không random) — không tất định thì không
   `projectSteps.ts ↔ projectStepsP3.ts` tạo **chu trình import**. Đã tách schema/kiểu/helper
   của một bước sang `projectStepTypes.ts` — hai file nội dung cùng import xuống đó, phụ thuộc
   chỉ còn một chiều.
+- **Nợ kỹ thuật #7 đã thành sự cố thật (và đã trả):** cổng `quality` đỏ lần hai vì coverage
+  **branches tụt xuống 89,86%** (ngưỡng 90%) — engine `gitSim` mới có nhiều lối rẽ chưa được
+  chạy lần nào. Đã bổ sung 16 ca cho `gitSim` + 4 ca cho `gitRunner`: gitSim từ 88,1%/75,2%
+  lên **100% dòng / 95,7% nhánh**, branches toàn dự án **90,23%**. Bài học: biên độ coverage
+  mỏng (0,1–0,3 điểm) nghĩa là **mỗi file lớn thêm vào đều phải kèm test phủ nhánh ngay trong
+  cùng PR**, không để dồn.
 - **Còn lại của môn:** thẻ SRS cho bậc P2/P3 · U12 milestone chặng P3 · chặng P4–P5 của dự án
   trục (thuộc bậc sau).
 - **Tiếp theo:** thẻ SRS P2/P3 (nối vào SRS chung đã có của môn English), hoặc U12.
