@@ -340,3 +340,34 @@ for (const theme of THEMES) {
     expect(all).toEqual([])
   })
 }
+
+// ── MÀN AI PHẢN HỒI CODE môn Lập trình (PR-L5) ────────────────────────────────────
+// Khối này chỉ hiện ở bước "Tự viết" và phần trả lời chỉ hiện SAU khi gọi API, nên vòng
+// quét theo route ở trên không bao giờ chạm tới. Chặn `/api/programming/feedback` trả câu
+// mẫu rồi quét đủ 5 theme — cùng cách đã làm cho màn kết quả Chat/Writing/Speaking.
+async function openProgrammingAiPanel(page: Page, theme: ThemeName) {
+  await page.route('**/api/programming/feedback', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        text: 'Đề bài muốn in ra số tiền điện. Bạn thử đọc lại xem mốc 50 kWh đầu tính giá nào nhé?',
+        kind: 'socratic_hint',
+        hintLevel: 1,
+      }),
+    }),
+  )
+  await mockLogin(page, 'vi', theme)
+  await page.goto('/lap-trinh/bai-hoc/p1-u4-l1', { waitUntil: 'domcontentloaded' })
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page.getByRole('button', { name: /Gợi ý bậc/ }).click()
+  await expect(page.getByText(/mốc 50 kWh đầu/)).toBeVisible()
+}
+
+for (const theme of THEMES) {
+  test(`a11y: AI xem code (Lập trình) theme=${theme} — 0 vi phạm A/AA`, async ({ page }) => {
+    await openProgrammingAiPanel(page, theme)
+    const { all } = await scan(page)
+    expect(all).toEqual([])
+  })
+}

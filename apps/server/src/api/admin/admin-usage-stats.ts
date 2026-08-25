@@ -45,12 +45,13 @@ end`
 
 // Tổng mọi lượt AI của 1 dòng daily_usage (KHÔNG gồm learn_count — học từ vựng chạy ở
 // client, không tốn tiền AI; gộp vào sẽ thổi phồng chi phí ước tính).
-const AI_SUM_SQL = 'chat_count + writing_count + speaking_count + stt_count + pronounce_count'
+const AI_SUM_SQL =
+  'chat_count + writing_count + speaking_count + stt_count + pronounce_count + code_feedback_count'
 // Bản có tiền tố bảng, dùng ở các truy vấn có JOIN (cột trùng tên sẽ nhập nhằng nếu không).
 const AI_SUM_D_SQL =
-  'd.chat_count + d.writing_count + d.speaking_count + d.stt_count + d.pronounce_count'
+  'd.chat_count + d.writing_count + d.speaking_count + d.stt_count + d.pronounce_count + d.code_feedback_count'
 
-const MODES: UsageMode[] = ['chat', 'writing', 'speaking', 'stt', 'pronounce']
+const MODES: UsageMode[] = ['chat', 'writing', 'speaking', 'stt', 'pronounce', 'code_feedback']
 
 interface UsageDayRow {
   day: string
@@ -59,6 +60,7 @@ interface UsageDayRow {
   speaking: number
   stt: number
   pronounce: number
+  code_feedback: number
   learn: number
   active_users: number
 }
@@ -71,6 +73,7 @@ interface PlanUsageRow {
   speaking: number
   stt: number
   pronounce: number
+  code_feedback: number
 }
 
 // Một dòng token THẬT gộp theo provider/model (bảng platform.ai_token_usage_daily, mục N4).
@@ -95,6 +98,7 @@ interface TopUserRow {
   speaking: number
   stt: number
   pronounce: number
+  code_feedback: number
   total: number
   active_days: number
 }
@@ -105,6 +109,7 @@ function toCounts(row: {
   speaking: number
   stt: number
   pronounce: number
+  code_feedback: number
 }): Record<UsageMode, number> {
   return {
     chat: row.chat,
@@ -112,6 +117,7 @@ function toCounts(row: {
     speaking: row.speaking,
     stt: row.stt,
     pronounce: row.pronounce,
+    code_feedback: row.code_feedback,
   }
 }
 
@@ -184,6 +190,7 @@ export default async function handler(req: Request): Promise<Response> {
                 sum(speaking_count)::int  as speaking,
                 sum(stt_count)::int       as stt,
                 sum(pronounce_count)::int as pronounce,
+                sum(code_feedback_count)::int as code_feedback,
                 sum(learn_count)::int     as learn,
                 count(*) filter (where ${AI_SUM_SQL} + learn_count > 0)::int as active_users
          from public.daily_usage
@@ -201,7 +208,8 @@ export default async function handler(req: Request): Promise<Response> {
                 sum(d.writing_count)::int   as writing,
                 sum(d.speaking_count)::int  as speaking,
                 sum(d.stt_count)::int       as stt,
-                sum(d.pronounce_count)::int as pronounce
+                sum(d.pronounce_count)::int as pronounce,
+                sum(d.code_feedback_count)::int as code_feedback
          from public.daily_usage d
          left join public.profiles p on p.id = d.user_id
          where d.day >= $1
@@ -217,6 +225,7 @@ export default async function handler(req: Request): Promise<Response> {
                 count(distinct user_id) filter (where speaking_count > 0)::int  as speaking,
                 count(distinct user_id) filter (where stt_count > 0)::int       as stt,
                 count(distinct user_id) filter (where pronounce_count > 0)::int as pronounce,
+                count(distinct user_id) filter (where code_feedback_count > 0)::int as code_feedback,
                 count(distinct user_id) filter (where learn_count > 0)::int     as learn
          from public.daily_usage where day >= $1`,
         [from],
@@ -298,6 +307,7 @@ export default async function handler(req: Request): Promise<Response> {
                 sum(d.speaking_count)::int  as speaking,
                 sum(d.stt_count)::int       as stt,
                 sum(d.pronounce_count)::int as pronounce,
+                sum(d.code_feedback_count)::int as code_feedback,
                 sum(${AI_SUM_D_SQL})::int as total,
                 count(*)::int as active_days
          from public.daily_usage d
@@ -342,7 +352,15 @@ export default async function handler(req: Request): Promise<Response> {
     const profiledTotal = planCounts.free + planCounts.pro + planCounts.vip
     planCounts.free += Math.max(totalUsers - profiledTotal, 0)
 
-    const usageTotals = { chat: 0, writing: 0, speaking: 0, stt: 0, pronounce: 0, learn: 0 }
+    const usageTotals = {
+      chat: 0,
+      writing: 0,
+      speaking: 0,
+      stt: 0,
+      pronounce: 0,
+      code_feedback: 0,
+      learn: 0,
+    }
     for (const row of dailyRes.rows) {
       for (const key of Object.keys(usageTotals) as (keyof typeof usageTotals)[]) {
         usageTotals[key] += row[key]

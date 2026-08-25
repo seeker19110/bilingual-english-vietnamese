@@ -10,7 +10,10 @@ import { resolvePlan, type Plan } from './plan.js'
 import { effectivePlan } from './promo.js'
 import { getAppSettings, isSubjectEnforced } from '@dhcb/core-db/settings'
 
-export type UsageMode = 'chat' | 'writing' | 'speaking' | 'stt' | 'pronounce'
+// 'code_feedback' (PR-L5, môn Lập trình): AI đọc code góp ý / gợi ý Socratic / giải thích lỗi.
+// Cột riêng để tách được CHI PHÍ theo tính năng trên dashboard admin; hạn mức thì vẫn theo
+// đúng luật chung (Free: kho lượt chung cửa sổ trượt · Pro/VIP: tổng ngày mọi mode cộng lại).
+export type UsageMode = 'chat' | 'writing' | 'speaking' | 'stt' | 'pronounce' | 'code_feedback'
 
 // Môn học — mặc định 'english' ở MỌI lời gọi hiện tại (chỉ có 1 môn tồn tại). Khi thêm môn
 // mới (GĐ2), lời gọi của môn đó tự truyền subject khác; các lời gọi hiện có KHÔNG cần sửa.
@@ -30,6 +33,7 @@ const COLUMN: Record<UsageMode, string> = {
   speaking: 'speaking_count',
   stt: 'stt_count',
   pronounce: 'pronounce_count',
+  code_feedback: 'code_feedback_count',
 }
 
 // Quyết định 2026-07-26 (đổi cơ chế trượt 2026-07-27): gói Free dùng 1 KHO LƯỢT CHUNG cho
@@ -46,7 +50,14 @@ export const FREE_ROLLING_WINDOW_DAYS = 7
 export const FREE_WEEKLY_CAP = FREE_WEEKLY_BONUS_PER_DAY * FREE_ROLLING_WINDOW_DAYS
 
 export function isUsageMode(v: unknown): v is UsageMode {
-  return v === 'chat' || v === 'writing' || v === 'speaking' || v === 'stt' || v === 'pronounce'
+  return (
+    v === 'chat' ||
+    v === 'writing' ||
+    v === 'speaking' ||
+    v === 'stt' ||
+    v === 'pronounce' ||
+    v === 'code_feedback'
+  )
 }
 
 function today(): string {
