@@ -147,74 +147,88 @@ export async function ingestMemory(
   candidate: MemoryCandidate,
   actor = 'system',
 ): Promise<{ record: MemoryRecord; evaluation: CandidateEvaluation }> {
-  return withTransaction(pool, async (client) => {
-    const evaluation = await evaluateMemoryCandidate(client, personId, candidate)
+  return withTransaction(pool, (client) =>
+    ingestMemoryWithClient(client, personId, candidate, actor),
+  )
+}
 
-    if (evaluation.outcome === 'REJECT' || evaluation.outcome === 'ASK_USER') {
-      throw new ValidationError(`Memory candidate not accepted: ${evaluation.reason}`)
+/**
+ * Bản chạy TRONG một transaction đang mở sẵn — dùng khi việc ghi ký ức phải nguyên tử cùng thao
+ * tác khác (ví dụ Companion xác nhận một ProposedAction). `ingestMemory` ở trên chỉ là lớp bọc
+ * mở transaction rồi gọi hàm này.
+ */
+export async function ingestMemoryWithClient(
+  client: PoolClient,
+  personId: string,
+  candidate: MemoryCandidate,
+  actor = 'system',
+): Promise<{ record: MemoryRecord; evaluation: CandidateEvaluation }> {
+  const evaluation = await evaluateMemoryCandidate(client, personId, candidate)
+
+  if (evaluation.outcome === 'REJECT' || evaluation.outcome === 'ASK_USER') {
+    throw new ValidationError(`Memory candidate not accepted: ${evaluation.reason}`)
+  }
+
+  if (evaluation.outcome === 'MERGE' && evaluation.existingRecordId) {
+    // evaluateMemoryCandidate() luôn set mergedContent khi outcome='MERGE' (dòng ~131-136) —
+    // bất biến này không được TypeScript enforce (CandidateEvaluation không phải discriminated
+    // union) nên assert tường minh thay vì âm thầm rơi về candidate.content nếu bất biến vỡ.
+    if (!evaluation.mergedContent) {
+      throw new Error('mergedContent phải có giá trị khi outcome=MERGE')
     }
-
-    if (evaluation.outcome === 'MERGE' && evaluation.existingRecordId) {
-      // evaluateMemoryCandidate() luôn set mergedContent khi outcome='MERGE' (dòng ~131-136) —
-      // bất biến này không được TypeScript enforce (CandidateEvaluation không phải discriminated
-      // union) nên assert tường minh thay vì âm thầm rơi về candidate.content nếu bất biến vỡ.
-      if (!evaluation.mergedContent) {
-        throw new Error('mergedContent phải có giá trị khi outcome=MERGE')
-      }
-      // Merge into existing record
-      const { rows } = await client.query<MemoryRecordRow>(
-        `update personal.memory_records
-         set content = $1, status = 'merged', updated_at = now(), version = version + 1
-         where id = $2 and person_id = $3
-         returning ${MEMORY_COLUMNS}`,
-        [evaluation.mergedContent, evaluation.existingRecordId, personId],
-      )
-      const row = rows[0]
-      if (!row) throw new NotFoundError('Target memory record to merge was not found')
-
-      await client.query(
-        `insert into personal.memory_records_audit_log
-           (record_id, person_id, action, changes, changed_by)
-         values ($1, $2, 'MERGE', $3, $4)`,
-        [
-          row.id,
-          personId,
-          JSON.stringify({ mergedFromContent: candidate.content, newContent: row.content }),
-          actor,
-        ],
-      )
-
-      return { record: rowToMemoryRecord(row), evaluation }
-    }
-
-    // ACCEPT -> Insert new record
+    // Merge into existing record
     const { rows } = await client.query<MemoryRecordRow>(
-      `insert into personal.memory_records
-         (person_id, namespace, content, provenance, sensitivity, status, retain_until)
-       values ($1, $2, $3, $4, $5, 'accepted', $6)
+      `update personal.memory_records
+       set content = $1, status = 'merged', updated_at = now(), version = version + 1
+       where id = $2 and person_id = $3
        returning ${MEMORY_COLUMNS}`,
-      [
-        personId,
-        candidate.namespace,
-        candidate.content.trim(),
-        candidate.provenance.trim(),
-        candidate.sensitivity,
-        candidate.retainUntil ? new Date(candidate.retainUntil) : null,
-      ],
+      [evaluation.mergedContent, evaluation.existingRecordId, personId],
     )
-
     const row = rows[0]
-    if (!row) throw new Error('Failed to insert memory record')
+    if (!row) throw new NotFoundError('Target memory record to merge was not found')
 
     await client.query(
       `insert into personal.memory_records_audit_log
          (record_id, person_id, action, changes, changed_by)
-       values ($1, $2, 'INSERT', $3, $4)`,
-      [row.id, personId, JSON.stringify({ namespace: row.namespace, content: row.content }), actor],
+       values ($1, $2, 'MERGE', $3, $4)`,
+      [
+        row.id,
+        personId,
+        JSON.stringify({ mergedFromContent: candidate.content, newContent: row.content }),
+        actor,
+      ],
     )
 
     return { record: rowToMemoryRecord(row), evaluation }
-  })
+  }
+
+  // ACCEPT -> Insert new record
+  const { rows } = await client.query<MemoryRecordRow>(
+    `insert into personal.memory_records
+       (person_id, namespace, content, provenance, sensitivity, status, retain_until)
+     values ($1, $2, $3, $4, $5, 'accepted', $6)
+     returning ${MEMORY_COLUMNS}`,
+    [
+      personId,
+      candidate.namespace,
+      candidate.content.trim(),
+      candidate.provenance.trim(),
+      candidate.sensitivity,
+      candidate.retainUntil ? new Date(candidate.retainUntil) : null,
+    ],
+  )
+
+  const row = rows[0]
+  if (!row) throw new Error('Failed to insert memory record')
+
+  await client.query(
+    `insert into personal.memory_records_audit_log
+       (record_id, person_id, action, changes, changed_by)
+     values ($1, $2, 'INSERT', $3, $4)`,
+    [row.id, personId, JSON.stringify({ namespace: row.namespace, content: row.content }), actor],
+  )
+
+  return { record: rowToMemoryRecord(row), evaluation }
 }
 
 export async function getMemoryRecord(

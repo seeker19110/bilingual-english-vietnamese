@@ -199,22 +199,34 @@ async function insertFact(
  * Suy luận của model KHÔNG được tự nâng lên thành sự thật đè lời người dùng tự khai.
  */
 export async function declareFact(pool: Pool, input: DeclareFactInput): Promise<PersonalFact> {
-  return withTransaction(pool, async (client) => {
-    const current = await lockCurrentFact(client, input.personId, input.namespace, input.key)
+  return withTransaction(pool, (client) => declareFactWithClient(client, input))
+}
 
-    if (current && current.origin === 'user_declared' && input.origin === 'derived') {
-      throw new ConflictError(
-        `Fact "${input.namespace}.${input.key}" do người dùng tự khai — suy luận (derived) không được ghi đè`,
-      )
-    }
+/**
+ * Bản chạy TRONG một transaction đang mở sẵn — dùng khi việc ghi fact phải nguyên tử cùng thao
+ * tác khác (ví dụ Companion xác nhận một ProposedAction: đánh dấu 'committed' và ghi fact phải
+ * cùng sống hoặc cùng chết, không được nửa nọ nửa kia).
+ *
+ * `declareFact` ở trên chỉ là lớp bọc mở transaction rồi gọi hàm này.
+ */
+export async function declareFactWithClient(
+  client: PoolClient,
+  input: DeclareFactInput,
+): Promise<PersonalFact> {
+  const current = await lockCurrentFact(client, input.personId, input.namespace, input.key)
 
-    if (current) {
-      await client.query('update personal.personal_facts set is_current = false where id = $1', [
-        current.id,
-      ])
-    }
-    return insertFact(client, input, current?.id ?? null)
-  })
+  if (current && current.origin === 'user_declared' && input.origin === 'derived') {
+    throw new ConflictError(
+      `Fact "${input.namespace}.${input.key}" do người dùng tự khai — suy luận (derived) không được ghi đè`,
+    )
+  }
+
+  if (current) {
+    await client.query('update personal.personal_facts set is_current = false where id = $1', [
+      current.id,
+    ])
+  }
+  return insertFact(client, input, current?.id ?? null)
 }
 
 export interface ListFactsOptions {

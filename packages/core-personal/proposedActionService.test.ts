@@ -38,15 +38,47 @@ function actionRow(over: Record<string, unknown> = {}) {
   }
 }
 
+// Từ 2026-08-25, thi hành một ProposedAction là GHI THẬT xuống DB (capabilityExecutor) chứ không
+// còn giả vờ trả `{status:'ok'}`. `learning.update_goal` ghi vào personal_facts, nên mock DB phải
+// biết trả lời các câu đó — gom vào đây để mọi test khỏi lặp lại.
+function factRow(over: Record<string, unknown> = {}) {
+  return {
+    id: '33333333-3333-4333-8333-333333333333',
+    person_id: PERSON,
+    namespace: 'learning',
+    key: 'goal',
+    value: 'IELTS 7.5',
+    origin: 'observed',
+    confidence: 0.85,
+    source: { type: 'companion_conversation' },
+    sensitivity: 'personal',
+    created_at: NOW,
+    updated_at: NOW,
+    last_confirmed_at: null,
+    expires_at: null,
+    supersedes: null,
+    is_current: true,
+    ...over,
+  }
+}
+
 function mockPool(
   queryFn: (sql: string, params?: unknown[]) => Promise<{ rows?: unknown[]; rowCount?: number }>,
 ): Pool {
+  const handle = async (sql: string, params?: unknown[]) => {
+    if (sql.includes('personal.personal_facts')) {
+      // insert → trả dòng vừa ghi · select ... for update → chưa có fact cũ · update → không cần dòng
+      return sql.includes('insert into') ? { rows: [factRow()] } : { rows: [] }
+    }
+    return queryFn(sql, params)
+  }
+
   const client = {
-    query: vi.fn(queryFn),
+    query: vi.fn(handle),
     release: vi.fn(),
   }
   return {
-    query: vi.fn(queryFn),
+    query: vi.fn(handle),
     connect: vi.fn().mockResolvedValue(client),
   } as unknown as Pool
 }
@@ -516,5 +548,74 @@ describe('ProposedActionService — nhánh biên confirm/reject/list', () => {
 
     await listProposedActions(pool, PERSON, { limit: -3 })
     expect(captured?.[1]).toBe(1)
+  })
+})
+
+describe('CỔNG CỨNG: ghi hồ sơ/ký ức luôn chờ người dùng xác nhận (chốt 2026-08-25)', () => {
+  // Bất biến này bảo vệ dữ liệu về CON NGƯỜI thật: AI suy ra sai rồi tự lưu thì người dùng
+  // không có cơ hội biết mà sửa, và mọi lượt thoại sau đều bị nhiễm theo.
+  const WRITE_CAPABILITIES = [
+    { capabilityId: 'profile.update_fact', action: 'update_fact', domain: 'profile' },
+    { capabilityId: 'memory.create_record', action: 'create_record', domain: 'personal' },
+  ] as const
+
+  for (const cap of WRITE_CAPABILITIES) {
+    it(`${cap.capabilityId} vẫn 'pending' kể cả khi policy cho phép AUTOMATE`, async () => {
+      policies.resolveAuthority.mockResolvedValue('AUTOMATE')
+
+      const pool = mockPool(async (sql) => {
+        if (sql.includes('insert into personal.proposed_actions')) {
+          return {
+            rows: [
+              actionRow({
+                capability_id: cap.capabilityId,
+                action: cap.action,
+                target_domain: cap.domain,
+                status: 'pending',
+              }),
+            ],
+          }
+        }
+        return { rows: [] }
+      })
+
+      const res = await proposeAction(pool, {
+        personId: PERSON,
+        capabilityId: cap.capabilityId,
+        action: cap.action,
+        targetDomain: cap.domain,
+        payload: { rawText: 'Tôi là Kẻ Tìm Kiếm', content: 'Tôi là Kẻ Tìm Kiếm' },
+        riskLevel: 'low',
+      })
+
+      expect(res.action.status).toBe('pending')
+      expect(res.autoExecuted).toBe(false)
+
+      // Và quan trọng nhất: KHÔNG có gì được ghi xuống hồ sơ/ký ức khi chưa xác nhận.
+      const sqlCalls = vi.mocked(pool.query).mock.calls.map((c) => String(c[0]))
+      expect(sqlCalls.some((sql) => sql.includes('personal.personal_facts'))).toBe(false)
+      expect(sqlCalls.some((sql) => sql.includes('personal.memory_records'))).toBe(false)
+    })
+  }
+
+  it('thi hành thất bại → KHÔNG đánh dấu committed (không báo sai cho người dùng)', async () => {
+    policies.resolveAuthority.mockResolvedValue('AUTOMATE')
+
+    // payload thiếu nội dung → capabilityExecutor ném ValidationError
+    const pool = mockPool(async () => ({ rows: [] }))
+
+    await expect(
+      proposeAction(pool, {
+        personId: PERSON,
+        capabilityId: 'learning.update_goal',
+        action: 'update_goal',
+        targetDomain: 'learning',
+        payload: {},
+        riskLevel: 'low',
+      }),
+    ).rejects.toThrow(/Thiếu nội dung mục tiêu/)
+
+    const sqlCalls = vi.mocked(pool.query).mock.calls.map((c) => String(c[0]))
+    expect(sqlCalls.some((sql) => sql.includes("'committed'"))).toBe(false)
   })
 })

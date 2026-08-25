@@ -8,6 +8,66 @@
 
 ## Giai đoạn hiện tại
 
+### fix(companion): Bạn Đồng Hành AI có TRÍ NHỚ thật + vá lỗi báo sai "đã thực thi" (2026-08-25)
+
+Người dùng báo: _"nói chuyện 1 vòng rồi vào phiên khác hỏi không còn nhớ gì"_. Rà ra **ba** lỗ
+hổng chồng lên nhau, sửa cả ba.
+
+- **🔴 Lỗ hổng 1 — app BÁO SAI SỰ THẬT (nghiêm trọng nhất).** `proposedActionService` đánh dấu
+  hành động `committed` kèm kết quả ĐÓNG CỨNG `{status:'ok'}` mà **không hề gọi capability nào**.
+  Giao diện hiện "✅ Đã thực thi update_fact" trong khi **không có gì được ghi xuống DB**. Hai hàm
+  ghi thật (`declareFact`, `ingestMemory`) đã tồn tại nhưng chưa nơi nào trong luồng Companion gọi.
+  → File mới `capabilityExecutor.ts` thi hành THẬT. Capability chưa có đường ghi thì **ném lỗi**,
+  tuyệt đối không âm thầm báo thành công. `dictionary.lookup` trả `no_side_effect` thay vì 'ok'.
+- **🔴 Lỗ hổng 2 — hội thoại không được lưu ở đâu cả.** Không bảng nào chứa lượt thoại Companion.
+  → Migration `0067` + `companionMessageService.ts` + `GET /api/companion` (KHÔNG đếm lượt vì
+  không gọi model AI) + nạp lại khi mở trang.
+- **🔴 Lỗ hổng 3 — ngay trong một phiên AI cũng không thấy tin trước.** Client chỉ gửi một câu,
+  server dựng `messages = [1 tin]`. → Nạp 10 lượt gần nhất vào prompt, cắt mỗi tin 1500 ký tự để
+  không ăn hết ngân sách token.
+- **CỔNG CỨNG: ghi hồ sơ/ký ức LUÔN chờ người dùng bấm xác nhận** (chốt của người dùng
+  2026-08-25) — `CONFIRMATION_REQUIRED_CAPABILITIES`, đặt TRƯỚC mọi điều kiện khác nên không
+  Personal Policy nào lách qua được, kể cả `AUTOMATE`. Có test khoá bất biến này.
+- **Nguyên tử:** tách `declareFactWithClient`/`ingestMemoryWithClient` (bản chạy trong transaction
+  có sẵn) để việc đổi trạng thái hành động và việc ghi dữ liệu **cùng sống hoặc cùng chết** — thi
+  hành lỗi ⇒ rollback ⇒ hành động vẫn `pending`, không bao giờ lặp lại đúng lỗi vừa vá. API công
+  khai `declareFact`/`ingestMemory` giữ nguyên (chỉ thành lớp bọc).
+- **Trí nhớ là tiện ích, không phải điều kiện để trả lời:** lỗi đọc/ghi lịch sử đều bị nuốt, người
+  dùng vẫn nhận được câu trả lời. Có test cho cả hai nhánh.
+- **Kiểm chứng:** 5539 unit test xanh (445 file; +45 test mới). Build · typecheck · lint (0 cảnh
+  báo) · format xanh. Initial JS **123,34 kB / 140 kB**.
+- **Còn lại:** `learning.update_goal` tạm lưu thành fact `learning.goal` (Context Engine đọc facts
+  nên AI vẫn nhớ thật), chưa nối vào Goal Engine `life_goals` — `detail.storedAs` ghi rõ chỗ lưu
+  tạm để sau dời. Migration `0067` tự áp khi deploy (`scripts/deploy.sh`).
+
+### feat(companion): câu hỏi tick chọn trong Bạn Đồng Hành AI (2026-08-25)
+
+Người dùng trả lời câu hỏi khảo sát của Companion bằng cách **bấm tick**, thay vì gõ tay như trước.
+
+- **Vấn đề:** Companion hay hỏi khảo sát bản thân bằng chữ thuần ("Bạn cảm thấy hạnh phúc nhất
+  khi làm gì? (công việc, học tập, sáng tạo...)") — người dùng phải gõ tay, chậm trên điện thoại
+  và dữ liệu thu về không chuẩn hoá được.
+- **Cách làm — theo đúng khuôn `proposedActions` đã có:** LLM trả về **dữ liệu có cấu trúc** bên
+  cạnh lời văn. Contract mới `packages/core-contracts/interactiveQuestion.ts`: LLM nối một khối
+  ` ```dhcb-questions ` (JSON) vào cuối câu trả lời; `extractInteractiveQuestions()` gỡ khối
+  đó ra khỏi lời văn và validate bằng Zod. Ràng buộc: tối đa **5 câu/lượt** (khớp luồng người mới
+  "5 câu ~90 giây"), mỗi câu **2–8 lựa chọn**, `multi` (nhiều/một), `allowFreeText` (ô "Khác…").
+- **NGUYÊN TẮC BẤT BIẾN — hỏng thì về hành vi cũ:** LLM là nguồn KHÔNG đáng tin, nên mọi nhánh
+  (không có khối · JSON sai cú pháp · sai schema · id trùng nhau) đều rơi về **hiện chữ như cũ**,
+  không bao giờ ném lỗi. Riêng khi JSON sai schema, khối vẫn bị GỠ để người dùng khỏi đọc JSON thô.
+- **Điểm chạm:** `companionRuntime.ts` (nối hướng dẫn vào system prompt + trường mới
+  `interactiveQuestions` trong `CompanionResponse` + sự kiện SSE mới `questions` — chỉ phát khi có,
+  nên client cũ bỏ qua an toàn) · `companionApi.ts` (`onQuestions`) · `InteractiveQuestionCard.tsx`
+  - `interactiveAnswer.ts` (giao diện tick, vùng chạm ≥ 44px, checkbox/radio thật + `fieldset`).
+- **Câu trả lời đi vào luồng chat SẴN CÓ:** bấm "Gửi câu trả lời" gom lựa chọn thành một tin nhắn
+  tiếng Việt ("Câu hỏi → đáp án A, đáp án B") rồi gọi `handleSend()` như tin nhắn thường — cơ chế
+  ghi nhận hồ sơ (`update_fact`) và schema DB **không phải sửa gì**.
+- **Kiểm chứng:** 5507 unit test xanh (443 file; +25 test mới: 12 contract, 9 UI/gom câu trả lời,
+  4 runtime/stream). Build · typecheck · lint (0 cảnh báo) · format xanh. Initial JS
+  **123,36 kB / 140 kB** (không đổi — component nằm trong chunk lazy của trang Companion).
+- **Còn lại:** chưa chạy `eval:tutor` cho thay đổi system prompt của Companion (cần key AI thật —
+  thuộc nợ kỹ thuật #5 vốn đã mở); prompt của gia sư tiếng Anh (`/api/agent`) KHÔNG bị đụng tới.
+
 ### feat(programming): PR-L7e — Fetch API giả lập + P3-U7 (2026-08-25)
 
 Mạch Web của bậc P3 HOÀN TẤT: HTML → CSS → DOM → **fetch + render danh sách (U7)**.
