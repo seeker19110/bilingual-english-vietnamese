@@ -258,7 +258,7 @@ export async function exportPersonData(pool: Pool, personId: string): Promise<Pe
     pool
       .query<WorkRow>(
         `select id, 'project' as record_type, created_at::text
-         from work.projects where person_id = $1`,
+         from worklife.projects where person_id = $1`,
         [personId],
       )
       .catch(() => ({ rows: [] as WorkRow[] })),
@@ -274,7 +274,7 @@ export async function exportPersonData(pool: Pool, personId: string): Promise<Pe
     pool
       .query<LifeRow>(
         `select id, 'plan' as record_type, created_at::text
-         from life.plans where person_id = $1`,
+         from worklife.plans where person_id = $1`,
         [personId],
       )
       .catch(() => ({ rows: [] as LifeRow[] })),
@@ -421,9 +421,9 @@ export async function erasePersonData(
 
     // Work
     totalDeleted += await client
-      .query('DELETE FROM work.projects WHERE person_id = $1', [personId])
+      .query('DELETE FROM worklife.projects WHERE person_id = $1', [personId])
       .then((r) => {
-        if ((r.rowCount ?? 0) > 0) schemasCleared.push('work.projects')
+        if ((r.rowCount ?? 0) > 0) schemasCleared.push('worklife.projects')
         return r.rowCount ?? 0
       })
       .catch(() => 0)
@@ -439,30 +439,30 @@ export async function erasePersonData(
 
     // Life
     totalDeleted += await client
-      .query('DELETE FROM life.plans WHERE person_id = $1', [personId])
+      .query('DELETE FROM worklife.plans WHERE person_id = $1', [personId])
       .then((r) => {
-        if ((r.rowCount ?? 0) > 0) schemasCleared.push('life.plans')
+        if ((r.rowCount ?? 0) > 0) schemasCleared.push('worklife.plans')
         return r.rowCount ?? 0
       })
       .catch(() => 0)
     totalDeleted += await client
-      .query('DELETE FROM life.habits WHERE person_id = $1', [personId])
+      .query('DELETE FROM worklife.habits WHERE person_id = $1', [personId])
       .then((r) => {
-        if ((r.rowCount ?? 0) > 0) schemasCleared.push('life.habits')
+        if ((r.rowCount ?? 0) > 0) schemasCleared.push('worklife.habits')
         return r.rowCount ?? 0
       })
       .catch(() => 0)
     totalDeleted += await client
-      .query('DELETE FROM life.wellbeing_checks WHERE person_id = $1', [personId])
+      .query('DELETE FROM worklife.wellbeing_checks WHERE person_id = $1', [personId])
       .then((r) => {
-        if ((r.rowCount ?? 0) > 0) schemasCleared.push('life.wellbeing_checks')
+        if ((r.rowCount ?? 0) > 0) schemasCleared.push('worklife.wellbeing_checks')
         return r.rowCount ?? 0
       })
       .catch(() => 0)
     totalDeleted += await client
-      .query('DELETE FROM life.growth_milestones WHERE person_id = $1', [personId])
+      .query('DELETE FROM worklife.growth_milestones WHERE person_id = $1', [personId])
       .then((r) => {
-        if ((r.rowCount ?? 0) > 0) schemasCleared.push('life.growth_milestones')
+        if ((r.rowCount ?? 0) > 0) schemasCleared.push('worklife.growth_milestones')
         return r.rowCount ?? 0
       })
       .catch(() => 0)

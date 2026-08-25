@@ -175,7 +175,7 @@ export async function createLifePlan(
 ): Promise<LifePlan> {
   const id = randomUUID()
   const res = await pool.query<PlanRow>(
-    `insert into life.plans (id, person_id, title, plan_type, period_start, period_end, status, version)
+    `insert into worklife.plans (id, person_id, title, plan_type, period_start, period_end, status, version)
      values ($1, $2, $3, $4, $5, $6, 'draft', 1) returning *`,
     [id, personId, input.title, input.planType, input.periodStart, input.periodEnd],
   )
@@ -188,7 +188,7 @@ export async function listLifePlans(
   status?: string,
 ): Promise<LifePlan[]> {
   const params: unknown[] = [personId]
-  let q = `select * from life.plans where person_id = $1`
+  let q = `select * from worklife.plans where person_id = $1`
   if (status) {
     params.push(status)
     q += ` and status = $2`
@@ -206,12 +206,12 @@ export async function updateLifePlanStatus(
 ): Promise<LifePlan> {
   return await withTransaction(pool, async (client) => {
     const ex = await client.query<PlanRow>(
-      `select id from life.plans where id=$1 and person_id=$2`,
+      `select id from worklife.plans where id=$1 and person_id=$2`,
       [planId, personId],
     )
     if (!ex.rows[0]) throw new NotFoundError('Không tìm thấy LifePlan')
     const res = await client.query<PlanRow>(
-      `update life.plans set status=$1, version=version+1, updated_at=now() where id=$2 and person_id=$3 returning *`,
+      `update worklife.plans set status=$1, version=version+1, updated_at=now() where id=$2 and person_id=$3 returning *`,
       [status, planId, personId],
     )
     return toPlan(res.rows[0]!)
@@ -231,7 +231,7 @@ export async function createHabit(
 ): Promise<Habit> {
   const id = randomUUID()
   const res = await pool.query<HabitRow>(
-    `insert into life.habits (id, person_id, title, habit_type, frequency, target_count, version)
+    `insert into worklife.habits (id, person_id, title, habit_type, frequency, target_count, version)
      values ($1, $2, $3, $4, $5, $6, 1) returning *`,
     [id, personId, input.title, input.habitType, input.frequency, input.targetCount ?? 1],
   )
@@ -244,7 +244,7 @@ export async function listHabits(
   isActive?: boolean,
 ): Promise<Habit[]> {
   const params: unknown[] = [personId]
-  let q = `select * from life.habits where person_id=$1`
+  let q = `select * from worklife.habits where person_id=$1`
   if (isActive !== undefined) {
     params.push(isActive)
     q += ` and is_active=$2`
@@ -266,14 +266,14 @@ export async function logHabit(
 ): Promise<HabitLog> {
   return await withTransaction(pool, async (client) => {
     const ex = await client.query<HabitRow>(
-      `select * from life.habits where id=$1 and person_id=$2`,
+      `select * from worklife.habits where id=$1 and person_id=$2`,
       [input.habitId, personId],
     )
     if (!ex.rows[0]) throw new NotFoundError('Không tìm thấy Habit')
 
     const logId = randomUUID()
     const res = await client.query<HabitLogRow>(
-      `insert into life.habit_logs (id, habit_id, person_id, logged_at, count, note)
+      `insert into worklife.habit_logs (id, habit_id, person_id, logged_at, count, note)
        values ($1, $2, $3, $4, $5, $6) returning *`,
       [
         logId,
@@ -288,7 +288,7 @@ export async function logHabit(
     const newStreak = ex.rows[0]!.current_streak + 1
     const bestStreak = Math.max(newStreak, ex.rows[0]!.best_streak)
     await client.query(
-      `update life.habits set current_streak=$1, best_streak=$2, version=version+1, updated_at=now() where id=$3`,
+      `update worklife.habits set current_streak=$1, best_streak=$2, version=version+1, updated_at=now() where id=$3`,
       [newStreak, bestStreak, input.habitId],
     )
 
@@ -309,7 +309,7 @@ export async function recordWellbeingCheck(
 ): Promise<WellbeingCheck> {
   const id = randomUUID()
   const res = await pool.query<WellbeingRow>(
-    `insert into life.wellbeing_checks (id, person_id, mood_score, energy_score, stress_score, notes)
+    `insert into worklife.wellbeing_checks (id, person_id, mood_score, energy_score, stress_score, notes)
      values ($1, $2, $3, $4, $5, $6) returning *`,
     [id, personId, input.moodScore, input.energyScore, input.stressScore, input.notes ?? null],
   )
@@ -322,7 +322,7 @@ export async function listWellbeingChecks(
   limit = 30,
 ): Promise<WellbeingCheck[]> {
   const res = await pool.query<WellbeingRow>(
-    `select * from life.wellbeing_checks where person_id=$1 order by checked_at desc limit $2`,
+    `select * from worklife.wellbeing_checks where person_id=$1 order by checked_at desc limit $2`,
     [personId, limit],
   )
   return res.rows.map(toWellbeing)
@@ -341,7 +341,7 @@ export async function createGrowthMilestone(
 ): Promise<GrowthMilestone> {
   const id = randomUUID()
   const res = await pool.query<GrowthRow>(
-    `insert into life.growth_milestones (id, person_id, area, title, description, achieved_at)
+    `insert into worklife.growth_milestones (id, person_id, area, title, description, achieved_at)
      values ($1, $2, $3, $4, $5, $6) returning *`,
     [id, personId, input.area, input.title, input.description ?? null, input.achievedAt ?? null],
   )
@@ -354,7 +354,7 @@ export async function listGrowthMilestones(
   area?: GrowthArea,
 ): Promise<GrowthMilestone[]> {
   const params: unknown[] = [personId]
-  let q = `select * from life.growth_milestones where person_id=$1`
+  let q = `select * from worklife.growth_milestones where person_id=$1`
   if (area) {
     params.push(area)
     q += ` and area=$2`

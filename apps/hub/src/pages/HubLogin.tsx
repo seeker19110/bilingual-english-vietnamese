@@ -31,7 +31,10 @@ import {
 } from '@core/clientAuth'
 import { ThemeToggle } from '@core/ThemeToggle'
 
+// Đích mặc định sau đăng nhập = app nền tảng (không phải riêng môn tiếng Anh).
+// Tên biến mới VITE_APP_URL; vẫn đọc VITE_ENGLISH_APP_URL để không phải sửa .env trên VPS.
 const DEFAULT_REDIRECT_URL =
+  (import.meta.env.VITE_APP_URL as string | undefined) ||
   (import.meta.env.VITE_ENGLISH_APP_URL as string | undefined) ||
   'https://en-vi.donghanhcungban.org/'
 
@@ -122,7 +125,7 @@ export default function HubLogin() {
           return
         }
       }
-      // Chuyển hướng tới trang đích an toàn (subdomain môn học)
+      // Chuyển hướng tới trang đích an toàn (subdomain của nền tảng)
       window.location.href = targetRedirectUrl
     } catch {
       setError('Không thể kết nối đến máy chủ. Vui lòng thử lại.')
@@ -261,8 +264,8 @@ export default function HubLogin() {
         <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
           Đồng hành cùng bạn
         </h1>
-        <p className="text-zinc-400 text-xs sm:text-sm mt-1">
-          Cổng đăng nhập tập trung toàn hệ sinh thái (SSO)
+        <p className="text-zinc-300 text-xs sm:text-sm mt-1">
+          Một tài khoản cho cả nền tảng — năm trụ và mọi môn học
         </p>
       </div>
 
@@ -303,7 +306,7 @@ export default function HubLogin() {
                 href={targetRedirectUrl}
                 className="w-full inline-flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-400 text-zinc-950 font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-accent-500/20 active:scale-[0.98]"
               >
-                <span>Tiếp tục vào môn học</span>
+                <span>Tiếp tục vào nền tảng</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
 

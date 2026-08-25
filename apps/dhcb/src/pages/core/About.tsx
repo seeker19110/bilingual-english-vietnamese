@@ -2,6 +2,11 @@ import { useNavigate } from 'react-router-dom'
 import {
   BookOpen,
   Target,
+  Compass,
+  Briefcase,
+  Rocket,
+  GraduationCap,
+  Bot,
   BookMarked,
   MessageCircle,
   Mic,
@@ -18,6 +23,70 @@ import PageHeader from '../../components/PageHeader'
 import { useLang } from '../../context/useLang'
 
 type IconType = typeof BookOpen
+
+// Trang /gioi-thieu — giới thiệu NỀN TẢNG trước, rồi mới tới môn Tiếng Anh.
+// DHCB là nền tảng đồng hành cá nhân 4 trụ (Học tập · Sự nghiệp · Khởi nghiệp · Công việc &
+// Đời sống — Work và Life gộp làm một, xem migration 0066) + Companion "Bạn Đồng Hành";
+// Tiếng Anh chỉ là MỘT MÔN trong trụ Học tập —
+// môn đầu tiên và chín nhất. Xem `docs/research/dac-ta-kien-truc-platform-dhcb-2026-08-23.md`.
+
+interface Pillar {
+  icon: IconType
+  path: string
+  titleVi: string
+  titleEn: string
+  descVi: string
+  descEn: string
+}
+
+// Mỗi trụ trỏ tới route CÓ THẬT trong App.tsx — không giới thiệu trang chưa tồn tại.
+const PILLARS: Pillar[] = [
+  {
+    icon: GraduationCap,
+    path: '/mon-hoc',
+    titleVi: 'Học tập',
+    titleEn: 'Learning',
+    descVi: 'Phòng học đa môn: Tiếng Anh, Lập trình — các môn khác đang được xây cùng một khuôn.',
+    descEn: 'Multi-subject study room: English, Programming — more subjects are being built.',
+  },
+  {
+    icon: Compass,
+    path: '/su-nghiep',
+    titleVi: 'Sự nghiệp',
+    titleEn: 'Career',
+    descVi:
+      'Tám họ nghề — kỹ thuật–CNTT, y tế–chăm sóc, giáo dục, kinh doanh–bán hàng, tài chính–kế toán–pháp lý, sáng tạo–truyền thông, sản xuất–kỹ thuật viên, dịch vụ công–hành chính — mỗi họ có cửa sổ then chốt và nhánh chuyển hướng riêng.',
+    descEn:
+      'Eight job families — engineering/IT, healthcare, education, sales, finance/legal, creative/media, manufacturing, public service — each with its own key window and natural pivots.',
+  },
+  {
+    icon: Rocket,
+    path: '/khoi-nghiep',
+    titleVi: 'Khởi nghiệp',
+    titleEn: 'Startup',
+    descVi: 'Dựng mô hình kinh doanh, ghi rõ giả định và tìm cách kiểm chứng rẻ nhất.',
+    descEn: 'Sketch a business model, write down assumptions, find the cheapest way to test them.',
+  },
+  {
+    icon: Briefcase,
+    path: '/cong-viec-cuoc-song',
+    titleVi: 'Công việc & Đời sống',
+    titleEn: 'Work & Life',
+    descVi:
+      'Một guồng, không phải hai: dự án và việc cần làm nằm cạnh thói quen, sức khoẻ, kế hoạch — vì chúng tiêu cùng một quỹ thời gian.',
+    descEn:
+      'One rhythm, not two: projects and tasks sit next to habits, wellbeing and plans — they draw on the same hours.',
+  },
+  {
+    icon: Bot,
+    path: '/ban-dong-hanh',
+    titleVi: 'Bạn Đồng Hành',
+    titleEn: 'Your Companion',
+    descVi: 'Một người bạn AI duy nhất, hiểu ngữ cảnh của bạn ở cả bốn trụ. Bạn chốt, AI đề xuất.',
+    descEn:
+      'One AI companion that knows your context across all four pillars. You decide, it suggests.',
+  },
+] as const
 
 interface Feature {
   icon: IconType
@@ -157,21 +226,54 @@ export default function About() {
       <Layout />
       <main className="max-w-2xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
         <PageHeader
-          title={isA ? 'Giới thiệu Gia sư AI' : 'About AI Tutor'}
+          title={isA ? 'Giới thiệu nền tảng' : 'About the platform'}
           subtitle={
             isA
-              ? 'Gia sư ngôn ngữ AI hai chiều Việt ⇄ Anh — học mọi lúc, giá rẻ, sát đời sống.'
-              : 'A two-way Vietnamese ⇄ English AI tutor — learn anytime, affordable, close to real life.'
+              ? 'Đồng hành cùng bạn — nền tảng đồng hành cá nhân gồm bốn trụ, cùng một người bạn AI hiểu ngữ cảnh cả bốn.'
+              : 'Đồng hành cùng bạn — a personal companion platform of four pillars, with one AI companion that understands all four.'
           }
         />
 
-        {/* Điểm khác biệt */}
+        {/* Nền tảng gồm những gì — đặt TRƯỚC phần môn Tiếng Anh, vì đây là trang giới thiệu
+            nền tảng chứ không phải trang giới thiệu một môn. */}
+        <section className="animate-fade-in">
+          <h2 className="text-lg font-bold text-white mb-1">
+            {isA ? 'Nền tảng gồm những gì' : 'What the platform covers'}
+          </h2>
+          <p className="text-xs text-zinc-300 mb-3">
+            {isA
+              ? 'Bốn trụ nằm chung một hồ sơ, nên việc bạn làm ở mảng này được tính đến khi gợi ý cho mảng kia.'
+              : 'Four pillars share one profile, so what you do in one area informs the suggestions in another.'}
+          </p>
+          <div className="grid sm:grid-cols-2 gap-3">
+            {PILLARS.map((p) => (
+              <button
+                key={p.titleVi}
+                type="button"
+                onClick={() => nav(p.path)}
+                className="tap-44 text-left bg-zinc-900/80 border border-zinc-800/80 hover:border-accent-500/40 rounded-2xl p-4 flex items-start gap-3 transition"
+              >
+                <div className="w-10 h-10 rounded-xl bg-accent-500/15 flex items-center justify-center shrink-0">
+                  <p.icon className="w-5 h-5 text-accent-400" aria-hidden="true" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-white">{isA ? p.titleVi : p.titleEn}</p>
+                  <p className="text-xs text-zinc-300 mt-0.5">{isA ? p.descVi : p.descEn}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* Môn Tiếng Anh — điểm khác biệt riêng của môn này */}
         <section className="rounded-2xl border border-accent-500/30 bg-accent-500/5 p-4 animate-fade-in">
           <div className="flex items-start gap-3">
             <Volume2 className="mt-0.5 h-5 w-5 shrink-0 text-accent-400" aria-hidden="true" />
             <p className="text-sm text-zinc-300">
               <strong className="text-white">
-                {isA ? 'Điểm khác biệt: ' : "What's different: "}
+                {isA
+                  ? 'Môn Tiếng Anh — điểm khác biệt: '
+                  : "The English subject — what's different: "}
               </strong>
               {isA ? (
                 <>
@@ -199,7 +301,7 @@ export default function About() {
         {/* Tính năng chính */}
         <section className="animate-fade-in">
           <h2 className="text-lg font-bold text-white mb-3">
-            {isA ? 'Tính năng chính' : 'Key features'}
+            {isA ? 'Môn Tiếng Anh có gì' : 'Inside the English subject'}
           </h2>
           <div className="grid sm:grid-cols-2 gap-3">
             {FEATURES.map((f) => (
@@ -212,7 +314,7 @@ export default function About() {
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-white">{isA ? f.titleVi : f.titleEn}</p>
-                  <p className="text-xs text-zinc-400 mt-0.5">{isA ? f.descVi : f.descEn}</p>
+                  <p className="text-xs text-zinc-300 mt-0.5">{isA ? f.descVi : f.descEn}</p>
                 </div>
               </div>
             ))}
@@ -223,7 +325,7 @@ export default function About() {
         <section className="animate-fade-in">
           <h2 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
             <Brain className="w-5 h-5 text-accent-400" aria-hidden="true" />
-            {isA ? 'Học sao cho hiệu quả' : 'Tips for effective learning'}
+            {isA ? 'Học ngoại ngữ sao cho hiệu quả' : 'Tips for effective language learning'}
           </h2>
           <div className="space-y-3">
             {TIPS.map((tip, i) => (
@@ -237,7 +339,7 @@ export default function About() {
                   </span>
                   {isA ? tip.titleVi : tip.titleEn}
                 </p>
-                <p className="text-xs text-zinc-400 mt-1.5 pl-7">{isA ? tip.bodyVi : tip.bodyEn}</p>
+                <p className="text-xs text-zinc-300 mt-1.5 pl-7">{isA ? tip.bodyVi : tip.bodyEn}</p>
               </div>
             ))}
           </div>
@@ -251,7 +353,7 @@ export default function About() {
           <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center shrink-0">
             <Award className="w-5 h-5 text-amber-300" aria-hidden="true" />
           </div>
-          <div className="text-xs text-zinc-400">
+          <div className="text-xs text-zinc-300">
             <p>
               {isA
                 ? 'Càng học đều, càng kiếm được nhiều huy hiệu và ngày dùng gói Pro/VIP miễn phí — xem chi tiết ở mục Nhiệm vụ trong Hồ sơ.'
@@ -282,7 +384,7 @@ export default function About() {
           className="tap-44 w-full flex items-center justify-center gap-2 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold py-3.5 transition active:scale-[0.99]"
         >
           <Sparkles className="w-4 h-4" aria-hidden="true" />
-          {isA ? 'Bắt đầu học ngay' : 'Start learning now'}
+          {isA ? 'Về trang chủ nền tảng' : 'Back to the platform home'}
         </button>
       </main>
     </div>

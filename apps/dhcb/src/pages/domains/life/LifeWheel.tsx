@@ -146,7 +146,7 @@ export default function LifeWheel() {
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout onBack={() => nav('/cuoc-song')} />
+      <Layout onBack={() => nav('/cong-viec-cuoc-song?muc=doi-song')} />
 
       <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
         <PageHeader

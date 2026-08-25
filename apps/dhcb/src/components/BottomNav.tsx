@@ -57,6 +57,7 @@ const PROFILE_PATHS = [
   '/cong-viec-cua-toi',
   '/hoc-cong-viec',
   '/cong-viec',
+  '/cong-viec-cuoc-song',
   '/work',
   '/toi-khoi-nghiep',
   '/hoc-khoi-nghiep',
