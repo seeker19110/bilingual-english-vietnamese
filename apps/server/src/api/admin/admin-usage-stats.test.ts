@@ -126,6 +126,7 @@ describe('GET /api/admin-usage-stats', () => {
           speaking: 20,
           stt: 30,
           pronounce: 40,
+          code_feedback: 5,
           learn: 500,
           active_users: 7,
         },
@@ -135,7 +136,12 @@ describe('GET /api/admin-usage-stats', () => {
     const body = (await (await handler(makeRequest())).json()) as Body
 
     const expectedUsd =
-      100 * unit.chat + 10 * unit.writing + 20 * unit.speaking + 30 * unit.stt + 40 * unit.pronounce
+      100 * unit.chat +
+      10 * unit.writing +
+      20 * unit.speaking +
+      30 * unit.stt +
+      40 * unit.pronounce +
+      5 * unit.code_feedback
     expect(body.cost.totalUsd).toBeCloseTo(expectedUsd, 8)
     expect(body.cost.totalVnd).toBeCloseTo(expectedUsd * rate, 4)
     // learn_count KHÔNG được tính vào chi phí AI (học từ vựng chạy ở client).

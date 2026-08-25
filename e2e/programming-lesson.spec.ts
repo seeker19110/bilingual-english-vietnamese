@@ -83,3 +83,50 @@ test('bài số ngẫu nhiên: code mẫu đạt hết test-case trong Pyodide (
   await page.getByRole('button', { name: 'Chấm bài' }).click()
   await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 120_000 })
 })
+
+// ⑥b AI đồng hành (PR-L5) — chặn `/api/programming/feedback` để KHÔNG gọi model thật trong CI.
+// Thứ cần chốt ở đây là hợp đồng UI: bậc gợi ý mở dần theo bậc SERVER trả về, nút "nhờ xem
+// code" chỉ xuất hiện sau khi đạt bài, và lời nhắn hết lượt hiện nguyên văn cho học viên.
+test('gợi ý Socratic mở dần theo bậc server trả về; hết lượt hiện đúng lời nhắn', async ({
+  page,
+}) => {
+  await mockLogin(page, 'vi', 'dark-blue')
+
+  let call = 0
+  await page.route('**/api/programming/feedback', async (route) => {
+    call += 1
+    if (call === 1) {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          text: 'Đề bài yêu cầu in ra gì nhỉ?',
+          kind: 'socratic_hint',
+          hintLevel: 1,
+        }),
+      })
+      return
+    }
+    await route.fulfill({
+      status: 429,
+      contentType: 'application/json',
+      body: JSON.stringify({ error: 'Hết lượt rồi. Học thêm bài để có thêm lượt nhé!' }),
+    })
+  })
+
+  await page.goto('/lap-trinh/bai-hoc/p1-u4-l1', { waitUntil: 'domcontentloaded' })
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+
+  // Chưa đạt bài → KHÔNG được mời nhờ AI xem lại code (đó là đường vòng lấy lời giải).
+  await expect(page.getByRole('button', { name: 'Nhờ AI xem lại code' })).toHaveCount(0)
+
+  const hint = page.getByRole('button', { name: /Gợi ý bậc/ })
+  await expect(hint).toContainText('bậc 1/3')
+  await hint.click()
+  await expect(page.getByText('Đề bài yêu cầu in ra gì nhỉ?')).toBeVisible()
+  await expect(hint).toContainText('bậc 2/3')
+
+  // Lượt sau hết lượt → hiện NGUYÊN VĂN lời nhắn của server, không nuốt thành lỗi chung.
+  await hint.click()
+  await expect(page.getByText('Hết lượt rồi. Học thêm bài để có thêm lượt nhé!')).toBeVisible()
+})

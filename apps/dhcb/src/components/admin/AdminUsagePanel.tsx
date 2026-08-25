@@ -15,7 +15,7 @@ import {
 } from 'lucide-react'
 import { getAuthHeader } from '@core/authHeader'
 
-type Mode = 'chat' | 'writing' | 'speaking' | 'stt' | 'pronounce'
+type Mode = 'chat' | 'writing' | 'speaking' | 'stt' | 'pronounce' | 'code_feedback'
 
 interface UsageDay {
   day: string
@@ -24,6 +24,7 @@ interface UsageDay {
   speaking: number
   stt: number
   pronounce: number
+  code_feedback: number
   learn: number
   active_users: number
 }
@@ -100,6 +101,7 @@ interface Stats {
     speaking: number
     stt: number
     pronounce: number
+    code_feedback: number
   }[]
 }
 
@@ -109,6 +111,7 @@ const MODE_LABELS: Record<Mode, string> = {
   speaking: 'Luyện nói',
   stt: 'Nhận dạng giọng (STT)',
   pronounce: 'Chấm phát âm',
+  code_feedback: 'AI xem code (Lập trình)',
 }
 
 const CYCLE_LABELS: Record<string, string> = {
@@ -569,7 +572,16 @@ export default function AdminUsagePanel() {
                   </thead>
                   <tbody>
                     {stats.topUsers.map((u) => {
-                      const costUsd = (['chat', 'writing', 'speaking', 'stt', 'pronounce'] as const)
+                      const costUsd = (
+                        [
+                          'chat',
+                          'writing',
+                          'speaking',
+                          'stt',
+                          'pronounce',
+                          'code_feedback',
+                        ] as const
+                      )
                         .map((m) => u[m] * stats.cost.unitCostsUsd[m])
                         .reduce((a, b) => a + b, 0)
                       return (
