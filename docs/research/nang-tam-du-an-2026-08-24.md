@@ -151,12 +151,19 @@ dùng, và có ít nhất 5 người dùng thật quay lại lần thứ hai.
 - **PR 3.2 — Chạy k6 lần đầu tiên**, dù chỉ ở mức 200–500 người đồng thời. Mục đích không phải để
   scale, mà để **biết con số thật** — thay cho 993 dòng tài liệu đang dựa hoàn toàn vào ước lượng.
 
-**✅ [2026-08-24] PR 3.1 đã làm xong. PR 3.2 (chạy k6 lần đầu) ĐÃ CHẠY THẬT trên production** —
-100 VU, 4 phút 30 giây. Kết quả `/api/health` (không rate-limit, không cần đăng nhập): **100%
-thành công, p95 = 293ms**, 0 lỗi 500 ở mọi route. `http_req_failed` báo đỏ 50% ban đầu gây hiểu
-lầm — điều tra bằng `nginx access.log` cho thấy đây là 2 lỗi PHƯƠNG PHÁP TEST (rate-limit theo
-IP khi test từ 1 máy + kịch bản gọi nhầm route cần đăng nhập), không phải server quá tải. Chi
-tiết + bản sửa kịch bản: `PROGRESS.md` mục "PR 3.2 — lần chạy k6 baseline ĐẦU TIÊN".
+**✅ [2026-08-24] PR 3.1 đã làm xong. PR 3.2 (chạy k6) ĐÃ LEO THANG THẬT 100 → 500 → 2.000 VU trên
+production.** 100 VU và 500 VU: sạch tuyệt đối (100% thành công, p95 125–293ms, 0 lỗi 500). 2.000
+VU (2 lần độc lập, qua Cloudflare): p95 ~1,3s, vẫn 0 lỗi thật — `http_req_failed` báo cao chỉ vì
+giới hạn 30 req/phút/IP của `/api/app-settings`, một IP duy nhất bắn 2.000 VU chạm giới hạn đó
+ngay lập tức, không phải server yếu.
+
+**Có một giả thuyết SAI giữa chừng, đã tự đính chính bằng thực nghiệm (không giấu):** nghi ngờ
+Cloudflare đang chặn request (thấy IP Cloudflare trong log lỗi) — kiểm chứng bằng cách bỏ qua hẳn
+Cloudflare (trỏ `/etc/hosts` domain về `127.0.0.1`, đánh thẳng vào Nginx trên VPS) thì **kết quả
+TỆ HƠN HẲN**: p95 nhảy lên 5,62s, xuất hiện lỗi thật lần đầu (1,25%), thông lượng giảm. Kết luận
+đúng: **Cloudflare không chặn mà đang giúp** — gộp kết nối client giảm tải bắt tay TLS trực tiếp
+cho Nginx. Số liệu đáng tin là **đo qua Cloudflare** (đường đi thật của người dùng thật). Chi tiết
+đầy đủ: `PROGRESS.md` mục "leo thang k6 100→500→2.000 VU trên production".
 
 ---
 
@@ -193,8 +200,8 @@ thuật còn mở":
 2. **Khoá gốc mã hoá dữ liệu người dùng (`USER_DATA_MASTER_KEY`) chưa chốt nơi cất.** Hạ tầng mã hoá
    đã viết xong và có 18 test, nhưng đang "ngủ". Lưu ý: bản dump PostgreSQL và backup trên Cloudflare
    R2 hiện **vẫn là văn bản thuần**.
-3. **✅ ĐÃ ĐÓNG — PR 3.2 chạy k6 lần đầu, script đã sửa.** Kết quả và bản sửa kịch bản (route
-   `/api/dictionary` cần đăng nhập bị dùng nhầm, đã đổi sang `/api/app-settings`) xem
-   `PROGRESS.md`. **Còn lại (không chặn, chỉ là bước tiếp theo):** chạy lại kịch bản đã sửa để
-   có số đo `/api/app-settings` sạch, rồi tăng dần `VU_TARGET` (500 → 2.000…) theo đúng lộ trình
+3. **✅ ĐÃ ĐÓNG HẲN — PR 3.2 chạy k6, leo thang tới 2.000 VU, kết luận Cloudflare không phải nút
+   thắt.** Chi tiết đầy đủ (bao gồm giả thuyết sai đã đính chính) xem `PROGRESS.md`. Dừng leo
+   thang ở 2.000 VU vì thử nghiệm 1-IP không còn cho tín hiệu đáng tin ở mức cao hơn — muốn đo
+   tiếp cần nguồn tải nhiều IP thật, ngoài phạm vi hiện tại.
    thận trọng đã ghi trong chính file kịch bản.
