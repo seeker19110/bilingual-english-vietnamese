@@ -37,6 +37,34 @@ const PYODIDE_FILES = [
 ]
 const pyodideSrcDir = fileURLToPath(new URL('../../node_modules/pyodide', import.meta.url))
 
+// sql.js — SQLite biên dịch WASM cho bài SQL của môn Lập trình (PR-L7b2). Chỉ cần MỘT file
+// .wasm (~648KB); phần JS nạp nó đi kèm worker nên không vào bundle chính.
+const SQLJS_FILES = ['sql-wasm.wasm']
+const sqlJsSrcDir = fileURLToPath(new URL('../../node_modules/sql.js/dist', import.meta.url))
+
+function sqlJsSelfHostPlugin(): Plugin {
+  return {
+    name: 'dhcb-sqljs-self-host',
+    async closeBundle() {
+      const outDir = path.join(repoRoot, 'dist', 'sqljs')
+      await mkdir(outDir, { recursive: true })
+      for (const f of SQLJS_FILES) {
+        await cp(path.join(sqlJsSrcDir, f), path.join(outDir, f))
+      }
+    },
+    configureServer(server) {
+      server.middlewares.use('/sqljs', (req, res, next) => {
+        const name = (req.url || '').split('?')[0]?.replace(/^\//, '') || ''
+        if (!SQLJS_FILES.includes(name)) return next()
+        const file = path.join(sqlJsSrcDir, name)
+        if (!existsSync(file)) return next()
+        res.setHeader('Content-Type', 'application/wasm')
+        createReadStream(file).pipe(res)
+      })
+    },
+  }
+}
+
 function pyodideSelfHostPlugin(): Plugin {
   return {
     name: 'dhcb-pyodide-self-host',
@@ -131,6 +159,8 @@ export default defineConfig(({ mode }) => {
       // KHÔNG dùng CDN ngoài. Worker nạp qua importScripts('/pyodide/pyodide.js') và chỉ
       // tải khi học viên bấm "Chạy" lần đầu — không ảnh hưởng bundle chính.
       pyodideSelfHostPlugin(),
+      // Tự host sql.js (SQLite WASM cho bài SQL — PR-L7b2), cùng lý do: không CDN ngoài.
+      sqlJsSelfHostPlugin(),
       // Gzip + Brotli compression cho production
       compress({
         gzip: {

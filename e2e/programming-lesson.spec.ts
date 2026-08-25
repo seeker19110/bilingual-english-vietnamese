@@ -180,3 +180,55 @@ test('bài JavaScript: vòng lặp vô hạn bị ngắt, trang không treo', as
   // Trang còn phản hồi: bấm sang bước khác vẫn được.
   await page.getByRole('button', { name: 'Về nhà' }).click()
 })
+
+// PR-L7b2 — bài SQL chạy trên SQLite (sql.js) tự host tại /sqljs/sql-wasm.wasm, KHÔNG CDN.
+// Cổng nội dung (lessonsSql.test.ts) chấm bằng chính engine này ở node, nên hai nơi không thể
+// lệch; test dưới đây chốt phần cổng kia không thấy: worker nạp được .wasm từ đúng origin và
+// trang chọn đúng bộ chạy theo `language: 'sql'`.
+for (const lessonId of ['p3-u8-l1', 'p3-u9-l1']) {
+  test(`bài SQL ${lessonId}: code mẫu đạt hết test-case trên SQLite trong trình duyệt`, async ({
+    page,
+  }) => {
+    test.setTimeout(120_000)
+    await mockLogin(page, 'vi', 'dark-blue')
+
+    // Chốt "tự host": mọi yêu cầu ra ngoài origin của app đều bị chặn — nếu code lỡ trỏ CDN
+    // thì test đỏ ngay chứ không âm thầm chạy được nhờ mạng của runner.
+    await page.route('**/*', (route) => {
+      const url = new URL(route.request().url())
+      const noiBo = url.hostname === 'localhost' || url.hostname === '127.0.0.1'
+      // fallback() chứ KHÔNG phải continue(): phải nhường lại cho các handler đăng ký
+      // trước (mockLogin giả lập /api/*), nếu không sẽ giành mất và học viên thành chưa
+      // đăng nhập.
+      return noiBo || url.protocol === 'data:' ? route.fallback() : route.abort()
+    })
+
+    await page.goto(`/lap-trinh/bai-hoc/${lessonId}`, { waitUntil: 'domcontentloaded' })
+    await page.getByRole('button', { name: 'Tự viết' }).click()
+    await page.getByRole('button', { name: 'Xem code mẫu' }).click()
+    await page.getByRole('button', { name: 'Chấm bài' }).click()
+    await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 60_000 })
+  })
+}
+
+// CSDL phải được dựng LẠI mỗi lượt: học viên xoá sạch bảng để thử nghiệm rồi chạy lại vẫn
+// phải có dữ liệu. Nếu trạng thái rò rỉ giữa các lượt thì bài sau sẽ rớt oan.
+test('bài SQL: xoá sạch bảng rồi chạy lại vẫn có dữ liệu (mỗi lượt một CSDL sạch)', async ({
+  page,
+}) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p3-u8-l1', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  const editor = page.getByRole('textbox').first()
+  await editor.fill('DELETE FROM mon;')
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  await expect(page.getByText('Đạt toàn bộ test!')).not.toBeVisible()
+
+  await editor.fill(
+    "SELECT ten, gia FROM mon WHERE nhom = 'uong' AND gia >= 20000 ORDER BY gia DESC LIMIT 2;",
+  )
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 60_000 })
+})
