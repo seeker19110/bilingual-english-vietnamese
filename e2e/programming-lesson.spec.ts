@@ -232,3 +232,44 @@ test('bài SQL: xoá sạch bảng rồi chạy lại vẫn có dữ liệu (m�
   await page.getByRole('button', { name: 'Chấm bài' }).click()
   await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 60_000 })
 })
+
+// PR-L7c — bài HTML/CSS (U4–U5). Hai thứ cần chốt mà cổng CI không thấy được:
+// (1) parser của TRÌNH DUYỆT thật cho ra cùng bản mô tả cây DOM với happy-dom ở cổng CI
+//     (đây là khe hở hai engine duy nhất còn lại của môn — chấp nhận có, nên phải canh);
+// (2) khung xem trang là iframe sandbox="" nên KHÔNG chạy script.
+for (const lessonId of ['p3-u4-l1', 'p3-u5-l1']) {
+  test(`bài HTML ${lessonId}: code mẫu đạt hết test-case trong trình duyệt thật`, async ({
+    page,
+  }) => {
+    test.setTimeout(120_000)
+    await mockLogin(page, 'vi', 'dark-blue')
+    await page.goto(`/lap-trinh/bai-hoc/${lessonId}`, { waitUntil: 'domcontentloaded' })
+
+    await page.getByRole('button', { name: 'Tự viết' }).click()
+    await page.getByRole('button', { name: 'Xem code mẫu' }).click()
+    await page.getByRole('button', { name: 'Chấm bài' }).click()
+    await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 60_000 })
+  })
+}
+
+test('khung xem trang hiển thị trang nhưng KHÔNG chạy script trong đó', async ({ page }) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p3-u4-l1', { waitUntil: 'domcontentloaded' })
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+
+  await page
+    .getByRole('textbox')
+    .first()
+    .fill(
+      '<!doctype html><html lang="vi"><body><h1 id="tieu-de">Xin chao</h1>' +
+        '<script>document.getElementById("tieu-de").textContent = "SCRIPT DA CHAY"</script>' +
+        '</body></html>',
+    )
+
+  const khung = page.frameLocator('iframe[title="Xem trước trang web bạn vừa viết"]')
+  // Trang hiển thị được...
+  await expect(khung.getByRole('heading', { name: 'Xin chao' })).toBeVisible()
+  // ...nhưng script bên trong KHÔNG được phép chạy (sandbox="" thu hồi mọi quyền).
+  await expect(khung.getByText('SCRIPT DA CHAY')).toHaveCount(0)
+})

@@ -29,6 +29,7 @@ import PageHeader from '../../../components/PageHeader'
 import CodeEditor from '../../../components/CodeEditor'
 import { useAuth } from '../../../context/useAuth'
 import { runLessonCode, resetLessonRunners } from '../../../lib/codeRunner'
+import { HtmlPreview } from '../../../components/HtmlPreview'
 import { saveLessonProgress } from '../../../lib/programmingProgress'
 import { MAX_HINT_LEVEL } from '@dhcb/subject-programming/feedbackPrompt'
 import {
@@ -370,6 +371,9 @@ export default function ProgrammingLessonPage() {
               </p>
             </div>
             <CodeEditor value={code} onChange={setCode} ariaLabel="Ô soạn code bài tự viết" />
+            {/* Bài HTML/CSS: hiện luôn trang học viên đang viết — thấy ngay kết quả là thứ
+                khiến người mới bám trụ được với web. Cập nhật theo từng lần gõ. */}
+            {lesson.language === 'html' && <HtmlPreview html={code} />}
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => void gradeMake()}
