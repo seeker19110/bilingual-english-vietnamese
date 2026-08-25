@@ -3,14 +3,19 @@
 import { describe, expect, it } from 'vitest'
 import {
   P1_PROJECT_STEPS,
+  P2_PROJECT_STEPS,
+  PROJECT_STAGES,
   ProjectStepSchema,
   getProjectStep,
+  getStepFiles,
+  getStepMainFile,
   PROJECT_STARTER_CODE,
   PROJECT_MAIN_FILE,
 } from './projectSteps.js'
 import { PROGRAMMING_LEVELS } from './curriculum.js'
 
 const P1_UNIT_IDS = new Set(PROGRAMMING_LEVELS.find((l) => l.id === 'p1')!.units.map((u) => u.id))
+const P2_UNIT_IDS = new Set(PROGRAMMING_LEVELS.find((l) => l.id === 'p2')!.units.map((u) => u.id))
 const GIA = [5000, 15000, 10000]
 const thanhToan = (tong: number) =>
   tong >= 100_000 ? Math.floor(tong * 0.8) : tong >= 50_000 ? Math.floor(tong * 0.9) : tong
@@ -51,5 +56,51 @@ describe('P1 project steps', () => {
     expect(PROJECT_MAIN_FILE).toBe('cua_hang.py')
     expect(PROJECT_STARTER_CODE).toContain('cua_hang.py')
     expect(getProjectStep('p1-s9')).toBeUndefined()
+  })
+})
+
+describe('P2 project steps (PR-L6b)', () => {
+  it('đúng khuôn schema, id tuần tự p2-s1..s5, unit P2 tồn tại, bước cuối là milestone', () => {
+    expect(P2_PROJECT_STEPS.map((s) => s.id)).toEqual(['p2-s1', 'p2-s2', 'p2-s3', 'p2-s4', 'p2-s5'])
+    for (const step of P2_PROJECT_STEPS) {
+      expect(ProjectStepSchema.safeParse(step).success, `sai khuôn: ${step.id}`).toBe(true)
+      expect(P2_UNIT_IDS.has(step.unitId), `unit lạ ở ${step.id}`).toBe(true)
+      expect(step.checks.some((c) => !c.hidden)).toBe(true)
+    }
+    expect(P2_PROJECT_STEPS.at(-1)!.isMilestone).toBe(true)
+    expect(P2_PROJECT_STEPS.slice(0, -1).every((s) => !s.isMilestone)).toBe(true)
+  })
+
+  it('bước tách file: khai đủ file, file chính đứng đầu, và CÓ probe import module', () => {
+    const s5 = getProjectStep('p2-s5')!
+    expect(getStepFiles(s5)).toEqual(['cua_hang.py', 'logic.py', 'luu_tru.py'])
+    expect(getStepMainFile(s5)).toBe('cua_hang.py')
+    // Mọi file PHỤ phải có code mẫu kèm theo, nếu không "phao" sẽ nạp thiếu file.
+    expect(Object.keys(s5.referenceFiles ?? {}).sort()).toEqual(['logic.py', 'luu_tru.py'])
+    // Không có probe thì code gộp một file vẫn qua được — bước tách vai trò thành hình thức.
+    expect(s5.probeCode).toBeDefined()
+    expect(s5.probeCode).toContain('from logic import')
+    expect(s5.probeCode).toContain('from luu_tru import')
+  })
+
+  it('các bước KHÔNG tách file thì chỉ dùng file chính của chặng', () => {
+    for (const step of P2_PROJECT_STEPS.slice(0, -1)) {
+      expect(getStepFiles(step)).toEqual([PROJECT_MAIN_FILE])
+      expect(step.probeCode).toBeUndefined()
+    }
+  })
+})
+
+describe('PROJECT_STAGES', () => {
+  it('liệt kê đúng các chặng đã mở, id bước không trùng nhau giữa các chặng', () => {
+    expect(PROJECT_STAGES.map((s) => s.level)).toEqual(['p1', 'p2'])
+    expect(PROJECT_STAGES[0]!.steps).toBe(P1_PROJECT_STEPS)
+    expect(PROJECT_STAGES[1]!.steps).toBe(P2_PROJECT_STEPS)
+    const ids = PROJECT_STAGES.flatMap((s) => s.steps).map((s) => s.id)
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it('getProjectStep tra được bước của MỌI chặng (không chỉ P1)', () => {
+    expect(getProjectStep('p2-s5')?.isMilestone).toBe(true)
   })
 })

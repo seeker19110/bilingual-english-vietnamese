@@ -1,4 +1,4 @@
-// programmingProject — workspace dự án trục phía client (PR-L3b).
+// programmingProject — workspace dự án trục phía client (PR-L3b; nhiều file từ PR-L6b).
 // Server (/api/programming/project) là nguồn sự thật; localStorage là bộ đệm để mở tức thì
 // và làm việc ngoại tuyến (cùng mô hình programmingProgress.ts).
 import { getAuthHeader } from '@core/authHeader'
@@ -27,8 +27,9 @@ function writeCache(uid: string, cache: ProjectCache): void {
   }
 }
 
-/** Đọc nội dung file chính của dự án: ưu tiên server, lỗi mạng thì dùng cache/starter. */
-export async function loadProjectFile(uid: string): Promise<string> {
+/** Đọc TOÀN BỘ workspace (path → nội dung): ưu tiên server, lỗi mạng thì dùng cache (PR-L6b).
+ *  File chính luôn có mặt (rơi về code khởi đầu) để trang dự án không bao giờ trắng ô soạn. */
+export async function loadProjectFiles(uid: string): Promise<Record<string, string>> {
   try {
     const res = await fetch('/api/programming/project', { headers: getAuthHeader() })
     if (res.ok) {
@@ -36,25 +37,34 @@ export async function loadProjectFile(uid: string): Promise<string> {
       const files: Record<string, string> = {}
       for (const f of body.files) files[f.path] = f.content
       writeCache(uid, { files })
-      const main = files[PROJECT_MAIN_FILE]
-      if (main !== undefined) return main
+      return withMainFile(files)
     }
   } catch {
     // rơi xuống cache
   }
-  return readCache(uid).files[PROJECT_MAIN_FILE] ?? PROJECT_STARTER_CODE
+  return withMainFile(readCache(uid).files)
 }
 
-/** Lưu file chính: cache trước (lạc quan), rồi đẩy server. Trả false nếu server từ chối. */
-export async function saveProjectFile(uid: string, content: string): Promise<boolean> {
+function withMainFile(files: Record<string, string>): Record<string, string> {
+  return files[PROJECT_MAIN_FILE] === undefined
+    ? { ...files, [PROJECT_MAIN_FILE]: PROJECT_STARTER_CODE }
+    : files
+}
+
+/** Lưu MỘT file bất kỳ của workspace (cache lạc quan trước, rồi đẩy server). */
+export async function saveProjectFileAt(
+  uid: string,
+  path: string,
+  content: string,
+): Promise<boolean> {
   const cache = readCache(uid)
-  cache.files[PROJECT_MAIN_FILE] = content
+  cache.files[path] = content
   writeCache(uid, cache)
   try {
     const res = await fetch('/api/programming/project', {
       method: 'POST',
       headers: { 'content-type': 'application/json', ...getAuthHeader() },
-      body: JSON.stringify({ action: 'save', path: PROJECT_MAIN_FILE, content }),
+      body: JSON.stringify({ action: 'save', path, content }),
     })
     return res.ok
   } catch {

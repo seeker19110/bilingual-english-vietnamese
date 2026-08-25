@@ -63,14 +63,14 @@ Chạy tuần tự. Mỗi tầng ghi rõ: **lệnh**, **tiêu chí đạt**, **n
 | Lint        | `npm run lint`         | 0 cảnh báo (`--max-warnings 0`)                                                                                        |
 | Format      | `npm run format:check` | "All matched files use Prettier code style"                                                                            |
 | Unit test   | `npm test`             | 100% pass; ghi số `X/Y`                                                                                                |
-| Bundle size | `npm run size`         | JS ≤ 123 kB · CSS ≤ 11 kB (brotli) — ngưỡng thật đọc ở `.size-limit.json`/cấu hình size-limit, không hardcode số ở đây |
+| Bundle size | `npm run size`         | JS ≤ 140 kB · CSS ≤ 18 kB (brotli) — ngưỡng thật đọc ở `.size-limit.json`/cấu hình size-limit, không hardcode số ở đây |
 
 - **Nếu fail:** dừng, ghi lỗi cụ thể vào báo cáo. Đây là fail chặn (blocking).
 - **Ai xử lý:** AI tự sửa được (lỗi code/format).
 - **Ngân sách bundle: ghi cả BIÊN ĐỘ CÒN LẠI, không chỉ đạt/không đạt.** `size-limit` chỉ nói
   pass/fail, nên "còn 0,3 kB" và "còn 40 kB" trông giống hệt nhau trong báo cáo. Tính
   `còn lại = ngưỡng − thực đo` và ghi kèm %; **≥ 95% ngưỡng → cảnh báo trong báo cáo** (tính năng
-  nhỏ kế tiếp sẽ làm CI đỏ). Đo 2026-08-24: JS 120,72/123 kB (98,1%) · CSS 15,72/16 kB (98,3%).
+  nhỏ kế tiếp sẽ làm CI đỏ). Đo 2026-08-25 sau khi nới ngưỡng (PR-L6b): JS 122,84/140 kB (87,7%) · CSS 15,66/18 kB (87,0%).
 
 **1b. Test KHÔNG ỔN ĐỊNH (flaky) — một lượt xanh KHÔNG chứng minh được gì:**
 

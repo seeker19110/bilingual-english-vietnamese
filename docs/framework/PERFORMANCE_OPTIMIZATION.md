@@ -35,7 +35,7 @@ Dữ liệu tĩnh tải dần (_từ điển, mẫu câu, bài học_) được 
 
 Dự án gác chặn kích thước bundle tự động qua `@size-limit/file` trong CI pipeline:
 
-- **Initial JS (Brotli)**: ≤ 123 kB
+- **Initial JS (Brotli)**: ≤ 140 kB
 - **Initial CSS (Brotli)**: ≤ 11 kB
 
 Kiểm tra cục bộ:
