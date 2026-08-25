@@ -14,7 +14,9 @@
 //
 // Mọi dòng chấm điểm in KHÔNG DẤU, như hai chặng trước.
 import { TestCaseSchema, type ProgrammingTestCase } from './lessonTypes.js'
-import type { ProjectStep } from './projectSteps.js'
+// Xuống projectStepTypes (KHÔNG phải projectSteps): file kia import ngược lên đây để gom
+// PROJECT_STAGES, nên import chéo sẽ tạo chu trình — cổng `codemap -- cycles` chặn CI.
+import type { ProjectStep } from './projectStepTypes.js'
 
 export const P3_PAGE_FILE = 'trang.html'
 export const P3_ORDER_FILE = 'dat_hang.js'
