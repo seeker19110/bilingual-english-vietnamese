@@ -46,17 +46,20 @@ describe('programming lessons', () => {
     }
   })
 
-  it('MỌI unit của bậc P1 đều đã có bài học (đích PR-L4 — học viên đi trọn bậc)', () => {
-    const p1Units = PROGRAMMING_LEVELS.find((l) => l.id === 'p1')!.units
-    const thieu = p1Units.filter((u) => getLessonsByUnit(u.id).length === 0).map((u) => u.id)
-    expect(thieu, `Unit P1 chưa có bài học: ${thieu.join(', ')}`).toEqual([])
+  // Bậc đã MỞ = mọi unit của bậc đều có bài (học viên đi trọn bậc, không gặp lỗ hổng
+  // "Sắp mở" ở giữa đường). P1 mở ở PR-L4, P2 mở ở PR-L6.
+  it.each(['p1', 'p2'])('MỌI unit của bậc %s đều đã có bài học', (levelId) => {
+    const units = PROGRAMMING_LEVELS.find((l) => l.id === levelId)!.units
+    const thieu = units.filter((u) => getLessonsByUnit(u.id).length === 0).map((u) => u.id)
+    expect(thieu, `Unit ${levelId} chưa có bài học: ${thieu.join(', ')}`).toEqual([])
   })
 
   it('tra cứu theo unit và theo id', () => {
     expect(getLessonsByUnit('p1-u4').map((l) => l.id)).toContain('p1-u4-l1')
-    // Unit của bậc CHƯA soạn nội dung → rỗng (UI hiện "Sắp mở"). P2 là bậc kế tiếp trong
-    // hàng đợi soạn, dùng làm mốc kiểm nhánh rỗng thay cho p1-u1 (nay đã có bài, PR-L4).
-    expect(getLessonsByUnit('p2-u1')).toEqual([])
+    expect(getLessonsByUnit('p2-u4').map((l) => l.id)).toContain('p2-u4-l1')
+    // Unit của bậc CHƯA soạn nội dung → rỗng (UI hiện "Sắp mở"). P3 là bậc kế tiếp trong
+    // hàng đợi soạn (P2 đã có bài từ PR-L6), dùng làm mốc kiểm nhánh rỗng.
+    expect(getLessonsByUnit('p3-u1')).toEqual([])
     expect(getLesson('p9-u9-l9')).toBeUndefined()
   })
 })

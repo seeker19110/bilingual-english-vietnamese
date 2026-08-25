@@ -13,12 +13,16 @@
 // cũng có). KHÔNG có python3 → test tự bỏ qua kèm cảnh báo, KHÔNG làm đỏ CI oan.
 import { describe, expect, it } from 'vitest'
 import { execFileSync, spawnSync } from 'node:child_process'
+import { mkdtempSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { PROGRAMMING_LESSONS } from './lessons.js'
 import { P1_PROJECT_STEPS } from './projectSteps.js'
 import { gradeTestCase, allTestsPassed } from './grading.js'
 import type { ProgrammingTestCase } from './lessonTypes.js'
 
 const hasPython = spawnSync('python3', ['--version']).status === 0
+const WORK_DIR = mkdtempSync(join(tmpdir(), 'dhcb-lesson-'))
 
 // Prelude PHẢI khớp hành vi input() của sandbox trình duyệt (apps/dhcb/src/workers/
 // pyodideWorker.ts): đọc tuần tự các dòng đã điền sẵn và ECHO "prompt + giá trị" ra stdout.
@@ -50,6 +54,9 @@ function runPython3(code: string, stdinLines: string[]): RunOutcome {
     const output = execFileSync('python3', ['-c', wrap(code, stdinLines)], {
       encoding: 'utf8',
       timeout: 15_000,
+      // Chạy trong thư mục TẠM: bài học P2-U6 ghi file CSV thật, không được để nó rơi
+      // vào cây mã nguồn của repo khi chạy test.
+      cwd: WORK_DIR,
       // Không cho code mẫu đọc stdin thật (mọi input phải đi qua prelude).
       stdio: ['ignore', 'pipe', 'pipe'],
     })

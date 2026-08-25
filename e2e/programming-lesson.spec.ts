@@ -84,6 +84,25 @@ test('bài số ngẫu nhiên: code mẫu đạt hết test-case trong Pyodide (
   await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 120_000 })
 })
 
+// P2 dùng hai thứ mà python3 của runner làm được nhưng Pyodide THÌ CHƯA CHẮC: ghi/đọc FILE
+// (U6 — Pyodide dùng hệ thống file trong bộ nhớ) và thư viện datetime/math (U8). Xanh ở cổng
+// python3 mà rớt trong trình duyệt thì học viên là người lãnh đủ, nên chạy thật hai bài này
+// trong Pyodide y như học viên gặp.
+for (const lessonId of ['p2-u6-l1', 'p2-u8-l1']) {
+  test(`bài ${lessonId}: code mẫu đạt hết test-case trong Pyodide (khớp python3)`, async ({
+    page,
+  }) => {
+    test.setTimeout(180_000)
+    await mockLogin(page, 'vi', 'dark-blue')
+    await page.goto(`/lap-trinh/bai-hoc/${lessonId}`, { waitUntil: 'domcontentloaded' })
+
+    await page.getByRole('button', { name: 'Tự viết' }).click()
+    await page.getByRole('button', { name: 'Xem code mẫu' }).click()
+    await page.getByRole('button', { name: 'Chấm bài' }).click()
+    await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 120_000 })
+  })
+}
+
 // ⑥b AI đồng hành (PR-L5) — chặn `/api/programming/feedback` để KHÔNG gọi model thật trong CI.
 // Thứ cần chốt ở đây là hợp đồng UI: bậc gợi ý mở dần theo bậc SERVER trả về, nút "nhờ xem
 // code" chỉ xuất hiện sau khi đạt bài, và lời nhắn hết lượt hiện nguyên văn cho học viên.
