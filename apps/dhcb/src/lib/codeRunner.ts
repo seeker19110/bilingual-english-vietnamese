@@ -7,6 +7,7 @@ import type { ProgrammingLesson } from '@dhcb/subject-programming/lessonTypes'
 import type { CodeRunResult } from './codeRunResult'
 import { runPython, resetPythonWorker } from './pythonRunner'
 import { runJavaScript, resetJsWorker } from './jsRunner'
+import { runSql, resetSqlWorker } from './sqlRunner'
 
 export type LessonLanguage = ProgrammingLesson['language']
 
@@ -32,12 +33,11 @@ export function runLessonCode(
     })
   }
   if (language === 'sql') {
-    // Chưa mở (PR-L7b2). Trả lỗi rõ ràng thay vì im lặng chạy nhầm bằng Python.
-    return Promise.resolve({
-      output: '',
-      error: 'Bài SQL chưa mở trong phiên bản này.',
-      timedOut: false,
-      durationMs: 0,
+    // SQL không có input(): dữ liệu đã nằm sẵn trong CSDL mẫu (sqlDataset.ts).
+    const { onOutput, onLoading } = options
+    return runSql(code, {
+      ...(onOutput ? { onOutput } : {}),
+      ...(onLoading ? { onLoading } : {}),
     })
   }
   return runPython(code, options)
@@ -47,4 +47,5 @@ export function runLessonCode(
 export function resetLessonRunners(): void {
   resetPythonWorker()
   resetJsWorker()
+  resetSqlWorker()
 }
