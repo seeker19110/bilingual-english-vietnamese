@@ -15,7 +15,7 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 import { initSentryServer, captureServerException } from './api/_lib/sentry.js'
-import { registerApiRoutes, CSP_HEADER } from './routes.js'
+import { registerApiRoutes, applyCommonSecurityHeaders } from './routes.js'
 import { warnIfClusterWithoutRedis, reportRedisStatusAtStartup } from '@dhcb/core-auth/security'
 
 // Bật Sentry (error tracking) — no-op nếu chưa cấu hình SENTRY_DSN (xem api/_lib/sentry.ts).
@@ -56,9 +56,7 @@ const __dirname = process.cwd()
 app.use((req, res, next) => {
   // Chỉ apply cho non-API routes để tránh double headers
   if (!req.path.startsWith('/api/')) {
-    res.setHeader('X-Content-Type-Options', 'nosniff')
-    res.setHeader('Content-Security-Policy', CSP_HEADER)
-    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+    applyCommonSecurityHeaders(res)
   }
   next()
 })
@@ -67,9 +65,7 @@ app.use((req, res, next) => {
 // Endpoint nhẹ để PM2 / Nginx / uptime monitor kiểm tra app còn sống không.
 // Không gọi AI, không đụng DB → trả lời tức thì, không tốn tiền.
 app.get('/api/health', (_req, res) => {
-  res.setHeader('X-Content-Type-Options', 'nosniff')
-  res.setHeader('Content-Security-Policy', CSP_HEADER)
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+  applyCommonSecurityHeaders(res)
   res.json({ status: 'ok', uptime: process.uptime(), time: new Date().toISOString() })
 })
 

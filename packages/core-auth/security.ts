@@ -69,13 +69,34 @@ export function getCorsHeaders(req: Request): Record<string, string> {
 }
 
 // ── Security Headers ──────────────────────────────────────────────────────────
+// Permissions-Policy: tắt sẵn mọi tính năng trình duyệt app KHÔNG dùng, và giới hạn hai
+// tính năng app CÓ dùng về chính origin này:
+//   - microphone: ghi âm luyện nói/STT (apps/dhcb/src/lib/audioRecorder.ts, sttServer.ts)
+//   - camera: quay video challenge (apps/dhcb/src/lib/challengeRecorder.ts, nhánh video)
+// Thiếu header này thì một iframe/script nhúng bên thứ ba vẫn xin được các quyền đó dưới
+// danh nghĩa trang mình (audit 2026-08-25, F4).
+//
+// ĐÚNG MỘT giá trị dùng chung cho cả response API lẫn trang HTML: `wrapEdge` đính header
+// sau khi copy response của handler, nên nếu để hai giá trị khác nhau thì giá trị này luôn
+// thắng — hai bản chỉ gây hiểu nhầm chứ không siết thêm được gì.
+// HSTS: ghim HTTPS 2 năm. Khai báo riêng vì trang HTML/static cũng cần đúng giá trị này
+// (applyCommonSecurityHeaders trong apps/server/src/routes.ts) — audit 2026-08-25, F4.
+export const HSTS_VALUE = 'max-age=63072000; includeSubDomains; preload'
+
+export const PERMISSIONS_POLICY =
+  'accelerometer=(), autoplay=(self), camera=(self), display-capture=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(self), payment=(), usb=()'
+
 // Các header bảo mật chuẩn — luôn đính kèm vào mọi response từ server.
 export const SECURITY_HEADERS: Record<string, string> = {
   'X-Content-Type-Options': 'nosniff',
-  'X-Frame-Options': 'DENY',
+  // SAMEORIGIN chứ không phải DENY: CSP của dự án khai `frame-ancestors 'self'` (nguồn chuẩn,
+  // hiện đại, trình duyệt ưu tiên hơn X-Frame-Options). Để DENY ở đây là TỰ MÂU THUẪN với
+  // chính CSP mình gửi kèm. Thống nhất một giá trị, khớp CSP (audit 2026-08-25, F4).
+  'X-Frame-Options': 'SAMEORIGIN',
   // X-XSS-Protection đã deprecated — trình duyệt hiện đại không cần, bỏ đi tránh warning
-  'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
+  'Strict-Transport-Security': HSTS_VALUE,
   'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Permissions-Policy': PERMISSIONS_POLICY,
   // no-store: không cache response API (có chứa khoá giải mã và dữ liệu nhạy cảm)
   'Cache-Control': 'no-store',
 }
