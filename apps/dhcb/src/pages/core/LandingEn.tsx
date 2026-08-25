@@ -9,9 +9,10 @@ import { setDirection } from '../../lib/storage'
 // (xem docs/research/chien-luoc-marketing-2026-07-25.md §2.1). Song song với src/pages/Landing.tsx
 // (chiều A, tiếng Việt) — KHÔNG gộp chung 1 component vì đối tượng, kênh phân phối (Reddit/expat
 // group vs TikTok VN) và ngôn ngữ nội dung khác hẳn nhau, gộp lại sẽ rối hơn là tách.
-const TITLE = 'Learn Vietnamese by Speaking with AI — Corrections Explained in English'
+const TITLE =
+  'Learn Vietnamese by Speaking with AI — Corrections Explained in English | Đồng hành cùng bạn'
 const DESCRIPTION =
-  'Practice real Vietnamese conversation with an AI tutor. Mistakes are explained back to you in English, in a real Vietnamese voice. Free.'
+  'Practice real Vietnamese conversation with an AI tutor. Mistakes are explained back to you in English, in a real Vietnamese voice. Free. One subject inside Đồng hành cùng bạn, a personal companion platform.'
 
 const MODES = [
   {
@@ -86,12 +87,17 @@ export default function LandingEn() {
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-500/15 text-accent-400">
             <Sparkles className="h-7 w-7" aria-hidden="true" />
           </div>
+          <p className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/60 theme-light:bg-zinc-50 px-3 py-1 text-xs text-zinc-300 theme-light:text-zinc-700">
+            <span className="font-semibold text-accent-400">Language subject</span>
+            <span aria-hidden="true">·</span>
+            <span>part of the Đồng hành cùng bạn platform</span>
+          </p>
           <h1 className="text-2xl font-bold leading-tight sm:text-3xl">
             Learn Vietnamese with AI
             <br />
             <span className="text-accent-400">mistakes explained back to you in English</span>
           </h1>
-          <p className="mt-3 text-base text-zinc-400">
+          <p className="mt-3 text-base text-zinc-300 theme-light:text-zinc-700">
             Free. No prior Vietnamese needed to get started.
           </p>
 
@@ -136,7 +142,9 @@ export default function LandingEn() {
                   <h3 className="font-semibold text-zinc-100 theme-light:text-zinc-900">
                     {mode.title}
                   </h3>
-                  <p className="mt-0.5 text-sm text-zinc-400">{mode.desc}</p>
+                  <p className="mt-0.5 text-sm text-zinc-300 theme-light:text-zinc-700">
+                    {mode.desc}
+                  </p>
                 </div>
               </div>
             ))}
@@ -145,7 +153,7 @@ export default function LandingEn() {
 
         {/* Giới hạn dùng — thành thật, không phóng đại */}
         <section className="mt-8 rounded-xl border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/40 theme-light:bg-zinc-50 p-4 text-center">
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-zinc-300 theme-light:text-zinc-700">
             Free, with a daily usage limit so everyone gets a fair share.
           </p>
         </section>

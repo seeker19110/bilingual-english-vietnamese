@@ -7,9 +7,14 @@ import ThemeToggle from '../../components/ThemeToggle'
 // Trang landing công khai, KHÔNG bọc RequireAuth — dùng làm điểm đến cho link quảng cáo
 // (TikTok/Facebook/SEO). Khác với "/" (đã gắn RequireAuth, đẩy người chưa đăng nhập sang
 // /login), trang này ai cũng vào được để đọc giới thiệu trước khi quyết định đăng ký.
-const TITLE = 'Nói tiếng Anh với AI — sửa lỗi bằng giọng Việt | Gia sư tiếng Anh AI'
+//
+// PHẠM VI: đây là trang quảng cáo RIÊNG cho MÔN TIẾNG ANH (giữ nguyên thông điệp theo từ
+// khoá quảng cáo), KHÔNG phải trang chủ nền tảng. Trang chủ nền tảng là apps/hub (giới
+// thiệu đủ 5 trụ). Vì vậy trang này phải nói rõ tiếng Anh là MỘT MÔN của nền tảng và có
+// đường dẫn sang phần còn lại — tránh để người đọc hiểu nhầm nền tảng chỉ dạy tiếng Anh.
+const TITLE = 'Nói tiếng Anh với AI — sửa lỗi bằng giọng Việt | Môn Tiếng Anh · Đồng hành cùng bạn'
 const DESCRIPTION =
-  'Nói tiếng Anh với AI — sai chỗ nào, được giảng lại bằng tiếng Việt. Miễn phí. Hội thoại giọng Anh chuẩn, sửa lỗi & giải thích bằng giọng tiếng Việt, nội dung sát đời sống Việt Nam.'
+  'Nói tiếng Anh với AI — sai chỗ nào, được giảng lại bằng tiếng Việt. Miễn phí. Hội thoại giọng Anh chuẩn, sửa lỗi & giải thích bằng giọng tiếng Việt. Môn Tiếng Anh thuộc nền tảng đồng hành cá nhân Đồng hành cùng bạn.'
 
 const MODES = [
   {
@@ -88,12 +93,17 @@ export default function Landing() {
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-500/15 text-accent-400">
             <Sparkles className="h-7 w-7" aria-hidden="true" />
           </div>
+          <p className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/60 theme-light:bg-zinc-50 px-3 py-1 text-xs text-zinc-300 theme-light:text-zinc-700">
+            <span className="font-semibold text-accent-400">Môn Tiếng Anh</span>
+            <span aria-hidden="true">·</span>
+            <span>một môn của nền tảng Đồng hành cùng bạn</span>
+          </p>
           <h1 className="text-2xl font-bold leading-tight sm:text-3xl">
             Nói tiếng Anh với AI
             <br />
             <span className="text-accent-400">sai chỗ nào, được giảng lại bằng tiếng Việt</span>
           </h1>
-          <p className="mt-3 text-base text-zinc-400">
+          <p className="mt-3 text-base text-zinc-300 theme-light:text-zinc-700">
             Miễn phí. Không cần biết trước tiếng Anh vẫn học được.
           </p>
 
@@ -137,7 +147,9 @@ export default function Landing() {
                   <h3 className="font-semibold text-zinc-100 theme-light:text-zinc-900">
                     {mode.title}
                   </h3>
-                  <p className="mt-0.5 text-sm text-zinc-400">{mode.desc}</p>
+                  <p className="mt-0.5 text-sm text-zinc-300 theme-light:text-zinc-700">
+                    {mode.desc}
+                  </p>
                 </div>
               </div>
             ))}
@@ -146,9 +158,27 @@ export default function Landing() {
 
         {/* Giới hạn dùng — thành thật, không phóng đại */}
         <section className="mt-8 rounded-xl border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/40 theme-light:bg-zinc-50 p-4 text-center">
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-zinc-300 theme-light:text-zinc-700">
             Miễn phí, có giới hạn lượt dùng mỗi ngày để mọi người cùng dùng được.
           </p>
+        </section>
+
+        {/* Không dừng ở môn tiếng Anh: cho người đọc biết tài khoản này dùng được cả nền tảng */}
+        <section className="mt-8 rounded-2xl border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/40 theme-light:bg-zinc-50 p-4">
+          <h2 className="text-sm font-semibold text-zinc-100 theme-light:text-zinc-900">
+            Tiếng Anh chỉ là một môn ở đây
+          </h2>
+          <p className="mt-1.5 text-sm text-zinc-300 theme-light:text-zinc-700">
+            Cùng một tài khoản, bạn còn dùng được bốn trụ khác của nền tảng: sự nghiệp, công việc,
+            khởi nghiệp và đời sống — cùng Bạn Đồng Hành, người bạn AI hiểu ngữ cảnh cả năm mảng.
+            Không phải mua thêm gói nào.
+          </p>
+          <a
+            href="https://www.donghanhcungban.org"
+            className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-400 hover:underline"
+          >
+            Xem toàn bộ nền tảng →
+          </a>
         </section>
 
         <div className="mt-8 text-center">
