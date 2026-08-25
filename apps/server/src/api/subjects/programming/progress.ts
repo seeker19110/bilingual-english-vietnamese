@@ -19,10 +19,12 @@ import {
 import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
 import { jsonResponse, getClientIp, internalErrorResponse } from '@dhcb/core-http/http'
 import { getLesson } from '@dhcb/subject-programming/lessons'
+import { getProjectStep } from '@dhcb/subject-programming/projectSteps'
 
 const UpdateSchema = z
   .object({
-    lessonId: z.string().regex(/^p[1-6]-u\d+-l\d+$/),
+    // Bài học ('p1-u4-l1') HOẶC bước dự án trục ('p1-s1') — cùng một bảng tiến độ.
+    lessonId: z.string().regex(/^p[1-6]-(u\d+-l\d+|s\d+)$/),
     status: z.enum(['in_progress', 'completed']),
   })
   .strict()
@@ -92,7 +94,7 @@ export default async function handler(req: Request): Promise<Response> {
       return jsonResponse({ error: validated.error.message }, validated.error.status, headers)
 
     const { lessonId, status } = validated.data
-    if (!getLesson(lessonId)) {
+    if (!getLesson(lessonId) && !getProjectStep(lessonId)) {
       return jsonResponse({ error: `Bài học "${lessonId}" không tồn tại` }, 400, headers)
     }
 
