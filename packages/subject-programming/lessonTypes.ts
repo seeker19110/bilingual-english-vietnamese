@@ -31,9 +31,10 @@ export const LessonSchema = z
     /** Ngôn ngữ của bài (PR-L7b1) — quyết định bộ chạy ở trình duyệt VÀ cổng CI nào chấm
      *  bài. KHÔNG có giá trị mặc định ngầm: người soạn phải ghi rõ, vì chọn sai ngôn ngữ
      *  nghĩa là bài không được cổng nào chấm. */
-    language: z.enum(['python', 'javascript', 'sql', 'html', 'dom']),
-    /** Bài 'dom': TRANG CÓ SẴN mà JavaScript của học viên tác động lên (PR-L7d). Học viên
-     *  không sửa trang này — họ chỉ viết script. Bắt buộc với language 'dom', cấm với các
+    language: z.enum(['python', 'javascript', 'sql', 'html', 'dom', 'fetch']),
+    /** Bài 'dom'/'fetch': TRANG CÓ SẴN mà JavaScript của học viên tác động lên (PR-L7d).
+     *  Học viên không sửa trang này — họ chỉ viết script. Bài 'fetch' (PR-L7e) = bài DOM
+     *  cộng fetch giả lập (fetchPrelude.ts). Bắt buộc với hai ngôn ngữ này, cấm với các
      *  ngôn ngữ khác (refine bên dưới kiểm). */
     domHtml: z.string().max(4000).optional(),
     title: z.string().min(1).max(120),
@@ -88,8 +89,8 @@ export const LessonSchema = z
   .refine((l) => l.id.startsWith(`${l.unitId}-l`), {
     message: 'id bài học phải bắt đầu bằng unitId',
   })
-  .refine((l) => (l.language === 'dom') === (l.domHtml !== undefined), {
-    message: "bài 'dom' phải có domHtml; ngôn ngữ khác thì không được có",
+  .refine((l) => (l.language === 'dom' || l.language === 'fetch') === (l.domHtml !== undefined), {
+    message: "bài 'dom'/'fetch' phải có domHtml; ngôn ngữ khác thì không được có",
   })
 
 export type ProgrammingTestCase = z.infer<typeof TestCaseSchema>

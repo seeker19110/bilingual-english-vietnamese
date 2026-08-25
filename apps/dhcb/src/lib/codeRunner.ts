@@ -10,6 +10,7 @@ import { runJavaScript, resetJsWorker } from './jsRunner'
 import { runSql, resetSqlWorker } from './sqlRunner'
 import { runHtml } from './htmlRunner'
 import { runDom, resetDomWorker } from './domRunner'
+import { runFetchLesson, resetFetchWorker } from './fetchRunner'
 
 export type LessonLanguage = ProgrammingLesson['language']
 
@@ -36,7 +37,7 @@ export function runLessonCode(
       ...(onOutput ? { onOutput } : {}),
     })
   }
-  if (language === 'dom') {
+  if (language === 'dom' || language === 'fetch') {
     const { stdinLines, onOutput, domHtml } = options
     if (!domHtml) {
       // Bài 'dom' không có trang thì không chấm được — nói thẳng thay vì chạy ra kết quả rỗng.
@@ -47,7 +48,9 @@ export function runLessonCode(
         durationMs: 0,
       })
     }
-    return runDom(code, {
+    // Bài 'fetch' = bài DOM cộng fetch giả lập — worker riêng, cùng khuôn chạy.
+    const runPage = language === 'fetch' ? runFetchLesson : runDom
+    return runPage(code, {
       html: domHtml,
       ...(stdinLines ? { hanhDong: stdinLines } : {}),
       ...(onOutput ? { onOutput } : {}),
@@ -75,4 +78,5 @@ export function resetLessonRunners(): void {
   resetJsWorker()
   resetSqlWorker()
   resetDomWorker()
+  resetFetchWorker()
 }

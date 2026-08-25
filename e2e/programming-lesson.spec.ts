@@ -304,6 +304,51 @@ test('bài DOM: khung "Xem trang chạy" chạy script thật và phản ứng k
   await expect(khung.locator('#ket-qua')).toHaveText('Tien dien: 306000 dong')
 })
 
+// PR-L7e — bài FETCH (p3-u7). Sandbox không có mạng nên fetch là GIẢ LẬP (fetchPrelude.ts):
+// bộ chấm trong Worker dùng thẳng taoFetchGia(), còn khung xem trang nhúng FETCH_SHIM_JS sinh
+// từ .toString() của chính hàm đó. Hai test dưới chốt cả hai đường trong trình duyệt thật —
+// đặc biệt đường shim, vì source qua bundler của Vite có thể bị biến đổi (đã đệm __name).
+for (const lessonId of ['p3-u7-l1', 'p3-u7-l2']) {
+  test(`bài fetch ${lessonId}: code mẫu đạt hết test-case KHÔNG cần mạng thật`, async ({
+    page,
+  }) => {
+    test.setTimeout(120_000)
+    await mockLogin(page, 'vi', 'dark-blue')
+
+    // Chặn mọi yêu cầu ra ngoài origin: nếu bài fetch lỡ gọi mạng thật thì đỏ ngay tại đây,
+    // không âm thầm xanh nhờ mạng của runner (cùng khuôn với test SQL tự host ở trên).
+    await page.route('**/*', (route) => {
+      const url = new URL(route.request().url())
+      const noiBo = url.hostname === 'localhost' || url.hostname === '127.0.0.1'
+      return noiBo || url.protocol === 'data:' ? route.fallback() : route.abort()
+    })
+
+    await page.goto(`/lap-trinh/bai-hoc/${lessonId}`, { waitUntil: 'domcontentloaded' })
+    await page.getByRole('button', { name: 'Tự viết' }).click()
+    await page.getByRole('button', { name: 'Xem code mẫu' }).click()
+    await page.getByRole('button', { name: 'Chấm bài' }).click()
+    await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 60_000 })
+  })
+}
+
+test('bài fetch: khung "Xem trang chạy" dùng fetch giả — tra cứu chạy thật trong iframe', async ({
+  page,
+}) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p3-u7-l2', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page.getByRole('button', { name: 'Xem code mẫu' }).click()
+  await page.getByRole('button', { name: 'Xem trang chạy' }).click()
+
+  const khung = page.frameLocator('iframe[title="Xem trước trang web bạn vừa viết"]')
+  await khung.locator('#o-tinh').fill('Đà Nẵng')
+  await khung.getByRole('button', { name: 'Tra cuu' }).click()
+  // Số liệu từ bộ dữ liệu mẫu weatherData.ts — iframe không có mạng mà vẫn trả lời được.
+  await expect(khung.locator('#ket-qua')).toHaveText('Đà Nẵng: 26 do C, mưa rào')
+})
+
 test('bài DOM: vòng lặp vô hạn khi CHẤM bị ngắt, trang không treo', async ({ page }) => {
   test.setTimeout(120_000)
   await mockLogin(page, 'vi', 'dark-blue')
