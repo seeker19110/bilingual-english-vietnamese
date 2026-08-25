@@ -68,7 +68,7 @@
 - **Tiếp theo:** soạn nội dung bậc P2 (PR-L6) theo phân đợt đặc tả; hoặc chạy
   `npm run eval:code-feedback` với key thật để chốt chất lượng prompt trước khi mở rộng.
 
-### docs(load-test): leo thang k6 100→500→2.000 VU trên production — phát hiện quan trọng, đính chính giữa chừng (2026-08-24/25)
+### docs(load-test): leo thang k6 100→500→2.000 VU trên production — phát hiện quan trọng, đính chính giữa chừng — PR #662 (2026-08-24/25, đã MERGE)
 
 Tiếp nối 2 lần đo k6 100 VU đã ghi (PR #653/#655), chủ dự án tự leo thang 500 VU rồi 2.000 VU
 trên production thật (`www.donghanhcungban.org`), theo đúng lộ trình thận trọng ghi trong
