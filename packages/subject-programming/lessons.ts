@@ -33,6 +33,7 @@ import { P3U3_LESSONS } from './lessons/p3u3.js'
 import { P3U4_LESSONS } from './lessons/p3u4.js'
 import { P3U5_LESSONS } from './lessons/p3u5.js'
 import { P3U6_LESSONS } from './lessons/p3u6.js'
+import { P3U6B_LESSONS } from './lessons/p3u6b.js'
 import { P3U8_LESSONS } from './lessons/p3u8.js'
 import { P3U9_LESSONS } from './lessons/p3u9.js'
 
@@ -63,6 +64,7 @@ export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...P3U4_LESSONS,
   ...P3U5_LESSONS,
   ...P3U6_LESSONS,
+  ...P3U6B_LESSONS,
   ...P3U8_LESSONS,
   ...P3U9_LESSONS,
 ]

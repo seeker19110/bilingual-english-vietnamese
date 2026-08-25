@@ -9,20 +9,40 @@
 // Học viên vẫn có thể viết <script> vào bài — trình duyệt sẽ lặng lẽ không chạy nó. Đó là
 // hành vi đúng cho hai unit này (U4 HTML, U5 CSS); bài DOM sẽ có cơ chế riêng.
 interface Props {
-  /** Mã HTML của học viên. */
+  /** Mã HTML của trang. */
   html: string
+  /**
+   * Script cho bài DOM. CÓ script nghĩa là iframe phải được phép chạy JavaScript, nên nó
+   * KHÔNG còn là trang tĩnh câm nữa — xem cảnh báo bên dưới.
+   */
+  script?: string
 }
 
-export function HtmlPreview({ html }: Props) {
+export function HtmlPreview({ html, script }: Props) {
+  const chayScript = script !== undefined
+  // Nhét script vào cuối body để nó chạy SAU khi các thẻ đã tồn tại (đúng cái bẫy số 2 mà
+  // bài DOM dạy: đặt script trước nội dung thì getElementById trả null).
+  // '\x3C/script>' thay vì gõ thẳng thẻ đóng: chuỗi này nằm trong mã nguồn JavaScript, gõ
+  // thẳng có thể cắt sớm thẻ script của trang bao ngoài nếu bundle bị nhúng vào HTML.
+  const trang = chayScript
+    ? html.replace(/<\/body>/i, `<script>${script}\x3C/script></body>`)
+    : html
+
   return (
     <div className="space-y-2">
       <p className="text-xs text-zinc-400">
-        Xem trang (script bị tắt trong khung này — chỉ hiển thị):
+        {chayScript
+          ? 'Xem trang chạy thật (script của bạn có chạy trong khung này):'
+          : 'Xem trang (script bị tắt trong khung này — chỉ hiển thị):'}
       </p>
       <iframe
-        // sandbox="" = thu hồi TOÀN BỘ quyền. Đừng thêm allow-scripts vào đây.
-        sandbox=""
-        srcDoc={html}
+        // sandbox="" = thu hồi TOÀN BỘ quyền (bài HTML/CSS: trang tĩnh, không thể treo).
+        // allow-scripts CHỈ dùng cho bài DOM, nơi học viên cần thấy trang phản ứng thật.
+        // KHÔNG bao giờ thêm allow-same-origin: iframe sẽ đọc được cookie/storage của app.
+        // Lưu ý: khung này KHÔNG phải chỗ chấm bài — chấm chạy trong Web Worker (domRunner),
+        // nơi vòng lặp vô hạn bị terminate(). Ở đây vòng lặp vô hạn chỉ làm khung đứng hình.
+        sandbox={chayScript ? 'allow-scripts' : ''}
+        srcDoc={trang}
         title="Xem trước trang web bạn vừa viết"
         className="w-full h-64 rounded-2xl border border-zinc-800 bg-white"
       />
