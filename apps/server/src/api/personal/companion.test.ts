@@ -27,6 +27,27 @@ vi.mock('@dhcb/core-personal/companionRuntime', () => ({
   executeCompanionTurn: (...a: unknown[]) => runtime.executeCompanionTurn(...a),
 }))
 
+const messageService = vi.hoisted(() => ({
+  listRecentCompanionMessages: vi.fn(),
+}))
+
+// Đếm lượt: mock để khẳng định được đường GET (đọc lịch sử) KHÔNG tiêu hạn mức của người dùng.
+const usageMock = vi.hoisted(() => ({
+  checkAndConsumeUsage: vi.fn(),
+  refundUsage: vi.fn(),
+}))
+
+vi.mock('@dhcb/core-billing/usage', () => ({
+  checkAndConsumeUsage: (...a: unknown[]) => usageMock.checkAndConsumeUsage(...a),
+  refundUsage: (...a: unknown[]) => usageMock.refundUsage(...a),
+}))
+
+vi.mock('@dhcb/core-personal/companionMessageService', () => ({
+  listRecentCompanionMessages: (...a: unknown[]) =>
+    messageService.listRecentCompanionMessages(...a),
+  COMPANION_HISTORY_PAGE_SIZE: 50,
+}))
+
 import handler from './companion.js'
 
 const PERSON = '11111111-1111-4111-8111-111111111111'
@@ -45,6 +66,7 @@ beforeEach(() => {
   vi.clearAllMocks()
   authState.user = { userId: 'user-1' }
   rateLimitOk = true
+  usageMock.checkAndConsumeUsage.mockResolvedValue({ ok: true, day: '2026-08-25' })
   getOrCreatePerson.mockResolvedValue({ id: PERSON })
   runtime.executeCompanionTurn.mockResolvedValue({
     reply: 'Xin chào!',
@@ -77,7 +99,8 @@ describe('auth, rate limit and validation for /api/companion', () => {
   })
 
   it('rejects unsupported methods with 405', async () => {
-    const res = await handler(req('GET'))
+    // GET nay là đường đọc lịch sử hội thoại (hợp lệ) — dùng PUT để kiểm nhánh 405.
+    const res = await handler(req('PUT'))
     expect(res.status).toBe(405)
   })
 
@@ -123,5 +146,38 @@ describe('POST /api/companion execution', () => {
         tokenBudget: 3000,
       }),
     )
+  })
+})
+
+describe('GET /api/companion — lịch sử hội thoại', () => {
+  it('trả về các tin nhắn đã lưu', async () => {
+    messageService.listRecentCompanionMessages.mockResolvedValue([
+      { id: 'm1', role: 'user', content: 'Tôi là Kẻ Tìm Kiếm', createdAt: '2026-08-25T10:00:00Z' },
+    ])
+
+    const res = await handler(req('GET'))
+    expect(res.status).toBe(200)
+    const body = (await res.json()) as { messages: Array<{ content: string }> }
+    expect(body.messages).toHaveLength(1)
+    expect(body.messages[0]?.content).toBe('Tôi là Kẻ Tìm Kiếm')
+  })
+
+  it('KHÔNG đếm lượt — đọc lịch sử không gọi model AI nên không được tốn hạn mức', async () => {
+    messageService.listRecentCompanionMessages.mockResolvedValue([])
+    await handler(req('GET'))
+    expect(usageMock.checkAndConsumeUsage).not.toHaveBeenCalled()
+  })
+
+  it('chưa đăng nhập → 401, không đọc dữ liệu của ai cả', async () => {
+    authState.user = null
+    const res = await handler(req('GET'))
+    expect(res.status).toBe(401)
+    expect(messageService.listRecentCompanionMessages).not.toHaveBeenCalled()
+  })
+
+  it('lỗi DB → 500, không trả mảng rỗng giả vờ "chưa có hội thoại"', async () => {
+    messageService.listRecentCompanionMessages.mockRejectedValue(new Error('DB sập'))
+    const res = await handler(req('GET'))
+    expect(res.status).toBe(500)
   })
 })

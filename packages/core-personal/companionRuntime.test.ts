@@ -422,7 +422,10 @@ describe('executeCompanionTurn — nhánh ngữ cảnh & đếm trạng thái', 
       intent: 'general_conversation',
     })
 
-    expect(queryMock).not.toHaveBeenCalled()
+    // Bước đọc Learning Read Model là câu tra `personal.persons` để lấy user_id. Các câu query
+    // khác (lịch sử hội thoại) là bình thường — chỉ khẳng định KHÔNG có câu nào của read model.
+    const sqlCalls = queryMock.mock.calls.map((call) => String(call[0]))
+    expect(sqlCalls.some((sql) => sql.includes('personal.persons'))).toBe(false)
     expect(res.targetDomain).toBe('personal')
     expect(res.executionSummary.plannedSteps).toBe(0)
     const ctxOptions = contextEngineMock.buildContextPackage.mock.calls[0]![1] as {
@@ -706,6 +709,126 @@ describe('executeCompanionTurn — câu hỏi tick chọn (interactiveQuestions)
     }
 
     expect(events).not.toContain('questions')
+    delete process.env.GROQ_API_KEY
+  })
+})
+
+describe('executeCompanionTurn — TRÍ NHỚ hội thoại (vá lỗi "không nhớ gì", 2026-08-25)', () => {
+  const NOW = new Date('2026-08-25T10:00:00Z')
+
+  function historyRow(over: Record<string, unknown> = {}) {
+    return {
+      id: '55555555-5555-4555-8555-555555555555',
+      role: 'user',
+      content: 'Tôi là Kẻ Tìm Kiếm',
+      domain: 'profile',
+      intent: 'update_profile_fact',
+      created_at: NOW,
+      ...over,
+    }
+  }
+
+  /** Pool giả: trả lịch sử cho câu select, nuốt câu insert. */
+  function poolWithHistory(rows: unknown[]) {
+    const query = vi.fn(async (sql: string, params?: unknown[]) => {
+      void params
+      if (sql.includes('select') && sql.includes('companion_messages')) {
+        return { rows }
+      }
+      return { rows: [historyRow()] }
+    })
+    return { pool: { query } as unknown as Pool, query }
+  }
+
+  beforeEach(() => {
+    process.env.GROQ_API_KEY = 'test-groq-key'
+    chatProvidersMock.callGroqChatWithKeyPool.mockResolvedValue({
+      kind: 'success',
+      text: 'Ừ, mình nhớ bạn là Kẻ Tìm Kiếm.',
+      latencyMs: 100,
+    })
+  })
+
+  it('GỬI lịch sử vào prompt LLM, đúng thứ tự cũ → mới, trước tin nhắn hiện tại', async () => {
+    const { pool: livePool } = poolWithHistory([
+      historyRow({ id: 'b', role: 'companion', content: 'Mình đã ghi nhận' }),
+      historyRow({ id: 'a', role: 'user', content: 'Tôi là Kẻ Tìm Kiếm' }),
+    ])
+
+    await executeCompanionTurn(livePool, {
+      personId: PERSON_ID,
+      userMessage: 'tôi là ai',
+      targetDomain: 'personal',
+    })
+
+    const messages = chatProvidersMock.callGroqChatWithKeyPool.mock.calls[0]![2] as Array<{
+      role: string
+      content: string
+    }>
+    expect(messages).toHaveLength(3)
+    expect(messages[0]).toEqual({ role: 'user', content: 'Tôi là Kẻ Tìm Kiếm' })
+    expect(messages[1]).toEqual({ role: 'assistant', content: 'Mình đã ghi nhận' })
+    expect(messages[2]).toEqual({ role: 'user', content: 'tôi là ai' })
+    delete process.env.GROQ_API_KEY
+  })
+
+  it('LƯU cả tin người dùng lẫn câu trả lời để lượt sau còn nhớ', async () => {
+    const { pool: livePool, query } = poolWithHistory([])
+
+    await executeCompanionTurn(livePool, {
+      personId: PERSON_ID,
+      userMessage: 'tôi là ai',
+      targetDomain: 'personal',
+    })
+
+    const inserts = query.mock.calls
+      .filter((c) => String(c[0]).includes('insert into personal.companion_messages'))
+      .map((c) => c[1] as unknown[])
+    expect(inserts).toHaveLength(2)
+    expect(inserts[0]![1]).toBe('user')
+    expect(inserts[0]![2]).toBe('tôi là ai')
+    expect(inserts[1]![1]).toBe('companion')
+    expect(inserts[1]![2]).toBe('Ừ, mình nhớ bạn là Kẻ Tìm Kiếm.')
+    delete process.env.GROQ_API_KEY
+  })
+
+  it('lỗi ĐỌC lịch sử không được làm hỏng lượt trả lời', async () => {
+    const livePool = {
+      query: vi.fn(async (sql: string) => {
+        if (String(sql).includes('select') && String(sql).includes('companion_messages')) {
+          throw new Error('DB sập')
+        }
+        return { rows: [historyRow()] }
+      }),
+    } as unknown as Pool
+
+    const res = await executeCompanionTurn(livePool, {
+      personId: PERSON_ID,
+      userMessage: 'tôi là ai',
+      targetDomain: 'personal',
+    })
+
+    expect(res.reply).toBe('Ừ, mình nhớ bạn là Kẻ Tìm Kiếm.')
+    delete process.env.GROQ_API_KEY
+  })
+
+  it('lỗi GHI lịch sử cũng không được làm hỏng lượt trả lời', async () => {
+    const livePool = {
+      query: vi.fn(async (sql: string) => {
+        if (String(sql).includes('insert into personal.companion_messages')) {
+          throw new Error('DB sập')
+        }
+        return { rows: [] }
+      }),
+    } as unknown as Pool
+
+    const res = await executeCompanionTurn(livePool, {
+      personId: PERSON_ID,
+      userMessage: 'tôi là ai',
+      targetDomain: 'personal',
+    })
+
+    expect(res.reply).toBe('Ừ, mình nhớ bạn là Kẻ Tìm Kiếm.')
     delete process.env.GROQ_API_KEY
   })
 })

@@ -16,6 +16,7 @@ import {
   sendCompanionMessageStream,
   confirmProposedAction,
   rejectProposedAction,
+  fetchCompanionHistory,
 } from '../../lib/companionApi'
 import type { ProposedAction } from '@dhcb/core-contracts/proposedAction'
 import type { ContextPackage } from '@dhcb/core-contracts/contextPackage'
@@ -69,6 +70,41 @@ export default function Companion() {
     fetchProactiveAgentState()
       .then((state) => setProactiveState(state))
       .catch(() => {})
+  }, [])
+
+  // Khoá "đã nạp lịch sử": React StrictMode chạy effect HAI LẦN ở môi trường dev, không có khoá
+  // này thì toàn bộ hội thoại cũ bị chèn vào hai lần.
+  const historyLoadedRef = useRef(false)
+
+  // Nạp lại hội thoại đã lưu — mở lại trang là thấy tiếp cuộc trò chuyện trước, không phải bắt
+  // đầu lại từ đầu. Lỗi mạng thì im lặng giữ nguyên tin chào (không có gì để khôi phục thì thôi).
+  useEffect(() => {
+    if (historyLoadedRef.current) return
+    historyLoadedRef.current = true
+
+    let cancelled = false
+    fetchCompanionHistory()
+      .then((history) => {
+        if (cancelled || history.length === 0) return
+        setMessages((prev) => [
+          ...prev,
+          ...history.map((msg) => ({
+            id: `hist-${msg.id}`,
+            sender: msg.role,
+            text: msg.content,
+            timestamp: new Date(msg.createdAt).toLocaleTimeString('vi-VN', {
+              hour: '2-digit',
+              minute: '2-digit',
+            }),
+            ...(msg.domain ? { domain: msg.domain } : {}),
+            ...(msg.intent ? { intent: msg.intent } : {}),
+          })),
+        ])
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   // ── Chế độ giọng nói: STT → LLM → TTS (KHÔNG "live" — ghi âm xong mới gửi từng bước) ──

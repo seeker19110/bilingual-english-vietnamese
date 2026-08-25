@@ -14,6 +14,7 @@ import {
 import { CapabilityRiskLevelSchema } from '@dhcb/core-contracts/capabilityManifest'
 import { resolveAuthority } from './policyService.js'
 import { getToolManifest, validateToolInput } from './toolRegistry.js'
+import { executeCapability, requiresUserConfirmation } from './capabilityExecutor.js'
 
 type ProposedActionStatus = z.infer<typeof ProposedActionStatusSchema>
 type CapabilityRiskLevel = z.infer<typeof CapabilityRiskLevelSchema>
@@ -137,8 +138,12 @@ export async function proposeAction(
   }
 
   const isHighRisk = riskLevel === 'high' || riskLevel === 'restricted'
+  // Ghi vào hồ sơ/ký ức cá nhân thì LUÔN chờ người dùng bấm xác nhận, kể cả khi Personal Policy
+  // cho phép tự động — chốt của người dùng 2026-08-25. Đây là cổng cứng, đặt trước mọi điều kiện
+  // khác để không policy nào lách qua được.
   const canAutomate =
     !isHighRisk &&
+    !requiresUserConfirmation(capabilityId) &&
     (authority === 'AUTOMATE' ||
       (authority === 'WRITE_INTERNAL' && riskLevel === 'low') ||
       (authority === null && riskLevel === 'low' && tool.sideEffect === 'none'))
@@ -146,10 +151,19 @@ export async function proposeAction(
   if (canAutomate) {
     const id = randomUUID()
     const startTime = Date.now()
-    const execResult = { executedAt: new Date().toISOString(), toolId: tool.id, status: 'ok' }
-    const duration = Date.now() - startTime
 
     return await withTransaction(pool, async (client) => {
+      // Thi hành THẬT rồi mới ghi 'committed' — nếu bước này ném lỗi, transaction cuộn lại và
+      // hành động KHÔNG bị đánh dấu là đã thực hiện.
+      const execResult = await executeCapability(
+        client,
+        personId,
+        capabilityId,
+        payload,
+        'system:automate',
+      )
+      const duration = Date.now() - startTime
+
       await recordToolAudit(
         client,
         personId,
@@ -228,13 +242,20 @@ export async function confirmAction(
       )
     }
 
-    const tool = getToolManifest(current.capability_id)
+    // Ném sớm nếu capability không còn trong registry — không cho phép "xác nhận" một thứ không
+    // biết thi hành thế nào.
+    getToolManifest(current.capability_id)
     const startTime = Date.now()
-    const execResult = {
-      executedAt: new Date().toISOString(),
-      toolId: tool.id,
-      status: 'confirmed_and_run',
-    }
+
+    // Thi hành THẬT trong chính transaction này. Lỗi ở đây ⇒ rollback ⇒ hành động vẫn 'pending',
+    // người dùng thấy lỗi và bấm lại được — thay vì bị báo "đã lưu" mà thật ra không lưu gì.
+    const execResult = await executeCapability(
+      client,
+      personId,
+      current.capability_id,
+      (current.payload ?? {}) as Record<string, unknown>,
+      actor,
+    )
     const duration = Date.now() - startTime
 
     await recordToolAudit(

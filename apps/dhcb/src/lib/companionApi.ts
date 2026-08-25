@@ -156,6 +156,29 @@ export async function sendCompanionMessageStream(
   return finalResponse
 }
 
+export interface CompanionHistoryMessage {
+  id: string
+  role: 'user' | 'companion'
+  content: string
+  domain?: string
+  intent?: string
+  createdAt: string
+}
+
+/**
+ * Nạp lại hội thoại đã lưu để mở trang là thấy lại cuộc trò chuyện trước đó.
+ */
+export async function fetchCompanionHistory(): Promise<CompanionHistoryMessage[]> {
+  const headers = await getAuthHeader()
+  const res = await fetch('/api/companion', { headers })
+  if (!res.ok) {
+    const errorBody = await res.json().catch(() => ({ error: `HTTP error ${res.status}` }))
+    throw new Error(errorBody.error || `HTTP error ${res.status}`)
+  }
+  const data = await res.json()
+  return Array.isArray(data.messages) ? data.messages : []
+}
+
 /**
  * List proposed actions for the authenticated person.
  */
