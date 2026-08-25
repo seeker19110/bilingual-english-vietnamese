@@ -228,9 +228,18 @@ chạy Python; chạy trong Web Worker để không đơ UI; đặt timeout ng�
   output mong đợi) chạy ngay trong sandbox trình duyệt; kết quả pass/fail hiện từng ca (ca ẩn
   chỉ hiện pass/fail, không lộ input). Đây là đường chấm CHÍNH.
 - **AI chỉ cho phản hồi chất lượng** (đọc code góp ý đặt tên/cách làm hay hơn, giải thích lỗi
-  khó bằng tiếng Việt, Socratic hints): qua `/api/agent` với prompt riêng trong
-  `apps/dhcb/src/prompts/`, **mode đếm lượt mới `code_feedback`** (thêm cột usage, giới hạn
-  free/pro riêng — theo đúng luật "mọi lệnh gọi AI phải đếm lượt").
+  khó bằng tiếng Việt, Socratic hints): **mode đếm lượt mới `code_feedback`** (thêm cột usage
+  — theo đúng luật "mọi lệnh gọi AI phải đếm lượt").
+  **[Cập nhật 2026-08-25 — thi hành PR-L5, ĐỔI so với câu trên]** KHÔNG đi qua `/api/agent` và
+  prompt KHÔNG nằm ở `apps/dhcb/src/prompts/`. Hai lý do phát hiện khi đọc lại code:
+  (a) `/api/agent` chèn cứng `SYSTEM_GUARDRAIL` "Bạn là trợ lý GIA SƯ NGÔN NGỮ… việc ngoài phạm
+  vi học ngôn ngữ thì lịch sự từ chối" (`core-ai/aiConfig.ts`) — hỏi nó về Python là đúng cái nó
+  được dặn từ chối; (b) `/api/agent` chỉ nhận mode `chat|writing|speaking` (chặn có chủ ý) nên
+  không có đường đếm vào `code_feedback`. Thay bằng endpoint riêng
+  `POST /api/programming/feedback`, prompt dựng HOÀN TOÀN Ở SERVER
+  (`packages/subject-programming/feedbackPrompt.ts`) — client chỉ gửi mã bài + code, không gửi
+  được prompt tuỳ ý. Hạn mức vẫn theo luật chung: Free tiêu kho lượt cửa sổ trượt, Pro/VIP tính
+  vào hạn mức TỔNG/ngày (không có hạn mức riêng cho môn).
 - Chống gian lận nhẹ nhàng đúng tư thế đồng hành: không "bắt phạt", chỉ thỉnh thoảng hỏi lại
   1 câu Predict về chính code học viên vừa nộp ("dòng 5 đổi thành X thì in gì?").
 
@@ -243,15 +252,15 @@ Parsons (dòng xáo trộn + đáp án), đề Make (đề + starter code + test
 
 ## 7. Phân đợt PR (đề xuất — chờ người dùng duyệt mới làm)
 
-| PR     | Nội dung                                                                                                                              | Cổng nghiệm thu                                                  |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| PR-L0  | Đặc tả này + cập nhật PROGRESS/CLAUDE                                                                                                 | Người dùng duyệt đặc tả                                          |
-| PR-L1  | Khung môn: subjectRegistry + schema `programming.*` (migration) + trang tổng quan P1–P6 + trang bậc rỗng                              | Route chạy, migration idempotent, a11y pass                      |
-| PR-L2  | Sandbox chạy code: Pyodide lazy-load trong Worker + editor (CodeMirror 6 — nhẹ hơn Monaco, phù hợp mobile-first) + nút Chạy + timeout | Chạy được 10 bài mẫu P1 trên mobile thật, bundle budget không vỡ |
-| PR-L3  | Engine bài học 8 bước: Predict + Parsons + Make chấm test-case + tiến độ lưu DB                                                       | Test ca biên chấm; luồng 1 bài end-to-end                        |
-| PR-L4  | Nội dung P1 đầy đủ (10 unit ~40 bài) + thẻ SRS                                                                                        | Người thật học thử hết P1; eval nội dung                         |
-| PR-L5  | AI feedback + Socratic hints (mode `code_feedback` đếm lượt) + Companion tích hợp                                                     | Đếm lượt đúng free/pro; eval prompt                              |
-| PR-L6+ | Nội dung P2 → P3 (thêm JS sandbox + SQL WASM ở P3), chẩn đoán đầu vào ẩn                                                              | Từng đợt như P1                                                  |
+| PR     | Nội dung                                                                                                                              | Cổng nghiệm thu                                                    |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| PR-L0  | Đặc tả này + cập nhật PROGRESS/CLAUDE                                                                                                 | Người dùng duyệt đặc tả                                            |
+| PR-L1  | Khung môn: subjectRegistry + schema `programming.*` (migration) + trang tổng quan P1–P6 + trang bậc rỗng                              | Route chạy, migration idempotent, a11y pass                        |
+| PR-L2  | Sandbox chạy code: Pyodide lazy-load trong Worker + editor (CodeMirror 6 — nhẹ hơn Monaco, phù hợp mobile-first) + nút Chạy + timeout | Chạy được 10 bài mẫu P1 trên mobile thật, bundle budget không vỡ   |
+| PR-L3  | Engine bài học 8 bước: Predict + Parsons + Make chấm test-case + tiến độ lưu DB                                                       | Test ca biên chấm; luồng 1 bài end-to-end                          |
+| PR-L4  | Nội dung P1 đầy đủ (10 unit ~40 bài) + thẻ SRS                                                                                        | Người thật học thử hết P1; eval nội dung                           |
+| PR-L5  | AI feedback + Socratic hints (mode `code_feedback` đếm lượt) + Companion tích hợp — **XONG 2026-08-25**                               | Đếm lượt đúng free/pro; eval prompt (`npm run eval:code-feedback`) |
+| PR-L6+ | Nội dung P2 → P3 (thêm JS sandbox + SQL WASM ở P3), chẩn đoán đầu vào ẩn                                                              | Từng đợt như P1                                                    |
 
 Mỗi PR nhỏ, tự kiểm được, theo đúng nhịp "chia nhỏ" của CLAUDE.md mục 3.
 

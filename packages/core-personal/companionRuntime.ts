@@ -13,6 +13,10 @@ import {
   getLearningReadModel,
   formatLearningReadModelForContext,
 } from '@dhcb/core-learner/learningReadModelService'
+import {
+  getProgrammingProgressSummary,
+  formatProgrammingProgressForContext,
+} from '@dhcb/core-learner/programmingReadModelService'
 import { callGroqChatWithKeyPool, callAnthropicChat } from '@dhcb/core-ai/chatProviders'
 import { callGemini } from '@dhcb/core-ai/geminiApi'
 import { ALLOWED_MODEL, GEMINI_CHAT_MODEL, GROQ_CHAT_MODEL } from '@dhcb/core-ai/aiConfig'
@@ -26,7 +30,7 @@ export const COMPANION_SYSTEM_PROMPT =
   'Bạn là Bạn Đồng Hành AI — Người đồng hành trí tuệ, thấu cảm và tận tâm trong nền tảng "Đồng Hành Cùng Bạn".\n\n' +
   '🌟 SỨ MỆNH & ĐỊNH HƯỚNG CỦA BẠN:\n' +
   'Đồng hành cùng người dùng trên hành trình tự học, phát triển bản thân và làm chủ cuộc sống xuyên suốt 5 lĩnh vực cốt lõi:\n' +
-  '1. 📚 Học tập (Learning): Làm chủ tiếng Anh (IELTS, phát âm IPA, từ vựng theo ngữ cảnh, giao tiếp tự nhiên), phương pháp tự học Socratic và tư duy đa ngành.\n' +
+  '1. 📚 Học tập (Learning): Làm chủ tiếng Anh (IELTS, phát âm IPA, từ vựng theo ngữ cảnh, giao tiếp tự nhiên) và LẬP TRÌNH từ số 0 (Python, thang bậc P1–P6, học qua một dự án xuyên suốt), cùng phương pháp tự học Socratic và tư duy đa ngành.\n' +
   '2. 💼 Sự nghiệp (Career): Định hướng phát triển nghề nghiệp, giải mã năng lực cá nhân, xây dựng lộ trình thăng tiến bền vững theo chuẩn quốc tế.\n' +
   '3. ⚡ Công việc (Work): Giải quyết bài toán chuyên môn, tư duy hệ thống & kiến trúc, nâng cao năng suất và ra quyết định hiệu quả.\n' +
   '4. 🚀 Khởi nghiệp (Venture): Thẩm định ý tưởng sáng tạo, kiểm chứng giả định thực tế, phản biện logic và xây dựng giải pháp thực thi tinh gọn.\n' +
@@ -445,9 +449,15 @@ export async function executeCompanionTurn(
       )
       const userId = personRow.rows[0]?.user_id ?? personId
       const learningModel = await getLearningReadModel(pool, { personId, userId })
+      // Môn Lập trình có khuôn tiến độ riêng (bậc P1–P6, không phải CEFR) nên nối thêm một
+      // dòng thay vì nhồi vào LearningReadModel — và chỉ nối khi người học ĐÃ chạm vào môn.
+      const programming = formatProgrammingProgressForContext(
+        await getProgrammingProgressSummary(pool, userId),
+      )
+      const learningContext = formatLearningReadModelForContext(learningModel)
       domainState = {
         sourceId: personId,
-        content: formatLearningReadModelForContext(learningModel),
+        content: programming ? `${learningContext}\n${programming}` : learningContext,
         provenance: 'learning:read_model',
       }
     } catch {

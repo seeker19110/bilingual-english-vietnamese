@@ -20,6 +20,9 @@ import {
   ListChecks,
   Puzzle,
   PencilLine,
+  Sparkles,
+  MessageCircleQuestion,
+  AlertCircle,
 } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
@@ -27,6 +30,12 @@ import CodeEditor from '../../../components/CodeEditor'
 import { useAuth } from '../../../context/useAuth'
 import { runPython, resetPythonWorker } from '../../../lib/pythonRunner'
 import { saveLessonProgress } from '../../../lib/programmingProgress'
+import { MAX_HINT_LEVEL } from '@dhcb/subject-programming/feedbackPrompt'
+import {
+  requestCodeFeedback,
+  failedCaseLabels,
+  type CodeFeedbackKind,
+} from '../../../lib/programmingFeedback'
 import { getLesson } from '@dhcb/subject-programming/lessons'
 import {
   gradeTestCase,
@@ -73,6 +82,14 @@ export default function ProgrammingLessonPage() {
   const [hintsShown, setHintsShown] = useState(0)
   const [sampleViewed, setSampleViewed] = useState(false)
   const passed = results !== null && allTestsPassed(results)
+  // ⑥b AI phản hồi code (PR-L5) — TIÊU LƯỢT nên chỉ chạy khi học viên tự bấm, không tự động.
+  // `aiLevel` = bậc gợi ý Socratic đã dùng: mở dần 1→MAX_HINT_LEVEL, không nhảy cóc.
+  const [aiLevel, setAiLevel] = useState(0)
+  const [aiBusy, setAiBusy] = useState<CodeFeedbackKind | null>(null)
+  const [aiText, setAiText] = useState('')
+  const [aiError, setAiError] = useState('')
+  // Lỗi runtime đầu tiên trong lần chấm gần nhất — có thì mới mời "giải thích lỗi".
+  const firstError = results?.find((r) => r.error)?.error ?? ''
 
   // Ghi "đang học" khi vào bài; rời trang huỷ worker Python.
   useEffect(() => {
@@ -107,6 +124,30 @@ export default function ProgrammingLessonPage() {
     setGrading(false)
     if (allTestsPassed(out) && user) {
       void saveLessonProgress(user.id, lesson.id, 'completed')
+    }
+  }
+
+  const askAi = async (kind: CodeFeedbackKind) => {
+    if (aiBusy || !lesson) return
+    const nextLevel = kind === 'socratic_hint' ? Math.min(aiLevel + 1, MAX_HINT_LEVEL) : undefined
+    setAiBusy(kind)
+    setAiError('')
+    setAiText('')
+    const r = await requestCodeFeedback({
+      kind,
+      lessonId: lesson.id,
+      code,
+      ...(nextLevel ? { hintLevel: nextLevel } : {}),
+      ...(kind === 'explain_error' && firstError ? { errorText: firstError } : {}),
+      ...(kind === 'socratic_hint' ? { failedCaseLabels: failedCaseLabels(results) } : {}),
+    })
+    setAiBusy(null)
+    if (r.ok) {
+      setAiText(r.text)
+      // Lên bậc theo bậc SERVER đã dùng (server là nơi kẹp dải), không theo phỏng đoán client.
+      if (kind === 'socratic_hint') setAiLevel(r.hintLevel ?? nextLevel ?? aiLevel + 1)
+    } else {
+      setAiError(r.message)
     }
   }
 
@@ -378,6 +419,76 @@ export default function ProgrammingLessonPage() {
                 ))}
               </ul>
             )}
+            {/* ⑥b AI đồng hành: gợi ý Socratic (mở dần) · giải thích lỗi · góp ý sau khi đạt.
+                Gợi ý soạn sẵn ở trên vẫn là đường CHÍNH (0đ, tức thì) — AI chỉ dùng khi bí thật. */}
+            <div className="rounded-3xl border border-zinc-800 bg-zinc-900/80 p-5 space-y-3">
+              <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-accent-400" />
+                <span>Bí quá? Hỏi Bạn Đồng Hành</span>
+              </h2>
+              <p className="text-xs text-zinc-300">
+                AI sẽ hỏi ngược để bạn tự tìm ra chỗ sai, không đưa lời giải sẵn. Mỗi lần hỏi tiêu 1
+                lượt AI trong ngày.
+              </p>
+              <div className="flex items-center gap-2 flex-wrap">
+                <button
+                  onClick={() => void askAi('socratic_hint')}
+                  disabled={aiBusy !== null || !code.trim() || aiLevel >= MAX_HINT_LEVEL}
+                  className="tap-44 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-black font-semibold text-sm transition"
+                >
+                  {aiBusy === 'socratic_hint' ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <MessageCircleQuestion className="w-4 h-4" />
+                  )}
+                  <span>
+                    {aiLevel >= MAX_HINT_LEVEL
+                      ? `Đã dùng hết ${MAX_HINT_LEVEL} bậc gợi ý`
+                      : `Gợi ý bậc ${aiLevel + 1}/${MAX_HINT_LEVEL}`}
+                  </span>
+                </button>
+                {firstError && (
+                  <button
+                    onClick={() => void askAi('explain_error')}
+                    disabled={aiBusy !== null}
+                    className="tap-44 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-zinc-600 disabled:opacity-50 text-zinc-200 font-semibold text-sm transition"
+                  >
+                    {aiBusy === 'explain_error' ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <AlertCircle className="w-4 h-4 text-rose-400" />
+                    )}
+                    <span>Lỗi này nghĩa là gì?</span>
+                  </button>
+                )}
+                {passed && (
+                  <button
+                    onClick={() => void askAi('review')}
+                    disabled={aiBusy !== null}
+                    className="tap-44 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-zinc-600 disabled:opacity-50 text-zinc-200 font-semibold text-sm transition"
+                  >
+                    {aiBusy === 'review' ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Sparkles className="w-4 h-4 text-accent-400" />
+                    )}
+                    <span>Nhờ AI xem lại code</span>
+                  </button>
+                )}
+              </div>
+              <div aria-live="polite">
+                {aiText && (
+                  <p className="rounded-2xl border border-accent-500/30 bg-accent-500/10 p-3.5 text-sm text-zinc-100 leading-relaxed whitespace-pre-line">
+                    {aiText}
+                  </p>
+                )}
+                {aiError && (
+                  <p className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-3.5 text-sm text-zinc-100">
+                    {aiError}
+                  </p>
+                )}
+              </div>
+            </div>
             {results && (
               <ul className="space-y-2" aria-live="polite">
                 {results.map((r, i) => (

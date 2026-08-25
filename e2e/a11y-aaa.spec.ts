@@ -97,3 +97,31 @@ for (const theme of THEMES) {
     })
   }
 }
+
+// Khối AI phản hồi code (PR-L5) chỉ hiện ở bước "Tự viết" sau khi gọi API → vòng quét theo
+// ROUTES ở trên không thấy. Quét riêng đúng trạng thái đó, đủ 5 theme.
+for (const theme of THEMES) {
+  test(`a11y AAA (nội dung + tiêu đề): AI xem code (Lập trình) theme=${theme}`, async ({
+    page,
+  }) => {
+    await page.route('**/api/programming/feedback', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          text: 'Đề bài muốn in ra số tiền điện. Bạn thử đọc lại xem mốc 50 kWh đầu tính giá nào nhé?',
+          kind: 'socratic_hint',
+          hintLevel: 1,
+        }),
+      }),
+    )
+    await mockLogin(page, 'vi', theme)
+    await page.goto('/lap-trinh/bai-hoc/p1-u4-l1', { waitUntil: 'domcontentloaded' })
+    await page.getByRole('button', { name: 'Tự viết' }).click()
+    await page.getByRole('button', { name: /Gợi ý bậc/ }).click()
+    await expect(page.getByText(/mốc 50 kWh đầu/)).toBeVisible()
+
+    const violated = await scanAaa(page)
+    expect(violated, `Vi phạm WCAG AAA trên khối AI phản hồi code, theme=${theme}.`).toEqual([])
+  })
+}

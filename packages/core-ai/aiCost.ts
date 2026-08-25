@@ -16,6 +16,8 @@ import type { UsageMode } from '@dhcb/core-billing/usage'
 //   speaking  — 1 lượt nói = trả lời tiếng đích + phần sửa lỗi tiếng mẹ đẻ (2 đoạn văn bản).
 //   stt       — Whisper qua Groq (whisper-large-v3-turbo), đoạn ghi âm ~30 giây.
 //   pronounce — chấm phát âm Azure, tính theo giờ audio, mỗi lượt vài giây.
+//   code_feedback — AI đọc code môn Lập trình (đề bài + code học viên vào, góp ý/gợi ý ra):
+//                   cùng bể provider với chat, prompt vào dài hơn nhưng trả lời ngắn hơn.
 // CHƯA gồm: TTS (tính theo ký tự VÀ có cache dùng chung, xem tts_cache — chi phí thực tế
 // thấp hơn nhiều số lượt) và hạ tầng VPS (chi phí cố định, không theo lượt).
 const DEFAULT_UNIT_USD: Record<UsageMode, number> = {
@@ -24,6 +26,7 @@ const DEFAULT_UNIT_USD: Record<UsageMode, number> = {
   speaking: 0.003,
   stt: 0.0005,
   pronounce: 0.0004,
+  code_feedback: 0.003,
 }
 
 // Tỉ giá quy đổi USD → VND để so trực tiếp với doanh thu (đơn thanh toán ghi bằng VND).
@@ -45,6 +48,7 @@ const ENV_NAME: Record<UsageMode, string> = {
   speaking: 'AI_COST_SPEAKING_USD',
   stt: 'AI_COST_STT_USD',
   pronounce: 'AI_COST_PRONOUNCE_USD',
+  code_feedback: 'AI_COST_CODE_FEEDBACK_USD',
 }
 
 // Đơn giá đang áp dụng cho từng chế độ (đã tính cả ghi đè từ biến môi trường).
@@ -55,6 +59,7 @@ export function getUnitCostsUsd(): Record<UsageMode, number> {
     speaking: envNumber(ENV_NAME.speaking, DEFAULT_UNIT_USD.speaking),
     stt: envNumber(ENV_NAME.stt, DEFAULT_UNIT_USD.stt),
     pronounce: envNumber(ENV_NAME.pronounce, DEFAULT_UNIT_USD.pronounce),
+    code_feedback: envNumber(ENV_NAME.code_feedback, DEFAULT_UNIT_USD.code_feedback),
   }
 }
 
