@@ -6,9 +6,21 @@ import { randomUUID } from 'node:crypto'
 import type { Pool } from 'pg'
 import { z } from 'zod'
 import { buildContextPackage, type ContextBuildOptions } from './contextEngine.js'
+import {
+  appendCompanionMessage,
+  listRecentCompanionMessages,
+  toProviderMessages,
+  COMPANION_HISTORY_TURNS,
+  type CompanionMessage,
+} from './companionMessageService.js'
 import { proposeAction, type ProposeActionInput } from './proposedActionService.js'
 import type { ContextPackage } from '@dhcb/core-contracts/contextPackage'
 import type { ProposedAction } from '@dhcb/core-contracts/proposedAction'
+import {
+  extractInteractiveQuestions,
+  INTERACTIVE_QUESTION_PROMPT_GUIDE,
+  type InteractiveQuestion,
+} from '@dhcb/core-contracts/interactiveQuestion'
 import {
   getLearningReadModel,
   formatLearningReadModelForContext,
@@ -75,6 +87,12 @@ export interface CompanionResponse {
   contextPackage: ContextPackage
   proposedActions: ProposedAction[]
   executionSummary: CompanionExecutionSummary
+  /**
+   * Câu hỏi tick chọn kèm theo lượt trả lời (rỗng khi LLM chỉ trả lời bằng lời văn). Giao diện
+   * dựng thành checkbox/radio để người dùng khỏi phải gõ tay — xem
+   * `packages/core-contracts/interactiveQuestion.ts`.
+   */
+  interactiveQuestions: InteractiveQuestion[]
 }
 
 /**
@@ -286,6 +304,12 @@ export async function synthesizeCompanionReply(
   domain: string,
   proposedActions: ProposedAction[],
   contextPackage: ContextPackage,
+  /**
+   * Các lượt thoại TRƯỚC đó (cũ → mới, KHÔNG gồm tin nhắn hiện tại). Thiếu tham số này thì AI
+   * chỉ thấy đúng một câu vừa gõ và không nhớ gì — chính là lỗi "không có trí nhớ" được vá
+   * 2026-08-25.
+   */
+  history: CompanionMessage[] = [],
 ): Promise<string> {
   const groqKey = process.env.GROQ_API_KEY
   const geminiKey = process.env.GEMINI_API_KEY
@@ -317,9 +341,11 @@ export async function synthesizeCompanionReply(
 
   const systemPrompt = `${COMPANION_SYSTEM_PROMPT}\n${domainContext}${
     contextDetails ? `\nThông tin ngữ cảnh người dùng trích xuất:\n${contextDetails}` : ''
-  }${actionsSummary}\n\nHãy trả lời người dùng với giọng điệu tự nhiên, ấm áp, thông tuệ và truyền cảm hứng dựa trên ngữ cảnh.`
+  }${actionsSummary}${INTERACTIVE_QUESTION_PROMPT_GUIDE}\n\nHãy trả lời người dùng với giọng điệu tự nhiên, ấm áp, thông tuệ và truyền cảm hứng dựa trên ngữ cảnh.`
 
-  const messages = [{ role: 'user', content: userMessage }]
+  // Lịch sử đứng TRƯỚC tin nhắn hiện tại, đúng thứ tự thời gian — nhà cung cấp LLM nào cũng đọc
+  // mảng messages theo thứ tự này để hiểu mạch hội thoại.
+  const messages = [...toProviderMessages(history), { role: 'user', content: userMessage }]
 
   // 1. Nhánh Groq (ưu tiên hàng đầu — chung model với gia sư tiếng Anh: GROQ_CHAT_MODEL)
   if (groqKey) {
@@ -439,6 +465,15 @@ export async function executeCompanionTurn(
   // Step 1: Intent & Domain Resolution
   const { intent, domain } = resolveIntentAndDomain(userMessage, explicitIntent, explicitDomain)
 
+  // Step 1b: Nạp lịch sử hội thoại để AI nhớ được các lượt trước. Hỏng thì đi tiếp với lịch sử
+  // rỗng — mất trí nhớ một lượt vẫn hơn là không trả lời được câu nào.
+  let history: CompanionMessage[] = []
+  try {
+    history = await listRecentCompanionMessages(pool, personId, COMPANION_HISTORY_TURNS)
+  } catch {
+    history = []
+  }
+
   // Step 2: Context Resolution (Context Engine with Domain Read Model)
   let domainState: ContextBuildOptions['domainState'] = undefined
   if (domain === 'learning') {
@@ -508,16 +543,45 @@ export async function executeCompanionTurn(
   }
 
   // Step 6: Synthesize Read Model / Intelligent LLM Response
-  const reply = await synthesizeCompanionReply(
+  const rawReply = await synthesizeCompanionReply(
     userMessage,
     intent,
     domain,
     proposedActions,
     contextPackage,
+    history,
   )
+
+  // Step 7: Tách khối câu hỏi tick chọn (nếu có) ra khỏi lời văn — khối JSON không bao giờ được
+  // lọt xuống giao diện dưới dạng chữ thô.
+  const { text: reply, questions: interactiveQuestions } = extractInteractiveQuestions(rawReply)
+
+  // Step 8: Lưu cả hai vế của lượt thoại để lần sau mở lại vẫn còn. Ghi lỗi thì KHÔNG làm hỏng
+  // câu trả lời đang trả về cho người dùng — họ vẫn đọc được, chỉ là lượt này không vào lịch sử.
+  try {
+    await appendCompanionMessage(pool, {
+      personId,
+      role: 'user',
+      content: userMessage,
+      domain,
+      intent,
+    })
+    if (reply.trim()) {
+      await appendCompanionMessage(pool, {
+        personId,
+        role: 'companion',
+        content: reply,
+        domain,
+        intent,
+      })
+    }
+  } catch {
+    // bỏ qua: lịch sử là tiện ích, không phải điều kiện để trả lời
+  }
 
   return {
     reply,
+    interactiveQuestions,
     intent,
     targetDomain: domain,
     contextPackage,
@@ -541,6 +605,7 @@ export type CompanionStreamEvent =
         executionSummary: CompanionExecutionSummary
       }
     }
+  | { type: 'questions'; data: { interactiveQuestions: InteractiveQuestion[] } }
   | { type: 'done'; data: CompanionResponse }
   | { type: 'error'; data: { message: string } }
 
@@ -582,6 +647,14 @@ export async function* streamCompanionTurn(
       proposedActions: response.proposedActions,
       executionSummary: response.executionSummary,
     },
+  }
+
+  // 3b. Emit câu hỏi tick chọn (chỉ khi có) — sự kiện riêng để client cũ bỏ qua được an toàn.
+  if (response.interactiveQuestions.length > 0) {
+    yield {
+      type: 'questions',
+      data: { interactiveQuestions: response.interactiveQuestions },
+    }
   }
 
   // 4. Emit final done event

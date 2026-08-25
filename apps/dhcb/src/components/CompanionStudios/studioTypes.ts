@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import type { ProposedAction } from '@dhcb/core-contracts/proposedAction'
 import type { ContextPackage } from '@dhcb/core-contracts/contextPackage'
+import type { InteractiveQuestion } from '@dhcb/core-contracts/interactiveQuestion'
 
 export type StudioTab = 'dialogue' | 'cognitive' | 'labs' | 'proactive' | 'synthesis'
 
@@ -29,6 +30,8 @@ export interface ChatMessage {
   domain?: string
   contextPackage?: ContextPackage
   proposedActions?: ProposedAction[]
+  // Câu hỏi tick chọn kèm tin nhắn của Companion (nếu lượt đó có hỏi).
+  interactiveQuestions?: InteractiveQuestion[]
 }
 
 export const DOMAIN_OPTIONS = [

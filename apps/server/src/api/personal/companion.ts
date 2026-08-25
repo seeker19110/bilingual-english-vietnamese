@@ -11,6 +11,10 @@ import {
 } from '@dhcb/core-auth/security'
 import { getOrCreatePerson } from '@dhcb/core-personal/personService'
 import { executeCompanionTurn, streamCompanionTurn } from '@dhcb/core-personal/companionRuntime'
+import {
+  listRecentCompanionMessages,
+  COMPANION_HISTORY_PAGE_SIZE,
+} from '@dhcb/core-personal/companionMessageService'
 import { isAppError, toErrorBody } from '@dhcb/core-errors/appError'
 import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
 import { jsonResponse, getClientIp, internalErrorResponse } from '@dhcb/core-http/http'
@@ -40,6 +44,26 @@ export default async function handler(req: Request): Promise<Response> {
   const auth = await validateAuth(req)
   if (!auth) {
     return jsonResponse({ error: 'Unauthorized' }, 401, headers)
+  }
+
+  // GET /api/companion → lịch sử hội thoại gần nhất, để mở lại trang là thấy lại cuộc trò chuyện.
+  // KHÔNG đếm lượt: đây là đọc dữ liệu đã có, không gọi model AI nên không tốn tiền API.
+  if (req.method === 'GET') {
+    try {
+      const pool = getPgPool()
+      const person = await getOrCreatePerson(pool, auth.userId)
+      const messages = await listRecentCompanionMessages(
+        pool,
+        person.id,
+        COMPANION_HISTORY_PAGE_SIZE,
+      )
+      return jsonResponse({ messages }, 200, headers)
+    } catch (err: unknown) {
+      if (isAppError(err)) {
+        return jsonResponse(toErrorBody(err), err.status, headers)
+      }
+      return internalErrorResponse(err, headers, 'companion-history')
+    }
   }
 
   if (req.method !== 'POST') {
