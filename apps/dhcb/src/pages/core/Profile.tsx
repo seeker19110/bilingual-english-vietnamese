@@ -14,7 +14,6 @@ import {
   ChevronRight,
   Loader2,
   Briefcase,
-  FolderKanban,
   Rocket,
   Heart,
   GitMerge,
@@ -130,14 +129,6 @@ export default function Profile() {
       bg: 'bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/60',
     },
     {
-      path: '/cong-viec',
-      title: isA ? 'Công việc' : 'Work Hub',
-      desc: isA ? 'Dự án, công việc & biên bản cuộc họp' : 'Projects, tasks & meeting minutes',
-      icon: FolderKanban,
-      color: 'text-blue-400',
-      bg: 'bg-blue-500/10 border-blue-500/30 hover:border-blue-500/60',
-    },
-    {
       path: '/khoi-nghiep',
       title: isA ? 'Khởi nghiệp' : 'Startup Hub',
       desc: isA
@@ -148,9 +139,11 @@ export default function Profile() {
       bg: 'bg-purple-500/10 border-purple-500/30 hover:border-purple-500/60',
     },
     {
-      path: '/cuoc-song',
-      title: isA ? 'Đời sống' : 'Life Foundation',
-      desc: isA ? 'Thói quen, sức khỏe & kế hoạch cuộc sống' : 'Habits, wellbeing & life plans',
+      path: '/cong-viec-cuoc-song',
+      title: isA ? 'Công việc & Đời sống' : 'Work & Life',
+      desc: isA
+        ? 'Dự án, việc cần làm, cuộc họp · thói quen, sức khoẻ, kế hoạch'
+        : 'Projects, tasks, meetings · habits, wellbeing, life plans',
       icon: Heart,
       color: 'text-rose-400',
       bg: 'bg-rose-500/10 border-rose-500/30 hover:border-rose-500/60',

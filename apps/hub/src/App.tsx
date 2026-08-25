@@ -3,34 +3,55 @@ import {
   Sparkles,
   ArrowRight,
   BookOpen,
-  Volume2,
-  Mic,
-  PenTool,
-  Headphones,
+  Compass,
+  Briefcase,
+  Rocket,
+  HeartHandshake,
+  GraduationCap,
+  Bot,
   CheckCircle2,
   Smartphone,
   ShieldCheck,
-  Zap,
   ChevronDown,
   ChevronUp,
-  Award,
   Users,
-  GraduationCap,
   Flame,
   User,
   Shield,
+  Layers,
+  MessageCircle,
+  Code2,
+  Languages,
 } from 'lucide-react'
 import { ThemeToggle } from '@core/ThemeToggle'
 import HubLogin from './pages/HubLogin'
 
-// Trang chủ hub — Nền tảng "Đồng hành cùng bạn" (https://www.donghanhcungban.org)
-// - Tiếng Anh giọng Mỹ (US Accent 🇺🇸), gia sư 2 chiều Việt - Anh, CEFR A1→C2.
-// - Ẩn số người dùng và lượt học cho non-admin (chỉ admin mới thấy qua API).
-// - Hiển thị liên kết trang cá nhân (Profile) khi người dùng đã đăng nhập.
-const ENGLISH_APP_URL =
-  (import.meta.env.VITE_ENGLISH_APP_URL as string | undefined) || 'https://www.donghanhcungban.org'
+// Trang chủ hub — nền tảng "Đồng hành cùng bạn" (https://www.donghanhcungban.org)
+//
+// LUẬT NỘI DUNG CỦA TRANG NÀY (chốt 2026-08-25, theo đặc tả kiến trúc platform
+// `docs/research/dac-ta-kien-truc-platform-dhcb-2026-08-23.md`):
+//   1. Trang chủ giới thiệu NỀN TẢNG DHCB — 4 trụ (Học tập · Sự nghiệp · Khởi nghiệp ·
+//      Công việc & Đời sống) + Companion "Bạn Đồng Hành". KHÔNG đóng khung cả nền tảng
+//      thành "app học tiếng Anh". Work và Life gộp làm MỘT trụ (quyết định người dùng
+//      2026-08-25): chúng tiêu cùng một quỹ thời gian nên tách ra là bắt người dùng tự
+//      ghép lại — xem migration 0066_worklife_merge.sql.
+//   2. Tiếng Anh là MỘT MÔN trong trụ Học tập — môn đầu tiên và chín nhất, đứng ngang hàng
+//      với Lập trình và các môn đang xây.
+//   3. Ngôn ngữ tuân theo tư thế đồng hành (`dong-hanh-va-phat-trien-nang-khieu-...`):
+//      không xếp loại người dùng, không so sánh với người khác, không bảng điểm năng lực
+//      trên trang chủ, không hứa điều nền tảng chưa làm được.
+//   4. Ẩn số người dùng và lượt học với non-admin (chỉ admin thấy qua /api/hub-stats).
 
-const PROFILE_URL = `${ENGLISH_APP_URL}/profile`
+// URL app nền tảng. Tên biến mới là VITE_APP_URL; vẫn đọc VITE_ENGLISH_APP_URL để không
+// phải sửa .env trên VPS ngay (tên cũ có từ thời nền tảng chỉ có môn tiếng Anh).
+const APP_URL =
+  (import.meta.env.VITE_APP_URL as string | undefined) ||
+  (import.meta.env.VITE_ENGLISH_APP_URL as string | undefined) ||
+  'https://www.donghanhcungban.org'
+
+const PROFILE_URL = `${APP_URL}/trang-ca-nhan`
+const START_URL = `${APP_URL}/bat-dau`
+const COMPANION_URL = `${APP_URL}/ban-dong-hanh`
 
 interface HubStats {
   isAdmin?: boolean
@@ -40,104 +61,200 @@ interface HubStats {
   totalEnglishSessions?: number
 }
 
-interface SubjectTab {
+// ── Dữ liệu nội dung ─────────────────────────────────────────────────────────────
+
+interface Pillar {
   id: string
   name: string
-  flagOrEmoji: string
-  status: 'live' | 'coming-soon'
+  icon: typeof BookOpen
+  tagline: string
+  description: string
+  bullets: string[]
+  url: string
+}
+
+// 4 trụ của nền tảng. Mọi URL đều là route CÓ THẬT trong apps/dhcb (App.tsx) —
+// không quảng cáo trang chưa tồn tại.
+const PILLARS: Pillar[] = [
+  {
+    id: 'learning',
+    name: 'Học tập',
+    icon: GraduationCap,
+    tagline: 'Nhiều môn, một lộ trình liền mạch',
+    description:
+      'Phòng học đa môn với gia sư AI riêng cho từng môn. Tiến độ, ôn tập ngắt quãng và lượt dùng đều nằm chung một hồ sơ, học môn nào cũng cộng dồn vào đó.',
+    bullets: [
+      'Tiếng Anh: hội thoại 2 chiều, phát âm, viết, lộ trình CEFR A1→C2',
+      'Lập trình: Python · JavaScript/TypeScript · SQL, học tới sản phẩm chạy thật',
+      'Toán · Lý · Hóa · Sinh đang được xây theo cùng một khuôn',
+    ],
+    url: `${APP_URL}/mon-hoc`,
+  },
+  {
+    id: 'career',
+    name: 'Sự nghiệp',
+    icon: Compass,
+    tagline: 'Nghề nào cũng có đường đi tiếp',
+    description:
+      'Nền tảng không mô hình hoá hàng nghìn nghề riêng lẻ mà làm việc theo tám họ nghề — mỗi họ có cửa sổ then chốt, năng lực được trả giá cao và nhánh chuyển hướng tự nhiên khác nhau. Bạn chọn họ gần mình nhất, rồi đi từ đó.',
+    bullets: [
+      'Kỹ thuật – CNTT · Y tế – chăm sóc · Giáo dục · Kinh doanh – bán hàng',
+      'Tài chính – kế toán – pháp lý · Sáng tạo – truyền thông · Sản xuất – kỹ thuật viên · Dịch vụ công – hành chính',
+      'Mỗi họ nghề có nhánh chuyển hướng riêng: kỹ thuật → kiến trúc/quản lý/sản phẩm, y tế → đào tạo/y tế dự phòng, sáng tạo → giám đốc sáng tạo/giảng dạy…',
+      'Luyện phỏng vấn cùng Companion, có phản hồi cụ thể',
+      'Bước kế tiếp luôn ở kích cỡ làm được trong tuần',
+    ],
+    url: `${APP_URL}/su-nghiep`,
+  },
+  {
+    id: 'startup',
+    name: 'Khởi nghiệp',
+    icon: Rocket,
+    tagline: 'Từ ý tưởng đến thứ kiểm chứng được',
+    description:
+      'Dựng khung mô hình kinh doanh, đặt giả định ra giấy và tìm cách kiểm chứng rẻ nhất trước khi đổ công sức lớn.',
+    bullets: [
+      'Business Model Canvas điền cùng Companion',
+      'Ghi rõ giả định nào chưa được kiểm chứng',
+      'Ưu tiên thử nghiệm rẻ trước, làm lớn sau',
+    ],
+    url: `${APP_URL}/khoi-nghiep`,
+  },
+  {
+    id: 'worklife',
+    name: 'Công việc & Đời sống',
+    icon: Briefcase,
+    tagline: 'Một guồng, không phải hai',
+    description:
+      'Việc hằng ngày và đời sống là cùng một quỹ thời gian: dồn cho bên này thì lấy đi của bên kia. Vì vậy hai nửa nằm chung một trụ, chung một chỗ dữ liệu — để bạn thấy cả hai cùng lúc thay vì tự ghép hai bức tranh.',
+    bullets: [
+      'Nửa công việc: dự án, việc cần làm, cuộc họp, tài liệu',
+      'Nửa đời sống: thói quen, tâm trạng, kế hoạch, cột mốc',
+      'Companion biết bạn đang bận gì trước khi gợi ý thêm việc',
+      'Quay lại sau khi ngắt quãng luôn được chào đón',
+    ],
+    url: `${APP_URL}/cong-viec-cuoc-song`,
+  },
+]
+
+interface Subject {
+  id: string
+  name: string
+  emoji: string
+  icon: typeof BookOpen
+  status: 'live' | 'building'
   tagline: string
   description: string
   highlight: string
-  accentNote?: string
   skills: string[]
   ctaUrl?: string
+  ctaLabel?: string
 }
 
-const SUBJECTS: SubjectTab[] = [
+// Môn học trong trụ Học tập. Trạng thái bám theo `subjectRegistry` (core-learner) và
+// route thật: english + programming đã dùng được, 4 môn STEM mới ở mức khai báo.
+const SUBJECTS: Subject[] = [
   {
     id: 'english',
-    name: 'Tiếng Anh (Giọng Mỹ - US)',
-    flagOrEmoji: '🇺🇸',
+    name: 'Tiếng Anh',
+    emoji: '🇺🇸',
+    icon: Languages,
     status: 'live',
-    tagline: 'Gia sư AI 2 chiều chuẩn giọng Mỹ (American English) · CEFR A1 → C2',
+    tagline: 'Gia sư AI hai chiều Việt ⇄ Anh · lộ trình CEFR A1 → C2',
     description:
-      'Gia sư AI đồng hành kiên nhẫn: AI đàm thoại bằng tiếng Anh giọng Mỹ tự nhiên, nhận diện và chấm điểm phát âm từng âm vị IPA, đồng thời giải thích ngữ pháp và sửa lỗi chi tiết bằng tiếng Việt gần gũi.',
+      'Môn đầu tiên và chín nhất của nền tảng. AI trò chuyện bằng giọng Anh chuẩn, nhưng chỗ bạn sai thì được giảng lại bằng GIỌNG tiếng Việt — không chỉ hiện chữ.',
     highlight:
-      'Đầy đủ lộ trình CEFR A1→C2, 12.000+ từ vựng gắn nhãn cấp độ, 16+ giọng AI sống động (Chirp3-HD, Studio, Gemini AI), chấm bài viết chuẩn IELTS và hỗ trợ học Offline.',
-    accentNote: 'Chuẩn 100% tiếng Anh - Mỹ (en-US Accent) bản xứ',
+      'Hơn 12.000 từ vựng gắn nhãn cấp độ A1–C2, nhiều giọng đọc AI chất lượng cao, chấm bài viết theo tiêu chí IELTS, ôn tập ngắt quãng và học được cả khi mất mạng.',
     skills: [
-      'Đàm thoại phản xạ 2 chiều Việt ⇄ Anh',
-      'Luyện phát âm & Nhận diện giọng nói chuẩn IPA',
-      'Luyện viết chấm điểm tiêu chuẩn IELTS / CEFR',
-      'Luyện nghe sâu & Đọc truyện song ngữ Karaoke Text',
-      'Ôn từ vựng ngắt quãng thông minh (FSRS/SRS)',
-      'Học ngoại tuyến (Offline) trên Web & Mobile PWA',
+      'Hội thoại phản xạ hai chiều Việt ⇄ Anh',
+      'Luyện phát âm, đối chiếu theo phiên âm IPA',
+      'Luyện viết, chấm theo tiêu chí kiểu IELTS',
+      'Luyện nghe và đọc truyện song ngữ',
+      'Ôn từ vựng ngắt quãng (SRS/FSRS)',
+      'Học ngoại tuyến trên web và điện thoại (PWA)',
     ],
-    ctaUrl: ENGLISH_APP_URL,
+    ctaUrl: `${APP_URL}/hoc-tieng-anh`,
+    ctaLabel: 'Vào học Tiếng Anh',
   },
   {
-    id: 'math',
-    name: 'Toán học',
-    flagOrEmoji: '📐',
-    status: 'coming-soon',
-    tagline: 'Tư duy logic, giải toán từng bước kèm minh họa trực quan',
+    id: 'programming',
+    name: 'Lập trình',
+    emoji: '💻',
+    icon: Code2,
+    status: 'live',
+    tagline: 'Từ số 0 tới sản phẩm chạy thật · bậc P1 → P6',
     description:
-      'Gia sư AI hỗ trợ học Toán từ THCS, THPT đến Đại học (Đại số, Hình học không gian, Giải tích, Xác suất thống kê). Phân tích đề bài, hướng dẫn phương pháp giải từng bước thay vì chỉ đưa ra đáp án.',
-    highlight: 'Hệ thống bài tập bám sát chương trình phổ thông và các kỳ thi chuẩn hóa.',
+      'Python, JavaScript/TypeScript và SQL, học quanh một dự án xuyên suốt. AI đọc code của bạn rồi hỏi lại để bạn tự tìm ra lỗi, thay vì đưa sẵn lời giải.',
+    highlight:
+      'Chạy thử code ngay trong trình duyệt, mỗi bài có mốc dự án cụ thể để bạn thấy thứ mình làm ra lớn dần.',
     skills: [
-      'Giải bài tập từng bước có lý giải chi tiết',
-      'Hình học không gian & Đồ thị trực quan',
-      'Rèn luyện tư duy giải đề thi THPT Quốc gia',
-      'Kiểm tra và củng cố lỗ hổng kiến thức',
+      'Đoán kết quả và đọc hiểu code có sẵn',
+      'Sắp lại thứ tự dòng lệnh (Parsons)',
+      'Tự viết code và chạy thử ngay trên web',
+      'Mốc dự án thật sau mỗi chặng',
+    ],
+    ctaUrl: `${APP_URL}/lap-trinh`,
+    ctaLabel: 'Vào học Lập trình',
+  },
+  {
+    id: 'mathematics',
+    name: 'Toán học',
+    emoji: '📐',
+    icon: BookOpen,
+    status: 'building',
+    tagline: 'Đại số · Hình học · Giải tích · Xác suất thống kê',
+    description:
+      'Đang được xây theo đúng khuôn môn học của nền tảng: hướng dẫn cách nghĩ và từng bước giải, thay vì đưa thẳng đáp án.',
+    highlight: 'Bài tập bám chương trình phổ thông; phần đại học sẽ mở dần sau.',
+    skills: [
+      'Giải từng bước kèm lý do cho mỗi bước',
+      'Đồ thị và hình học trực quan',
+      'Ôn theo dạng bài của kỳ thi',
     ],
   },
   {
     id: 'physics',
     name: 'Vật lý',
-    flagOrEmoji: '⚛️',
-    status: 'coming-soon',
-    tagline: 'Hiểu bản chất hiện tượng & Ứng dụng thực tế',
+    emoji: '⚛️',
+    icon: BookOpen,
+    status: 'building',
+    tagline: 'Cơ · Nhiệt · Điện từ · Quang · Vật lý hiện đại',
     description:
-      'Khám phá thế giới vật lý qua mô phỏng tương tác: Cơ học, Nhiệt học, Điện từ học, Quang học và Vật lý hiện đại. Giải bài tập định lượng và giải thích hiện tượng tự nhiên.',
-    highlight: 'Mô phỏng thí nghiệm tương tác giúp nắm chắc bản chất vật lý.',
+      'Đang được xây: hiểu bản chất hiện tượng trước, rồi mới đến công thức và bài tập định lượng.',
+    highlight: 'Mô phỏng tương tác để nhìn thấy hiện tượng chứ không chỉ đọc công thức.',
     skills: [
-      'Mô phỏng hiện tượng & thí nghiệm ảo',
-      'Hệ thống công thức & phương pháp giải bài tập',
-      'Phân tích đồ thị và bài toán thực tế',
-      'Hỏi đáp hiện tượng khoa học thường ngày',
+      'Mô phỏng thí nghiệm ảo',
+      'Phương pháp giải theo từng dạng bài',
+      'Đọc và phân tích đồ thị',
     ],
   },
   {
     id: 'chemistry',
     name: 'Hóa học',
-    flagOrEmoji: '🧪',
-    status: 'coming-soon',
-    tagline: 'Cơ chế phản ứng, bản chất liên kết & Bài toán hóa học',
+    emoji: '🧪',
+    icon: BookOpen,
+    status: 'building',
+    tagline: 'Vô cơ · Hữu cơ · Oxi hóa khử · Phân tích',
     description:
-      'Học Hóa học trực quan từ Hóa vô cơ đến Hóa hữu cơ. Hướng dẫn viết phương trình, cân bằng phản ứng, phân tích cơ chế và giải quyết các dạng bài toán hóa học phức tạp.',
-    highlight: 'Trực quan hóa cấu trúc phân tử và chuỗi phản ứng liên hoàn.',
+      'Đang được xây: viết và cân bằng phương trình, đọc cơ chế phản ứng, giải bài toán hóa học theo lối tư duy.',
+    highlight: 'Trực quan hóa cấu trúc phân tử và chuỗi phản ứng.',
     skills: [
-      'Viết và cân bằng phương trình phản ứng',
-      'Chuỗi phản ứng và nhận biết chất',
-      'Giải bài toán hóa vô cơ & hữu cơ',
-      'Mô hình phân tử không gian 3D',
+      'Viết và cân bằng phương trình',
+      'Chuỗi phản ứng, nhận biết chất',
+      'Bài toán định lượng',
     ],
   },
   {
     id: 'biology',
     name: 'Sinh học',
-    flagOrEmoji: '🧬',
-    status: 'coming-soon',
-    tagline: 'Cơ chế di truyền, tế bào học & Thế giới sống',
+    emoji: '🧬',
+    icon: BookOpen,
+    status: 'building',
+    tagline: 'Di truyền · Tế bào · Tiến hóa · Sinh thái',
     description:
-      'Hệ thống kiến thức sinh học toàn diện: Di truyền học, Sinh học tế bào, Sinh thái và Tiến hóa. Hỗ trợ giải bài tập quy luật di truyền và sơ đồ phả hệ chi tiết.',
-    highlight: 'Sơ đồ tư duy sinh học và phương pháp giải bài tập di truyền chuẩn xác.',
-    skills: [
-      'Giải bài tập quy luật di truyền & phả hệ',
-      'Cơ chế di truyền phân tử và biến dị',
-      'Sinh học tế bào và vi sinh vật',
-      'Sinh thái học và bảo vệ môi trường',
-    ],
+      'Đang được xây: hệ thống kiến thức theo sơ đồ và cơ chế, kèm bài tập di truyền có hướng dẫn lập luận.',
+    highlight: 'Sơ đồ tư duy và phương pháp giải bài tập di truyền, phả hệ.',
+    skills: ['Quy luật di truyền và phả hệ', 'Cơ chế di truyền phân tử', 'Sinh thái và môi trường'],
   },
 ]
 
@@ -155,7 +272,7 @@ function useHubStats() {
         if (!cancelled && data) setStats(data)
       })
       .catch(() => {
-        // Fail-open
+        // Fail-open: trang chủ vẫn hiển thị đầy đủ khi API lỗi.
       })
     return () => {
       cancelled = true
@@ -169,79 +286,69 @@ function Navbar({ stats }: { stats: HubStats | null }) {
   const isLoggedIn = !!stats?.loggedIn
   const displayName = stats?.userName?.trim()
 
+  const navLinks = [
+    { href: '#tru-cot', label: 'Bốn trụ' },
+    { href: '#companion', label: 'Bạn Đồng Hành' },
+    { href: '#mon-hoc', label: 'Môn học' },
+    { href: '#cach-hoat-dong', label: 'Cách hoạt động' },
+    { href: '#bang-gia', label: 'Bảng giá' },
+    { href: '#hoi-dap', label: 'Hỏi đáp' },
+  ]
+
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-zinc-950/80 border-b border-zinc-800/80">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <a href="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-accent-500 to-accent-400 flex items-center justify-center text-zinc-950 font-bold shadow-lg shadow-accent-500/20 group-hover:scale-105 transition-transform">
+    <header className="sticky top-0 z-50 backdrop-blur-md bg-zinc-950/85 border-b border-zinc-800/80">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+        <a href="/" className="flex items-center gap-2.5 group shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-accent-500 to-accent-400 flex items-center justify-center shadow-lg shadow-accent-500/20 group-hover:scale-105 transition-transform">
             <Sparkles className="w-5 h-5 text-zinc-950" />
           </div>
           <div className="flex flex-col">
             <span className="font-bold text-base sm:text-lg tracking-tight text-white flex items-center gap-1.5">
               Đồng hành cùng bạn
-              <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-accent-500/10 text-accent-400 theme-light:text-accent-700 border border-accent-500/20">
-                AI Platform
+              <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-accent-500/10 text-accent-300 theme-light:text-accent-800 border border-accent-500/25">
+                Nền tảng
               </span>
             </span>
-            <span className="text-[11px] text-zinc-400 hidden sm:inline">
-              Nền tảng học tập cùng Gia sư AI thông minh
+            <span className="text-[11px] text-zinc-300 hidden sm:inline">
+              Học tập · Sự nghiệp · Khởi nghiệp · Công việc & Đời sống
             </span>
           </div>
         </a>
 
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-zinc-300">
-          <a
-            href="#subjects"
-            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition-colors"
-          >
-            Môn học
-          </a>
-          <a
-            href="#features"
-            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition-colors"
-          >
-            Tính năng AI
-          </a>
-          <a
-            href="#why-us"
-            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition-colors"
-          >
-            Điểm khác biệt
-          </a>
-          <a
-            href="#pricing"
-            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition-colors"
-          >
-            Bảng giá
-          </a>
-          <a
-            href="#faq"
-            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition-colors"
-          >
-            Hỏi đáp
-          </a>
+        <nav
+          aria-label="Điều hướng chính"
+          className="hidden lg:flex items-center gap-5 text-sm font-medium text-zinc-200"
+        >
+          {navLinks.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className="hover:text-accent-300 theme-light:hover:text-accent-800 transition-colors"
+            >
+              {l.label}
+            </a>
+          ))}
         </nav>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <ThemeToggle lang="vi" />
           {isLoggedIn ? (
             <>
               <a
                 href={PROFILE_URL}
-                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-zinc-200 hover:text-white px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 transition"
-                title="Truy cập trang cá nhân & quản lý tài khoản"
+                className="hidden sm:inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-zinc-100 hover:text-white px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 transition"
+                title="Trang cá nhân & quản lý tài khoản"
               >
-                <User className="w-3.5 h-3.5 text-accent-400 theme-light:text-accent-700" />
+                <User className="w-3.5 h-3.5 text-accent-300 theme-light:text-accent-800" />
                 <span className="max-w-[120px] sm:max-w-[160px] truncate">
                   {displayName || 'Trang cá nhân'}
                 </span>
               </a>
               <a
-                href={ENGLISH_APP_URL}
-                className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-zinc-950 shadow-md shadow-accent-500/20 transition-all hover:scale-[1.02]"
+                href={APP_URL}
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold px-3 sm:px-3.5 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-zinc-950 shadow-md shadow-accent-500/20 transition-all hover:scale-[1.02]"
               >
-                <span>Vào học</span>
-                <span className="text-xs">🇺🇸</span>
+                <span>Vào nền tảng</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </a>
             </>
@@ -249,16 +356,15 @@ function Navbar({ stats }: { stats: HubStats | null }) {
             <>
               <a
                 href="/login"
-                className="text-xs sm:text-sm font-medium text-zinc-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-zinc-900 transition"
+                className="text-xs sm:text-sm font-medium text-zinc-200 hover:text-white px-3 py-1.5 rounded-lg hover:bg-zinc-900 transition"
               >
                 Đăng nhập
               </a>
               <a
-                href={ENGLISH_APP_URL}
+                href={START_URL}
                 className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-zinc-950 shadow-md shadow-accent-500/20 hover:shadow-accent-500/30 transition-all hover:scale-[1.02]"
               >
-                <span>Học Tiếng Anh</span>
-                <span className="text-xs">🇺🇸</span>
+                <span>Bắt đầu</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </a>
             </>
@@ -269,102 +375,91 @@ function Navbar({ stats }: { stats: HubStats | null }) {
   )
 }
 
-// ── Hero Section ─────────────────────────────────────────────────────────────────
+// ── Hero ─────────────────────────────────────────────────────────────────────────
 function Hero({ stats }: { stats: HubStats | null }) {
   const isLoggedIn = !!stats?.loggedIn
   const displayName = stats?.userName?.trim()
 
   return (
-    <section className="relative overflow-hidden pt-12 pb-16 sm:pt-20 sm:pb-24 px-4 sm:px-6">
-      {/* Background glow effects */}
+    <section className="relative overflow-hidden pt-12 pb-16 sm:pt-20 sm:pb-20 px-4 sm:px-6">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[350px] bg-accent-500/10 blur-[120px] pointer-events-none -z-10 rounded-full" />
       <div className="absolute top-10 right-10 w-[300px] h-[250px] bg-accent-400/10 blur-[100px] pointer-events-none -z-10 rounded-full" />
 
       <div className="max-w-4xl mx-auto text-center">
-        {/* Accent / User Greeting badge */}
         {isLoggedIn ? (
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-950/50 border border-accent-500/40 text-xs sm:text-sm text-accent-300 theme-light:text-accent-800 mb-6 shadow-sm">
-            <span>👋</span>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-500/10 border border-accent-500/40 text-xs sm:text-sm text-accent-200 theme-light:text-accent-900 mb-6 shadow-sm">
+            <span aria-hidden="true">👋</span>
             <span className="font-semibold">
-              Chào mừng trở lại{displayName ? `, ${displayName}` : ''}!
+              Chào bạn quay lại{displayName ? `, ${displayName}` : ''}
             </span>
-            <span className="text-accent-600">•</span>
+            <span aria-hidden="true" className="text-accent-500">
+              •
+            </span>
             <a href={PROFILE_URL} className="underline hover:text-white transition">
               Trang cá nhân
             </a>
           </div>
         ) : (
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-xs sm:text-sm text-zinc-300 mb-6 shadow-sm">
-            <span className="text-base">🇺🇸</span>
-            <span className="font-semibold text-accent-400 theme-light:text-accent-700">
-              Tiếng Anh Giọng Mỹ (US Accent)
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-xs sm:text-sm text-zinc-200 mb-6 shadow-sm">
+            <Layers className="w-3.5 h-3.5 text-accent-300 theme-light:text-accent-800" />
+            <span className="font-semibold text-accent-300 theme-light:text-accent-800">
+              Một nền tảng — bốn trụ
             </span>
-            <span className="text-zinc-600">•</span>
-            <span className="text-zinc-400">Chuẩn CEFR A1 → C2</span>
+            <span aria-hidden="true" className="text-zinc-500">
+              •
+            </span>
+            <span className="text-zinc-200">Một hồ sơ duy nhất của bạn</span>
           </div>
         )}
 
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15] mb-6">
-          Gia sư AI kiên nhẫn, <br className="hidden sm:inline" />
+          Không chỉ học một môn — <br className="hidden sm:inline" />
           <span className="bg-gradient-to-r from-accent-400 via-accent-300 to-accent-200 bg-clip-text text-transparent">
             đồng hành cùng bạn
           </span>{' '}
-          mỗi ngày
+          trên cả chặng đường
         </h1>
 
-        <p className="text-base sm:text-lg lg:text-xl text-zinc-400 max-w-2xl mx-auto mb-8 leading-relaxed">
-          Trải nghiệm học Tiếng Anh giọng Mỹ tự nhiên cùng Gia sư AI song ngữ 2 chiều: Đàm thoại bản
-          xứ phản xạ nhanh, chấm điểm phát âm từng âm tiết IPA, và sửa lỗi ngữ pháp bằng tiếng Việt
-          tận tâm.
+        <p className="text-base sm:text-lg lg:text-xl text-zinc-200 max-w-2xl mx-auto mb-8 leading-relaxed">
+          Học tập, sự nghiệp, khởi nghiệp, và công việc gắn liền đời sống — bốn trụ nằm chung một hồ
+          sơ, có một người bạn AI hiểu ngữ cảnh cả bốn. Bạn chốt mục tiêu, nền tảng đề xuất bước gần
+          nhất.
         </p>
 
-        {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 mb-10">
           <a
-            href={ENGLISH_APP_URL}
+            href={isLoggedIn ? APP_URL : START_URL}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-zinc-950 font-bold text-base shadow-lg shadow-accent-500/25 hover:shadow-accent-500/35 transition-all hover:scale-[1.02]"
           >
-            <span>{isLoggedIn ? 'Tiếp tục học Tiếng Anh ngay' : 'Bắt đầu học Tiếng Anh ngay'}</span>
-            <span className="text-sm">🇺🇸</span>
+            <span>{isLoggedIn ? 'Tiếp tục việc đang làm' : 'Bắt đầu — khoảng 90 giây'}</span>
             <ArrowRight className="w-4 h-4" />
           </a>
 
-          {isLoggedIn ? (
-            <a
-              href={PROFILE_URL}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 text-zinc-200 font-semibold text-base transition"
-            >
-              <User className="w-4 h-4 text-accent-400 theme-light:text-accent-700" />
-              <span>Xem trang cá nhân & Lộ trình</span>
-            </a>
-          ) : (
-            <a
-              href="#subjects"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 text-zinc-200 font-semibold text-base transition"
-            >
-              <BookOpen className="w-4 h-4 text-accent-400 theme-light:text-accent-700" />
-              <span>Xem tất cả môn học</span>
-            </a>
-          )}
+          <a
+            href="#tru-cot"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 text-zinc-100 font-semibold text-base transition"
+          >
+            <Layers className="w-4 h-4 text-accent-300 theme-light:text-accent-800" />
+            <span>Nền tảng gồm những gì?</span>
+          </a>
         </div>
 
-        {/* Feature Highlights Pills */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto pt-4 border-t border-zinc-800/60 text-xs sm:text-sm text-zinc-400">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto pt-4 border-t border-zinc-800/60 text-xs sm:text-sm text-zinc-200">
           <div className="flex items-center justify-center gap-2 p-2 rounded-lg bg-zinc-900/40">
-            <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
-            <span>Không cần thẻ tín dụng</span>
+            <CheckCircle2 className="w-4 h-4 text-accent-300 theme-light:text-accent-800 shrink-0" />
+            <span>Không cần thẻ ngân hàng</span>
           </div>
           <div className="flex items-center justify-center gap-2 p-2 rounded-lg bg-zinc-900/40">
-            <Smartphone className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
-            <span>Học Web & Mobile PWA</span>
+            <Smartphone className="w-4 h-4 text-accent-300 theme-light:text-accent-800 shrink-0" />
+            <span>Web &amp; điện thoại (PWA)</span>
           </div>
           <div className="flex items-center justify-center gap-2 p-2 rounded-lg bg-zinc-900/40">
-            <Zap className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
-            <span>Phát âm chuẩn giọng Mỹ</span>
+            <Bot className="w-4 h-4 text-accent-300 theme-light:text-accent-800 shrink-0" />
+            <span>Một AI hiểu cả bốn trụ</span>
           </div>
           <div className="flex items-center justify-center gap-2 p-2 rounded-lg bg-zinc-900/40">
-            <ShieldCheck className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
-            <span>Học phí siêu tiết kiệm</span>
+            <ShieldCheck className="w-4 h-4 text-accent-300 theme-light:text-accent-800 shrink-0" />
+            <span>Dữ liệu của bạn, bạn quyết</span>
           </div>
         </div>
       </div>
@@ -372,9 +467,9 @@ function Hero({ stats }: { stats: HubStats | null }) {
   )
 }
 
-// ── Activity / Platform Highlights Section ────────────────────────────────────────
-// - Cho Admin: Hiển thị 4 thẻ bao gồm Số người dùng và Lượt học thật.
-// - Cho Non-Admin / Khách: Ẩn số người dùng và lượt học, hiển thị các mốc chất lượng nền tảng.
+// ── Dải số liệu nền tảng ─────────────────────────────────────────────────────────
+// Admin: số người dùng + lượt học thật. Người khác: mốc mô tả nền tảng, KHÔNG phải
+// điểm số của người dùng (luật "không bảng chấm điểm trên trang chủ").
 function ActivitySection({ stats }: { stats: HubStats | null }) {
   const isAdmin = stats?.isAdmin === true
   const hasAdminStats =
@@ -385,89 +480,85 @@ function ActivitySection({ stats }: { stats: HubStats | null }) {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-6">
           <div className="flex items-center justify-center gap-1.5 mb-1">
-            <h2 className="text-xs uppercase tracking-widest text-accent-400 theme-light:text-accent-700 font-bold">
-              {isAdmin ? 'Thống kê hoạt động nền tảng' : 'Chất lượng đào tạo chuẩn quốc tế'}
+            <h2 className="text-xs uppercase tracking-widest text-accent-300 theme-light:text-accent-800 font-bold">
+              {isAdmin ? 'Thống kê hoạt động nền tảng' : 'Nền tảng hiện có gì'}
             </h2>
             {isAdmin && (
-              <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold">
+              <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-200 border border-amber-500/30 font-semibold">
                 <Shield className="w-2.5 h-2.5" />
                 Admin
               </span>
             )}
           </div>
-          <p className="text-zinc-400 text-xs sm:text-sm">
+          <p className="text-zinc-200 text-xs sm:text-sm">
             {isAdmin
-              ? 'Số liệu quản trị thời gian thực'
-              : 'Nền tảng học tập thông minh với kho dữ liệu chuẩn mực'}
+              ? 'Số liệu quản trị, chỉ admin nhìn thấy'
+              : 'Nói đúng những gì đang chạy được — phần đang xây ghi rõ là đang xây'}
           </p>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {hasAdminStats ? (
             <>
-              {/* Thẻ dành riêng cho Admin */}
-              <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center relative">
-                <div className="text-2xl sm:text-3xl font-extrabold text-accent-400 theme-light:text-accent-700 tracking-tight">
+              <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
+                <div className="text-2xl sm:text-3xl font-extrabold text-accent-300 theme-light:text-accent-800 tracking-tight">
                   {formatNumber(stats.totalUsers!)}
                 </div>
-                <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
-                  <Users className="w-3.5 h-3.5 text-zinc-500" />
+                <div className="text-xs sm:text-sm text-zinc-200 mt-1 flex items-center justify-center gap-1.5">
+                  <Users className="w-3.5 h-3.5 text-zinc-300" />
                   <span>Người dùng tham gia</span>
                 </div>
               </div>
-
               <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
-                <div className="text-2xl sm:text-3xl font-extrabold text-accent-400 theme-light:text-accent-700 tracking-tight">
+                <div className="text-2xl sm:text-3xl font-extrabold text-accent-300 theme-light:text-accent-800 tracking-tight">
                   {formatNumber(stats.totalEnglishSessions!)}
                 </div>
-                <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
-                  <Flame className="w-3.5 h-3.5 text-zinc-500" />
-                  <span>Lượt học đã thực hiện</span>
+                <div className="text-xs sm:text-sm text-zinc-200 mt-1 flex items-center justify-center gap-1.5">
+                  <Flame className="w-3.5 h-3.5 text-zinc-300" />
+                  <span>Lượt học môn Tiếng Anh</span>
                 </div>
               </div>
             </>
           ) : (
             <>
-              {/* Thẻ hiển thị cho Người học & Khách vãng lai */}
               <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
-                <div className="text-2xl sm:text-3xl font-extrabold text-accent-400 theme-light:text-accent-700 tracking-tight">
-                  6 Cấp độ
+                <div className="text-2xl sm:text-3xl font-extrabold text-accent-300 theme-light:text-accent-800 tracking-tight">
+                  4 trụ
                 </div>
-                <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
-                  <Award className="w-3.5 h-3.5 text-zinc-500" />
-                  <span>Lộ trình CEFR A1 → C2</span>
+                <div className="text-xs sm:text-sm text-zinc-200 mt-1 flex items-center justify-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5 text-zinc-300" />
+                  <span>Học · Nghề · Khởi nghiệp · Việc &amp; Đời sống</span>
                 </div>
               </div>
-
               <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
-                <div className="text-2xl sm:text-3xl font-extrabold text-accent-400 theme-light:text-accent-700 tracking-tight">
-                  100%
+                <div className="text-2xl sm:text-3xl font-extrabold text-accent-300 theme-light:text-accent-800 tracking-tight">
+                  2 môn
                 </div>
-                <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
-                  <Mic className="w-3.5 h-3.5 text-zinc-500" />
-                  <span>Tiếng Anh Giọng Mỹ (US)</span>
+                <div className="text-xs sm:text-sm text-zinc-200 mt-1 flex items-center justify-center gap-1.5">
+                  <BookOpen className="w-3.5 h-3.5 text-zinc-300" />
+                  <span>Đang học được: Tiếng Anh &amp; Lập trình</span>
                 </div>
               </div>
             </>
           )}
 
           <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
-            <div className="text-2xl sm:text-3xl font-extrabold text-accent-400 theme-light:text-accent-700 tracking-tight">
-              12.160+
+            <div className="text-2xl sm:text-3xl font-extrabold text-accent-300 theme-light:text-accent-800 tracking-tight">
+              12.000+
             </div>
-            <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
-              <GraduationCap className="w-3.5 h-3.5 text-zinc-500" />
-              <span>Từ vựng chuẩn hóa A1-C2</span>
+            <div className="text-xs sm:text-sm text-zinc-200 mt-1 flex items-center justify-center gap-1.5">
+              <GraduationCap className="w-3.5 h-3.5 text-zinc-300" />
+              <span>Từ vựng Anh gắn nhãn A1–C2</span>
             </div>
           </div>
 
           <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
-            <div className="text-2xl sm:text-3xl font-extrabold text-accent-400 theme-light:text-accent-700 tracking-tight">
-              16+
+            <div className="text-2xl sm:text-3xl font-extrabold text-accent-300 theme-light:text-accent-800 tracking-tight">
+              1 hồ sơ
             </div>
-            <div className="text-xs sm:text-sm text-zinc-400 mt-1 flex items-center justify-center gap-1.5">
-              <Volume2 className="w-3.5 h-3.5 text-zinc-500" />
-              <span>Giọng AI Mỹ (Chirp3, Studio, Gemini)</span>
+            <div className="text-xs sm:text-sm text-zinc-200 mt-1 flex items-center justify-center gap-1.5">
+              <User className="w-3.5 h-3.5 text-zinc-300" />
+              <span>Dùng chung cho mọi trụ, mọi môn</span>
             </div>
           </div>
         </div>
@@ -476,447 +567,525 @@ function ActivitySection({ stats }: { stats: HubStats | null }) {
   )
 }
 
-// ── Subjects Showcase ────────────────────────────────────────────────────────────
-function SubjectTabs() {
+// ── Bốn trụ ──────────────────────────────────────────────────────────────────────
+function PillarsSection() {
+  return (
+    <section id="tru-cot" className="px-4 sm:px-6 py-16 sm:py-20 max-w-6xl mx-auto">
+      <div className="text-center max-w-2xl mx-auto mb-12">
+        <span className="text-xs uppercase font-bold tracking-widest text-accent-300 theme-light:text-accent-800 mb-2 block">
+          Cấu trúc nền tảng
+        </span>
+        <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
+          Bốn trụ của một con người
+        </h2>
+        <p className="text-zinc-200 text-sm sm:text-base">
+          Đời sống không chia thành từng ứng dụng rời rạc. Ở đây bốn mảng nằm chung một hồ sơ, nên
+          việc bạn làm ở mảng này được tính đến khi gợi ý cho mảng kia.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {PILLARS.map((p) => {
+          const Icon = p.icon
+          return (
+            <article
+              key={p.id}
+              className="bg-zinc-900/70 hover:bg-zinc-900 rounded-2xl p-6 border border-zinc-800 hover:border-accent-500/40 transition-all flex flex-col"
+            >
+              <div className="w-12 h-12 rounded-xl bg-accent-500/10 border border-accent-500/20 flex items-center justify-center mb-4">
+                <Icon className="w-6 h-6 text-accent-300 theme-light:text-accent-800" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-1">{p.name}</h3>
+              <p className="text-accent-300 theme-light:text-accent-800 text-sm font-medium mb-3">
+                {p.tagline}
+              </p>
+              <p className="text-zinc-200 text-sm leading-relaxed mb-4">{p.description}</p>
+              <ul className="space-y-2 mb-5 flex-1">
+                {p.bullets.map((b) => (
+                  <li key={b} className="flex items-start gap-2 text-xs sm:text-sm text-zinc-200">
+                    <CheckCircle2 className="w-4 h-4 text-accent-300 theme-light:text-accent-800 shrink-0 mt-0.5" />
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+              <a
+                href={p.url}
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent-300 theme-light:text-accent-800 hover:text-white transition"
+              >
+                <span>Xem trụ {p.name}</span>
+                <ArrowRight className="w-4 h-4" />
+              </a>
+            </article>
+          )
+        })}
+
+        {/* Thẻ thứ 5: Companion — thứ nối 4 trụ lại với nhau */}
+        <article className="bg-gradient-to-br from-accent-500/10 to-zinc-900 rounded-2xl p-6 border border-accent-500/40 flex flex-col">
+          <div className="w-12 h-12 rounded-xl bg-accent-500/20 border border-accent-500/30 flex items-center justify-center mb-4">
+            <Bot className="w-6 h-6 text-accent-200 theme-light:text-accent-900" />
+          </div>
+          <h3 className="text-lg font-bold text-white mb-1">Bạn Đồng Hành</h3>
+          <p className="text-accent-200 theme-light:text-accent-900 text-sm font-medium mb-3">
+            Sợi chỉ xuyên suốt cả bốn trụ
+          </p>
+          <p className="text-zinc-100 text-sm leading-relaxed mb-4 flex-1">
+            Không phải bốn con bot rời rạc. Một người bạn AI duy nhất, nhớ ngữ cảnh của bạn ở mọi
+            trụ — nên lời gợi ý cho việc học có tính đến chuyện bạn đang bận gì ở công việc.
+          </p>
+          <a
+            href={COMPANION_URL}
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent-200 theme-light:text-accent-900 hover:text-white transition"
+          >
+            <span>Gặp Bạn Đồng Hành</span>
+            <ArrowRight className="w-4 h-4" />
+          </a>
+        </article>
+      </div>
+    </section>
+  )
+}
+
+// ── Companion: tư thế đồng hành ──────────────────────────────────────────────────
+// Nội dung dịch từ 8 luật hành xử (docs/research/dong-hanh-va-phat-trien-nang-khieu).
+function CompanionSection() {
+  const promises = [
+    {
+      title: 'Bạn chốt, mình đề xuất',
+      desc: 'Mục tiêu là của bạn. Companion đưa ra lựa chọn kèm lý do, không ra lệnh "hôm nay bạn phải…".',
+    },
+    {
+      title: 'Hỏi trước khi khuyên',
+      desc: 'Hiểu hoàn cảnh của bạn rồi mới nói. Một lời khuyên đúng lý thuyết mà lệch hoàn cảnh thì vô dụng.',
+    },
+    {
+      title: 'Mỗi lúc chỉ ba việc',
+      desc: 'Không dội cho bạn danh sách 23 thứ cần cải thiện. Ba việc, làm xong rồi tính tiếp.',
+    },
+    {
+      title: 'So với chính bạn hôm qua',
+      desc: 'Không bảng xếp hạng, không so bạn với người khác, không "đáng lẽ tuổi này bạn phải…".',
+    },
+    {
+      title: 'Gián đoạn là chuyện bình thường',
+      desc: 'Nghỉ hai tuần rồi quay lại vẫn được chào đón như thường. Không trách móc, không tính sổ.',
+    },
+    {
+      title: 'Biết giới hạn của mình',
+      desc: 'Chuyện y tế, tâm lý lâm sàng, pháp lý hay đầu tư — Companion nói thẳng là ngoài tầm và chỉ bạn sang người thật.',
+    },
+  ]
+
+  return (
+    <section
+      id="companion"
+      className="px-4 sm:px-6 py-16 sm:py-20 bg-zinc-900/30 border-t border-zinc-800"
+    >
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <span className="text-xs uppercase font-bold tracking-widest text-accent-300 theme-light:text-accent-800 mb-2 block">
+            Bạn Đồng Hành
+          </span>
+          <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
+            Một người bạn, không phải một huấn luyện viên khắc nghiệt
+          </h2>
+          <p className="text-zinc-200 text-sm sm:text-base">
+            Thước đo thành công của nền tảng là bạn tiến bộ ngoài đời thật — không phải số phút bạn
+            ở lại trong ứng dụng. Sáu cam kết dưới đây là ràng buộc thiết kế, không phải khẩu hiệu.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {promises.map((p) => (
+            <div
+              key={p.title}
+              className="bg-zinc-900/70 rounded-2xl p-5 border border-zinc-800 hover:border-zinc-700 transition"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <HeartHandshake className="w-4 h-4 text-accent-300 theme-light:text-accent-800 shrink-0" />
+                <h3 className="text-base font-bold text-white">{p.title}</h3>
+              </div>
+              <p className="text-zinc-200 text-sm leading-relaxed">{p.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-10 text-center">
+          <a
+            href={COMPANION_URL}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-accent-500/30 text-zinc-100 font-semibold text-sm transition"
+          >
+            <MessageCircle className="w-4 h-4 text-accent-300 theme-light:text-accent-800" />
+            <span>Trò chuyện với Bạn Đồng Hành</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ── Môn học (trong trụ Học tập) ──────────────────────────────────────────────────
+function SubjectsSection() {
   const [active, setActive] = useState(SUBJECTS[0]!.id)
   const current = SUBJECTS.find((s) => s.id === active)!
 
   return (
-    <section id="subjects" className="px-4 sm:px-6 py-16 sm:py-20 max-w-5xl mx-auto">
+    <section id="mon-hoc" className="px-4 sm:px-6 py-16 sm:py-20 max-w-5xl mx-auto">
       <div className="text-center max-w-2xl mx-auto mb-10">
-        <span className="text-xs uppercase font-bold tracking-widest text-accent-400 theme-light:text-accent-700 mb-2 block">
-          Hệ sinh thái môn học
+        <span className="text-xs uppercase font-bold tracking-widest text-accent-300 theme-light:text-accent-800 mb-2 block">
+          Bên trong trụ Học tập
         </span>
         <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
-          Một nền tảng — Nhiều môn học
+          Các môn học — cùng một khuôn
         </h2>
-        <p className="text-zinc-400 text-sm sm:text-base">
-          Bắt đầu với môn <strong>Tiếng Anh giọng Mỹ (US Accent)</strong> đã hoàn thiện và sẵn sàng
-          học ngay, mở rộng dần sang toàn bộ các môn STEM phổ thông.
+        <p className="text-zinc-200 text-sm sm:text-base">
+          Mỗi môn có gia sư AI, lộ trình và cách chấm riêng, nhưng dùng chung hồ sơ, tiến độ và gói
+          tài khoản. Tiếng Anh là môn đầu tiên và chín nhất; Lập trình đã học được; các môn còn lại
+          đang được xây theo đúng khuôn đó.
         </p>
       </div>
 
-      {/* Tabs list */}
-      <div className="flex gap-2 justify-center flex-wrap mb-8">
+      <div
+        role="tablist"
+        aria-label="Chọn môn học"
+        className="flex gap-2 justify-center flex-wrap mb-8"
+      >
         {SUBJECTS.map((s) => (
           <button
             key={s.id}
+            type="button"
+            role="tab"
+            id={`tab-${s.id}`}
+            aria-selected={active === s.id}
+            aria-controls={`panel-${s.id}`}
             onClick={() => setActive(s.id)}
             className={`px-4 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${
               active === s.id
                 ? 'bg-accent-500 text-zinc-950 shadow-lg shadow-accent-500/20 scale-105'
-                : 'bg-zinc-900 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 border border-zinc-800'
+                : 'bg-zinc-900 text-zinc-200 hover:text-white hover:bg-zinc-800 border border-zinc-800'
             }`}
           >
-            <span>{s.flagOrEmoji}</span>
+            <span aria-hidden="true">{s.emoji}</span>
             <span>{s.name}</span>
             {s.status === 'live' ? (
-              <span className="w-2 h-2 rounded-full bg-accent-400 animate-pulse" />
+              <span
+                className={`text-[10px] px-1.5 py-0.5 rounded font-semibold ${
+                  active === s.id
+                    ? 'bg-zinc-950/15 text-zinc-950'
+                    : 'bg-accent-500/15 text-accent-200 theme-light:text-accent-800 border border-accent-500/25'
+                }`}
+              >
+                Học được
+              </span>
             ) : (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
-                Sắp ra mắt
+              <span
+                className={`text-[10px] px-1.5 py-0.5 rounded ${
+                  active === s.id
+                    ? 'bg-zinc-950/15 text-zinc-950'
+                    : 'bg-zinc-800 text-zinc-200 border border-zinc-700'
+                }`}
+              >
+                Đang xây
               </span>
             )}
           </button>
         ))}
       </div>
 
-      {/* Active Subject Detail Card */}
-      <div className="bg-zinc-900/90 rounded-2xl p-6 sm:p-8 border border-zinc-800 shadow-xl relative overflow-hidden">
-        <div className="flex flex-col lg:flex-row gap-8 items-start justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-3 flex-wrap">
-              <span className="text-3xl">{current.flagOrEmoji}</span>
-              <h3 className="text-xl sm:text-2xl font-bold text-white">{current.name}</h3>
-              {current.status === 'live' ? (
-                <span className="text-xs px-2.5 py-1 rounded-full bg-accent-500/10 text-accent-400 theme-light:text-accent-700 font-semibold border border-accent-500/30 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-accent-400" />
-                  Đang hoạt động (Live)
-                </span>
-              ) : (
-                <span className="text-xs px-2.5 py-1 rounded-full bg-zinc-800 text-zinc-400 border border-zinc-700">
-                  Lộ trình Giai đoạn 2
-                </span>
-              )}
-            </div>
+      <div
+        role="tabpanel"
+        id={`panel-${current.id}`}
+        aria-labelledby={`tab-${current.id}`}
+        className="bg-zinc-900/90 rounded-2xl p-6 sm:p-8 border border-zinc-800 shadow-xl"
+      >
+        <div className="flex items-center gap-3 mb-3 flex-wrap">
+          <span className="text-3xl" aria-hidden="true">
+            {current.emoji}
+          </span>
+          <h3 className="text-xl sm:text-2xl font-bold text-white">{current.name}</h3>
+          {current.status === 'live' ? (
+            <span className="text-xs px-2.5 py-1 rounded-full bg-accent-500/10 text-accent-200 theme-light:text-accent-900 font-semibold border border-accent-500/30">
+              Đang học được
+            </span>
+          ) : (
+            <span className="text-xs px-2.5 py-1 rounded-full bg-zinc-800 text-zinc-200 border border-zinc-700">
+              Đang được xây
+            </span>
+          )}
+        </div>
 
-            <p className="text-accent-400 theme-light:text-accent-700 font-medium text-sm sm:text-base mb-3">
-              {current.tagline}
-            </p>
+        <p className="text-accent-300 theme-light:text-accent-800 font-medium text-sm sm:text-base mb-3">
+          {current.tagline}
+        </p>
+        <p className="text-zinc-100 text-sm sm:text-base leading-relaxed mb-5">
+          {current.description}
+        </p>
 
-            <p className="text-zinc-300 text-sm sm:text-base leading-relaxed mb-4">
-              {current.description}
-            </p>
-
-            {current.accentNote && (
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-950/40 border border-accent-500/30 text-accent-300 theme-light:text-accent-800 text-xs sm:text-sm font-medium mb-5">
-                <span>🎯</span>
-                <span>{current.accentNote}</span>
+        <div className="mt-2 mb-6">
+          <div className="text-xs font-semibold text-zinc-200 uppercase tracking-wider mb-3">
+            Bạn làm được gì trong môn này
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {current.skills.map((skill) => (
+              <div key={skill} className="flex items-start gap-2 text-xs sm:text-sm text-zinc-100">
+                <CheckCircle2 className="w-4 h-4 text-accent-300 theme-light:text-accent-800 shrink-0 mt-0.5" />
+                <span>{skill}</span>
               </div>
-            )}
-
-            {/* Skills List */}
-            <div className="mt-2 mb-6">
-              <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3">
-                Kỹ năng & Tính năng nổi bật:
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {current.skills.map((skill, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-start gap-2 text-xs sm:text-sm text-zinc-300"
-                  >
-                    <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0 mt-0.5" />
-                    <span>{skill}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="text-xs text-zinc-500 border-t border-zinc-800/80 pt-4 mb-6">
-              💡 {current.highlight}
-            </div>
-
-            {current.status === 'live' && current.ctaUrl && (
-              <div className="flex flex-wrap items-center gap-3">
-                <a
-                  href={current.ctaUrl}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-500 hover:bg-accent-400 text-zinc-950 font-bold text-sm sm:text-base transition-all shadow-md shadow-accent-500/20 hover:scale-[1.02]"
-                >
-                  <span>Vào học Tiếng Anh ngay</span>
-                  <span className="text-sm">🇺🇸</span>
-                  <ArrowRight className="w-4 h-4" />
-                </a>
-                <span className="text-xs text-zinc-400">
-                  Miễn phí sử dụng hàng ngày • Không cần thẻ
-                </span>
-              </div>
-            )}
+            ))}
           </div>
         </div>
+
+        <p className="text-xs sm:text-sm text-zinc-200 border-t border-zinc-800/80 pt-4 mb-6">
+          <span aria-hidden="true">💡</span> {current.highlight}
+        </p>
+
+        {current.status === 'live' && current.ctaUrl ? (
+          <div className="flex flex-wrap items-center gap-3">
+            <a
+              href={current.ctaUrl}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent-500 hover:bg-accent-400 text-zinc-950 font-bold text-sm sm:text-base transition-all shadow-md shadow-accent-500/20 hover:scale-[1.02]"
+            >
+              <span>{current.ctaLabel}</span>
+              <ArrowRight className="w-4 h-4" />
+            </a>
+            <span className="text-xs text-zinc-200">
+              Có lượt dùng miễn phí mỗi ngày • Không cần thẻ
+            </span>
+          </div>
+        ) : (
+          <p className="text-xs sm:text-sm text-zinc-200">
+            Môn này chưa mở để học. Khi mở, tài khoản hiện tại của bạn dùng được ngay, không phải
+            mua thêm.
+          </p>
+        )}
+      </div>
+
+      <div className="mt-8 text-center">
+        <a
+          href={`${APP_URL}/mon-hoc`}
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent-300 theme-light:text-accent-800 hover:text-white transition"
+        >
+          <BookOpen className="w-4 h-4" />
+          <span>Xem phòng học đa môn</span>
+          <ArrowRight className="w-4 h-4" />
+        </a>
       </div>
     </section>
   )
 }
 
-// ── 6 Core Advantages (Why Us) ───────────────────────────────────────────────────
-function WhyUsSection() {
-  const features = [
+// ── Cách hoạt động ───────────────────────────────────────────────────────────────
+function HowItWorksSection() {
+  const steps = [
     {
-      icon: <Volume2 className="w-6 h-6 text-accent-400 theme-light:text-accent-700" />,
-      title: 'Giọng Mỹ Chuẩn Bản Xứ (US Accent 🇺🇸)',
-      description:
-        'Học theo giọng tiếng Anh - Mỹ tự nhiên phổ biến nhất thế giới. AI phát âm rõ âm cuối (ending sounds), nối âm, ngữ điệu thực tế và chấm điểm ngữ âm IPA tức thì.',
+      n: '1',
+      title: 'Vài câu hỏi ngắn, khoảng 90 giây',
+      desc: 'Bạn đang bận tâm chuyện gì, muốn hướng nào, có bao nhiêu thời gian. Không bài kiểm tra, không chấm điểm, không xếp loại bạn.',
     },
     {
-      icon: <Mic className="w-6 h-6 text-accent-400 theme-light:text-accent-700" />,
-      title: 'Gia sư Song ngữ 2 chiều Việt ⇄ Anh',
-      description:
-        'Không sợ bí từ! Bạn có thể nói tiếng Anh để luyện phản xạ, hoặc hỏi bằng tiếng Việt bất kỳ lúc nào để AI giải thích cặn kẽ và hướng dẫn cách diễn đạt hay hơn.',
+      n: '2',
+      title: 'Companion gợi ý đúng một việc',
+      desc: 'Một việc nhỏ đủ để bắt đầu ngay hôm nay, kèm hai lựa chọn khác và luôn có đường "để mình chọn thứ khác". Bạn là người chốt.',
     },
     {
-      icon: <Award className="w-6 h-6 text-accent-400 theme-light:text-accent-700" />,
-      title: 'Chuẩn CEFR A1→C2 & Chấm Điểm IELTS',
-      description:
-        'Hơn 12.000 từ vựng và bài học phân cấp chặt chẽ theo Khung tham chiếu Châu Âu. Công cụ luyện viết chấm bài tự động theo 4 tiêu chí chuẩn bài thi IELTS.',
-    },
-    {
-      icon: <Headphones className="w-6 h-6 text-accent-400 theme-light:text-accent-700" />,
-      title: 'Luyện nghe & Karaoke Text thông minh',
-      description:
-        'Kho truyện ngắn và bài nghe phong phú, chữ sáng theo từng nhịp giọng đọc giúp bạn đồng thời bắt kịp tai nghe và mắt nhìn mặt chữ chính xác.',
-    },
-    {
-      icon: <Zap className="w-6 h-6 text-accent-400 theme-light:text-accent-700" />,
-      title: 'Ghi nhớ dài hạn với thuật toán FSRS/SRS',
-      description:
-        'Tự động tính toán chu kỳ lặp lại ngắt quãng khoa học cho từng từ vựng và mẫu câu, giúp bạn ôn lại đúng lúc trước khi quên mà không tốn công ghi chép.',
-    },
-    {
-      icon: <Smartphone className="w-6 h-6 text-accent-400 theme-light:text-accent-700" />,
-      title: 'Học Ngoại tuyến (Offline Mode) & PWA',
-      description:
-        'Cài đặt trực tiếp như một ứng dụng di động native từ trình duyệt. Tải trước bài học và audio để luyện tập ngay cả khi đang trên xe buýt hoặc mất mạng.',
+      n: '3',
+      title: 'Làm, rồi điều chỉnh dần',
+      desc: 'Bạn làm việc đó ở đúng trụ tương ứng. Companion học thêm về hoàn cảnh của bạn qua chính việc bạn làm, nên gợi ý sau sát hơn gợi ý trước.',
     },
   ]
 
   return (
     <section
-      id="why-us"
+      id="cach-hoat-dong"
       className="px-4 sm:px-6 py-16 sm:py-20 bg-zinc-900/30 border-t border-zinc-800"
     >
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs uppercase font-bold tracking-widest text-accent-400 theme-light:text-accent-700 mb-2 block">
-            Điểm khác biệt vượt trội
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <span className="text-xs uppercase font-bold tracking-widest text-accent-300 theme-light:text-accent-800 mb-2 block">
+            Bắt đầu thế nào
           </span>
           <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
-            Tại sao chọn Đồng Hành Cùng Bạn?
+            Ba bước, không có bài kiểm tra đầu vào
           </h2>
-          <p className="text-zinc-400 text-sm sm:text-base">
-            Được thiết kế riêng cho người học Việt Nam với mục tiêu tối ưu hiệu quả và chi phí
+          <p className="text-zinc-200 text-sm sm:text-base">
+            Nền tảng không mở đầu bằng một bảng chấm điểm con người. Nó mở đầu bằng một việc bạn làm
+            được ngay hôm nay.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((item, idx) => (
-            <div
-              key={idx}
-              className="bg-zinc-900/70 hover:bg-zinc-900 rounded-2xl p-6 border border-zinc-800 hover:border-zinc-700 transition-all hover:scale-[1.01] flex flex-col justify-between"
+        <ol className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {steps.map((s) => (
+            <li
+              key={s.n}
+              className="bg-zinc-900/70 rounded-2xl p-6 border border-zinc-800 relative flex flex-col"
             >
-              <div>
-                <div className="w-12 h-12 rounded-xl bg-accent-500/10 border border-accent-500/20 flex items-center justify-center mb-4">
-                  {item.icon}
-                </div>
-                <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
-                <p className="text-zinc-400 text-sm leading-relaxed">{item.description}</p>
+              <div className="w-10 h-10 rounded-full bg-accent-500 text-zinc-950 font-extrabold flex items-center justify-center mb-4 text-lg">
+                {s.n}
               </div>
-            </div>
+              <h3 className="text-lg font-bold text-white mb-2">{s.title}</h3>
+              <p className="text-zinc-200 text-sm leading-relaxed">{s.desc}</p>
+            </li>
           ))}
+        </ol>
+
+        <div className="mt-10 text-center">
+          <a
+            href={START_URL}
+            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-zinc-950 font-bold text-base shadow-lg shadow-accent-500/25 transition-all hover:scale-[1.02]"
+          >
+            <span>Bắt đầu ngay</span>
+            <ArrowRight className="w-4 h-4" />
+          </a>
         </div>
       </div>
     </section>
   )
 }
 
-// ── Interactive Features Showcase ────────────────────────────────────────────────
-function FeaturesSection() {
-  return (
-    <section id="features" className="px-4 sm:px-6 py-16 sm:py-20 max-w-6xl mx-auto">
-      <div className="text-center max-w-2xl mx-auto mb-14">
-        <span className="text-xs uppercase font-bold tracking-widest text-accent-400 theme-light:text-accent-700 mb-2 block">
-          Tính năng AI chuyên sâu
-        </span>
-        <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
-          Bộ công cụ toàn diện cho người học
-        </h2>
-        <p className="text-zinc-400 text-sm sm:text-base">
-          Mỗi tính năng đều được tối ưu để bạn tiến bộ nhanh nhất trong từng kỹ năng
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Box 1: Luyện phát âm & Hội thoại */}
-        <div className="bg-gradient-to-br from-zinc-900 to-zinc-950 rounded-2xl p-6 sm:p-8 border border-zinc-800">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2.5 rounded-xl bg-accent-500/10 text-accent-400 theme-light:text-accent-700">
-              <Mic className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-white">Luyện nói & Phản xạ Giọng Mỹ (US)</h3>
-              <p className="text-xs text-zinc-400">Tự tin giao tiếp không ngại sai</p>
-            </div>
-          </div>
-          <p className="text-zinc-300 text-sm leading-relaxed mb-4">
-            Trò chuyện tự do với các nhân vật AI đa dạng. AI lắng nghe phát âm của bạn, nhận diện
-            từng âm sai theo bảng phiên âm IPA quốc tế và gợi ý cách đặt lưỡi, khẩu hình để chuẩn
-            hóa giọng Mỹ tự nhiên.
-          </p>
-          <div className="bg-zinc-950/60 rounded-xl p-4 border border-zinc-800/80 text-xs font-mono text-zinc-300">
-            <div className="flex items-center justify-between text-zinc-400 mb-2 pb-2 border-b border-zinc-800">
-              <span>Đánh giá phát âm AI</span>
-              <span className="text-accent-400 theme-light:text-accent-700 font-bold">
-                96% Match (US)
-              </span>
-            </div>
-            <div className="text-zinc-300 mb-1">
-              User: <span className="text-white">"I'd like to schedule an appointment."</span>
-            </div>
-            <div className="text-accent-400 theme-light:text-accent-700">
-              AI Tutor: 🇺🇸 /aɪd laɪk tuː ˈskedʒuːl ən əˈpɔɪntmənt/ — Âm /skedʒuːl/ chuẩn giọng Mỹ!
-            </div>
-          </div>
-        </div>
-
-        {/* Box 2: Luyện viết & Chấm điểm */}
-        <div className="bg-gradient-to-br from-zinc-900 to-zinc-950 rounded-2xl p-6 sm:p-8 border border-zinc-800">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2.5 rounded-xl bg-accent-500/10 text-accent-400 theme-light:text-accent-700">
-              <PenTool className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-white">Luyện viết & Chấm điểm IELTS/CEFR</h3>
-              <p className="text-xs text-zinc-400">Nhận xét chi tiết sau 3 giây</p>
-            </div>
-          </div>
-          <p className="text-zinc-300 text-sm leading-relaxed mb-4">
-            Chấm bài viết tiếng Anh theo 4 tiêu chí chuẩn IELTS: Task Achievement, Coherence &
-            Cohesion, Lexical Resource, Grammatical Range & Accuracy. Kèm bản viết lại chuẩn mực để
-            học hỏi.
-          </p>
-          <div className="bg-zinc-950/60 rounded-xl p-4 border border-zinc-800/80 text-xs font-mono text-zinc-300">
-            <div className="flex items-center justify-between text-zinc-400 mb-2 pb-2 border-b border-zinc-800">
-              <span>Tiêu chí đánh giá</span>
-              <span className="text-accent-400 theme-light:text-accent-700 font-bold">
-                Band 7.0 (CEFR C1)
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-[11px]">
-              <div className="bg-zinc-900 p-1.5 rounded">Từ vựng (Lexical): 7.5</div>
-              <div className="bg-zinc-900 p-1.5 rounded">Ngữ pháp (Grammar): 7.0</div>
-              <div className="bg-zinc-900 p-1.5 rounded">Mạch lạc (Coherence): 7.0</div>
-              <div className="bg-zinc-900 p-1.5 rounded">Nhiệm vụ (Task): 6.5</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ── Pricing Section ──────────────────────────────────────────────────────────────
+// ── Bảng giá ─────────────────────────────────────────────────────────────────────
 function PricingSection({ stats }: { stats: HubStats | null }) {
   const isLoggedIn = !!stats?.loggedIn
 
   return (
-    <section
-      id="pricing"
-      className="px-4 sm:px-6 py-16 sm:py-20 bg-zinc-900/40 border-t border-zinc-800"
-    >
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs uppercase font-bold tracking-widest text-accent-400 theme-light:text-accent-700 mb-2 block">
-            Bảng giá minh bạch & Tiết kiệm
-          </span>
-          <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
-            Một gói duy nhất — Học tất cả các môn
-          </h2>
-          <p className="text-zinc-400 text-sm sm:text-base">
-            Học phí bình dân cho học sinh, sinh viên và người đi làm. Khi hệ thống mở thêm môn Toán,
-            Lý, Hóa, tài khoản của bạn được dùng chung không cần mua thêm.
-          </p>
+    <section id="bang-gia" className="px-4 sm:px-6 py-16 sm:py-20 max-w-5xl mx-auto">
+      <div className="text-center max-w-2xl mx-auto mb-14">
+        <span className="text-xs uppercase font-bold tracking-widest text-accent-300 theme-light:text-accent-800 mb-2 block">
+          Bảng giá
+        </span>
+        <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
+          Một tài khoản cho cả nền tảng
+        </h2>
+        <p className="text-zinc-200 text-sm sm:text-base">
+          Không mua theo môn, không mua theo trụ. Khi nền tảng mở thêm môn hoặc thêm tính năng ở một
+          trụ nào đó, tài khoản đang có của bạn dùng được luôn.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
+        <div className="bg-zinc-900 rounded-2xl p-6 sm:p-8 border border-zinc-800 flex flex-col justify-between">
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-white">Gói Miễn phí</h3>
+              <span className="text-xs px-2.5 py-1 rounded-full bg-zinc-800 text-zinc-200">
+                Không giới hạn thời gian
+              </span>
+            </div>
+            <div className="mb-6">
+              <span className="text-3xl sm:text-4xl font-extrabold text-white">0đ</span>
+              <span className="text-zinc-200 text-xs sm:text-sm"> / mãi mãi</span>
+            </div>
+            <p className="text-xs sm:text-sm text-zinc-200 mb-6">
+              Dùng được cả bốn trụ với một số lượt gọi AI mỗi ngày, để nhiều người cùng dùng được.
+            </p>
+            <ul className="space-y-3 text-xs sm:text-sm text-zinc-100 mb-8">
+              {[
+                'Truy cập cả 4 trụ và Bạn Đồng Hành',
+                'Học Tiếng Anh và Lập trình với lượt AI hằng ngày',
+                'Trọn lộ trình CEFR A1 → C2 và từ điển',
+                'Ôn tập ngắt quãng, học ngoại tuyến trên điện thoại',
+              ].map((t) => (
+                <li key={t} className="flex items-start gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-accent-300 theme-light:text-accent-800 shrink-0 mt-0.5" />
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <a
+            href={isLoggedIn ? APP_URL : START_URL}
+            className="w-full py-3 px-4 rounded-xl border border-zinc-700 hover:bg-zinc-800 text-center font-semibold text-sm text-white transition block"
+          >
+            {isLoggedIn ? 'Vào nền tảng' : 'Dùng thử miễn phí'}
+          </a>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
-          {/* Free Tier */}
-          <div className="bg-zinc-900 rounded-2xl p-6 sm:p-8 border border-zinc-800 flex flex-col justify-between">
-            <div>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold text-white">Gói Miễn Phí (Free)</h3>
-                <span className="text-xs px-2.5 py-1 rounded-full bg-zinc-800 text-zinc-400">
-                  Trọn đời
-                </span>
-              </div>
-              <div className="mb-6">
-                <span className="text-3xl sm:text-4xl font-extrabold text-white">0đ</span>
-                <span className="text-zinc-400 text-xs sm:text-sm"> / mãi mãi</span>
-              </div>
-              <p className="text-xs sm:text-sm text-zinc-400 mb-6">
-                Trải nghiệm đầy đủ các tính năng cơ bản mỗi ngày mà không tốn bất kỳ chi phí nào.
-              </p>
-              <ul className="space-y-3 text-xs sm:text-sm text-zinc-300 mb-8">
-                <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
-                  <span>4 giọng đọc AI tiếng Anh Mỹ chuẩn</span>
-                </li>
-                <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
-                  <span>Chat đàm thoại & Luyện phát âm IPA</span>
-                </li>
-                <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
-                  <span>Tra từ điển & Ôn tập từ vựng ngắt quãng</span>
-                </li>
-                <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
-                  <span>Đầy đủ lộ trình CEFR A1 → C2</span>
-                </li>
-              </ul>
-            </div>
-            <a
-              href={ENGLISH_APP_URL}
-              className="w-full py-3 px-4 rounded-xl border border-zinc-700 hover:bg-zinc-800 text-center font-semibold text-sm text-white transition block"
-            >
-              {isLoggedIn ? 'Vào học ngay' : 'Học thử miễn phí ngay'}
-            </a>
+        <div className="bg-gradient-to-b from-zinc-900 via-zinc-900 to-accent-500/10 rounded-2xl p-6 sm:p-8 border-2 border-accent-500/60 shadow-xl shadow-accent-500/10 flex flex-col justify-between relative">
+          <div className="absolute -top-3 right-6 bg-accent-500 text-zinc-950 font-bold text-[11px] uppercase tracking-wider px-3 py-0.5 rounded-full shadow">
+            Khuyên dùng
           </div>
-
-          {/* Pro / VIP Tier */}
-          <div className="bg-gradient-to-b from-zinc-900 via-zinc-900 to-accent-950/30 rounded-2xl p-6 sm:p-8 border-2 border-accent-500/60 shadow-xl shadow-accent-500/10 flex flex-col justify-between relative">
-            <div className="absolute -top-3 right-6 bg-accent-500 text-zinc-950 font-bold text-[11px] uppercase tracking-wider px-3 py-0.5 rounded-full shadow">
-              Khuyên dùng
+          <div>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <span>Gói Pro / VIP</span>
+                <Sparkles className="w-4 h-4 text-accent-300 theme-light:text-accent-800" />
+              </h3>
+              <span className="text-xs px-2.5 py-1 rounded-full bg-accent-500/10 text-accent-200 theme-light:text-accent-900 font-semibold border border-accent-500/20">
+                Cả nền tảng
+              </span>
             </div>
-            <div>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <span>Gói Pro / VIP</span>
-                  <Sparkles className="w-4 h-4 text-accent-400 theme-light:text-accent-700" />
-                </h3>
-                <span className="text-xs px-2.5 py-1 rounded-full bg-accent-500/10 text-accent-400 theme-light:text-accent-700 font-semibold border border-accent-500/20">
-                  Một gói đa môn
-                </span>
-              </div>
-              <div className="mb-6">
-                <span className="text-3xl sm:text-4xl font-extrabold text-accent-400 theme-light:text-accent-700">
-                  Học phí bình dân
-                </span>
-                <span className="text-zinc-400 text-xs sm:text-sm"> / theo tháng & năm</span>
-              </div>
-              <p className="text-xs sm:text-sm text-zinc-300 mb-6">
-                Không giới hạn lượt học, mở trọn bộ 16+ giọng AI cao cấp nhất và áp dụng cho mọi môn
-                học.
-              </p>
-              <ul className="space-y-3 text-xs sm:text-sm text-zinc-200 mb-8">
-                <li className="flex items-center gap-2.5 font-medium">
-                  <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
-                  <span>Trọn bộ 16+ giọng AI Mỹ (Chirp3-HD, Studio, Gemini)</span>
-                </li>
-                <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
-                  <span>Chấm bài viết IELTS & Sửa lỗi chi tiết không giới hạn</span>
-                </li>
-                <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
-                  <span>Tải bài học & Nghe ngoại tuyến (Offline) không giới hạn</span>
-                </li>
-                <li className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
-                  <span>Tự động mở khóa các môn STEM mới (Toán, Lý, Hóa)</span>
-                </li>
-              </ul>
+            <div className="mb-6">
+              <span className="text-3xl sm:text-4xl font-extrabold text-accent-300 theme-light:text-accent-800">
+                Học phí bình dân
+              </span>
+              <span className="text-zinc-200 text-xs sm:text-sm"> / 10 ngày · tháng · năm</span>
             </div>
-            <a
-              href={isLoggedIn ? PROFILE_URL : `${ENGLISH_APP_URL}/login`}
-              className="w-full py-3.5 px-4 rounded-xl bg-accent-500 hover:bg-accent-400 text-center font-bold text-sm text-zinc-950 shadow-md shadow-accent-500/25 transition block hover:scale-[1.02]"
-            >
-              {isLoggedIn
-                ? 'Xem chi tiết giá & Nâng cấp trong Hồ sơ →'
-                : 'Đăng nhập để xem bảng giá & Nâng cấp →'}
-            </a>
+            <p className="text-xs sm:text-sm text-zinc-100 mb-6">
+              Nới rộng lượt dùng AI ở mọi trụ và mở trọn bộ giọng đọc cao cấp. Giá cụ thể xem trong
+              trang cá nhân, luôn cập nhật theo bảng giá hiện hành.
+            </p>
+            <ul className="space-y-3 text-xs sm:text-sm text-zinc-100 mb-8">
+              {[
+                'Lượt dùng AI rộng hơn ở cả 4 trụ',
+                'Trọn bộ giọng đọc AI cao cấp cho môn Tiếng Anh',
+                'Chấm bài viết và phản hồi chi tiết thoải mái hơn',
+                'Môn mở sau này tự động dùng được, không mua thêm',
+              ].map((t) => (
+                <li key={t} className="flex items-start gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-accent-300 theme-light:text-accent-800 shrink-0 mt-0.5" />
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ul>
           </div>
+          <a
+            href={isLoggedIn ? PROFILE_URL : `${APP_URL}/login`}
+            className="w-full py-3.5 px-4 rounded-xl bg-accent-500 hover:bg-accent-400 text-center font-bold text-sm text-zinc-950 shadow-md shadow-accent-500/25 transition block hover:scale-[1.02]"
+          >
+            {isLoggedIn ? 'Xem giá & nâng cấp trong hồ sơ →' : 'Đăng nhập để xem bảng giá →'}
+          </a>
         </div>
       </div>
     </section>
   )
 }
 
-// ── FAQ Section ──────────────────────────────────────────────────────────────────
+// ── Hỏi đáp ──────────────────────────────────────────────────────────────────────
 function FaqSection() {
   const [openIdx, setOpenIdx] = useState<number | null>(0)
 
   const faqs = [
     {
-      q: 'Nền tảng sử dụng chuẩn Tiếng Anh giọng gì?',
-      a: 'Đồng hành cùng bạn sử dụng 100% chuẩn Tiếng Anh - Mỹ (American English / US Accent) phổ biến nhất toàn cầu. Toàn bộ hệ thống 16+ giọng đọc AI chất lượng cao (Google Chirp3-HD, Studio, Gemini AI, ElevenLabs) và bộ nhận diện chấm phát âm IPA đều được thiết lập theo chuẩn giọng Mỹ.',
+      q: '"Đồng hành cùng bạn" là gì — một app học tiếng Anh phải không?',
+      a: 'Không. Đây là nền tảng đồng hành cá nhân gồm bốn trụ: Học tập, Sự nghiệp, Khởi nghiệp và Công việc & Đời sống (hai mảng này gộp làm một vì chúng tiêu cùng một quỹ thời gian), nối với nhau bằng Bạn Đồng Hành — một tác tử AI hiểu ngữ cảnh của bạn ở cả bốn trụ. Tiếng Anh là MỘT MÔN trong trụ Học tập; nó là môn đầu tiên nên hiện đầy đủ nhất, chứ không phải toàn bộ nền tảng.',
     },
     {
-      q: 'Tôi có thể dùng thử miễn phí không?',
-      a: 'Có! Bạn có thể sử dụng gói Miễn phí (Free) mãi mãi mà không cần nhập thẻ ngân hàng hay thanh toán bất kỳ khoản nào. Gói miễn phí đã bao gồm 4 giọng đọc chuẩn, tra từ điển, chat phản xạ và ôn tập ngắt quãng hàng ngày.',
+      q: 'Tôi chỉ muốn học tiếng Anh thôi, có bị bắt dùng những phần khác không?',
+      a: 'Không. Bạn vào thẳng môn Tiếng Anh và dùng như một app học tiếng Anh bình thường. Các trụ khác nằm đó khi nào bạn cần thì mở, không có thứ gì ép bạn phải điền.',
     },
     {
-      q: 'Tôi có thể cài đặt ứng dụng lên điện thoại như thế nào?',
-      a: 'Bạn có thể truy cập website trên trình duyệt điện thoại (Safari trên iPhone hoặc Chrome trên Android) và bấm "Thêm vào Màn hình chính" (Add to Home Screen). Ứng dụng hỗ trợ công nghệ PWA (Progressive Web App), hoạt động mượt mà và hỗ trợ cả chế độ học Offline.',
+      q: 'Hiện tại phần nào dùng được thật, phần nào còn đang xây?',
+      a: 'Dùng được thật: cả bốn trụ ở mức công cụ nền (hồ sơ, vòng tròn cuộc sống, bảng việc, canvas khởi nghiệp, luyện phỏng vấn), Bạn Đồng Hành, và hai môn Tiếng Anh (đầy đủ nhất) cùng Lập trình. Đang xây: các môn Toán, Lý, Hóa, Sinh và phần chiều sâu của từng trụ. Chỗ nào chưa xong thì trang này ghi rõ là "đang xây" — không hứa trước.',
     },
     {
-      q: 'Khi mở thêm các môn Toán, Lý, Hóa, tôi có phải mua gói riêng không?',
-      a: 'Không. Tôn chỉ của Đồng hành cùng bạn là "Một gói, dùng mọi môn". Khi bạn đăng ký gói Pro hoặc VIP, bạn sẽ được tự động sử dụng tất cả các môn học mới khi ra mắt mà không phát sinh thêm chi phí.',
+      q: 'Nền tảng có chấm điểm hay xếp loại tôi không?',
+      a: 'Không. Nền tảng có ghi nhận tiến độ để gợi ý việc phù hợp, nhưng nguyên tắc thiết kế là kết quả đó không bao giờ trở thành bảng điểm con người trên màn hình chính, không so bạn với người khác và không có bảng xếp hạng. Tiến bộ được đối chiếu với chính bạn trước đó.',
+    },
+    {
+      q: 'Dùng thử miễn phí được không?',
+      a: 'Được. Gói Miễn phí dùng mãi mãi, không cần nhập thẻ ngân hàng, có số lượt gọi AI mỗi ngày. Muốn dùng nhiều hơn thì nâng cấp Pro hoặc VIP, và một tài khoản áp dụng cho cả nền tảng.',
+    },
+    {
+      q: 'Cài lên điện thoại thế nào?',
+      a: 'Mở website bằng trình duyệt trên điện thoại (Safari trên iPhone, Chrome trên Android) rồi chọn "Thêm vào Màn hình chính". Nền tảng chạy dạng PWA, dùng như một ứng dụng và môn Tiếng Anh còn học được cả khi mất mạng.',
     },
   ]
 
   return (
-    <section id="faq" className="px-4 sm:px-6 py-16 sm:py-20 max-w-4xl mx-auto">
+    <section
+      id="hoi-dap"
+      className="px-4 sm:px-6 py-16 sm:py-20 max-w-4xl mx-auto border-t border-zinc-800"
+    >
       <div className="text-center mb-12">
-        <span className="text-xs uppercase font-bold tracking-widest text-accent-400 theme-light:text-accent-700 mb-2 block">
+        <span className="text-xs uppercase font-bold tracking-widest text-accent-300 theme-light:text-accent-800 mb-2 block">
           Giải đáp thắc mắc
         </span>
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
@@ -929,22 +1098,28 @@ function FaqSection() {
           const isOpen = openIdx === idx
           return (
             <div
-              key={idx}
+              key={faq.q}
               className="bg-zinc-900/80 rounded-xl border border-zinc-800 overflow-hidden transition"
             >
               <button
+                type="button"
                 onClick={() => setOpenIdx(isOpen ? null : idx)}
-                className="w-full px-5 py-4 text-left flex items-center justify-between gap-4 font-semibold text-sm sm:text-base text-zinc-200 hover:text-white"
+                aria-expanded={isOpen}
+                aria-controls={`faq-panel-${idx}`}
+                className="w-full px-5 py-4 text-left flex items-center justify-between gap-4 font-semibold text-sm sm:text-base text-zinc-100 hover:text-white"
               >
                 <span>{faq.q}</span>
                 {isOpen ? (
-                  <ChevronUp className="w-4 h-4 text-accent-400 theme-light:text-accent-700 shrink-0" />
+                  <ChevronUp className="w-4 h-4 text-accent-300 theme-light:text-accent-800 shrink-0" />
                 ) : (
-                  <ChevronDown className="w-4 h-4 text-zinc-500 shrink-0" />
+                  <ChevronDown className="w-4 h-4 text-zinc-300 shrink-0" />
                 )}
               </button>
               {isOpen && (
-                <div className="px-5 pb-4 text-xs sm:text-sm text-zinc-400 leading-relaxed border-t border-zinc-800/50 pt-3">
+                <div
+                  id={`faq-panel-${idx}`}
+                  className="px-5 pb-4 text-xs sm:text-sm text-zinc-200 leading-relaxed border-t border-zinc-800/50 pt-3"
+                >
                   {faq.a}
                 </div>
               )}
@@ -956,31 +1131,30 @@ function FaqSection() {
   )
 }
 
-// ── Call to Action Banner ────────────────────────────────────────────────────────
+// ── CTA cuối trang ───────────────────────────────────────────────────────────────
 function CtaBanner({ stats }: { stats: HubStats | null }) {
   const isLoggedIn = !!stats?.loggedIn
 
   return (
     <section className="px-4 sm:px-6 py-14 max-w-5xl mx-auto">
-      <div className="bg-gradient-to-r from-accent-950 via-zinc-900 to-zinc-900 border border-accent-500/30 rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl">
+      <div className="bg-gradient-to-r from-accent-500/15 via-zinc-900 to-zinc-900 border border-accent-500/30 rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl">
         <div className="max-w-2xl mx-auto relative z-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-500/10 border border-accent-500/20 text-accent-400 theme-light:text-accent-700 text-xs font-semibold mb-4">
-            <span>🇺🇸</span>
-            <span>Bắt đầu ngay hôm nay</span>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-500/10 border border-accent-500/20 text-accent-200 theme-light:text-accent-900 text-xs font-semibold mb-4">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Bắt đầu từ một việc nhỏ</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-extrabold text-white mb-4 tracking-tight">
-            Sẵn sàng nâng tầm Tiếng Anh Giọng Mỹ cùng AI?
+            Việc nhỏ hôm nay, đường dài có bạn đi cùng
           </h2>
-          <p className="text-zinc-300 text-sm sm:text-base mb-8 leading-relaxed">
-            Học tập kiên nhẫn cùng gia sư AI thông minh 24/7. Khám phá ngay trải nghiệm song ngữ 2
-            chiều độc đáo!
+          <p className="text-zinc-100 text-sm sm:text-base mb-8 leading-relaxed">
+            Không cần biết trước mình muốn gì. Trả lời vài câu ngắn, rồi làm đúng một việc — phần
+            còn lại tính sau.
           </p>
           <a
-            href={ENGLISH_APP_URL}
+            href={isLoggedIn ? APP_URL : START_URL}
             className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-accent-500 hover:bg-accent-400 text-zinc-950 font-bold text-base shadow-lg shadow-accent-500/25 transition-all hover:scale-105"
           >
-            <span>{isLoggedIn ? 'Tiếp tục bài học' : 'Học Tiếng Anh miễn phí ngay'}</span>
-            <span className="text-sm">🇺🇸</span>
+            <span>{isLoggedIn ? 'Tiếp tục việc đang làm' : 'Bắt đầu miễn phí'}</span>
             <ArrowRight className="w-4 h-4" />
           </a>
         </div>
@@ -994,65 +1168,82 @@ function Footer({ stats }: { stats: HubStats | null }) {
   const isLoggedIn = !!stats?.loggedIn
 
   return (
-    <footer className="px-4 sm:px-6 py-12 bg-zinc-950 border-t border-zinc-800/80 text-zinc-500 text-xs">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="flex flex-col items-center md:items-start gap-1">
-          <div className="flex items-center gap-2 text-zinc-300 font-bold text-sm">
-            <Sparkles className="w-4 h-4 text-accent-400 theme-light:text-accent-700" />
+    <footer className="px-4 sm:px-6 py-12 bg-zinc-950 border-t border-zinc-800/80 text-zinc-200 text-xs">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="md:col-span-2 flex flex-col gap-2">
+          <div className="flex items-center gap-2 text-zinc-100 font-bold text-sm">
+            <Sparkles className="w-4 h-4 text-accent-300 theme-light:text-accent-800" />
             <span>Đồng hành cùng bạn</span>
           </div>
-          <p className="text-zinc-500 text-xs">
-            Nền tảng học tập cùng Gia sư AI thông minh · donghanhcungban.org
+          <p className="text-zinc-200 text-xs leading-relaxed max-w-sm">
+            Nền tảng đồng hành cá nhân: học tập, sự nghiệp, khởi nghiệp, và công việc gắn liền đời
+            sống — cùng một người bạn AI hiểu ngữ cảnh cả bốn mảng. donghanhcungban.org
           </p>
         </div>
 
-        <div className="flex items-center gap-6 text-zinc-400 flex-wrap justify-center">
+        <nav aria-label="Các trụ" className="flex flex-col gap-2">
+          <h2 className="text-zinc-100 font-semibold text-xs uppercase tracking-wider mb-1">
+            Bốn trụ
+          </h2>
+          {PILLARS.map((p) => (
+            <a
+              key={p.id}
+              href={p.url}
+              className="hover:text-accent-300 theme-light:hover:text-accent-800 transition"
+            >
+              {p.name}
+            </a>
+          ))}
+        </nav>
+
+        <nav aria-label="Liên kết khác" className="flex flex-col gap-2">
+          <h2 className="text-zinc-100 font-semibold text-xs uppercase tracking-wider mb-1">
+            Liên kết
+          </h2>
           <a
-            href={ENGLISH_APP_URL}
-            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition"
+            href={COMPANION_URL}
+            className="hover:text-accent-300 theme-light:hover:text-accent-800 transition"
           >
-            Học Tiếng Anh 🇺🇸
+            Bạn Đồng Hành
+          </a>
+          <a
+            href={`${APP_URL}/mon-hoc`}
+            className="hover:text-accent-300 theme-light:hover:text-accent-800 transition"
+          >
+            Phòng học đa môn
+          </a>
+          <a
+            href={`${APP_URL}/gioi-thieu`}
+            className="hover:text-accent-300 theme-light:hover:text-accent-800 transition"
+          >
+            Giới thiệu nền tảng
           </a>
           {isLoggedIn && (
             <a
               href={PROFILE_URL}
-              className="hover:text-accent-400 theme-light:hover:text-accent-700 transition"
+              className="hover:text-accent-300 theme-light:hover:text-accent-800 transition"
             >
               Trang cá nhân
             </a>
           )}
           <a
-            href="#subjects"
-            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition"
-          >
-            Các môn học
-          </a>
-          <a
-            href="#pricing"
-            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition"
-          >
-            Bảng giá
-          </a>
-          <a
             href="mailto:donghanhcungban.org@gmail.com"
-            className="hover:text-accent-400 theme-light:hover:text-accent-700 transition"
+            className="hover:text-accent-300 theme-light:hover:text-accent-800 transition"
           >
             Liên hệ hỗ trợ
           </a>
-        </div>
+        </nav>
+      </div>
 
-        <div className="text-center md:text-right text-zinc-500">
-          <p>© 2026 Đồng Hành Cùng Bạn. All rights reserved.</p>
-          <p className="text-[11px] text-zinc-600 mt-0.5">
-            Phục vụ học sinh, sinh viên và người đi làm Việt Nam
-          </p>
-        </div>
+      <div className="max-w-6xl mx-auto mt-10 pt-6 border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-2 text-zinc-300">
+        <p>© 2026 Đồng Hành Cùng Bạn.</p>
+        <p>Làm cho người Việt — miễn phí ở mức đủ dùng, trả phí khi cần nhiều hơn.</p>
       </div>
     </footer>
   )
 }
 
-// ── Path Router Hook ─────────────────────────────────────────────────────────────
+// ── Router tối giản ──────────────────────────────────────────────────────────────
 function useCurrentPath(): string {
   const [path, setPath] = useState(typeof window !== 'undefined' ? window.location.pathname : '/')
 
@@ -1067,26 +1258,24 @@ function useCurrentPath(): string {
   return path
 }
 
-// ── Root App Component ───────────────────────────────────────────────────────────
 export default function App() {
   const path = useCurrentPath()
   const stats = useHubStats()
 
-  // Tuyến đường /login hoặc /login/
   if (path === '/login' || path.startsWith('/login/')) {
     return <HubLogin />
   }
 
-  // Tuyến đường Landing Page mặc định
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col selection:bg-accent-500/30 selection:text-accent-300">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col selection:bg-accent-500/30 selection:text-accent-200">
       <Navbar stats={stats} />
       <main className="flex-1">
         <Hero stats={stats} />
         <ActivitySection stats={stats} />
-        <SubjectTabs />
-        <WhyUsSection />
-        <FeaturesSection />
+        <PillarsSection />
+        <CompanionSection />
+        <SubjectsSection />
+        <HowItWorksSection />
         <PricingSection stats={stats} />
         <FaqSection />
         <CtaBanner stats={stats} />

@@ -8,6 +8,105 @@
 
 ## Giai đoạn hiện tại
 
+### refactor(worklife): gộp trụ WORK + LIFE thành MỘT trụ "Công việc & Đời sống" (2026-08-25)
+
+Người dùng chốt: **gộp sâu cả dữ liệu**, không chỉ gộp hiển thị. Lý do sản phẩm: việc hằng
+ngày và đời sống tiêu **cùng một quỹ thời gian** — tách làm hai trụ là bắt người dùng tự ghép
+lại hai nửa vốn là một. Nền tảng còn **4 trụ**: Học tập · Sự nghiệp · Khởi nghiệp · Công việc
+& Đời sống.
+
+- **Dữ liệu — migration `0066_worklife_merge.sql`.** Tạo schema `worklife` rồi
+  `alter table ... set schema` toàn bộ 9 bảng (`work`: projects/tasks/meetings/documents ·
+  `life`: plans/habits/habit_logs/wellbeing_checks/growth_milestones), sau đó
+  `drop schema ... restrict` hai schema cũ. **KHÔNG sao chép dữ liệu** — chỉ đổi chỗ đứng
+  trong catalog nên chạy tức thì, giữ nguyên hàng/khoá ngoại/chỉ mục. Vòng lặp đọc
+  `information_schema` nên **lũy đẳng** (chạy lại không lỗi). `restrict` (không phải
+  `cascade`) là chốt an toàn: còn sót đối tượng nào thì migration BÁO LỖI thay vì xoá ngầm.
+  Lệnh lùi ghi sẵn ở cuối file migration. Không có bảng trùng tên giữa hai schema — đã đối
+  chiếu `0048` và `0050` trước khi viết.
+- **Code truy vấn:** `workService.ts`, `lifeFoundationService.ts`, `personErasureService.ts`
+  đổi tiền tố schema sang `worklife.*`. Lưu ý bẫy trong test cũ: vị từ `s.includes('work.')`
+  KHÔNG khớp `'worklife.'` (chuỗi là `workl…`) trong khi `s.includes('life.')` thì CÓ khớp —
+  nên đã viết lại 3 vị từ trong `personErasureService.test.ts` thành `'worklife.'` tường minh
+  thay vì để chúng khớp/trượt do trùng chuỗi.
+- **UI — `pages/domains/worklife/WorkLife.tsx` (mới).** Một trang, hai tab "Công việc" /
+  "Đời sống", tab đang mở nằm trong query `?muc=` (chia sẻ/bookmark được đúng nửa đang xem).
+  KHÔNG viết lại 1.800 dòng của hai trang cũ: `Work.tsx` và `Life.tsx` nhận thêm prop
+  `embedded` — ở chế độ nhúng thì bỏ `Layout` riêng và **không render `PageHeader` (h1)** nữa
+  mà dùng `h2`, vì hai `h1` trên một trang là lỗi phân cấp tiêu đề (a11y). Mọi tính năng, API
+  và test sẵn có của hai trụ giữ nguyên hành vi.
+- **Route:** `/cong-viec-cuoc-song` là route mới; `/cong-viec` và `/cuoc-song` (cùng các bí
+  danh `/work`, `/life`, `/cong-viec-cua-toi`, `/cuoc-song-cua-toi`, `/hoc-cong-viec`,
+  `/hoc-cuoc-song`) chuyển hướng sang đúng tab tương ứng — **link cũ, bookmark và SEO không
+  gãy**. E2E `v2-hubs.spec.ts` thêm 2 khẳng định `toHaveURL` để chuyển hướng hỏng thì test đỏ
+  chứ không trượt im lặng.
+- **Điều hướng đã đồng bộ:** `Layout.tsx` (gộp 2 mục quick-nav thành "Công Việc & Đời Sống"),
+  `Profile.tsx` (gộp 2 thẻ), `BottomNav.tsx`, `Home.tsx`, `About.tsx`, và trang chủ
+  `apps/hub` (thẻ trụ + FAQ + bảng giá + footer đổi "năm trụ" → "bốn trụ").
+- **Trụ Sự nghiệp nay mô tả nhiều ngành nghề** (yêu cầu người dùng): dùng đúng **8 họ nghề**
+  của `docs/research/dac-ta-nang-luc-ca-nhan-theo-do-tuoi-2026-08-23.md` (kỹ thuật–CNTT ·
+  y tế–chăm sóc · giáo dục · kinh doanh–bán hàng · tài chính–kế toán–pháp lý ·
+  sáng tạo–truyền thông · sản xuất–kỹ thuật viên · dịch vụ công–hành chính) kèm **nhánh
+  chuyển hướng tự nhiên** của từng họ, thay vì liệt kê nghề lẻ (đặc tả cố ý không mô hình hoá
+  hàng nghìn nghề vì bảo trì bất khả thi).
+
+**Việc tay còn lại của bạn:** chạy `npm run migrate:pg` trên VPS trước khi deploy bản này —
+nếu deploy code mới mà chưa chạy migration thì mọi truy vấn `worklife.*` sẽ lỗi "schema does
+not exist" (trụ Công việc & Đời sống trắng màn, các trụ khác không ảnh hưởng). Nên backup DB
+trước, dù thao tác này lùi được bằng lệnh ghi ở cuối file migration.
+
+**Quy ước mới (người dùng chốt 2026-08-25):** LUÔN bật auto-merge cho mọi PR ngay sau khi tạo
+— ghi vào `CLAUDE.md` mục 11. An toàn vì `main` đã có required status check `quality`/`e2e`/
+`metadata`, auto-merge chỉ merge khi cả ba xanh.
+
+### feat(hub): trang chủ + trang giới thiệu nói đúng "nền tảng DHCB", không còn đóng khung thành app tiếng Anh (2026-08-25)
+
+Người dùng chỉ ra: **trang chủ là tổng hợp của DHCB, không phải của môn tiếng Anh** — và yêu
+cầu rà lại cả các trang con. Trước đợt này, `apps/hub` (landing tại domain gốc) quảng bá gần
+như 100% môn tiếng Anh (hero "Gia sư AI… Tiếng Anh Giọng Mỹ", 6 "điểm khác biệt" đều là tính
+năng môn Anh, FAQ chỉ hỏi về giọng Mỹ), tức là mâu thuẫn trực tiếp với tầm nhìn đã chốt ở
+`docs/research/dac-ta-kien-truc-platform-dhcb-2026-08-23.md`.
+
+Đã sửa:
+
+- **`apps/hub/src/App.tsx` — viết lại kiến trúc thông tin của trang chủ.** Thứ tự mục mới:
+  Hero (nền tảng, 5 trụ) → dải "nền tảng hiện có gì" → **Năm trụ** (Học tập · Sự nghiệp ·
+  Công việc · Khởi nghiệp · Đời sống, mỗi trụ một thẻ + thẻ thứ 6 là Companion) → **Bạn Đồng
+  Hành** (6 cam kết dịch từ 8 luật hành xử SDT) → **Môn học** (tab: Tiếng Anh và Lập trình
+  "học được", 4 môn STEM "đang xây") → Cách hoạt động 3 bước → Bảng giá "một tài khoản cho cả
+  nền tảng" → Hỏi đáp cấp nền tảng → CTA → Footer 3 cột. Mục "6 điểm khác biệt" và "tính năng
+  AI chuyên sâu" cũ (thuần môn Anh) bị bỏ, phần còn giá trị gộp vào tab môn Tiếng Anh.
+- **Chỉ quảng cáo thứ có thật.** Mọi liên kết trụ/môn trỏ route CÓ THẬT trong
+  `apps/dhcb/src/App.tsx` (`/mon-hoc`, `/su-nghiep`, `/cong-viec`, `/khoi-nghiep`,
+  `/cuoc-song`, `/ban-dong-hanh`, `/hoc-tieng-anh`, `/lap-trinh`, `/bat-dau`); trạng thái môn
+  bám `subjectRegistry` (core-learner). Môn chưa mở ghi thẳng "đang xây", không hứa trước.
+- **Ngôn ngữ theo tư thế đồng hành.** FAQ trả lời thẳng câu "đây có phải app học tiếng Anh
+  không"; không xếp loại/so sánh người dùng, không bảng điểm năng lực trên trang chủ (luật số
+  1 của sản phẩm), CTA mở đầu là "vài câu hỏi ~90 giây" chứ không phải bài kiểm tra đầu vào.
+- **Trang con đã rà cùng đợt:** `apps/hub/src/pages/HubLogin.tsx` ("cổng SSO" → "một tài khoản
+  cho cả nền tảng", nút "Tiếp tục vào môn học" → "vào nền tảng"); `apps/dhcb/src/pages/core/
+About.tsx` (`/gioi-thieu`) đổi tiêu đề thành "Giới thiệu nền tảng" và **thêm mục 5 trụ +
+  Companion đặt TRƯỚC** phần môn Anh; `Landing.tsx` (`/welcome`) và `LandingEn.tsx`
+  (`/learn-vietnamese`) giữ nguyên thông điệp quảng cáo theo từ khoá nhưng gắn nhãn "một môn
+  của nền tảng" + mục dẫn sang phần còn lại.
+- **SEO:** `apps/hub/index.html` và `apps/dhcb/index.html` đổi title/description/OG/Twitter và
+  JSON-LD `WebApplication` sang mô tả cấp nền tảng; giữ nguyên schema `Course` của lộ trình
+  CEFR (vẫn đúng, chỉ là một môn).
+- **Biến môi trường:** thêm `VITE_APP_URL` (tên đúng vai trò) cho hub, **vẫn đọc
+  `VITE_ENGLISH_APP_URL` làm dự phòng** nên không phải sửa `.env` trên VPS ngay.
+- **Tương phản (a11y):** đã rà `packages/core-ui/theme.css` — token `--z-400`/`--z-500` vốn
+  đã được chỉnh sẵn để `text-zinc-400` đạt AAA 7:1 và `text-zinc-500` đạt AA 4.5:1 trên mọi
+  bề mặt thật, nên **chữ xám cũ KHÔNG hề vi phạm**; việc nâng lên `zinc-300` chỉ là chọn
+  sáng hơn cho dễ đọc, không phải vá lỗi. Vấn đề THẬT là ở màu nhấn: `--a-*` **không đảo**
+  theo theme (khác `--z-*`), nên mọi chữ màu nhấn bắt buộc có cặp
+  `theme-light:text-accent-800/900` — thiếu là hỏng tương phản ở 3 theme nền sáng; đã rà đủ.
+  Cũng đã xoá các class chết `accent-950` (thang accent của hub chỉ tới 900 — class cũ không
+  sinh CSS nên nền coi như trong suốt).
+
+**Còn mở:** hub chưa nằm trong cổng e2e a11y (`e2e/a11y*.spec.ts` chỉ quét 15 route của
+`apps/dhcb`) — nên đợt này kiểm tương phản bằng cách rà token thủ công. Nên thêm hub vào bộ
+quét a11y ở một PR riêng.
+
 ### chore(audit): audit toàn diện 2026-08-25 + vá 6/7 phát hiện
 
 **Yêu cầu người dùng:** "audit toàn diện" → sau đó "vá toàn bộ".
@@ -6183,8 +6282,57 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
-- 🟡 **[2026-08-24] Model chat Gemini đổi khẩn cấp sang `gemini-3.6-flash` — CHƯA xác nhận
-  hoạt động, CHƯA cập nhật baseline.** PR #647: Google đã khai tử hẳn `gemini-2.0-flash` (lỗi
+- 🟡 **[2026-08-25] `nginx/en-vi.conf` đã sửa trong repo nhưng CHƯA áp lên VPS thật.** Audit
+  2026-08-25 (F5) phát hiện bản `Content-Security-Policy-Report-Only` trong nginx còn whitelist
+  `*.supabase.co` dù dự án rời Supabase từ 2026-07-20, lại thiếu facebook/apple/microsoft,
+  `media-src blob:` và `frame-src accounts.google.com` so với CSP thật — nên nó chỉ sinh báo cáo
+  vi phạm GIẢ. Đã xoá hẳn ở PR #664 (giữ đúng MỘT nguồn CSP là Express).
+
+  **Điều kiện gỡ nợ:** copy file lên VPS rồi:
+
+  ```bash
+  sudo nginx -t && sudo systemctl reload nginx
+  ```
+
+  **Vì sao chưa gỡ được từ đây:** repo chỉ chứa BẢN SAO cấu hình; file thi hành thật nằm trên
+  server. Sửa trong repo mà quên áp = tài liệu nói một đằng, server chạy một nẻo — đúng loại
+  lệch mà Tầng 6b của quy trình audit sinh ra để bắt.
+
+- 🟡 **[2026-08-25] Biên độ ngân sách chất lượng đã MỎNG — bundle JS 99,7%, coverage branches
+  dư 0,13 điểm.** Audit 2026-08-25 (F3). Số đo thật: JS 122,65/123 kB · CSS 15,64/16 kB ·
+  coverage branches 90,13% trên sàn 90. Lần audit 2026-08-24 branches còn dư 0,17 điểm ⇒ biên độ
+  đang **hẹp dần**, không phải đứng yên.
+
+  Chưa đỏ, nên KHÔNG chặn việc gì hôm nay. Cái đáng lo là ai gánh: tính năng nhỏ kế tiếp sẽ làm
+  CI đỏ, và người viết PR đó lãnh trọn cái nợ mà các PR trước đã tiêu dần.
+
+  **Đo lại bất cứ lúc nào:** `npm run build && npm run test:coverage && npm run budget`
+  (`scripts/check-budget-margin.ts`, thêm ở PR #664 — in biên độ còn lại thành số, cảnh báo khi
+  bundle ≥95% ngân sách hoặc coverage dư <1 điểm).
+
+  **Điều kiện gỡ nợ — chọn một, KHÔNG lặng lẽ nâng ngưỡng:** (a) giảm bundle thật
+  (code-splitting thêm, bỏ dependency eager) và bổ sung test cho các file nhánh phủ thấp
+  (`geminiLiveService.ts` 14 nhánh thiếu · `co-learning-audio.ts` 12 · `neuroAffectiveService.ts`
+  8 · `redisChat.ts` 8); hoặc (b) nâng ngưỡng CÓ CHỦ ĐÍCH kèm lý do ghi vào chính mục này.
+
+- 🟡 **[2026-08-25] Tầng 8 (Core Web Vitals) và Tầng 9 (vận hành production) CHƯA kiểm được
+  trong lượt audit toàn diện 2026-08-25.** Proxy của container chặn
+  `en-vi.donghanhcungban.org` (403 CONNECT tunnel). Hai tầng này được ghi **TRỐNG**, không chấm
+  đạt — một lượt audit thiếu 2/13 tầng thì không được coi là đã phủ hết.
+
+  **Điều kiện gỡ nợ:** từ máy có mạng tới server — chạy Lighthouse trên trang chủ + Dictionary +
+  1 trang CEFR (ngân sách LCP ≤ 2,5s · INP ≤ 200ms · CLS ≤ 0,1), và đọc Sentry (lỗi mới chưa
+  xem xét) + `pm2 logs`/số lần restart + dung lượng ổ đĩa.
+
+- 🔴 **[2026-08-24 · XÁC NHẬN LẠI 2026-08-25 qua audit toàn diện] Model chat Gemini đổi khẩn
+  cấp sang `gemini-3.6-flash` — VẪN CHƯA xác nhận hoạt động, CHƯA cập nhật baseline.**
+  _Audit 2026-08-25 chấm Tầng 4 **FAIL** bằng lệnh, không đoán:_ `git log -1` trên
+  `apps/dhcb/src/prompts` + `packages/core-ai/aiConfig.ts` cho **2026-08-24**, còn trên
+  `docs/research/eval-tutor-baseline.md` cho **2026-08-21** — ngày đổi MỚI HƠN ngày baseline
+  ⇒ baseline đã cũ. (Nội dung tài liệu baseline ghi "2026-08-20", commit là 2026-08-21; lệch
+  1 ngày này không đổi kết luận.) Container audit không có `.env` nên vẫn không chạy được.
+
+  _Bối cảnh gốc (2026-08-24):_ PR #647 — Google đã khai tử hẳn `gemini-2.0-flash` (lỗi
   404 thật khi chạy `npm run eval:tutor`, sửa ở 4 chỗ — `aiConfig.ts` GEMINI_CHAT_MODEL,
   `visionSolverService.ts`, `ambientVisionService.ts`, `scripts/eval-tutor.ts`). Tên model mới
   lấy trực tiếp từ thông báo lỗi của Google, **không phải suy đoán**, nhưng môi trường sửa lỗi
