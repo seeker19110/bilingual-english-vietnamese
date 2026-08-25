@@ -50,11 +50,10 @@ const AppliedKnowledge = lazyWithRetry(() => import('./pages/learning/AppliedKno
 // ── 4. Life Synthesis Domains (Sự nghiệp, Công việc, Khởi nghiệp, Cuộc sống)
 const Career = lazyWithRetry(() => import('./pages/domains/career/Career'))
 const CareerInterview = lazyWithRetry(() => import('./pages/domains/career/CareerInterview'))
-const Work = lazyWithRetry(() => import('./pages/domains/work/Work'))
+const WorkLife = lazyWithRetry(() => import('./pages/domains/worklife/WorkLife'))
 const WorkKanban = lazyWithRetry(() => import('./pages/domains/work/WorkKanban'))
 const Startup = lazyWithRetry(() => import('./pages/domains/startup/Startup'))
 const StartupCanvas = lazyWithRetry(() => import('./pages/domains/startup/StartupCanvas'))
-const Life = lazyWithRetry(() => import('./pages/domains/life/Life'))
 const LifeGraph = lazyWithRetry(() => import('./pages/domains/life/LifeGraph'))
 const LifeWheel = lazyWithRetry(() => import('./pages/domains/life/LifeWheel'))
 
@@ -295,13 +294,20 @@ export default function App() {
                           </RequireAuth>
                         }
                       />
+                      {/* Trụ GỘP "Công việc & Đời sống" (2026-08-25). Hai route cũ
+                          /cong-viec và /cuoc-song vẫn vào được — chuyển hướng sang đúng
+                          tab của trang gộp, nên link cũ và bookmark không gãy. */}
                       <Route
-                        path="/cong-viec"
+                        path="/cong-viec-cuoc-song"
                         element={
                           <RequireAuth>
-                            <Work />
+                            <WorkLife />
                           </RequireAuth>
                         }
+                      />
+                      <Route
+                        path="/cong-viec"
+                        element={<Navigate to="/cong-viec-cuoc-song?muc=cong-viec" replace />}
                       />
                       <Route
                         path="/khoi-nghiep"
@@ -313,11 +319,7 @@ export default function App() {
                       />
                       <Route
                         path="/cuoc-song"
-                        element={
-                          <RequireAuth>
-                            <Life />
-                          </RequireAuth>
-                        }
+                        element={<Navigate to="/cong-viec-cuoc-song?muc=doi-song" replace />}
                       />
                       {/* V2 Multi-Subject Learning Hub & Sub-pages */}
                       <Route
@@ -655,12 +657,18 @@ export default function App() {
                         element={<Navigate to="/su-nghiep" replace />}
                       />
                       <Route path="/hoc-su-nghiep" element={<Navigate to="/su-nghiep" replace />} />
-                      <Route path="/work" element={<Navigate to="/cong-viec" replace />} />
+                      <Route
+                        path="/work"
+                        element={<Navigate to="/cong-viec-cuoc-song?muc=cong-viec" replace />}
+                      />
                       <Route
                         path="/cong-viec-cua-toi"
-                        element={<Navigate to="/cong-viec" replace />}
+                        element={<Navigate to="/cong-viec-cuoc-song?muc=cong-viec" replace />}
                       />
-                      <Route path="/hoc-cong-viec" element={<Navigate to="/cong-viec" replace />} />
+                      <Route
+                        path="/hoc-cong-viec"
+                        element={<Navigate to="/cong-viec-cuoc-song?muc=cong-viec" replace />}
+                      />
                       <Route path="/startup" element={<Navigate to="/khoi-nghiep" replace />} />
                       <Route
                         path="/toi-khoi-nghiep"
@@ -670,12 +678,18 @@ export default function App() {
                         path="/hoc-khoi-nghiep"
                         element={<Navigate to="/khoi-nghiep" replace />}
                       />
-                      <Route path="/life" element={<Navigate to="/cuoc-song" replace />} />
+                      <Route
+                        path="/life"
+                        element={<Navigate to="/cong-viec-cuoc-song?muc=doi-song" replace />}
+                      />
                       <Route
                         path="/cuoc-song-cua-toi"
-                        element={<Navigate to="/cuoc-song" replace />}
+                        element={<Navigate to="/cong-viec-cuoc-song?muc=doi-song" replace />}
                       />
-                      <Route path="/hoc-cuoc-song" element={<Navigate to="/cuoc-song" replace />} />
+                      <Route
+                        path="/hoc-cuoc-song"
+                        element={<Navigate to="/cong-viec-cuoc-song?muc=doi-song" replace />}
+                      />
                       <Route path="/companion" element={<Navigate to="/ban-dong-hanh" replace />} />
                       <Route path="/dong-hanh" element={<Navigate to="/ban-dong-hanh" replace />} />
                       <Route

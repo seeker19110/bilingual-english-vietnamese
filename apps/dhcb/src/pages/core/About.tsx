@@ -5,7 +5,6 @@ import {
   Compass,
   Briefcase,
   Rocket,
-  HeartHandshake,
   GraduationCap,
   Bot,
   BookMarked,
@@ -26,8 +25,9 @@ import { useLang } from '../../context/useLang'
 type IconType = typeof BookOpen
 
 // Trang /gioi-thieu — giới thiệu NỀN TẢNG trước, rồi mới tới môn Tiếng Anh.
-// DHCB là nền tảng đồng hành cá nhân 5 trụ (Học tập · Sự nghiệp · Công việc · Khởi nghiệp ·
-// Đời sống) + Companion "Bạn Đồng Hành"; Tiếng Anh chỉ là MỘT MÔN trong trụ Học tập —
+// DHCB là nền tảng đồng hành cá nhân 4 trụ (Học tập · Sự nghiệp · Khởi nghiệp · Công việc &
+// Đời sống — Work và Life gộp làm một, xem migration 0066) + Companion "Bạn Đồng Hành";
+// Tiếng Anh chỉ là MỘT MÔN trong trụ Học tập —
 // môn đầu tiên và chín nhất. Xem `docs/research/dac-ta-kien-truc-platform-dhcb-2026-08-23.md`.
 
 interface Pillar {
@@ -54,16 +54,10 @@ const PILLARS: Pillar[] = [
     path: '/su-nghiep',
     titleVi: 'Sự nghiệp',
     titleEn: 'Career',
-    descVi: 'Nhìn lại việc bạn làm được, chọn hướng đi, chia thành bước làm được trong tuần.',
-    descEn: 'Review what you can do, pick a direction, break it into steps you can do this week.',
-  },
-  {
-    icon: Briefcase,
-    path: '/cong-viec',
-    titleVi: 'Công việc',
-    titleEn: 'Work',
-    descVi: 'Bảng việc và ưu tiên hằng ngày, để Companion biết bạn đang bận gì.',
-    descEn: 'Daily task board and priorities, so the Companion knows what you are busy with.',
+    descVi:
+      'Tám họ nghề — kỹ thuật–CNTT, y tế–chăm sóc, giáo dục, kinh doanh–bán hàng, tài chính–kế toán–pháp lý, sáng tạo–truyền thông, sản xuất–kỹ thuật viên, dịch vụ công–hành chính — mỗi họ có cửa sổ then chốt và nhánh chuyển hướng riêng.',
+    descEn:
+      'Eight job families — engineering/IT, healthcare, education, sales, finance/legal, creative/media, manufacturing, public service — each with its own key window and natural pivots.',
   },
   {
     icon: Rocket,
@@ -74,21 +68,23 @@ const PILLARS: Pillar[] = [
     descEn: 'Sketch a business model, write down assumptions, find the cheapest way to test them.',
   },
   {
-    icon: HeartHandshake,
-    path: '/cuoc-song',
-    titleVi: 'Đời sống',
-    titleEn: 'Life',
-    descVi: 'Sức khỏe, quan hệ, tiền bạc, thói quen — thấy chỗ lệch rồi chỉnh một việc nhỏ.',
-    descEn: 'Health, relationships, money, habits — spot what is off, then fix one small thing.',
+    icon: Briefcase,
+    path: '/cong-viec-cuoc-song',
+    titleVi: 'Công việc & Đời sống',
+    titleEn: 'Work & Life',
+    descVi:
+      'Một guồng, không phải hai: dự án và việc cần làm nằm cạnh thói quen, sức khoẻ, kế hoạch — vì chúng tiêu cùng một quỹ thời gian.',
+    descEn:
+      'One rhythm, not two: projects and tasks sit next to habits, wellbeing and plans — they draw on the same hours.',
   },
   {
     icon: Bot,
     path: '/ban-dong-hanh',
     titleVi: 'Bạn Đồng Hành',
     titleEn: 'Your Companion',
-    descVi: 'Một người bạn AI duy nhất, hiểu ngữ cảnh của bạn ở cả năm trụ. Bạn chốt, AI đề xuất.',
+    descVi: 'Một người bạn AI duy nhất, hiểu ngữ cảnh của bạn ở cả bốn trụ. Bạn chốt, AI đề xuất.',
     descEn:
-      'One AI companion that knows your context across all five pillars. You decide, it suggests.',
+      'One AI companion that knows your context across all four pillars. You decide, it suggests.',
   },
 ] as const
 
@@ -233,8 +229,8 @@ export default function About() {
           title={isA ? 'Giới thiệu nền tảng' : 'About the platform'}
           subtitle={
             isA
-              ? 'Đồng hành cùng bạn — nền tảng đồng hành cá nhân gồm năm trụ, cùng một người bạn AI hiểu ngữ cảnh cả năm.'
-              : 'Đồng hành cùng bạn — a personal companion platform of five pillars, with one AI companion that understands all five.'
+              ? 'Đồng hành cùng bạn — nền tảng đồng hành cá nhân gồm bốn trụ, cùng một người bạn AI hiểu ngữ cảnh cả bốn.'
+              : 'Đồng hành cùng bạn — a personal companion platform of four pillars, with one AI companion that understands all four.'
           }
         />
 
@@ -246,8 +242,8 @@ export default function About() {
           </h2>
           <p className="text-xs text-zinc-300 mb-3">
             {isA
-              ? 'Năm trụ nằm chung một hồ sơ, nên việc bạn làm ở mảng này được tính đến khi gợi ý cho mảng kia.'
-              : 'Five pillars share one profile, so what you do in one area informs the suggestions in another.'}
+              ? 'Bốn trụ nằm chung một hồ sơ, nên việc bạn làm ở mảng này được tính đến khi gợi ý cho mảng kia.'
+              : 'Four pillars share one profile, so what you do in one area informs the suggestions in another.'}
           </p>
           <div className="grid sm:grid-cols-2 gap-3">
             {PILLARS.map((p) => (

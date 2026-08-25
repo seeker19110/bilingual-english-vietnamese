@@ -30,9 +30,11 @@ import HubLogin from './pages/HubLogin'
 //
 // LUẬT NỘI DUNG CỦA TRANG NÀY (chốt 2026-08-25, theo đặc tả kiến trúc platform
 // `docs/research/dac-ta-kien-truc-platform-dhcb-2026-08-23.md`):
-//   1. Trang chủ giới thiệu NỀN TẢNG DHCB — 5 trụ (Học tập · Sự nghiệp · Công việc ·
-//      Khởi nghiệp · Đời sống) + Companion "Bạn Đồng Hành". KHÔNG đóng khung cả nền tảng
-//      thành "app học tiếng Anh".
+//   1. Trang chủ giới thiệu NỀN TẢNG DHCB — 4 trụ (Học tập · Sự nghiệp · Khởi nghiệp ·
+//      Công việc & Đời sống) + Companion "Bạn Đồng Hành". KHÔNG đóng khung cả nền tảng
+//      thành "app học tiếng Anh". Work và Life gộp làm MỘT trụ (quyết định người dùng
+//      2026-08-25): chúng tiêu cùng một quỹ thời gian nên tách ra là bắt người dùng tự
+//      ghép lại — xem migration 0066_worklife_merge.sql.
 //   2. Tiếng Anh là MỘT MÔN trong trụ Học tập — môn đầu tiên và chín nhất, đứng ngang hàng
 //      với Lập trình và các môn đang xây.
 //   3. Ngôn ngữ tuân theo tư thế đồng hành (`dong-hanh-va-phat-trien-nang-khieu-...`):
@@ -71,7 +73,7 @@ interface Pillar {
   url: string
 }
 
-// 5 trụ của nền tảng. Mọi URL đều là route CÓ THẬT trong apps/dhcb (App.tsx) —
+// 4 trụ của nền tảng. Mọi URL đều là route CÓ THẬT trong apps/dhcb (App.tsx) —
 // không quảng cáo trang chưa tồn tại.
 const PILLARS: Pillar[] = [
   {
@@ -92,29 +94,17 @@ const PILLARS: Pillar[] = [
     id: 'career',
     name: 'Sự nghiệp',
     icon: Compass,
-    tagline: 'Đi đâu tiếp, và bước gần nhất là gì',
+    tagline: 'Nghề nào cũng có đường đi tiếp',
     description:
-      'Nhìn lại việc bạn đã làm được, chọn hướng muốn đi, rồi chia thành những bước đủ nhỏ để bắt tay vào ngay tuần này.',
+      'Nền tảng không mô hình hoá hàng nghìn nghề riêng lẻ mà làm việc theo tám họ nghề — mỗi họ có cửa sổ then chốt, năng lực được trả giá cao và nhánh chuyển hướng tự nhiên khác nhau. Bạn chọn họ gần mình nhất, rồi đi từ đó.',
     bullets: [
-      'Phác hoạ hướng nghề theo việc bạn thật sự làm được',
+      'Kỹ thuật – CNTT · Y tế – chăm sóc · Giáo dục · Kinh doanh – bán hàng',
+      'Tài chính – kế toán – pháp lý · Sáng tạo – truyền thông · Sản xuất – kỹ thuật viên · Dịch vụ công – hành chính',
+      'Mỗi họ nghề có nhánh chuyển hướng riêng: kỹ thuật → kiến trúc/quản lý/sản phẩm, y tế → đào tạo/y tế dự phòng, sáng tạo → giám đốc sáng tạo/giảng dạy…',
       'Luyện phỏng vấn cùng Companion, có phản hồi cụ thể',
       'Bước kế tiếp luôn ở kích cỡ làm được trong tuần',
     ],
     url: `${APP_URL}/su-nghiep`,
-  },
-  {
-    id: 'work',
-    name: 'Công việc',
-    icon: Briefcase,
-    tagline: 'Việc đang chạy, gọn trong một chỗ',
-    description:
-      'Bảng việc, ưu tiên và ghi chú công việc hằng ngày. Companion biết bạn đang bận gì để không gợi ý những thứ lệch hoàn cảnh.',
-    bullets: [
-      'Bảng Kanban cho việc đang làm',
-      'Tách việc quan trọng khỏi việc chỉ gấp',
-      'Ngữ cảnh công việc dùng chung với các trụ khác',
-    ],
-    url: `${APP_URL}/cong-viec`,
   },
   {
     id: 'startup',
@@ -131,18 +121,19 @@ const PILLARS: Pillar[] = [
     url: `${APP_URL}/khoi-nghiep`,
   },
   {
-    id: 'life',
-    name: 'Đời sống',
-    icon: HeartHandshake,
-    tagline: 'Sức khỏe, quan hệ, tiền bạc, thói quen',
+    id: 'worklife',
+    name: 'Công việc & Đời sống',
+    icon: Briefcase,
+    tagline: 'Một guồng, không phải hai',
     description:
-      'Nhìn tổng thể các mặt của cuộc sống để thấy chỗ nào đang lệch — rồi chọn đúng một việc nhỏ để chỉnh lại, thay vì sửa tất cả cùng lúc.',
+      'Việc hằng ngày và đời sống là cùng một quỹ thời gian: dồn cho bên này thì lấy đi của bên kia. Vì vậy hai nửa nằm chung một trụ, chung một chỗ dữ liệu — để bạn thấy cả hai cùng lúc thay vì tự ghép hai bức tranh.',
     bullets: [
-      'Vòng tròn cuộc sống: thấy bức tranh chung',
-      'Thói quen theo dõi được, không cần hoàn hảo',
+      'Nửa công việc: dự án, việc cần làm, cuộc họp, tài liệu',
+      'Nửa đời sống: thói quen, tâm trạng, kế hoạch, cột mốc',
+      'Companion biết bạn đang bận gì trước khi gợi ý thêm việc',
       'Quay lại sau khi ngắt quãng luôn được chào đón',
     ],
-    url: `${APP_URL}/cuoc-song`,
+    url: `${APP_URL}/cong-viec-cuoc-song`,
   },
 ]
 
@@ -296,7 +287,7 @@ function Navbar({ stats }: { stats: HubStats | null }) {
   const displayName = stats?.userName?.trim()
 
   const navLinks = [
-    { href: '#tru-cot', label: 'Năm trụ' },
+    { href: '#tru-cot', label: 'Bốn trụ' },
     { href: '#companion', label: 'Bạn Đồng Hành' },
     { href: '#mon-hoc', label: 'Môn học' },
     { href: '#cach-hoat-dong', label: 'Cách hoạt động' },
@@ -319,7 +310,7 @@ function Navbar({ stats }: { stats: HubStats | null }) {
               </span>
             </span>
             <span className="text-[11px] text-zinc-300 hidden sm:inline">
-              Học tập · Sự nghiệp · Công việc · Khởi nghiệp · Đời sống
+              Học tập · Sự nghiệp · Khởi nghiệp · Công việc & Đời sống
             </span>
           </div>
         </a>
@@ -412,7 +403,7 @@ function Hero({ stats }: { stats: HubStats | null }) {
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-xs sm:text-sm text-zinc-200 mb-6 shadow-sm">
             <Layers className="w-3.5 h-3.5 text-accent-300 theme-light:text-accent-800" />
             <span className="font-semibold text-accent-300 theme-light:text-accent-800">
-              Một nền tảng — năm trụ
+              Một nền tảng — bốn trụ
             </span>
             <span aria-hidden="true" className="text-zinc-500">
               •
@@ -430,8 +421,9 @@ function Hero({ stats }: { stats: HubStats | null }) {
         </h1>
 
         <p className="text-base sm:text-lg lg:text-xl text-zinc-200 max-w-2xl mx-auto mb-8 leading-relaxed">
-          Học tập, sự nghiệp, công việc, khởi nghiệp và đời sống — năm mảng nằm chung một hồ sơ, có
-          một người bạn AI hiểu ngữ cảnh cả năm. Bạn chốt mục tiêu, nền tảng đề xuất bước gần nhất.
+          Học tập, sự nghiệp, khởi nghiệp, và công việc gắn liền đời sống — bốn trụ nằm chung một hồ
+          sơ, có một người bạn AI hiểu ngữ cảnh cả bốn. Bạn chốt mục tiêu, nền tảng đề xuất bước gần
+          nhất.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 mb-10">
@@ -463,7 +455,7 @@ function Hero({ stats }: { stats: HubStats | null }) {
           </div>
           <div className="flex items-center justify-center gap-2 p-2 rounded-lg bg-zinc-900/40">
             <Bot className="w-4 h-4 text-accent-300 theme-light:text-accent-800 shrink-0" />
-            <span>Một AI hiểu cả năm trụ</span>
+            <span>Một AI hiểu cả bốn trụ</span>
           </div>
           <div className="flex items-center justify-center gap-2 p-2 rounded-lg bg-zinc-900/40">
             <ShieldCheck className="w-4 h-4 text-accent-300 theme-light:text-accent-800 shrink-0" />
@@ -531,11 +523,11 @@ function ActivitySection({ stats }: { stats: HubStats | null }) {
             <>
               <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
                 <div className="text-2xl sm:text-3xl font-extrabold text-accent-300 theme-light:text-accent-800 tracking-tight">
-                  5 trụ
+                  4 trụ
                 </div>
                 <div className="text-xs sm:text-sm text-zinc-200 mt-1 flex items-center justify-center gap-1.5">
                   <Layers className="w-3.5 h-3.5 text-zinc-300" />
-                  <span>Học · Nghề · Việc · Khởi nghiệp · Đời sống</span>
+                  <span>Học · Nghề · Khởi nghiệp · Việc &amp; Đời sống</span>
                 </div>
               </div>
               <div className="bg-zinc-900/80 rounded-xl p-4 sm:p-5 border border-zinc-800 text-center">
@@ -575,7 +567,7 @@ function ActivitySection({ stats }: { stats: HubStats | null }) {
   )
 }
 
-// ── Năm trụ ──────────────────────────────────────────────────────────────────────
+// ── Bốn trụ ──────────────────────────────────────────────────────────────────────
 function PillarsSection() {
   return (
     <section id="tru-cot" className="px-4 sm:px-6 py-16 sm:py-20 max-w-6xl mx-auto">
@@ -584,10 +576,10 @@ function PillarsSection() {
           Cấu trúc nền tảng
         </span>
         <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-white mb-3">
-          Năm trụ của một con người
+          Bốn trụ của một con người
         </h2>
         <p className="text-zinc-200 text-sm sm:text-base">
-          Đời sống không chia thành từng ứng dụng rời rạc. Ở đây năm mảng nằm chung một hồ sơ, nên
+          Đời sống không chia thành từng ứng dụng rời rạc. Ở đây bốn mảng nằm chung một hồ sơ, nên
           việc bạn làm ở mảng này được tính đến khi gợi ý cho mảng kia.
         </p>
       </div>
@@ -627,17 +619,17 @@ function PillarsSection() {
           )
         })}
 
-        {/* Thẻ thứ 6: Companion — thứ nối 5 trụ lại với nhau */}
+        {/* Thẻ thứ 5: Companion — thứ nối 4 trụ lại với nhau */}
         <article className="bg-gradient-to-br from-accent-500/10 to-zinc-900 rounded-2xl p-6 border border-accent-500/40 flex flex-col">
           <div className="w-12 h-12 rounded-xl bg-accent-500/20 border border-accent-500/30 flex items-center justify-center mb-4">
             <Bot className="w-6 h-6 text-accent-200 theme-light:text-accent-900" />
           </div>
           <h3 className="text-lg font-bold text-white mb-1">Bạn Đồng Hành</h3>
           <p className="text-accent-200 theme-light:text-accent-900 text-sm font-medium mb-3">
-            Sợi chỉ xuyên suốt cả năm trụ
+            Sợi chỉ xuyên suốt cả bốn trụ
           </p>
           <p className="text-zinc-100 text-sm leading-relaxed mb-4 flex-1">
-            Không phải năm con bot rời rạc. Một người bạn AI duy nhất, nhớ ngữ cảnh của bạn ở mọi
+            Không phải bốn con bot rời rạc. Một người bạn AI duy nhất, nhớ ngữ cảnh của bạn ở mọi
             trụ — nên lời gợi ý cho việc học có tính đến chuyện bạn đang bận gì ở công việc.
           </p>
           <a
@@ -982,11 +974,11 @@ function PricingSection({ stats }: { stats: HubStats | null }) {
               <span className="text-zinc-200 text-xs sm:text-sm"> / mãi mãi</span>
             </div>
             <p className="text-xs sm:text-sm text-zinc-200 mb-6">
-              Dùng được cả năm trụ với một số lượt gọi AI mỗi ngày, để nhiều người cùng dùng được.
+              Dùng được cả bốn trụ với một số lượt gọi AI mỗi ngày, để nhiều người cùng dùng được.
             </p>
             <ul className="space-y-3 text-xs sm:text-sm text-zinc-100 mb-8">
               {[
-                'Truy cập cả 5 trụ và Bạn Đồng Hành',
+                'Truy cập cả 4 trụ và Bạn Đồng Hành',
                 'Học Tiếng Anh và Lập trình với lượt AI hằng ngày',
                 'Trọn lộ trình CEFR A1 → C2 và từ điển',
                 'Ôn tập ngắt quãng, học ngoại tuyến trên điện thoại',
@@ -1032,7 +1024,7 @@ function PricingSection({ stats }: { stats: HubStats | null }) {
             </p>
             <ul className="space-y-3 text-xs sm:text-sm text-zinc-100 mb-8">
               {[
-                'Lượt dùng AI rộng hơn ở cả 5 trụ',
+                'Lượt dùng AI rộng hơn ở cả 4 trụ',
                 'Trọn bộ giọng đọc AI cao cấp cho môn Tiếng Anh',
                 'Chấm bài viết và phản hồi chi tiết thoải mái hơn',
                 'Môn mở sau này tự động dùng được, không mua thêm',
@@ -1063,7 +1055,7 @@ function FaqSection() {
   const faqs = [
     {
       q: '"Đồng hành cùng bạn" là gì — một app học tiếng Anh phải không?',
-      a: 'Không. Đây là nền tảng đồng hành cá nhân gồm năm trụ: Học tập, Sự nghiệp, Công việc, Khởi nghiệp và Đời sống, nối với nhau bằng Bạn Đồng Hành — một tác tử AI hiểu ngữ cảnh của bạn ở cả năm trụ. Tiếng Anh là MỘT MÔN trong trụ Học tập; nó là môn đầu tiên nên hiện đầy đủ nhất, chứ không phải toàn bộ nền tảng.',
+      a: 'Không. Đây là nền tảng đồng hành cá nhân gồm bốn trụ: Học tập, Sự nghiệp, Khởi nghiệp và Công việc & Đời sống (hai mảng này gộp làm một vì chúng tiêu cùng một quỹ thời gian), nối với nhau bằng Bạn Đồng Hành — một tác tử AI hiểu ngữ cảnh của bạn ở cả bốn trụ. Tiếng Anh là MỘT MÔN trong trụ Học tập; nó là môn đầu tiên nên hiện đầy đủ nhất, chứ không phải toàn bộ nền tảng.',
     },
     {
       q: 'Tôi chỉ muốn học tiếng Anh thôi, có bị bắt dùng những phần khác không?',
@@ -1071,7 +1063,7 @@ function FaqSection() {
     },
     {
       q: 'Hiện tại phần nào dùng được thật, phần nào còn đang xây?',
-      a: 'Dùng được thật: cả năm trụ ở mức công cụ nền (hồ sơ, vòng tròn cuộc sống, bảng việc, canvas khởi nghiệp, luyện phỏng vấn), Bạn Đồng Hành, và hai môn Tiếng Anh (đầy đủ nhất) cùng Lập trình. Đang xây: các môn Toán, Lý, Hóa, Sinh và phần chiều sâu của từng trụ. Chỗ nào chưa xong thì trang này ghi rõ là "đang xây" — không hứa trước.',
+      a: 'Dùng được thật: cả bốn trụ ở mức công cụ nền (hồ sơ, vòng tròn cuộc sống, bảng việc, canvas khởi nghiệp, luyện phỏng vấn), Bạn Đồng Hành, và hai môn Tiếng Anh (đầy đủ nhất) cùng Lập trình. Đang xây: các môn Toán, Lý, Hóa, Sinh và phần chiều sâu của từng trụ. Chỗ nào chưa xong thì trang này ghi rõ là "đang xây" — không hứa trước.',
     },
     {
       q: 'Nền tảng có chấm điểm hay xếp loại tôi không?',
@@ -1184,14 +1176,14 @@ function Footer({ stats }: { stats: HubStats | null }) {
             <span>Đồng hành cùng bạn</span>
           </div>
           <p className="text-zinc-200 text-xs leading-relaxed max-w-sm">
-            Nền tảng đồng hành cá nhân: học tập, sự nghiệp, công việc, khởi nghiệp và đời sống —
-            cùng một người bạn AI hiểu ngữ cảnh cả năm mảng. donghanhcungban.org
+            Nền tảng đồng hành cá nhân: học tập, sự nghiệp, khởi nghiệp, và công việc gắn liền đời
+            sống — cùng một người bạn AI hiểu ngữ cảnh cả bốn mảng. donghanhcungban.org
           </p>
         </div>
 
         <nav aria-label="Các trụ" className="flex flex-col gap-2">
           <h2 className="text-zinc-100 font-semibold text-xs uppercase tracking-wider mb-1">
-            Năm trụ
+            Bốn trụ
           </h2>
           {PILLARS.map((p) => (
             <a

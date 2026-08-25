@@ -135,12 +135,13 @@ function makeFullPool(personId: string) {
       if (s.includes('career.career_profiles')) return Promise.resolve({ rows: [], rowCount: 0 })
       if (s.includes('career.career_experiences')) return Promise.resolve({ rows: [], rowCount: 0 })
       if (s.includes('career.career_goals')) return Promise.resolve({ rows: [], rowCount: 0 })
-      if (s.includes('work.projects')) return Promise.resolve({ rows: [], rowCount: 0 })
+      if (s.includes('worklife.projects')) return Promise.resolve({ rows: [], rowCount: 0 })
       if (s.includes('startup.ventures')) return Promise.resolve({ rows: [], rowCount: 0 })
-      if (s.includes('life.plans')) return Promise.resolve({ rows: [], rowCount: 0 })
-      if (s.includes('life.habits')) return Promise.resolve({ rows: [], rowCount: 0 })
-      if (s.includes('life.wellbeing_checks')) return Promise.resolve({ rows: [], rowCount: 0 })
-      if (s.includes('life.growth_milestones')) return Promise.resolve({ rows: [], rowCount: 0 })
+      if (s.includes('worklife.plans')) return Promise.resolve({ rows: [], rowCount: 0 })
+      if (s.includes('worklife.habits')) return Promise.resolve({ rows: [], rowCount: 0 })
+      if (s.includes('worklife.wellbeing_checks')) return Promise.resolve({ rows: [], rowCount: 0 })
+      if (s.includes('worklife.growth_milestones'))
+        return Promise.resolve({ rows: [], rowCount: 0 })
 
       return Promise.resolve({ rows: [], rowCount: 0 })
     }),
@@ -227,12 +228,7 @@ describe('exportPersonData', () => {
   it('continues export even if domain schemas throw (best-effort)', async () => {
     const pool = {
       query: vi.fn((sql: string) => {
-        if (
-          sql.includes('career') ||
-          sql.includes('work') ||
-          sql.includes('startup') ||
-          sql.includes('life.')
-        ) {
+        if (sql.includes('career') || sql.includes('worklife.') || sql.includes('startup')) {
           return Promise.reject(new Error('schema does not exist'))
         }
         return Promise.resolve({ rows: [], rowCount: 0 })
@@ -298,12 +294,7 @@ describe('erasePersonData', () => {
           return Promise.resolve({ rows: [{ id: 'erasure-log-2' }], rowCount: 1 })
         if (s.includes('begin') || s.includes('commit') || s.includes('rollback'))
           return Promise.resolve({ rows: [], rowCount: 0 })
-        if (
-          s.includes('career.') ||
-          s.includes('work.') ||
-          s.includes('startup.') ||
-          s.includes('life.')
-        )
+        if (s.includes('career.') || s.includes('worklife.') || s.includes('startup.'))
           return Promise.reject(new Error('schema does not exist'))
         return Promise.resolve({ rows: [], rowCount: 1 })
       }),
@@ -325,11 +316,7 @@ describe('erasePersonData', () => {
     expect(result.erasureLogId).toBe('erasure-log-2')
     // Domain deletes threw → count = 0 from catch, not added to schemasCleared
     const hasDomainSchema = result.schemasCleared.some(
-      (s) =>
-        s.startsWith('career.') ||
-        s.startsWith('work.') ||
-        s.startsWith('startup.') ||
-        s.startsWith('life.'),
+      (s) => s.startsWith('career.') || s.startsWith('worklife.') || s.startsWith('startup.'),
     )
     expect(hasDomainSchema).toBe(false)
   })
@@ -346,12 +333,7 @@ describe('erasePersonData', () => {
         // action_receipts returns 0 — tests count === 0 && indexOf === -1 → still pushed
         if (s.includes('action_receipts')) return Promise.resolve({ rows: [], rowCount: 0 })
         // Domain throws → catch path
-        if (
-          s.includes('career.') ||
-          s.includes('work.') ||
-          s.includes('startup.') ||
-          s.includes('life.')
-        )
+        if (s.includes('career.') || s.includes('worklife.') || s.includes('startup.'))
           return Promise.reject(new Error('schema does not exist'))
         return Promise.resolve({ rows: [], rowCount: 1 })
       }),
@@ -383,12 +365,7 @@ describe('erasePersonData', () => {
           return Promise.resolve({ rows: [{ id: 'erasure-log-4' }], rowCount: 1 })
         if (s.includes('begin') || s.includes('commit') || s.includes('rollback'))
           return Promise.resolve({ rows: [], rowCount: 0 })
-        if (
-          s.includes('career.') ||
-          s.includes('work.') ||
-          s.includes('startup.') ||
-          s.includes('life.')
-        )
+        if (s.includes('career.') || s.includes('worklife.') || s.includes('startup.'))
           return Promise.resolve({ rows: [], rowCount: null })
         return Promise.resolve({ rows: [], rowCount: 1 })
       }),

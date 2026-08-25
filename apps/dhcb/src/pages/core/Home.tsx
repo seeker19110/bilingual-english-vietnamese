@@ -356,7 +356,7 @@ export default function Home() {
                   Phỏng Vấn STAR
                 </button>
                 <button
-                  onClick={() => nav('/cong-viec')}
+                  onClick={() => nav('/cong-viec-cuoc-song?muc=cong-viec')}
                   className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-purple-300 transition text-center truncate"
                 >
                   Công Việc Của Tôi
@@ -401,7 +401,7 @@ export default function Home() {
                   Lean Canvas
                 </button>
                 <button
-                  onClick={() => nav('/cuoc-song')}
+                  onClick={() => nav('/cong-viec-cuoc-song?muc=doi-song')}
                   className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-pink-300 transition text-center truncate"
                 >
                   Bánh Xe Cuộc Đời

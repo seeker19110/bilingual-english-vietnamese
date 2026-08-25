@@ -206,6 +206,12 @@ Bất kỳ mục ❌ → sửa trước, chạy lại toàn bộ, KHÔNG commit/
 
 Mỗi tính năng/sửa lỗi một nhánh riêng · commit nhỏ, mỗi commit một thay đổi logic · **conventional commits** (`feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `style`, `perf`) · mọi merge vào nhánh chính qua pull request (kể cả làm một mình) · **không push thẳng nhánh chính**.
 
+**LUÔN BẬT AUTO-MERGE CHO MỌI PR (quy ước người dùng chốt 2026-08-25).** Ngay sau khi tạo PR,
+bật auto-merge (squash) cho PR đó — không hỏi lại. Điều này AN TOÀN vì nhánh `main` đã có
+branch protection với required status check (`quality`, `e2e`, `metadata`): auto-merge chỉ
+merge khi CẢ BA check xanh, check đỏ thì PR nằm nguyên đó. Nếu bật auto-merge thất bại (quyền,
+hoặc repo tắt tính năng), báo lại cho người dùng chứ đừng tự merge tay.
+
 ## 12. Khi nào PHẢI dừng và hỏi
 
 Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác (xóa dữ liệu, đổi schema phá vỡ) · mâu thuẫn với code/thiết kế hiện có · breaking change ảnh hưởng nhiều nơi · nhiều giải pháp đánh đổi khác nhau đáng kể · đụng bảo mật, thanh toán, dữ liệu người dùng thật.

@@ -395,7 +395,10 @@ test.describe('Platform V2 Specialized Domain Hubs & Companion E2E', () => {
   test('Luồng Work Hub: chuyển đổi giữa các tab Công việc, Dự án, Cuộc họp và Tài liệu', async ({
     page,
   }) => {
+    // Route cũ /cong-viec nay chuyển hướng sang tab "Công việc" của trụ gộp
+    // "Công việc & Đời sống" (migration 0066) — kiểm luôn để link cũ không gãy im lặng.
     await page.goto('/cong-viec')
+    await expect(page).toHaveURL(/\/cong-viec-cuoc-song\?muc=cong-viec/)
     await expect(page.getByText('Không Gian Công Việc (Work Hub)')).toBeVisible()
 
     // Tab 1: Công việc
@@ -430,7 +433,9 @@ test.describe('Platform V2 Specialized Domain Hubs & Companion E2E', () => {
   test('Luồng Life Foundation Hub: xem chuỗi thói quen, check-in sức khỏe và kế hoạch', async ({
     page,
   }) => {
+    // Route cũ /cuoc-song nay chuyển hướng sang tab "Đời sống" của trụ gộp.
     await page.goto('/cuoc-song')
+    await expect(page).toHaveURL(/\/cong-viec-cuoc-song\?muc=doi-song/)
     await expect(page.getByText('Nền Tảng Cuộc Sống (Life Foundation)')).toBeVisible()
 
     // Tab Thói quen

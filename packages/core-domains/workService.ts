@@ -187,7 +187,7 @@ export async function createWorkProject(
 ): Promise<WorkProject> {
   const id = randomUUID()
   const res = await pool.query<ProjectRow>(
-    `insert into work.projects
+    `insert into worklife.projects
       (id, person_id, name, description, status, deadline, version)
      values ($1, $2, $3, $4, 'active', $5, 1)
      returning *`,
@@ -205,7 +205,7 @@ export async function listWorkProjects(
   status?: string,
 ): Promise<WorkProject[]> {
   const params: unknown[] = [personId]
-  let query = `select * from work.projects where person_id = $1`
+  let query = `select * from worklife.projects where person_id = $1`
   if (status) {
     params.push(status)
     query += ` and status = $2`
@@ -226,13 +226,13 @@ export async function updateWorkProject(
 ): Promise<WorkProject> {
   return await withTransaction(pool, async (client) => {
     const existing = await client.query<ProjectRow>(
-      `select * from work.projects where id = $1 and person_id = $2`,
+      `select * from worklife.projects where id = $1 and person_id = $2`,
       [projectId, personId],
     )
     if (!existing.rows[0]) throw new NotFoundError('Không tìm thấy WorkProject')
 
     const res = await client.query<ProjectRow>(
-      `update work.projects
+      `update worklife.projects
        set name = coalesce($1, name),
            description = coalesce($2, description),
            status = coalesce($3, status),
@@ -264,7 +264,7 @@ export async function createWorkTask(
 ): Promise<WorkTask> {
   const id = randomUUID()
   const res = await pool.query<TaskRow>(
-    `insert into work.tasks
+    `insert into worklife.tasks
       (id, person_id, project_id, title, priority, status, due_at, version)
      values ($1, $2, $3, $4, $5, 'todo', $6, 1)
      returning *`,
@@ -283,7 +283,7 @@ export async function listWorkTasks(
   projectId?: string,
 ): Promise<WorkTask[]> {
   const params: unknown[] = [personId]
-  let query = `select * from work.tasks where person_id = $1`
+  let query = `select * from worklife.tasks where person_id = $1`
   if (status) {
     params.push(status)
     query += ` and status = $${params.length}`
@@ -308,13 +308,13 @@ export async function updateWorkTask(
 ): Promise<WorkTask> {
   return await withTransaction(pool, async (client) => {
     const existing = await client.query<TaskRow>(
-      `select * from work.tasks where id = $1 and person_id = $2`,
+      `select * from worklife.tasks where id = $1 and person_id = $2`,
       [taskId, personId],
     )
     if (!existing.rows[0]) throw new NotFoundError('Không tìm thấy WorkTask')
 
     const res = await client.query<TaskRow>(
-      `update work.tasks
+      `update worklife.tasks
        set title = coalesce($1, title),
            priority = coalesce($2, priority),
            status = coalesce($3, status),
@@ -347,7 +347,7 @@ export async function recordWorkMeeting(
   const id = randomUUID()
   const actionsJson = JSON.stringify(input.actionItems ?? [])
   const res = await pool.query<MeetingRow>(
-    `insert into work.meetings
+    `insert into worklife.meetings
       (id, person_id, title, scheduled_at, duration_minutes, summary, action_items)
      values ($1, $2, $3, $4, $5, $6, $7)
      returning *`,
@@ -369,7 +369,7 @@ export async function recordWorkMeeting(
  */
 export async function listWorkMeetings(pool: Pool, personId: string): Promise<WorkMeeting[]> {
   const res = await pool.query<MeetingRow>(
-    `select * from work.meetings where person_id = $1 order by scheduled_at desc`,
+    `select * from worklife.meetings where person_id = $1 order by scheduled_at desc`,
     [personId],
   )
   return res.rows.map(toWorkMeeting)
@@ -385,7 +385,7 @@ export async function createWorkDocument(
 ): Promise<WorkDocument> {
   const id = randomUUID()
   const res = await pool.query<DocumentRow>(
-    `insert into work.documents
+    `insert into worklife.documents
       (id, person_id, project_id, title, document_type, summary, content_uri, version)
      values ($1, $2, $3, $4, $5, $6, $7, 1)
      returning *`,
@@ -411,7 +411,7 @@ export async function listWorkDocuments(
   projectId?: string,
 ): Promise<WorkDocument[]> {
   const params: unknown[] = [personId]
-  let query = `select * from work.documents where person_id = $1`
+  let query = `select * from worklife.documents where person_id = $1`
   if (projectId) {
     params.push(projectId)
     query += ` and project_id = $2`
