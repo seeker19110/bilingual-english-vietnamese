@@ -8,6 +8,7 @@ export const P1U10_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p1-u10-l1',
     unitId: 'p1-u10',
+    language: 'python',
     title: 'Milestone chặng P1 — ráp lại thành máy bán nước tự động',
     hook: 'Bạn đã học đủ 4 "viên gạch" của lập trình: biến, nhập/xuất, rẽ nhánh if, vòng lặp. Bài này không dạy gì mới — mà thử thách bạn RÁP cả 4 viên gạch đó lại thành một chương trình thật sự hữu ích: một cái MÁY BÁN NƯỚC TỰ ĐỘNG.',
     theory:

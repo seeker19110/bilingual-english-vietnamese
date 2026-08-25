@@ -149,3 +149,34 @@ test('gợi ý Socratic mở dần theo bậc server trả về; hết lượt h
   await hint.click()
   await expect(page.getByText('Hết lượt rồi. Học thêm bài để có thêm lượt nhé!')).toBeVisible()
 })
+
+// PR-L7b1 — bài JAVASCRIPT đầu tiên (p3-u6-l1) chạy bằng Web Worker riêng, KHÔNG phải Pyodide.
+// Cổng nội dung (lessonsJs.test.ts) chấm bằng node:vm; test này chốt đường đi thật trong trình
+// duyệt: trang chọn đúng bộ chạy theo `language` của bài, worker nạp được, output khớp bộ chấm.
+test('bài JavaScript p3-u6-l1: code mẫu đạt hết test-case trong Worker', async ({ page }) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p3-u6-l1', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page.getByRole('button', { name: 'Xem code mẫu' }).click()
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 60_000 })
+})
+
+// Vòng lặp vô hạn là lỗi kinh điển của người mới — và là lý do bài JS chạy trong Worker chứ
+// không phải iframe (iframe chung luồng với trang thì treo cứng cả app, không ngắt được).
+// Test này chốt: trang vẫn sống và báo đúng lời nhắn quá giờ.
+test('bài JavaScript: vòng lặp vô hạn bị ngắt, trang không treo', async ({ page }) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p3-u6-l1', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  const editor = page.getByRole('textbox').first()
+  await editor.fill('while (true) {}')
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  await expect(page.getByText(/quá 5 giây nên đã bị dừng/)).toBeVisible({ timeout: 60_000 })
+  // Trang còn phản hồi: bấm sang bước khác vẫn được.
+  await page.getByRole('button', { name: 'Về nhà' }).click()
+})

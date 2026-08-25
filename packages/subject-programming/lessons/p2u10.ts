@@ -5,6 +5,7 @@ export const P2U10_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p2-u10-l1',
     unitId: 'p2-u10',
+    language: 'python',
     title: 'Milestone P2 — sổ bán hàng một phiên: dict + hàm + vòng lặp + try/except',
     hook: 'Đây là bài chốt bậc P2. Bạn sẽ ráp đúng những thứ vừa học — dict tra giá, hàm chia việc, vòng lặp nhận nhiều đơn, try/except chống nhập bậy — thành một sổ bán hàng chạy được cả phiên mà không sập lần nào.',
     theory:

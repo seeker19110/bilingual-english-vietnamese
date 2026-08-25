@@ -6,6 +6,7 @@ export const P2U1_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p2-u1-l1',
     unitId: 'p2-u1',
+    language: 'python',
     title: 'Hàm — đặt tên cho một việc rồi gọi lại nhiều lần',
     hook: 'Ở bậc P1, mỗi lần muốn tính tiền bạn phải chép lại nguyên đoạn code tính toán. Chép 3 chỗ, sửa giá một lần là quên sửa 2 chỗ kia — sổ sách sai ngay. HÀM sinh ra để bạn viết MỘT lần rồi gọi lại mọi nơi.',
     theory:

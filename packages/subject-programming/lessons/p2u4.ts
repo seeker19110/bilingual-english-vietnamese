@@ -5,6 +5,7 @@ export const P2U4_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p2-u4-l1',
     unitId: 'p2-u4',
+    language: 'python',
     title: 'Dict — tra giá theo TÊN món, không phải theo số thứ tự',
     hook: 'Với list, muốn biết giá "nuoc cam" bạn phải nhớ nó nằm ở vị trí số mấy. Khách gọi món bằng TÊN chứ có ai gọi "cho tôi món số 1" đâu. Dict cho phép tra thẳng bằng tên.',
     theory:

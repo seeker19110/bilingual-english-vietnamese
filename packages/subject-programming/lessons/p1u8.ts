@@ -5,6 +5,7 @@ export const P1U8_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p1-u8-l1',
     unitId: 'p1-u8',
+    language: 'python',
     title: 'Đọc code và tìm lỗi — trace trên giấy',
     hook: 'Code không chạy không phải vì máy tính "ghét" bạn — mà vì một lỗi rất nhỏ: sai một chữ hoa, thiếu một dấu ngoặc, lệch một khoảng trắng. Hôm nay bạn học cách ĐỌC code như máy tính đọc, để tự tìm ra lỗi thay vì đoán mò.',
     theory:

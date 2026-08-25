@@ -7,6 +7,7 @@ export const P1U9_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p1-u9-l1',
     unitId: 'p1-u9',
+    language: 'python',
     title: 'Số ngẫu nhiên & import — oẳn tù tì với máy',
     hook: 'Bạn có từng chơi oẳn tù tì (kéo búa bao) chưa? Hôm nay máy tính sẽ là đối thủ của bạn — nó "chọn" ngẫu nhiên nhờ một MODULE có sẵn tên là random, bạn không cần tự viết lại từ đầu.',
     theory:

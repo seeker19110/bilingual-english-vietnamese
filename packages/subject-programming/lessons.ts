@@ -30,6 +30,7 @@ import { P2U10_LESSONS } from './lessons/p2u10.js'
 import { P3U1_LESSONS } from './lessons/p3u1.js'
 import { P3U2_LESSONS } from './lessons/p3u2.js'
 import { P3U3_LESSONS } from './lessons/p3u3.js'
+import { P3U6_LESSONS } from './lessons/p3u6.js'
 
 export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...P1U1_LESSONS,
@@ -55,6 +56,7 @@ export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...P3U1_LESSONS,
   ...P3U2_LESSONS,
   ...P3U3_LESSONS,
+  ...P3U6_LESSONS,
 ]
 
 const lessonMap = new Map(PROGRAMMING_LESSONS.map((l) => [l.id, l]))

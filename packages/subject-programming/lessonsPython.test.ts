@@ -22,6 +22,9 @@ import { gradeTestCase, allTestsPassed } from './grading.js'
 import type { ProgrammingTestCase } from './lessonTypes.js'
 
 const hasPython = spawnSync('python3', ['--version']).status === 0
+
+// Chỉ bài PYTHON đi qua cổng này; bài JavaScript có cổng riêng (lessonsJs.test.ts).
+const PYTHON_LESSONS = PROGRAMMING_LESSONS.filter((l) => l.language === 'python')
 const WORK_DIR = mkdtempSync(join(tmpdir(), 'dhcb-lesson-'))
 
 // Prelude PHẢI khớp hành vi input() của sandbox trình duyệt (apps/dhcb/src/workers/
@@ -89,18 +92,18 @@ describe.skipIf(!hasPython)('nội dung môn Lập trình chạy THẬT bằng p
     expect(runPython3('print("ok")', []).output.trim()).toBe('ok')
   })
 
-  it.each(PROGRAMMING_LESSONS)('$id — code mẫu đạt HẾT test-case', (lesson) => {
+  it.each(PYTHON_LESSONS)('$id — code mẫu đạt HẾT test-case', (lesson) => {
     const results = gradeAll(lesson.make.sampleSolution, lesson.make.testCases)
     expect(allTestsPassed(results), `Bài ${lesson.id}: ${describeFailures(results)}`).toBe(true)
   })
 
-  it.each(PROGRAMMING_LESSONS)('$id — ví dụ mẫu chạy không lỗi', (lesson) => {
+  it.each(PYTHON_LESSONS)('$id — ví dụ mẫu chạy không lỗi', (lesson) => {
     const r = runPython3(lesson.workedExample.code, lesson.workedExample.stdinLines)
     expect(r.error, `Bài ${lesson.id} ví dụ mẫu lỗi: ${r.error}`).toBeUndefined()
     expect(r.output.trim().length, `Bài ${lesson.id}: ví dụ mẫu không in gì`).toBeGreaterThan(0)
   })
 
-  it.each(PROGRAMMING_LESSONS)('$id — đáp án Predict khớp output thật', (lesson) => {
+  it.each(PYTHON_LESSONS)('$id — đáp án Predict khớp output thật', (lesson) => {
     const r = runPython3(lesson.predict.code, [])
     expect(r.error, `Bài ${lesson.id} code Predict lỗi: ${r.error}`).toBeUndefined()
     const answer = lesson.predict.choices[lesson.predict.answerIndex]!

@@ -5,6 +5,7 @@ export const P2U8_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p2-u8-l1',
     unitId: 'p2-u8',
+    language: 'python',
     title: 'datetime & math — đếm ngược tới ngày quan trọng',
     hook: 'Còn bao nhiêu ngày nữa tới kỳ thi? Tự trừ tay là sai ngay, vì tháng thì 30 ngày tháng thì 31, lại còn năm nhuận. Python có sẵn thư viện làm đúng chuyện đó — bạn chỉ cần biết gọi.',
     theory:

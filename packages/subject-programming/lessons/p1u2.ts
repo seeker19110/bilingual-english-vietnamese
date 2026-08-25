@@ -5,6 +5,7 @@ export const P1U2_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p1-u2-l1',
     unitId: 'p1-u2',
+    language: 'python',
     title: 'Biến và phép toán — quản lý tiền chợ bằng Python',
     hook: 'Đi chợ mua rau 15.000đ, mua thịt 45.000đ — bạn nhẩm tổng trong đầu ngay lập tức. Máy tính cũng cần một "chỗ nhớ" để giữ từng con số đó lại rồi tính toán. Chỗ nhớ ấy gọi là BIẾN.',
     theory:

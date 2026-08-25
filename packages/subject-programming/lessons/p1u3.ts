@@ -5,6 +5,7 @@ export const P1U3_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p1-u3-l1',
     unitId: 'p1-u3',
+    language: 'python',
     title: 'Nhập / xuất dữ liệu — input(), f-string và làm tròn',
     hook: 'Ở bài trước, giá vở và số lượng bạn phải TỰ gõ sẵn vào code. Nhưng một chương trình quán photocopy thật sự phải hỏi khách: "In mấy trang?" rồi mới tính tiền. Đó là lúc cần input() — máy biết LẮNG NGHE.',
     theory:

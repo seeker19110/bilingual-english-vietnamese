@@ -5,6 +5,7 @@ export const P2U3_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p2-u3-l1',
     unitId: 'p2-u3',
+    language: 'python',
     title: 'Chuỗi chuyên sâu — chuẩn hoá họ tên người dùng nhập bậy',
     hook: 'Người dùng gõ tên vào form không bao giờ đẹp: thừa khoảng trắng đầu cuối, gõ hai ba dấu cách giữa chữ, lúc HOA lúc thường. Nếu bạn lưu thẳng vào sổ, sau này tìm "Nguyen Van An" sẽ không ra. Chuẩn hoá chuỗi là việc lập trình viên nào cũng phải làm.',
     theory:

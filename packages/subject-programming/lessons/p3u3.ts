@@ -9,6 +9,7 @@ export const P3U3_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p3-u3-l1',
     unitId: 'p3-u3',
+    language: 'python',
     title: 'Dữ liệu bảng — từ file CSV thô đến con số nói được điều gì đó',
     hook: 'Sếp đưa bạn file bán hàng 2.000 dòng và hỏi "món nào ra tiền nhất?". Mở Excel cuộn tay thì mất buổi chiều và lần sau lại làm lại. Viết 15 dòng Python thì lần sau chỉ mất 2 giây — và đó chính là việc dân dữ liệu làm hằng ngày.',
     theory:

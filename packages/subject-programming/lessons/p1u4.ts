@@ -7,6 +7,7 @@ export const P1U4_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p1-u4-l1',
     unitId: 'p1-u4',
+    language: 'python',
     title: 'Rẽ nhánh if — tính tiền điện bậc thang EVN',
     hook: 'Cuối tháng nhìn hoá đơn tiền điện, bạn có bao giờ thắc mắc vì sao dùng gấp đôi số điện mà tiền lại hơn gấp đôi? Vì giá điện tính theo BẬC THANG — dùng càng nhiều, phần vượt càng đắt. Hôm nay bạn sẽ dạy máy tính tính đúng hoá đơn đó.',
     theory:

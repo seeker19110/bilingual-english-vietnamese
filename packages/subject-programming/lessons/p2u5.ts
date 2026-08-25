@@ -5,6 +5,7 @@ export const P2U5_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p2-u5-l1',
     unitId: 'p2-u5',
+    language: 'python',
     title: 'Comprehension & sort — lọc và sắp xếp trong một dòng',
     hook: 'Chủ quán hỏi: "Cho tôi xem những món từ 10.000 trở lên, sắp từ rẻ tới đắt". Với vòng lặp bạn viết 5 dòng. Với comprehension và sorted, đúng một dòng — và đọc lên gần như đọc tiếng Anh.',
     theory:

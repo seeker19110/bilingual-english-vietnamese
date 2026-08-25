@@ -5,6 +5,7 @@ export const P2U6_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p2-u6-l1',
     unitId: 'p2-u6',
+    language: 'python',
     title: 'Ghi và đọc file CSV — sổ sách không mất khi tắt máy',
     hook: 'Mọi chương trình bạn viết từ trước tới giờ có một điểm chung buồn: tắt là mất sạch. Bán cả ngày, đóng cửa sổ, doanh thu về 0. Hôm nay bạn cho dữ liệu một chỗ ở lâu dài: file.',
     theory:

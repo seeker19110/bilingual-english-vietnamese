@@ -5,6 +5,7 @@ export const P2U2_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p2-u2-l1',
     unitId: 'p2-u2',
+    language: 'python',
     title: 'Danh sách — một cái tên chứa được cả menu quán',
     hook: 'Quán bạn có 3 món thì đặt 3 biến gia1, gia2, gia3 còn xoay xở được. Thêm món thứ 12 thì sao? Danh sách (list) cho phép một cái tên duy nhất giữ cả trăm giá trị, và đếm/duyệt/thêm/bớt được.',
     theory:

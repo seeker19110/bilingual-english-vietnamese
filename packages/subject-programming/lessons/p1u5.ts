@@ -5,6 +5,7 @@ export const P1U5_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p1-u5-l1',
     unitId: 'p1-u5',
+    language: 'python',
     title: 'Vòng lặp while — tiết kiệm đủ tiền mua xe đạp',
     hook: 'Bạn để dành tiền mua một chiếc xe đạp mới, mỗi tháng bỏ ống heo một số tiền cố định. Bạn không biết trước cần bao nhiêu tháng — chỉ biết là phải LẶP LẠI việc bỏ tiền cho tới khi đủ. Đó chính là lúc cần vòng lặp while.',
     theory:

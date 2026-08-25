@@ -5,6 +5,7 @@ export const P1U7_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p1-u7-l1',
     unitId: 'p1-u7',
+    language: 'python',
     title: 'Lồng nhau — đếm học sinh đậu/rớt qua từng bài kiểm tra',
     hook: 'Cô giáo có một xấp bài kiểm tra, cần lướt qua TỪNG bài rồi với MỖI bài lại phải QUYẾT ĐỊNH xem đậu hay rớt (điểm >= 5 là đậu). Đó là hai việc lồng vào nhau: lặp qua từng bài, và bên trong mỗi lần lặp lại rẽ nhánh.',
     theory:

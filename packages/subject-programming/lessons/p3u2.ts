@@ -6,6 +6,7 @@ export const P3U2_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p3-u2-l1',
     unitId: 'p3-u2',
+    language: 'python',
     title: 'JSON — định dạng để dữ liệu LỒNG NHAU đi được ra khỏi chương trình',
     hook: 'Ở bậc P2 bạn lưu sổ sách bằng CSV. CSV chỉ là bảng phẳng: một đơn hàng có 3 món thì nhét vào một dòng kiểu gì? JSON sinh ra cho đúng chuyện đó — nó giữ nguyên hình dạng dict và list của bạn, và gần như MỌI API trên đời đều nói bằng JSON.',
     theory:

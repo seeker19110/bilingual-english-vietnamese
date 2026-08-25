@@ -5,6 +5,7 @@ export const P1U6_LESSONS: ProgrammingLesson[] = [
   {
     id: 'p1-u6-l1',
     unitId: 'p1-u6',
+    language: 'python',
     title: 'Vòng lặp for — cộng dồn tiền tiết kiệm mỗi ngày',
     hook: 'Mỗi sáng bạn bỏ vào heo đất một số tiền cố định, làm liên tục đúng 10 ngày. Số lần lặp bạn BIẾT TRƯỚC — không cần chờ điều kiện như while. Đây là lúc for phát huy tác dụng: lặp đúng số lần đã định.',
     theory:
