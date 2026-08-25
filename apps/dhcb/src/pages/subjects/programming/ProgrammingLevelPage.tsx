@@ -31,6 +31,12 @@ export default function ProgrammingLevelPage() {
   // Id bậc lạ → về trang tổng quan môn, không render trang rỗng.
   if (!level) return <Navigate to="/lap-trinh" replace />
 
+  // Tiến độ bậc: đếm trên các bài ĐÃ SOẠN của bậc (unit chưa có bài không tính vào mẫu số,
+  // để thanh tiến độ không "đứng im" ở mức thấp khi nội dung còn đang soạn dần).
+  const levelLessons = level.units.flatMap((u) => getLessonsByUnit(u.id))
+  const lessonCount = levelLessons.length
+  const completedCount = levelLessons.filter((l) => isLessonCompleted(progress, l.id)).length
+
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => nav('/lap-trinh')} />
@@ -55,9 +61,35 @@ export default function ProgrammingLevelPage() {
 
         {/* Danh sách unit */}
         <section className="space-y-3">
-          <h2 className="text-base font-bold text-white">
-            Đề cương {level.units.length} unit ({level.duration})
-          </h2>
+          <div className="flex items-baseline justify-between gap-3 flex-wrap">
+            <h2 className="text-base font-bold text-white">
+              Đề cương {level.units.length} unit ({level.duration})
+            </h2>
+            {lessonCount > 0 && (
+              <p className="text-xs text-zinc-400">
+                Đã hoàn thành{' '}
+                <strong className="text-emerald-300 theme-light:text-emerald-800">
+                  {completedCount}/{lessonCount}
+                </strong>{' '}
+                bài học
+              </p>
+            )}
+          </div>
+          {lessonCount > 0 && (
+            <div
+              className="h-2 rounded-full bg-zinc-900 border border-zinc-800 overflow-hidden"
+              role="progressbar"
+              aria-label={`Tiến độ bậc ${level.id.toUpperCase()}`}
+              aria-valuenow={completedCount}
+              aria-valuemin={0}
+              aria-valuemax={lessonCount}
+            >
+              <div
+                className="h-full bg-emerald-500 transition-all"
+                style={{ width: `${Math.round((completedCount / lessonCount) * 100)}%` }}
+              />
+            </div>
+          )}
           {level.units.map((unit, idx) => {
             const lessons = getLessonsByUnit(unit.id)
             const unitCompleted =

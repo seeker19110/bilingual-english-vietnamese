@@ -66,3 +66,20 @@ test('parsons xếp sai báo chưa đúng; make chạy code khởi đầu thì c
   await expect(page.getByText(/Dùng 30 kWh/).first()).toBeVisible({ timeout: 120_000 })
   await expect(page.getByText('Đạt toàn bộ test!')).not.toBeVisible()
 })
+
+// Bài P1-U9 dạy random.seed() để kết quả TẤT ĐỊNH. Cổng nội dung (lessonsPython.test.ts)
+// chấm bằng python3 của runner; học viên lại chạy CPython bản WASM (Pyodide). Nếu hai bản
+// sinh dãy số khác nhau thì bài sẽ "xanh ở CI, rớt ở người học" — test này chạy chính code
+// mẫu của bài TRONG TRÌNH DUYỆT để chốt hai môi trường khớp nhau.
+test('bài số ngẫu nhiên: code mẫu đạt hết test-case trong Pyodide (khớp python3)', async ({
+  page,
+}) => {
+  test.setTimeout(180_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p1-u9-l1', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page.getByRole('button', { name: 'Xem code mẫu' }).click()
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 120_000 })
+})

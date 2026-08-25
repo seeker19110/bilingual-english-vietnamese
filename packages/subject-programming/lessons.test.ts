@@ -46,9 +46,17 @@ describe('programming lessons', () => {
     }
   })
 
+  it('MỌI unit của bậc P1 đều đã có bài học (đích PR-L4 — học viên đi trọn bậc)', () => {
+    const p1Units = PROGRAMMING_LEVELS.find((l) => l.id === 'p1')!.units
+    const thieu = p1Units.filter((u) => getLessonsByUnit(u.id).length === 0).map((u) => u.id)
+    expect(thieu, `Unit P1 chưa có bài học: ${thieu.join(', ')}`).toEqual([])
+  })
+
   it('tra cứu theo unit và theo id', () => {
     expect(getLessonsByUnit('p1-u4').map((l) => l.id)).toContain('p1-u4-l1')
-    expect(getLessonsByUnit('p1-u1')).toEqual([])
+    // Unit của bậc CHƯA soạn nội dung → rỗng (UI hiện "Sắp mở"). P2 là bậc kế tiếp trong
+    // hàng đợi soạn, dùng làm mốc kiểm nhánh rỗng thay cho p1-u1 (nay đã có bài, PR-L4).
+    expect(getLessonsByUnit('p2-u1')).toEqual([])
     expect(getLesson('p9-u9-l9')).toBeUndefined()
   })
 })
