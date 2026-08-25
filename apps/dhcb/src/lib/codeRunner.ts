@@ -8,6 +8,7 @@ import type { CodeRunResult } from './codeRunResult'
 import { runPython, resetPythonWorker } from './pythonRunner'
 import { runJavaScript, resetJsWorker } from './jsRunner'
 import { runSql, resetSqlWorker } from './sqlRunner'
+import { runHtml } from './htmlRunner'
 
 export type LessonLanguage = ProgrammingLesson['language']
 
@@ -31,6 +32,11 @@ export function runLessonCode(
       ...(stdinLines ? { stdinLines } : {}),
       ...(onOutput ? { onOutput } : {}),
     })
+  }
+  if (language === 'html') {
+    // Bài HTML/CSS không có input() và không chạy script — "chạy" nghĩa là dựng cây DOM rồi
+    // mô tả lại. Khung XEM TRANG là phần riêng của giao diện (iframe sandbox="").
+    return runHtml(code)
   }
   if (language === 'sql') {
     // SQL không có input(): dữ liệu đã nằm sẵn trong CSDL mẫu (sqlDataset.ts).
