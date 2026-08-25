@@ -9,6 +9,7 @@ import { runPython, resetPythonWorker } from './pythonRunner'
 import { runJavaScript, resetJsWorker } from './jsRunner'
 import { runSql, resetSqlWorker } from './sqlRunner'
 import { runHtml } from './htmlRunner'
+import { runDom, resetDomWorker } from './domRunner'
 
 export type LessonLanguage = ProgrammingLesson['language']
 
@@ -19,6 +20,8 @@ export interface LessonRunOptions {
   onLoading?: () => void
   /** Workspace nhiều file — hiện chỉ Python (dự án trục) dùng. */
   files?: Record<string, string>
+  /** Bài 'dom': trang HTML có sẵn mà script của học viên tác động lên (bắt buộc với 'dom'). */
+  domHtml?: string
 }
 
 export function runLessonCode(
@@ -30,6 +33,23 @@ export function runLessonCode(
     const { stdinLines, onOutput } = options
     return runJavaScript(code, {
       ...(stdinLines ? { stdinLines } : {}),
+      ...(onOutput ? { onOutput } : {}),
+    })
+  }
+  if (language === 'dom') {
+    const { stdinLines, onOutput, domHtml } = options
+    if (!domHtml) {
+      // Bài 'dom' không có trang thì không chấm được — nói thẳng thay vì chạy ra kết quả rỗng.
+      return Promise.resolve({
+        output: '',
+        error: 'Bài này thiếu trang HTML đi kèm (domHtml).',
+        timedOut: false,
+        durationMs: 0,
+      })
+    }
+    return runDom(code, {
+      html: domHtml,
+      ...(stdinLines ? { hanhDong: stdinLines } : {}),
       ...(onOutput ? { onOutput } : {}),
     })
   }
@@ -54,4 +74,5 @@ export function resetLessonRunners(): void {
   resetPythonWorker()
   resetJsWorker()
   resetSqlWorker()
+  resetDomWorker()
 }

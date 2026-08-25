@@ -273,3 +273,46 @@ test('khung xem trang hiển thị trang nhưng KHÔNG chạy script trong đó'
   // ...nhưng script bên trong KHÔNG được phép chạy (sandbox="" thu hồi mọi quyền).
   await expect(khung.getByText('SCRIPT DA CHAY')).toHaveCount(0)
 })
+
+// PR-L7d — bài DOM (p3-u6-l2). Chấm chạy trong Web Worker với linkedom (cùng thư viện cổng CI
+// dùng), còn iframe chỉ để XEM trang chạy. Ba thứ cần chốt trong trình duyệt thật:
+test('bài DOM p3-u6-l2: code mẫu đạt hết test-case (Worker + linkedom)', async ({ page }) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p3-u6-l2', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page.getByRole('button', { name: 'Xem code mẫu' }).click()
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 60_000 })
+})
+
+test('bài DOM: khung "Xem trang chạy" chạy script thật và phản ứng khi bấm', async ({ page }) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p3-u6-l2', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page.getByRole('button', { name: 'Xem code mẫu' }).click()
+  // Khung chỉ chạy khi bấm — KHÔNG chạy theo từng phím gõ (script dở dang là mối nguy thật).
+  await expect(page.locator('iframe[title="Xem trước trang web bạn vừa viết"]')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Xem trang chạy' }).click()
+
+  const khung = page.frameLocator('iframe[title="Xem trước trang web bạn vừa viết"]')
+  await khung.locator('#so-kwh').fill('150')
+  await khung.getByRole('button', { name: 'Tinh tien' }).click()
+  await expect(khung.locator('#ket-qua')).toHaveText('Tien dien: 306000 dong')
+})
+
+test('bài DOM: vòng lặp vô hạn khi CHẤM bị ngắt, trang không treo', async ({ page }) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p3-u6-l2', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page.getByRole('textbox').first().fill('while (true) {}')
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  await expect(page.getByText(/quá 5 giây nên đã bị dừng/)).toBeVisible({ timeout: 60_000 })
+  // Trang còn phản hồi.
+  await page.getByRole('button', { name: 'Về nhà' }).click()
+})

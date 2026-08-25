@@ -65,6 +65,8 @@ export default function ProgrammingLessonPage() {
   const [step, setStep] = useState(0)
   // ③ Ví dụ mẫu
   const [exampleOutput, setExampleOutput] = useState('')
+  // Bài DOM: bản chụp code để xem trang chạy (null = chưa bấm xem lần nào).
+  const [previewScript, setPreviewScript] = useState<string | null>(null)
   const [exampleRunning, setExampleRunning] = useState(false)
   // ④ Predict
   const [predictChoice, setPredictChoice] = useState<number | null>(null)
@@ -105,6 +107,7 @@ export default function ProgrammingLessonPage() {
     const r = await runLessonCode(lesson.language, lesson.workedExample.code, {
       stdinLines: lesson.workedExample.stdinLines,
       onOutput: setExampleOutput,
+      ...(lesson.domHtml ? { domHtml: lesson.domHtml } : {}),
     })
     setExampleOutput(r.output + (r.error ? `\n${r.error}` : ''))
     setExampleRunning(false)
@@ -118,6 +121,7 @@ export default function ProgrammingLessonPage() {
     for (const testCase of lesson.make.testCases) {
       const r = await runLessonCode(lesson.language, code, {
         stdinLines: testCase.stdinLines,
+        ...(lesson.domHtml ? { domHtml: lesson.domHtml } : {}),
       })
       out.push(
         gradeTestCase(testCase, r.output, r.error ?? (r.timedOut ? 'Quá thời gian' : undefined)),
@@ -374,6 +378,22 @@ export default function ProgrammingLessonPage() {
             {/* Bài HTML/CSS: hiện luôn trang học viên đang viết — thấy ngay kết quả là thứ
                 khiến người mới bám trụ được với web. Cập nhật theo từng lần gõ. */}
             {lesson.language === 'html' && <HtmlPreview html={code} />}
+            {/* Bài DOM: KHÔNG xem trực tiếp theo từng phím gõ — script dở dang (hoặc vòng lặp
+                vô hạn đang gõ nửa chừng) sẽ chạy ngay trong khung. Học viên bấm nút thì mới
+                chụp lại code hiện tại và chạy. */}
+            {lesson.language === 'dom' && lesson.domHtml && (
+              <div className="space-y-2">
+                <button
+                  onClick={() => setPreviewScript(code)}
+                  className="tap-44 inline-flex items-center px-4 py-2 rounded-2xl border border-zinc-700 hover:border-zinc-500 text-sm text-zinc-200 transition"
+                >
+                  Xem trang chạy
+                </button>
+                {previewScript !== null && (
+                  <HtmlPreview html={lesson.domHtml} script={previewScript} />
+                )}
+              </div>
+            )}
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => void gradeMake()}

@@ -43,6 +43,7 @@ export interface ElementLike {
   childNodes: ArrayLike<NodeLike>
   textContent: string | null
   getAttribute(name: string): string | null
+  hasAttribute(name: string): boolean
 }
 
 const NODE_VAN_BAN = 3
@@ -85,10 +86,12 @@ function moTaMotThe(el: ElementLike, muc: number): string[] {
   const thut = '  '.repeat(muc)
   const ten = el.tagName.toLowerCase()
 
-  const thuocTinh = ATTRS_QUAN_TRONG.map((a) => {
-    const v = el.getAttribute(a)
-    return v === null ? null : `${a}="${gonChu(v)}"`
-  }).filter(Boolean)
+  // Hỏi hasAttribute chứ KHÔNG dựa vào getAttribute trả null: linkedom trả chuỗi rỗng cho
+  // thuộc tính không tồn tại (class), nên kiểm bằng null sẽ đẻ ra class="" rác khắp nơi.
+  // Dùng hasAttribute cũng giữ đúng alt="" của ảnh trang trí — đó là giá trị CÓ Ý NGHĨA.
+  const thuocTinh = ATTRS_QUAN_TRONG.filter((a) => el.hasAttribute(a)).map(
+    (a) => `${a}="${gonChu(el.getAttribute(a) ?? '')}"`,
+  )
 
   // Thẻ <style>: in CSS đã chuẩn hoá thay vì coi như chữ thường.
   if (ten === 'style') {

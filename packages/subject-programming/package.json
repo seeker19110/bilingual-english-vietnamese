@@ -8,5 +8,8 @@
       "types": "./dist/*.d.ts",
       "default": "./dist/*.js"
     }
+  },
+  "dependencies": {
+    "linkedom": "^0.18.12"
   }
 }
