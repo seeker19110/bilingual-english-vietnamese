@@ -38,6 +38,9 @@ import {
   type CodeFeedbackKind,
 } from '../../../lib/programmingFeedback'
 import { getLesson } from '@dhcb/subject-programming/lessons'
+// fetchGia chứ KHÔNG phải fetchPrelude: prelude kéo theo linkedom (~94KB gzip) — thư viện đó
+// chỉ được nằm trong worker, lọt vào đây là nổ ngân sách Initial JS.
+import { FETCH_SHIM_JS } from '@dhcb/subject-programming/fetchGia'
 import {
   gradeTestCase,
   allTestsPassed,
@@ -381,10 +384,14 @@ export default function ProgrammingLessonPage() {
             {/* Bài DOM: KHÔNG xem trực tiếp theo từng phím gõ — script dở dang (hoặc vòng lặp
                 vô hạn đang gõ nửa chừng) sẽ chạy ngay trong khung. Học viên bấm nút thì mới
                 chụp lại code hiện tại và chạy. */}
-            {lesson.language === 'dom' && lesson.domHtml && (
+            {(lesson.language === 'dom' || lesson.language === 'fetch') && lesson.domHtml && (
               <div className="space-y-2">
                 <button
-                  onClick={() => setPreviewScript(code)}
+                  onClick={() =>
+                    // Bài fetch: nhét fetch giả (cùng nguồn với bộ chấm) vào TRƯỚC code —
+                    // iframe không có mạng thật nên fetch thật kiểu gì cũng thất bại.
+                    setPreviewScript(lesson.language === 'fetch' ? FETCH_SHIM_JS + code : code)
+                  }
                   className="tap-44 inline-flex items-center px-4 py-2 rounded-2xl border border-zinc-700 hover:border-zinc-500 text-sm text-zinc-200 transition"
                 >
                   Xem trang chạy

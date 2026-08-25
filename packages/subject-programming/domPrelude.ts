@@ -27,12 +27,13 @@ export interface DomRunResult {
 const RE_CLICK = /^click\s+(.+)$/
 const RE_DIEN = /^dien\s+(.+?)\s*=\s*(.*)$/
 
-interface DomLike {
+export interface DomLike {
   querySelector(sel: string): unknown
   documentElement: unknown
 }
 
-function thucHien(
+/** Diễn MỘT hành động người dùng trên trang — dùng chung cho bài DOM và bài fetch (PR-L7e). */
+export function thucHien(
   hanhDong: string,
   document: DomLike,
   EventCtor: new (t: string) => unknown,
