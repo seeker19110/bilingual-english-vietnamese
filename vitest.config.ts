@@ -31,6 +31,9 @@ export default defineConfig({
     coverage: {
       // v8 = đo coverage bằng bộ máy V8 (nhanh, không cần biến đổi mã).
       provider: 'v8',
+      // json-summary thêm vào bộ mặc định để `npm run budget` đọc được BIÊN ĐỘ còn lại của
+      // ngưỡng coverage (scripts/check-budget-margin.ts) — audit 2026-08-25, F3.
+      reporter: ['text', 'html', 'json-summary'],
       // Chỉ đo phần LOGIC THUẦN (lib + api). Bỏ UI (.tsx/pages/components),
       // điểm khởi tạo (server.ts) và dữ liệu tĩnh — nơi unit test ít giá trị.
       include: ['apps/dhcb/src/lib/**/*.ts', 'apps/server/src/api/**/*.ts', 'packages/**/*.ts'],

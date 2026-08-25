@@ -2,6 +2,8 @@
 // server.ts chỉ còn app/middleware/static/scheduler — thêm endpoint mới thì sửa Ở ĐÂY
 // (test gác: api/routes-registered.test.ts đọc file này).
 import express from 'express'
+import type { Response as ExpressResponse } from 'express'
+import { HSTS_VALUE, PERMISSIONS_POLICY } from '@dhcb/core-auth/security'
 import { captureServerException } from './api/_lib/sentry.js'
 
 import ttsHandler from '@dhcb/core-ai/tts'
@@ -131,6 +133,20 @@ import geminiLiveHandler from './api/platform/gemini-live.js'
 export const CSP_HEADER =
   "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com https://accounts.google.com https://connect.facebook.net https://appleid.cdn-apple.com https://alcdn.msauth.net; style-src 'self' 'unsafe-inline' https://accounts.google.com; font-src 'self' data:; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://accounts.google.com; frame-ancestors 'self'"
 
+// Header bảo mật đính vào MỌI response — API, static và health dùng chung đúng một nguồn.
+// Trước đây 3 chỗ tự gọi setHeader riêng nên HSTS/Permissions-Policy chỉ có ở response API,
+// còn trang HTML (thứ trình duyệt thực sự ghim HSTS theo) thì không (audit 2026-08-25, F4).
+// X-Frame-Options SAMEORIGIN khớp với `frame-ancestors 'self'` của CSP — cho trình duyệt cũ
+// chưa hiểu frame-ancestors.
+export function applyCommonSecurityHeaders(res: ExpressResponse): void {
+  res.setHeader('X-Content-Type-Options', 'nosniff')
+  res.setHeader('Content-Security-Policy', CSP_HEADER)
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+  res.setHeader('Strict-Transport-Security', HSTS_VALUE)
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN')
+  res.setHeader('Permissions-Policy', PERMISSIONS_POLICY)
+}
+
 // ── Bọc Edge Function handler thành Express route ────────────────────────────
 // Edge Function: nhận (Request) → trả (Response)  [Web API chuẩn]
 // Express      : nhận (req, res)                   [Node.js API]
@@ -159,9 +175,7 @@ function wrapEdge(handler: (req: Request) => Promise<Response>) {
       webRes.headers.forEach((val, key) => res.setHeader(key, val))
 
       // Security headers — thêm sau khi convert response, tránh conflict với Web API Response
-      res.setHeader('X-Content-Type-Options', 'nosniff')
-      res.setHeader('Content-Security-Policy', CSP_HEADER)
-      res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+      applyCommonSecurityHeaders(res)
 
       res.send(await webRes.text())
     } catch (err) {

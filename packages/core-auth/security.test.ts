@@ -6,6 +6,9 @@ import {
   validateAuth,
   validateContentType,
   logSecurityEvent,
+  SECURITY_HEADERS,
+  PERMISSIONS_POLICY,
+  HSTS_VALUE,
 } from './security.js'
 
 const validateSessionToken = vi.hoisted(() => vi.fn())
@@ -251,5 +254,41 @@ describe('logSecurityEvent', () => {
       JSON.stringify({ email: 'a@b.com' }),
     )
     warnSpy.mockRestore()
+  })
+})
+
+// Bất biến header bảo mật — audit 2026-08-25 (F4) phát hiện `Permissions-Policy` vắng mặt
+// hoàn toàn và HSTS chỉ có ở response API. Test này chặn việc âm thầm bỏ lại một header.
+describe('SECURITY_HEADERS', () => {
+  it('có đủ các header bắt buộc', () => {
+    for (const name of [
+      'X-Content-Type-Options',
+      'X-Frame-Options',
+      'Strict-Transport-Security',
+      'Referrer-Policy',
+      'Permissions-Policy',
+      'Cache-Control',
+    ]) {
+      expect(SECURITY_HEADERS[name], `thiếu header ${name}`).toBeTruthy()
+    }
+  })
+
+  it('X-Frame-Options khớp `frame-ancestors self` của CSP, không tự mâu thuẫn', () => {
+    expect(SECURITY_HEADERS['X-Frame-Options']).toBe('SAMEORIGIN')
+  })
+
+  it('HSTS dùng chung đúng một giá trị', () => {
+    expect(SECURITY_HEADERS['Strict-Transport-Security']).toBe(HSTS_VALUE)
+    expect(HSTS_VALUE).toMatch(/^max-age=\d+;/)
+  })
+
+  it('Permissions-Policy cho phép đúng microphone + camera (app có dùng), chặn phần còn lại', () => {
+    expect(SECURITY_HEADERS['Permissions-Policy']).toBe(PERMISSIONS_POLICY)
+    // Hai tính năng app THẬT SỰ dùng: ghi âm luyện nói + quay video challenge.
+    expect(PERMISSIONS_POLICY).toContain('microphone=(self)')
+    expect(PERMISSIONS_POLICY).toContain('camera=(self)')
+    // Không dùng tới → phải đóng hẳn.
+    expect(PERMISSIONS_POLICY).toContain('geolocation=()')
+    expect(PERMISSIONS_POLICY).toContain('payment=()')
   })
 })
