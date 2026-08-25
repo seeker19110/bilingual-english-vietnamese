@@ -349,6 +349,36 @@ test('bài fetch: khung "Xem trang chạy" dùng fetch giả — tra cứu chạ
   await expect(khung.locator('#ket-qua')).toHaveText('Đà Nẵng: 26 do C, mưa rào')
 })
 
+// PR-L9 — bài GIT (p3-u10, p3-u11). Chạy trên bộ mô phỏng thuần TypeScript (gitSim.ts), KHÔNG
+// worker và KHÔNG git thật: cổng CI và trình duyệt gọi chung một hàm nên không thể lệch. Test
+// này chốt đường đi trong trình duyệt: trang chọn đúng bộ chạy theo language 'git', và lệnh
+// gõ sai hiện lỗi dạy được ngay tại chỗ thay vì im lặng.
+test('bài Git p3-u10-l1: code mẫu đạt hết test-case, không cần git thật', async ({ page }) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p3-u10-l1', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page.getByRole('button', { name: 'Xem code mẫu' }).click()
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 60_000 })
+})
+
+test('bài Git: quên git add thì báo lỗi dạy được, không im lặng đánh rớt', async ({ page }) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p3-u10-l1', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page
+    .getByRole('textbox')
+    .first()
+    .fill('git init\necho "Quan cua toi" > README.md\ngit commit -m "Them README"')
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  // Thông điệp của bộ mô phỏng phải tới được mắt học viên, kèm cách sửa.
+  await expect(page.getByText(/vung cho/).first()).toBeVisible({ timeout: 60_000 })
+})
+
 test('bài DOM: vòng lặp vô hạn khi CHẤM bị ngắt, trang không treo', async ({ page }) => {
   test.setTimeout(120_000)
   await mockLogin(page, 'vi', 'dark-blue')

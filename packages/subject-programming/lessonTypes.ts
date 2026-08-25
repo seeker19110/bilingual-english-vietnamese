@@ -31,7 +31,7 @@ export const LessonSchema = z
     /** Ngôn ngữ của bài (PR-L7b1) — quyết định bộ chạy ở trình duyệt VÀ cổng CI nào chấm
      *  bài. KHÔNG có giá trị mặc định ngầm: người soạn phải ghi rõ, vì chọn sai ngôn ngữ
      *  nghĩa là bài không được cổng nào chấm. */
-    language: z.enum(['python', 'javascript', 'sql', 'html', 'dom', 'fetch']),
+    language: z.enum(['python', 'javascript', 'sql', 'html', 'dom', 'fetch', 'git']),
     /** Bài 'dom'/'fetch': TRANG CÓ SẴN mà JavaScript của học viên tác động lên (PR-L7d).
      *  Học viên không sửa trang này — họ chỉ viết script. Bài 'fetch' (PR-L7e) = bài DOM
      *  cộng fetch giả lập (fetchPrelude.ts). Bắt buộc với hai ngôn ngữ này, cấm với các

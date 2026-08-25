@@ -229,7 +229,7 @@ export default function ProgrammingLessonPage() {
               ) : (
                 <Play className="w-4 h-4" />
               )}
-              <span>Chạy ví dụ</span>
+              <span>{lesson.language === 'git' ? 'Chạy thử các lệnh' : 'Chạy ví dụ'}</span>
             </button>
             {exampleOutput && (
               <pre className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 text-sm font-mono text-zinc-100 whitespace-pre-wrap">
@@ -377,7 +377,15 @@ export default function ProgrammingLessonPage() {
                 {lesson.make.prompt}
               </p>
             </div>
-            <CodeEditor value={code} onChange={setCode} ariaLabel="Ô soạn code bài tự viết" />
+            <CodeEditor
+              value={code}
+              onChange={setCode}
+              // Bài Git/dòng lệnh: học viên gõ LỆNH chứ không phải code — nhãn phải nói đúng
+              // thứ đang làm, nhất là với người dùng trình đọc màn hình.
+              ariaLabel={
+                lesson.language === 'git' ? 'Ô gõ lệnh bài tự viết' : 'Ô soạn code bài tự viết'
+              }
+            />
             {/* Bài HTML/CSS: hiện luôn trang học viên đang viết — thấy ngay kết quả là thứ
                 khiến người mới bám trụ được với web. Cập nhật theo từng lần gõ. */}
             {lesson.language === 'html' && <HtmlPreview html={code} />}
