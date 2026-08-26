@@ -2488,39 +2488,32 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
-- 🔴 **[2026-08-26] Rate limit BỊ NÉ HOÀN TOÀN bằng header giả — đã vá tầng app, CÒN THIẾU
-  tầng nginx trên VPS.** Đo thật trên production: 40 request liên tiếp vào `/api/app-settings`
-  (giới hạn **30/phút**) với `X-Forwarded-For` ngẫu nhiên mỗi lần → **40 lần `200`, KHÔNG một
-  `429`**.
+- 🟢 **[2026-08-26 — ĐÃ GỠ, kiểm chứng bằng bài thử] Rate limit từng bị né hoàn toàn bằng
+  header `X-Forwarded-For` giả; nay đã bịt cả hai tầng.**
 
-  **Cơ chế:** nginx dùng `$proxy_add_x_forwarded_for` — NỐI ip thật vào CUỐI chuỗi client gửi
-  lên. `getClientIp()` bản cũ đọc phần tử ĐẦU, tức chính giá trị client tự khai. Đổi header mỗi
-  request là mỗi request một khoá rate limit khác nhau.
+  **Trước khi vá** — 40 request vào `/api/app-settings` (giới hạn 30/phút) với IP giả ngẫu
+  nhiên mỗi lần: **40 lần `200`, không một `429`**. Nguyên nhân: nginx dùng
+  `$proxy_add_x_forwarded_for` (NỐI ip thật vào CUỐI) trong khi `getClientIp()` đọc phần tử
+  ĐẦU — tức giá trị client tự khai.
 
-  **Vì sao nghiêm trọng hơn mọi nợ khác đang mở:** rate limit là tuyến phòng thủ DUY NHẤT cho
-  hạn mức gọi AI TRẢ PHÍ. Ở quy mô hiện tại còn ít người biết; ở 5.000 DAU thì xác suất có
-  người thử là chuyện thời gian.
+  **Sau khi vá** — chạy lại đúng hai bài thử ở `docs/cloudflare-setup.md`:
 
-  **Đã vá (tầng app, PR này):** `getClientIp()` đọc theo thứ tự `CF-Connecting-IP` →
-  `X-Real-IP` → `X-Forwarded-For` phần tử **CUỐI**. Cloudflare GHI ĐÈ `CF-Connecting-IP` ở biên
-  (khác nginx là nối), nên client không tự khai được khi đi qua CF — xác nhận 2026-08-26 site
-  đang chạy sau Cloudflare (`server: cloudflare` + `cf-ray`). Có 7 test chặn hồi quy
-  (`packages/core-http/http.test.ts`).
+  | Bài thử                           | Kết quả                            | Đọc thế nào                                                                                                        |
+  | --------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+  | A — IP giả **ngẫu nhiên** mỗi lần | **30 × `200`, rồi 10 × `429`**     | Khớp CHÍNH XÁC giới hạn 30/phút ⇒ đếm theo IP thật, header giả vô tác dụng                                         |
+  | B — IP giả **cố định**            | **40 × `429`** ngay từ request đầu | Chạy từ cùng máy với A nên cùng IP thật; quota đã bị A dùng hết ⇒ hai bài dùng CHUNG một bộ đếm, đúng như phải thế |
 
-  **CÒN THIẾU — việc tay trên VPS, chưa làm:** ai gọi THẲNG vào IP VPS (bỏ qua Cloudflare) vẫn
-  tự đặt được `CF-Connecting-IP`. Bịt bằng:
+  Bài B trả `429` ngay từ đầu thoạt nhìn có vẻ lạ, nhưng đó mới là bằng chứng mạnh nhất: nếu
+  rate limit còn tin header giả thì B đã có bộ đếm riêng và trả `200`.
 
-  ```bash
-  cd /var/www/dhcb && git pull origin main
-  sudo bash scripts/update-cloudflare-ips.sh
-  sudo cp nginx/en-vi.conf /etc/nginx/sites-available/en-vi
-  sudo nginx -t && sudo systemctl reload nginx
-  ```
+  **Hai tầng đã áp:** (1) `getClientIp()` đọc `CF-Connecting-IP` → `X-Real-IP` → XFF phần tử
+  CUỐI (PR #701, 7 test chặn hồi quy trong `packages/core-http/http.test.ts`); (2) nginx
+  `cloudflare-realip.conf` chỉ nhận header từ đúng dải IP Cloudflare — người dùng đã áp lên VPS
+  cùng ngày.
 
-  (Cùng lúc gỡ luôn nợ #6 — `en-vi.conf` trong repo vốn đã sửa mà chưa áp lên VPS.)
-
-  **Điều kiện gỡ nợ:** chạy lại BÀI THỬ ở `docs/cloudflare-setup.md` mục "Cách kiểm tra đã chạy
-  đúng" — cả hai ca A (IP giả ngẫu nhiên) và B (IP giả cố định) đều phải thấy `429`.
+  **Bài học ghi lại:** lỗ hổng sống sót qua nhiều lần rà soát vì cách kiểm chứng cũ hỏi sai
+  câu — _"IP hiển thị có đúng không?"_ (nhìn log là trả lời được) thay vì _"IP có ghi đè được
+  không?"_ (chỉ trả lời được bằng cách tự tấn công mình). Tài liệu đã đổi sang câu thứ hai.
 
 - 🟡 **[2026-08-26 — HẠ MỨC sau khi chẩn đoán; ban đầu ghi 🔴 là ĐÁNH GIÁ QUÁ NẶNG] Redis rớt
   kết nối 7 lần/ngày, mỗi lần DƯỚI MỘT GIÂY.** `pm2 logs dhcb --err` cho thấy 7 cặp log
@@ -2586,7 +2579,7 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   Toàn bộ là cảnh báo Redis rớt (mục trên) và 2 lỗi TTS Gemini có xử lý sẵn. Vậy 64 là cộng
   dồn qua các lần `pm2 reload` khi deploy — bình thường.
 
-- 🟡 **[2026-08-25] `nginx/en-vi.conf` đã sửa trong repo nhưng CHƯA áp lên VPS thật.** Audit
+- 🟢 **[2026-08-25 → ĐÃ GỠ 2026-08-26] `nginx/en-vi.conf` nay ĐÃ áp lên VPS thật** (làm cùng lúc với việc áp `cloudflare-realip.conf` để bịt lỗ hổng rate limit — xác nhận bằng bài thử A/B ở mục trên). Ghi lại bối cảnh gốc: Audit
   2026-08-25 (F5) phát hiện bản `Content-Security-Policy-Report-Only` trong nginx còn whitelist
   `*.supabase.co` dù dự án rời Supabase từ 2026-07-20, lại thiếu facebook/apple/microsoft,
   `media-src blob:` và `frame-src accounts.google.com` so với CSP thật — nên nó chỉ sinh báo cáo
