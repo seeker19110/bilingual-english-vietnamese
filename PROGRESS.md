@@ -2488,6 +2488,40 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- 🔴 **[2026-08-26] Rate limit BỊ NÉ HOÀN TOÀN bằng header giả — đã vá tầng app, CÒN THIẾU
+  tầng nginx trên VPS.** Đo thật trên production: 40 request liên tiếp vào `/api/app-settings`
+  (giới hạn **30/phút**) với `X-Forwarded-For` ngẫu nhiên mỗi lần → **40 lần `200`, KHÔNG một
+  `429`**.
+
+  **Cơ chế:** nginx dùng `$proxy_add_x_forwarded_for` — NỐI ip thật vào CUỐI chuỗi client gửi
+  lên. `getClientIp()` bản cũ đọc phần tử ĐẦU, tức chính giá trị client tự khai. Đổi header mỗi
+  request là mỗi request một khoá rate limit khác nhau.
+
+  **Vì sao nghiêm trọng hơn mọi nợ khác đang mở:** rate limit là tuyến phòng thủ DUY NHẤT cho
+  hạn mức gọi AI TRẢ PHÍ. Ở quy mô hiện tại còn ít người biết; ở 5.000 DAU thì xác suất có
+  người thử là chuyện thời gian.
+
+  **Đã vá (tầng app, PR này):** `getClientIp()` đọc theo thứ tự `CF-Connecting-IP` →
+  `X-Real-IP` → `X-Forwarded-For` phần tử **CUỐI**. Cloudflare GHI ĐÈ `CF-Connecting-IP` ở biên
+  (khác nginx là nối), nên client không tự khai được khi đi qua CF — xác nhận 2026-08-26 site
+  đang chạy sau Cloudflare (`server: cloudflare` + `cf-ray`). Có 7 test chặn hồi quy
+  (`packages/core-http/http.test.ts`).
+
+  **CÒN THIẾU — việc tay trên VPS, chưa làm:** ai gọi THẲNG vào IP VPS (bỏ qua Cloudflare) vẫn
+  tự đặt được `CF-Connecting-IP`. Bịt bằng:
+
+  ```bash
+  cd /var/www/dhcb && git pull origin main
+  sudo bash scripts/update-cloudflare-ips.sh
+  sudo cp nginx/en-vi.conf /etc/nginx/sites-available/en-vi
+  sudo nginx -t && sudo systemctl reload nginx
+  ```
+
+  (Cùng lúc gỡ luôn nợ #6 — `en-vi.conf` trong repo vốn đã sửa mà chưa áp lên VPS.)
+
+  **Điều kiện gỡ nợ:** chạy lại BÀI THỬ ở `docs/cloudflare-setup.md` mục "Cách kiểm tra đã chạy
+  đúng" — cả hai ca A (IP giả ngẫu nhiên) và B (IP giả cố định) đều phải thấy `429`.
+
 - 🟡 **[2026-08-26 — HẠ MỨC sau khi chẩn đoán; ban đầu ghi 🔴 là ĐÁNH GIÁ QUÁ NẶNG] Redis rớt
   kết nối 7 lần/ngày, mỗi lần DƯỚI MỘT GIÂY.** `pm2 logs dhcb --err` cho thấy 7 cặp log
   (00:03 · 00:27 · 02:50 · 03:41 · 04:37 · 05:28 · 08:03), mỗi cặp là "Redis lỗi (Stream isn't

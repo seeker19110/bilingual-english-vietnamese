@@ -89,11 +89,35 @@ sudo nginx -t && sudo systemctl reload nginx
    header `cf-ray` nghĩa là request đã đi qua Cloudflare.
 2. **App vẫn chạy bình thường**: mở site, thử đăng nhập, chat, nghe TTS — luồng
    chính không đổi gì cả (Cloudflare chỉ là lớp trung gian, không đổi code app).
-3. **Rate-limit vẫn nhận đúng IP thật** (quan trọng nhất — xác nhận
-   `nginx/cloudflare-realip.conf` hoạt động đúng): trên VPS chạy
-   `pm2 logs dhcb` rồi thử gọi 1 request bất kỳ, xem log
-   `[Security][...]` (nếu có) có in ra IP **thật của bạn**, không phải IP nội bộ
-   Cloudflare (dải `173.245.x.x`, `103.21.x.x`, v.v.).
+3. **Rate-limit KHÔNG né được bằng header giả** — quan trọng nhất, và phải kiểm bằng
+   BÀI THỬ chứ không chỉ đọc log. Cách cũ (đọc `pm2 logs` xem IP có đúng không) chỉ cho biết
+   IP hiển thị đẹp, KHÔNG cho biết kẻ tấn công có ghi đè được nó không.
+
+   ```bash
+   # A. 40 request, mỗi lần một IP giả khác nhau. /api/app-settings giới hạn 30/phút.
+   for i in $(seq 1 40); do
+     curl -s -o /dev/null -w "%{http_code} " \
+       -H "X-Forwarded-For: 10.0.$((RANDOM%255)).$((RANDOM%255))" \
+       https://en-vi.donghanhcungban.org/api/app-settings
+   done; echo
+
+   # B. Đối chứng: 40 request, CÙNG một IP giả cố định.
+   for i in $(seq 1 40); do
+     curl -s -o /dev/null -w "%{http_code} " \
+       -H "X-Forwarded-For: 203.0.113.99" \
+       https://en-vi.donghanhcungban.org/api/app-settings
+   done; echo
+   ```
+
+   **Đọc kết quả:** cả A và B đều phải xuất hiện `429` sau khoảng 30 request. Nếu A toàn `200`
+   mà B có `429` ⇒ rate limit **bị né bằng header giả** — đúng lỗ hổng đo được ngày 2026-08-26
+   (40/40 lần `200`, không một `429`). Nếu cả hai đều toàn `200` ⇒ rate limit không chạy chút
+   nào, vấn đề còn lớn hơn.
+
+   Lớp bảo vệ nằm ở **hai chỗ, cần cả hai**: `getClientIp()` đọc `CF-Connecting-IP` trước
+   (`packages/core-http/http.ts`), VÀ nginx chỉ nhận header đó từ đúng dải IP Cloudflare
+   (`include /etc/nginx/cloudflare-realip.conf`). Thiếu lớp nginx thì ai gọi thẳng vào IP VPS
+   vẫn tự đặt được `CF-Connecting-IP`.
 
 ## Cách hoàn tác (nếu có sự cố)
 
