@@ -54,6 +54,19 @@ import { P4U9_LESSONS } from './lessons/p4u9.js'
 import { P4U10_LESSONS } from './lessons/p4u10.js'
 import { P4U11_LESSONS } from './lessons/p4u11.js'
 import { P4U12_LESSONS } from './lessons/p4u12.js'
+import { P5U1_LESSONS } from './lessons/p5u1.js'
+import { P5U2_LESSONS } from './lessons/p5u2.js'
+import { P5U3_LESSONS } from './lessons/p5u3.js'
+import { P5U4_LESSONS } from './lessons/p5u4.js'
+import { P5U5_LESSONS } from './lessons/p5u5.js'
+import { P5U6_LESSONS } from './lessons/p5u6.js'
+import { P5U7_LESSONS } from './lessons/p5u7.js'
+import { P5U8_LESSONS } from './lessons/p5u8.js'
+import { P5U9_LESSONS } from './lessons/p5u9.js'
+import { P6U1_LESSONS } from './lessons/p6u1.js'
+import { P6U2_LESSONS } from './lessons/p6u2.js'
+import { P6U3_LESSONS } from './lessons/p6u3.js'
+import { P6U4_LESSONS } from './lessons/p6u4.js'
 
 export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...P1U1_LESSONS,
@@ -101,6 +114,19 @@ export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...P4U10_LESSONS,
   ...P4U11_LESSONS,
   ...P4U12_LESSONS,
+  ...P5U1_LESSONS,
+  ...P5U2_LESSONS,
+  ...P5U3_LESSONS,
+  ...P5U4_LESSONS,
+  ...P5U5_LESSONS,
+  ...P5U6_LESSONS,
+  ...P5U7_LESSONS,
+  ...P5U8_LESSONS,
+  ...P5U9_LESSONS,
+  ...P6U1_LESSONS,
+  ...P6U2_LESSONS,
+  ...P6U3_LESSONS,
+  ...P6U4_LESSONS,
 ]
 
 const lessonMap = new Map(PROGRAMMING_LESSONS.map((l) => [l.id, l]))

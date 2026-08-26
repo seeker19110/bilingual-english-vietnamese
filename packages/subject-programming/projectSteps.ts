@@ -12,6 +12,7 @@ import { TestCaseSchema, type ProgrammingTestCase } from './lessonTypes.js'
 import type { ProjectStep } from './projectStepTypes.js'
 import { P3_PROJECT_STEPS } from './projectStepsP3.js'
 import { P4_PROJECT_STEPS } from './projectStepsP4.js'
+import { P5_PROJECT_STEPS } from './projectStepsP5.js'
 
 export {
   PROJECT_MAIN_FILE,
@@ -23,6 +24,7 @@ export {
 } from './projectStepTypes.js'
 export { P3_PROJECT_STEPS } from './projectStepsP3.js'
 export { P4_PROJECT_STEPS } from './projectStepsP4.js'
+export { P5_PROJECT_STEPS } from './projectStepsP5.js'
 
 /** Code khởi đầu khi mở dự án lần đầu. */
 export const PROJECT_STARTER_CODE = `# cua_hang.py — Cửa hàng của tôi (dự án xuyên suốt, chặng P1)
@@ -654,7 +656,7 @@ print(f"So moi: {so_don} {doanh_thu}")`,
 
 /** Các chặng dự án đã mở (theo bậc) — UI đọc bảng này để dựng thanh chọn chặng. */
 export const PROJECT_STAGES: {
-  level: 'p1' | 'p2' | 'p3' | 'p4'
+  level: 'p1' | 'p2' | 'p3' | 'p4' | 'p5'
   title: string
   steps: ProjectStep[]
 }[] = [
@@ -662,6 +664,7 @@ export const PROJECT_STAGES: {
   { level: 'p2', title: 'Chặng P2 — Sổ sách tử tế', steps: P2_PROJECT_STEPS },
   { level: 'p3', title: 'Chặng P3 — Lên web', steps: P3_PROJECT_STEPS },
   { level: 'p4', title: 'Chặng P4 — Có xương sống', steps: P4_PROJECT_STEPS },
+  { level: 'p5', title: 'Chặng P5 — Ra Internet', steps: P5_PROJECT_STEPS },
 ]
 
 const stepMap = new Map(PROJECT_STAGES.flatMap((stage) => stage.steps).map((s) => [s.id, s]))

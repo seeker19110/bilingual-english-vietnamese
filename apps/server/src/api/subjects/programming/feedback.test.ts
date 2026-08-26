@@ -85,9 +85,11 @@ describe('/api/programming/feedback — cổng vào', () => {
   })
 
   it('mã bài ĐÚNG KHUÔN nhưng chưa soạn bài đó → 400 và KHÔNG tiêu lượt', async () => {
-    // p6-u1-l1 hợp lệ theo regex nhưng bậc P6 chưa có nội dung — đây là ca mà chỉ Zod thôi
-    // KHÔNG chặn được, phải tra registry bài học thật.
-    const res = await handler(req({ kind: 'socratic_hint', lessonId: 'p6-u1-l1', code: 'x' }))
+    // p1-u99-l1 hợp lệ theo regex (`^p[1-6]-u\d+-l\d+$`) nhưng KHÔNG có trong registry —
+    // đây là ca mà chỉ Zod thôi KHÔNG chặn được, phải tra registry bài học thật.
+    // Trước PR-L19 mốc này là 'p6-u1-l1'; nay bậc P6 đã có nội dung nên phải đổi sang một
+    // unit không bao giờ tồn tại, để cổng vẫn kiểm đúng thứ nó sinh ra để kiểm.
+    const res = await handler(req({ kind: 'socratic_hint', lessonId: 'p1-u99-l1', code: 'x' }))
     expect(res.status).toBe(400)
     expect((await res.json()) as { error: string }).toMatchObject({
       error: expect.stringContaining('không tồn tại'),

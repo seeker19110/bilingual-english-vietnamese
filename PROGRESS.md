@@ -57,6 +57,136 @@ dọc" — sai với bối cảnh dùng thật (đang đi bộ ngoài đường,
   đo tương phản thủ công đều đạt · ngân sách: Initial JS 123,83 kB / 140 kB (88,5%), **CSS
   15,80 kB / 18 kB — KHÔNG tăng** (tái dùng utility sẵn có, không đẻ class mới).
 
+### feat(programming): MỞ BẬC P6 — 4 track chuyên sâu, HOÀN THÀNH MÔN LẬP TRÌNH P1→P6 (2026-08-26)
+
+Bậc cuối. Từ đây môn Lập trình **không còn unit nào rỗng ở bất kỳ bậc nào** — cổng
+`lessons.test.ts` nay kiểm điều đó cho cả sáu bậc, và mốc "nhánh rỗng" phải đổi sang một unit
+không bao giờ tồn tại (`p1-u99`) vì không còn unit thật nào để làm mốc.
+
+**Cảnh báo đã nêu, ghi lại để phiên sau không hiểu nhầm:** đặc tả gốc ghi bốn track P6 "soạn
+sau khi P1–P5 chạy thật với người học". Bậc này soạn TRƯỚC mốc đó theo yêu cầu trực tiếp của
+người dùng, nên nó là **bản mở đường**, chưa hiệu chỉnh theo dữ liệu người học thật, dễ phải
+sửa hơn P1–P5.
+
+- **Hiến chương bậc P6** — `docs/research/dac-ta-bac-p6-bon-track-va-ranh-gioi-ngon-ngu-2026-08-26.md`:
+  - **KHÔNG dựng judge server, kể cả ở P6** — xét lại đúng ở chỗ đặc tả gốc dành cho nó và vẫn
+    trả lời không, vì ba lý do có thật: VPS 3 vCPU/3GB đang chở web + Postgres + Redis + PM2
+    cluster · chạy code người lạ trên máy chủ mình là bề mặt tấn công lớn nhất dự án tự tạo ra,
+    cần đặc tả cô lập riêng · và cái người mới cần ở Go/Rust là CƠ CHẾ, không phải trình biên
+    dịch nói câu gì. Tài liệu ghi rõ **ba điều kiện đồng thời** để mở lại câu hỏi này.
+  - **Track Go và Rust dạy cơ chế bằng MÔ HÌNH chạy được, cú pháp thật ở làn C.** Học viên
+    không "viết Go" — họ viết bộ mô phỏng xen kẽ luồng, hoặc bộ kiểm quyền sở hữu. Bài nói
+    thẳng đó là mô hình và chỉ rõ chỗ mô hình khác thật; bước ⑦ là cài Go/Rust thật, đối chiếu
+    `go run -race` và mã lỗi E0382 / E0505.
+  - **Track AI: không proxy khoá LLM của học viên** (giữ luật P4 §5). Phần chấm được là TRUY
+    HỒI — cũng chính là phần quyết định chất lượng một hệ RAG; gọi LLM là bước cuối và dễ nhất.
+
+- **Phát hiện hạ tầng, đã KIỂM CHỨNG bằng cách chạy thật (không đoán):** trên Pyodide 314.0.5
+  của repo, `import threading` **thành công** nhưng `Thread.start()` ném
+  `RuntimeError: can't start new thread`. Nghĩa là bài dùng thread sẽ **XANH ở cổng CI** (python3
+  trên runner có thread thật) và **RỚT trên máy học viên** — khe hở mà cổng không bắt được, vì
+  cổng chạy đúng thứ bị hỏng ở nơi kia. **Luật mới của môn: nội dung không được dựa vào
+  `threading`/`multiprocessing`.** Đồng thời dạy bằng mô hình xen kẽ tất định — vốn còn hơn chạy
+  thật ở một điểm: cuộc đua TÁI LẬP ĐƯỢC, chỉ được vào đúng một lịch xen kẽ cụ thể.
+
+**Nội dung 4 bài, mỗi track một bài, tất cả chạy làn `python` — KHÔNG thêm hạ tầng nào:**
+U1 AI ứng dụng (RAG: cắt đoạn có chồng lấn · cosine · xếp hạng top-k; chấm điểm tới 3 chữ số
+thập phân để buộc tính cosine thật thay vì đếm từ trùng) → U2 backend cloud/Go (mô hình xen kẽ:
+`chung += 1` là ba vi-bước, lịch "AABABB" mất một lần tăng; kênh gom về một chủ sở hữu thì mọi
+lịch đều đúng) → U3 hệ thống/C→Rust (bộ kiểm quyền sở hữu: chuyển quyền · mượn · dùng sau khi
+chuyển; ca ẩn mượn hai lần trả một lần bắt lời giải dùng cờ thay vì bộ đếm) → U4 phỏng vấn
+thuật toán (Kadane O(n) + năm bước trả lời phỏng vấn + bẫy kinh điển toàn số âm).
+
+**Dự án trục KẾT THÚC Ở P5, không kéo sang P6** (§7 hiến chương) — `PROJECT_STAGES` dừng ở `p5`
+đúng như đặc tả dự án xuyên suốt đã chốt "milestone P5 = hoàn thành môn". Ghi ra để phiên sau
+không đi thêm `projectStepsP6.ts` cho đủ bộ.
+
+**Một cổng phải sửa vì nội dung mới làm nó hết đúng:** `feedback.test.ts` dùng `p6-u1-l1` làm
+mốc "mã bài đúng khuôn nhưng chưa soạn" — nay bài đó có thật nên cổng đo nhầm thứ. Đổi mốc sang
+`p1-u99-l1` (khớp regex, không bao giờ tồn tại). Đây là loại nợ mà chỉ chạy TOÀN BỘ test mới
+thấy, không phải chỉ test của gói đang sửa.
+
+**Kiểm chứng (chạy thật):** 456 file / **6025 test xanh** · branches **90,12%** (sàn 90 — sát
+sàn, xem nợ kỹ thuật #7) · typecheck · lint 0 cảnh báo · format · build. Cổng
+`lessonsPython.test.ts` chạy python3 thật cho cả 4 bài P6 (157 test). Mọi con số kỳ vọng
+(cosine 0.316 / 0.577 / 0.408, lịch xen kẽ, `Ket qua: 3/4`, Kadane −40) lấy từ lần chạy thật
+lúc soạn.
+
+**Nợ / việc còn lại của môn:** không còn bậc nào chưa mở. Còn lại là việc _sau khi có người học
+thật_: hiệu chỉnh nội dung P6 theo chỗ họ vấp · hạ tầng làn C cho milestone P5 (kiểm URL sống
+bằng fetch HEAD phía server, có rate-limit) · mở dự án trục T2/T3 (hiện chỉ T1 khả dụng).
+
+### feat(programming): ĐÓNG TRỌN BẬC P5 — hiến chương "đo được thì mới dạy được" + 9 bài + chặng dự án cuối (2026-08-26)
+
+Bậc P5 xong nghĩa là môn Lập trình có **trọn vẹn đường đi P1 → P5** — từ dòng `print` đầu tiên
+tới một API có ràng buộc, có giao dịch, có chống injection và sẵn sàng ra Internet. **Không có
+hạ tầng mới nào** ở PR này: bốn làn đã dựng ở P4 (`python` · `sql` · `apisim` · `pytest`) chở
+đủ toàn bộ nội dung. Thứ phải chốt trước là CÁCH CHẤM, không phải engine.
+
+- **Hiến chương bậc P5** — `docs/research/dac-ta-bac-p5-deploy-va-lan-c-2026-08-26.md`:
+  - **Luật số 1: chấm bằng PHÉP ĐẾM, không bằng ĐỒNG HỒ.** Bài đầu bậc là big-O, và phản xạ tự
+    nhiên là cho học viên bấm giờ rồi chấm "phải nhanh hơn X giây". Cấm — cùng một code chạy
+    trên Pyodide điện thoại và trên runner CI lệch nhau cả chục lần (test flaky, Tầng 1b của
+    `QUY-TRINH-AUDIT.md`), và big-O vốn nói về _tốc độ tăng_ chứ không nói về giây. Đồng hồ để
+    NHÌN THẤY (bước ③ và ⑦), bộ đếm thao tác để CHẤM (bước ⑥).
+  - **Deploy vẫn KHÔNG mô phỏng** (giữ nguyên quyết định của hiến chương P4 §5). Cách thi hành:
+    tách phần đo được ra khỏi phần không đo được — U8 chấm thứ quyết định 90% ca deploy hỏng
+    thật (ứng dụng đọc cấu hình từ `os.environ`, bí mật không nằm trong code), còn thao tác trên
+    nền tảng + URL sống thuộc làn C, tự khai + bằng chứng, **không chấm hộ**.
+  - **Kết luận đóng một câu hỏi để ngỏ từ đặc tả gốc:** KHÔNG cần judge server đa ngôn ngữ ở P5.
+    Nó chỉ cần khi mở track Java/Go/C ở P6, và lúc đó phải có đặc tả riêng về cô lập tiến trình.
+  - Bảo mật dạy bằng CHÍNH lỗi của mình: cho nổ trước, vá sau. XSS chỉ dạy nhận biết + về nhà,
+    vì bộ chạy DOM của môn không dựng được ca nổ trung thực — không chấm thứ mình không kiểm
+    chứng được.
+
+**Nội dung 9 bài (mỗi unit một bài):** U1 big-O (đếm so sánh: tuyến tính 1.000 vs nhị phân 10)
+→ U2 tìm kiếm & sắp xếp (sắp xếp CHÈN chứ không phải CHỌN — chọn luôn tốn đúng n(n-1)/2 nên học
+viên tính nhẩm ra số mà không cần viết thuật toán) → U3 stack/queue/hash/đệ quy → U4 cây & đồ
+thị (BFS tìm đường ngắn nhất trên bản đồ tuyến xe) → U5 thiết kế CSDL (`sql`: chuẩn hoá, khoá
+ngoại, index, giao dịch) → U6 bảo mật (`python`: SQL injection + hash mật khẩu có muối) → U7
+hiệu năng (O(n×m) → bảng băm trên 10.000 dòng) → U8 deploy (cấu hình từ môi trường, che bí mật
+trong log) → U9 milestone (`apisim`: API đăng ký lớp — chỗ có hạn, ràng buộc ở tầng CSDL, giao
+dịch, tham số `?`).
+
+**Chặng P5 của dự án trục — 5 bước** (`projectStepsP5.ts`), là chặng CUỐI của môn: dựng lại CSDL
+quán có khoá ngoại/CHECK/khoá chính ghép + giao dịch → đăng nhập chủ quán (pbkdf2 có muối) → đo
+và sửa điểm chậm của báo cáo 10.000 đơn (300.000 → 10.000 thao tác) → cấu hình sẵn sàng deploy →
+**milestone**: API cửa hàng đặt món/trừ kho/báo cáo, kèm yêu cầu làn C (URL https sống + bảng
+biến môi trường + log khởi động). Luật tiền của quán giữ nguyên từ chặng P1.
+
+**Quyết định soạn đáng ghi lại (đều rút từ thứ suýt sai khi làm):**
+
+- **Bộ đếm dùng để chấm phải PHỤ THUỘC DỮ LIỆU.** Bản nháp U2 dùng sắp xếp chọn — số so sánh
+  luôn là n(n-1)/2, tức học viên đoán ra đáp án mà không cần viết thuật toán. Đổi sang sắp xếp
+  chèn thì số đếm chỉ ra đúng khi thật sự chạy đúng thuật toán.
+- **Đồ thị của U4 dựng để mỗi cặp trạm có ĐÚNG MỘT đường ngắn nhất** — đã vét cạn mọi đường đi
+  khi soạn. Có hai đường cùng độ dài thì kết quả phụ thuộc thứ tự duyệt hàng xóm và test-case
+  so chuỗi trở thành test flaky theo cách soạn. Thứ tự hàng xóm cũng cố tình đặt đường DÀI
+  trước, để lời giải đi theo chiều sâu bị bắt.
+- **Danh sách in trong ngoặc vuông** (`Hang cho: [ca phe]`) ở U3: chấm "contains" trên chuỗi
+  trần thì lời giải thừa phần tử vẫn đạt.
+- **Test-case bảo mật phải TÁCH ĐƯỢC hai lời giải cùng "chạy đúng".** Ca `chu_quan' --` cho lời
+  giải ghép chuỗi đăng nhập thành công không cần mật khẩu, lời giải dùng tham số `?` thì từ
+  chối — đã chạy thật cả hai bản khi soạn để chắc ca này thật sự phân biệt được.
+- **U6 chuyển từ làn `apisim` (dự kiến trong hiến chương) sang làn `python`** khi thi hành: bộ
+  API giả lập của môn chưa có header, nên kể chuyện `Authorization: Bearer …` trên nó là bịa,
+  vi phạm luật 1 của hiến chương P4. Phần phiên đăng nhập qua header để ở bước ⑦, làn C. Hiến
+  chương đã sửa lại cho khớp thực tế thi hành.
+
+**Kiểm chứng (chạy thật, không suy đoán):** trên nhánh trước khi gộp — 452 file / 5936 test
+xanh, branches 90,27%. **Sau khi gộp `main` (đã có #691 chia sẻ vị trí): 456 file / 5996 test
+xanh, branches 90,13%** (sàn 90 — biên độ mỏng đi vì #691, xem nợ kỹ thuật #7). Cổng
+`lessonsPython.test.ts` chạy python3 thật cho
+8 bài Python/apisim + cả 5 bước dự án chặng P5; `lessonsSql.test.ts` chạy SQLite thật cho bài
+U5. Mọi con số kỳ vọng trong test-case (1.005.000 thao tác · 63.112 phép so sánh · mã băm
+`114eaa6eba7a4653` · doanh thu 134.000) đều lấy từ lần chạy thật lúc soạn, không tính tay.
+Initial JS 123,39kB/140kB (88,1%) — nội dung bài học nạp trễ nên không đụng ngân sách gói đầu.
+
+**Nợ / việc còn lại của môn:** bậc P6 (4 track chuyên sâu: AI ứng dụng · backend cloud Go · hệ
+thống C/Rust · luyện phỏng vấn thuật toán) — theo đặc tả gốc, chỉ soạn sau khi P1–P5 chạy thật
+với người học. Hạ tầng làn C cho milestone (kiểm URL sống bằng fetch HEAD phía server, có
+rate-limit) chưa dựng — hiện phần này là tự khai + Companion soát bằng chứng.
+
 ### feat(location): "Đi chung" — chia sẻ vị trí thời gian thực với bạn bè (2026-08-26)
 
 Tính năng mới cho trụ nền tảng: nhóm bạn đi chơi chung thấy nhau trên bản đồ Google Maps để
