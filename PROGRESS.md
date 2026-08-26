@@ -8,6 +8,47 @@
 
 ## Giai đoạn hiện tại
 
+### feat(programming): PR-UX1 — vá 2 lỗi giao diện môn Lập trình (2026-08-26)
+
+Đợt thi hành đầu của đặc tả UI/UX (PR-UX0). Cố ý nhỏ: sửa lỗi thật trước, dọn nền và dựng lại
+trang môn để các PR sau.
+
+- **Vá V2 — nút Quay lại đi sai bậc.** `ProgrammingLessonPage` ghi cứng `nav('/lap-trinh/p1')`,
+  nên học xong bài P3/P4/P5 bấm Quay lại là rơi về bậc P1. Thêm `getLevelIdOfLesson()` trong
+  `curriculum.ts` (suy bậc từ mã bài) — mã lạ thì trả `undefined` và trang lùi về `/lap-trinh`,
+  **tuyệt đối không đoán bừa một bậc**. Khoá bằng 3 unit test + 1 e2e đi từ bài `p3-u10-l1`.
+- **Vá V7 — ngôn ngữ bài không hiện ra.** Component mới `components/programming/LangBadge.tsx`
+  hiện huy hiệu ngôn ngữ ở danh sách bài (trang bậc) và đầu trang bài học. Học viên biết sắp
+  viết Python hay SQL **trước** khi bấm vào.
+- **Phát hiện khi làm: nay có 11 ngôn ngữ, không phải 7** — bậc P4 đã thêm `pytest`, `httpsim`,
+  `apisim`, `typescript`. Typecheck bắt được ngay vì `Record<Lang, …>` đòi đủ khoá. Đã tách hằng
+  `LESSON_LANGUAGES` trong `lessonTypes.ts` (schema và giao diện dùng CHUNG một danh sách), và
+  `LangBadge.test.tsx` duyệt qua chính hằng đó → **thêm ngôn ngữ mà quên nhãn là CI đỏ**, không
+  lặng lẽ render huy hiệu trống.
+- **Luật "không giả vờ" áp cho giao diện:** 5 làn chạy trên module giả lập (`pytest`, `httpsim`,
+  `apisim`, `fetch`, `git`) tự khai "· mô phỏng" ngay trên huy hiệu. Chấm màu ngôn ngữ là
+  `aria-hidden` — tên luôn hiện bằng chữ, **màu không bao giờ là kênh thông tin duy nhất**.
+
+**Kiểm chứng (chạy thật, không đoán):** build ✅ · typecheck ✅ · lint ✅ 0 cảnh báo · format ✅ ·
+**457 file / 6031 test xanh** · e2e `programming-lesson` **27/27** · a11y **267/267, 0 vi phạm**
+(15 trang × 5 theme, cả A/AA lẫn AAA).
+
+**Hai ghi chú vận hành cho phiên sau:**
+
+1. **Ngân sách bundle nay RỘNG, nợ kỹ thuật #7 đã lạc hậu.** Đo thật: Initial JS 123,62/140 kB
+   (dư ~11,7%), CSS 15,71/18 kB (dư ~12,7%) — không còn cảnh "99,7%" như mục nợ đang ghi.
+2. **`npm ci` lại SAU KHI merge `main`, không chỉ ở đầu phiên.** PR #691 thêm gói
+   `@dhcb/core-location`; container cài dependencies trước lúc merge nên build đỏ với 4 lỗi
+   `Cannot find module` trông như lỗi code. Chạy lại `npm ci` là xanh. Cùng họ với bài học
+   "công cụ phải khớp lockfile" ở CLAUDE.md mục 8.
+
+**Ba quyết định UI/UX người dùng đã chốt (ghi vào §9 đặc tả):** (1) câu "chưa ai đi hết môn"
+chỉ đặt ở trang giới thiệu, không rải khắp nơi; (2) `/lap-trinh/gioi-thieu` **mở cho người chưa
+đăng nhập** (đặt ngoài `RequireAuth`); (3) giữ nguyên thứ tự 5 PR.
+
+**Tiếp theo:** PR-UX2 — tách `components/programming/` (`CodeSurface`, `RunOutput`, `StepBar`),
+gọt `ProgrammingLessonPage` từ 662 dòng xuống dưới 400, không đổi hành vi.
+
 ### docs(programming): PR-UX0 — ĐẶC TẢ UI/UX môn Lập trình (2026-08-26)
 
 Tài liệu, **không sửa code**. Môn Lập trình nay đủ nội dung (60 bài, P1→P6) nhưng chưa từng có

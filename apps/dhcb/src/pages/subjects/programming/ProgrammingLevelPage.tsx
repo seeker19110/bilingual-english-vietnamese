@@ -7,6 +7,7 @@ import { useNavigate, useParams, Navigate } from 'react-router-dom'
 import { BookOpen, Hammer, Trophy, Lock, CheckCircle2, Play } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
+import LangBadge from '../../../components/programming/LangBadge'
 import { useAuth } from '../../../context/useAuth'
 import {
   fetchProgress,
@@ -127,17 +128,22 @@ export default function ProgrammingLevelPage() {
                   </p>
                 )}
                 {lessons.map((lesson) => (
-                  <button
-                    key={lesson.id}
-                    onClick={() => nav(`/lap-trinh/bai-hoc/${lesson.id}`)}
-                    className="tap-44 w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition active:scale-[0.98]"
-                  >
-                    <span className="flex items-center gap-2">
-                      <Play className="w-4 h-4" />
-                      <span>Học bài: {lesson.title}</span>
-                    </span>
-                    {isLessonCompleted(progress, lesson.id) && <CheckCircle2 className="w-4 h-4" />}
-                  </button>
+                  <div key={lesson.id} className="space-y-1.5">
+                    {/* Ngôn ngữ hiện TRƯỚC khi bấm (PR-UX1) — học viên biết sắp viết gì. */}
+                    <LangBadge language={lesson.language} />
+                    <button
+                      onClick={() => nav(`/lap-trinh/bai-hoc/${lesson.id}`)}
+                      className="tap-44 w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition active:scale-[0.98]"
+                    >
+                      <span className="flex items-center gap-2 min-w-0">
+                        <Play className="w-4 h-4 shrink-0" />
+                        <span className="truncate">Học bài: {lesson.title}</span>
+                      </span>
+                      {isLessonCompleted(progress, lesson.id) && (
+                        <CheckCircle2 className="w-4 h-4 shrink-0" />
+                      )}
+                    </button>
+                  </div>
                 ))}
               </div>
             )

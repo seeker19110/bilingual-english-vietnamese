@@ -26,6 +26,7 @@ import {
 } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
+import LangBadge from '../../../components/programming/LangBadge'
 import CodeEditor from '../../../components/CodeEditor'
 import { useAuth } from '../../../context/useAuth'
 import { runLessonCode, resetLessonRunners } from '../../../lib/codeRunner'
@@ -39,6 +40,7 @@ import {
   type CodeFeedbackKind,
 } from '../../../lib/programmingFeedback'
 import { getLesson } from '@dhcb/subject-programming/lessons'
+import { getLevelIdOfLesson } from '@dhcb/subject-programming/curriculum'
 // fetchGia chứ KHÔNG phải fetchPrelude: prelude kéo theo linkedom (~94KB gzip) — thư viện đó
 // chỉ được nằm trong worker, lọt vào đây là nổ ngân sách Initial JS.
 import { FETCH_SHIM_JS } from '@dhcb/subject-programming/fetchGia'
@@ -174,13 +176,30 @@ export default function ProgrammingLessonPage() {
   }
 
   const current = STEPS[step]!
+  const levelId = getLevelIdOfLesson(lesson.id)
+  const backTo = levelId ? `/lap-trinh/${levelId}` : '/lap-trinh'
 
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
-      <Layout onBack={() => nav('/lap-trinh/p1')} />
+      {/* Quay lại ĐÚNG bậc của bài đang học (PR-UX1). Trước đây ghi cứng '/lap-trinh/p1' nên
+          học xong bài P5 bấm quay lại là rơi về bậc P1. Mã bài lạ → lùi về trang môn. */}
+      <Layout onBack={() => nav(backTo)} />
 
       <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-5">
         <PageHeader title={lesson.title} subtitle={`Bài học unit ${lesson.unitId.toUpperCase()}`} />
+
+        {/* Ngôn ngữ của bài + lối về đúng bậc (PR-UX1). */}
+        <div className="flex items-center gap-2 flex-wrap -mt-3">
+          <LangBadge language={lesson.language} />
+          {levelId && (
+            <button
+              onClick={() => nav(backTo)}
+              className="tap-44 text-[11px] font-semibold text-zinc-400 hover:text-white underline underline-offset-2 transition"
+            >
+              Bậc {levelId.toUpperCase()}
+            </button>
+          )}
+        </div>
 
         {/* Thanh bước */}
         <nav aria-label="Các bước bài học" className="flex gap-1.5 overflow-x-auto pb-1">

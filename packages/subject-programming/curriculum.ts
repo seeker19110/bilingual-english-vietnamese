@@ -375,6 +375,18 @@ export function getProgrammingLevel(levelId: string): ProgrammingLevel | undefin
   return levelMap.get(levelId.toLowerCase())
 }
 
+/**
+ * Suy BẬC từ mã bài học: 'p3-u9-l1' → 'p3'. Trả undefined nếu mã không đúng khuôn hoặc
+ * bậc không tồn tại.
+ *
+ * Có hàm này để giao diện không phải đoán bậc bằng cách ghi cứng — lỗi PR-UX1 vá chính là
+ * `ProgrammingLessonPage` luôn quay lại '/lap-trinh/p1' kể cả khi đang học bài P5.
+ */
+export function getLevelIdOfLesson(lessonId: string): ProgrammingLevelId | undefined {
+  const prefix = lessonId.toLowerCase().split('-')[0]
+  return PROGRAMMING_LEVEL_IDS.find((id) => id === prefix)
+}
+
 /** Ba phương án dự án trục — học viên chọn 1 lúc vào môn (MVP mới mở T1). */
 export interface ProjectTrack {
   id: 'T1' | 'T2' | 'T3'

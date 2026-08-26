@@ -5,6 +5,7 @@ import {
   PROGRAMMING_LEVEL_IDS,
   PROJECT_TRACKS,
   getProgrammingLevel,
+  getLevelIdOfLesson,
 } from './curriculum.js'
 
 describe('programming curriculum', () => {
@@ -36,6 +37,30 @@ describe('programming curriculum', () => {
   it('getProgrammingLevel không phân biệt hoa thường và trả undefined khi id lạ', () => {
     expect(getProgrammingLevel('P1')?.name).toBe('Nhập môn tư duy')
     expect(getProgrammingLevel('p9')).toBeUndefined()
+  })
+
+  it('getLevelIdOfLesson suy đúng bậc từ mã bài — mọi bậc, không riêng p1', () => {
+    expect(getLevelIdOfLesson('p1-u4-l1')).toBe('p1')
+    expect(getLevelIdOfLesson('p3-u9-l1')).toBe('p3')
+    expect(getLevelIdOfLesson('p6-u1-l1')).toBe('p6')
+    // Hoa thường không ảnh hưởng — khớp cách getProgrammingLevel cư xử.
+    expect(getLevelIdOfLesson('P5-U2-L1')).toBe('p5')
+  })
+
+  it('getLevelIdOfLesson trả undefined với mã lạ, không rơi về p1', () => {
+    // Đây là bất biến chặn lỗi V2 tái phát: sai mã thì phải nói KHÔNG BIẾT,
+    // tuyệt đối không đoán bừa một bậc nào đó.
+    expect(getLevelIdOfLesson('p9-u1-l1')).toBeUndefined()
+    expect(getLevelIdOfLesson('khong-phai-ma-bai')).toBeUndefined()
+    expect(getLevelIdOfLesson('')).toBeUndefined()
+  })
+
+  it('mọi bài đã soạn đều suy được về bậc có thật', () => {
+    for (const level of PROGRAMMING_LEVELS) {
+      for (const unit of level.units) {
+        expect(getLevelIdOfLesson(`${unit.id}-l1`)).toBe(level.id)
+      }
+    }
   })
 
   it('MVP chỉ mở track T1', () => {

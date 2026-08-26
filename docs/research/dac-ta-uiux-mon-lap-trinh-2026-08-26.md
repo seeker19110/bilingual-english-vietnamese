@@ -170,15 +170,32 @@ trên nền giấy. Học viên phân biệt "đang đọc" với "đang nhìn m
 
 `amber` ≠ `red` là quyết định sư phạm (N5), phải giữ nhất quán tuyệt đối.
 
-### 4.3. Huy hiệu ngôn ngữ (mới — vá V7)
+### 4.3. Huy hiệu ngôn ngữ (ĐÃ THI HÀNH ở PR-UX1 — vá V7)
 
-7 giá trị `language` mỗi cái một huy hiệu nhỏ hiện ở **danh sách bài** và **đầu bài học**:
+**11** giá trị `language` (không phải 7 như bản nháp đầu — bậc P4 đã thêm 4 làn mới), mỗi cái
+một huy hiệu nhỏ hiện ở **danh sách bài** và **đầu bài học**:
 
-`python` Python · `javascript` JavaScript · `sql` SQL · `html` HTML/CSS ·
-`dom` JS trên trang · `fetch` JS gọi API · `git` Git (mô phỏng)
+| Mã           | Nhãn              | Mô phỏng?                          |
+| ------------ | ----------------- | ---------------------------------- |
+| `python`     | Python            | —                                  |
+| `pytest`     | Python · pytest   | ✔ bộ chạy tự viết                  |
+| `httpsim`    | Python · gọi API  | ✔ `requests.py` nằm sẵn trong máy  |
+| `apisim`     | Python · dựng API | ✔ gói `fastapi/` nằm sẵn trong máy |
+| `typescript` | TypeScript        | — (biên dịch thật)                 |
+| `javascript` | JavaScript        | —                                  |
+| `sql`        | SQL               | — (SQLite WASM thật)               |
+| `html`       | HTML/CSS          | —                                  |
+| `dom`        | JS trên trang     | —                                  |
+| `fetch`      | JS gọi API        | ✔                                  |
+| `git`        | Git               | ✔                                  |
 
-Quy cách: pill `text-[11px]`, viền `zinc-700`, chữ `zinc-300`, kèm chấm màu riêng từng
-ngôn ngữ. Bài `git`/`fetch` **bắt buộc** kèm chữ "mô phỏng" — đúng luật "không giả vờ".
+Quy cách: pill `text-[11px]`, nền `zinc-950`, viền `zinc-700`, chữ `zinc-300`, kèm chấm màu
+`aria-hidden` — **màu không bao giờ là kênh thông tin duy nhất**, tên ngôn ngữ luôn hiện bằng
+chữ. Làn mô phỏng **bắt buộc** kèm "· mô phỏng" (luật "không giả vờ").
+
+Danh sách ngôn ngữ khai một chỗ (`LESSON_LANGUAGES` trong `lessonTypes.ts`) và `LangBadge.test.tsx`
+duyệt qua chính hằng đó — thêm ngôn ngữ mà quên nhãn thì **CI đỏ**, không lặng lẽ render huy
+hiệu trống.
 
 ### 4.4. Thanh tiến trình bậc — hình dạng "leo dốc"
 
@@ -409,13 +426,14 @@ Thứ tự cố ý: **sửa lỗi thật trước → dọn nền → thêm mớ
 
 ---
 
-## 9. Điều còn phải quyết (cần người dùng chốt)
+## 9. Ba quyết định đã chốt (người dùng duyệt 2026-08-26)
 
-1. **Câu "chưa ai đi hết môn" đặt ở đâu?** Đề xuất: chỉ ở trang giới thiệu (khối 6), không rải
-   lên trang môn hay trang bậc — nói một lần cho rõ, nhắc nhiều lần thành tự bôi xấu. Nhãn "bản
-   mở đường" của P6 là ngoại lệ, vì nó là cảnh báo có hệ quả thực tế cho người đang học.
-2. **Có mở `/lap-trinh/gioi-thieu` cho người chưa đăng nhập không?** Đề xuất: **có** — đây
-   là trang bán hàng của môn, bắt đăng nhập mới xem là tự chặn người mới. Cần thêm ngoại lệ
-   `RequireAuth` cho riêng route này.
-3. **Thứ tự PR** — có muốn đảo UX3 (trang giới thiệu) lên trước UX2 (dọn nền) để thấy kết
-   quả nhìn được sớm hơn không?
+1. **Câu "chưa ai đi hết môn" chỉ xuất hiện ở trang giới thiệu** (§6 khối 6) — nói một lần cho
+   rõ, không rải lên trang môn hay trang bậc; nhắc nhiều lần thành tự bôi xấu. Ngoại lệ duy
+   nhất: nhãn "bản mở đường" của P6, vì đó là cảnh báo có hệ quả thực tế cho người đang học.
+2. **`/lap-trinh/gioi-thieu` mở cho người CHƯA đăng nhập.** Đây là trang bán hàng của môn; bắt
+   đăng nhập mới xem là tự chặn người mới. Thi hành: đặt route NGOÀI `RequireAuth` (khác 6 route
+   còn lại của môn). Hệ quả phải xử lý ở PR-UX3: trang không được gọi API cần token, và nút hành
+   động cuối trang phải dẫn qua đăng nhập rồi mới vào bài.
+3. **Giữ nguyên thứ tự 5 PR** ở §8: sửa lỗi thật trước → dọn nền → thêm trang mới → dựng lại
+   trang môn → màn bài học.
