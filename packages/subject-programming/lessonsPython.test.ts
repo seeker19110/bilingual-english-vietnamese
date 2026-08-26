@@ -13,9 +13,9 @@
 // cũng có). KHÔNG có python3 → test tự bỏ qua kèm cảnh báo, KHÔNG làm đỏ CI oan.
 import { describe, expect, it } from 'vitest'
 import { execFileSync, spawnSync } from 'node:child_process'
-import { mkdtempSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { PROGRAMMING_LESSONS } from './lessons.js'
 import { laLanPython, fileCuaLan, noiCodeTheoLan, type PythonLane } from './pyLanes.js'
 import { PROJECT_STAGES, getStepLanguage, type ProjectStep } from './projectSteps.js'
@@ -44,7 +44,11 @@ function thuMucCuaLan(lane: PythonLane): string {
   }
   const dir = mkdtempSync(join(tmpdir(), `dhcb-lan-${lane}-`))
   for (const [name, content] of Object.entries(files)) {
-    writeFileSync(join(dir, name), content, 'utf8')
+    // Tên có "/" = một GÓI Python (fastapi/__init__.py) — tạo thư mục cha trước, y hệt
+    // cách worker Pyodide dựng workspace trong trình duyệt.
+    const dich = join(dir, name)
+    mkdirSync(dirname(dich), { recursive: true })
+    writeFileSync(dich, content, 'utf8')
   }
   LANE_DIRS.set(lane, dir)
   return dir

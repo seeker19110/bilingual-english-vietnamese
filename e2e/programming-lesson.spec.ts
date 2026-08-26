@@ -462,3 +462,18 @@ test('bài pytest p4-u6-l1: bộ chạy rút gọn hoạt động thật trong P
   await page.getByRole('button', { name: 'Chấm bài' }).click()
   await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 120_000 })
 })
+
+// PR-L15 — LÀN APISIM. Khác làn pytest ở một điểm hạ tầng: module được ghi vào workspace nằm
+// trong THƯ MỤC CON (fastapi/__init__.py + fastapi/testclient.py, để `from fastapi.testclient
+// import TestClient` gõ đúng như FastAPI thật). Hệ thống file trong bộ nhớ của Pyodide không
+// tự tạo thư mục cha, nên đường này phải được chứng minh trong trình duyệt thật.
+test('bài apisim p4-u8-l1: gói fastapi giả lập nạp được trong Pyodide', async ({ page }) => {
+  test.setTimeout(180_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p4-u8-l1', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page.getByRole('button', { name: 'Xem code mẫu' }).click()
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 120_000 })
+})

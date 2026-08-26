@@ -98,9 +98,14 @@ _dhcb_p.mkdir(parents=True, exist_ok=True)
 
 _dhcb_map = json.loads(_dhcb_files_json)
 for _name, _content in _dhcb_map.items():
-    (_dhcb_p / _name).write_text(_content, encoding="utf-8")
+    _dhcb_f = _dhcb_p / _name
+    # Ten co dau "/" nghia la mot GOI Python (vd fastapi/__init__.py) — phai tao thu muc cha
+    # truoc, neu khong Python bao khong tim thay duong dan va ca luot cham hong.
+    _dhcb_f.parent.mkdir(parents=True, exist_ok=True)
+    _dhcb_f.write_text(_content, encoding="utf-8")
     if _name.endswith(".py"):
         sys.modules.pop(_name[:-3], None)
+        sys.modules.pop(_name.split("/")[0], None)
 
 if _dhcb_dir in sys.path:
     sys.path.remove(_dhcb_dir)
