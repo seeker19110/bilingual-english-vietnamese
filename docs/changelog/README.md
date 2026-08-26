@@ -25,8 +25,11 @@ NNNN-YYYY-MM-DD-slug.md
 - `YYYY-MM-DD` — ngày làm đợt việc đó.
 - `slug` — chữ thường không dấu, nối bằng dấu gạch ngang.
 
-Hai PR song song có thể cùng lấy một số — **không sao**: slug khác nhau nên tên file khác nhau,
-git vẫn không xung đột. Thứ tự trong cùng một ngày hiếm khi quan trọng.
+Hai PR song song có thể cùng lấy một số, và git sẽ KHÔNG xung đột (slug khác nhau nên tên file
+khác nhau) — nhưng test `scripts/changelog.test.ts` yêu cầu số **tăng nghiêm ngặt**, nên PR nào
+merge sau sẽ đỏ CI. Cách xử lý: sau khi merge nhánh chính vào, chạy lại `npm run changelog` xem
+số kế tiếp rồi **đổi tên file của mình lên số đó** (nhớ sửa cả tiêu đề `#` bên trong file).
+Đã dính thật ở PR #703 (trùng số 0154 với PR rate-limit merge trước).
 
 Bất biến này được canh bằng test: `scripts/changelog.test.ts`.
 
