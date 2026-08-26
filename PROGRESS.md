@@ -8,6 +8,40 @@
 
 ## Giai đoạn hiện tại
 
+### docs(programming): PR-UX0 — ĐẶC TẢ UI/UX môn Lập trình (2026-08-26)
+
+Tài liệu, **không sửa code**. Môn Lập trình nay đủ nội dung (60 bài, P1→P6) nhưng chưa từng có
+đợt thiết kế giao diện riêng: đặc tả gốc `dac-ta-mon-lap-trinh-2026-08-24.md` chỉ có MỘT dòng
+về UI ("tái dùng khuôn `CefrLevelPage`" của môn English). Nên 6 trang hiện có là giao diện chức
+năng mượn từ môn khác — chạy được, nhưng không phải thiết kế cho lập trình.
+
+- **Đặc tả mới:** `docs/research/dac-ta-uiux-mon-lap-trinh-2026-08-26.md` — chẩn đoán 8 vấn đề
+  đo được, 7 nguyên tắc thiết kế riêng của môn, 3 bề mặt thị giác (Giấy / Bảng đen / Bàn làm
+  việc), đặc tả từng màn, **nguyên văn trang mô tả khoá học & mục tiêu**, 12 tiêu chí nghiệm
+  thu, kế hoạch 5 PR nhỏ.
+- **Hai lỗi thật phát hiện khi rà (chưa sửa, để PR-UX1):**
+  1. `ProgrammingLessonPage.tsx:180` ghi cứng `nav('/lap-trinh/p1')` — học bài P3/P4/P5 xong bấm
+     quay lại thì rơi về bậc P1.
+  2. `ProgrammingHome` không đọc tiến độ → **không có thẻ "Học tiếp"**. Học viên quay lại phải
+     tự nhớ mình đang ở bài nào, bấm 3 lần mới tới nơi (môn English có, môn Lập trình không).
+     Đây là khiếm khuyết nặng nhất về giữ chân người học.
+- **Bài học quy trình, ghi lại vì suýt hỏng đặc tả:** phiên này ban đầu đếm được 35 bài và viết
+  cả một đặc tả quanh giả định "P4–P6 chưa soạn". Sai — container clone repo TRƯỚC khi PR #690–#692
+  merge, nên `git log` local tụt 3 commit so với `origin/main`. Người dùng chỉ ra thì mới lộ.
+  **Luật rút ra: `git fetch origin main` NGAY ĐẦU PHIÊN trước khi đếm bất cứ thứ gì trong repo** —
+  "đọc file thật" (CLAUDE.md mục 5) không đủ nếu bản sao đã cũ.
+- **Luật số 1 của thiết kế (N1) sau khi sửa:** nội dung đã đủ nên luật "nói thật" không còn nhắm
+  vào số bài, mà vào **mức độ đã kiểm chứng** — trang giới thiệu phải tự nói _chưa ai đi hết môn
+  này_, mốc thời lượng là ước tính, và P6 mang nhãn "bản mở đường". Mọi con số phải sinh từ dữ
+  liệu, viết tay là vi phạm (tiêu chí A11).
+- **Ràng buộc đã tính:** không thêm dependency nào (ngân sách bundle chỉ còn 0,3% — nợ kỹ thuật
+  #7); route mới `/lap-trinh/gioi-thieu` phải vào `e2e/a11y.spec.ts` ngay trong PR tạo ra nó.
+
+**Còn chờ người dùng chốt (mục 9 của đặc tả):** (1) câu "chưa ai đi hết môn" đặt ở đâu; (2) trang
+giới thiệu có cho xem khi chưa đăng nhập không; (3) thứ tự thi hành 5 PR.
+
+**Tiếp theo:** PR-UX1 (hai vá nhỏ: nút quay lại + huy hiệu ngôn ngữ) sau khi người dùng chốt.
+
 ### feat(programming): MỞ BẬC P6 — 4 track chuyên sâu, HOÀN THÀNH MÔN LẬP TRÌNH P1→P6 (2026-08-26)
 
 Bậc cuối. Từ đây môn Lập trình **không còn unit nào rỗng ở bất kỳ bậc nào** — cổng
