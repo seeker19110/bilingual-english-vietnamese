@@ -11,10 +11,18 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "📍 VỊ TRÍ DỰ ÁN HIỆN TẠI"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-# Giai đoạn hiện tại
+# Đợt việc gần nhất — đọc THẲNG docs/changelog/ (từ 2026-08-26 nhật ký tách khỏi PROGRESS.md,
+# mỗi đợt một file, để hai PR song song không còn xung đột ở cùng một chỗ). File có SỐ LỚN NHẤT
+# là mới nhất; dòng đầu mỗi file là tiêu đề.
 echo ""
-echo "🎯 GIAI ĐOẠN:"
-grep "^## Giai đoạn hiện tại" PROGRESS.md -A 3 | tail -3
+echo "🎯 3 ĐỢT VIỆC GẦN NHẤT (docs/changelog/ — xem thêm: npm run changelog):"
+if [ -d docs/changelog ]; then
+  for f in $(ls docs/changelog/[0-9]*.md 2>/dev/null | sort -r | head -3); do
+    head -1 "$f" | sed 's/^# /   · /'
+  done
+else
+  echo "   (chưa có docs/changelog/)"
+fi
 
 echo ""
 echo "✅ ĐÃ XONG (xác nhận qua audit 2026-08-01, xem CLAUDE.md mục 13 + PROGRESS.md):"
