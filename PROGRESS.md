@@ -65,8 +65,10 @@ biến môi trường + log khởi động). Luật tiền của quán giữ ngu
   vi phạm luật 1 của hiến chương P4. Phần phiên đăng nhập qua header để ở bước ⑦, làn C. Hiến
   chương đã sửa lại cho khớp thực tế thi hành.
 
-**Kiểm chứng (chạy thật, không suy đoán):** 452 file / **5936 test xanh**; coverage branches
-90,27% (sàn 90) — nhỉnh hơn 90,24% trước đó. Cổng `lessonsPython.test.ts` chạy python3 thật cho
+**Kiểm chứng (chạy thật, không suy đoán):** trên nhánh trước khi gộp — 452 file / 5936 test
+xanh, branches 90,27%. **Sau khi gộp `main` (đã có #691 chia sẻ vị trí): 456 file / 5996 test
+xanh, branches 90,13%** (sàn 90 — biên độ mỏng đi vì #691, xem nợ kỹ thuật #7). Cổng
+`lessonsPython.test.ts` chạy python3 thật cho
 8 bài Python/apisim + cả 5 bước dự án chặng P5; `lessonsSql.test.ts` chạy SQLite thật cho bài
 U5. Mọi con số kỳ vọng trong test-case (1.005.000 thao tác · 63.112 phép so sánh · mã băm
 `114eaa6eba7a4653` · doanh thu 134.000) đều lấy từ lần chạy thật lúc soạn, không tính tay.
@@ -76,6 +78,31 @@ Initial JS 123,39kB/140kB (88,1%) — nội dung bài học nạp trễ nên kh�
 thống C/Rust · luyện phỏng vấn thuật toán) — theo đặc tả gốc, chỉ soạn sau khi P1–P5 chạy thật
 với người học. Hạ tầng làn C cho milestone (kiểm URL sống bằng fetch HEAD phía server, có
 rate-limit) chưa dựng — hiện phần này là tự khai + Companion soát bằng chứng.
+
+### feat(location): "Đi chung" — chia sẻ vị trí thời gian thực với bạn bè (2026-08-26)
+
+Tính năng mới cho trụ nền tảng: nhóm bạn đi chơi chung thấy nhau trên bản đồ Google Maps để
+không bị lạc, **bật/tắt chủ động**, và **tự tắt khi hết giờ**. Đặc tả đầy đủ:
+`docs/research/dac-ta-chia-se-vi-tri-2026-08-26.md`.
+
+- **Dùng lại hạ tầng sẵn có thay vì dựng mới:** WebSocket `/ws/location` đi đúng khuôn của chat
+  (auth qua cookie lúc upgrade, fan-out qua Redis pub/sub của `core-chat` nên chạy đúng với PM2
+  cluster 3 instance). Kênh theo CHUYẾN (`loc:session:<id>`) chứ không theo user.
+- **Luôn có đường lui:** mạng chặn WebSocket → client tự quay về polling REST 8 giây/lần; thiếu
+  `VITE_GOOGLE_MAPS_API_KEY` → vẫn còn danh sách khoảng cách + nút "Chỉ đường" mở Google Maps
+  (URL công khai, không cần key). Bản đồ nạp bằng thẻ script LƯỜI nên **không tốn ngân sách
+  bundle** (Initial JS 123,68 kB / 140 kB).
+- **Riêng tư là ràng buộc kỹ thuật, không phải lời hứa suông:** không có chế độ vĩnh viễn
+  (bắt buộc 1/4/8 giờ) · chỉ lưu vị trí MỚI NHẤT, không lưu lịch sử hành trình · tắt chia sẻ là
+  **xoá** dòng vị trí (không phải ẩn) + dừng GPS · mặc định TẮT · chế độ "gần đúng ~500m" làm
+  tròn Ở SERVER · nhật ký đồng thuận `consent_log` · job nền 15 phút dọn chuyến hết hạn.
+- **Chống lạc:** cảnh báo khi ai đó cách điểm hẹn (hoặc tâm nhóm) quá bán kính đặt trước, khoảng
+  cách tới từng người tính ngay trên máy, hiển thị mức pin của bạn bè, nút chỉ đường.
+- **Tiết kiệm pin:** chỉ gửi vị trí khi đã đi ≥ 20m hoặc quá 30 giây (`shouldSendUpdate`).
+- **Kiểm chứng:** 454 file / **5820 test xanh**, branches 90,12% · typecheck/lint sạch ·
+  `node dist-server/server.js` + `/api/health` → 200 với WS mới đã gắn.
+- **Còn để lại (ghi trong đặc tả mục 8):** chạy nền khi tắt màn hình (giới hạn của trình duyệt),
+  thông báo đẩy khi có người tụt lại, gộp nhịp cho nhóm > ~20 người.
 
 ### feat(programming): ĐÓNG TRỌN BẬC P4 — 4 làn hạ tầng mới + 12 bài + chặng dự án (2026-08-26)
 

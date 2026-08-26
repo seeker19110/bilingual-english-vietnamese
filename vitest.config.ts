@@ -83,6 +83,11 @@ export default defineConfig({
         // Worker & lưu trữ nhị phân trình duyệt (OPFS/IndexedDB).
         'apps/dhcb/src/lib/edgeAi/edgeModelStorage.ts',
         'apps/dhcb/src/lib/edgeAi/edgeAiService.ts',
+        // Nạp SDK ngoài (script tag Google Maps) + vỏ bọc WebSocket/geolocation của tính năng
+        // "Đi chung": logic THẬT (khoảng cách, làm mờ toạ độ, nhịp gửi tiết kiệm pin) nằm ở
+        // packages/core-location/geo.ts và ĐÃ có test riêng.
+        'apps/dhcb/src/lib/googleMapsLoader.ts',
+        'apps/dhcb/src/lib/locationShare.ts',
         // Gửi-rồi-quên / khởi tạo SDK ngoài.
         'apps/dhcb/src/lib/analytics.ts',
         'apps/dhcb/src/lib/errorTracking.ts',

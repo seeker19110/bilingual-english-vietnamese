@@ -10,6 +10,11 @@ interface ImportMetaEnv {
   readonly VITE_FACEBOOK_APP_ID: string
   readonly VITE_APPLE_CLIENT_ID: string
   readonly VITE_MICROSOFT_CLIENT_ID: string
+  // Google Maps JavaScript API key (bản đồ "Đi chung"). Public được — nhưng PHẢI khoá theo
+  // HTTP referrer + chỉ bật Maps JavaScript API trong Google Cloud Console, nếu không người
+  // khác dùng ké sẽ tính tiền vào tài khoản mình. Thiếu key thì app tự chuyển sang danh sách
+  // khoảng cách + nút mở Google Maps (xem components/location/LiveMap.tsx).
+  readonly VITE_GOOGLE_MAPS_API_KEY: string
 }
 
 interface ImportMeta {
