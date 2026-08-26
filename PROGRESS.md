@@ -982,6 +982,11 @@ lại có phải bug thật không rồi sửa riêng.
   **chưa biết môn Toán/KHTN bị sửa cụ thể những gì**. Bộ SGK Toán trong tay nay đã là **ấn bản
   chính thức** (không còn bản mẫu 2023), nhưng vẫn chưa có bản đối chứng của SGK chỉnh sửa theo
   TT 17/2025 — xem điểm cần giáo viên duyệt ở trên.
+- ⚠️ **[Sửa lại 2026-08-26] `packages/core-grading` KHÔNG CÒN TRONG REPO** — đã bị xoá ở đợt
+  cải tổ cấu trúc 2026-08-23 vì "mồ côi" (không gói nào import). Code còn nguyên trong lịch
+  sử git: 9 file tại commit `9fa6f59`, khôi phục bằng `git checkout 9fa6f59 -- packages/core-grading`
+  rồi gắn lại `package.json`/`tsconfig.json` composite + project reference. Phần mô tả ngay dưới
+  đây viết ở thì hiện tại là mô tả **code trong lịch sử**, không phải code đang có.
 - **✅ `packages/core-grading` — ENGINE CHẤM DÙNG CHUNG, ĐÃ VIẾT XONG + 74 test** (99% câu lệnh,
   90,6% nhánh — cao hơn ngưỡng chung của repo vì chấm sai làm mất niềm tin người học ngay).
   Đặc tả: `docs/research/dac-ta-engine-cham-dung-chung.md`. Không có AI trong luồng chấm; hàm
@@ -1115,6 +1120,21 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
 ## Tiếp theo
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
+
+- **[2026-08-26] 🔜 ĐANG CHỜ DUYỆT ĐỂ CODE — hai tính năng giữ chân đã có đặc tả đầy đủ.**
+  Đợt research-first 2026-08-26 (xem `docs/changelog/0155-*.md`). Người dùng đã chọn làm hai
+  việc này trước, đặc tả xong, **chưa viết dòng code nào**:
+  1. **Chế độ ôn thi có hạn chót** — `docs/research/dac-ta-che-do-on-thi-2026-08-26.md`.
+     4 PR: E1 `packages/core-examplan` (hàm thuần + 8 ca biên) → E2 migration `0069` + API →
+     E3 UI đếm ngược → E4 nối `requestRetention` của FSRS theo giai đoạn. Phạm vi đợt 1 chốt
+     cứng **một kỳ thi duy nhất**: vào lớp 10 — Tiếng Anh.
+  2. **Người thân theo dõi (báo cáo tuần cho phụ huynh)** —
+     `docs/research/dac-ta-nguoi-dong-hanh-2026-08-26.md`. 4 PR: C1 migration `0070` + service →
+     C2 `weeklyReport.ts` hàm thuần → C3 scheduler + gửi mail (có test idempotency đa tiến
+     trình) → C4 UI trong Hồ sơ.
+     **Điểm cần người dùng chốt trước khi bắt đầu E1:** kỳ thi đợt 1 có đúng là "vào lớp 10 — Tiếng
+     Anh" không (đây là giả định của AI, chọn vì môn Anh chín nhất và không phụ thuộc engine chấm
+     đang thiếu).
 
 - **[2026-08-03] Thưởng cho Huy hiệu & mốc (migration 0026) — ✅ XONG, admin cấu hình được.**
   Mỗi huy hiệu/mốc (19 huy hiệu hiện có, `src/data/achievements.ts`) tặng thêm N ngày gói
