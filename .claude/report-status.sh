@@ -38,14 +38,18 @@ echo "   3. 🟢 Facebook/Apple/Microsoft OAuth tạm hoãn thêm domain .org (�
 echo "   4. 🟢 PM2 cluster mode ĐÃ chạy song song thật — VPS nâng lên 3 vCPU / 3GB RAM" \
      "(2026-08-21), 3 instance khai thác đủ 3 core. Việc tách Postgres/Redis ra máy riêng vẫn" \
      "thuộc GĐ2 kế hoạch scale."
-echo "   5. 🔴 [xác nhận lại 2026-08-25 qua audit toàn diện] Model Gemini đổi khẩn cấp sang" \
-     "gemini-3.6-flash (PR #647, Google gỡ gemini-2.0-flash) — VẪN chưa xác nhận hoạt động," \
-     "baseline eval:tutor vẫn là bản 2026-08-21 (cũ hơn ngày đổi prompt/model 2026-08-24)." \
-     "Cần chạy tay: npm run eval:tutor -- --write-baseline với key thật trên VPS."
+echo "   5. 🟡 [2026-08-26] Model Gemini (gemini-3.6-flash, PR #647) ĐÃ XÁC NHẬN CHẠY THẬT trên" \
+     "production: trang Trạng thái tính năng lượt 07:00 26/8/2026 báo AI hội thoại — Google" \
+     "Gemini hoạt động 512ms (Groq 426ms, TTS 315ms, R2 817ms, SePay OK). Phần CÒN LẠI của" \
+     "nợ này: baseline eval:tutor vẫn là bản 2026-08-21, cũ hơn ngày đổi prompt/model 2026-08-24" \
+     "— gọi được API KHÔNG chứng minh chất lượng sư phạm không tụt. Cần chạy tay trên VPS:" \
+     "npm run eval:tutor -- --write-baseline (có key thật)."
 echo "   6. 🟡 [2026-08-25] nginx/en-vi.conf đã sửa trong repo (bỏ CSP-Report-Only lạc hậu còn" \
      "trỏ supabase) nhưng CHƯA áp lên VPS thật — cần copy + nginx -t + systemctl reload nginx."
-echo "   7. 🟡 [2026-08-25] Biên độ ngân sách mỏng: bundle JS dùng 99,7% ngưỡng, coverage" \
-     "branches chỉ dư 0,13 điểm. Chạy npm run budget để xem số hiện tại."
+echo "   7. 🟡 [đo lại 2026-08-26] Ngân sách BUNDLE nay RỘNG, không còn 99,7% như ghi trước:" \
+     "Initial JS 124,03/140 kB (dư ~11,4%), CSS 15,87/18 kB (dư ~11,8%) — ngưỡng đã được nới ở" \
+     "các PR gần đây mà mục nợ chưa cập nhật. Thứ VẪN mỏng là COVERAGE: branches 90,17% trên" \
+     "sàn 90 = dư 0,17 điểm, đủ để một PR quên viết test là CI đỏ. Chạy npm run budget để xem số hiện tại."
 
 # Git status
 echo ""

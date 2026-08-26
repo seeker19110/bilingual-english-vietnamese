@@ -134,6 +134,43 @@ pm2 set pm2-logrotate:compress true
 
 ---
 
+## Bước 3a — Tạo swap (làm TRƯỚC lần deploy đầu tiên)
+
+> **Vì sao bắt buộc, không phải "nên có".** Số đo thật trên VPS ngày 2026-08-26:
+>
+> ```
+> free -h  →  total 2.9Gi · used 1.1Gi · available 1.8Gi · Swap 0B
+> pm2 list →  3 instance dhcb: 218 + 218 + 231 MB (+ pm2-logrotate 57 MB)
+> ```
+>
+> Lúc rảnh thì dư dả. Nhưng `scripts/deploy.sh` chạy `npm ci` + `npm run build` **ngay trên
+> máy đang phục vụ** — Vite cộng `tsc -b` 16 workspace ngốn thêm 1–1,5 GB ở đỉnh. Cộng vào
+> 1,1 GB đang chạy là chạm trần 2,9 GB. Không có swap thì kernel gọi OOM killer, và OOM
+> killer **không chọn tiến trình "đáng chết"**: nó có thể giết PostgreSQL giữa lúc deploy.
+>
+> Swap không làm máy nhanh hơn. Nó đổi "OOM giết mất một dịch vụ" lấy "deploy chậm hơn vài
+> chục giây" — đó là toàn bộ mục đích.
+
+```bash
+cd /var/www/dhcb
+sudo bash scripts/setup-swap.sh 6G
+```
+
+Script tự kiểm đĩa còn trống (đòi dư ít nhất 2 GB sau khi trừ swap), hỏi xác nhận trước khi
+ghi, ghi `/etc/fstab` để swap sống qua reboot, và đặt `vm.swappiness=10` — kernel chỉ chạm
+vào swap khi RAM thật sự cạn, chứ không đẩy dữ liệu sang sớm làm chậm máy.
+
+Kiểm lại sau khi chạy:
+
+```bash
+free -h            # dòng Swap phải khác 0B
+swapon --show
+cat /proc/sys/vm/swappiness   # 10
+```
+
+Gỡ ra nếu cần: `sudo swapoff /swapfile && sudo rm -f /swapfile`, rồi xoá dòng `/swapfile`
+trong `/etc/fstab`.
+
 ## Bước 3b — Cài Redis local (bắt buộc trước khi bật cluster mode nhiều tiến trình)
 
 > Vì sao cần: cluster mode (`instances: 'max'` trong `ecosystem.config.cjs`) chạy N tiến
