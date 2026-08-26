@@ -12,6 +12,7 @@ import { runHtml } from './htmlRunner'
 import { runGit } from './gitRunner'
 import { runDom, resetDomWorker } from './domRunner'
 import { runFetchLesson, resetFetchWorker } from './fetchRunner'
+import { runTypeScript } from './tsRunner'
 import type { FetchApi } from '@dhcb/subject-programming/fetchPrelude'
 import { laLanPython, fileCuaLan, noiCodeTheoLan } from '@dhcb/subject-programming/pyLanes'
 
@@ -74,6 +75,14 @@ export function runLessonCode(
     // Bài HTML/CSS không có input() và không chạy script — "chạy" nghĩa là dựng cây DOM rồi
     // mô tả lại. Khung XEM TRANG là phần riêng của giao diện (iframe sandbox="").
     return runHtml(code)
+  }
+  if (language === 'typescript') {
+    // Kiểm kiểu ở server rồi chạy JavaScript sinh ra trong Worker JS đã có — xem tsRunner.ts.
+    const { stdinLines, onOutput } = options
+    return runTypeScript(code, {
+      ...(stdinLines ? { stdinLines } : {}),
+      ...(onOutput ? { onOutput } : {}),
+    })
   }
   if (language === 'sql') {
     // SQL không có input(): dữ liệu đã nằm sẵn trong CSDL mẫu (sqlDataset.ts).

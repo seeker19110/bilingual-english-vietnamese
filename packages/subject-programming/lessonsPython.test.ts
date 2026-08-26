@@ -174,19 +174,28 @@ describe.skipIf(!hasPython)('nội dung môn Lập trình chạy THẬT bằng p
   // LỌC THEO NGÔN NGỮ (PR-L8): từ chặng P3, dự án có bước HTML/DOM/SQL/fetch — chúng chạy
   // bằng engine khác và có cổng riêng (projectStepsP3.test.ts). Đưa chúng vào python3 thì
   // chỉ nhận về SyntaxError vô nghĩa.
-  const ALL_STEPS: ProjectStep[] = PROJECT_STAGES.flatMap((stage) => stage.steps).filter(
-    (s) => getStepLanguage(s) === 'python',
+  //
+  // PR-L17: chặng P4 có bước chạy bằng LÀN mở rộng (pytest/apisim) — vẫn cùng engine Python,
+  // nên chúng đi qua chính cổng này; thư mục của bước được ghi thêm module của làn.
+  const ALL_STEPS: ProjectStep[] = PROJECT_STAGES.flatMap((stage) => stage.steps).filter((s) =>
+    laLanPython(getStepLanguage(s)),
   )
 
   it.each(ALL_STEPS)('$id — code tham chiếu đạt HẾT milestone check', (step) => {
+    const lane = getStepLanguage(step) as PythonLane
     const dir = mkdtempSync(join(tmpdir(), `dhcb-step-${step.id}-`))
+    for (const [name, content] of Object.entries(fileCuaLan(lane))) {
+      const dich = join(dir, name)
+      mkdirSync(dirname(dich), { recursive: true })
+      writeFileSync(dich, content, 'utf8')
+    }
     for (const [path, content] of Object.entries(step.referenceFiles ?? {})) {
       writeFileSync(join(dir, path), content, 'utf8')
     }
     const mainFile = step.files?.[0] ?? 'cua_hang.py'
     writeFileSync(join(dir, mainFile), step.referenceCode, 'utf8')
 
-    const entry = step.probeCode ?? step.referenceCode
+    const entry = noiCodeTheoLan(lane, step.probeCode ?? step.referenceCode)
     const results = gradeAll(entry, step.checks, dir)
     expect(allTestsPassed(results), `Bước ${step.id}: ${describeFailures(results)}`).toBe(true)
   })

@@ -48,14 +48,30 @@ Luật kèm theo, không được vi phạm:
 | U10–U11 TypeScript  | A   | **cổng type-check phía SERVER** (`/api/ts-check`) dùng `typescript` đã có sẵn trong repo — KHÔNG nhét compiler TS vào bundle trình duyệt (ngân sách bundle đang ở 99,7%, xem nợ kỹ thuật #7)                                                           |
 | U12 milestone       | C   | dùng lại khuôn milestone tự khai của dự án trục                                                                                                                                                                                                        |
 
-## 4. Thứ tự PR (chia nhỏ, mỗi PR chạy được)
+## 4. Thứ tự thi hành (mỗi chặng chạy được độc lập)
 
-- **PR-L12** — U1–U4 (OOP + lỗi/logging). Làn A thuần, KHÔNG hạ tầng mới. ← chặng này
-- **PR-L13** — `pytestPrelude` + cổng CI + U5–U6
-- **PR-L14** — `httpSimPrelude` + U7
-- **PR-L15** — `apiSimPrelude` (định tuyến + SQLite) + U8–U9
-- **PR-L16** — `/api/ts-check` + làn TypeScript + U10–U11
-- **PR-L17** — bước dự án trục chặng P4 + U12 milestone
+- **L12** — U1–U4 (OOP + lỗi/logging). Làn A thuần, KHÔNG hạ tầng mới. ✅
+- **L13** — `pytestPrelude` + `pyLanes` + cổng CI + U5–U6. ✅
+- **L14** — `httpSimPrelude` + U7. ✅
+- **L15** — `apiSimPrelude` (định tuyến + SQLite) + U8–U9. ✅
+- **L16** — `/api/ts-check` + làn TypeScript + U10–U11. ✅
+- **L17** — bước dự án trục chặng P4 + U12 milestone. ✅
+
+### 4.1. Cơ chế chung của ba làn Python mở rộng (chốt khi thi hành L13)
+
+Ba làn `pytest` · `httpsim` · `apisim` KHÔNG đẻ thêm engine nào: chúng vẫn chạy trên đúng
+Python đã có (Pyodide ở trình duyệt, python3 ở cổng CI). Khác biệt duy nhất được khai báo ở
+**một chỗ** — `packages/subject-programming/pyLanes.ts`:
+
+- `fileCuaLan(lane)` — các module Python ghi vào thư mục làm việc trước khi chạy;
+- `noiCodeTheoLan(lane, code)` — phần nối THÊM VÀO CUỐI code học viên.
+
+Luật kèm theo, rút từ đúng thứ suýt sai khi làm: **không chèn prelude vào ĐẦU code học viên**
+— làm vậy số dòng trong traceback lệch đi và người mới sẽ đi tìm lỗi ở một dòng không tồn tại.
+Prelude luôn là FILE riêng; code học viên giữ nguyên dòng 1.
+
+Hệ quả hạ tầng: workspace (cả Pyodide lẫn cổng CI) nay **tạo được thư mục con**, vì
+`from fastapi.testclient import TestClient` đòi `fastapi` phải là một GÓI Python thật.
 
 ## 5. Điều KHÔNG làm ở P4 (ghi để phiên sau khỏi mở lại)
 

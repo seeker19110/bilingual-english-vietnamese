@@ -36,6 +36,7 @@ export const LessonSchema = z
       'pytest',
       'httpsim',
       'apisim',
+      'typescript',
       'javascript',
       'sql',
       'html',

@@ -15,6 +15,24 @@
 // gói dữ liệu bài học, không được kéo theo trình biên dịch vào bất kỳ bundle nào.
 import type * as TS from 'typescript'
 
+/**
+ * Phần API của gói `typescript` mà file này thật sự dùng.
+ *
+ * Vì sao KHÔNG khai `typeof import('typescript')`: gói được nạp bằng `import ts from
+ * 'typescript'` ở server (CommonJS + esModuleInterop) nhưng bằng `import * as ts` ở cổng CI —
+ * hai hình dạng lệch nhau đúng ở thuộc tính `default`, và build server đã đỏ vì chuyện đó.
+ * Mô tả theo CẤU TRÚC thì cả hai đều hợp lệ, và người đọc thấy ngay file này cần những gì.
+ */
+export interface TsCompiler {
+  ScriptTarget: typeof TS.ScriptTarget
+  ModuleKind: typeof TS.ModuleKind
+  createSourceFile: typeof TS.createSourceFile
+  createCompilerHost: typeof TS.createCompilerHost
+  createProgram: typeof TS.createProgram
+  transpileModule: typeof TS.transpileModule
+  flattenDiagnosticMessageText: typeof TS.flattenDiagnosticMessageText
+}
+
 /** Tên file ảo của code học viên — hiện trong thông báo lỗi nên đặt cho dễ hiểu. */
 export const TEN_FILE_TS = 'bai.ts'
 
@@ -37,7 +55,7 @@ export const TIEU_DE_LOI = '[TypeScript] Trinh bien dich bat duoc loi — chuong
  * Bật `strict` vì đó là cấu hình của chính dự án DHCB (CLAUDE.md mục 4) và cũng là điều
  * khiến TypeScript đáng học: strict tắt thì phần lớn lỗi mà bài muốn dạy sẽ không hiện ra.
  */
-export function kiemTraTypeScript(code: string, ts: typeof TS): KetQuaKiemTs {
+export function kiemTraTypeScript(code: string, ts: TsCompiler): KetQuaKiemTs {
   const options: TS.CompilerOptions = {
     strict: true,
     noImplicitAny: true,
@@ -74,7 +92,7 @@ export function kiemTraTypeScript(code: string, ts: typeof TS): KetQuaKiemTs {
 }
 
 /** "Dòng 7: TS2322 Type 'string' is not assignable to type 'number'." */
-function dinhDangMotLoi(chuan_doan: TS.Diagnostic, ts: typeof TS): string {
+function dinhDangMotLoi(chuan_doan: TS.Diagnostic, ts: TsCompiler): string {
   const thongDiep = ts.flattenDiagnosticMessageText(chuan_doan.messageText, ' ')
   if (chuan_doan.file && chuan_doan.start !== undefined) {
     const { line } = chuan_doan.file.getLineAndCharacterOfPosition(chuan_doan.start)
