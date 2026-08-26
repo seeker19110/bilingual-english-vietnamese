@@ -28,6 +28,7 @@ import * as dotenv from 'dotenv'
 import { chatSystemPrompt, speakingSystemPrompt } from '../apps/dhcb/src/prompts/index.ts'
 import { callGemini } from '@dhcb/core-ai/geminiApi'
 import { fetchWithTimeout } from '@dhcb/core-http/fetchTimeout'
+import { groqKeyPool, isSkippableGroqKeyError } from '@dhcb/core-ai/groqKeyPool'
 import {
   ALLOWED_MODEL,
   GEMINI_CHAT_MODEL,
@@ -65,6 +66,9 @@ function argVal(name: string, def: string): string {
 const MODE_ARG = argVal('--mode', 'chat')
 const LIMIT = Number(argVal('--limit', '0'))
 const DELAY_MS = Number(argVal('--delay', '500'))
+// Số lần chờ-rồi-thử-lại tối đa khi CẢ BỂ khoá chạm hạn mức. 5 lần với lùi dần 5s→80s (hoặc
+// theo `retry-after` Groq gửi) đủ vượt cửa sổ hạn mức phút của gói free.
+const MAX_RETRY_429 = Number(argVal('--max-retry-429', '5'))
 const WRITE_BASELINE = args.includes('--write-baseline')
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
@@ -76,11 +80,23 @@ const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms
 // người dùng thật gặp. Phát hiện khi chạy `npm run eval:tutor` thật: script chọn Gemini dù .env
 // có đủ GROQ_API_KEY, trong khi production lẽ ra ưu tiên Groq trước.
 const GEMINI_KEY = process.env.GEMINI_API_KEY
-const GROQ_KEY = process.env.GROQ_API_KEY
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY
 
+// [2026-08-26] PHẢI qua groqKeyPool(), KHÔNG đọc thẳng process.env.GROQ_API_KEY.
+// Production hỗ trợ NHIỀU key cách nhau dấu phẩy (packages/core-ai/groqKeyPool.ts). Script này
+// trước đây gửi nguyên chuỗi "key1,key2" làm Bearer token → Groq trả 401 Invalid API Key, và
+// người đọc kết luận nhầm là khoá hết hạn / dịch vụ chết, trong khi app thật vẫn chạy tốt.
+// Đã xảy ra thật: 62/62 câu lỗi 401 dẫn tới một lượt báo động sự cố production hoàn toàn sai.
+//
+// Bài học chung: công cụ chẩn đoán phải đọc cấu hình GIỐNG HỆT production, nếu không nó đo
+// chính nó chứ không đo hệ thống.
+const GROQ_KEYS = groqKeyPool()
+
 function providerLabel(): string {
-  if (GROQ_KEY) return `Groq · ${GROQ_CHAT_MODEL}`
+  if (GROQ_KEYS.length > 0) {
+    const n = GROQ_KEYS.length > 1 ? ` (${GROQ_KEYS.length} key)` : ''
+    return `Groq · ${GROQ_CHAT_MODEL}${n}`
+  }
   if (ANTHROPIC_KEY) return `Anthropic · ${ALLOWED_MODEL}`
   if (GEMINI_KEY) return `Gemini · ${GEMINI_CHAT_MODEL}`
   return 'none'
@@ -89,24 +105,83 @@ function providerLabel(): string {
 type Msg = { role: 'user' | 'assistant'; content: string }
 
 async function callGroq(system: string, messages: Msg[]): Promise<string> {
-  const resp = await fetchWithTimeout(
-    'https://api.groq.com/openai/v1/chat/completions',
-    {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${GROQ_KEY!}`, 'content-type': 'application/json' },
-      body: JSON.stringify({
-        model: GROQ_CHAT_MODEL,
-        max_tokens: MAX_TOKENS,
-        messages: [{ role: 'system', content: system }, ...messages],
-      }),
-    },
-    AI_TIMEOUT_MS,
-  )
-  if (!resp.ok) throw new Error(`Groq ${resp.status}: ${(await resp.text()).slice(0, 200)}`)
-  const data = (await resp.json()) as { choices?: Array<{ message?: { content?: unknown } }> }
-  const text = data.choices?.[0]?.message?.content
-  if (typeof text !== 'string') throw new Error('Groq trả về cấu trúc không hợp lệ')
-  return text
+  // Thử lần lượt từng key trong bể, đúng cách production làm: key hết hạn (401) hoặc chạm hạn
+  // mức (429) thì sang key kế, chỉ báo lỗi khi CẢ BỂ đều hỏng.
+  //
+  // [2026-08-26] Báo lỗi kèm trạng thái của TỪNG key, không chỉ key cuối. Bản trước chỉ giữ
+  // `lastErr`, nên khi key #1 chạm hạn mức (429) còn key #3 đã hỏng (401) thì thông báo chỉ
+  // hiện 401 — giấu mất tín hiệu quyết định và dẫn tới hai vòng chẩn đoán sai. Công cụ chẩn
+  // đoán che bớt số đo còn tệ hơn không có công cụ.
+  // [2026-08-26] CHỜ RỒI THỬ LẠI khi CẢ BỂ chạm hạn mức (429). Groq tính hạn mức theo TÀI
+  // KHOẢN chứ không theo khoá, nên nhiều khoá cùng một tài khoản sẽ 429 đồng thời — gộp bể
+  // không tăng quota. Bản trước bỏ cuộc ngay ở câu đó: đo thật trên VPS cho 21 câu đầu chạy
+  // liền mạch rồi 31/62 câu còn lại hỏng hàng loạt, tức baseline chỉ dựa trên nửa bộ đề —
+  // không đủ tư cách làm mốc so sánh. Tôn trọng header `retry-after` khi Groq có gửi.
+  for (let attempt = 0; ; attempt++) {
+    const kq = await thuCaBeGroq(system, messages)
+    if (kq.text !== undefined) return kq.text
+    if (!kq.allRateLimited || attempt >= MAX_RETRY_429) throw new Error(kq.err)
+    const choMs = kq.retryAfterMs ?? Math.min(60_000, 5_000 * 2 ** attempt)
+    process.stdout.write(` [429 — chờ ${Math.round(choMs / 1000)}s rồi thử lại]`)
+    await sleep(choMs)
+  }
+}
+
+type KetQuaBe = {
+  text?: string
+  err: string
+  allRateLimited: boolean
+  retryAfterMs?: number
+}
+
+async function thuCaBeGroq(system: string, messages: Msg[]): Promise<KetQuaBe> {
+  const statuses: string[] = []
+  let fatal = ''
+  let allRateLimited = GROQ_KEYS.length > 0
+  let retryAfterMs: number | undefined
+  for (const [i, key] of GROQ_KEYS.entries()) {
+    const resp = await fetchWithTimeout(
+      'https://api.groq.com/openai/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${key}`, 'content-type': 'application/json' },
+        body: JSON.stringify({
+          model: GROQ_CHAT_MODEL,
+          max_tokens: MAX_TOKENS,
+          messages: [{ role: 'system', content: system }, ...messages],
+        }),
+      },
+      AI_TIMEOUT_MS,
+    )
+    if (resp.ok) {
+      const data = (await resp.json()) as { choices?: Array<{ message?: { content?: unknown } }> }
+      const text = data.choices?.[0]?.message?.content
+      if (typeof text !== 'string') throw new Error('Groq trả về cấu trúc không hợp lệ')
+      return { text, err: '', allRateLimited: false }
+    }
+    statuses.push(`#${i + 1}\u2192${resp.status}`)
+    if (resp.status === 429) {
+      const ra = Number(resp.headers.get('retry-after'))
+      // Lấy khoảng chờ DÀI NHẤT trong bể: chờ ngắn hơn thì khoá kia vẫn còn bị chặn.
+      if (Number.isFinite(ra) && ra > 0) {
+        retryAfterMs = Math.max(retryAfterMs ?? 0, Math.min(120_000, ra * 1000))
+      }
+    } else {
+      allRateLimited = false
+    }
+    if (!isSkippableGroqKeyError(resp.status)) {
+      fatal = (await resp.text()).slice(0, 160)
+      break
+    }
+  }
+  if (GROQ_KEYS.length === 0) {
+    return { err: 'Groq: bể khoá rỗng', allRateLimited: false }
+  }
+  return {
+    err: `Groq cả bể hỏng [${statuses.join(' ')}]${fatal ? ` \u2014 ${fatal}` : ''}`,
+    allRateLimited,
+    retryAfterMs,
+  }
 }
 
 async function callAnthropic(system: string, messages: Msg[]): Promise<string> {
@@ -132,7 +207,7 @@ async function callAnthropic(system: string, messages: Msg[]): Promise<string> {
 
 async function callProvider(system: string, userText: string): Promise<string> {
   const messages: Msg[] = [{ role: 'user', content: userText }]
-  if (GROQ_KEY) return callGroq(system, messages)
+  if (GROQ_KEYS.length > 0) return callGroq(system, messages)
   if (ANTHROPIC_KEY) return callAnthropic(system, messages)
   if (GEMINI_KEY) return callGemini(GEMINI_KEY, GEMINI_CHAT_MODEL, system, messages, MAX_TOKENS)
   throw new Error('Chưa cấu hình GEMINI_API_KEY / GROQ_API_KEY / ANTHROPIC_API_KEY')
@@ -302,7 +377,38 @@ async function main(): Promise<void> {
 
   const doc = renderReport(fixtures, sections)
   process.stdout.write('\n' + doc + '\n')
+
   if (WRITE_BASELINE) {
+    // CỔNG CHẶN [2026-08-26] — trước đây `--write-baseline` ghi đè VÔ ĐIỀU KIỆN, kể cả khi
+    // 100% request lỗi provider. Đã xảy ra thật: `GROQ_API_KEY` hết hiệu lực → 62/62 câu trả
+    // 401 → mọi chỉ số `n/a` → script vẫn in "✅ Đã ghi" và baseline thật bị thay bằng bảng
+    // rỗng. Một baseline rỗng còn tệ hơn baseline cũ: nó xoá mất mốc so sánh DUY NHẤT, và
+    // PR sau đó sẽ "không tụt so với baseline" vì chẳng còn gì để tụt.
+    //
+    // Luật: chỉ ghi khi chấm được ÍT NHẤT 80% số câu ở MỌI chế độ đã chạy.
+    const NGUONG_TOI_THIEU = 0.8
+    const khongDat = sections.filter((s) => {
+      const tong = s.summary.scored + s.summary.providerErrors
+      return tong === 0 || s.summary.scored / tong < NGUONG_TOI_THIEU
+    })
+
+    if (khongDat.length > 0) {
+      process.stderr.write('\n❌ KHÔNG ghi baseline — lượt chạy này không đo được đủ dữ liệu.\n')
+      for (const s of khongDat) {
+        const tong = s.summary.scored + s.summary.providerErrors
+        process.stderr.write(
+          `   ${s.mode}: chấm được ${s.summary.scored}/${tong} câu ` +
+            `(cần ≥ ${Math.ceil(tong * NGUONG_TOI_THIEU)}), ${s.summary.providerErrors} câu lỗi provider.\n`,
+        )
+      }
+      process.stderr.write(
+        '   Baseline CŨ giữ nguyên — nó vẫn là mốc so sánh đúng.\n' +
+          '   Sửa nguyên nhân rồi chạy lại: lỗi 401 = khoá API sai/hết hạn (kiểm .env),\n' +
+          '   lỗi 404 = tên model sai, lỗi 429 = chạm hạn mức nhà cung cấp.\n',
+      )
+      process.exit(1)
+    }
+
     writeFileSync(BASELINE_PATH, doc + '\n')
     process.stderr.write(`\n✅ Đã ghi ${path.relative(PROJECT_ROOT, BASELINE_PATH)}\n`)
   }
