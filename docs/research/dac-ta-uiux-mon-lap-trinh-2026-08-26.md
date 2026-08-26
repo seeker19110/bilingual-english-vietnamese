@@ -411,20 +411,33 @@ muốn một cái nền vững chứ không phải mẹo vặt.
 
 ---
 
-## 8. Kế hoạch thi hành — 5 PR nhỏ
+## 8. Kế hoạch thi hành — ĐÃ XONG CẢ 5 ĐỢT (2026-08-26)
 
-| PR      | Nội dung                                                                                                                                                             | Rủi ro                                   |
-| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| **UX0** | Đặc tả này (tài liệu, không sửa code)                                                                                                                                | Không                                    |
-| **UX1** | Sửa V2 (nút quay lại) + V7 (huy hiệu ngôn ngữ). Hai vá nhỏ, độc lập, thấy kết quả ngay                                                                               | Rất thấp                                 |
-| **UX2** | Tách `components/programming/` (`CodeSurface`, `RunOutput`, `StepBar`, `LangBadge`, `LevelMilestone`), gọt `ProgrammingLessonPage` < 400 dòng. **Không đổi hành vi** | Trung bình — e2e hiện có là lưới an toàn |
-| **UX3** | Trang `/lap-trinh/gioi-thieu` theo §6 + liên kết vào                                                                                                                 | Thấp (trang mới, tĩnh)                   |
-| **UX4** | Dựng lại `/lap-trinh`: thẻ Học tiếp, dải tiến độ thật, cột mốc bậc, dự án động                                                                                       | Cao nhất — làm sau cùng                  |
-| **UX5** | Áp N3/N4/N5 vào màn bài học: thanh 2 pha, 3 trạng thái chạy, amber/red                                                                                               | Trung bình                               |
+| PR      | Nội dung                                                                           | Trạng thái |
+| ------- | ---------------------------------------------------------------------------------- | ---------- |
+| **UX0** | Đặc tả này                                                                         | ✅         |
+| **UX1** | Vá V2 (nút quay lại sai bậc) + V7 (huy hiệu ngôn ngữ)                              | ✅         |
+| **UX2** | Tách 7 component `components/programming/`; `ProgrammingLessonPage` 662 → 378 dòng | ✅         |
+| **UX3** | Trang `/lap-trinh/gioi-thieu` (công khai)                                          | ✅         |
+| **UX4** | Dựng lại `/lap-trinh`: thẻ Học tiếp, tiến độ thật, cột mốc bậc, dự án động         | ✅         |
+| **UX5** | Luật N3 (thanh 2 pha) · N4 (3 trạng thái chạy) · N5 (amber/red)                    | ✅         |
 
-Thứ tự cố ý: **sửa lỗi thật trước → dọn nền → thêm mới → dựng lại cái lớn nhất sau cùng.**
+**Bốn lỗi thật bị phát hiện trong lúc thi hành** — không cái nào nằm trong danh sách 8 vấn đề
+ban đầu, tất cả lộ ra khi đọc kỹ code hoặc khi một cổng đỏ:
 
----
+1. **V2 có HAI ca, không phải một.** Ngoài `Layout onBack`, nút "Về trang bậc P1" ở màn ⑦ cũng
+   ghi cứng. Vá một chỗ mà tưởng xong là cách lỗi sống sót.
+2. **Có 11 ngôn ngữ, không phải 7** (bậc P4 thêm `pytest`/`httpsim`/`apisim`/`typescript`).
+   Typecheck bắt được nhờ `Record<Lang, …>` đòi đủ khoá — nếu dùng `Partial` thì đã lọt.
+3. **Ca N4 ở trang bài học:** `{output && <pre>…}` nên chương trình chạy đúng mà không in gì
+   thì màn hình trống trơn.
+4. **Ca N4 ở sandbox, tệ hơn:** chạy xong quay về `idle` nên hiện lại câu _"Bấm Chạy để xem kết
+   quả"_ — không phải im lặng mà là **nói dối rằng chưa chạy lần nào**.
+
+**Một bài học về ranh giới a11y:** cùng một cặp class `text-accent-300 theme-light:text-accent-800`
+đạt AAA khi nằm trong `<button>` nhưng TRƯỢT khi nằm trong `<p>` hoặc `<li>` — vì cổng AAA chỉ
+soi nội dung/tiêu đề, và `li` không nằm trong danh sách "chrome" của `e2e/a11y-aaa.spec.ts`.
+Copy class từ một nút sang một đoạn văn là đủ để làm đỏ CI.
 
 ## 9. Ba quyết định đã chốt (người dùng duyệt 2026-08-26)
 
