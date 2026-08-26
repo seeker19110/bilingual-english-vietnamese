@@ -427,3 +427,19 @@ test('thẻ SRS: đạt bài xong thì trang ôn có thẻ, lật đáp án rồ
   // thái đã lật, nên nút "Xem đáp án" quay lại (thẻ mới) hoặc biến mất (hết thẻ).
   await expect(page.getByRole('button', { name: 'Nhớ được' })).toHaveCount(0)
 })
+
+// PR-L11 — MILESTONE chặng P3 (p3-u12-l1): bài tổng kết ráp DOM + sự kiện + gom nhóm dữ liệu.
+// Đề độc lập với dự án trục (sổ chi tiêu, không phải cửa hàng) nên đây là phép thử "tự ráp
+// được từ đầu" — chạy code mẫu thật trong Chromium để chắc bài giải được như cổng CI nói.
+test('bài milestone P3 p3-u12-l1: code mẫu đạt hết test-case trong trình duyệt', async ({
+  page,
+}) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p3-u12-l1', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page.getByRole('button', { name: 'Xem code mẫu' }).click()
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 60_000 })
+})
