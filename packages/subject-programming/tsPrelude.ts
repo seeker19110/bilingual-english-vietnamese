@@ -55,8 +55,8 @@ export const TIEU_DE_LOI = '[TypeScript] Trinh bien dich bat duoc loi — chuong
  * Bật `strict` vì đó là cấu hình của chính dự án DHCB (CLAUDE.md mục 4) và cũng là điều
  * khiến TypeScript đáng học: strict tắt thì phần lớn lỗi mà bài muốn dạy sẽ không hiện ra.
  */
-export function kiemTraTypeScript(code: string, ts: TsCompiler): KetQuaKiemTs {
-  const options: TS.CompilerOptions = {
+function taoOptions(ts: TsCompiler): TS.CompilerOptions {
+  return {
     strict: true,
     noImplicitAny: true,
     target: ts.ScriptTarget.ES2020,
@@ -65,15 +65,44 @@ export function kiemTraTypeScript(code: string, ts: TsCompiler): KetQuaKiemTs {
     skipLibCheck: true,
     noEmit: false,
   }
+}
 
+// BỘ NHỚ LIB — thứ quyết định endpoint này dùng được hay không.
+//
+// Mỗi lần createProgram, TypeScript đọc và PHÂN TÍCH LẠI toàn bộ lib.es2020.d.ts và họ hàng
+// của nó (vài MB). Một lượt như vậy tốn ~2–5 giây, mà lib thì bất biến — nên nạp lại là phí
+// sạch. Cache ở mức module: lượt đầu chịu giá, các lượt sau gần như tức thì.
+//
+// Đây không phải tối ưu sớm: chính chỗ này đã làm cổng CI hết giờ (mỗi bài học một lượt tsc),
+// và trên server nó là CPU tiêu tốn cho MỖI lần học viên bấm "Chấm bài".
+const boNhoLib = new Map<string, TS.SourceFile | undefined>()
+let hostDungChung: TS.CompilerHost | null = null
+
+function layHost(ts: TsCompiler, options: TS.CompilerOptions): TS.CompilerHost {
+  if (hostDungChung) return hostDungChung
+  const goc = ts.createCompilerHost(options)
+  hostDungChung = {
+    ...goc,
+    getSourceFile: (ten, ...rest) => {
+      const san = boNhoLib.get(ten)
+      if (san !== undefined) return san
+      const tep = goc.getSourceFile(ten, ...rest)
+      boNhoLib.set(ten, tep)
+      return tep
+    },
+    writeFile: () => {},
+  }
+  return hostDungChung
+}
+
+export function kiemTraTypeScript(code: string, ts: TsCompiler): KetQuaKiemTs {
+  const options = taoOptions(ts)
   const sourceFile = ts.createSourceFile(TEN_FILE_TS, code, ts.ScriptTarget.ES2020, true)
-  const hostGoc = ts.createCompilerHost(options)
+  const hostGoc = layHost(ts, options)
   const host: TS.CompilerHost = {
     ...hostGoc,
     getSourceFile: (ten, ...rest) =>
       ten === TEN_FILE_TS ? sourceFile : hostGoc.getSourceFile(ten, ...rest),
-    // Không ghi gì ra đĩa: JavaScript lấy qua transpileModule bên dưới.
-    writeFile: () => {},
     fileExists: (ten) => ten === TEN_FILE_TS || hostGoc.fileExists(ten),
     readFile: (ten) => (ten === TEN_FILE_TS ? code : hostGoc.readFile(ten)),
   }

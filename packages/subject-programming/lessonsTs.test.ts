@@ -8,7 +8,7 @@
 //
 // Ở đây KHÔNG có rủi ro "hai bản khác nhau" như mạch Python: server và cổng này gọi cùng một
 // hàm, cùng một gói typescript của repo.
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 import vm from 'node:vm'
 import ts from 'typescript'
 import { PROGRAMMING_LESSONS } from './lessons.js'
@@ -73,6 +73,14 @@ function describeFailures(results: ReturnType<typeof gradeAll>): string {
 }
 
 describe('nội dung TypeScript môn Lập trình đi qua tsc THẬT', () => {
+  // Lượt tsc ĐẦU TIÊN phải nạp bộ lib.d.ts (~1 giây ở máy dev, chậm hơn nhiều trên runner CI);
+  // từ lượt hai trở đi lib đã nằm trong bộ nhớ của tsPrelude nên chỉ còn vài chục ms. Trả giá
+  // đó ở đây, trong hook có hạn giờ rộng, thay vì để nó rơi ngẫu nhiên vào test nào chạy đầu
+  // và làm cổng đỏ vì hết giờ 5 giây — đúng chuyện đã xảy ra ở CI lần trước.
+  beforeAll(() => {
+    runTs('const khoi_dong: number = 1\nconsole.log(khoi_dong)', [])
+  }, 60_000)
+
   it('code sạch kiểu thì chạy và in ra được (chống test rỗng vô nghĩa)', () => {
     const r = runTs('const ten: string = "Lan"\nconsole.log("Chao " + ten)', [])
     expect(r.output).toContain('Chao Lan')

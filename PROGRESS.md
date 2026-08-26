@@ -60,6 +60,12 @@ phải đoán (nó đã bắt được một lần soạn nhầm `TS2345` thành
 bài `p4-u6-l1` (làn pytest) và `p4-u8-l1` (làn apisim — đường ghi gói vào thư mục con của
 Pyodide). `tsRunner.test.ts` canh hợp đồng client: còn lỗi kiểu thì TUYỆT ĐỐI không chạy code.
 
+**Một lỗi hiệu năng CI bắt được, đáng ghi lại:** mỗi lần `ts.createProgram` là một lần đọc và
+phân tích lại toàn bộ `lib.es2020.d.ts` (~2–5 giây), nên cổng TS hết giờ 5 giây trên runner.
+Sửa tận gốc bằng cách nhớ SourceFile của lib ở mức module (`tsPrelude.ts`): lượt đầu ~0,9 giây,
+các lượt sau ~40ms. Việc này quan trọng hơn cả cổng CI — nó chính là CPU mà server tiêu cho
+MỖI lần học viên bấm "Chấm bài".
+
 **Nợ / việc còn lại của môn:** bậc P5–P6 (CTDL-GT, bảo mật, deploy thật, 4 track chuyên sâu) —
 theo hiến chương, deploy và judge đa ngôn ngữ **không mô phỏng**, sẽ cần đặc tả riêng.
 
