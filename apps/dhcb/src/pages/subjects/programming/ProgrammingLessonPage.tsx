@@ -30,6 +30,7 @@ import PredictStep from '../../../components/programming/PredictStep'
 import ParsonsStep from '../../../components/programming/ParsonsStep'
 import TestResultList from '../../../components/programming/TestResultList'
 import AiHelpPanel from '../../../components/programming/AiHelpPanel'
+import LessonProse from '../../../components/programming/LessonProse'
 import CodeEditor from '../../../components/CodeEditor'
 import { useAuth } from '../../../context/useAuth'
 import { runLessonCode, resetLessonRunners } from '../../../lib/codeRunner'
@@ -172,9 +173,7 @@ export default function ProgrammingLessonPage() {
               <p className="text-sm text-zinc-100 leading-relaxed">{lesson.hook}</p>
             </div>
             <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5">
-              <p className="text-sm text-zinc-200 leading-relaxed whitespace-pre-line">
-                {lesson.theory}
-              </p>
+              <LessonProse text={lesson.theory} />
             </div>
           </section>
         )}
