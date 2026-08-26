@@ -164,8 +164,14 @@ không đọc `.env` của shell tương tác):
 
 ```bash
 sudo -u postgres crontab -e
-10 3 * * * cd /var/www/dhcb && ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run backup:env >> /var/log/env-backup-r2.log 2>&1
+10 3 * * * . /root/.dhcb-cron-env && cd /var/www/dhcb && npm run backup:env >> /var/log/env-backup-r2.log 2>&1
 ```
+
+> **`/root/.dhcb-cron-env` là gì:** file `chmod 600` chứa `ENV_BACKUP_PASSPHRASE` (và
+> `FEATURE_STATUS_CRON_KEY`). Cách tạo: `docs/deploy-vps-ubuntu.md` **Bước 2b**.
+> Không viết passphrase thẳng vào crontab — `crontab -l` là lệnh người ta chạy hằng ngày,
+> nên bí mật sẽ lộ trong những tình huống hoàn toàn bình thường (dán output đi hỏi, chụp
+> màn hình). Passphrase này giải mã được **toàn bộ `.env`** từ bản backup trên R2.
 
 **Khôi phục** khi cần (tải bản mới nhất, giải mã, ghi ra `.env.restored` để tự kiểm tra trước khi
 đổi tên thành `.env`):
@@ -196,7 +202,7 @@ user khác — khác `backup:r2`/`backup:env` chạy bằng user `postgres`):
 
 ```bash
 sudo crontab -e
-15 3 * * * cd /var/www/dhcb && ENV_BACKUP_PASSPHRASE="passphrase-cua-ban" npm run backup:system >> /var/log/system-backup-r2.log 2>&1
+15 3 * * * . /root/.dhcb-cron-env && cd /var/www/dhcb && npm run backup:system >> /var/log/system-backup-r2.log 2>&1
 ```
 
 **Khôi phục** khi cần (tải bản mới nhất, giải mã, ghi ra `system-restored.tar.gz` — KHÔNG tự giải

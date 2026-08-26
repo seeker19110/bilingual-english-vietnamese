@@ -134,6 +134,56 @@ pm2 set pm2-logrotate:compress true
 
 ---
 
+## Bước 2b — Nơi cất secret cho các job cron (đọc TRƯỚC khi tạo cron)
+
+> **Luật: không viết mật khẩu thẳng vào crontab.** Ai đọc được `crontab -l` là thấy hết — và
+> `crontab -l` là lệnh người ta chạy hằng ngày để xem lịch, nên bí mật lộ ra trong những tình
+> huống hoàn toàn bình thường: dán output đi hỏi, chụp màn hình, gửi log.
+>
+> Nguy hiểm nhất là `ENV_BACKUP_PASSPHRASE`: nó giải mã **bản backup `.env`** trên R2. Ai có nó
+> cộng một file backup là mở được toàn bộ secret của dự án — `DATABASE_URL`, khoá AI, khoá
+> SePay. Một dòng crontab đánh đổi tất cả.
+
+Cất secret của cron vào một file chỉ root đọc được:
+
+```bash
+sudo install -m 600 /dev/null /root/.dhcb-cron-env
+sudo nano /root/.dhcb-cron-env
+```
+
+Nội dung (mỗi dòng một biến, không có `export`, không dấu nháy thừa):
+
+```bash
+ENV_BACKUP_PASSPHRASE=<passphrase-that>
+FEATURE_STATUS_CRON_KEY=<khoa-that-khop-.env>
+```
+
+Rồi trong crontab, nạp file đó thay vì viết giá trị ra:
+
+```cron
+5 3 * * * . /root/.dhcb-cron-env && cd /var/www/dhcb && BACKUP_DIR=/var/backups/pg npm run backup:r2 >> /var/log/pg-backup-r2.log 2>&1
+10 3 * * * . /root/.dhcb-cron-env && cd /var/www/dhcb && npm run backup:env >> /var/log/env-backup-r2.log 2>&1
+15 3 * * * . /root/.dhcb-cron-env && cd /var/www/dhcb && npm run backup:system >> /var/log/system-backup-r2.log 2>&1
+0 0,12 * * * . /root/.dhcb-cron-env && curl -s -X POST -H "x-cron-key: $FEATURE_STATUS_CRON_KEY" https://en-vi.donghanhcungban.org/api/admin-feature-status >/dev/null 2>&1
+```
+
+Kiểm quyền file (phải là `-rw-------`):
+
+```bash
+sudo ls -l /root/.dhcb-cron-env
+```
+
+**Nếu lỡ để lộ passphrase** (dán vào chat, chụp màn hình, commit nhầm): đổi passphrase mới
+**và** xoá các bản backup `.env` cũ trên R2 rồi tạo lại — bản cũ vẫn mã hoá bằng passphrase cũ,
+đổi khoá không làm chúng an toàn trở lại.
+
+```bash
+openssl rand -base64 32     # passphrase backup mới
+openssl rand -hex 32        # FEATURE_STATUS_CRON_KEY mới (nhớ sửa cả .env rồi pm2 reload)
+```
+
+---
+
 ## Bước 3a — Tạo swap (làm TRƯỚC lần deploy đầu tiên)
 
 > **Vì sao bắt buộc, không phải "nên có".** Số đo thật trên VPS ngày 2026-08-26:
@@ -509,10 +559,10 @@ khác UTC, kiểm tra bằng `timedatectl`):
 crontab -e
 ```
 
-Thêm dòng (thay `<FEATURE_STATUS_CRON_KEY>` bằng giá trị thật trong `.env` trên VPS):
+Thêm dòng (khoá đọc từ `/root/.dhcb-cron-env` — xem Bước 2b, KHÔNG viết thẳng vào crontab):
 
 ```
-0 0,12 * * * curl -s -X POST -H "x-cron-key: <FEATURE_STATUS_CRON_KEY>" https://en-vi.donghanhcungban.org/api/admin-feature-status >/dev/null 2>&1
+0 0,12 * * * . /root/.dhcb-cron-env && curl -s -X POST -H "x-cron-key: $FEATURE_STATUS_CRON_KEY" https://en-vi.donghanhcungban.org/api/admin-feature-status >/dev/null 2>&1
 ```
 
 ---

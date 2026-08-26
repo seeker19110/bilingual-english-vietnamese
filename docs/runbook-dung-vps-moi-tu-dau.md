@@ -450,9 +450,15 @@ Thêm 3 dòng:
 ```cron
 0 3 * * * pg_dump dhcb | gzip > /var/backups/dhcb_$(date +\%Y\%m\%d).sql.gz && find /var/backups -name 'dhcb_*.sql.gz' -mtime +7 -delete
 5 3 * * * cd /var/www/dhcb && npm run backup:r2 >> /var/log/pg-backup-r2.log 2>&1
-10 3 * * * cd /var/www/dhcb && ENV_BACKUP_PASSPHRASE="passphrase-that-cua-ban" npm run backup:env >> /var/log/env-backup-r2.log 2>&1
+10 3 * * * . /root/.dhcb-cron-env && cd /var/www/dhcb && npm run backup:env >> /var/log/env-backup-r2.log 2>&1
 0 4 * * 0 bash /var/www/dhcb/scripts/verify-pg-backup.sh >> /var/log/pg-restore-test.log 2>&1
 ```
+
+> **`/root/.dhcb-cron-env` là gì:** file `chmod 600` chứa `ENV_BACKUP_PASSPHRASE` (và
+> `FEATURE_STATUS_CRON_KEY`). Cách tạo: `docs/deploy-vps-ubuntu.md` **Bước 2b**.
+> Không viết passphrase thẳng vào crontab — `crontab -l` là lệnh người ta chạy hằng ngày,
+> nên bí mật sẽ lộ trong những tình huống hoàn toàn bình thường (dán output đi hỏi, chụp
+> màn hình). Passphrase này giải mã được **toàn bộ `.env`** từ bản backup trên R2.
 
 ---
 
