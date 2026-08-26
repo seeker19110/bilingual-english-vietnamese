@@ -7,6 +7,17 @@ on:
   push:
     branches: [main]
 
+# Mỗi lần push mới lên một PR làm run của commit CŨ thành vô nghĩa — nhưng GitHub không tự
+# huỷ chúng, nên chúng nằm lại trong hàng đợi và ăn suất runner của repo. Đã thấy thật ở
+# PR #703: hai run cho commit đã lỗi thời kẹt `queued` gần 30 phút, trong khi commit mới
+# nhất không được xếp hàng, và branch protection thì báo "Waiting for status to be reported".
+#
+# cancel-in-progress CHỈ bật cho pull_request. Push lên main không bao giờ bị huỷ: lượt CI
+# trên main là double-check trước khi deploy.yml chạy, huỷ nó là mất lưới an toàn cuối.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   quality:
     runs-on: ubuntu-latest
