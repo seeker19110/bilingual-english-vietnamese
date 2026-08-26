@@ -1,24 +1,61 @@
-// ProgrammingHome — trang tổng quan môn LẬP TRÌNH: thang bậc P1→P6 + dự án xuyên suốt.
-// PR-L1: khung môn (đặc tả docs/research/dac-ta-mon-lap-trinh-2026-08-24.md). Nội dung bài
-// học chi tiết vào ở PR-L3/L4 — các bậc hiện là khung "sắp mở" trừ phần xem đề cương.
+// ProgrammingHome — TRANG MÔN Lập trình: chỗ học viên quay lại mỗi ngày (PR-UX4).
+//
+// Thứ tự khối cố ý, mỗi khối trả lời một câu hỏi của người vừa mở app (đặc tả UI/UX §5.1):
+//  ① "hôm nay học gì?"      → thẻ Học tiếp, to nhất, đứng đầu
+//  ② "tôi đi tới đâu rồi?"  → dải tiến độ
+//  ③ "sản phẩm tôi sao rồi?"→ dự án trục, hiện chặng đang ở
+//  ④ "còn gì để làm?"       → ba nút tắt
+//  ⑤ "đường còn dài không?" → cột mốc 6 bậc
+//
+// Trước PR này trang không đọc tiến độ, nên học viên quay lại sau vài ngày phải tự nhớ mình
+// đang ở bài nào rồi bấm ba lần mới tới nơi. Đó là khiếm khuyết nặng nhất về giữ chân người học.
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Code2,
-  Rocket,
-  Store,
-  Lock,
-  ChevronRight,
-  Languages,
-  Clock,
-  Play,
-  Brain,
-} from 'lucide-react'
+import { Code2, Rocket, Store, Play, Brain, BookOpen, Trophy, PartyPopper } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
-import { PROGRAMMING_LEVELS, PROJECT_TRACKS } from '@dhcb/subject-programming/curriculum'
+import LangBadge from '../../../components/programming/LangBadge'
+import LevelMilestones from '../../../components/programming/LevelMilestones'
+import { useAuth } from '../../../context/useAuth'
+import { fetchProgress, type ProgrammingLessonProgress } from '../../../lib/programmingProgress'
+import {
+  pickNextLesson,
+  countCompleted,
+  countCompletedByLevel,
+} from '../../../lib/programmingNextLesson'
+import { PROGRAMMING_LEVELS } from '@dhcb/subject-programming/curriculum'
+import { PROJECT_STAGES } from '@dhcb/subject-programming/projectSteps'
 
 export default function ProgrammingHome() {
   const nav = useNavigate()
+  const { user } = useAuth()
+  const [progress, setProgress] = useState<ProgrammingLessonProgress[]>([])
+  // Phân biệt "chưa tải xong" với "đã tải, chưa học gì" — hai thứ này hiện khác nhau, nếu gộp
+  // thì người học cũ sẽ thấy nhấp nháy chữ "Bắt đầu từ bài 1" trước khi tiến độ về.
+  const [fetched, setFetched] = useState(false)
+  // Chưa đăng nhập thì không có gì để tải — coi như đã xong ngay, KHÔNG setState trong effect
+  // (đặt state đồng bộ trong effect gây render dây chuyền, ESLint chặn).
+  const loaded = !user || fetched
+
+  useEffect(() => {
+    if (!user) return
+    void fetchProgress(user.id).then((p) => {
+      setProgress(p)
+      setFetched(true)
+    })
+  }, [user])
+
+  const next = pickNextLesson(progress)
+  const { done, total } = countCompleted(progress)
+  const xongMon = loaded && next === null
+
+  // Chặng dự án đang ở = chặng của bậc chứa bài học tiếp; xong môn thì là chặng cuối.
+  const changDangO =
+    PROJECT_STAGES.find((s) => s.level === next?.levelId) ??
+    PROJECT_STAGES[PROJECT_STAGES.length - 1]
+
+  const nutPhu =
+    'tap-44 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-accent-500/60 text-white font-semibold text-sm transition active:scale-[0.98]'
 
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
@@ -30,101 +67,152 @@ export default function ProgrammingHome() {
           subtitle="Từ số 0 tới sản phẩm chạy thật trên Internet — Python, JavaScript/TypeScript, SQL. Hoàn thành môn là hoàn thành luôn dự án của chính bạn."
         />
 
-        {/* Chạy thử ngay — sandbox Python trong trình duyệt (PR-L2) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <button
-            onClick={() => nav('/lap-trinh/chay-thu')}
-            className="tap-44 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition shadow-md shadow-accent-500/20 active:scale-[0.98]"
-          >
-            <Play className="w-4 h-4" />
-            <span>Chạy thử Python ngay</span>
-          </button>
-          <button
-            onClick={() => nav('/lap-trinh/du-an')}
-            className="tap-44 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-zinc-900 border border-accent-500/40 hover:border-accent-500 text-white font-semibold text-sm transition active:scale-[0.98]"
-          >
-            <Store className="w-4 h-4 text-accent-400" />
-            <span>Dự án của tôi (P1 → P3)</span>
-          </button>
-        </div>
+        {/* ① Học tiếp — khối quan trọng nhất trang, luôn đứng đầu */}
+        {xongMon ? (
+          <section className="rounded-3xl border border-emerald-500/40 bg-emerald-500/10 p-5 space-y-2">
+            <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <PartyPopper className="w-5 h-5 text-emerald-400" />
+              <span>Bạn đã đi hết {total} bài của môn</span>
+            </h2>
+            <p className="text-sm text-zinc-100 leading-relaxed">
+              Giờ sản phẩm mới là thứ đáng khoe, không phải số bài. Quay lại dự án của bạn, hoặc ôn
+              lại những khái niệm đã lâu không dùng.
+            </p>
+          </section>
+        ) : (
+          <section className="rounded-3xl border border-accent-500/40 bg-zinc-900 p-5 space-y-3 shadow-md shadow-accent-500/10">
+            <p className="text-xs font-semibold text-zinc-300 uppercase tracking-wide">
+              {next?.resuming ? 'Đang học dở' : 'Học tiếp'}
+            </p>
+            {next && (
+              <>
+                <h2 className="text-lg font-bold text-white leading-snug">{next.lesson.title}</h2>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <LangBadge language={next.lesson.language} />
+                  <span className="text-[11px] font-semibold text-zinc-400">
+                    Bậc {next.levelId.toUpperCase()} — {next.levelName}
+                  </span>
+                </div>
+              </>
+            )}
+            <button
+              onClick={() => next && nav(`/lap-trinh/bai-hoc/${next.lesson.id}`)}
+              disabled={!next}
+              className="tap-44 w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-black font-semibold text-sm transition active:scale-[0.98]"
+            >
+              <Play className="w-4 h-4" />
+              <span>{!loaded ? 'Đang tải…' : next?.resuming ? 'Học tiếp' : 'Bắt đầu bài này'}</span>
+            </button>
+            {done === 0 && loaded && (
+              <button
+                onClick={() => nav('/lap-trinh/gioi-thieu')}
+                className="tap-44 w-full text-center text-xs font-semibold text-zinc-400 hover:text-white underline underline-offset-2 transition"
+              >
+                Khoá học này là gì? Học xong được gì?
+              </button>
+            )}
+          </section>
+        )}
 
-        {/* Ôn thẻ (PR-L10) — bước ⑧ của khuôn bài học, giữ lại khái niệm cốt lõi đã học */}
-        <button
-          onClick={() => nav('/lap-trinh/on-tap')}
-          className="tap-44 w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-accent-500/60 text-white font-semibold text-sm transition active:scale-[0.98]"
-        >
-          <Brain className="w-4 h-4 text-accent-400" />
-          <span>Ôn thẻ — khái niệm cốt lõi đã học</span>
-        </button>
+        {/* ② Tiến độ của BẠN — không phải tiến độ soạn bài */}
+        <section className="space-y-2">
+          <div className="flex items-baseline justify-between gap-3 flex-wrap">
+            <h2 className="text-sm font-bold text-white">Tiến độ của bạn</h2>
+            <p className="text-xs text-zinc-400">
+              <strong className="text-emerald-300 theme-light:text-emerald-800">{done}</strong>/
+              {total} bài
+            </p>
+          </div>
+          <div
+            className="h-2 rounded-full bg-zinc-900 border border-zinc-800 overflow-hidden"
+            role="progressbar"
+            aria-label="Tiến độ môn Lập trình"
+            aria-valuenow={done}
+            aria-valuemin={0}
+            aria-valuemax={total}
+          >
+            <div
+              className="h-full bg-emerald-500 transition-all"
+              style={{ width: `${total > 0 ? Math.round((done / total) * 100) : 0}%` }}
+            />
+          </div>
+        </section>
 
-        {/* Dự án xuyên suốt */}
+        {/* ③ Dự án trục — hiện CHẶNG ĐANG Ở, không còn là thẻ mô tả tĩnh */}
         <section className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 space-y-3 shadow-sm">
           <h2 className="text-base font-bold text-white flex items-center gap-2">
             <Rocket className="w-5 h-5 text-accent-400" />
             <span>Dự án xuyên suốt — học tới đâu, xây tới đó</span>
           </h2>
           <p className="text-sm text-zinc-300 leading-relaxed">
-            Mỗi bậc học kết thúc bằng một chặng của <strong>cùng một sản phẩm</strong>: bắt đầu là
-            máy tính tiền chạy chữ (P1), kết thúc là web bán hàng thật của bạn chạy trên Internet
-            (P5) — kèm repo GitHub làm hồ sơ xin việc.
+            Mỗi bậc kết thúc bằng một chặng của <strong>cùng một sản phẩm</strong>: bắt đầu là máy
+            tính tiền chạy chữ, kết thúc là web bán hàng của bạn chạy thật trên Internet — kèm repo
+            GitHub làm hồ sơ xin việc.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-            {PROJECT_TRACKS.map((track) => (
-              <div
-                key={track.id}
-                className={`rounded-2xl p-4 border space-y-1.5 ${
-                  track.available
-                    ? 'bg-zinc-950 border-accent-500/40'
-                    : 'bg-zinc-950/60 border-zinc-800'
-                }`}
-              >
-                <p className="text-sm font-bold text-white flex items-center gap-1.5">
-                  <Store className="w-4 h-4 text-accent-400 shrink-0" />
-                  <span>{track.name}</span>
-                </p>
-                <p className="text-xs text-zinc-400 leading-relaxed">{track.description}</p>
-                {!track.available && (
-                  <p className="text-[11px] font-semibold text-zinc-400 flex items-center gap-1">
-                    <Lock className="w-3 h-3" /> Sắp mở
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
+          <ol className="flex items-center gap-1.5 overflow-x-auto pb-1">
+            {PROJECT_STAGES.map((stage) => {
+              const p = countCompletedByLevel(progress, stage.level)
+              const xong = p.total > 0 && p.done === p.total
+              const dangO = stage.level === changDangO?.level
+              return (
+                <li key={stage.level} className="shrink-0">
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold border ${
+                      xong
+                        ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300 theme-light:text-emerald-800'
+                        : dangO
+                          ? 'bg-accent-500/20 border-accent-500/60 text-zinc-100'
+                          : 'bg-zinc-950 border-zinc-800 text-zinc-400'
+                    }`}
+                  >
+                    {stage.level.toUpperCase()}
+                  </span>
+                </li>
+              )
+            })}
+          </ol>
+          {changDangO && (
+            <p className="text-sm text-zinc-200 flex items-start gap-2">
+              <Store className="w-4 h-4 text-accent-400 shrink-0 mt-0.5" aria-hidden="true" />
+              <span>
+                Bạn đang ở <strong>{changDangO.title}</strong>
+              </span>
+            </p>
+          )}
+          <button onClick={() => nav('/lap-trinh/du-an')} className={`${nutPhu} w-full`}>
+            <Trophy className="w-4 h-4 text-accent-400" />
+            <span>Mở dự án của tôi</span>
+          </button>
         </section>
 
-        {/* Thang bậc P1–P6 */}
+        {/* ④ Ba nút tắt */}
+        <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <button onClick={() => nav('/lap-trinh/chay-thu')} className={nutPhu}>
+            <Play className="w-4 h-4 text-accent-400" />
+            <span>Chạy thử tự do</span>
+          </button>
+          <button onClick={() => nav('/lap-trinh/on-tap')} className={nutPhu}>
+            <Brain className="w-4 h-4 text-accent-400" />
+            <span>Ôn thẻ</span>
+          </button>
+          <button onClick={() => nav('/lap-trinh/gioi-thieu')} className={nutPhu}>
+            <BookOpen className="w-4 h-4 text-accent-400" />
+            <span>Về khoá học</span>
+          </button>
+        </section>
+
+        {/* ⑤ Lộ trình 6 bậc — cột mốc, thấy được mình đang ở đâu trên đường dài */}
         <section className="space-y-3">
           <h2 className="text-base font-bold text-white flex items-center gap-2">
             <Code2 className="w-5 h-5 text-accent-400" />
-            <span>Lộ trình 6 bậc P1 → P6</span>
+            <span>Lộ trình {PROGRAMMING_LEVELS.length} bậc P1 → P6</span>
           </h2>
-          {PROGRAMMING_LEVELS.map((level) => (
-            <button
-              key={level.id}
-              onClick={() => nav(`/lap-trinh/${level.id}`)}
-              className="tap-44 w-full text-left bg-zinc-900/80 border border-zinc-800 hover:border-zinc-700 rounded-3xl p-5 transition flex items-start justify-between gap-3 active:scale-[0.99]"
-            >
-              <div className="space-y-1.5 min-w-0">
-                <p className="text-sm font-bold text-white">
-                  <span className="text-accent-300 theme-light:text-accent-800 uppercase mr-2">
-                    {level.id}
-                  </span>
-                  {level.name}
-                </p>
-                <p className="text-xs text-zinc-400 leading-relaxed">{level.canDo}</p>
-                <div className="flex items-center gap-3 flex-wrap text-[11px] text-zinc-500 pt-0.5">
-                  <span className="inline-flex items-center gap-1">
-                    <Languages className="w-3.5 h-3.5" /> {level.languages.join(' · ')}
-                  </span>
-                  <span className="inline-flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5" /> {level.duration}
-                  </span>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-zinc-600 shrink-0 mt-1" />
-            </button>
-          ))}
+          <LevelMilestones
+            levels={PROGRAMMING_LEVELS}
+            progressOf={(levelId) => countCompletedByLevel(progress, levelId)}
+            onOpen={(levelId) => nav(`/lap-trinh/${levelId}`)}
+            currentLevelId={next?.levelId}
+          />
         </section>
       </main>
     </div>

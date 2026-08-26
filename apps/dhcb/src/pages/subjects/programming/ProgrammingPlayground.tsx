@@ -11,7 +11,10 @@ import CodeEditor from '../../../components/CodeEditor'
 import { runPython, resetPythonWorker } from '../../../lib/pythonRunner'
 import { P1_SAMPLES } from '@dhcb/subject-programming/samplesP1'
 
-type RunState = 'idle' | 'loading-env' | 'running'
+// 'done' tách khỏi 'idle' để giữ luật N4: sau khi chạy phải nói được "đã chạy xong", kể cả
+// khi chương trình không in ra gì. Gộp hai trạng thái này là cách cũ khiến màn hình quay về
+// câu 'Bấm "Chạy"…' — tức nói dối rằng chưa chạy lần nào.
+type RunState = 'idle' | 'loading-env' | 'running' | 'done'
 
 export default function ProgrammingPlayground() {
   const nav = useNavigate()
@@ -54,14 +57,14 @@ export default function ProgrammingPlayground() {
     })
     setOutput(result.output)
     if (result.error) setError(result.error)
-    setRunState('idle')
+    setRunState('done')
     runningRef.current = false
   }
 
   const handleStop = () => {
     resetPythonWorker()
     setError('Đã dừng chương trình theo yêu cầu.')
-    setRunState('idle')
+    setRunState('done')
     runningRef.current = false
   }
 
@@ -127,10 +130,10 @@ export default function ProgrammingPlayground() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => void handleRun()}
-            disabled={runState !== 'idle' || !code.trim()}
+            disabled={runState === 'running' || runState === 'loading-env' || !code.trim()}
             className="tap-44 inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-black font-semibold text-sm transition shadow-md shadow-accent-500/20 active:scale-[0.98]"
           >
-            {runState === 'idle' ? (
+            {runState === 'idle' || runState === 'done' ? (
               <>
                 <Play className="w-4 h-4" />
                 <span>Chạy</span>
@@ -142,7 +145,7 @@ export default function ProgrammingPlayground() {
               </>
             )}
           </button>
-          {runState !== 'idle' && (
+          {(runState === 'running' || runState === 'loading-env') && (
             <button
               onClick={handleStop}
               className="tap-44 inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-white font-semibold text-sm transition"
@@ -160,7 +163,16 @@ export default function ProgrammingPlayground() {
             <span>Kết quả</span>
           </h2>
           <pre className="min-h-[96px] max-h-80 overflow-auto rounded-2xl border border-zinc-800 bg-zinc-950 p-4 text-sm font-mono text-zinc-100 whitespace-pre-wrap">
-            {output || (runState === 'idle' ? 'Bấm "Chạy" để xem kết quả ở đây.' : '')}
+            {/* Luật N4: không bao giờ để trống sau khi chạy. Chương trình chạy đúng mà không in
+                gì là chuyện thường; im lặng ở đây khiến học viên tưởng máy hỏng. */}
+            {output ||
+              (runState === 'idle'
+                ? 'Bấm "Chạy" để xem kết quả ở đây.'
+                : runState === 'running' || runState === 'loading-env'
+                  ? 'Đang chạy…'
+                  : error
+                    ? ''
+                    : 'Chạy xong — chương trình không in ra gì.')}
           </pre>
           {error && (
             <pre className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-4 text-sm font-mono text-rose-200 theme-light:text-rose-700 whitespace-pre-wrap overflow-auto">

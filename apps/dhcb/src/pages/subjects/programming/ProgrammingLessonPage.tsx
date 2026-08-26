@@ -9,8 +9,6 @@ import {
   BookOpen,
   Play,
   Loader2,
-  CheckCircle2,
-  XCircle,
   Lightbulb,
   Eye,
   ChevronRight,
@@ -20,28 +18,25 @@ import {
   ListChecks,
   Puzzle,
   PencilLine,
-  Sparkles,
-  MessageCircleQuestion,
-  AlertCircle,
 } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
+import LangBadge from '../../../components/programming/LangBadge'
+import CodeSurface from '../../../components/programming/CodeSurface'
+import RunOutput, { type RunState } from '../../../components/programming/RunOutput'
+import StepBar, { type LessonStep } from '../../../components/programming/StepBar'
+import LivePreview from '../../../components/programming/LivePreview'
+import PredictStep from '../../../components/programming/PredictStep'
+import ParsonsStep from '../../../components/programming/ParsonsStep'
+import TestResultList from '../../../components/programming/TestResultList'
+import AiHelpPanel from '../../../components/programming/AiHelpPanel'
 import CodeEditor from '../../../components/CodeEditor'
 import { useAuth } from '../../../context/useAuth'
 import { runLessonCode, resetLessonRunners } from '../../../lib/codeRunner'
-import { HtmlPreview } from '../../../components/HtmlPreview'
 import { saveLessonProgress } from '../../../lib/programmingProgress'
 import { addLessonCardsToSrs } from '../../../lib/programmingSrs'
-import { MAX_HINT_LEVEL } from '@dhcb/subject-programming/feedbackPrompt'
-import {
-  requestCodeFeedback,
-  failedCaseLabels,
-  type CodeFeedbackKind,
-} from '../../../lib/programmingFeedback'
 import { getLesson } from '@dhcb/subject-programming/lessons'
-// fetchGia chứ KHÔNG phải fetchPrelude: prelude kéo theo linkedom (~94KB gzip) — thư viện đó
-// chỉ được nằm trong worker, lọt vào đây là nổ ngân sách Initial JS.
-import { FETCH_SHIM_JS } from '@dhcb/subject-programming/fetchGia'
+import { getLevelIdOfLesson } from '@dhcb/subject-programming/curriculum'
 import {
   gradeTestCase,
   allTestsPassed,
@@ -50,14 +45,15 @@ import {
   type TestCaseResult,
 } from '@dhcb/subject-programming/grading'
 
-// 6 màn hình phủ 8 bước sư phạm (①② gộp một màn; ⑧ SRS vào PR sau).
-const STEPS = [
+// 6 màn hình phủ 8 bước sư phạm (①② gộp một màn; ⑧ SRS chạy ngầm khi đạt bài Make).
+// `graded` = bước có chấm (pha TRẢ) · `startsPhase` = vẽ vạch ngăn phía trước (luật N3).
+const STEPS: readonly LessonStep[] = [
   { key: 'concept', label: 'Khái niệm', icon: BookOpen },
   { key: 'example', label: 'Ví dụ mẫu', icon: Play },
-  { key: 'predict', label: 'Dự đoán', icon: ListChecks },
-  { key: 'parsons', label: 'Xếp code', icon: Puzzle },
-  { key: 'make', label: 'Tự viết', icon: PencilLine },
-  { key: 'done', label: 'Về nhà', icon: Home },
+  { key: 'predict', label: 'Dự đoán', icon: ListChecks, graded: true, startsPhase: 'luyện tập' },
+  { key: 'parsons', label: 'Xếp code', icon: Puzzle, graded: true },
+  { key: 'make', label: 'Tự viết', icon: PencilLine, graded: true },
+  { key: 'done', label: 'Về nhà', icon: Home, startsPhase: 'hoàn tất' },
 ] as const
 
 export default function ProgrammingLessonPage() {
@@ -69,9 +65,8 @@ export default function ProgrammingLessonPage() {
   const [step, setStep] = useState(0)
   // ③ Ví dụ mẫu
   const [exampleOutput, setExampleOutput] = useState('')
-  // Bài DOM: bản chụp code để xem trang chạy (null = chưa bấm xem lần nào).
-  const [previewScript, setPreviewScript] = useState<string | null>(null)
-  const [exampleRunning, setExampleRunning] = useState(false)
+  // Luật N4: 3 trạng thái rõ ràng, không có ca "chạy xong mà màn hình trống".
+  const [exampleState, setExampleState] = useState<RunState>('idle')
   // ④ Predict
   const [predictChoice, setPredictChoice] = useState<number | null>(null)
   const [predictRevealed, setPredictRevealed] = useState(false)
@@ -89,14 +84,6 @@ export default function ProgrammingLessonPage() {
   const [hintsShown, setHintsShown] = useState(0)
   const [sampleViewed, setSampleViewed] = useState(false)
   const passed = results !== null && allTestsPassed(results)
-  // ⑥b AI phản hồi code (PR-L5) — TIÊU LƯỢT nên chỉ chạy khi học viên tự bấm, không tự động.
-  // `aiLevel` = bậc gợi ý Socratic đã dùng: mở dần 1→MAX_HINT_LEVEL, không nhảy cóc.
-  const [aiLevel, setAiLevel] = useState(0)
-  const [aiBusy, setAiBusy] = useState<CodeFeedbackKind | null>(null)
-  const [aiText, setAiText] = useState('')
-  const [aiError, setAiError] = useState('')
-  // Lỗi runtime đầu tiên trong lần chấm gần nhất — có thì mới mời "giải thích lỗi".
-  const firstError = results?.find((r) => r.error)?.error ?? ''
 
   // Ghi "đang học" khi vào bài; rời trang huỷ mọi worker chạy code (Python/JavaScript).
   useEffect(() => {
@@ -107,14 +94,15 @@ export default function ProgrammingLessonPage() {
   if (!lesson) return <Navigate to="/lap-trinh" replace />
 
   const runExample = async () => {
-    setExampleRunning(true)
+    setExampleState('running')
+    setExampleOutput('')
     const r = await runLessonCode(lesson.language, lesson.workedExample.code, {
       stdinLines: lesson.workedExample.stdinLines,
       onOutput: setExampleOutput,
       ...(lesson.domHtml ? { domHtml: lesson.domHtml } : {}),
     })
     setExampleOutput(r.output + (r.error ? `\n${r.error}` : ''))
-    setExampleRunning(false)
+    setExampleState('done')
   }
 
   const gradeMake = async () => {
@@ -142,30 +130,6 @@ export default function ProgrammingLessonPage() {
     }
   }
 
-  const askAi = async (kind: CodeFeedbackKind) => {
-    if (aiBusy || !lesson) return
-    const nextLevel = kind === 'socratic_hint' ? Math.min(aiLevel + 1, MAX_HINT_LEVEL) : undefined
-    setAiBusy(kind)
-    setAiError('')
-    setAiText('')
-    const r = await requestCodeFeedback({
-      kind,
-      lessonId: lesson.id,
-      code,
-      ...(nextLevel ? { hintLevel: nextLevel } : {}),
-      ...(kind === 'explain_error' && firstError ? { errorText: firstError } : {}),
-      ...(kind === 'socratic_hint' ? { failedCaseLabels: failedCaseLabels(results) } : {}),
-    })
-    setAiBusy(null)
-    if (r.ok) {
-      setAiText(r.text)
-      // Lên bậc theo bậc SERVER đã dùng (server là nơi kẹp dải), không theo phỏng đoán client.
-      if (kind === 'socratic_hint') setAiLevel(r.hintLevel ?? nextLevel ?? aiLevel + 1)
-    } else {
-      setAiError(r.message)
-    }
-  }
-
   const stepDone = (i: number): boolean => {
     if (i === 2) return predictRevealed
     if (i === 3) return parsonsResult === 'correct'
@@ -174,32 +138,32 @@ export default function ProgrammingLessonPage() {
   }
 
   const current = STEPS[step]!
+  const levelId = getLevelIdOfLesson(lesson.id)
+  const backTo = levelId ? `/lap-trinh/${levelId}` : '/lap-trinh'
 
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
-      <Layout onBack={() => nav('/lap-trinh/p1')} />
+      {/* Quay lại ĐÚNG bậc của bài đang học (PR-UX1). Trước đây ghi cứng '/lap-trinh/p1' nên
+          học xong bài P5 bấm quay lại là rơi về bậc P1. Mã bài lạ → lùi về trang môn. */}
+      <Layout onBack={() => nav(backTo)} />
 
       <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-5">
         <PageHeader title={lesson.title} subtitle={`Bài học unit ${lesson.unitId.toUpperCase()}`} />
 
-        {/* Thanh bước */}
-        <nav aria-label="Các bước bài học" className="flex gap-1.5 overflow-x-auto pb-1">
-          {STEPS.map((s, i) => (
+        {/* Ngôn ngữ của bài + lối về đúng bậc (PR-UX1). */}
+        <div className="flex items-center gap-2 flex-wrap -mt-3">
+          <LangBadge language={lesson.language} />
+          {levelId && (
             <button
-              key={s.key}
-              onClick={() => setStep(i)}
-              aria-current={i === step ? 'step' : undefined}
-              className={`tap-44 shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition ${
-                i === step
-                  ? 'bg-accent-500 text-black'
-                  : 'bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white'
-              }`}
+              onClick={() => nav(backTo)}
+              className="tap-44 text-[11px] font-semibold text-zinc-400 hover:text-white underline underline-offset-2 transition"
             >
-              <s.icon className="w-3.5 h-3.5" />
-              <span>{s.label}</span>
+              Bậc {levelId.toUpperCase()}
             </button>
-          ))}
-        </nav>
+          )}
+        </div>
+
+        <StepBar steps={STEPS} current={step} isDone={stepDone} onGo={setStep} />
 
         {/* ①② Móc thực tế + khái niệm */}
         {current.key === 'concept' && (
@@ -221,157 +185,53 @@ export default function ProgrammingLessonPage() {
             <p className="text-sm text-zinc-300">
               Đọc từng dòng (chú thích tiếng Việt trong code) rồi bấm chạy để thấy kết quả thật:
             </p>
-            <pre className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-4 text-sm font-mono text-zinc-100 overflow-x-auto whitespace-pre">
-              {lesson.workedExample.code}
-            </pre>
+            <CodeSurface code={lesson.workedExample.code} />
             <button
               onClick={() => void runExample()}
-              disabled={exampleRunning}
+              disabled={exampleState === 'running'}
               className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-black font-semibold text-sm transition"
             >
-              {exampleRunning ? (
+              {exampleState === 'running' ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <Play className="w-4 h-4" />
               )}
               <span>{lesson.language === 'git' ? 'Chạy thử các lệnh' : 'Chạy ví dụ'}</span>
             </button>
-            {exampleOutput && (
-              <pre className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 text-sm font-mono text-zinc-100 whitespace-pre-wrap">
-                {exampleOutput}
-              </pre>
-            )}
+            <RunOutput state={exampleState} output={exampleOutput} />
           </section>
         )}
 
         {/* ④ Predict — dự đoán TRƯỚC khi chạy */}
         {current.key === 'predict' && (
-          <section className="space-y-3">
-            <p className="text-sm font-semibold text-white">{lesson.predict.question}</p>
-            <pre className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-4 text-sm font-mono text-zinc-100 overflow-x-auto whitespace-pre">
-              {lesson.predict.code}
-            </pre>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {lesson.predict.choices.map((choice, i) => {
-                const isAnswer = i === lesson.predict.answerIndex
-                const showState = predictRevealed && (isAnswer || i === predictChoice)
-                return (
-                  <button
-                    key={choice}
-                    disabled={predictRevealed}
-                    onClick={() => {
-                      setPredictChoice(i)
-                      setPredictRevealed(true)
-                    }}
-                    className={`tap-44 text-left px-4 py-3 rounded-2xl border text-sm font-medium transition ${
-                      showState
-                        ? isAnswer
-                          ? 'bg-emerald-500/15 border-emerald-500/50 text-emerald-300 theme-light:text-emerald-800'
-                          : 'bg-rose-500/15 border-rose-500/50 text-rose-300 theme-light:text-rose-700'
-                        : 'bg-zinc-900 border-zinc-800 text-zinc-200 hover:border-zinc-600'
-                    }`}
-                  >
-                    {choice}
-                  </button>
-                )
-              })}
-            </div>
-            {predictRevealed && (
-              <div
-                className={`rounded-2xl border p-4 text-sm leading-relaxed ${
-                  predictChoice === lesson.predict.answerIndex
-                    ? 'bg-emerald-500/10 border-emerald-500/30 text-zinc-100'
-                    : 'bg-amber-500/10 border-amber-500/30 text-zinc-100'
-                }`}
-              >
-                <p className="font-semibold mb-1">
-                  {predictChoice === lesson.predict.answerIndex
-                    ? 'Chính xác! 🎉'
-                    : 'Chưa đúng — không sao, đoán sai là lúc học được nhiều nhất.'}
-                </p>
-                <p>{lesson.predict.explain}</p>
-              </div>
-            )}
-          </section>
+          <PredictStep
+            predict={lesson.predict}
+            choice={predictChoice}
+            revealed={predictRevealed}
+            onChoose={(i) => {
+              setPredictChoice(i)
+              setPredictRevealed(true)
+            }}
+          />
         )}
 
         {/* ⑤ Parsons — bấm dòng để xếp thứ tự */}
         {current.key === 'parsons' && (
-          <section className="space-y-3">
-            <p className="text-sm text-zinc-300">{lesson.parsons.prompt}</p>
-            <div className="space-y-1.5">
-              <p className="text-xs font-semibold text-zinc-400 uppercase">
-                Bài của bạn (bấm dòng để trả lại kho)
-              </p>
-              <div className="min-h-[64px] rounded-2xl border border-dashed border-zinc-700 bg-zinc-950 p-2 space-y-1">
-                {arranged.map((line, i) => (
-                  <button
-                    key={`${line}-${i}`}
-                    onClick={() => {
-                      setArranged(arranged.filter((_, idx) => idx !== i))
-                      setParsonsResult(null)
-                    }}
-                    className="tap-44 w-full text-left px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 font-mono text-sm text-zinc-100 whitespace-pre hover:border-rose-500/50"
-                  >
-                    {line}
-                  </button>
-                ))}
-                {arranged.length === 0 && (
-                  <p className="text-xs text-zinc-500 p-2">
-                    Bấm các dòng ở kho bên dưới theo đúng thứ tự…
-                  </p>
-                )}
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <p className="text-xs font-semibold text-zinc-400 uppercase">
-                Kho dòng code (đã xáo trộn)
-              </p>
-              <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-2 space-y-1">
-                {shuffledLines
-                  .filter((line) => {
-                    const used = arranged.filter((a) => a === line).length
-                    const total = shuffledLines.filter((s) => s === line).length
-                    return used < total
-                  })
-                  .map((line, i) => (
-                    <button
-                      key={`${line}-${i}`}
-                      onClick={() => {
-                        setArranged([...arranged, line])
-                        setParsonsResult(null)
-                      }}
-                      className="tap-44 w-full text-left px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 font-mono text-sm text-zinc-200 whitespace-pre hover:border-accent-500/60"
-                    >
-                      {line}
-                    </button>
-                  ))}
-              </div>
-            </div>
-            <button
-              onClick={() =>
-                setParsonsResult(
-                  checkParsonsOrder(arranged, lesson.parsons.lines) ? 'correct' : 'wrong',
-                )
-              }
-              disabled={arranged.length === 0}
-              className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-black font-semibold text-sm transition"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Kiểm tra thứ tự</span>
-            </button>
-            {parsonsResult === 'correct' && (
-              <p className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm text-zinc-100">
-                Đúng thứ tự! Chương trình đọc từ trên xuống đúng như bạn xếp. 🎉
-              </p>
-            )}
-            {parsonsResult === 'wrong' && (
-              <p className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-zinc-100">
-                Chưa đúng thứ tự — để ý: khai báo/đọc dữ liệu trước, rồi if → elif → else; dòng thụt
-                lề nằm ngay dưới điều kiện của nó.
-              </p>
-            )}
-          </section>
+          <ParsonsStep
+            prompt={lesson.parsons.prompt}
+            shuffledLines={shuffledLines}
+            arranged={arranged}
+            result={parsonsResult}
+            onArrangedChange={(lines) => {
+              setArranged(lines)
+              setParsonsResult(null)
+            }}
+            onCheck={() =>
+              setParsonsResult(
+                checkParsonsOrder(arranged, lesson.parsons.lines) ? 'correct' : 'wrong',
+              )
+            }
+          />
         )}
 
         {/* ⑥ Make — tự viết, chấm test-case */}
@@ -391,29 +251,7 @@ export default function ProgrammingLessonPage() {
                 lesson.language === 'git' ? 'Ô gõ lệnh bài tự viết' : 'Ô soạn code bài tự viết'
               }
             />
-            {/* Bài HTML/CSS: hiện luôn trang học viên đang viết — thấy ngay kết quả là thứ
-                khiến người mới bám trụ được với web. Cập nhật theo từng lần gõ. */}
-            {lesson.language === 'html' && <HtmlPreview html={code} />}
-            {/* Bài DOM: KHÔNG xem trực tiếp theo từng phím gõ — script dở dang (hoặc vòng lặp
-                vô hạn đang gõ nửa chừng) sẽ chạy ngay trong khung. Học viên bấm nút thì mới
-                chụp lại code hiện tại và chạy. */}
-            {(lesson.language === 'dom' || lesson.language === 'fetch') && lesson.domHtml && (
-              <div className="space-y-2">
-                <button
-                  onClick={() =>
-                    // Bài fetch: nhét fetch giả (cùng nguồn với bộ chấm) vào TRƯỚC code —
-                    // iframe không có mạng thật nên fetch thật kiểu gì cũng thất bại.
-                    setPreviewScript(lesson.language === 'fetch' ? FETCH_SHIM_JS + code : code)
-                  }
-                  className="tap-44 inline-flex items-center px-4 py-2 rounded-2xl border border-zinc-700 hover:border-zinc-500 text-sm text-zinc-200 transition"
-                >
-                  Xem trang chạy
-                </button>
-                {previewScript !== null && (
-                  <HtmlPreview html={lesson.domHtml} script={previewScript} />
-                )}
-              </div>
-            )}
+            <LivePreview language={lesson.language} domHtml={lesson.domHtml} code={code} />
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => void gradeMake()}
@@ -465,110 +303,10 @@ export default function ProgrammingLessonPage() {
                 ))}
               </ul>
             )}
-            {/* ⑥b AI đồng hành: gợi ý Socratic (mở dần) · giải thích lỗi · góp ý sau khi đạt.
-                Gợi ý soạn sẵn ở trên vẫn là đường CHÍNH (0đ, tức thì) — AI chỉ dùng khi bí thật. */}
-            <div className="rounded-3xl border border-zinc-800 bg-zinc-900/80 p-5 space-y-3">
-              <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-accent-400" />
-                <span>Bí quá? Hỏi Bạn Đồng Hành</span>
-              </h2>
-              <p className="text-xs text-zinc-300">
-                AI sẽ hỏi ngược để bạn tự tìm ra chỗ sai, không đưa lời giải sẵn. Mỗi lần hỏi tiêu 1
-                lượt AI trong ngày.
-              </p>
-              <div className="flex items-center gap-2 flex-wrap">
-                <button
-                  onClick={() => void askAi('socratic_hint')}
-                  disabled={aiBusy !== null || !code.trim() || aiLevel >= MAX_HINT_LEVEL}
-                  className="tap-44 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-black font-semibold text-sm transition"
-                >
-                  {aiBusy === 'socratic_hint' ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <MessageCircleQuestion className="w-4 h-4" />
-                  )}
-                  <span>
-                    {aiLevel >= MAX_HINT_LEVEL
-                      ? `Đã dùng hết ${MAX_HINT_LEVEL} bậc gợi ý`
-                      : `Gợi ý bậc ${aiLevel + 1}/${MAX_HINT_LEVEL}`}
-                  </span>
-                </button>
-                {firstError && (
-                  <button
-                    onClick={() => void askAi('explain_error')}
-                    disabled={aiBusy !== null}
-                    className="tap-44 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-zinc-600 disabled:opacity-50 text-zinc-200 font-semibold text-sm transition"
-                  >
-                    {aiBusy === 'explain_error' ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <AlertCircle className="w-4 h-4 text-rose-400" />
-                    )}
-                    <span>Lỗi này nghĩa là gì?</span>
-                  </button>
-                )}
-                {passed && (
-                  <button
-                    onClick={() => void askAi('review')}
-                    disabled={aiBusy !== null}
-                    className="tap-44 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-zinc-600 disabled:opacity-50 text-zinc-200 font-semibold text-sm transition"
-                  >
-                    {aiBusy === 'review' ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Sparkles className="w-4 h-4 text-accent-400" />
-                    )}
-                    <span>Nhờ AI xem lại code</span>
-                  </button>
-                )}
-              </div>
-              <div aria-live="polite">
-                {aiText && (
-                  <p className="rounded-2xl border border-accent-500/30 bg-accent-500/10 p-3.5 text-sm text-zinc-100 leading-relaxed whitespace-pre-line">
-                    {aiText}
-                  </p>
-                )}
-                {aiError && (
-                  <p className="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-3.5 text-sm text-zinc-100">
-                    {aiError}
-                  </p>
-                )}
-              </div>
-            </div>
-            {results && (
-              <ul className="space-y-2" aria-live="polite">
-                {results.map((r, i) => (
-                  <li
-                    key={i}
-                    className={`rounded-2xl border p-3.5 text-sm ${
-                      r.passed
-                        ? 'border-emerald-500/30 bg-emerald-500/10'
-                        : 'border-rose-500/30 bg-rose-500/10'
-                    }`}
-                  >
-                    <p className="flex items-center gap-2 font-semibold text-zinc-100">
-                      {r.passed ? (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                      ) : (
-                        <XCircle className="w-4 h-4 text-rose-400" />
-                      )}
-                      <span>{r.hidden ? `Ca ẩn ${i + 1}` : r.label}</span>
-                    </p>
-                    {r.error && (
-                      <pre className="mt-2 text-xs font-mono text-zinc-200 whitespace-pre-wrap">
-                        {r.error}
-                      </pre>
-                    )}
-                    {!r.passed && r.actual !== undefined && !r.error && (
-                      <p className="mt-2 text-xs text-zinc-200">
-                        Máy của bạn in ra:{' '}
-                        <code className="font-mono">{r.actual || '(không in gì)'}</code>
-                      </p>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
+            {/* ⑥b AI đồng hành — gợi ý soạn sẵn ở trên vẫn là đường CHÍNH (0đ, tức thì);
+                AI chỉ dùng khi bí thật, và mỗi lượt hỏi tiêu 1 lượt AI trong ngày. */}
+            <AiHelpPanel lessonId={lesson.id} code={code} results={results} passed={passed} />
+            {results && <TestResultList results={results} />}
             {passed && (
               <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-sm text-zinc-100 flex items-start gap-2">
                 <Trophy className="w-5 h-5 text-emerald-400 shrink-0" />
@@ -604,10 +342,10 @@ export default function ProgrammingLessonPage() {
                 : 'Bạn chưa đạt hết test ở bước "Tự viết" — quay lại chấm bài để hoàn thành bài học.'}
             </div>
             <button
-              onClick={() => nav('/lap-trinh/p1')}
+              onClick={() => nav(backTo)}
               className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition"
             >
-              <span>Về trang bậc P1</span>
+              <span>{levelId ? `Về trang bậc ${levelId.toUpperCase()}` : 'Về trang môn'}</span>
               <ChevronRight className="w-4 h-4" />
             </button>
           </section>

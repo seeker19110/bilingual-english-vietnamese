@@ -7,6 +7,7 @@ import { useNavigate, useParams, Navigate } from 'react-router-dom'
 import { BookOpen, Hammer, Trophy, Lock, CheckCircle2, Play } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
+import LangBadge from '../../../components/programming/LangBadge'
 import { useAuth } from '../../../context/useAuth'
 import {
   fetchProgress,
@@ -46,6 +47,15 @@ export default function ProgrammingLevelPage() {
           title={`Bậc ${level.id.toUpperCase()} — ${level.name}`}
           subtitle={level.canDo}
         />
+
+        {/* P6 soạn TRƯỚC mốc "P1–P5 chạy thật với người học" nên dễ phải sửa hơn — nói ra vì
+            đây là cảnh báo có hệ quả thực tế cho người đang học, không phải tự bôi xấu. */}
+        {level.id === 'p6' && (
+          <p className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-zinc-100 leading-relaxed">
+            <strong>Bản mở đường.</strong> Bậc này được soạn trước khi có dữ liệu người học thật,
+            nên nội dung của nó dễ được sửa hơn P1–P5.
+          </p>
+        )}
 
         {/* Chặng dự án trục của bậc */}
         <section className="bg-zinc-900/80 border border-accent-500/30 rounded-3xl p-5 space-y-2 shadow-sm">
@@ -127,17 +137,22 @@ export default function ProgrammingLevelPage() {
                   </p>
                 )}
                 {lessons.map((lesson) => (
-                  <button
-                    key={lesson.id}
-                    onClick={() => nav(`/lap-trinh/bai-hoc/${lesson.id}`)}
-                    className="tap-44 w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition active:scale-[0.98]"
-                  >
-                    <span className="flex items-center gap-2">
-                      <Play className="w-4 h-4" />
-                      <span>Học bài: {lesson.title}</span>
-                    </span>
-                    {isLessonCompleted(progress, lesson.id) && <CheckCircle2 className="w-4 h-4" />}
-                  </button>
+                  <div key={lesson.id} className="space-y-1.5">
+                    {/* Ngôn ngữ hiện TRƯỚC khi bấm (PR-UX1) — học viên biết sắp viết gì. */}
+                    <LangBadge language={lesson.language} />
+                    <button
+                      onClick={() => nav(`/lap-trinh/bai-hoc/${lesson.id}`)}
+                      className="tap-44 w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition active:scale-[0.98]"
+                    >
+                      <span className="flex items-center gap-2 min-w-0">
+                        <Play className="w-4 h-4 shrink-0" />
+                        <span className="truncate">Học bài: {lesson.title}</span>
+                      </span>
+                      {isLessonCompleted(progress, lesson.id) && (
+                        <CheckCircle2 className="w-4 h-4 shrink-0" />
+                      )}
+                    </button>
+                  </div>
                 ))}
               </div>
             )

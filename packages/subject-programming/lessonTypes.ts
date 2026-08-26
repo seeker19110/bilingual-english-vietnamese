@@ -22,6 +22,24 @@ export const TestCaseSchema = z
   })
   .strict()
 
+/**
+ * Danh sách ngôn ngữ bài học, khai ở MỘT chỗ để giao diện duyệt được đủ giá trị mà không
+ * chép tay (LangBadge.test.tsx dùng nó để bắt ca "thêm ngôn ngữ mà quên nhãn hiển thị").
+ */
+export const LESSON_LANGUAGES = [
+  'python',
+  'pytest',
+  'httpsim',
+  'apisim',
+  'typescript',
+  'javascript',
+  'sql',
+  'html',
+  'dom',
+  'fetch',
+  'git',
+] as const
+
 export const LessonSchema = z
   .object({
     /** id ổn định `<unit>-l<số>` (vd 'p1-u4-l1') — khoá tiến độ trong Postgres. */
@@ -31,19 +49,7 @@ export const LessonSchema = z
     /** Ngôn ngữ của bài (PR-L7b1) — quyết định bộ chạy ở trình duyệt VÀ cổng CI nào chấm
      *  bài. KHÔNG có giá trị mặc định ngầm: người soạn phải ghi rõ, vì chọn sai ngôn ngữ
      *  nghĩa là bài không được cổng nào chấm. */
-    language: z.enum([
-      'python',
-      'pytest',
-      'httpsim',
-      'apisim',
-      'typescript',
-      'javascript',
-      'sql',
-      'html',
-      'dom',
-      'fetch',
-      'git',
-    ]),
+    language: z.enum(LESSON_LANGUAGES),
     /** Bài 'dom'/'fetch': TRANG CÓ SẴN mà JavaScript của học viên tác động lên (PR-L7d).
      *  Học viên không sửa trang này — họ chỉ viết script. Bài 'fetch' (PR-L7e) = bài DOM
      *  cộng fetch giả lập (fetchPrelude.ts). Bắt buộc với hai ngôn ngữ này, cấm với các

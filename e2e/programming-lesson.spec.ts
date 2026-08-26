@@ -477,3 +477,18 @@ test('bài apisim p4-u8-l1: gói fastapi giả lập nạp được trong Pyodid
   await page.getByRole('button', { name: 'Chấm bài' }).click()
   await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 120_000 })
 })
+
+// Cổng chặn V2 tái phát (PR-UX1, tiêu chí A6 của đặc tả UI/UX). Trước PR này trang bài học
+// ghi cứng `nav('/lap-trinh/p1')`, nên học xong một bài P3/P4/P5 rồi bấm Quay lại là rơi về
+// bậc P1 — sai bậc, mất chỗ đang học. Test đi từ một bài KHÔNG thuộc P1 để bắt đúng lỗi đó.
+test('quay lại từ bài học về ĐÚNG bậc của bài, không phải P1', async ({ page }) => {
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p3-u10-l1', { waitUntil: 'domcontentloaded' })
+
+  // Huy hiệu ngôn ngữ của bài hiện ngay đầu trang (PR-UX1, vá V7). Bài Git chạy trên bộ mô
+  // phỏng nên phải tự khai điều đó.
+  await expect(page.getByText('· mô phỏng').first()).toBeVisible()
+
+  await page.getByRole('button', { name: 'Trang chủ' }).click()
+  await expect(page).toHaveURL(/\/lap-trinh\/p3$/)
+})
