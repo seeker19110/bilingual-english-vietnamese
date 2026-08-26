@@ -12,6 +12,7 @@ import {
   Clock,
   Play,
   Brain,
+  BookOpen,
 } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
@@ -47,6 +48,16 @@ export default function ProgrammingHome() {
             <span>Dự án của tôi (P1 → P3)</span>
           </button>
         </div>
+
+        {/* Mô tả khoá học (PR-UX3) — trang trả lời "học xong tôi có gì / mất bao lâu / tôi có
+            hợp không". Công khai, người chưa đăng nhập cũng xem được. */}
+        <button
+          onClick={() => nav('/lap-trinh/gioi-thieu')}
+          className="tap-44 w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-accent-500/60 text-white font-semibold text-sm transition active:scale-[0.98]"
+        >
+          <BookOpen className="w-4 h-4 text-accent-400" />
+          <span>Khoá học này là gì? Học xong được gì?</span>
+        </button>
 
         {/* Ôn thẻ (PR-L10) — bước ⑧ của khuôn bài học, giữ lại khái niệm cốt lõi đã học */}
         <button

@@ -76,6 +76,9 @@ const Lessons = lazyWithRetry(() => import('./pages/subjects/english/Lessons'))
 const Learn = lazyWithRetry(() => import('./pages/subjects/english/Learn'))
 const CefrLevelPage = lazyWithRetry(() => import('./pages/subjects/english/CefrLevelPage'))
 const ProgrammingHome = lazyWithRetry(() => import('./pages/subjects/programming/ProgrammingHome'))
+const ProgrammingAbout = lazyWithRetry(
+  () => import('./pages/subjects/programming/ProgrammingAbout'),
+)
 const ProgrammingLevelPage = lazyWithRetry(
   () => import('./pages/subjects/programming/ProgrammingLevelPage'),
 )
@@ -356,6 +359,10 @@ export default function App() {
                         path="/mon-hoc/programming"
                         element={<Navigate to="/lap-trinh" replace />}
                       />
+                      {/* Mô tả khoá học môn Lập trình — CÔNG KHAI, cố ý đặt ngoài RequireAuth
+                          (quyết định 2026-08-26): đây là trang giới thiệu môn, bắt đăng nhập
+                          mới cho xem là tự chặn đúng người mình cần thuyết phục. */}
+                      <Route path="/lap-trinh/gioi-thieu" element={<ProgrammingAbout />} />
                       <Route
                         path="/lap-trinh"
                         element={
