@@ -38,6 +38,9 @@
       "path": "./packages/core-learner"
     },
     {
+      "path": "./packages/core-location"
+    },
+    {
       "path": "./packages/core-personal"
     },
     {

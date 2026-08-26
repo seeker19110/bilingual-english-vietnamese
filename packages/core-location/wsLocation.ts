@@ -1,0 +1,168 @@
+// packages/core-location/wsLocation.ts — WebSocket thời gian thực cho "Đi chung".
+//
+// Dùng lại đúng khuôn của chat (packages/core-chat/wsHandler.ts): gắn vào http.Server sẵn có,
+// auth qua cookie HttpOnly, fan-out qua Redis pub/sub để chạy đúng khi PM2 cluster nhiều
+// instance. Kênh theo CHUYẾN (`loc:session:<id>`) chứ không theo user như chat: ai đang mở màn
+// hình chuyến nào thì subscribe kênh chuyến đó.
+//
+// REST (/api/location) vẫn làm được mọi việc — WebSocket chỉ là lớp tăng tốc. Trình duyệt nào
+// không mở được WS thì client tự quay về chế độ polling (xem apps/dhcb/src/lib/locationShare.ts).
+
+import type { Server as HttpServer, IncomingMessage } from 'node:http'
+import { WebSocketServer, WebSocket, type RawData } from 'ws'
+import { validateAuth } from '@dhcb/core-auth/security'
+import {
+  WsLocationClientEventSchema,
+  type WsLocationServerEvent,
+} from '@dhcb/core-contracts/location'
+import { publish, subscribeChannel } from '@dhcb/core-chat/redisChat'
+import { getActiveMembership, getSessionState, recordPosition } from './locationService.js'
+
+const WS_PATH = '/ws/location'
+
+function sessionChannel(sessionId: string): string {
+  return `loc:session:${sessionId}`
+}
+
+function send(ws: WebSocket, event: WsLocationServerEvent): void {
+  if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(event))
+}
+
+/** Phát sự kiện tới mọi người đang mở chuyến — kể cả ở tiến trình PM2 khác. */
+export async function broadcastToSession(
+  sessionId: string,
+  event: WsLocationServerEvent,
+): Promise<void> {
+  await publish(sessionChannel(sessionId), event)
+}
+
+// Socket đang mở TRONG TIẾN TRÌNH NÀY, gom theo chuyến.
+const socketsBySession = new Map<string, Set<WebSocket>>()
+const channelUnsubscribers = new Map<string, () => void>()
+
+export function _resetWsLocationStateForTests(): void {
+  socketsBySession.clear()
+  for (const unsub of channelUnsubscribers.values()) unsub()
+  channelUnsubscribers.clear()
+}
+
+function ensureChannelSubscription(sessionId: string): void {
+  if (channelUnsubscribers.has(sessionId)) return
+  const unsub = subscribeChannel(sessionChannel(sessionId), (payload) => {
+    const sockets = socketsBySession.get(sessionId)
+    if (!sockets) return
+    for (const ws of sockets) send(ws, payload as WsLocationServerEvent)
+  })
+  channelUnsubscribers.set(sessionId, unsub)
+}
+
+function addSocket(sessionId: string, ws: WebSocket): void {
+  const set = socketsBySession.get(sessionId) ?? new Set<WebSocket>()
+  set.add(ws)
+  socketsBySession.set(sessionId, set)
+  ensureChannelSubscription(sessionId)
+}
+
+function removeSocket(sessionId: string, ws: WebSocket): void {
+  const set = socketsBySession.get(sessionId)
+  if (!set) return
+  set.delete(ws)
+  if (set.size > 0) return
+  socketsBySession.delete(sessionId)
+  channelUnsubscribers.get(sessionId)?.()
+  channelUnsubscribers.delete(sessionId)
+}
+
+async function authenticateUpgrade(req: IncomingMessage): Promise<{ userId: string } | null> {
+  const cookie = req.headers.cookie ?? ''
+  const fakeRequest = new Request('http://localhost' + WS_PATH, { headers: { cookie } })
+  return validateAuth(fakeRequest)
+}
+
+export function attachLocationWebSocketServer(server: HttpServer): void {
+  const wss = new WebSocketServer({ noServer: true })
+
+  server.on('upgrade', (req, socket, head) => {
+    const url = new URL(req.url ?? '', 'http://localhost')
+    if (url.pathname !== WS_PATH) return
+
+    authenticateUpgrade(req)
+      .then((auth) => {
+        if (!auth) {
+          socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n')
+          socket.destroy()
+          return
+        }
+        wss.handleUpgrade(req, socket, head, (ws) => wss.emit('connection', ws, req, auth))
+      })
+      .catch(() => socket.destroy())
+  })
+
+  wss.on('connection', (ws: WebSocket, _req: IncomingMessage, auth: { userId: string }) => {
+    handleConnection(ws, auth.userId)
+  })
+}
+
+export function handleConnection(ws: WebSocket, userId: string): void {
+  // Chuyến mà socket này đang theo dõi — mỗi lần subscribe đều kiểm quyền lại ở DB.
+  const joined = new Set<string>()
+
+  ws.on('message', (raw: RawData) => {
+    void handleClientEvent(ws, userId, joined, raw)
+  })
+
+  ws.on('close', () => {
+    for (const sessionId of joined) removeSocket(sessionId, ws)
+    joined.clear()
+  })
+}
+
+async function handleClientEvent(
+  ws: WebSocket,
+  userId: string,
+  joined: Set<string>,
+  raw: RawData,
+): Promise<void> {
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(raw.toString())
+  } catch {
+    send(ws, { type: 'error', message: 'Dữ liệu không hợp lệ' })
+    return
+  }
+  const event = WsLocationClientEventSchema.safeParse(parsed)
+  if (!event.success) {
+    send(ws, { type: 'error', message: 'Sự kiện không hợp lệ' })
+    return
+  }
+
+  const { sessionId } = event.data
+  if (event.data.type === 'unsubscribe') {
+    joined.delete(sessionId)
+    removeSocket(sessionId, ws)
+    return
+  }
+
+  // KHÔNG tin danh sách `joined` trong bộ nhớ: quyền có thể bị thu hồi giữa chừng (rời chuyến,
+  // chuyến hết hạn) nên kiểm lại ở DB mỗi sự kiện.
+  const membership = await getActiveMembership(sessionId, userId)
+  if (!membership) {
+    joined.delete(sessionId)
+    removeSocket(sessionId, ws)
+    send(ws, { type: 'error', message: 'Bạn không còn ở trong chuyến này' })
+    return
+  }
+
+  if (event.data.type === 'subscribe') {
+    joined.add(sessionId)
+    addSocket(sessionId, ws)
+    const state = await getSessionState(sessionId, userId)
+    if (state) send(ws, { type: 'state', state })
+    return
+  }
+
+  // type === 'position'
+  const member = await recordPosition(sessionId, userId, event.data.position)
+  if (!member) return // đang tắt chia sẻ → bỏ qua im lặng, không báo lỗi
+  await broadcastToSession(sessionId, { type: 'position', sessionId, member })
+}

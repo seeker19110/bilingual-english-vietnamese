@@ -34,6 +34,7 @@ const Quests = lazyWithRetry(() => import('./pages/core/Quests'))
 const About = lazyWithRetry(() => import('./pages/core/About'))
 const AdminDashboard = lazyWithRetry(() => import('./pages/core/AdminDashboard'))
 const Friends = lazyWithRetry(() => import('./pages/core/Friends'))
+const LiveLocation = lazyWithRetry(() => import('./pages/core/LiveLocation'))
 const AddFriend = lazyWithRetry(() => import('./pages/core/AddFriend'))
 
 // ── 2. AI Companion & Decision Studio (Bạn Đồng Hành AI)
@@ -277,6 +278,22 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <AddFriend />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/di-chung"
+                        element={
+                          <RequireAuth>
+                            <LiveLocation />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/di-chung/:code"
+                        element={
+                          <RequireAuth>
+                            <LiveLocation />
                           </RequireAuth>
                         }
                       />

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import QRCode from 'qrcode'
-import { Users, Copy, Check, UserMinus, MessageSquare } from 'lucide-react'
+import { Users, Copy, Check, UserMinus, MessageSquare, MapPin } from 'lucide-react'
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import { useToast } from '@core/ToastProvider'
@@ -93,6 +93,20 @@ export default function Friends() {
             </button>
           </section>
         )}
+
+        {/* Lối vào tính năng "Đi chung" — chia sẻ vị trí thật khi cả nhóm đi chơi cùng nhau */}
+        <Link
+          to="/di-chung"
+          className="mb-6 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 min-h-[44px]"
+        >
+          <MapPin size={18} className="text-accent-400" aria-hidden="true" />
+          <span className="text-sm text-white">
+            <strong className="font-semibold">Đi chung</strong>
+            <span className="block text-xs text-zinc-400">
+              Chia sẻ vị trí thời gian thực khi đi chơi chung — bật/tắt lúc nào cũng được
+            </span>
+          </span>
+        </Link>
 
         <section>
           <h2 className="text-sm font-semibold text-zinc-300 mb-3 flex items-center gap-2">

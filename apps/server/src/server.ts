@@ -26,6 +26,8 @@ initSentryServer()
 warnIfClusterWithoutRedis()
 
 import { attachChatWebSocketServer } from '@dhcb/core-chat/wsHandler'
+import { attachLocationWebSocketServer } from '@dhcb/core-location/wsLocation'
+import { purgeExpiredPositions } from '@dhcb/core-location/locationService'
 import { attachVoiceWebSocketServer } from '@dhcb/core-ai/wsVoiceHandler'
 import { attachCoLearningWebSocketServer } from '@dhcb/core-ai/wsCoLearningHandler'
 import { attachGeminiLiveWebSocketServer } from '@dhcb/core-ai/wsGeminiLiveHandler'
@@ -218,6 +220,22 @@ function startPlanExpiryScheduler() {
   }, 60_000) // kiểm tra mỗi phút, chạy 1 lần khi sang ngày mới (UTC)
 }
 
+// ── Dọn vị trí của chuyến "Đi chung" đã hết hạn (mỗi 15 phút) ───────────────
+// Vị trí là dữ liệu nhạy cảm nhất trong app: chuyến hết hạn/kết thúc thì toạ độ phải biến mất
+// mà không cần ai bấm nút. Xem packages/core-location/locationService.ts#purgeExpiredPositions.
+function startLocationPurgeScheduler() {
+  setInterval(() => {
+    void purgeExpiredPositions()
+      .then((deleted) => {
+        if (deleted > 0) console.log(`[location-purge] Đã xoá ${deleted} vị trí của chuyến hết hạn`)
+      })
+      .catch((err) => {
+        console.error('[location-purge] lỗi dọn vị trí hết hạn:', err)
+        captureServerException(err, { context: 'location-purge-scheduler' })
+      })
+  }, 15 * 60_000)
+}
+
 // ── Khởi động ─────────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 3000
 const server = app.listen(PORT, () => {
@@ -231,6 +249,7 @@ const server = app.listen(PORT, () => {
   if (pm2Instance === undefined || pm2Instance === '0') {
     startReminderScheduler()
     startPlanExpiryScheduler()
+    startLocationPurgeScheduler()
     // Kiểm Redis CHỈ ở instance 0: cấu hình REDIS_URL giống hệt nhau ở mọi instance nên một
     // lần là đủ, in 3 lần chỉ làm rối log. Không await — đo đạc không được làm chậm khởi động.
     void reportRedisStatusAtStartup()
@@ -246,6 +265,7 @@ const server = app.listen(PORT, () => {
 // WebSocket chat gắn vào CHÍNH http.Server này (không mở cổng riêng) — xem
 // packages/core-chat/wsHandler.ts.
 attachChatWebSocketServer(server)
+attachLocationWebSocketServer(server)
 attachVoiceWebSocketServer(server)
 attachCoLearningWebSocketServer(server)
 attachGeminiLiveWebSocketServer(server)
