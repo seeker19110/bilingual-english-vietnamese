@@ -52,10 +52,28 @@ dọc" — sai với bối cảnh dùng thật (đang đi bộ ngoài đường,
   lên đầu chuyến thay vì lẫn cuối trang · màn hình chưa có chuyến nêu 3 cam kết riêng tư và đặt
   "chuyến đang mở" lên trên cùng · form gửi được bằng Enter · khoá nút khi đang gọi mạng (chống
   bấm hai lần ra hai chuyến) · bỏ điểm hẹn được (trước chỉ đặt được, không gỡ được).
-- **Kiểm chứng:** 458 file / **5943 test xanh** (+18 test ca biên mới cho `locationFormat` và
-  `memberColor`) · typecheck/lint/format sạch · a11y 10/10 test mới xanh trên 5 theme · 45 phép
-  đo tương phản thủ công đều đạt · ngân sách: Initial JS 123,83 kB / 140 kB (88,5%), **CSS
-  15,80 kB / 18 kB — KHÔNG tăng** (tái dùng utility sẵn có, không đẻ class mới).
+- **Ba lỗi NỮA lộ ra khi CI chạy cổng mới — đều ở code DÙNG CHUNG, đã sửa:** cổng mới đỏ ngay
+  lần đầu với `button-name (critical, 18–30 phần tử)`. Tái hiện được ở máy bằng cách giả lập
+  trình duyệt TỪ CHỐI quyền vị trí (đúng cảnh CI headless): **89 toast trong 3 giây**. Gốc rễ:
+  1. `ToastProvider` tạo mới object `api` **mỗi lần render** (không `useMemo`) → giá trị context
+     đổi tham chiếu liên tục → 6 trang đặt `toast` trong mảng phụ thuộc `useEffect` chạy lại
+     theo. Với `LiveLocation` thành **vòng lặp vô hạn**: lỗi GPS → toast → effect chạy lại →
+     gọi lại `watchPosition` → lỗi GPS → … (vừa ngập màn hình vừa ngốn pin — trái đúng cam kết
+     tiết kiệm pin của chính tính năng).
+  2. Nút đóng toast chỉ có icon, **không có tên đọc được** → vi phạm `button-name` mức critical
+     trên TOÀN APP, chỉ chưa lộ vì chưa trang nào được quét lúc đang hiện toast.
+  3. Chữ toast dùng sắc độ -300, **rớt AA ở 3 theme nền sáng** (1,38–1,52 so với sàn 4,5) →
+     thêm biến thể `theme-light:text-*-800` (6,09–6,64).
+- **Lỗi thứ tư, thuộc loại "im lặng không báo":** `apps/dhcb/tailwind.config.js` **không quét
+  `packages/core-ui/`**, nên class Tailwind chỉ dùng ở đó KHÔNG được sinh ra — bản vá tương phản
+  toast suýt vô tác dụng (`theme-light:text-red-800` đếm được 0 trong CSS build ra).
+  `apps/hub/tailwind.config.js` vốn đã quét đường dẫn này; đã bổ sung cho `apps/dhcb` cho khớp.
+- **Cổng canh thêm cho chính bốn lỗi trên:** 5 test nữa quét màn hình lúc **đang hiện toast lỗi
+  GPS** (fixture giả lập geolocation tất định — `fixed` / `denied` — để không còn cảnh "xanh ở
+  máy dev, đỏ trên CI").
+- **Kiểm chứng (sau khi merge `main`):** 458 file / **6043 test xanh** · **282/282 test a11y**
+  (cả hai cổng, 5 theme) · typecheck/lint/format sạch · 45 phép đo tương phản thủ công đều đạt ·
+  ngân sách: Initial JS 123,93 kB / 140 kB, CSS 15,85 kB / 18 kB.
 
 ### feat(programming): MỞ BẬC P6 — 4 track chuyên sâu, HOÀN THÀNH MÔN LẬP TRÌNH P1→P6 (2026-08-26)
 

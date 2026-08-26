@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
 import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react'
 
 // ── Hệ thống thông báo nổi (toast) dùng chung cho toàn app ───────────────────
@@ -22,10 +22,23 @@ interface ToastApi {
 const ToastContext = createContext<ToastApi | null>(null)
 
 // Cấu hình màu + icon theo loại toast
+// Sắc độ -300 đọc tốt trên nền TỐI nhưng rớt AA hẳn trên nền SÁNG (đo được 1,38–1,52 so với
+// sàn 4,5 ở Blue sky / Pink / Nhi đồng), nên các theme nền sáng đổi sang -800 (6,09–6,64) qua
+// biến thể `theme-light:`. Không đổi chung một sắc độ cho cả hai được: -800 trên nền tối chỉ
+// đạt ~2,0.
 const STYLES: Record<ToastKind, { cls: string; Icon: typeof Info }> = {
-  success: { cls: 'bg-accent-500/15 border-accent-500/30 text-accent-300', Icon: CheckCircle2 },
-  error: { cls: 'bg-red-500/15 border-red-500/30 text-red-300', Icon: AlertCircle },
-  info: { cls: 'bg-sky-500/15 border-sky-500/30 text-sky-300', Icon: Info },
+  success: {
+    cls: 'bg-accent-500/15 border-accent-500/30 text-accent-300 theme-light:text-accent-800',
+    Icon: CheckCircle2,
+  },
+  error: {
+    cls: 'bg-red-500/15 border-red-500/30 text-red-300 theme-light:text-red-800',
+    Icon: AlertCircle,
+  },
+  info: {
+    cls: 'bg-sky-500/15 border-sky-500/30 text-sky-300 theme-light:text-sky-800',
+    Icon: Info,
+  },
 }
 
 export function ToastProvider({ children }: { children: ReactNode }) {
@@ -45,12 +58,20 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     [remove],
   )
 
-  const api: ToastApi = {
-    show,
-    success: useCallback((m: string) => show(m, 'success'), [show]),
-    error: useCallback((m: string) => show(m, 'error'), [show]),
-    info: useCallback((m: string) => show(m, 'info'), [show]),
-  }
+  const success = useCallback((m: string) => show(m, 'success'), [show])
+  const error = useCallback((m: string) => show(m, 'error'), [show])
+  const info = useCallback((m: string) => show(m, 'info'), [show])
+
+  // PHẢI memo hoá: đây là GIÁ TRỊ CONTEXT, mà nhiều trang đặt `toast` vào mảng phụ thuộc của
+  // useEffect (LiveLocation, Profile, WorkKanban, Life, LifeGraph, ActionCanvas…). Trước đây
+  // `api` là object literal tạo mới MỖI LẦN render, nên cứ hiện một toast là ToastProvider
+  // render lại → `api` đổi tham chiếu → các effect kia chạy lại. Với LiveLocation điều đó thành
+  // vòng lặp vô hạn: lỗi GPS → toast → effect chạy lại → gọi lại watchPosition → lỗi GPS →
+  // toast… (đo được 89 toast trong 3 giây khi trình duyệt từ chối quyền vị trí).
+  const api = useMemo<ToastApi>(
+    () => ({ show, success, error, info }),
+    [show, success, error, info],
+  )
 
   return (
     <ToastContext.Provider value={api}>
@@ -67,11 +88,14 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             >
               <Icon className="w-4 h-4 shrink-0 mt-0.5" />
               <span className="flex-1 leading-snug">{message}</span>
+              {/* aria-label là BẮT BUỘC: nút chỉ có mỗi icon nên không có tên đọc được —
+                  thiếu nó là vi phạm WCAG "button-name" mức critical. */}
               <button
                 onClick={() => remove(id)}
+                aria-label="Đóng thông báo"
                 className="shrink-0 opacity-60 hover:opacity-100 transition"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-3.5 h-3.5" aria-hidden="true" />
               </button>
             </div>
           )

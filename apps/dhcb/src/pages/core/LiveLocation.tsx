@@ -136,9 +136,17 @@ export default function LiveLocation() {
       return
     }
     if (watchRef.current) return
+    // Báo lỗi GPS ĐÚNG MỘT LẦN cho mỗi lượt bật chia sẻ. watchPosition gọi callback lỗi lặp
+    // lại (quyền bị từ chối, hết giờ chờ liên tiếp) — báo mỗi lần là phủ kín màn hình bằng
+    // cùng một dòng chữ, che mất chính cái bản đồ mà người dùng đang cần nhìn.
+    let reportedError = false
     watchRef.current = watchMyPosition(
       (position) => socketRef.current?.sendPosition(position),
-      (message) => toast.error(message),
+      (message) => {
+        if (reportedError) return
+        reportedError = true
+        toast.error(message)
+      },
     )
     return () => {
       watchRef.current?.stop()

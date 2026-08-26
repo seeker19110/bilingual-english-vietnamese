@@ -71,9 +71,46 @@ function buildTripState() {
   }
 }
 
+/**
+ * Trình duyệt E2E không có GPS thật, nên PHẢI giả lập — bỏ mặc thì kết quả phụ thuộc vào việc
+ * trình duyệt trên máy này có từ chối quyền vị trí hay không, và test sẽ xanh ở máy dev mà đỏ
+ * trên CI (đã dính đúng lỗi đó một lần).
+ *   • 'fixed'  — luôn trả về một toạ độ cố định: trạng thái bình thường, không có toast.
+ *   • 'denied' — luôn gọi callback lỗi: đúng cảnh người dùng chưa cấp quyền vị trí, làm hiện
+ *     toast lỗi. Dùng để quét a11y của chính cái toast đó.
+ */
+type GeolocationMode = 'fixed' | 'denied'
+
+async function stubGeolocation(page: Page, mode: GeolocationMode): Promise<void> {
+  await page.addInitScript((m: GeolocationMode) => {
+    Object.defineProperty(navigator, 'geolocation', {
+      configurable: true,
+      value: {
+        watchPosition: (ok: (p: unknown) => void, err: (e: unknown) => void) => {
+          if (m === 'denied') {
+            setTimeout(() => err({ code: 1, PERMISSION_DENIED: 1 }), 30)
+          } else {
+            setTimeout(
+              () => ok({ coords: { latitude: 21.0286, longitude: 105.8543, accuracy: 10 } }),
+              30,
+            )
+          }
+          return 1
+        },
+        clearWatch: () => {},
+      },
+    })
+  }, mode)
+}
+
 /** Mở /nhom-di-chung và vào thẳng chuyến mẫu, chờ giao diện trong chuyến dựng xong. */
-export async function openLiveLocationTrip(page: Page, theme: ThemeName): Promise<void> {
+export async function openLiveLocationTrip(
+  page: Page,
+  theme: ThemeName,
+  geolocation: GeolocationMode = 'fixed',
+): Promise<void> {
   const state = buildTripState()
+  await stubGeolocation(page, geolocation)
 
   await page.route('**/api/location*', (route) => {
     // Cùng một đường dẫn phục vụ hai việc: có `sessionId` là hỏi toàn cảnh 1 chuyến,

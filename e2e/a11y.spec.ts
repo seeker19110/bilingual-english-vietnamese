@@ -389,3 +389,19 @@ for (const theme of THEMES) {
     expect(all).toEqual([])
   })
 }
+
+// Cùng màn hình nhưng khi trình duyệt TỪ CHỐI quyền vị trí — lúc đó app hiện toast lỗi, và
+// chính cái toast đó từng mang hai vi phạm mà không cổng nào chạm tới, vì trước đây không có
+// trang nào được quét trong lúc đang hiện toast:
+//   • `button-name` (critical): nút đóng toast chỉ có icon, không có tên đọc được;
+//   • `color-contrast` (serious): chữ toast dùng sắc độ -300, rớt AA trên 3 theme nền sáng
+//     (đo được 1,38–1,52 so với sàn 4,5).
+// Cả hai đã sửa ở packages/core-ui/ToastProvider.tsx; vòng quét này giữ cho chúng không quay lại.
+for (const theme of THEMES) {
+  test(`a11y: Đi chung — toast lỗi GPS theme=${theme} — 0 vi phạm A/AA`, async ({ page }) => {
+    await openLiveLocationTrip(page, theme, 'denied')
+    await expect(page.getByText(/chưa cho phép truy cập vị trí/i)).toBeVisible()
+    const { all } = await scan(page)
+    expect(all).toEqual([])
+  })
+}
