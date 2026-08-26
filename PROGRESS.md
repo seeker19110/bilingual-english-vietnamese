@@ -8,6 +8,35 @@
 
 ## Giai đoạn hiện tại
 
+### docs(vps): cất secret cho cron đúng chỗ + chẩn đoán xong vụ Redis rớt (2026-08-26)
+
+**Lỗ hổng thật, do CHÍNH TÀI LIỆU của dự án dạy sai.** `runbook-dung-vps-moi-tu-dau.md` và
+`setup-postgresql-vps.md` đều hướng dẫn viết `ENV_BACKUP_PASSPHRASE="..."` **thẳng vào dòng
+crontab**, và VPS đã làm đúng theo đó. Hậu quả: `crontab -l` — lệnh người ta chạy hằng ngày để
+xem lịch — in ra passphrase giải mã được **toàn bộ `.env`** từ bản backup trên R2
+(`DATABASE_URL`, khoá AI, khoá SePay). Lộ ra khi đọc crontab để chẩn đoán việc khác; người dùng
+đã xoay vòng secret ngay.
+
+- **Bước 2b mới** trong `docs/deploy-vps-ubuntu.md`: cất secret cron vào `/root/.dhcb-cron-env`
+  (`chmod 600`), crontab nạp bằng `. /root/.dhcb-cron-env &&` thay vì viết giá trị ra. Kèm cách
+  sinh khoá mới và **nhắc điều dễ quên: đổi passphrase KHÔNG cứu được các bản backup cũ trên
+  R2** — chúng vẫn mã hoá bằng passphrase cũ, phải xoá và tạo lại.
+- Sửa 3 dòng cron mẫu ở 2 file còn lại; các lệnh chạy TAY giữ nguyên (chạy một lần, không nằm
+  lại trên đĩa).
+
+**Vụ Redis rớt kết nối: chẩn đoán xong, HẠ 🔴 → 🟡 — và ghi nhận tôi đã đánh giá quá nặng.**
+Hai dòng log của mỗi lần rớt có **cùng dấu thời gian đến giây**, tức gián đoạn dưới 1 giây,
+7 lần/ngày. Lần ghi đầu gắn 🔴 dựa trên giả định ngầm rằng gián đoạn kéo dài, **không kiểm dấu
+thời gian trước khi gắn nhãn**. Bốn giả thuyết đều bị số đo bác bỏ (`timeout 0` · uptime Redis
+2,7 ngày · `rejected_connections: 0` · `REDIS_URL` đúng chuẩn) — chi tiết + mốc theo dõi ở mục
+"Nợ kỹ thuật còn mở". **Không vá vì chưa biết nguyên nhân:** nếu lúc đầu vá `keepAlive` theo
+linh cảm thì giờ đã có một bản vá vô dụng trông như đã xong việc.
+
+**Xác nhận hai vá hôm nay ĐANG CHẠY THẬT trên production** (không chỉ nằm trong repo):
+`pm2 describe dhcb` → `max memory restart 419430400` (=400 MB) ở cả 3 instance;
+`grep -c POOL_MAX_MAC_DINH packages/core-db/dist/pgPool.js` → 2, tức `PG_POOL_MAX=5` đã biên
+dịch và reload. Swap 6 GB cũng đã chạy (`Swap: 6.0Gi`).
+
 ### chore(vps): swap 6GB (đã chạy thật) + chặn rò rỉ RAM + giảm kết nối Postgres (2026-08-26)
 
 **Cập nhật cuối ngày — swap ĐÃ CHẠY trên VPS thật**, và ba việc vận hành còn lại đã vá:
@@ -7195,41 +7224,39 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
-- 🔴 **[2026-08-26] Redis production RỚT KẾT NỐI lặp lại — rate limit tụt về Map in-memory,
-  hạn mức lỏng gấp 3 lần trong lúc đó.** Đọc `pm2 logs dhcb --err --lines 200` thấy **7 lần**
-  trong 8 giờ (00:03 · 00:27 · 02:50 · 03:41 · 04:37 · 05:28 · 08:03), mỗi lần cùng một cặp:
+- 🟡 **[2026-08-26 — HẠ MỨC sau khi chẩn đoán; ban đầu ghi 🔴 là ĐÁNH GIÁ QUÁ NẶNG] Redis rớt
+  kết nối 7 lần/ngày, mỗi lần DƯỚI MỘT GIÂY.** `pm2 logs dhcb --err` cho thấy 7 cặp log
+  (00:03 · 00:27 · 02:50 · 03:41 · 04:37 · 05:28 · 08:03), mỗi cặp là "Redis lỗi (Stream isn't
+  writeable…)" rồi "Redis đã hoạt động trở lại".
 
-  ```
-  [Security] Redis lỗi (Stream isn't writeable and enableOfflineQueue options is false)
-             — rate limit tạm dùng Map in-memory mỗi instance.
-  [Security] Redis đã hoạt động trở lại — rate limit dùng chung toàn cluster.
-  ```
+  **Vì sao hạ từ 🔴 xuống 🟡:** hai dòng của mỗi cặp có **CÙNG dấu thời gian đến giây**
+  (`00:03:51` cho cả hai). Gián đoạn dưới 1 giây, 7 lần/ngày ⇒ cửa sổ rate limit lỏng chỉ vài
+  mili giây, không ai khai thác được. Lần ghi đầu gắn 🔴 dựa trên giả định ngầm rằng gián đoạn
+  kéo dài — **không kiểm dấu thời gian trước khi gắn nhãn**. Ghi lại lỗi suy luận này vì nó
+  đúng loại sai mà quy trình audit sinh ra để bắt.
 
-  **Vì sao đây là chuyện nghiêm trọng, không phải log ồn:** cluster chạy 3 instance, mỗi
-  instance đếm rate limit bằng `Map` RIÊNG khi Redis rớt ⇒ một IP gọi được **gấp 3 lần hạn
-  mức**, kể cả hạn mức gọi AI TRẢ PHÍ. Đó đúng là lý do `docs/deploy-vps-ubuntu.md` Bước 3b
-  bắt buộc cài Redis trước khi bật cluster mode.
+  **BỐN giả thuyết đã bị bác bỏ bằng số đo thật — đừng đi lại đường cũ:**
 
-  **Code KHÔNG sai** — `packages/core-auth/security.ts` xử lý đúng: chỉ dùng Redis khi
-  `status === 'ready'`, hỏng thì rơi về Map chứ không làm vỡ request, và log cả hai chiều
-  hỏng/phục hồi. Vấn đề nằm ở **kết nối TCP bị đóng**, không ở logic.
+  | Giả thuyết                 | Số đo                                          | Kết luận                            |
+  | -------------------------- | ---------------------------------------------- | ----------------------------------- |
+  | Redis đóng client nhàn rỗi | `timeout 0`                                    | ❌ Redis không bao giờ đóng vì idle |
+  | Redis bị khởi động lại     | `uptime_in_seconds: 232420` (2,7 ngày)         | ❌ không restart                    |
+  | Chạm `maxclients`          | `rejected_connections: 0`, `maxclients: 10000` | ❌                                  |
+  | `REDIS_URL` sai định dạng  | có dấu hai chấm, đúng chuẩn `redis://:pass@`   | ❌                                  |
+  | Trùng job cron             | cron chạy 3:05/3:10/3:15 + 0:00/12:00          | ❌ chỉ 1/7 mốc gần trùng            |
 
-  **Giả thuyết hàng đầu, CHƯA xác nhận:** Redis server đóng client nhàn rỗi (`timeout` khác 0
-  trong `redis.conf`), trong khi ioredis mặc định **không** bật TCP keep-alive (`keepAlive: 0`)
-  nên không giữ kết nối sống. Khoảng cách giữa các lần rớt không đều (24 → 143 → 51 → 56 → 51
-  → 155 phút) nên chưa loại được nguyên nhân khác.
+  **Manh mối còn lại, chưa đủ kết luận:** `connected_clients: 2` trong khi có 3 instance PM2
+  (kết nối tạo lazy nên có thể chỉ phản ánh lúc vừa reload); và khoảng cách giữa các lần rớt có
+  nhịp 51 → 56 → 51 phút không thuộc cron nào.
 
-  **Bước chẩn đoán TRƯỚC KHI VÁ** (chạy trên VPS, đừng đoán):
+  **Mốc theo dõi, KHÔNG vá vội:** VPS mới có swap từ 2026-08-26. Giả thuyết còn sống là máy bị
+  áp lực bộ nhớ khiến tiến trình đình trệ, không đáp TCP keepalive (`tcp-keepalive 300`) nên
+  Redis ngắt. Nếu vậy thì swap đã xử lý gián tiếp. **Đọc lại `pm2 logs dhcb --err` sau vài
+  ngày:** còn đúng ~7 lần/ngày ⇒ nguyên nhân nằm chỗ khác, đào tiếp; giảm hẳn ⇒ đóng nợ.
 
-  ```bash
-  redis-cli config get timeout          # khác 0 ⇒ đúng giả thuyết idle timeout
-  redis-cli config get tcp-keepalive
-  redis-cli info clients                 # connected_clients, blocked_clients
-  ```
-
-  **Vá dự kiến khi xác nhận:** thêm `keepAlive: 30000` vào `new Redis(url, {...})` trong
-  `security.ts`. KHÔNG đảo `enableOfflineQueue: false` — nó được đặt có chủ đích để rate limit
-  không treo request khi Redis chết.
+  **Nếu phải vá:** KHÔNG đảo `enableOfflineQueue: false` (đặt có chủ đích để rate limit không
+  treo request khi Redis chết). Ứng viên hợp lý là nới `connectTimeout` (đang 2000ms) — nhưng
+  chỉ khi có bằng chứng, không theo linh cảm.
 
 - 🟢 **[2026-08-26 — ĐÃ GỠ] VPS production đã có swap 6 GB.** `scripts/setup-swap.sh` chạy
   thật trên máy: `free -h` nay báo `Swap: 6.0Gi · used 0B` (dùng 0B là đúng —
