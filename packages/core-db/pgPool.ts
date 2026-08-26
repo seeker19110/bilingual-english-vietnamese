@@ -4,9 +4,18 @@
 
 import { Pool } from 'pg'
 
+// Mặc định 5 kết nối MỖI TIẾN TRÌNH (hạ từ 10 ngày 2026-08-26).
+// Con số này NHÂN với số tiến trình, đó là chỗ dễ tính nhầm: PM2 chạy cluster `instances:'max'`
+// trên VPS 3 core ⇒ default cũ 10 thành 30 kết nối Postgres thật, cho một máy đo được CPU 0,5%
+// và mỗi instance ~220 MB. Mỗi backend Postgres tốn vài MB RAM trên máy chỉ có 2,9 GB, nên đó
+// là bộ nhớ trả cho thứ không dùng tới. 3 × 5 = 15 vẫn thừa cho tải hiện tại.
+// Tách Postgres ra VPS riêng + PgBouncer (GĐ2) thì set PG_POOL_MAX trong .env cho khớp
+// `default_pool_size` — xem postgres/pgbouncer.ini.example.
+const POOL_MAX_MAC_DINH = 5
+
 function makePool(connectionString: string, maxEnvVar: string): Pool {
   const maxEnv = Number(process.env[maxEnvVar])
-  const max = Number.isFinite(maxEnv) && maxEnv > 0 ? maxEnv : 10
+  const max = Number.isFinite(maxEnv) && maxEnv > 0 ? maxEnv : POOL_MAX_MAC_DINH
   const pool = new Pool({ connectionString, max })
   pool.on('error', (err) => {
     // Lỗi kết nối idle (vd DB restart) — log, KHÔNG crash cả process.
@@ -29,7 +38,7 @@ export function getPgPool(): Pool {
     )
   }
 
-  // PG_POOL_MAX cấu hình được qua .env (mặc định 10 — giữ nguyên hành vi cũ nếu không set).
+  // PG_POOL_MAX cấu hình được qua .env (mặc định 5 mỗi tiến trình — xem makePool ở trên).
   // Khi tách Postgres ra VPS riêng + PgBouncer (GĐ2 kế hoạch scale, xem
   // docs/research/dac-ta-gd2-scale-50k.md), tăng số này lên cho khớp default_pool_size của
   // PgBouncer — không cần sửa code + build lại mỗi lần đổi.

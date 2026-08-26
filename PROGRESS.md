@@ -8,6 +8,27 @@
 
 ## Giai đoạn hiện tại
 
+### chore(vps): swap 6GB (đã chạy thật) + chặn rò rỉ RAM + giảm kết nối Postgres (2026-08-26)
+
+**Cập nhật cuối ngày — swap ĐÃ CHẠY trên VPS thật**, và ba việc vận hành còn lại đã vá:
+
+- **`max_memory_restart: '400M'`** trong `ecosystem.config.cjs`. Trước đây thiếu hẳn, nên
+  instance rò rỉ bộ nhớ sẽ phình tới khi kernel gọi OOM killer — mà OOM killer không chọn tiến
+  trình đáng chết, nó có thể giết PostgreSQL. Chọn 400M vì đo thật mỗi instance dùng ~218–231 MB:
+  đủ xa để không restart oan lúc tải cao, đủ gần để bắt được bất thường.
+- **`PG_POOL_MAX` mặc định 10 → 5** (`packages/core-db/pgPool.ts`). Chỗ dễ tính nhầm: con số
+  này là MỖI TIẾN TRÌNH, mà PM2 chạy `instances:'max'` trên 3 core ⇒ default cũ thành **30 kết
+  nối Postgres thật** cho một máy đo được CPU 0,5%. Mỗi backend Postgres tốn vài MB trên máy chỉ
+  có 2,9 GB. 3 × 5 = 15 vẫn thừa. Đã ghi rõ "mỗi tiến trình, không phải tổng" vào `.env.example`.
+- **↺ 64 lần restart: đã kết luận KHÔNG phải crash** — đọc 200 dòng log lỗi gần nhất, không có
+  một stack trace crash nào. Là cộng dồn qua các lần `pm2 reload` khi deploy.
+
+**Nhưng chính lần đọc log đó lộ ra một nợ 🔴 mới, nghiêm trọng hơn cả ba việc trên: Redis rớt
+kết nối 7 lần trong 8 giờ**, mỗi lần rate limit tụt về `Map` in-memory của từng instance ⇒ một
+IP gọi được gấp 3 lần hạn mức, kể cả hạn mức AI trả phí. Code không sai; kết nối TCP bị đóng.
+Chi tiết + bước chẩn đoán trước khi vá: xem mục "Nợ kỹ thuật còn mở" đầu danh sách. **Chưa vá
+vì chưa xác nhận nguyên nhân** — đụng đường rate limit thì không đoán.
+
 ### chore(vps): script tạo swap + đo lại 2 mục nợ kỹ thuật bằng số thật (2026-08-26)
 
 Người dùng hỏi "3 vCPU / 3GB đủ vận hành server không?" rồi gửi số đo thật từ VPS. Đợt này trả
@@ -7174,8 +7195,46 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
-- 🔴 **[2026-08-26] VPS production KHÔNG CÓ SWAP — `scripts/setup-swap.sh` đã có trong repo
-  nhưng CHƯA chạy trên máy thật.** Số đo người dùng gửi từ VPS hôm nay:
+- 🔴 **[2026-08-26] Redis production RỚT KẾT NỐI lặp lại — rate limit tụt về Map in-memory,
+  hạn mức lỏng gấp 3 lần trong lúc đó.** Đọc `pm2 logs dhcb --err --lines 200` thấy **7 lần**
+  trong 8 giờ (00:03 · 00:27 · 02:50 · 03:41 · 04:37 · 05:28 · 08:03), mỗi lần cùng một cặp:
+
+  ```
+  [Security] Redis lỗi (Stream isn't writeable and enableOfflineQueue options is false)
+             — rate limit tạm dùng Map in-memory mỗi instance.
+  [Security] Redis đã hoạt động trở lại — rate limit dùng chung toàn cluster.
+  ```
+
+  **Vì sao đây là chuyện nghiêm trọng, không phải log ồn:** cluster chạy 3 instance, mỗi
+  instance đếm rate limit bằng `Map` RIÊNG khi Redis rớt ⇒ một IP gọi được **gấp 3 lần hạn
+  mức**, kể cả hạn mức gọi AI TRẢ PHÍ. Đó đúng là lý do `docs/deploy-vps-ubuntu.md` Bước 3b
+  bắt buộc cài Redis trước khi bật cluster mode.
+
+  **Code KHÔNG sai** — `packages/core-auth/security.ts` xử lý đúng: chỉ dùng Redis khi
+  `status === 'ready'`, hỏng thì rơi về Map chứ không làm vỡ request, và log cả hai chiều
+  hỏng/phục hồi. Vấn đề nằm ở **kết nối TCP bị đóng**, không ở logic.
+
+  **Giả thuyết hàng đầu, CHƯA xác nhận:** Redis server đóng client nhàn rỗi (`timeout` khác 0
+  trong `redis.conf`), trong khi ioredis mặc định **không** bật TCP keep-alive (`keepAlive: 0`)
+  nên không giữ kết nối sống. Khoảng cách giữa các lần rớt không đều (24 → 143 → 51 → 56 → 51
+  → 155 phút) nên chưa loại được nguyên nhân khác.
+
+  **Bước chẩn đoán TRƯỚC KHI VÁ** (chạy trên VPS, đừng đoán):
+
+  ```bash
+  redis-cli config get timeout          # khác 0 ⇒ đúng giả thuyết idle timeout
+  redis-cli config get tcp-keepalive
+  redis-cli info clients                 # connected_clients, blocked_clients
+  ```
+
+  **Vá dự kiến khi xác nhận:** thêm `keepAlive: 30000` vào `new Redis(url, {...})` trong
+  `security.ts`. KHÔNG đảo `enableOfflineQueue: false` — nó được đặt có chủ đích để rate limit
+  không treo request khi Redis chết.
+
+- 🟢 **[2026-08-26 — ĐÃ GỠ] VPS production đã có swap 6 GB.** `scripts/setup-swap.sh` chạy
+  thật trên máy: `free -h` nay báo `Swap: 6.0Gi · used 0B` (dùng 0B là đúng —
+  `vm.swappiness=10` nên kernel chỉ chạm swap khi RAM thật sự cạn). Đĩa còn 22 GB trước khi
+  tạo nên không sát đáy. Ghi lại bối cảnh gốc: Số đo người dùng gửi từ VPS hôm nay:
 
   ```
   free -h  →  total 2.9Gi · used 1.1Gi · available 1.8Gi · Swap 0B
@@ -7197,10 +7256,10 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   2. `PG_POOL_MAX` mặc định **10 mỗi tiến trình × 3 instance = 30 kết nối** Postgres thật.
      Chưa vỡ (`max_connections` mặc định 100) nhưng thừa; đề xuất đặt `PG_POOL_MAX=5`.
 
-  **Một quan sát chưa kết luận được:** `pm2 list` hiện **↺ 64** ở cả ba instance. Con số này
-  cộng dồn qua mọi lần `pm2 reload` khi deploy nên có thể hoàn toàn bình thường; nhưng cũng có
-  thể có crash lẫn trong đó. Phân biệt được bằng `pm2 logs dhcb --err --lines 200` trên VPS —
-  chưa làm, nên KHÔNG kết luận là bình thường.
+  **↺ 64 — ĐÃ KẾT LUẬN, không phải crash.** Đọc `pm2 logs dhcb --err --lines 200`: 200 dòng
+  log lỗi gần nhất KHÔNG có một stack trace crash nào, không có tiến trình thoát bất thường.
+  Toàn bộ là cảnh báo Redis rớt (mục trên) và 2 lỗi TTS Gemini có xử lý sẵn. Vậy 64 là cộng
+  dồn qua các lần `pm2 reload` khi deploy — bình thường.
 
 - 🟡 **[2026-08-25] `nginx/en-vi.conf` đã sửa trong repo nhưng CHƯA áp lên VPS thật.** Audit
   2026-08-25 (F5) phát hiện bản `Content-Security-Policy-Report-Only` trong nginx còn whitelist

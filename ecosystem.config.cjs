@@ -71,6 +71,16 @@ module.exports = {
         PORT: 3001,
       },
 
+      // Chặn rò rỉ bộ nhớ [2026-08-26]: PM2 tự khởi động lại instance nào vượt ngưỡng.
+      // Vì sao cần: VPS chỉ có 2,9 GB thật. Không có mục này thì một instance rò rỉ sẽ phình
+      // tới khi kernel gọi OOM killer — mà OOM killer KHÔNG chọn tiến trình đáng chết, nó có
+      // thể giết PostgreSQL. PM2 khởi động lại một instance là chuyện nhỏ (2 instance còn lại
+      // vẫn phục vụ, cluster mode không có khoảng chết); mất PostgreSQL là sự cố.
+      // Vì sao 400M: đo thật 2026-08-26 mỗi instance dùng ~218–231 MB, nên 400 MB là mức
+      // BẤT THƯỜNG RÕ RÀNG chứ không phải mức bận bình thường — đặt sát quá sẽ khiến PM2
+      // restart oan lúc tải cao.
+      max_memory_restart: '400M',
+
       // Tự restart nếu app crash, giới hạn 10 lần/phút để tránh vòng lặp vô tận
       restart_delay: 3000,
       max_restarts: 10,
