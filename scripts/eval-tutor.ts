@@ -28,6 +28,7 @@ import * as dotenv from 'dotenv'
 import { chatSystemPrompt, speakingSystemPrompt } from '../apps/dhcb/src/prompts/index.ts'
 import { callGemini } from '@dhcb/core-ai/geminiApi'
 import { fetchWithTimeout } from '@dhcb/core-http/fetchTimeout'
+import { groqKeyPool, isSkippableGroqKeyError } from '@dhcb/core-ai/groqKeyPool'
 import {
   ALLOWED_MODEL,
   GEMINI_CHAT_MODEL,
@@ -76,11 +77,23 @@ const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms
 // người dùng thật gặp. Phát hiện khi chạy `npm run eval:tutor` thật: script chọn Gemini dù .env
 // có đủ GROQ_API_KEY, trong khi production lẽ ra ưu tiên Groq trước.
 const GEMINI_KEY = process.env.GEMINI_API_KEY
-const GROQ_KEY = process.env.GROQ_API_KEY
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY
 
+// [2026-08-26] PHẢI qua groqKeyPool(), KHÔNG đọc thẳng process.env.GROQ_API_KEY.
+// Production hỗ trợ NHIỀU key cách nhau dấu phẩy (packages/core-ai/groqKeyPool.ts). Script này
+// trước đây gửi nguyên chuỗi "key1,key2" làm Bearer token → Groq trả 401 Invalid API Key, và
+// người đọc kết luận nhầm là khoá hết hạn / dịch vụ chết, trong khi app thật vẫn chạy tốt.
+// Đã xảy ra thật: 62/62 câu lỗi 401 dẫn tới một lượt báo động sự cố production hoàn toàn sai.
+//
+// Bài học chung: công cụ chẩn đoán phải đọc cấu hình GIỐNG HỆT production, nếu không nó đo
+// chính nó chứ không đo hệ thống.
+const GROQ_KEYS = groqKeyPool()
+
 function providerLabel(): string {
-  if (GROQ_KEY) return `Groq · ${GROQ_CHAT_MODEL}`
+  if (GROQ_KEYS.length > 0) {
+    const n = GROQ_KEYS.length > 1 ? ` (${GROQ_KEYS.length} key)` : ''
+    return `Groq · ${GROQ_CHAT_MODEL}${n}`
+  }
   if (ANTHROPIC_KEY) return `Anthropic · ${ALLOWED_MODEL}`
   if (GEMINI_KEY) return `Gemini · ${GEMINI_CHAT_MODEL}`
   return 'none'
@@ -89,24 +102,33 @@ function providerLabel(): string {
 type Msg = { role: 'user' | 'assistant'; content: string }
 
 async function callGroq(system: string, messages: Msg[]): Promise<string> {
-  const resp = await fetchWithTimeout(
-    'https://api.groq.com/openai/v1/chat/completions',
-    {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${GROQ_KEY!}`, 'content-type': 'application/json' },
-      body: JSON.stringify({
-        model: GROQ_CHAT_MODEL,
-        max_tokens: MAX_TOKENS,
-        messages: [{ role: 'system', content: system }, ...messages],
-      }),
-    },
-    AI_TIMEOUT_MS,
-  )
-  if (!resp.ok) throw new Error(`Groq ${resp.status}: ${(await resp.text()).slice(0, 200)}`)
-  const data = (await resp.json()) as { choices?: Array<{ message?: { content?: unknown } }> }
-  const text = data.choices?.[0]?.message?.content
-  if (typeof text !== 'string') throw new Error('Groq trả về cấu trúc không hợp lệ')
-  return text
+  // Thử lần lượt từng key trong bể, đúng cách production làm: key hết hạn (401) hoặc chạm hạn
+  // mức (429) thì sang key kế, chỉ báo lỗi khi CẢ BỂ đều hỏng.
+  let lastErr = ''
+  for (const key of GROQ_KEYS) {
+    const resp = await fetchWithTimeout(
+      'https://api.groq.com/openai/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${key}`, 'content-type': 'application/json' },
+        body: JSON.stringify({
+          model: GROQ_CHAT_MODEL,
+          max_tokens: MAX_TOKENS,
+          messages: [{ role: 'system', content: system }, ...messages],
+        }),
+      },
+      AI_TIMEOUT_MS,
+    )
+    if (resp.ok) {
+      const data = (await resp.json()) as { choices?: Array<{ message?: { content?: unknown } }> }
+      const text = data.choices?.[0]?.message?.content
+      if (typeof text !== 'string') throw new Error('Groq trả về cấu trúc không hợp lệ')
+      return text
+    }
+    lastErr = `Groq ${resp.status}: ${(await resp.text()).slice(0, 200)}`
+    if (!isSkippableGroqKeyError(resp.status)) break
+  }
+  throw new Error(lastErr || 'Groq: bể khoá rỗng')
 }
 
 async function callAnthropic(system: string, messages: Msg[]): Promise<string> {
@@ -132,7 +154,7 @@ async function callAnthropic(system: string, messages: Msg[]): Promise<string> {
 
 async function callProvider(system: string, userText: string): Promise<string> {
   const messages: Msg[] = [{ role: 'user', content: userText }]
-  if (GROQ_KEY) return callGroq(system, messages)
+  if (GROQ_KEYS.length > 0) return callGroq(system, messages)
   if (ANTHROPIC_KEY) return callAnthropic(system, messages)
   if (GEMINI_KEY) return callGemini(GEMINI_KEY, GEMINI_CHAT_MODEL, system, messages, MAX_TOKENS)
   throw new Error('Chưa cấu hình GEMINI_API_KEY / GROQ_API_KEY / ANTHROPIC_API_KEY')

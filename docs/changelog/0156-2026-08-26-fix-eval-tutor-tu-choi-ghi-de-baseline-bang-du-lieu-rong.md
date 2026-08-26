@@ -2,9 +2,8 @@
 
 ## Chuyện đã xảy ra thật
 
-Chạy `npm run eval:tutor -- --write-baseline` trên VPS. `GROQ_API_KEY` đã hết hiệu lực nên
-**62/62 câu trả `401 Invalid API Key`**. Mọi chỉ số ra `n/a`, mọi loại lỗi `0/0` — và script
-vẫn in:
+Chạy `npm run eval:tutor -- --write-baseline` trên VPS. **62/62 câu trả `401 Invalid API Key`**.
+Mọi chỉ số ra `n/a`, mọi loại lỗi `0/0` — và script vẫn in:
 
 ```
 ✅ Đã ghi docs/research/eval-tutor-baseline.md
@@ -48,9 +47,25 @@ Tái hiện **đúng** tình huống trên VPS bằng cách chạy với khoá s
 Ngưỡng 80% chọn để một vài câu lỗi lẻ tẻ (mạng chập chờn, 429 tạm thời) không chặn được lượt
 chạy hợp lệ — chỉ chặn khi lượt chạy hỏng về bản chất.
 
-## Việc còn lại, KHÔNG thuộc PR này
+## Lỗi thứ hai, phát hiện ngay sau đó: `401` là GIẢ
 
-`GROQ_API_KEY` trên VPS đang bị Groq từ chối (`401`). Groq không chỉ dùng cho eval — **STT của
-chế độ Luyện nói cũng đi qua đó**, nên cần kiểm ngay key còn sống không và cấp lại nếu cần.
-Đáng chú ý: trang Trạng thái tính năng lượt 07:00 cùng ngày vẫn báo Groq hoạt động 426ms, tức
-key hỏng trong khoảng giữa.
+Ban đầu tôi kết luận `GROQ_API_KEY` hết hạn và **báo động một sự cố production không hề tồn
+tại** (STT hỏng). Sai hoàn toàn. Nguyên nhân thật:
+
+`scripts/eval-tutor.ts` đọc **nguyên chuỗi** `process.env.GROQ_API_KEY` làm Bearer token, trong
+khi production đi qua `groqKeyPool()` — hàm tách **nhiều key cách nhau dấu phẩy**.
+
+|                          | Kết quả                                             |
+| ------------------------ | --------------------------------------------------- |
+| App thật (`groqKeyPool`) | tách đúng 3 key → Groq chạy bình thường             |
+| `eval-tutor.ts` (bản cũ) | gửi cả chuỗi `key1,key2,key3` làm token → `401` giả |
+
+Đo thật trên VPS xác nhận: pool có **3 key**, và key đầu tiên trả **`200`**.
+
+**Đã vá cùng lượt:** script nay dùng `groqKeyPool()` + `isSkippableGroqKeyError()`, thử lần lượt
+từng key giống hệt production (401/429 → sang key kế, chỉ báo lỗi khi cả bể hỏng). Nhãn provider
+in luôn số key để nhìn là biết.
+
+**Bài học chung, đáng nhớ hơn cả bản vá:** _công cụ chẩn đoán phải đọc cấu hình GIỐNG HỆT
+production_ — nếu không, nó đo chính nó chứ không đo hệ thống, và người đọc kết luận sai về
+một thứ vốn đang khoẻ mạnh.
