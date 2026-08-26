@@ -104,8 +104,14 @@ type Msg = { role: 'user' | 'assistant'; content: string }
 async function callGroq(system: string, messages: Msg[]): Promise<string> {
   // Thử lần lượt từng key trong bể, đúng cách production làm: key hết hạn (401) hoặc chạm hạn
   // mức (429) thì sang key kế, chỉ báo lỗi khi CẢ BỂ đều hỏng.
-  let lastErr = ''
-  for (const key of GROQ_KEYS) {
+  //
+  // [2026-08-26] Báo lỗi kèm trạng thái của TỪNG key, không chỉ key cuối. Bản trước chỉ giữ
+  // `lastErr`, nên khi key #1 chạm hạn mức (429) còn key #3 đã hỏng (401) thì thông báo chỉ
+  // hiện 401 — giấu mất tín hiệu quyết định và dẫn tới hai vòng chẩn đoán sai. Công cụ chẩn
+  // đoán che bớt số đo còn tệ hơn không có công cụ.
+  const statuses: string[] = []
+  let fatal = ''
+  for (const [i, key] of GROQ_KEYS.entries()) {
     const resp = await fetchWithTimeout(
       'https://api.groq.com/openai/v1/chat/completions',
       {
@@ -125,10 +131,14 @@ async function callGroq(system: string, messages: Msg[]): Promise<string> {
       if (typeof text !== 'string') throw new Error('Groq trả về cấu trúc không hợp lệ')
       return text
     }
-    lastErr = `Groq ${resp.status}: ${(await resp.text()).slice(0, 200)}`
-    if (!isSkippableGroqKeyError(resp.status)) break
+    statuses.push(`#${i + 1}\u2192${resp.status}`)
+    if (!isSkippableGroqKeyError(resp.status)) {
+      fatal = (await resp.text()).slice(0, 160)
+      break
+    }
   }
-  throw new Error(lastErr || 'Groq: bể khoá rỗng')
+  if (GROQ_KEYS.length === 0) throw new Error('Groq: bể khoá rỗng')
+  throw new Error(`Groq cả bể hỏng [${statuses.join(' ')}]${fatal ? ` \u2014 ${fatal}` : ''}`)
 }
 
 async function callAnthropic(system: string, messages: Msg[]): Promise<string> {
