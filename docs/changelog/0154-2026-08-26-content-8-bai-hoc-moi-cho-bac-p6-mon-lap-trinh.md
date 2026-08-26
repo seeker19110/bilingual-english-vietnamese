@@ -1,7 +1,7 @@
 # 0154 — feat(lessons): 8 bài học mới cho bậc P6 môn Lập trình
 
 - **Ngày:** 2026-08-26
-- **PR:** (điền số sau khi mở PR)
+- **PR:** #703
 - **Nhánh:** `claude/programming-lessons-tl3tbg`
 
 ## Bối cảnh
