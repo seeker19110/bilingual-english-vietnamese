@@ -90,11 +90,20 @@ Hệ thống được chuẩn hóa theo 10 bộ quy chuẩn SOTA chuyên biệt 
 - **Theo giai đoạn, không bỏ giai đoạn.** Đầu phiên nêu rõ đang ở giai đoạn nào, việc tiếp theo là gì.
 - **Cổng giữa các giai đoạn.** Trước khi chuyển giai đoạn / thay đổi lớn: tóm tắt đã đạt cổng chưa và **xin xác nhận của người dùng**.
 - **Theo dõi trạng thái.** Cập nhật `PROGRESS.md` sau mỗi mốc.
-- **TẠO PR = COI NHƯ ĐÃ XONG (quyết định 2026-08-09).** Không chờ merge mới ghi nhận: **ngay trong
-  chính PR đó** phải cập nhật tài liệu `*.md` liên quan (`PROGRESS.md` là bắt buộc; thêm
-  `CLAUDE.md`/`PROJECT.md`/`docs/*` nếu thay đổi chạm tới). Ghi rõ số PR, ngày, việc đã làm và
-  quyết định kèm theo. Lý do: để phiên sau đọc `PROGRESS.md` là biết đủ, không phải lần lại `git log`
-  hay hỏi lại người dùng — và không còn cảnh dồn một đống PR đã merge mới ngồi ghi bù.
+- **TẠO PR = COI NHƯ ĐÃ XONG (quyết định 2026-08-09, làm rõ 2026-08-26).** Không chờ merge mới
+  ghi nhận. Ba việc phải làm **liền một mạch**, không tách ra hỏi lại:
+  1. **Cập nhật tài liệu ngay trong chính PR đó** — `PROGRESS.md` là bắt buộc; thêm
+     `CLAUDE.md`/`PROJECT.md`/`docs/*` nếu thay đổi chạm tới. Ghi rõ số PR, ngày, việc đã làm và
+     quyết định kèm theo.
+  2. **Đánh dấu hoàn thành trong dự án** — mục tương ứng ở `PROGRESS.md` (và mục 13 dưới đây nếu
+     là hạng mục lớn) chuyển sang trạng thái xong, kèm số PR.
+  3. **Bật auto-merge (squash) ngay** — xem mục 11.
+     Lý do: để phiên sau đọc `PROGRESS.md` là biết đủ, không phải lần lại `git log` hay hỏi lại
+     người dùng — và không còn cảnh dồn một đống PR đã merge mới ngồi ghi bù.
+- **PR KHÔNG ĐỂ Ở DẠNG NHÁP (draft).** GitHub **từ chối** bật auto-merge trên PR nháp
+  ("Pull request is a draft" — đã dính thật ở PR #693), nên để nháp là phá vỡ luật "tạo PR =
+  đã xong" ở trên. Nếu công cụ/môi trường mặc định tạo PR nháp thì phải bỏ nháp ngay rồi mới
+  bật auto-merge.
 - **Chia nhỏ.** Mỗi lần một phần nhỏ, hoàn chỉnh, kiểm tra được. Việc lớn → đề xuất kế hoạch chia nhỏ trước.
 - **Chủ động góp ý (BẮT BUỘC).** Thấy cách tốt hơn / rủi ro / thiếu sót yêu cầu / phạm vi phình → **nêu kèm đề xuất cụ thể**. Im lặng làm theo khi biết có vấn đề là vi phạm.
 - **Nhịp làm việc theo giới hạn giờ (usage limit).** Kiểm tra mức dùng giới hạn trước khi quyết định tiếp:
@@ -206,11 +215,17 @@ Bất kỳ mục ❌ → sửa trước, chạy lại toàn bộ, KHÔNG commit/
 
 Mỗi tính năng/sửa lỗi một nhánh riêng · commit nhỏ, mỗi commit một thay đổi logic · **conventional commits** (`feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `style`, `perf`) · mọi merge vào nhánh chính qua pull request (kể cả làm một mình) · **không push thẳng nhánh chính**.
 
-**LUÔN BẬT AUTO-MERGE CHO MỌI PR (quy ước người dùng chốt 2026-08-25).** Ngay sau khi tạo PR,
-bật auto-merge (squash) cho PR đó — không hỏi lại. Điều này AN TOÀN vì nhánh `main` đã có
-branch protection với required status check (`quality`, `e2e`, `metadata`): auto-merge chỉ
-merge khi CẢ BA check xanh, check đỏ thì PR nằm nguyên đó. Nếu bật auto-merge thất bại (quyền,
-hoặc repo tắt tính năng), báo lại cho người dùng chứ đừng tự merge tay.
+**LUÔN BẬT AUTO-MERGE CHO MỌI PR (quy ước người dùng chốt 2026-08-25, làm rõ 2026-08-26).**
+Ngay sau khi tạo PR: **bỏ nháp (nếu đang là draft) → bật auto-merge (squash)** — không hỏi lại.
+Điều này AN TOÀN vì nhánh `main` đã có branch protection với required status check (`quality`,
+`e2e`, `metadata`): auto-merge chỉ merge khi CẢ BA check xanh, check đỏ thì PR nằm nguyên đó.
+Nếu bật auto-merge thất bại (quyền, hoặc repo tắt tính năng), báo lại cho người dùng chứ đừng
+tự merge tay.
+
+**Bật auto-merge KHÔNG phải là hết trách nhiệm.** PR mình tạo là PR của mình: nếu CI đỏ thì
+phải đọc log, **tái hiện lỗi ở máy**, sửa và push cho tới khi xanh — không để PR nằm đỏ chờ
+người dùng. Nếu `main` tiến lên gây xung đột thì merge `main` vào nhánh, giải xung đột, rồi
+**chạy lại toàn bộ cổng trên kết quả đã merge** (mục 9) trước khi push.
 
 ## 12. Khi nào PHẢI dừng và hỏi
 
@@ -266,5 +281,14 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
    2026-07-11 và **xác nhận lại 2026-08-23** sau khi rà soát (đặc tả platform từng ghi nhầm là
    "chưa làm" — nay đã sửa). Các check bắt buộc: `quality`, `e2e` (từ `ci.yml`) và `metadata`
    (từ `pr-policy.yml` — cổng bắt PR có mô tả đầy đủ + liên kết đặc tả).
+
+- [x] **"Đi chung" — chia sẻ vị trí thời gian thực** (`/nhom-di-chung`): nhóm bạn đi chơi chung
+      thấy nhau trên bản đồ để không bị lạc. WebSocket `/ws/location` (dùng lại hạ tầng Redis
+      pub/sub của `core-chat`) + đường lui polling REST 8 giây; bản đồ Google nạp lười bằng thẻ
+      script nên không tốn ngân sách bundle. **Riêng tư là ràng buộc kỹ thuật:** không có chế độ
+      vĩnh viễn (1/4/8 giờ) · không lưu lịch sử hành trình · tắt là XOÁ vị trí chứ không ẩn ·
+      mặc định TẮT · chế độ gần đúng ~500m làm tròn ở server. Backend + schema: PR #691
+      (migration `0068`). Thiết kế lại UI/UX + 7 lỗi a11y dùng chung: PR #693. Đặc tả:
+      `docs/research/dac-ta-chia-se-vi-tri-2026-08-26.md`.
 
 Chú thích: `[x]` xong · `[~]` làm một phần · `[ ]` chưa làm.

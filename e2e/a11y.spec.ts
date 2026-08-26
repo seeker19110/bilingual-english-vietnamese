@@ -1,6 +1,7 @@
 import { test, expect, type Page } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import { mockLogin, USER_ID, type ThemeName } from './helpers/auth'
+import { openLiveLocationTrip } from './helpers/location'
 import { muteTts } from './helpers/tts'
 import { freezeAnimations } from './helpers/axe'
 
@@ -368,6 +369,38 @@ async function openProgrammingAiPanel(page: Page, theme: ThemeName) {
 for (const theme of THEMES) {
   test(`a11y: AI xem code (Lập trình) theme=${theme} — 0 vi phạm A/AA`, async ({ page }) => {
     await openProgrammingAiPanel(page, theme)
+    const { all } = await scan(page)
+    expect(all).toEqual([])
+  })
+}
+
+// ── MÀN "ĐI CHUNG" ĐANG TRONG CHUYẾN (/nhom-di-chung) ─────────────────────────────
+// Trang này KHÔNG nằm trong vòng quét theo route ở trên vì toàn bộ giao diện đáng quét
+// (bản đồ, danh sách người, cảnh báo đi lạc, công tắc chia sẻ, nút kết thúc chuyến) chỉ
+// hiện SAU khi có dữ liệu chuyến từ backend — tải trang trơn chỉ thấy màn tạo chuyến.
+//
+// Vì sao phải thêm: bản đầu của trang dùng `bg-accent-500` kèm chữ trắng, RỚT tương phản
+// AA ở cả 5 theme (2,54–3,53 so với sàn 4,5) mà không cổng nào bắt được — đúng vì trang
+// nằm ngoài danh sách quét. Fixture dùng chung ở e2e/helpers/location.ts bịt khoảng trống đó.
+for (const theme of THEMES) {
+  test(`a11y: Đi chung — trong chuyến theme=${theme} — 0 vi phạm A/AA`, async ({ page }) => {
+    await openLiveLocationTrip(page, theme)
+    const { all } = await scan(page)
+    expect(all).toEqual([])
+  })
+}
+
+// Cùng màn hình nhưng khi trình duyệt TỪ CHỐI quyền vị trí — lúc đó app hiện toast lỗi, và
+// chính cái toast đó từng mang hai vi phạm mà không cổng nào chạm tới, vì trước đây không có
+// trang nào được quét trong lúc đang hiện toast:
+//   • `button-name` (critical): nút đóng toast chỉ có icon, không có tên đọc được;
+//   • `color-contrast` (serious): chữ toast dùng sắc độ -300, rớt AA trên 3 theme nền sáng
+//     (đo được 1,38–1,52 so với sàn 4,5).
+// Cả hai đã sửa ở packages/core-ui/ToastProvider.tsx; vòng quét này giữ cho chúng không quay lại.
+for (const theme of THEMES) {
+  test(`a11y: Đi chung — toast lỗi GPS theme=${theme} — 0 vi phạm A/AA`, async ({ page }) => {
+    await openLiveLocationTrip(page, theme, 'denied')
+    await expect(page.getByText(/chưa cho phép truy cập vị trí/i)).toBeVisible()
     const { all } = await scan(page)
     expect(all).toEqual([])
   })
