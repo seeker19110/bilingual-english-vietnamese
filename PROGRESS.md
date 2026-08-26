@@ -19,12 +19,13 @@ Rà 11 PR đang mở. Kết quả và lý do quyết định:
   #673 (actions/checkout 7), #672 (github-script 9), #671 (setup-node 7), #670 (ssh-action 1.2.5),
   #669 (upload-artifact 7). Chúng nằm im chỉ vì trước đó chưa ai bật auto-merge, không phải vì lỗi.
 - **Đã ĐÓNG 4 bump major** — CI đỏ vì lý do THẬT, không phải flake, và đều cần việc tay riêng:
-  | PR | Bump | Nguyên nhân đỏ |
-  |---|---|---|
-  | #678 | vite 7 → 8 | peer xung đột `@vitejs/plugin-react@4.7.0` (chỉ tới vite 7) ⇒ `npm ci` gãy |
-  | #675 | @vitejs/plugin-react 4 → 6 | yêu cầu peer `vite@^8` ⇒ `npm ci` gãy. Phải gộp cùng #678 |
-  | #676 | size-limit 12 → 13 | peer xung đột `@size-limit/file@12.1.0`. Phải bump cả hai gói cùng lúc |
-  | #674 | express 4 → 5 | `path-to-regexp@8` bỏ cú pháp `/api/*`: boot check chết với `PathError: Missing parameter name at index 6` |
+
+  | PR   | Bump                       | Nguyên nhân đỏ                                                                                             |
+  | ---- | -------------------------- | ---------------------------------------------------------------------------------------------------------- |
+  | #678 | vite 7 → 8                 | peer xung đột `@vitejs/plugin-react@4.7.0` (chỉ tới vite 7) ⇒ `npm ci` gãy                                 |
+  | #675 | @vitejs/plugin-react 4 → 6 | yêu cầu peer `vite@^8` ⇒ `npm ci` gãy. Phải gộp cùng #678                                                  |
+  | #676 | size-limit 12 → 13         | peer xung đột `@size-limit/file@12.1.0`. Phải bump cả hai gói cùng lúc                                     |
+  | #674 | express 4 → 5              | `path-to-regexp@8` bỏ cú pháp `/api/*`: boot check chết với `PathError: Missing parameter name at index 6` |
 
   Quyết định của người dùng (2026-08-26): **giữ nguyên phiên bản**. Dự án đang ổn định, cả bốn
   bản nâng đều breaking và không mang lợi ích cấp bách. Nếu sau này cần nâng: vite 8 + plugin-react 6
