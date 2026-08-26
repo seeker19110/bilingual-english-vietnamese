@@ -12,7 +12,9 @@ import { runHtml } from './htmlRunner'
 import { runGit } from './gitRunner'
 import { runDom, resetDomWorker } from './domRunner'
 import { runFetchLesson, resetFetchWorker } from './fetchRunner'
+import { runTypeScript } from './tsRunner'
 import type { FetchApi } from '@dhcb/subject-programming/fetchPrelude'
+import { laLanPython, fileCuaLan, noiCodeTheoLan } from '@dhcb/subject-programming/pyLanes'
 
 export type LessonLanguage = ProgrammingLesson['language']
 
@@ -74,6 +76,14 @@ export function runLessonCode(
     // mô tả lại. Khung XEM TRANG là phần riêng của giao diện (iframe sandbox="").
     return runHtml(code)
   }
+  if (language === 'typescript') {
+    // Kiểm kiểu ở server rồi chạy JavaScript sinh ra trong Worker JS đã có — xem tsRunner.ts.
+    const { stdinLines, onOutput } = options
+    return runTypeScript(code, {
+      ...(stdinLines ? { stdinLines } : {}),
+      ...(onOutput ? { onOutput } : {}),
+    })
+  }
   if (language === 'sql') {
     // SQL không có input(): dữ liệu đã nằm sẵn trong CSDL mẫu (sqlDataset.ts).
     const { onOutput, onLoading } = options
@@ -82,7 +92,17 @@ export function runLessonCode(
       ...(onLoading ? { onLoading } : {}),
     })
   }
-  return runPython(code, options)
+  // Còn lại là các LÀN chạy bằng engine Python. Làn mở rộng của bậc P4 (pytest…) chỉ khác
+  // Python thuần ở mấy module ghi sẵn vào workspace + phần nối cuối — khai báo ở pyLanes.ts,
+  // dùng chung với cổng CI để hai nơi không trôi khỏi nhau.
+  const lane = laLanPython(language) ? language : 'python'
+  const laneFiles = fileCuaLan(lane)
+  const files =
+    Object.keys(laneFiles).length > 0 ? { ...laneFiles, ...(options.files ?? {}) } : options.files
+  return runPython(noiCodeTheoLan(lane, code), {
+    ...options,
+    ...(files ? { files } : {}),
+  })
 }
 
 /** Dọn mọi môi trường đã nạp — gọi khi rời trang bài học. */

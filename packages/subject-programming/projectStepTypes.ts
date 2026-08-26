@@ -24,7 +24,7 @@ export const ProjectStepSchema = z
     /** Ngôn ngữ của bước (PR-L8) — quyết định bộ chạy nào chấm. Bỏ trống = 'python' (đọc qua
      *  getStepLanguage(), cùng khuôn với getStepFiles): chặng P1/P2 thuần Python nên không
      *  phải sửa 23 bước cũ, còn bước web/SQL của chặng P3 thì ghi rõ. */
-    language: z.enum(['python', 'html', 'dom', 'sql', 'fetch']).optional(),
+    language: z.enum(['python', 'pytest', 'apisim', 'html', 'dom', 'sql', 'fetch']).optional(),
     /** Bước 'dom'/'fetch': trang HTML có sẵn mà script của học viên tác động lên. Bắt buộc với
      *  hai ngôn ngữ đó, cấm với các ngôn ngữ khác (refine bên dưới kiểm). */
     domHtml: z.string().max(6000).optional(),
@@ -59,7 +59,8 @@ export const ProjectStepSchema = z
   // `?? 'python'` chứ không so thẳng: bước chặng P1/P2 bỏ trống `language` nghĩa là Python
   // (xem getStepLanguage) — so thẳng sẽ đánh trượt oan chính những bước cũ đang dùng probeCode.
   .refine((s) => (s.language ?? 'python') === 'python' || s.probeCode === undefined, {
-    // probeCode = "chạy code chấm thay file chính để ép tách module" — chỉ có nghĩa với Python.
+    // probeCode = "chạy code chấm thay file chính để ép tách module" — chỉ có nghĩa với
+    // Python thuần; làn pytest/apisim đã có bộ chạy riêng nối ở cuối (pyLanes.ts).
     message: "probeCode chỉ dùng cho bước 'python'",
   })
 
