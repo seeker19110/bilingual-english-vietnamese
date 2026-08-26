@@ -36,6 +36,36 @@ phát hiện bản vá glob ở PR #693 đã **âm thầm sửa thêm một lỗ
   **biến mất không một tiếng động**. Đây là loại lỗi không cổng nào của dự án bắt được trước đó —
   nay đã có cổng.
 
+### chore(vps): script tạo swap + đo lại 2 mục nợ kỹ thuật bằng số thật (2026-08-26)
+
+Người dùng hỏi "3 vCPU / 3GB đủ vận hành server không?" rồi gửi số đo thật từ VPS. Đợt này trả
+lời bằng dữ liệu và vá chỗ mỏng nhất.
+
+- **`scripts/setup-swap.sh` (mới)** — tạo swap có kiểm soát: kiểm swap đã có, **chặn khi đĩa
+  không đủ** (đòi dư ≥ 2 GB sau khi trừ swap), hỏi xác nhận trước khi ghi (bỏ qua bằng `--yes`),
+  ghi `/etc/fstab` để sống qua reboot, đặt `vm.swappiness=10`. Kèm Bước 3a trong
+  `docs/deploy-vps-ubuntu.md`.
+  Đã thử cả hai nhánh chặn: gõ sai xác nhận → huỷ, không đụng gì; xin 500G trên đĩa 30G → thoát
+  mã 1, không tạo file. (Trong lúc thử suýt tạo swap 6G ngay trong container vì ở đó cũng là
+  root — chính vì vậy mới thêm bước xác nhận.)
+- **Nợ ngân sách: đo lại, phần bundle ĐÓNG.** JS 124,03/140 kB (dư ~11,4%) · CSS 15,87/18 kB
+  (dư ~11,8%). Con số "99,7%" ghi 2026-08-25 đã lạc hậu vì ngưỡng được nới ở PR sau đó mà mục
+  nợ không cập nhật — đúng loại lệch Tầng 6b sinh ra để bắt. Phần **coverage vẫn mỏng thật**:
+  branches 90,17% trên sàn 90, dư 0,17 điểm.
+- **Nợ Gemini: hạ 🔴 → 🟡.** Ảnh trang Trạng thái tính năng (lượt tự động 07:00 26/8/2026) cho
+  thấy Gemini hoạt động 512ms, cả 6 dịch vụ còn lại bình thường ⇒ tên model và key đều đúng.
+  **Không đóng cả mục:** health-check chứng minh _gọi được API_, không chứng minh _chất lượng sư
+  phạm không tụt_ — baseline `eval:tutor` vẫn là bản cũ hơn ngày đổi prompt/model.
+- **Nợ mới 🔴:** VPS chưa chạy swap (script mới chỉ nằm trong repo). Kèm hai đề xuất chưa vá,
+  chờ chốt: `max_memory_restart` cho PM2 và `PG_POOL_MAX=5`. Và một quan sát **chưa kết luận**:
+  `pm2 list` hiện ↺ 64 ở cả ba instance — có thể chỉ là cộng dồn qua các lần deploy, cần đọc
+  `pm2 logs --err` mới biết, nên không gọi là bình thường.
+
+**Trả lời câu hỏi gốc:** đủ cho hiện tại — phần nặng nhất (Pyodide, SQLite WASM, linkedom của
+môn Lập trình) chạy trong TRÌNH DUYỆT học viên chứ không phải server, và AI đều gọi API ngoài;
+server chỉ định tuyến, kiểm quyền, đọc/ghi Postgres. Ngưỡng phải nâng: vượt ~1.000 người đồng
+thời thì tách Postgres/Redis sang máy riêng (runbook GĐ2 đã có sẵn).
+
 ### feat(programming): THIẾT KẾ LẠI UI/UX MÔN LẬP TRÌNH — trọn 5 đợt UX0→UX5 (2026-08-26)
 
 Môn Lập trình đã đủ 60 bài (P1→P6) nhưng chưa từng có đợt thiết kế giao diện riêng: đặc tả gốc
@@ -7172,6 +7202,34 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- 🔴 **[2026-08-26] VPS production KHÔNG CÓ SWAP — `scripts/setup-swap.sh` đã có trong repo
+  nhưng CHƯA chạy trên máy thật.** Số đo người dùng gửi từ VPS hôm nay:
+
+  ```
+  free -h  →  total 2.9Gi · used 1.1Gi · available 1.8Gi · Swap 0B
+  pm2 list →  3 instance dhcb: 218,7 + 217,6 + 231,1 MB · pm2-logrotate 57,5 MB
+  ```
+
+  Lúc rảnh dư dả (dùng ~40% RAM). Chỗ nguy hiểm là **lúc deploy**: `scripts/deploy.sh` chạy
+  `npm ci` + `npm run build` ngay trên máy đang phục vụ, Vite + `tsc -b` 16 workspace ngốn thêm
+  1–1,5 GB ở đỉnh — chạm trần 2,9 GB. Không swap thì kernel gọi OOM killer, mà OOM killer
+  **không chọn tiến trình đáng chết**: nó có thể giết PostgreSQL giữa lúc deploy.
+
+  **Điều kiện gỡ nợ:** trên VPS chạy `sudo bash scripts/setup-swap.sh 6G` rồi xác nhận
+  `free -h` thấy dòng Swap khác `0B`. Xem `docs/deploy-vps-ubuntu.md` Bước 3a.
+
+  **Hai thứ nữa phát hiện cùng lúc, chưa vá (đề xuất, chờ người dùng chốt):**
+  1. `ecosystem.config.cjs` **thiếu `max_memory_restart`** — instance rò rỉ bộ nhớ thì PM2
+     không tự khởi động lại, để mặc kernel giết bừa. Đề xuất `'400M'` (mỗi instance đang dùng
+     ~220 MB, nên 400 MB là ngưỡng bất thường rõ ràng chứ không phải mức bình thường).
+  2. `PG_POOL_MAX` mặc định **10 mỗi tiến trình × 3 instance = 30 kết nối** Postgres thật.
+     Chưa vỡ (`max_connections` mặc định 100) nhưng thừa; đề xuất đặt `PG_POOL_MAX=5`.
+
+  **Một quan sát chưa kết luận được:** `pm2 list` hiện **↺ 64** ở cả ba instance. Con số này
+  cộng dồn qua mọi lần `pm2 reload` khi deploy nên có thể hoàn toàn bình thường; nhưng cũng có
+  thể có crash lẫn trong đó. Phân biệt được bằng `pm2 logs dhcb --err --lines 200` trên VPS —
+  chưa làm, nên KHÔNG kết luận là bình thường.
+
 - 🟡 **[2026-08-25] `nginx/en-vi.conf` đã sửa trong repo nhưng CHƯA áp lên VPS thật.** Audit
   2026-08-25 (F5) phát hiện bản `Content-Security-Policy-Report-Only` trong nginx còn whitelist
   `*.supabase.co` dù dự án rời Supabase từ 2026-07-20, lại thiếu facebook/apple/microsoft,
@@ -7188,13 +7246,23 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   server. Sửa trong repo mà quên áp = tài liệu nói một đằng, server chạy một nẻo — đúng loại
   lệch mà Tầng 6b của quy trình audit sinh ra để bắt.
 
-- 🟡 **[2026-08-25] Biên độ ngân sách chất lượng đã MỎNG — bundle JS 99,7%, coverage branches
-  dư 0,13 điểm.** Audit 2026-08-25 (F3). Số đo thật: JS 122,65/123 kB · CSS 15,64/16 kB ·
-  coverage branches 90,13% trên sàn 90. Lần audit 2026-08-24 branches còn dư 0,17 điểm ⇒ biên độ
-  đang **hẹp dần**, không phải đứng yên.
+- 🟡 **[ĐO LẠI 2026-08-26 — nợ này ĐÃ THU HẸP, không còn đúng như mô tả cũ] Chỉ COVERAGE còn
+  mỏng; ngân sách BUNDLE nay rộng.** Số đo thật hôm nay trên `main` (chạy `npm ci` sạch rồi
+  `npm run build`):
 
-  Chưa đỏ, nên KHÔNG chặn việc gì hôm nay. Cái đáng lo là ai gánh: tính năng nhỏ kế tiếp sẽ làm
-  CI đỏ, và người viết PR đó lãnh trọn cái nợ mà các PR trước đã tiêu dần.
+  | Ngân sách            | Số thật   | Ngưỡng | Biên độ          |
+  | -------------------- | --------- | ------ | ---------------- |
+  | Initial JS (brotli)  | 124,03 kB | 140 kB | dư **~11,4%**    |
+  | Initial CSS (brotli) | 15,87 kB  | 18 kB  | dư **~11,8%**    |
+  | Coverage branches    | 90,17%    | 90%    | dư **0,17 điểm** |
+
+  **Phần bundle của nợ này coi như đóng.** Con số "99,7%" ghi ngày 2026-08-25 đã lạc hậu: ngưỡng
+  JS được nới 123 → 140 kB và CSS 16 → 18 kB ở các PR sau đó, mà mục nợ không ai cập nhật. Đây
+  đúng loại lệch mà Tầng 6b của quy trình audit sinh ra để bắt — tài liệu điều hành nói một
+  đằng, số thật một nẻo — nên ghi lại để lần sau đo trước khi tin.
+
+  **Phần coverage thì VẪN nguyên:** dư 0,17 điểm branches là đủ để một PR quên viết test làm CI
+  đỏ, và người viết PR đó lãnh trọn cái nợ các PR trước đã tiêu dần.
 
   **Đo lại bất cứ lúc nào:** `npm run build && npm run test:coverage && npm run budget`
   (`scripts/check-budget-margin.ts`, thêm ở PR #664 — in biên độ còn lại thành số, cảnh báo khi
@@ -7214,8 +7282,19 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   1 trang CEFR (ngân sách LCP ≤ 2,5s · INP ≤ 200ms · CLS ≤ 0,1), và đọc Sentry (lỗi mới chưa
   xem xét) + `pm2 logs`/số lần restart + dung lượng ổ đĩa.
 
-- 🔴 **[2026-08-24 · XÁC NHẬN LẠI 2026-08-25 qua audit toàn diện] Model chat Gemini đổi khẩn
-  cấp sang `gemini-3.6-flash` — VẪN CHƯA xác nhận hoạt động, CHƯA cập nhật baseline.**
+- 🟡 **[2026-08-26 — GỠ ĐƯỢC NỬA ĐẦU] Model `gemini-3.6-flash` ĐÃ CHẠY THẬT trên production;
+  còn lại nợ baseline eval.** Người dùng gửi ảnh trang **Trạng thái tính năng**, lượt tự động
+  **07:00:02 ngày 26/8/2026**: _AI hội thoại — Google Gemini · Hoạt động — 512ms_, cùng lượt
+  Groq 426ms · TTS Google 315ms · R2 817ms · SePay webhook OK · PostgreSQL 90ms; băng tổng
+  "TẤT CẢ TÍNH NĂNG BÌNH THƯỜNG". Vậy tên model đúng, key đúng, đường gọi thông — nỗi lo lớn
+  nhất (404 vì sai tên model) đã hết.
+
+  **Nhưng KHÔNG được đóng cả mục.** Health-check chỉ chứng minh **gọi được API**, không chứng
+  minh **chất lượng sư phạm không tụt**: nó gửi một prompt tối thiểu, không chấm recall/precision
+  trên bộ fixture. Baseline `docs/research/eval-tutor-baseline.md` vẫn là bản 2026-08-21, cũ hơn
+  ngày đổi prompt/model 2026-08-24 — nên phần dưới đây giữ nguyên, chỉ hạ mức từ 🔴 xuống 🟡.
+
+  _Nguyên văn ghi nhận cũ (2026-08-24, xác nhận lại 2026-08-25):_
   _Audit 2026-08-25 chấm Tầng 4 **FAIL** bằng lệnh, không đoán:_ `git log -1` trên
   `apps/dhcb/src/prompts` + `packages/core-ai/aiConfig.ts` cho **2026-08-24**, còn trên
   `docs/research/eval-tutor-baseline.md` cho **2026-08-21** — ngày đổi MỚI HƠN ngày baseline
