@@ -443,3 +443,22 @@ test('bài milestone P3 p3-u12-l1: code mẫu đạt hết test-case trong trìn
   await page.getByRole('button', { name: 'Chấm bài' }).click()
   await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 60_000 })
 })
+
+// PR-L13 — LÀN PYTEST của bậc P4. Đây là làn đầu tiên dựa vào việc GHI MODULE vào workspace
+// Pyodide trước khi chạy (pytest.py + dhcb_pytest.py, xem pyLanes.ts): cổng CI chạy python3
+// trong một thư mục thật, còn trình duyệt dùng hệ thống file trong bộ nhớ — hai đường khác
+// hẳn nhau, nên phải chạy thật trong Chromium mới biết học viên có làm được không.
+//
+// Chọn p4-u6-l1 vì nó là bài khắt khe nhất của làn: đề yêu cầu báo cáo có ĐÚNG MỘT test đỏ
+// ("3 passed, 1 failed"), nên bài chỉ đạt khi bộ chạy rút gọn hoạt động đúng cả nhánh PASSED
+// lẫn nhánh FAILED — chạy sai một nhánh là rớt ngay.
+test('bài pytest p4-u6-l1: bộ chạy rút gọn hoạt động thật trong Pyodide', async ({ page }) => {
+  test.setTimeout(180_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p4-u6-l1', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page.getByRole('button', { name: 'Xem code mẫu' }).click()
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 120_000 })
+})

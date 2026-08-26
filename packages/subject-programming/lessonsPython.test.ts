@@ -17,15 +17,43 @@ import { mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { PROGRAMMING_LESSONS } from './lessons.js'
+import { laLanPython, fileCuaLan, noiCodeTheoLan, type PythonLane } from './pyLanes.js'
 import { PROJECT_STAGES, getStepLanguage, type ProjectStep } from './projectSteps.js'
 import { gradeTestCase, allTestsPassed } from './grading.js'
 import type { ProgrammingTestCase } from './lessonTypes.js'
 
 const hasPython = spawnSync('python3', ['--version']).status === 0
 
-// Chỉ bài PYTHON đi qua cổng này; bài JavaScript có cổng riêng (lessonsJs.test.ts).
-const PYTHON_LESSONS = PROGRAMMING_LESSONS.filter((l) => l.language === 'python')
+// Chỉ bài chạy bằng ENGINE PYTHON đi qua cổng này — gồm cả các LÀN mở rộng của bậc P4
+// (pytest…), vì chúng dùng đúng engine đó, chỉ khác mấy module ghi sẵn vào thư mục làm việc
+// (pyLanes.ts). Bài JavaScript có cổng riêng (lessonsJs.test.ts).
+const PYTHON_LESSONS = PROGRAMMING_LESSONS.filter((l) => laLanPython(l.language))
 const WORK_DIR = mkdtempSync(join(tmpdir(), 'dhcb-lesson-'))
+
+// Mỗi làn một thư mục riêng đã ghi sẵn module của làn — dựng MỘT lần, dùng lại cho mọi lượt
+// chạy, đúng cách Pyodide mount workspace ở trình duyệt.
+const LANE_DIRS = new Map<PythonLane, string>()
+
+function thuMucCuaLan(lane: PythonLane): string {
+  const san = LANE_DIRS.get(lane)
+  if (san) return san
+  const files = fileCuaLan(lane)
+  if (Object.keys(files).length === 0) {
+    LANE_DIRS.set(lane, WORK_DIR)
+    return WORK_DIR
+  }
+  const dir = mkdtempSync(join(tmpdir(), `dhcb-lan-${lane}-`))
+  for (const [name, content] of Object.entries(files)) {
+    writeFileSync(join(dir, name), content, 'utf8')
+  }
+  LANE_DIRS.set(lane, dir)
+  return dir
+}
+
+/** Chạy một đoạn code của bài THEO ĐÚNG LÀN của nó (module + phần nối cuối + thư mục). */
+function chayTheoLan(lane: PythonLane, code: string, stdinLines: string[]) {
+  return runPython3(noiCodeTheoLan(lane, code), stdinLines, thuMucCuaLan(lane))
+}
 
 // Prelude PHẢI khớp hành vi input() của sandbox trình duyệt (apps/dhcb/src/workers/
 // pyodideWorker.ts): đọc tuần tự các dòng đã điền sẵn và ECHO "prompt + giá trị" ra stdout.
@@ -77,6 +105,14 @@ function gradeAll(code: string, cases: ProgrammingTestCase[], cwd: string = WORK
   })
 }
 
+/** Như gradeAll nhưng chạy theo làn của bài (bài Python thuần: y hệt gradeAll). */
+function gradeAllTheoLan(lane: PythonLane, code: string, cases: ProgrammingTestCase[]) {
+  return cases.map((c) => {
+    const r = chayTheoLan(lane, code, c.stdinLines)
+    return gradeTestCase(c, r.output, r.error)
+  })
+}
+
 // Mô tả lỗi gọn cho người soạn nội dung biết sai ở ca nào.
 function describeFailures(results: ReturnType<typeof gradeAll>): string {
   return results
@@ -93,18 +129,26 @@ describe.skipIf(!hasPython)('nội dung môn Lập trình chạy THẬT bằng p
   })
 
   it.each(PYTHON_LESSONS)('$id — code mẫu đạt HẾT test-case', (lesson) => {
-    const results = gradeAll(lesson.make.sampleSolution, lesson.make.testCases)
+    const results = gradeAllTheoLan(
+      lesson.language as PythonLane,
+      lesson.make.sampleSolution,
+      lesson.make.testCases,
+    )
     expect(allTestsPassed(results), `Bài ${lesson.id}: ${describeFailures(results)}`).toBe(true)
   })
 
   it.each(PYTHON_LESSONS)('$id — ví dụ mẫu chạy không lỗi', (lesson) => {
-    const r = runPython3(lesson.workedExample.code, lesson.workedExample.stdinLines)
+    const r = chayTheoLan(
+      lesson.language as PythonLane,
+      lesson.workedExample.code,
+      lesson.workedExample.stdinLines,
+    )
     expect(r.error, `Bài ${lesson.id} ví dụ mẫu lỗi: ${r.error}`).toBeUndefined()
     expect(r.output.trim().length, `Bài ${lesson.id}: ví dụ mẫu không in gì`).toBeGreaterThan(0)
   })
 
   it.each(PYTHON_LESSONS)('$id — đáp án Predict khớp output thật', (lesson) => {
-    const r = runPython3(lesson.predict.code, [])
+    const r = chayTheoLan(lesson.language as PythonLane, lesson.predict.code, [])
     expect(r.error, `Bài ${lesson.id} code Predict lỗi: ${r.error}`).toBeUndefined()
     const answer = lesson.predict.choices[lesson.predict.answerIndex]!
     // Lựa chọn đúng phải xuất hiện trong output thật; các lựa chọn SAI thì không được
