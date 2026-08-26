@@ -27,6 +27,7 @@ import mistakesHandler from './api/subjects/english/mistakes.js'
 import programmingProgressHandler from './api/subjects/programming/progress.js'
 import programmingProjectHandler from './api/subjects/programming/project.js'
 import programmingFeedbackHandler from './api/subjects/programming/feedback.js'
+import programmingTsCheckHandler from './api/subjects/programming/ts-check.js'
 import tutorFeedbackHandler from './api/subjects/english/tutor-feedback.js'
 import feedbackHandler from './api/core/feedback.js'
 import adminSettingsHandler from './api/admin/admin-settings.js'
@@ -217,6 +218,7 @@ export function registerApiRoutes(app: express.Express): void {
   app.all('/api/programming/progress', wrapEdge(programmingProgressHandler))
   app.all('/api/programming/project', wrapEdge(programmingProjectHandler))
   app.all('/api/programming/feedback', wrapEdge(programmingFeedbackHandler))
+  app.all('/api/programming/ts-check', wrapEdge(programmingTsCheckHandler))
   app.all('/api/leaderboard', wrapEdge(leaderboardHandler))
   app.all('/api/auth', wrapEdge(authHandler))
   app.all('/api/profile', wrapEdge(profileHandler))
