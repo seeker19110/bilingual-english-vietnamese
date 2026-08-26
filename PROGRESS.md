@@ -8,7 +8,7 @@
 
 ## Giai đoạn hiện tại
 
-### feat(location): thiết kế lại UI/UX trang `/nhom-di-chung` (2026-08-26)
+### feat(location): thiết kế lại UI/UX trang `/nhom-di-chung` — PR #693 (2026-08-26) ✅
 
 Giai đoạn 1 của "Đi chung" chạy đúng nghiệp vụ nhưng giao diện là bố cục "trang tài liệu cuộn
 dọc" — sai với bối cảnh dùng thật (đang đi bộ ngoài đường, một tay cầm máy, nắng chói, vội).
