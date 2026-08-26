@@ -7,7 +7,15 @@ const here = fileURLToPath(new URL('.', import.meta.url))
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [here + 'index.html', here + 'src/**/*.{js,ts,jsx,tsx}'],
+  // packages/core-ui chứa component dùng chung (ToastProvider…) — PHẢI quét, nếu không class
+  // Tailwind chỉ xuất hiện ở đó sẽ KHÔNG được sinh ra và lặng lẽ mất tác dụng (đã dính thật:
+  // `theme-light:text-red-800` của toast lỗi). apps/hub/tailwind.config.js vốn đã quét đường
+  // dẫn này — đây là chỗ apps/dhcb bị bỏ sót.
+  content: [
+    here + 'index.html',
+    here + 'src/**/*.{js,ts,jsx,tsx}',
+    fileURLToPath(new URL('../../packages/core-ui/', import.meta.url)) + '**/*.{js,ts,jsx,tsx}',
+  ],
   theme: {
     extend: {
       // Map màu zinc + white sang CSS variable để đổi theme (light/dark/dark blue)

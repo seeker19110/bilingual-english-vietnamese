@@ -61,80 +61,72 @@ cho người chưa đăng nhập; (3) giữ nguyên thứ tự 5 PR.
 ~11% cả JS lẫn CSS. Và phải `npm ci` lại **sau khi merge `main`**, không chỉ đầu phiên: PR #691
 thêm gói `@dhcb/core-location` nên build đỏ với 4 lỗi `Cannot find module` trông y như lỗi code.
 
-### feat(programming): PR-UX1 — vá 2 lỗi giao diện môn Lập trình (2026-08-26)
+### feat(location): thiết kế lại UI/UX trang `/nhom-di-chung` — PR #693 (2026-08-26) ✅
 
-Đợt thi hành đầu của đặc tả UI/UX (PR-UX0). Cố ý nhỏ: sửa lỗi thật trước, dọn nền và dựng lại
-trang môn để các PR sau.
+Giai đoạn 1 của "Đi chung" chạy đúng nghiệp vụ nhưng giao diện là bố cục "trang tài liệu cuộn
+dọc" — sai với bối cảnh dùng thật (đang đi bộ ngoài đường, một tay cầm máy, nắng chói, vội).
+Đợt này thiết kế lại theo nguyên tắc "liếc một giây là biết", **không đổi API/schema nào**.
 
-- **Vá V2 — nút Quay lại đi sai bậc.** `ProgrammingLessonPage` ghi cứng `nav('/lap-trinh/p1')`,
-  nên học xong bài P3/P4/P5 bấm Quay lại là rơi về bậc P1. Thêm `getLevelIdOfLesson()` trong
-  `curriculum.ts` (suy bậc từ mã bài) — mã lạ thì trả `undefined` và trang lùi về `/lap-trinh`,
-  **tuyệt đối không đoán bừa một bậc**. Khoá bằng 3 unit test + 1 e2e đi từ bài `p3-u10-l1`.
-- **Vá V7 — ngôn ngữ bài không hiện ra.** Component mới `components/programming/LangBadge.tsx`
-  hiện huy hiệu ngôn ngữ ở danh sách bài (trang bậc) và đầu trang bài học. Học viên biết sắp
-  viết Python hay SQL **trước** khi bấm vào.
-- **Phát hiện khi làm: nay có 11 ngôn ngữ, không phải 7** — bậc P4 đã thêm `pytest`, `httpsim`,
-  `apisim`, `typescript`. Typecheck bắt được ngay vì `Record<Lang, …>` đòi đủ khoá. Đã tách hằng
-  `LESSON_LANGUAGES` trong `lessonTypes.ts` (schema và giao diện dùng CHUNG một danh sách), và
-  `LangBadge.test.tsx` duyệt qua chính hằng đó → **thêm ngôn ngữ mà quên nhãn là CI đỏ**, không
-  lặng lẽ render huy hiệu trống.
-- **Luật "không giả vờ" áp cho giao diện:** 5 làn chạy trên module giả lập (`pytest`, `httpsim`,
-  `apisim`, `fetch`, `git`) tự khai "· mô phỏng" ngay trên huy hiệu. Chấm màu ngôn ngữ là
-  `aria-hidden` — tên luôn hiện bằng chữ, **màu không bao giờ là kênh thông tin duy nhất**.
-
-**Kiểm chứng (chạy thật, không đoán):** build ✅ · typecheck ✅ · lint ✅ 0 cảnh báo · format ✅ ·
-**457 file / 6031 test xanh** · e2e `programming-lesson` **27/27** · a11y **267/267, 0 vi phạm**
-(15 trang × 5 theme, cả A/AA lẫn AAA).
-
-**Hai ghi chú vận hành cho phiên sau:**
-
-1. **Ngân sách bundle nay RỘNG, nợ kỹ thuật #7 đã lạc hậu.** Đo thật: Initial JS 123,62/140 kB
-   (dư ~11,7%), CSS 15,71/18 kB (dư ~12,7%) — không còn cảnh "99,7%" như mục nợ đang ghi.
-2. **`npm ci` lại SAU KHI merge `main`, không chỉ ở đầu phiên.** PR #691 thêm gói
-   `@dhcb/core-location`; container cài dependencies trước lúc merge nên build đỏ với 4 lỗi
-   `Cannot find module` trông như lỗi code. Chạy lại `npm ci` là xanh. Cùng họ với bài học
-   "công cụ phải khớp lockfile" ở CLAUDE.md mục 8.
-
-**Ba quyết định UI/UX người dùng đã chốt (ghi vào §9 đặc tả):** (1) câu "chưa ai đi hết môn"
-chỉ đặt ở trang giới thiệu, không rải khắp nơi; (2) `/lap-trinh/gioi-thieu` **mở cho người chưa
-đăng nhập** (đặt ngoài `RequireAuth`); (3) giữ nguyên thứ tự 5 PR.
-
-**Tiếp theo:** PR-UX2 — tách `components/programming/` (`CodeSurface`, `RunOutput`, `StepBar`),
-gọt `ProgrammingLessonPage` từ 662 dòng xuống dưới 400, không đổi hành vi.
-
-### docs(programming): PR-UX0 — ĐẶC TẢ UI/UX môn Lập trình (2026-08-26)
-
-Tài liệu, **không sửa code**. Môn Lập trình nay đủ nội dung (60 bài, P1→P6) nhưng chưa từng có
-đợt thiết kế giao diện riêng: đặc tả gốc `dac-ta-mon-lap-trinh-2026-08-24.md` chỉ có MỘT dòng
-về UI ("tái dùng khuôn `CefrLevelPage`" của môn English). Nên 6 trang hiện có là giao diện chức
-năng mượn từ môn khác — chạy được, nhưng không phải thiết kế cho lập trình.
-
-- **Đặc tả mới:** `docs/research/dac-ta-uiux-mon-lap-trinh-2026-08-26.md` — chẩn đoán 8 vấn đề
-  đo được, 7 nguyên tắc thiết kế riêng của môn, 3 bề mặt thị giác (Giấy / Bảng đen / Bàn làm
-  việc), đặc tả từng màn, **nguyên văn trang mô tả khoá học & mục tiêu**, 12 tiêu chí nghiệm
-  thu, kế hoạch 5 PR nhỏ.
-- **Hai lỗi thật phát hiện khi rà (chưa sửa, để PR-UX1):**
-  1. `ProgrammingLessonPage.tsx:180` ghi cứng `nav('/lap-trinh/p1')` — học bài P3/P4/P5 xong bấm
-     quay lại thì rơi về bậc P1.
-  2. `ProgrammingHome` không đọc tiến độ → **không có thẻ "Học tiếp"**. Học viên quay lại phải
-     tự nhớ mình đang ở bài nào, bấm 3 lần mới tới nơi (môn English có, môn Lập trình không).
-     Đây là khiếm khuyết nặng nhất về giữ chân người học.
-- **Bài học quy trình, ghi lại vì suýt hỏng đặc tả:** phiên này ban đầu đếm được 35 bài và viết
-  cả một đặc tả quanh giả định "P4–P6 chưa soạn". Sai — container clone repo TRƯỚC khi PR #690–#692
-  merge, nên `git log` local tụt 3 commit so với `origin/main`. Người dùng chỉ ra thì mới lộ.
-  **Luật rút ra: `git fetch origin main` NGAY ĐẦU PHIÊN trước khi đếm bất cứ thứ gì trong repo** —
-  "đọc file thật" (CLAUDE.md mục 5) không đủ nếu bản sao đã cũ.
-- **Luật số 1 của thiết kế (N1) sau khi sửa:** nội dung đã đủ nên luật "nói thật" không còn nhắm
-  vào số bài, mà vào **mức độ đã kiểm chứng** — trang giới thiệu phải tự nói _chưa ai đi hết môn
-  này_, mốc thời lượng là ước tính, và P6 mang nhãn "bản mở đường". Mọi con số phải sinh từ dữ
-  liệu, viết tay là vi phạm (tiêu chí A11).
-- **Ràng buộc đã tính:** không thêm dependency nào (ngân sách bundle chỉ còn 0,3% — nợ kỹ thuật
-  #7); route mới `/lap-trinh/gioi-thieu` phải vào `e2e/a11y.spec.ts` ngay trong PR tạo ra nó.
-
-**Còn chờ người dùng chốt (mục 9 của đặc tả):** (1) câu "chưa ai đi hết môn" đặt ở đâu; (2) trang
-giới thiệu có cho xem khi chưa đăng nhập không; (3) thứ tự thi hành 5 PR.
-
-**Tiếp theo:** PR-UX1 (hai vá nhỏ: nút quay lại + huy hiệu ngôn ngữ) sau khi người dùng chốt.
+- **Ba lỗi THẬT phát hiện khi rà, đã sửa:**
+  1. 🔴 **Rớt tương phản AA ở CẢ 5 THEME.** Nút chính dùng `bg-accent-500` + chữ trắng, đo được
+     2,54–3,53 so với sàn 4,5 (chữ trắng trên nền accent không bao giờ đạt). Đổi sang mực tối
+     `text-[#09090b]` → 5,64–7,84. Quy ước này đã có sẵn trong dự án (`TwoFactorSection.tsx`),
+     trang mới chỉ làm sai.
+  2. 🔴 **BottomNav che mất nút cuối trang.** Trang dùng `pb-24` (96px) trong khi `--bnav-h`
+     ≈ 140px — sai quy ước mà 38/41 trang khác đang theo. Đổi sang
+     `pb-[calc(1.5rem+var(--bnav-h))]`.
+  3. 🟡 Biểu tượng dùng `text-accent-400` rớt tương phản ở 3 theme nền sáng → thêm biến thể
+     `theme-light:text-accent-700`.
+- **Vì sao lỗi 1 lọt lưới:** cổng a11y chỉ quét 15 trang cố định, `/nhom-di-chung` không nằm
+  trong đó — và giao diện đáng quét chỉ hiện SAU khi có dữ liệu chuyến từ backend. Đã bịt hẳn:
+  thêm fixture dùng chung `e2e/helpers/location.ts` (chuyến dựng sẵn có điểm hẹn, người đi lạc,
+  người tắt chia sẻ, tôi là chủ chuyến) rồi nối vào **cả hai cổng** — `a11y.spec.ts` (A/AA) và
+  `a11y-aaa.spec.ts` (AAA nội dung) — **×5 theme = 10 test mới**. Đã kiểm chứng cổng KHÔNG rỗng:
+  đặt lại chữ trắng như bản cũ thì cổng fail đúng `color-contrast (serious)`.
+- **Thiết kế lại theo mức khẩn** (thay vì 6 thẻ giống hệt nhau xếp dọc): cảnh báo đi lạc → bản
+  đồ lớn (45dvh, trước bị kẹp giữa trang) → ai đang ở đâu → nhóm giãn bao xa → cài đặt →
+  rời/kết thúc.
+- **Công tắc chia sẻ dính đáy màn hình** (`ShareToggle`, `sticky bottom-[var(--bnav-h)]`) — luôn
+  trong tầm ngón cái, không phải cuộn đi tìm. Hai trạng thái khác nhau về **màu + biểu tượng +
+  chữ** (không chỉ khác chữ), và luôn nói rõ ai đang thấy mình.
+- **Màu định danh nối bản đồ với danh sách** (`memberColor.ts`): mỗi người một màu cố định suy
+  ra từ `userId`, dùng chung cho chấm SVG trên bản đồ và avatar trong danh sách — nhìn chấm là
+  biết ai, không phải bấm từng chấm đọc tên. 8 màu đều đã đo ≥ 7:1 với mực tối.
+- **Bản đồ thôi giật về giữa.** Trước đây `fitBounds` chạy mỗi lần vị trí cập nhật (vài giây/lần)
+  nên người đang kéo bản đồ xem đường bị kéo về liên tục. Nay chỉ tự canh khung khi người dùng
+  chưa tự kéo, kèm nút "Canh lại cả nhóm".
+- **Hành động phá huỷ phải xác nhận.** "Kết thúc chuyến cho cả nhóm" xoá vị trí của TẤT CẢ mọi
+  người, trước đây chỉ một chạm và trông y hệt nút "Chép link mời" bên cạnh. Nay xác nhận hai
+  bước + nhóm riêng viền cảnh báo.
+- **Ma trận khoảng cách thôi bùng nổ.** Liệt kê mọi cặp tăng theo bình phương (10 người = 45
+  dòng). Nay dẫn bằng MỘT con số (cặp xa nhau nhất = độ giãn của nhóm), phần còn lại gấp vào
+  `<details>`.
+- **Khác:** mời bạn qua Web Share API (mở thẳng Zalo/Messenger) thay vì chỉ chép clipboard, đưa
+  lên đầu chuyến thay vì lẫn cuối trang · màn hình chưa có chuyến nêu 3 cam kết riêng tư và đặt
+  "chuyến đang mở" lên trên cùng · form gửi được bằng Enter · khoá nút khi đang gọi mạng (chống
+  bấm hai lần ra hai chuyến) · bỏ điểm hẹn được (trước chỉ đặt được, không gỡ được).
+- **Ba lỗi NỮA lộ ra khi CI chạy cổng mới — đều ở code DÙNG CHUNG, đã sửa:** cổng mới đỏ ngay
+  lần đầu với `button-name (critical, 18–30 phần tử)`. Tái hiện được ở máy bằng cách giả lập
+  trình duyệt TỪ CHỐI quyền vị trí (đúng cảnh CI headless): **89 toast trong 3 giây**. Gốc rễ:
+  1. `ToastProvider` tạo mới object `api` **mỗi lần render** (không `useMemo`) → giá trị context
+     đổi tham chiếu liên tục → 6 trang đặt `toast` trong mảng phụ thuộc `useEffect` chạy lại
+     theo. Với `LiveLocation` thành **vòng lặp vô hạn**: lỗi GPS → toast → effect chạy lại →
+     gọi lại `watchPosition` → lỗi GPS → … (vừa ngập màn hình vừa ngốn pin — trái đúng cam kết
+     tiết kiệm pin của chính tính năng).
+  2. Nút đóng toast chỉ có icon, **không có tên đọc được** → vi phạm `button-name` mức critical
+     trên TOÀN APP, chỉ chưa lộ vì chưa trang nào được quét lúc đang hiện toast.
+  3. Chữ toast dùng sắc độ -300, **rớt AA ở 3 theme nền sáng** (1,38–1,52 so với sàn 4,5) →
+     thêm biến thể `theme-light:text-*-800` (6,09–6,64).
+- **Lỗi thứ tư, thuộc loại "im lặng không báo":** `apps/dhcb/tailwind.config.js` **không quét
+  `packages/core-ui/`**, nên class Tailwind chỉ dùng ở đó KHÔNG được sinh ra — bản vá tương phản
+  toast suýt vô tác dụng (`theme-light:text-red-800` đếm được 0 trong CSS build ra).
+  `apps/hub/tailwind.config.js` vốn đã quét đường dẫn này; đã bổ sung cho `apps/dhcb` cho khớp.
+- **Cổng canh thêm cho chính bốn lỗi trên:** 5 test nữa quét màn hình lúc **đang hiện toast lỗi
+  GPS** (fixture giả lập geolocation tất định — `fixed` / `denied` — để không còn cảnh "xanh ở
+  máy dev, đỏ trên CI").
+- **Kiểm chứng (sau khi merge `main`):** 458 file / **6043 test xanh** · **282/282 test a11y**
+  (cả hai cổng, 5 theme) · typecheck/lint/format sạch · 45 phép đo tương phản thủ công đều đạt ·
+  ngân sách: Initial JS 123,93 kB / 140 kB, CSS 15,85 kB / 18 kB.
 
 ### feat(programming): MỞ BẬC P6 — 4 track chuyên sâu, HOÀN THÀNH MÔN LẬP TRÌNH P1→P6 (2026-08-26)
 

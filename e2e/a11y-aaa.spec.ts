@@ -1,6 +1,7 @@
 import { test, expect, type Page } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import { mockLogin, type ThemeName } from './helpers/auth'
+import { openLiveLocationTrip } from './helpers/location'
 import { freezeAnimations } from './helpers/axe'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -125,5 +126,21 @@ for (const theme of THEMES) {
 
     const violated = await scanAaa(page)
     expect(violated, `Vi phạm WCAG AAA trên khối AI phản hồi code, theme=${theme}.`).toEqual([])
+  })
+}
+
+// Màn "Đi chung" khi ĐANG TRONG CHUYẾN — cũng nằm ngoài vòng quét theo ROUTES ở trên vì
+// giao diện chỉ dựng sau khi có dữ liệu chuyến. Fixture dùng chung với cổng A/AA.
+for (const theme of THEMES) {
+  test(`a11y AAA (nội dung + tiêu đề): Đi chung — trong chuyến theme=${theme}`, async ({
+    page,
+  }) => {
+    await openLiveLocationTrip(page, theme)
+    const violated = await scanAaa(page)
+    expect(
+      violated,
+      `Vi phạm WCAG AAA trên nội dung/tiêu đề ở /nhom-di-chung theme=${theme} — ` +
+        `chữ nội dung phải đạt tương phản ≥ 7:1 (chỉnh token màu ở apps/dhcb/src/index.css).`,
+    ).toEqual([])
   })
 }
