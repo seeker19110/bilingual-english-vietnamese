@@ -185,6 +185,21 @@ export default function LiveLocation() {
     [state, anchor],
   )
 
+  // Khoảng cách giữa TỪNG CẶP thành viên đang chia sẻ — không chỉ so với riêng mình, để cả
+  // nhóm biết ai gần ai mà không cần mỗi người tự mở máy tính so sánh toạ độ.
+  const pairDistances = useMemo(() => {
+    const sharingMembers = (state?.members ?? []).filter((m) => m.position)
+    const pairs: { a: MemberPosition; b: MemberPosition; distanceM: number }[] = []
+    for (let i = 0; i < sharingMembers.length; i++) {
+      for (let j = i + 1; j < sharingMembers.length; j++) {
+        const a = sharingMembers[i]!
+        const b = sharingMembers[j]!
+        pairs.push({ a, b, distanceM: distanceMeters(a.position!, b.position!) })
+      }
+    }
+    return pairs.sort((x, y) => x.distanceM - y.distanceM)
+  }, [state])
+
   const refresh = useCallback(async (sessionId: string) => {
     const next = await fetchSessionState(sessionId)
     if (next) setState(next)
@@ -503,6 +518,27 @@ export default function LiveLocation() {
                 })}
               </ul>
             </section>
+
+            {pairDistances.length > 0 && (
+              <section className="rounded-xl border border-white/10 p-4">
+                <h2 className="mb-3 text-lg font-bold text-white">Khoảng cách giữa mọi người</h2>
+                <ul className="space-y-2">
+                  {pairDistances.map(({ a, b, distanceM }) => (
+                    <li
+                      key={`${a.userId}-${b.userId}`}
+                      className="flex items-center justify-between gap-2 text-sm"
+                    >
+                      <span className="text-zinc-200">
+                        {a.name}
+                        {a.userId === myUserId && ' (bạn)'} ↔ {b.name}
+                        {b.userId === myUserId && ' (bạn)'}
+                      </span>
+                      <span className="font-semibold text-white">{formatDistance(distanceM)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
             <section className="flex flex-wrap gap-2">
               <button

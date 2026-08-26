@@ -59,7 +59,7 @@ Schema `location` (migration 0068): `sessions` · `session_members` · `position
 `consent_log`. Chi tiết cột xem ngay trong file migration (có chú thích tiếng Việt).
 
 Vào chuyến bằng **mã mời 6 ký tự** (bộ ký tự bỏ 0/O/1/I/L như `friend_code`), chia sẻ qua link
-`/di-chung/<MÃ>`. Cố ý KHÔNG ràng buộc "phải là bạn bè": đi chơi hay có người quen của bạn mình,
+`/nhom-di-chung/<MÃ>`. Cố ý KHÔNG ràng buộc "phải là bạn bè": đi chơi hay có người quen của bạn mình,
 người có mã mới vào được và chỉ thấy người trong chuyến đó.
 
 ## 5. API
@@ -83,7 +83,9 @@ người ngoài không dò được sessionId nào có thật.
 
 ## 6. Chống lạc
 
-- **Khoảng cách tới từng người** tính ngay trên máy (haversine, `geo.ts`) — không tốn request.
+- **Khoảng cách tới từng người + giữa TỪNG CẶP thành viên** tính ngay trên máy (haversine,
+  `geo.ts`) — không tốn request. Danh sách khoảng cách cặp giúp cả nhóm biết ai gần ai mà không
+  cần lấy bản thân mình làm mốc so sánh.
 - **Cảnh báo đi lạc**: ai cách "mốc" quá `alert_radius_m` (mặc định 300m) thì hiện cảnh báo.
   Mốc = **điểm hẹn** nếu chủ chuyến đã đặt, không thì **tâm nhóm** (trung bình toạ độ).
 - **Điểm hẹn** đặt bằng một nút "Đặt điểm hẹn tại đây"; mọi người bấm "Chỉ đường" là mở Google

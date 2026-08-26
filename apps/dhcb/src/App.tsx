@@ -282,7 +282,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/di-chung"
+                        path="/nhom-di-chung"
                         element={
                           <RequireAuth>
                             <LiveLocation />
@@ -290,7 +290,7 @@ export default function App() {
                         }
                       />
                       <Route
-                        path="/di-chung/:code"
+                        path="/nhom-di-chung/:code"
                         element={
                           <RequireAuth>
                             <LiveLocation />

@@ -96,7 +96,7 @@ export default function Friends() {
 
         {/* Lối vào tính năng "Đi chung" — chia sẻ vị trí thật khi cả nhóm đi chơi cùng nhau */}
         <Link
-          to="/di-chung"
+          to="/nhom-di-chung"
           className="mb-6 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 min-h-[44px]"
         >
           <MapPin size={18} className="text-accent-400" aria-hidden="true" />

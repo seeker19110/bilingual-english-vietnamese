@@ -113,7 +113,7 @@ export async function sendPositionRest(sessionId: string, position: Position): P
 
 /** Link mời vào chuyến — dán vào nhóm chat, người bấm sẽ vào thẳng chuyến. */
 export function buildInviteUrl(inviteCode: string): string {
-  return `${window.location.origin}/di-chung/${inviteCode}`
+  return `${window.location.origin}/nhom-di-chung/${inviteCode}`
 }
 
 /** Mở Google Maps chỉ đường tới một điểm — không cần API key, dùng URL công khai. */
