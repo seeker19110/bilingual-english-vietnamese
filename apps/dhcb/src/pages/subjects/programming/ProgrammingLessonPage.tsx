@@ -23,6 +23,7 @@ import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import LangBadge from '../../../components/programming/LangBadge'
 import CodeSurface from '../../../components/programming/CodeSurface'
+import RunOutput, { type RunState } from '../../../components/programming/RunOutput'
 import StepBar, { type LessonStep } from '../../../components/programming/StepBar'
 import LivePreview from '../../../components/programming/LivePreview'
 import PredictStep from '../../../components/programming/PredictStep'
@@ -64,7 +65,8 @@ export default function ProgrammingLessonPage() {
   const [step, setStep] = useState(0)
   // ③ Ví dụ mẫu
   const [exampleOutput, setExampleOutput] = useState('')
-  const [exampleRunning, setExampleRunning] = useState(false)
+  // Luật N4: 3 trạng thái rõ ràng, không có ca "chạy xong mà màn hình trống".
+  const [exampleState, setExampleState] = useState<RunState>('idle')
   // ④ Predict
   const [predictChoice, setPredictChoice] = useState<number | null>(null)
   const [predictRevealed, setPredictRevealed] = useState(false)
@@ -92,14 +94,15 @@ export default function ProgrammingLessonPage() {
   if (!lesson) return <Navigate to="/lap-trinh" replace />
 
   const runExample = async () => {
-    setExampleRunning(true)
+    setExampleState('running')
+    setExampleOutput('')
     const r = await runLessonCode(lesson.language, lesson.workedExample.code, {
       stdinLines: lesson.workedExample.stdinLines,
       onOutput: setExampleOutput,
       ...(lesson.domHtml ? { domHtml: lesson.domHtml } : {}),
     })
     setExampleOutput(r.output + (r.error ? `\n${r.error}` : ''))
-    setExampleRunning(false)
+    setExampleState('done')
   }
 
   const gradeMake = async () => {
@@ -185,17 +188,17 @@ export default function ProgrammingLessonPage() {
             <CodeSurface code={lesson.workedExample.code} />
             <button
               onClick={() => void runExample()}
-              disabled={exampleRunning}
+              disabled={exampleState === 'running'}
               className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-black font-semibold text-sm transition"
             >
-              {exampleRunning ? (
+              {exampleState === 'running' ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <Play className="w-4 h-4" />
               )}
               <span>{lesson.language === 'git' ? 'Chạy thử các lệnh' : 'Chạy ví dụ'}</span>
             </button>
-            {exampleOutput && <CodeSurface code={exampleOutput} wrap />}
+            <RunOutput state={exampleState} output={exampleOutput} />
           </section>
         )}
 

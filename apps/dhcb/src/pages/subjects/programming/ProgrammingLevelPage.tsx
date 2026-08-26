@@ -48,6 +48,15 @@ export default function ProgrammingLevelPage() {
           subtitle={level.canDo}
         />
 
+        {/* P6 soạn TRƯỚC mốc "P1–P5 chạy thật với người học" nên dễ phải sửa hơn — nói ra vì
+            đây là cảnh báo có hệ quả thực tế cho người đang học, không phải tự bôi xấu. */}
+        {level.id === 'p6' && (
+          <p className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-zinc-100 leading-relaxed">
+            <strong>Bản mở đường.</strong> Bậc này được soạn trước khi có dữ liệu người học thật,
+            nên nội dung của nó dễ được sửa hơn P1–P5.
+          </p>
+        )}
+
         {/* Chặng dự án trục của bậc */}
         <section className="bg-zinc-900/80 border border-accent-500/30 rounded-3xl p-5 space-y-2 shadow-sm">
           <h2 className="text-sm font-bold text-white flex items-center gap-2">
