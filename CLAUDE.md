@@ -37,7 +37,11 @@ Ba chế độ:
 ## 2. Tài liệu của dự án (đọc khi liên quan)
 
 - `@PROJECT.md` — _cái gì_ cần xây (vấn đề, MVP, schema, kiến trúc, DoD). **Đọc trước việc liên quan tính năng/thiết kế.**
-- `PROGRESS.md` — giai đoạn hiện tại, đã xong / đang làm / tiếp theo, quyết định quan trọng, **nợ kỹ thuật**.
+- `PROGRESS.md` — **trạng thái hiện tại**: đã xong / đang làm / tiếp theo, quyết định quan trọng,
+  **nợ kỹ thuật**, việc cần làm tay. Sửa TẠI CHỖ, không chồng thêm mục.
+- `docs/changelog/` — **nhật ký từng đợt việc, mỗi đợt một file** (tách khỏi `PROGRESS.md`
+  2026-08-26 để hai PR song song không xung đột — xem `docs/changelog/README.md`). Xem nhanh:
+  `npm run changelog`.
 - `App-Gia-Su-Tieng-Anh-AI.md` — kế hoạch sản phẩm đầy đủ.
 - `docs/framework/KHUNG-1..3-*.md` — quy trình 9 giai đoạn + luật AI + research-first chọn công nghệ.
 - `docs/framework/BO-SUNG-*.md` — chất lượng Nhóm 1/2 (mobile, hiệu năng, a11y, UI/UX, chống lỗi logic), theme, i18n/PWA/Sentry/SEO.
@@ -92,9 +96,14 @@ Hệ thống được chuẩn hóa theo 10 bộ quy chuẩn SOTA chuyên biệt 
 - **Theo dõi trạng thái.** Cập nhật `PROGRESS.md` sau mỗi mốc.
 - **TẠO PR = COI NHƯ ĐÃ XONG (quyết định 2026-08-09, làm rõ 2026-08-26).** Không chờ merge mới
   ghi nhận. Ba việc phải làm **liền một mạch**, không tách ra hỏi lại:
-  1. **Cập nhật tài liệu ngay trong chính PR đó** — `PROGRESS.md` là bắt buộc; thêm
-     `CLAUDE.md`/`PROJECT.md`/`docs/*` nếu thay đổi chạm tới. Ghi rõ số PR, ngày, việc đã làm và
-     quyết định kèm theo.
+  1. **Viết nhật ký đợt việc ngay trong chính PR đó** — thêm MỘT FILE MỚI vào `docs/changelog/`
+     theo khuôn `NNNN-YYYY-MM-DD-slug.md` (chạy `npm run changelog` để biết số kế tiếp). Ghi rõ
+     số PR, ngày, việc đã làm, quyết định kèm theo và bằng chứng kiểm chứng.
+     **KHÔNG chồng thêm mục vào `PROGRESS.md`** — nhật ký đã tách khỏi file đó từ 2026-08-26
+     (xem `docs/changelog/README.md`); chồng thêm là dựng lại đúng nguồn xung đột vừa bỏ.
+     Sửa `PROGRESS.md` CHỈ khi trạng thái hiện tại thật sự đổi (nợ kỹ thuật, quyết định quan
+     trọng, việc tiếp theo, việc cần làm tay) — sửa tại chỗ, không chồng thêm. Thêm
+     `CLAUDE.md`/`PROJECT.md`/`docs/*` nếu thay đổi chạm tới.
   2. **Đánh dấu hoàn thành trong dự án** — mục tương ứng ở `PROGRESS.md` (và mục 13 dưới đây nếu
      là hạng mục lớn) chuyển sang trạng thái xong, kèm số PR.
   3. **Bật auto-merge (squash) ngay** — xem mục 11.
