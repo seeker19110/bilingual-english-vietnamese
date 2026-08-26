@@ -47,21 +47,27 @@ describe('programming lessons', () => {
   })
 
   // Bậc đã MỞ = mọi unit của bậc đều có bài (học viên đi trọn bậc, không gặp lỗ hổng
-  // "Sắp mở" ở giữa đường). P1 mở ở PR-L4, P2 mở ở PR-L6.
-  it.each(['p1', 'p2'])('MỌI unit của bậc %s đều đã có bài học', (levelId) => {
-    const units = PROGRAMMING_LEVELS.find((l) => l.id === levelId)!.units
-    const thieu = units.filter((u) => getLessonsByUnit(u.id).length === 0).map((u) => u.id)
-    expect(thieu, `Unit ${levelId} chưa có bài học: ${thieu.join(', ')}`).toEqual([])
-  })
+  // "Sắp mở" ở giữa đường). P1 mở ở PR-L4, P2 ở PR-L6, P3 ở PR-L11, P4 ở PR-L17, P5 ở PR-L18,
+  // P6 ở PR-L19 — từ đây MỌI bậc của môn đều đã mở, không còn unit rỗng nào.
+  it.each(['p1', 'p2', 'p3', 'p4', 'p5', 'p6'])(
+    'MỌI unit của bậc %s đều đã có bài học',
+    (levelId) => {
+      const units = PROGRAMMING_LEVELS.find((l) => l.id === levelId)!.units
+      const thieu = units.filter((u) => getLessonsByUnit(u.id).length === 0).map((u) => u.id)
+      expect(thieu, `Unit ${levelId} chưa có bài học: ${thieu.join(', ')}`).toEqual([])
+    },
+  )
 
   it('tra cứu theo unit và theo id', () => {
     expect(getLessonsByUnit('p1-u4').map((l) => l.id)).toContain('p1-u4-l1')
     expect(getLessonsByUnit('p2-u4').map((l) => l.id)).toContain('p2-u4-l1')
     expect(getLessonsByUnit('p3-u2').map((l) => l.id)).toContain('p3-u2-l1')
     expect(getLessonsByUnit('p4-u1').map((l) => l.id)).toContain('p4-u1-l1')
-    // Unit CHƯA soạn nội dung → rỗng (UI hiện "Sắp mở"). P4 mới mở U1–U4 ở PR-L12;
-    // P5 là bậc kế tiếp trong hàng đợi, dùng làm mốc nhánh rỗng.
-    expect(getLessonsByUnit('p5-u1')).toEqual([])
+    expect(getLessonsByUnit('p5-u1').map((l) => l.id)).toContain('p5-u1-l1')
+    expect(getLessonsByUnit('p6-u1').map((l) => l.id)).toContain('p6-u1-l1')
+    // Từ PR-L19 mọi unit CÓ THẬT đều đã có bài, nên mốc "nhánh rỗng" phải là một unit
+    // KHÔNG tồn tại — giữ nhánh này để hàm tra cứu vẫn trả mảng rỗng chứ không ném lỗi.
+    expect(getLessonsByUnit('p1-u99')).toEqual([])
     expect(getLesson('p9-u9-l9')).toBeUndefined()
   })
 })
