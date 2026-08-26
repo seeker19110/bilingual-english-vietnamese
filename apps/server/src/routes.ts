@@ -49,6 +49,7 @@ import achievementsHandler from './api/platform/achievements.js'
 import friendsHandler from './api/platform/friends.js'
 import chatHandler from './api/core/chat.js'
 import locationHandler from './api/platform/location.js'
+import companionLinkHandler from './api/personal/companion-link.js'
 import adminAchievementRewardsHandler from './api/admin/admin-achievement-rewards.js'
 import adminPaymentsHandler from './api/admin/admin-payments.js'
 import adminSystemControlHandler from './api/admin/admin-system-control.js'
@@ -250,6 +251,7 @@ export function registerApiRoutes(app: express.Express): void {
   app.all('/api/friends', wrapEdge(friendsHandler))
   app.all('/api/chat', wrapEdge(chatHandler))
   app.all('/api/location', wrapEdge(locationHandler))
+  app.all('/api/companion-link', wrapEdge(companionLinkHandler))
   app.all('/api/admin-achievement-rewards', wrapEdge(adminAchievementRewardsHandler))
   app.all('/api/admin-payments', wrapEdge(adminPaymentsHandler))
   app.all('/api/admin-system-control', wrapEdge(adminSystemControlHandler))

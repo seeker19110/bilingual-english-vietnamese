@@ -2,7 +2,7 @@
 
 > Trạng thái: **ĐẶC TẢ, CHƯA TRIỂN KHAI**. Research-first theo KHUNG 3 · CLAUDE.md mục 0.
 > Ý tưởng #2 trong đợt đề xuất tích hợp 2026-08-26; người dùng chọn "1-2 làm trước".
-> Điểm chạm dự kiến: `postgres/migrations/0070_companions.sql` ·
+> Điểm chạm dự kiến: `postgres/migrations/0069_companion_links.sql` ·
 > `packages/core-personal/companionLinkService.ts` · `packages/core-contracts/companionLink.ts` ·
 > `apps/server/src/api/personal/companion-link.ts` ·
 > `apps/server/src/api/_lib/weeklyReport.ts` (nội dung thuần, có test) ·
@@ -79,7 +79,7 @@ Lấy nguyên tinh thần đã áp cho tính năng "Đi chung" (`dac-ta-chia-se-
 
 ## 4. Mô hình dữ liệu
 
-`postgres/migrations/0070_companions.sql`:
+`postgres/migrations/0069_companion_links.sql`:
 
 ```sql
 -- Liên kết "người học ← người thân theo dõi". KHÁC friendships (quan hệ ngang hàng, hai chiều):

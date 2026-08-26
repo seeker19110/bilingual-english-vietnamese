@@ -34,6 +34,7 @@ import { attachGeminiLiveWebSocketServer } from '@dhcb/core-ai/wsGeminiLiveHandl
 import { sendReminders } from './api/core/push.js'
 import { downgradeExpiredPlans } from './api/_lib/planExpiry.js'
 import { sendEmailReminders } from './api/_lib/emailReminders.js'
+import { sendWeeklyReports } from './api/_lib/weeklyReportService.js'
 
 const app = express()
 
@@ -200,6 +201,31 @@ function startReminderScheduler() {
   }, 60_000) // kiểm tra mỗi phút, gửi 1 lần khi sang giờ mới
 }
 
+// ── Báo cáo tuần cho "Người thân theo dõi" (chủ nhật 19h giờ VN) ─────────────
+// Đặc tả: docs/research/dac-ta-nguoi-dong-hanh-2026-08-26.md (mục 6). Chọn tối chủ nhật vì đó là
+// lúc gia đình có mặt ở nhà và tuần mới chưa bắt đầu — báo cáo còn kịp đổi được điều gì đó.
+// 19h VN = 12h UTC. Chống gửi trùng KHÔNG dựa vào bộ hẹn giờ này (server restart là chạy lại):
+// `claimDueLinks()` giành việc bằng chính câu UPDATE — xem weeklyReportService.ts.
+function startWeeklyReportScheduler() {
+  let lastRunHour = -1
+  setInterval(() => {
+    const now = new Date()
+    // getUTCDay(): 0 = chủ nhật. 12h UTC chủ nhật = 19h VN chủ nhật (VN không có giờ mùa hè).
+    if (now.getUTCDay() !== 0 || now.getUTCHours() !== 12) return
+    if (lastRunHour === now.getUTCHours()) return
+    lastRunHour = now.getUTCHours()
+
+    void sendWeeklyReports(now)
+      .then((r) => {
+        if (r.sent || r.skipped) console.log(`[weekly-report] gửi ${r.sent}, bỏ qua ${r.skipped}`)
+      })
+      .catch((err) => {
+        console.error('[weekly-report] lỗi gửi báo cáo tuần:', err)
+        captureServerException(err, { context: 'weekly-report-scheduler' })
+      })
+  }, 60_000)
+}
+
 // ── Dọn gói Pro/VIP hết hạn (1 lần/ngày) ─────────────────────────────────────
 // Chỉ dọn dữ liệu cho ĐÚNG (cột `plan` trong DB) — việc CHẶN quyền hết hạn đã tự áp ngay lúc
 // đọc plan (resolvePlan trong api/_lib/plan.ts), không phụ thuộc job này chạy đúng giờ hay không.
@@ -250,6 +276,7 @@ const server = app.listen(PORT, () => {
     startReminderScheduler()
     startPlanExpiryScheduler()
     startLocationPurgeScheduler()
+    startWeeklyReportScheduler()
     // Kiểm Redis CHỈ ở instance 0: cấu hình REDIS_URL giống hệt nhau ở mọi instance nên một
     // lần là đủ, in 3 lần chỉ làm rối log. Không await — đo đạc không được làm chậm khởi động.
     void reportRedisStatusAtStartup()

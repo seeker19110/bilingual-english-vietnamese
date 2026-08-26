@@ -26,6 +26,7 @@ import {
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import ReferralSection from '../../components/ReferralSection'
+import CompanionLinkSection from '../../components/CompanionLinkSection'
 import QuestsPanel from '../../components/QuestsPanel'
 import EmailVerifySection from '../../components/EmailVerifySection'
 import TwoFactorSection from '../../components/TwoFactorSection'
@@ -440,6 +441,12 @@ export default function Profile() {
 
         {/* Mời bạn cùng học */}
         <ReferralSection isA={isA} />
+
+        {/* Người thân theo dõi — báo cáo tuần cho bố mẹ/thầy cô.
+            Đợt 1 CHỈ hiện ở chiều A (người Việt học tiếng Anh): nội dung thư và toàn bộ giao diện
+            khối này mới có bản tiếng Việt. Hiện ở chiều B sẽ là giao diện nửa Việt nửa Anh — thà
+            chưa có còn hơn có mà lộn xộn. Xem "việc để lại" trong đặc tả. */}
+        {isA && <CompanionLinkSection />}
 
         {/* Huy hiệu & mốc */}
         <section className="animate-fade-in">

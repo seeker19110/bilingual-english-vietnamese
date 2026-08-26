@@ -1125,13 +1125,18 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   Đợt research-first 2026-08-26 (xem `docs/changelog/0155-*.md`). Người dùng đã chọn làm hai
   việc này trước, đặc tả xong, **chưa viết dòng code nào**:
   1. **Chế độ ôn thi có hạn chót** — `docs/research/dac-ta-che-do-on-thi-2026-08-26.md`.
-     4 PR: E1 `packages/core-examplan` (hàm thuần + 8 ca biên) → E2 migration `0069` + API →
+     4 PR: E1 `packages/core-examplan` (hàm thuần + 8 ca biên) → E2 migration `0070` + API →
      E3 UI đếm ngược → E4 nối `requestRetention` của FSRS theo giai đoạn. Phạm vi đợt 1 chốt
      cứng **một kỳ thi duy nhất**: vào lớp 10 — Tiếng Anh.
-  2. **Người thân theo dõi (báo cáo tuần cho phụ huynh)** —
-     `docs/research/dac-ta-nguoi-dong-hanh-2026-08-26.md`. 4 PR: C1 migration `0070` + service →
-     C2 `weeklyReport.ts` hàm thuần → C3 scheduler + gửi mail (có test idempotency đa tiến
-     trình) → C4 UI trong Hồ sơ.
+  2. **Người thân theo dõi (báo cáo tuần cho phụ huynh)** — ✅ **XONG C1–C4 (2026-08-26)**,
+     xem `docs/changelog/0156-*.md`. Migration `0069_companion_links.sql`, service
+     `packages/core-personal/companionLinkService.ts`, nội dung thư
+     `apps/server/src/api/_lib/weeklyReport.ts`, gửi `weeklyReportService.ts` (bộ hẹn giờ chủ
+     nhật 19h VN trong `server.ts`), API `/api/companion-link`, giao diện
+     `CompanionLinkSection.tsx` trong Hồ sơ, cổng a11y riêng `e2e/a11y-companion-link.spec.ts`.
+     ⚠️ **Việc tay:** `npm run migrate:pg` trên VPS (hoặc để deploy tự chạy khi merge).
+     Việc để lại: bản tiếng Anh cho chiều B; thêm dòng "còn N ngày đến kỳ thi" khi chế độ ôn thi
+     xong.
      **Điểm cần người dùng chốt trước khi bắt đầu E1:** kỳ thi đợt 1 có đúng là "vào lớp 10 — Tiếng
      Anh" không (đây là giả định của AI, chọn vì môn Anh chín nhất và không phụ thuộc engine chấm
      đang thiếu).

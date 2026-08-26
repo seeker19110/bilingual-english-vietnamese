@@ -2,7 +2,7 @@
 
 > Trạng thái: **ĐẶC TẢ, CHƯA TRIỂN KHAI**. Research-first theo KHUNG 3 · CLAUDE.md mục 0.
 > Ý tưởng #1 trong đợt đề xuất tích hợp 2026-08-26; người dùng chọn "1-2 làm trước".
-> Điểm chạm dự kiến: `postgres/migrations/0069_exam_plan.sql` · `packages/core-examplan/` ·
+> Điểm chạm dự kiến: `postgres/migrations/0070_exam_plan.sql` · `packages/core-examplan/` ·
 > `packages/core-contracts/examPlan.ts` · `apps/server/src/api/learning/exam-plan.ts` ·
 > `apps/dhcb/src/pages/learning/ExamPlan.tsx`.
 
@@ -127,7 +127,7 @@ Quy tắc:
 
 ## 6. Mô hình dữ liệu
 
-`postgres/migrations/0069_exam_plan.sql`:
+`postgres/migrations/0070_exam_plan.sql`:
 
 ```sql
 create table if not exists public.exam_plans (
@@ -172,7 +172,7 @@ Thi thử full-length ở mốc T-60 / T-30 / T-7. Hai việc chặn:
 | PR  | Nội dung                                                                                        | Cổng ra                                             |
 | --- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------- |
 | E1  | `packages/core-examplan/` — hàm thuần + toàn bộ ca biên mục 5                                   | Test xanh, coverage nhánh ≥ 90%                     |
-| E2  | Migration `0069` + `apps/server/src/api/learning/exam-plan.ts` (GET/POST/DELETE) + contract Zod | Boot check + test handler                           |
+| E2  | Migration `0070` + `apps/server/src/api/learning/exam-plan.ts` (GET/POST/DELETE) + contract Zod | Boot check + test handler                           |
 | E3  | UI `ExamPlan.tsx` — đếm ngược + "3 việc hôm nay" + luồng tạo kế hoạch                           | a11y AA/AAA 0 vi phạm, mobile-first                 |
 | E4  | Nối FSRS `requestRetention` theo `phase` + cờ tắt được                                          | `eval` SRS: số lượt ôn không tăng vọt ở phase build |
 
