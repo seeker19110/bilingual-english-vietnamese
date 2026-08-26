@@ -302,7 +302,38 @@ async function main(): Promise<void> {
 
   const doc = renderReport(fixtures, sections)
   process.stdout.write('\n' + doc + '\n')
+
   if (WRITE_BASELINE) {
+    // CỔNG CHẶN [2026-08-26] — trước đây `--write-baseline` ghi đè VÔ ĐIỀU KIỆN, kể cả khi
+    // 100% request lỗi provider. Đã xảy ra thật: `GROQ_API_KEY` hết hiệu lực → 62/62 câu trả
+    // 401 → mọi chỉ số `n/a` → script vẫn in "✅ Đã ghi" và baseline thật bị thay bằng bảng
+    // rỗng. Một baseline rỗng còn tệ hơn baseline cũ: nó xoá mất mốc so sánh DUY NHẤT, và
+    // PR sau đó sẽ "không tụt so với baseline" vì chẳng còn gì để tụt.
+    //
+    // Luật: chỉ ghi khi chấm được ÍT NHẤT 80% số câu ở MỌI chế độ đã chạy.
+    const NGUONG_TOI_THIEU = 0.8
+    const khongDat = sections.filter((s) => {
+      const tong = s.summary.scored + s.summary.providerErrors
+      return tong === 0 || s.summary.scored / tong < NGUONG_TOI_THIEU
+    })
+
+    if (khongDat.length > 0) {
+      process.stderr.write('\n❌ KHÔNG ghi baseline — lượt chạy này không đo được đủ dữ liệu.\n')
+      for (const s of khongDat) {
+        const tong = s.summary.scored + s.summary.providerErrors
+        process.stderr.write(
+          `   ${s.mode}: chấm được ${s.summary.scored}/${tong} câu ` +
+            `(cần ≥ ${Math.ceil(tong * NGUONG_TOI_THIEU)}), ${s.summary.providerErrors} câu lỗi provider.\n`,
+        )
+      }
+      process.stderr.write(
+        '   Baseline CŨ giữ nguyên — nó vẫn là mốc so sánh đúng.\n' +
+          '   Sửa nguyên nhân rồi chạy lại: lỗi 401 = khoá API sai/hết hạn (kiểm .env),\n' +
+          '   lỗi 404 = tên model sai, lỗi 429 = chạm hạn mức nhà cung cấp.\n',
+      )
+      process.exit(1)
+    }
+
     writeFileSync(BASELINE_PATH, doc + '\n')
     process.stderr.write(`\n✅ Đã ghi ${path.relative(PROJECT_ROOT, BASELINE_PATH)}\n`)
   }
