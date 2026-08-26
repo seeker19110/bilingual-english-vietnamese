@@ -30,6 +30,7 @@ const Profile = lazyWithRetry(() => import('./pages/core/Profile'))
 const Onboarding = lazyWithRetry(() => import('./pages/core/Onboarding'))
 const Intake = lazyWithRetry(() => import('./pages/core/Intake'))
 const MistakeBank = lazyWithRetry(() => import('./pages/core/MistakeBank'))
+const ExamPlan = lazyWithRetry(() => import('./pages/learning/ExamPlan'))
 const Quests = lazyWithRetry(() => import('./pages/core/Quests'))
 const About = lazyWithRetry(() => import('./pages/core/About'))
 const AdminDashboard = lazyWithRetry(() => import('./pages/core/AdminDashboard'))
@@ -249,6 +250,14 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <Profile />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/on-thi"
+                        element={
+                          <RequireAuth>
+                            <ExamPlan />
                           </RequireAuth>
                         }
                       />

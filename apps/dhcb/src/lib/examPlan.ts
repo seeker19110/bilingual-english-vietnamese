@@ -1,0 +1,116 @@
+// examPlan.ts (client) — Ghép dữ liệu học THẬT vào hàm lập lịch thuần `@dhcb/core-examplan`.
+//
+// Đặc tả: docs/research/dac-ta-che-do-on-thi-2026-08-26.md
+//
+// Vì sao tính ở CLIENT: dữ liệu từ vựng/CEFR nằm ở `src/data`, trạng thái đã thuộc và lịch SRS
+// nằm ở localStorage (đồng bộ lên server nhưng nguồn đọc nhanh là ở đây). Server chỉ giữ Ý ĐỊNH
+// (thi gì, ngày nào) — xem `apps/server/src/api/learning/exam-plan.ts`.
+
+import { buildExamPlan, type ExamPlanOutput } from '@dhcb/core-examplan/examPlan'
+import type { ExamPlan, CreateExamPlanInput } from '@dhcb/core-contracts/examPlan'
+import { getAuthHeader } from '@core/authHeader'
+import { getLevelWords, getDailySpeed } from './curriculum'
+import { getLearnedWords } from './vocab'
+import { getSRSStats } from './srs'
+import { vnDateStr } from './date'
+import type { CefrLevel } from '../data/cefrTypes'
+
+/**
+ * Phạm vi kỳ thi vào lớp 10 môn Tiếng Anh: từ vựng A1 → B1.
+ *
+ * Căn cứ: đề vào 10 bám khung A2–B1, nhưng người học phải nắm chắc cả A1 mới làm được A2 — nên
+ * phạm vi tính từ A1. KHÔNG lấy tới B2: đưa vào phạm vi thứ đề không hỏi chỉ làm khối lượng mỗi
+ * ngày phình lên và kế hoạch thành bất khả thi giả.
+ */
+const EXAM_SCOPE_LEVELS: Array<CefrLevel['id']> = ['A1', 'A2', 'B1']
+
+/** Từ vựng trong phạm vi kỳ thi (đã khử trùng giữa các cấp). */
+export function getExamScopeWords(): string[] {
+  const seen = new Set<string>()
+  for (const level of EXAM_SCOPE_LEVELS) {
+    for (const w of getLevelWords(level)) seen.add(w.word.toLowerCase())
+  }
+  return [...seen]
+}
+
+export interface TodayPlan extends ExamPlanOutput {
+  examDate: string
+  scopeItems: number
+  masteredItems: number
+}
+
+/**
+ * Lịch của HÔM NAY, tính lại từ trạng thái học thật mỗi lần gọi.
+ * `today` truyền vào được để test — mặc định là hôm nay theo giờ VN.
+ */
+export function computeTodayPlan(
+  plan: Pick<ExamPlan, 'examDate' | 'dailyCapItems' | 'restDays' | 'scopeItems'>,
+  uid: string,
+  today: string = vnDateStr(),
+): TodayPlan {
+  const scopeWords = getExamScopeWords()
+  const learned = getLearnedWords(uid)
+  const masteredItems = scopeWords.filter((w) => learned.has(w)).length
+
+  const out = buildExamPlan({
+    today,
+    examDate: plan.examDate,
+    // Ưu tiên số đo TẠI CHỖ (từ điển hiện tại) hơn con số đã lưu lúc tạo kế hoạch: dữ liệu từ
+    // vựng có thể được bổ sung giữa chừng, và người học quan tâm phạm vi THẬT hôm nay.
+    scopeItems: scopeWords.length || plan.scopeItems,
+    masteredItems,
+    dueToday: getSRSStats(uid).due,
+    dailyCapItems: plan.dailyCapItems,
+    restDays: plan.restDays,
+  })
+
+  return { ...out, examDate: plan.examDate, scopeItems: scopeWords.length, masteredItems }
+}
+
+/** Trần mặc định gợi ý khi tạo kế hoạch = tốc độ học người dùng đã chọn ở Hồ sơ (5/10/20). */
+export function suggestedDailyCap(uid: string): number {
+  return getDailySpeed(uid)
+}
+
+// ── Gọi API ─────────────────────────────────────────────────────────────────
+const ENDPOINT = '/api/exam-plan'
+
+export async function fetchExamPlan(): Promise<ExamPlan | null> {
+  try {
+    const res = await fetch(ENDPOINT, { headers: { ...getAuthHeader() } })
+    if (!res.ok) return null
+    return ((await res.json()) as { plan: ExamPlan | null }).plan
+  } catch {
+    return null
+  }
+}
+
+export type CreateOutcome = { ok: true; plan: ExamPlan } | { ok: false; message: string }
+
+export async function createExamPlan(input: CreateExamPlanInput): Promise<CreateOutcome> {
+  try {
+    const res = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
+      body: JSON.stringify(input),
+    })
+    const data = (await res.json()) as { plan?: ExamPlan; error?: string }
+    if (!res.ok || !data.plan)
+      return { ok: false, message: data.error ?? 'Không tạo được kế hoạch' }
+    return { ok: true, plan: data.plan }
+  } catch {
+    return { ok: false, message: 'Lỗi mạng — thử lại sau' }
+  }
+}
+
+export async function endExamPlan(planId: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${ENDPOINT}?planId=${encodeURIComponent(planId)}`, {
+      method: 'DELETE',
+      headers: { ...getAuthHeader() },
+    })
+    return res.ok
+  } catch {
+    return false
+  }
+}

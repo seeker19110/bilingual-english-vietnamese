@@ -1121,13 +1121,18 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
-- **[2026-08-26] 🔜 ĐANG CHỜ DUYỆT ĐỂ CODE — hai tính năng giữ chân đã có đặc tả đầy đủ.**
-  Đợt research-first 2026-08-26 (xem `docs/changelog/0155-*.md`). Người dùng đã chọn làm hai
-  việc này trước, đặc tả xong, **chưa viết dòng code nào**:
-  1. **Chế độ ôn thi có hạn chót** — `docs/research/dac-ta-che-do-on-thi-2026-08-26.md`.
-     4 PR: E1 `packages/core-examplan` (hàm thuần + 8 ca biên) → E2 migration `0070` + API →
-     E3 UI đếm ngược → E4 nối `requestRetention` của FSRS theo giai đoạn. Phạm vi đợt 1 chốt
-     cứng **một kỳ thi duy nhất**: vào lớp 10 — Tiếng Anh.
+- **[2026-08-26] ✅ HAI TÍNH NĂNG GIỮ CHÂN ĐÃ LÀM XONG (đặc tả + code + test + cổng a11y).**
+  Đợt research-first 2026-08-26 (`docs/changelog/0155-*.md`) rồi thi hành trọn vẹn cùng ngày
+  (`0156-*.md` và `0157-*.md`):
+  1. **Chế độ ôn thi có hạn chót** — ✅ **XONG E1–E4 (2026-08-26)**, xem
+     `docs/changelog/0157-*.md`. Gói mới `packages/core-examplan` (lập lịch ngược, hàm thuần),
+     migration `0070_exam_plans.sql`, API `/api/exam-plan`, trang `/on-thi`
+     (`apps/dhcb/src/pages/learning/ExamPlan.tsx`), FSRS nhận `request_retention` theo giai đoạn
+     (`apps/dhcb/src/lib/srs.ts`, có cờ tắt `localStorage.srs_retention_off = '1'`), cổng a11y
+     `e2e/a11y-exam-plan.spec.ts`. Phạm vi đợt 1: **một kỳ thi duy nhất** — vào lớp 10, Tiếng Anh,
+     phạm vi từ vựng A1→B1. ⚠️ **Việc tay:** `npm run migrate:pg` trên VPS.
+     Việc để lại: thi thử full-length (chặn bởi ngân hàng đề + `core-grading` đã bị xoá khỏi
+     repo, xem mục GĐ2); kỳ thi thứ hai; ghép "còn N ngày" vào báo cáo tuần.
   2. **Người thân theo dõi (báo cáo tuần cho phụ huynh)** — ✅ **XONG C1–C4 (2026-08-26)**,
      xem `docs/changelog/0156-*.md`. Migration `0069_companion_links.sql`, service
      `packages/core-personal/companionLinkService.ts`, nội dung thư
