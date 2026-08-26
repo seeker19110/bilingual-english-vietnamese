@@ -139,7 +139,7 @@ describe('PROJECT_STAGES', () => {
   it('liệt kê đúng các chặng đã mở, id bước không trùng nhau giữa các chặng', () => {
     // Chặng P3 thêm ở PR-L8 (nội dung + cổng riêng: projectStepsP3.test.ts); chặng P4 thêm ở
     // PR-L17 (chạy qua cổng python3 chung: lessonsPython.test.ts, gồm cả làn pytest/apisim).
-    expect(PROJECT_STAGES.map((s) => s.level)).toEqual(['p1', 'p2', 'p3', 'p4'])
+    expect(PROJECT_STAGES.map((s) => s.level)).toEqual(['p1', 'p2', 'p3', 'p4', 'p5'])
     expect(PROJECT_STAGES[0]!.steps).toBe(P1_PROJECT_STEPS)
     expect(PROJECT_STAGES[1]!.steps).toBe(P2_PROJECT_STEPS)
     const ids = PROJECT_STAGES.flatMap((s) => s.steps).map((s) => s.id)
