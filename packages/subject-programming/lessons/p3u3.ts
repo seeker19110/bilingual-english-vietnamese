@@ -107,5 +107,19 @@ for ten, tien in sorted(tong.items(), key=lambda x: x[1], reverse=True):
     },
     homework:
       'Về nhà (trên máy thật): "pip install pandas matplotlib", rồi làm lại đúng bài này bằng 3 dòng pandas — read_csv, groupby("ten")["so_tien"].sum().sort_values(ascending=False), .plot(kind="bar") rồi plt.show(). So sánh với bản viết tay của bạn: kết quả có khớp không? Nếu lệch, bản viết tay là thước đo để bạn tìm ra mình hiểu sai chỗ nào ở pandas. Sau đó thử với file điểm hoặc file lương thật của bạn.',
+    srsCards: [
+      {
+        hoi: 'Vì sao đọc file CSV thật nên dùng thư viện csv thay vì dong.split(",")?',
+        dap: 'Vì ô dữ liệu có thể chứa dấu phẩy bên trong và được bọc nháy kép, ví dụ "banh mi, pate". split(",") cắt sai vị trí, còn csv.reader hiểu luật nháy kép nên tách đúng ô.',
+      },
+      {
+        hoi: 'Khuôn "gộp nhóm rồi cộng" bằng dict, dùng .get(ten, 0) để làm gì?',
+        dap: 'Để coi khoá chưa xuất hiện là 0, nhờ vậy không cần viết if kiểm tra khoá đã có trong dict hay chưa trước khi cộng dồn: tong[ten] = tong.get(ten, 0) + tien.',
+      },
+      {
+        hoi: 'Đọc một ô số tiền từ CSV rồi cộng thẳng vào tổng mà không ép kiểu, chuyện gì xảy ra?',
+        dap: 'Lỗi hoặc sai kết quả, vì mọi ô đọc từ CSV đều là CHUỖI — cộng chuỗi với số ném TypeError, phải int()/float() trước khi cộng.',
+      },
+    ],
   },
 ]

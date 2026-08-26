@@ -78,5 +78,19 @@ print("Hom nay ban hoc lenh dau tien: print()")`,
     },
     homework:
       'Về nhà: viết một chương trình 3 dòng print() tự giới thiệu THẬT về bạn — tên, lớp/trường, và một điều bạn thích. Không cần dấu tiếng Việt nếu chưa quen, viết không dấu cũng được, miễn đúng cú pháp.',
+    srsCards: [
+      {
+        hoi: 'Máy tính có tự đoán ý mình muốn làm gì không?',
+        dap: 'KHÔNG. Máy chỉ làm ĐÚNG những gì được ra lệnh, theo ĐÚNG thứ tự — không thiếu không thừa, không đoán mò.',
+      },
+      {
+        hoi: 'Lệnh print("Xin chao") có in ra dấu ngoặc kép không?',
+        dap: 'Không. print() chỉ in NỘI DUNG chữ bên trong ngoặc kép, không in kèm dấu ". Kết quả: Xin chao',
+      },
+      {
+        hoi: 'Máy đọc và chạy các dòng lệnh theo thứ tự nào?',
+        dap: 'Từ TRÊN XUỐNG DƯỚI, chạy xong dòng này mới sang dòng kế tiếp.',
+      },
+    ],
   },
 ]

@@ -152,6 +152,20 @@ taiThoiTiet()                               // gọi hàm — quên dòng này l
     },
     homework:
       'Về nhà: thêm dòng "Dang tai..." vào #trang-thai NGAY khi bấm nút, trước dòng await đầu tiên — với API mẫu thì nó biến mất tức thì, nhưng với mạng thật (vài trăm mili giây tới vài giây) đây chính là trạng thái tải mà mọi app tử tế đều có. Rồi thử đọc thêm: fetch thật còn cần xử lý lỗi mạng bằng try/catch — bài sau bạn sẽ gặp res.ok và lỗi 404.',
+    srsCards: [
+      {
+        hoi: 'Vì sao gọi fetch phải await HAI lần?',
+        dap: 'Lần một chờ máy chủ TRẢ LỜI (res = await fetch(url)), lần hai chờ ĐỌC XONG phần thân và đổi JSON thành mảng/object thật (ds = await res.json()). Thiếu lần hai thì ds là Promise, ds.length ra undefined.',
+      },
+      {
+        hoi: 'Khuôn ba bước để biến một phần tử mảng thành thẻ trên trang là gì?',
+        dap: 'TẠO → ĐẶT CHỮ → GẮN: document.createElement("li") rồi li.textContent = ... rồi danhSach.appendChild(li). Nhớ xoá kết quả cũ trước khi render, không thì bấm hai lần là danh sách dài gấp đôi.',
+      },
+      {
+        hoi: 'Muốn await bên trong hàm xử lý sự kiện thì viết thế nào?',
+        dap: 'Đặt chữ async ngay trước hàm xử lý: nut.addEventListener("click", async () => { ... }). Không có async thì await bên trong báo lỗi cú pháp.',
+      },
+    ],
   },
   {
     id: 'p3-u7-l2',
@@ -264,5 +278,15 @@ nut.addEventListener("click", async () => {
     },
     homework:
       'Về nhà: (1) bọc cả khối fetch trong try/catch và hiện "Loi mang, thu lai sau" khi lỗi — trong sandbox hãy tự gây lỗi bằng cách gọi một địa chỉ ngoài /api/thoi-tiet để thấy nhánh catch chạy thật. (2) Ô trống mà bấm nút thì nhắc "Hay nhap ten tinh" ngay, KHÔNG gọi mạng — tiết kiệm một vòng hỏi-đáp vô ích là thói quen của người làm web có nghề.',
+    srsCards: [
+      {
+        hoi: 'fetch nhận về mã 404 thì có ném lỗi không?',
+        dap: 'KHÔNG. Với fetch, "hỏi được và bị trả lời KHÔNG" vẫn là hỏi thành công — res về bình thường với ok=false, status=404. Nó chỉ ném lỗi khi KHÔNG HỎI ĐƯỢC (mất mạng, sai địa chỉ). Nên phải tự kiểm res.ok.',
+      },
+      {
+        hoi: 'Vì sao phải bọc giá trị bằng encodeURIComponent khi ghép vào query string?',
+        dap: 'Vì tên có dấu, khoảng trắng, dấu & là những ký tự không được đứng trần trong URL. encodeURIComponent("Hà Nội") thành "H%C3%A0%20N%E1%BB%99i"; quên bọc thì câu hỏi gửi lên bị hỏng.',
+      },
+    ],
   },
 ]

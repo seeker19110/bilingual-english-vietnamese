@@ -99,5 +99,19 @@ ls`,
     },
     homework:
       'Về nhà (trên máy thật): mở terminal ở thư mục dự án của bạn, tạo môi trường ảo bằng python3 -m venv .venv rồi bật lên, cài thư viện và ghi lại danh sách bằng pip freeze > requirements.txt. Nhớ thêm .venv/ vào .gitignore trước khi commit. Sau bước này, bất kỳ ai clone kho của bạn cũng dựng lại được đúng môi trường chỉ bằng hai lệnh — đó là ranh giới giữa "code chạy trên máy tôi" và "dự án người khác dùng được".',
+    srsCards: [
+      {
+        hoi: 'Dấu > và >> khi ghi vào file khác nhau thế nào?',
+        dap: 'Một dấu > GHI ĐÈ: xoá sạch nội dung cũ rồi viết lại. Hai dấu >> NỐI THÊM vào cuối. Nhầm hai dấu này là cách nhanh nhất để tự xoá mất công sức của mình.',
+      },
+      {
+        hoi: 'Ba nhóm thứ phải bỏ vào .gitignore là gì?',
+        dap: '(1) File bí mật: .env, khoá API — lỡ commit lên GitHub công khai là coi như đã lộ. (2) File máy tự sinh: __pycache__/, node_modules/, dist/ — dựng lại được. (3) File riêng của máy bạn: cấu hình trình soạn thảo, rác hệ điều hành.',
+      },
+      {
+        hoi: 'Môi trường ảo (venv) giải quyết vấn đề gì?',
+        dap: 'Dự án A cần thư viện phiên bản 1, dự án B cần phiên bản 2 — cài chung một chỗ thì đá nhau. venv cho mỗi dự án một "tủ thuốc" riêng: python3 -m venv .venv rồi source .venv/bin/activate. Nhớ để .venv/ trong .gitignore.',
+      },
+    ],
   },
 ]

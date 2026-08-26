@@ -92,5 +92,19 @@ print(f"Ca ngay: {sang + chieu} dong")   # return cho phép cộng tiếp`,
     },
     homework:
       'Về nhà: thêm hàm thứ hai in_hoa_don(ten_mon, gia, so_luong) — gọi tinh_tien bên trong rồi in hoá đơn 3 dòng (tên món, số lượng, thành tiền). Thử gọi nó 3 lần với 3 món khác nhau: bạn vừa tránh được việc chép code 3 lần.',
+    srsCards: [
+      {
+        hoi: 'return khác print ở chỗ nào?',
+        dap: 'print chỉ HIỆN ra màn hình cho người xem, không đưa gì lại cho chương trình. return TRẢ giá trị về nơi gọi, chương trình có thể gán vào biến rồi dùng tiếp. Hàm chỉ print mà không return thì gọi xong không cầm được gì trong tay.',
+      },
+      {
+        hoi: 'Biến tạo bên trong hàm còn tồn tại sau khi hàm chạy xong không?',
+        dap: 'Không. Biến bên trong hàm chỉ sống trong hàm đó (phạm vi cục bộ), hết hàm là mất. Vì vậy sửa biến nội bộ không hề đụng tới biến cùng tên ở bên ngoài hàm.',
+      },
+      {
+        hoi: 'Gọi cong_them(so) mà không gán kết quả vào đâu thì biến so có đổi không?',
+        dap: 'Không đổi. Phải viết so = cong_them(so) mới cập nhật được — gọi hàm suông thì kết quả return bị rơi mất, đây là bẫy người mới hay gặp nhất với hàm.',
+      },
+    ],
   },
 ]

@@ -130,5 +130,19 @@ export const P3U4_LESSONS: ProgrammingLesson[] = [
     },
     homework:
       'Về nhà: dựng trang giới thiệu CHÍNH BẠN — tên, một đoạn tự giới thiệu, danh sách 3 việc bạn làm được, liên kết tới Facebook hoặc email. Sau đó bấm Tab liên tục trên trang và xem con trỏ nhảy tới đâu: nếu liên kết của bạn không nhận được Tab thì bạn đã dùng sai thẻ. Trang này sẽ là bản CV tĩnh bạn làm đẹp ở bài sau.',
+    srsCards: [
+      {
+        hoi: 'Vì sao nên chọn thẻ HTML theo Ý NGHĨA (vd h1 cho tiêu đề) thay vì chỉ theo hình dạng chữ to đậm?',
+        dap: 'Vì máy đọc màn hình, công cụ tìm kiếm và phím Tab đều dựa vào ý nghĩa của thẻ để hiểu và điều hướng trang — dùng div tô CSS cho to thì trang vẫn nhìn ổn nhưng người khiếm thị không dùng được.',
+      },
+      {
+        hoi: 'Ảnh trang trí không mang thông tin gì thì thuộc tính alt nên viết ra sao?',
+        dap: 'alt="" (rỗng) để máy đọc màn hình bỏ qua ảnh đó. Thiếu hẳn thuộc tính alt thì máy đọc sẽ đọc tên file ảnh, rất khó chịu cho người dùng.',
+      },
+      {
+        hoi: 'Thứ tự tiêu đề h1, h2, h3... trên một trang có được nhảy cóc không? Vì sao?',
+        dap: 'Không nên. Người dùng máy đọc màn hình duyệt trang bằng danh sách tiêu đề, nhảy từ h1 thẳng xuống h3 khiến họ mất phương hướng về cấu trúc trang.',
+      },
+    ],
   },
 ]

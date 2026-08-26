@@ -391,3 +391,39 @@ test('bài DOM: vòng lặp vô hạn khi CHẤM bị ngắt, trang không treo'
   // Trang còn phản hồi.
   await page.getByRole('button', { name: 'Về nhà' }).click()
 })
+
+// PR-L10 — THẺ SRS (bước ⑧ của khuôn bài học). Ba thứ cần chốt trong trình duyệt thật:
+// thẻ chỉ vào vòng ôn khi ĐẠT bài, màn ôn bắt nghĩ trước khi lật đáp án, và chấm xong thì
+// thẻ rời hàng đợi. Kho thẻ dựng từ chính nội dung bài học nên không cần cố định id bài.
+test('thẻ SRS: đạt bài xong thì trang ôn có thẻ, lật đáp án rồi chấm được', async ({ page }) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+
+  // Chưa học gì → không có thẻ nào tới hạn.
+  await page.goto('/lap-trinh/on-tap', { waitUntil: 'domcontentloaded' })
+  await expect(page.getByText('Hôm nay không có thẻ nào tới hạn')).toBeVisible({ timeout: 30_000 })
+
+  // Đạt một bài (bài Git chạy nhanh, không cần tải Pyodide) → thẻ của bài vào vòng ôn.
+  await page.goto('/lap-trinh/bai-hoc/p3-u10-l1', { waitUntil: 'domcontentloaded' })
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page.getByRole('button', { name: 'Xem code mẫu' }).click()
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 60_000 })
+
+  // Thẻ mới hẹn lần ôn đầu sau vài giờ (NEW_CARD_DELAY_MS) — đẩy đồng hồ trình duyệt tới
+  // tương lai để thấy chúng tới hạn, thay vì chờ thật.
+  await page.clock.install()
+  await page.clock.fastForward('30:00:00')
+  await page.goto('/lap-trinh/on-tap', { waitUntil: 'domcontentloaded' })
+
+  // Đáp án PHẢI ẩn cho tới khi bấm — bắt nghĩ trước là toàn bộ giá trị của thẻ.
+  const xemDapAn = page.getByRole('button', { name: 'Xem đáp án' })
+  await expect(xemDapAn).toBeVisible({ timeout: 30_000 })
+  await expect(page.getByRole('button', { name: 'Nhớ được' })).toHaveCount(0)
+
+  await xemDapAn.click()
+  await page.getByRole('button', { name: 'Nhớ được' }).click()
+  // Chấm xong: hoặc sang thẻ kế tiếp, hoặc hết phiên — cả hai đều KHÔNG còn nút cũ ở trạng
+  // thái đã lật, nên nút "Xem đáp án" quay lại (thẻ mới) hoặc biến mất (hết thẻ).
+  await expect(page.getByRole('button', { name: 'Nhớ được' })).toHaveCount(0)
+})

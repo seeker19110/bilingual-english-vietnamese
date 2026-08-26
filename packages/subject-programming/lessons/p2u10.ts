@@ -111,5 +111,19 @@ main()`,
     },
     homework:
       'Về nhà: nối bài này với U6 — sau khi đóng phiên, GHI danh sách đơn ra file doanh_thu.csv (chế độ "a"), rồi viết thêm một chương trình nhỏ đọc file đó in doanh thu cả tuần. Lúc đó bạn đã có phần mềm bán hàng dùng được thật, đúng mốc milestone chặng P2.',
+    srsCards: [
+      {
+        hoi: 'continue và break khác nhau ở đâu trong vòng lặp?',
+        dap: 'continue bỏ qua phần còn lại của VÒNG HIỆN TẠI rồi chạy tiếp vòng sau. break thoát HẲN khỏi vòng lặp, không chạy vòng nào nữa. Dùng continue khi muốn "bỏ đơn này, nhận đơn tiếp", dùng break khi muốn "kết thúc hẳn".',
+      },
+      {
+        hoi: 'Vì sao while True dùng để "nhận đơn tới khi gõ xong" mà không dùng for range(...)?',
+        dap: 'Vì chưa biết trước sẽ có bao nhiêu đơn — for range() cần biết số vòng lặp từ đầu, còn while True lặp mãi tới khi gặp điều kiện thoát (if ten == "xong": break), phù hợp với chuyện "chưa biết trước bao nhiêu vòng".',
+      },
+      {
+        hoi: 'Biến tích luỹ như so_don, tong phải khai báo ở đâu so với vòng lặp, vì sao?',
+        dap: 'Phải khai báo TRƯỚC vòng lặp (khởi tạo = 0), chỉ một lần. Nếu đặt bên trong vòng lặp, mỗi vòng nó lại bị reset về 0 và mất hết dữ liệu đã cộng dồn từ các vòng trước.',
+      },
+    ],
   },
 ]

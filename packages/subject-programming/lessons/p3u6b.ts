@@ -124,5 +124,19 @@ nut.addEventListener("click", () => {             // ③ NGHE: mỗi khi nút b�
     },
     homework:
       'Về nhà: thêm hai thứ vào trang này. (1) Nhập số âm hoặc bỏ trống thì hiện "Vui long nhap so kWh hop le" thay vì ra kết quả kỳ quái — dùng lại thói quen kiểm dữ liệu nhập từ bậc P2. (2) Bấm phím Enter trong ô nhập cũng tính luôn, không bắt người ta rời tay khỏi bàn phím (nghe sự kiện "keydown" và kiểm e.key === "Enter"). Thứ hai này chính là khác biệt giữa trang chạy được và trang dùng thấy sướng.',
+    srsCards: [
+      {
+        hoi: 'nut.addEventListener("click", tinhTien()) và nut.addEventListener("click", tinhTien) khác nhau ra sao?',
+        dap: 'Viết tinhTien() (có ngoặc) gọi hàm NGAY lúc gán, chỉ đưa kết quả cho trình duyệt chứ không đặt lịch chạy khi bấm. Phải viết tinhTien không ngoặc — truyền hàm để nó chạy sau, lúc bị bấm.',
+      },
+      {
+        hoi: 'Ô input có type="number" thì o.value trả về kiểu dữ liệu gì?',
+        dap: 'Vẫn là CHUỖI. type="number" chỉ ràng buộc thứ người dùng gõ được, không đổi kiểu của .value — phải Number(o.value) trước khi tính, nếu không phép cộng sẽ nối chuỗi.',
+      },
+      {
+        hoi: 'Vì sao nên dùng el.textContent thay vì el.innerHTML khi hiển thị chữ do người dùng nhập?',
+        dap: 'innerHTML nhét thẳng HTML vào trang, nên nếu chữ đó do người dùng gõ thì họ có thể chèn mã độc vào (lỗi XSS). textContent chỉ đổi CHỮ, an toàn hơn.',
+      },
+    ],
   },
 ]

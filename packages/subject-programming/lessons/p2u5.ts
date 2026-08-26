@@ -88,5 +88,19 @@ for ten, g in theo_gia:
     },
     homework:
       'Về nhà: đổi bảng giá thành list các tuple ("ten mon", gia) rồi in TOP 3 món đắt nhất kèm tên — dùng sorted(..., key=lambda m: m[1], reverse=True)[:3]. Đây đúng là truy vấn "bán chạy nhất" mà mọi phần mềm bán hàng đều có.',
+    srsCards: [
+      {
+        hoi: 'kq = gia.sort() thì biến kq nhận giá trị gì?',
+        dap: 'None. .sort() sắp xếp ngay trên list gốc và trả về None — không phải list đã sắp. Muốn cầm kết quả trong tay phải dùng kq = sorted(gia).',
+      },
+      {
+        hoi: 'Comprehension [g for g in gia if g >= 10000] tương đương với đoạn code vòng lặp nào?',
+        dap: 'cao = []\\nfor g in gia:\\n    if g >= 10000:\\n        cao.append(g). Comprehension chỉ là cách viết gọn của "duyệt, lọc, tạo list mới" — kết quả y hệt nhưng ngắn và ít lỗi cú pháp hơn.',
+      },
+      {
+        hoi: 'sorted(mon, key=lambda m: m[1]) dùng để làm gì?',
+        dap: 'Sắp xếp list mon theo TIÊU CHÍ do mình chọn — ở đây là theo phần tử thứ 2 (m[1]) của mỗi tuple, ví dụ sắp món theo giá thay vì sắp theo thứ tự mặc định.',
+      },
+    ],
   },
 ]

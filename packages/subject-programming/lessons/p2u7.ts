@@ -101,5 +101,19 @@ print(chia_tien("90000", "ba"))    # chữ thay vì số`,
     },
     homework:
       'Về nhà: bọc vòng lặp while quanh phần nhập liệu — nhập sai thì HỎI LẠI thay vì bỏ cuộc, chỉ thoát khi nhận được số hợp lệ. Đó là cách mọi phần mềm thật xử lý người dùng gõ nhầm.',
+    srsCards: [
+      {
+        hoi: 'try/except dùng để làm gì, khác if kiểm tra trước ở chỗ nào?',
+        dap: 'try/except BẮT lỗi (exception) khi nó xảy ra giữa chừng, cho chương trình xử lý tử tế thay vì sập. if kiểm tra TRƯỚC những điều kiện lường được (vd số <= 0). Quy tắc: kiểm được bằng if thì dùng if, không lường hết được thì bọc try.',
+      },
+      {
+        hoi: 'Chương trình bắt được except ValueError rồi thì có chạy tiếp các dòng phía sau khối try/except không?',
+        dap: 'Có. Sau khi except xử lý xong, chương trình chạy tiếp bình thường như không có gì — khác với việc chương trình bị sập và dừng hẳn khi không có try/except.',
+      },
+      {
+        hoi: 'Vì sao không nên viết except: (không ghi tên lỗi) rồi im lặng bỏ qua?',
+        dap: 'Vì nó bắt MỌI loại lỗi kể cả những lỗi mình không lường trước, che giấu vấn đề thật — sau này không hiểu vì sao số liệu sai. Nên bắt ĐÚNG loại lỗi mình lường được (vd ValueError) và luôn báo cho người dùng biết chuyện gì xảy ra.',
+      },
+    ],
   },
 ]

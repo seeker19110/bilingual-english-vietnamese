@@ -81,6 +81,23 @@ export const LessonSchema = z
       .strict(),
     /** ⑦ Ứng dụng về nhà — biến thể gắn đời thật, không chấm. */
     homework: z.string().min(1).max(800),
+    /** ⑧ Thẻ SRS (PR-L10) — 2–4 thẻ chốt khái niệm CỐT LÕI của bài, vào vòng ôn khi học viên
+     *  đạt bài Make. Optional vì bài soạn trước PR-L10 bổ sung dần; cổng srsCards.test.ts
+     *  canh chất lượng những thẻ đã có (xem luật soạn thẻ ở đầu file đó). */
+    srsCards: z
+      .array(
+        z
+          .object({
+            /** Mặt trước: MỘT câu hỏi, trả lời được trong đầu ~10 giây. */
+            hoi: z.string().min(1).max(200),
+            /** Mặt sau: câu trả lời ngắn gọn, đủ để tự chấm đúng/sai. */
+            dap: z.string().min(1).max(400),
+          })
+          .strict(),
+      )
+      .min(2)
+      .max(4)
+      .optional(),
   })
   .strict()
   .refine((l) => l.predict.answerIndex < l.predict.choices.length, {

@@ -84,6 +84,9 @@ const ProgrammingPlayground = lazyWithRetry(
 const ProgrammingLessonPage = lazyWithRetry(
   () => import('./pages/subjects/programming/ProgrammingLessonPage'),
 )
+const ProgrammingReview = lazyWithRetry(
+  () => import('./pages/subjects/programming/ProgrammingReview'),
+)
 const ProgrammingProjectPage = lazyWithRetry(
   () => import('./pages/subjects/programming/ProgrammingProjectPage'),
 )
@@ -357,6 +360,14 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <ProgrammingLessonPage />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/lap-trinh/on-tap"
+                        element={
+                          <RequireAuth>
+                            <ProgrammingReview />
                           </RequireAuth>
                         }
                       />

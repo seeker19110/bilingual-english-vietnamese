@@ -89,5 +89,19 @@ print(f"Cần để dành {so_thang} tháng mới đủ {muc_tieu} đồng")`,
     },
     homework:
       'Về nhà: đổi số bí mật thành ngày sinh của bạn (ví dụ ngày 15 thì số bí mật là 15), tự nghĩ ra 3-4 lượt đoán rồi chạy thử chương trình xem đúng số lần không. Thử thêm: nếu người chơi không bao giờ đoán trúng thì chuyện gì xảy ra? Vì sao nguy hiểm?',
+    srsCards: [
+      {
+        hoi: 'Vòng lặp while kiểm tra điều kiện vào lúc nào?',
+        dap: 'TRƯỚC mỗi vòng lặp. Còn đúng (True) thì chạy tiếp, sai (False) thì dừng ngay, không chạy thêm lần nào nữa.',
+      },
+      {
+        hoi: 'Vì sao vòng lặp while có thể chạy MÃI MÃI (lặp vô hạn)?',
+        dap: 'Vì bên trong vòng lặp không có gì làm điều kiện dần chuyển sang sai (quên cập nhật biến hoặc đọc input mới) — điều kiện cứ đúng hoài.',
+      },
+      {
+        hoi: 'Nên dùng while khi nào thay vì for?',
+        dap: 'Khi KHÔNG biết trước số lần lặp — chỉ biết "lặp cho tới khi đạt điều kiện" (ví dụ đoán đến khi trúng, để dành đến khi đủ tiền).',
+      },
+    ],
   },
 ]

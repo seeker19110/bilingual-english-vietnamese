@@ -82,5 +82,19 @@ print(f"Gia cao nhat: {max(gia)} dong")`,
     },
     homework:
       'Về nhà: mở tủ lạnh nhà bạn, ghi giá 5 món đồ vào một list rồi viết chương trình in ra món đắt nhất, món rẻ nhất và tổng tiền. Thử thêm gia.remove(...) để bỏ món vừa ăn hết xem list thay đổi thế nào.',
+    srsCards: [
+      {
+        hoi: 'Chỉ số (index) của list bắt đầu từ số mấy?',
+        dap: 'Từ 0. Phần tử "thứ hai" nằm ở chỉ số 1, không phải 2 — đây là chỗ người mới nhầm nhiều nhất. mon[1] lấy phần tử thứ hai trong list mon.',
+      },
+      {
+        hoi: 'gia.sort() và sorted(gia) khác nhau ở đâu (liên quan U2, cần cho U5)?',
+        dap: 'sort() sắp NGAY trên list gốc. sorted() trả về list MỚI, list gốc giữ nguyên. Dùng sorted() khi còn cần bản chưa sắp xếp.',
+      },
+      {
+        hoi: 'Truy cập chỉ số vượt quá len(list) - 1 thì chuyện gì xảy ra?',
+        dap: 'Chương trình ném lỗi IndexError và dừng ngay tại đó. Chỉ số hợp lệ luôn chạy từ 0 tới len(list) - 1.',
+      },
+    ],
   },
 ]
