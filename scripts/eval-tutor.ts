@@ -66,6 +66,9 @@ function argVal(name: string, def: string): string {
 const MODE_ARG = argVal('--mode', 'chat')
 const LIMIT = Number(argVal('--limit', '0'))
 const DELAY_MS = Number(argVal('--delay', '500'))
+// Số lần chờ-rồi-thử-lại tối đa khi CẢ BỂ khoá chạm hạn mức. 5 lần với lùi dần 5s→80s (hoặc
+// theo `retry-after` Groq gửi) đủ vượt cửa sổ hạn mức phút của gói free.
+const MAX_RETRY_429 = Number(argVal('--max-retry-429', '5'))
 const WRITE_BASELINE = args.includes('--write-baseline')
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
@@ -109,8 +112,33 @@ async function callGroq(system: string, messages: Msg[]): Promise<string> {
   // `lastErr`, nên khi key #1 chạm hạn mức (429) còn key #3 đã hỏng (401) thì thông báo chỉ
   // hiện 401 — giấu mất tín hiệu quyết định và dẫn tới hai vòng chẩn đoán sai. Công cụ chẩn
   // đoán che bớt số đo còn tệ hơn không có công cụ.
+  // [2026-08-26] CHỜ RỒI THỬ LẠI khi CẢ BỂ chạm hạn mức (429). Groq tính hạn mức theo TÀI
+  // KHOẢN chứ không theo khoá, nên nhiều khoá cùng một tài khoản sẽ 429 đồng thời — gộp bể
+  // không tăng quota. Bản trước bỏ cuộc ngay ở câu đó: đo thật trên VPS cho 21 câu đầu chạy
+  // liền mạch rồi 31/62 câu còn lại hỏng hàng loạt, tức baseline chỉ dựa trên nửa bộ đề —
+  // không đủ tư cách làm mốc so sánh. Tôn trọng header `retry-after` khi Groq có gửi.
+  for (let attempt = 0; ; attempt++) {
+    const kq = await thuCaBeGroq(system, messages)
+    if (kq.text !== undefined) return kq.text
+    if (!kq.allRateLimited || attempt >= MAX_RETRY_429) throw new Error(kq.err)
+    const choMs = kq.retryAfterMs ?? Math.min(60_000, 5_000 * 2 ** attempt)
+    process.stdout.write(` [429 — chờ ${Math.round(choMs / 1000)}s rồi thử lại]`)
+    await sleep(choMs)
+  }
+}
+
+type KetQuaBe = {
+  text?: string
+  err: string
+  allRateLimited: boolean
+  retryAfterMs?: number
+}
+
+async function thuCaBeGroq(system: string, messages: Msg[]): Promise<KetQuaBe> {
   const statuses: string[] = []
   let fatal = ''
+  let allRateLimited = GROQ_KEYS.length > 0
+  let retryAfterMs: number | undefined
   for (const [i, key] of GROQ_KEYS.entries()) {
     const resp = await fetchWithTimeout(
       'https://api.groq.com/openai/v1/chat/completions',
@@ -129,16 +157,31 @@ async function callGroq(system: string, messages: Msg[]): Promise<string> {
       const data = (await resp.json()) as { choices?: Array<{ message?: { content?: unknown } }> }
       const text = data.choices?.[0]?.message?.content
       if (typeof text !== 'string') throw new Error('Groq trả về cấu trúc không hợp lệ')
-      return text
+      return { text, err: '', allRateLimited: false }
     }
     statuses.push(`#${i + 1}\u2192${resp.status}`)
+    if (resp.status === 429) {
+      const ra = Number(resp.headers.get('retry-after'))
+      // Lấy khoảng chờ DÀI NHẤT trong bể: chờ ngắn hơn thì khoá kia vẫn còn bị chặn.
+      if (Number.isFinite(ra) && ra > 0) {
+        retryAfterMs = Math.max(retryAfterMs ?? 0, Math.min(120_000, ra * 1000))
+      }
+    } else {
+      allRateLimited = false
+    }
     if (!isSkippableGroqKeyError(resp.status)) {
       fatal = (await resp.text()).slice(0, 160)
       break
     }
   }
-  if (GROQ_KEYS.length === 0) throw new Error('Groq: bể khoá rỗng')
-  throw new Error(`Groq cả bể hỏng [${statuses.join(' ')}]${fatal ? ` \u2014 ${fatal}` : ''}`)
+  if (GROQ_KEYS.length === 0) {
+    return { err: 'Groq: bể khoá rỗng', allRateLimited: false }
+  }
+  return {
+    err: `Groq cả bể hỏng [${statuses.join(' ')}]${fatal ? ` \u2014 ${fatal}` : ''}`,
+    allRateLimited,
+    retryAfterMs,
+  }
 }
 
 async function callAnthropic(system: string, messages: Msg[]): Promise<string> {
