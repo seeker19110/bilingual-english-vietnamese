@@ -1,9 +1,10 @@
 # Đặc tả: Chia sẻ vị trí thời gian thực ("Đi chung") — 2026-08-26
 
-> Trạng thái: ĐÃ TRIỂN KHAI (giai đoạn 1). Xem `PROGRESS.md` mục cùng ngày.
+> Trạng thái: ĐÃ TRIỂN KHAI (giai đoạn 1) + ĐÃ THIẾT KẾ LẠI UI/UX. Xem `PROGRESS.md` mục cùng ngày.
 > Điểm chạm code: `postgres/migrations/0068_location_sharing.sql` ·
 > `packages/core-location/` · `packages/core-contracts/location.ts` ·
-> `apps/server/src/api/platform/location.ts` · `apps/dhcb/src/pages/core/LiveLocation.tsx`
+> `apps/server/src/api/platform/location.ts` · `apps/dhcb/src/pages/core/LiveLocation.tsx` ·
+> `apps/dhcb/src/components/location/` · `apps/dhcb/src/lib/locationFormat.ts`
 
 ## 1. Vấn đề
 
@@ -97,6 +98,29 @@ người ngoài không dò được sessionId nào có thật.
 
 `watchMyPosition` chỉ gửi lên khi **đã đi ≥ 20m** hoặc **quá 30 giây** kể từ lần gửi trước
 (`shouldSendUpdate`, có test ca biên). Tắt chia sẻ → `clearWatch` ngay, không để GPS chạy nền.
+
+## 7b. Giao diện — nguyên tắc bố cục (thiết kế lại 2026-08-26)
+
+Bối cảnh dùng thật quyết định bố cục: người dùng **đang đi bộ ngoài đường, một tay cầm máy,
+nắng chói, đang vội**. Đây là màn hình "liếc một giây là biết", không phải trang tài liệu để đọc.
+
+1. **Xếp theo mức khẩn**, không xếp theo thứ tự nghĩ ra: cảnh báo đi lạc → bản đồ (45dvh) →
+   ai đang ở đâu → nhóm giãn bao xa → cài đặt → rời/kết thúc.
+2. **Công tắc chia sẻ dính đáy màn hình** (`ShareToggle`), luôn trong tầm ngón cái, không bao giờ
+   nằm trong menu con — vì luật của tính năng là "bấm tắt là dừng NGAY" (mục 3, luật 3). Hai
+   trạng thái khác nhau về **màu + biểu tượng + chữ**, và luôn nói rõ ai đang thấy mình.
+3. **Màu định danh nối hai cách nhìn** (`components/location/memberColor.ts`): mỗi người một màu
+   cố định suy từ `userId`, dùng chung cho chấm trên bản đồ và avatar trong danh sách.
+4. **Hành động phá huỷ phải xác nhận hai bước** — "Kết thúc chuyến" xoá vị trí của tất cả mọi
+   người và không hoàn tác được.
+5. **Bản đồ không tự canh khung khi người dùng đang kéo** — vị trí cập nhật vài giây/lần, cứ
+   `fitBounds` mỗi lần là kéo giật màn hình của người đang xem đường.
+6. **Màu nút**: nền `accent-500` LUÔN đi với mực tối `text-[#09090b]`. Chữ trắng trên nền accent
+   rớt AA ở cả 5 theme (2,54–3,53 < 4,5) — đã đo, xem `PROGRESS.md`.
+
+**Cổng chặn:** trang được quét ở CẢ HAI cổng a11y × 5 theme qua fixture dùng chung
+`e2e/helpers/location.ts`. Giao diện trong chuyến chỉ hiện sau khi có dữ liệu backend, nên
+`page.goto` trơn KHÔNG quét được — thêm màn hình mới cho tính năng này thì phải nối vào fixture đó.
 
 ## 8. Việc còn để lại cho giai đoạn sau
 

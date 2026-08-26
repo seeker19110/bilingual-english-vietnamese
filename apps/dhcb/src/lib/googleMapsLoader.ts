@@ -19,6 +19,8 @@ export interface GoogleMap {
   setCenter(point: GoogleLatLngLiteral): void
   setZoom(zoom: number): void
   fitBounds(bounds: GoogleLatLngBounds, padding?: number): void
+  /** Dùng để biết người dùng đã tự kéo/thu phóng bản đồ — xem LiveMap.tsx. */
+  addListener(eventName: string, handler: () => void): void
 }
 export interface GoogleMarker {
   setPosition(point: GoogleLatLngLiteral): void

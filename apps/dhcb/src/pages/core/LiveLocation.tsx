@@ -1,33 +1,40 @@
 // apps/dhcb/src/pages/core/LiveLocation.tsx — "Đi chung": chia sẻ vị trí thời gian thực với bạn
 // bè trong một chuyến đi chơi, để không ai bị lạc.
 //
-// Nguyên tắc giao diện: công tắc chia sẻ luôn nhìn thấy được và LUÔN mặc định TẮT — người dùng
-// phải chủ động bật, và bấm tắt là dừng ngay lập tức (server xoá vị trí, xem migration 0068).
+// BỐI CẢNH DÙNG THẬT quyết định toàn bộ bố cục: người dùng đang đi bộ ngoài đường, một tay cầm
+// máy, nắng chói, đang vội. Màn hình này phải "liếc một giây là biết", chứ không phải một trang
+// tài liệu để đọc. Từ đó ba quyết định thiết kế chính:
+//
+//   1. BẢN ĐỒ TRƯỚC. Bản đồ chiếm khung lớn ngay đầu trang thay vì bị kẹp giữa các thẻ chữ.
+//      Nó là thứ trả lời câu hỏi "mọi người đang ở đâu" nhanh nhất.
+//   2. CÔNG TẮC DÍNH ĐÁY. Công tắc chia sẻ (ShareToggle) dính đáy màn hình, luôn trong tầm ngón
+//      cái, không bao giờ phải cuộn đi tìm — đây là quyết định riêng tư quan trọng nhất và luật
+//      của tính năng là "bấm tắt là dừng NGAY".
+//   3. XẾP THEO MỨC KHẨN. Cảnh báo có người đi lạc → bản đồ → ai đang ở đâu → nhóm giãn bao xa
+//      → cài đặt → rời/kết thúc. Thứ khẩn nhất nằm nơi mắt chạm tới trước.
+//
+// Nguyên tắc bất di bất dịch: công tắc chia sẻ LUÔN mặc định TẮT — người dùng phải chủ động bật,
+// và bấm tắt là dừng ngay lập tức (server xoá vị trí, xem migration 0068).
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import {
-  Navigation,
-  Copy,
-  Check,
-  LogOut,
-  Radio,
-  RadioTower,
-  Clock,
-  ShieldCheck,
-  AlertTriangle,
-  Flag,
-} from 'lucide-react'
+import { AlertTriangle, Flag, Navigation, ShieldCheck } from 'lucide-react'
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import LiveMap from '../../components/location/LiveMap'
+import MemberList from '../../components/location/MemberList'
+import GroupSpread, { type Pair } from '../../components/location/GroupSpread'
+import ShareToggle from '../../components/location/ShareToggle'
+import TripActions from '../../components/location/TripActions'
+import TripHeader from '../../components/location/TripHeader'
+import TripSetup from '../../components/location/TripSetup'
 import { useToast } from '@core/ToastProvider'
 import { useAuth } from '../../context/useAuth'
 import { distanceMeters, findStragglers, groupCenter } from '@dhcb/core-location/geo'
+import { formatDistance } from '../../lib/locationFormat'
 import {
   LocationSocket,
   buildDirectionsUrl,
-  buildInviteUrl,
   createSession,
   fetchMySessions,
   fetchSessionState,
@@ -42,31 +49,6 @@ import {
   type WatchHandle,
 } from '../../lib/locationShare'
 
-const DURATIONS: { value: 60 | 240 | 480; label: string }[] = [
-  { value: 60, label: '1 giờ' },
-  { value: 240, label: '4 giờ' },
-  { value: 480, label: '8 giờ' },
-]
-
-function formatDistance(meters: number): string {
-  return meters < 1000 ? `${Math.round(meters)} m` : `${(meters / 1000).toFixed(1)} km`
-}
-
-function formatAgo(iso: string | null): string {
-  if (!iso) return 'chưa chia sẻ'
-  const seconds = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 1000))
-  if (seconds < 60) return `${seconds} giây trước`
-  if (seconds < 3600) return `${Math.round(seconds / 60)} phút trước`
-  return `${Math.round(seconds / 3600)} giờ trước`
-}
-
-function formatRemaining(expiresAt: string): string {
-  const minutes = Math.round((new Date(expiresAt).getTime() - Date.now()) / 60000)
-  if (minutes <= 0) return 'đã hết hạn'
-  if (minutes < 60) return `còn ${minutes} phút`
-  return `còn ${Math.floor(minutes / 60)} giờ ${minutes % 60} phút`
-}
-
 export default function LiveLocation() {
   const toast = useToast()
   const { user } = useAuth()
@@ -75,11 +57,8 @@ export default function LiveLocation() {
   const [sessions, setSessions] = useState<SessionSummary[]>([])
   const [state, setState] = useState<SessionState | null>(null)
   const [loading, setLoading] = useState(true)
+  const [busy, setBusy] = useState(false)
   const [transport, setTransport] = useState<'websocket' | 'polling'>('polling')
-  const [copied, setCopied] = useState(false)
-  const [newName, setNewName] = useState('')
-  const [newDuration, setNewDuration] = useState<60 | 240 | 480>(240)
-  const [joinCode, setJoinCode] = useState('')
 
   const socketRef = useRef<LocationSocket | null>(null)
   const watchRef = useRef<WatchHandle | null>(null)
@@ -185,11 +164,23 @@ export default function LiveLocation() {
     [state, anchor],
   )
 
+  /** Khoảng cách từ TÔI tới từng người — MemberList hiện con số này ở cột phải. */
+  const distancesFromMe = useMemo(() => {
+    const map = new Map<string, number>()
+    if (!myPosition) return map
+    for (const member of state?.members ?? []) {
+      if (member.position && member.userId !== myUserId) {
+        map.set(member.userId, distanceMeters(myPosition, member.position))
+      }
+    }
+    return map
+  }, [state, myPosition, myUserId])
+
   // Khoảng cách giữa TỪNG CẶP thành viên đang chia sẻ — không chỉ so với riêng mình, để cả
   // nhóm biết ai gần ai mà không cần mỗi người tự mở máy tính so sánh toạ độ.
   const pairDistances = useMemo(() => {
     const sharingMembers = (state?.members ?? []).filter((m) => m.position)
-    const pairs: { a: MemberPosition; b: MemberPosition; distanceM: number }[] = []
+    const pairs: Pair[] = []
     for (let i = 0; i < sharingMembers.length; i++) {
       for (let j = i + 1; j < sharingMembers.length; j++) {
         const a = sharingMembers[i]!
@@ -200,267 +191,167 @@ export default function LiveLocation() {
     return pairs.sort((x, y) => x.distanceM - y.distanceM)
   }, [state])
 
-  const refresh = useCallback(async (sessionId: string) => {
+  const openSession = useCallback(async (sessionId: string) => {
     const next = await fetchSessionState(sessionId)
     if (next) setState(next)
   }, [])
 
   // ── Hành động ───────────────────────────────────────────────────────────────────────────
-  async function handleCreate() {
-    const name = newName.trim()
-    if (!name) {
-      toast.error('Đặt tên cho chuyến đi đã nhé')
-      return
+  /** Bọc mọi thao tác gọi mạng: khoá nút trong lúc chờ để không bấm hai lần ra hai chuyến. */
+  async function run(action: () => Promise<void>) {
+    if (busy) return
+    setBusy(true)
+    try {
+      await action()
+    } finally {
+      setBusy(false)
     }
-    const created = await createSession(name, newDuration)
-    if (!created) {
-      toast.error('Không tạo được chuyến — thử lại sau')
-      return
-    }
-    setNewName('')
-    setState(created)
-    toast.success(`Đã tạo chuyến "${created.name}" — chia sẻ mã ${created.inviteCode} cho bạn bè`)
   }
 
-  async function handleJoin() {
-    const joined = await joinSession(joinCode)
-    if (!joined) {
-      toast.error('Mã mời không dùng được')
-      return
-    }
-    setJoinCode('')
-    setState(joined)
-  }
-
-  async function toggleSharing() {
-    if (!state) return
-    const next = await setSharing(state.sessionId, { sharingEnabled: !sharing })
-    if (!next) {
-      toast.error('Không đổi được trạng thái chia sẻ')
-      return
-    }
-    setState(next)
-    toast.success(
-      sharing
-        ? 'Đã TẮT chia sẻ — vị trí của bạn đã được xoá khỏi máy chủ'
-        : 'Đang chia sẻ vị trí với mọi người trong chuyến',
-    )
-  }
-
-  async function togglePrecision() {
-    if (!state || !me) return
-    const next = await setSharing(state.sessionId, {
-      precisionMode: me.precisionMode === 'exact' ? 'approx' : 'exact',
+  const handleCreate = (name: string, durationMinutes: 60 | 240 | 480) =>
+    run(async () => {
+      if (!name) {
+        toast.error('Đặt tên cho chuyến đi đã nhé')
+        return
+      }
+      const created = await createSession(name, durationMinutes)
+      if (!created) {
+        toast.error('Không tạo được chuyến — thử lại sau')
+        return
+      }
+      setState(created)
+      toast.success(`Đã tạo chuyến "${created.name}" — bấm "Mời bạn" để gửi link cho bạn bè`)
     })
-    if (next) setState(next)
-  }
 
-  async function setMeetPointHere() {
-    if (!state || !myPosition) {
-      toast.error('Cần bật chia sẻ vị trí trước để lấy chỗ bạn đang đứng')
-      return
-    }
-    const next = await updateSession(state.sessionId, {
-      meetPoint: { lat: myPosition.lat, lng: myPosition.lng, label: 'Điểm hẹn' },
+  const handleJoin = (code: string) =>
+    run(async () => {
+      const joined = await joinSession(code)
+      if (!joined) {
+        toast.error('Mã mời không dùng được')
+        return
+      }
+      setState(joined)
     })
-    if (next) {
+
+  const toggleSharing = () =>
+    run(async () => {
+      if (!state) return
+      const next = await setSharing(state.sessionId, { sharingEnabled: !sharing })
+      if (!next) {
+        toast.error('Không đổi được trạng thái chia sẻ')
+        return
+      }
       setState(next)
-      toast.success('Đã đặt điểm hẹn tại chỗ bạn đang đứng')
-    } else toast.error('Chỉ chủ chuyến mới đặt được điểm hẹn')
-  }
-
-  async function handleExtend() {
-    if (!state) return
-    const next = await updateSession(state.sessionId, { extendMinutes: 60 })
-    if (next) {
-      setState(next)
-      toast.success('Đã gia hạn thêm 1 giờ')
-    } else toast.error('Chỉ chủ chuyến mới gia hạn được')
-  }
-
-  async function handleEnd() {
-    if (!state) return
-    // updateSession(end) trả về null vì server không gửi kèm state của chuyến đã kết thúc —
-    // dựa vào việc màn hình quay lại danh sách để biết đã xong.
-    await updateSession(state.sessionId, { end: true })
-    setState(null)
-    setSessions(await fetchMySessions())
-    toast.success('Đã kết thúc chuyến — vị trí của mọi người đã xoá')
-  }
-
-  async function handleLeave() {
-    if (!state) return
-    await leaveSession(state.sessionId)
-    setState(null)
-    setSessions(await fetchMySessions())
-    toast.success('Bạn đã rời chuyến, vị trí của bạn đã được xoá')
-  }
-
-  function copyInvite() {
-    if (!state) return
-    void navigator.clipboard.writeText(buildInviteUrl(state.inviteCode)).then(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      toast.success(
+        sharing
+          ? 'Đã TẮT chia sẻ — vị trí của bạn đã được xoá khỏi máy chủ'
+          : 'Đang chia sẻ vị trí với mọi người trong chuyến',
+      )
     })
-  }
+
+  const togglePrecision = () =>
+    run(async () => {
+      if (!state || !me) return
+      const next = await setSharing(state.sessionId, {
+        precisionMode: me.precisionMode === 'exact' ? 'approx' : 'exact',
+      })
+      if (next) setState(next)
+    })
+
+  const setMeetPointHere = () =>
+    run(async () => {
+      if (!state || !myPosition) {
+        toast.error('Cần bật chia sẻ vị trí trước để lấy chỗ bạn đang đứng')
+        return
+      }
+      const next = await updateSession(state.sessionId, {
+        meetPoint: { lat: myPosition.lat, lng: myPosition.lng, label: 'Điểm hẹn' },
+      })
+      if (next) {
+        setState(next)
+        toast.success('Đã đặt điểm hẹn tại chỗ bạn đang đứng')
+      } else toast.error('Chỉ chủ chuyến mới đặt được điểm hẹn')
+    })
+
+  const clearMeetPoint = () =>
+    run(async () => {
+      if (!state) return
+      const next = await updateSession(state.sessionId, { meetPoint: null })
+      if (next) {
+        setState(next)
+        toast.success('Đã bỏ điểm hẹn — cảnh báo đi lạc quay về tính theo tâm nhóm')
+      } else toast.error('Chỉ chủ chuyến mới đổi được điểm hẹn')
+    })
+
+  const handleExtend = () =>
+    run(async () => {
+      if (!state) return
+      const next = await updateSession(state.sessionId, { extendMinutes: 60 })
+      if (next) {
+        setState(next)
+        toast.success('Đã gia hạn thêm 1 giờ')
+      } else toast.error('Chỉ chủ chuyến mới gia hạn được')
+    })
+
+  const handleEnd = () =>
+    run(async () => {
+      if (!state) return
+      // updateSession(end) trả về null vì server không gửi kèm state của chuyến đã kết thúc —
+      // dựa vào việc màn hình quay lại danh sách để biết đã xong.
+      await updateSession(state.sessionId, { end: true })
+      setState(null)
+      setSessions(await fetchMySessions())
+      toast.success('Đã kết thúc chuyến — vị trí của mọi người đã xoá')
+    })
+
+  const handleLeave = () =>
+    run(async () => {
+      if (!state) return
+      await leaveSession(state.sessionId)
+      setState(null)
+      setSessions(await fetchMySessions())
+      toast.success('Bạn đã rời chuyến, vị trí của bạn đã được xoá')
+    })
 
   // ── Giao diện ───────────────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout />
-      <main className="mx-auto max-w-2xl px-4 pb-24 pt-4">
+      <main className="mx-auto max-w-2xl px-4 pt-4 pb-[calc(1.5rem+var(--bnav-h))]">
         <PageHeader
           title="Đi chung"
-          subtitle="Chia sẻ vị trí thời gian thực với bạn bè khi đi chơi chung — bật/tắt lúc nào cũng được"
+          subtitle="Thấy nhau trên bản đồ khi đi chơi chung, để không ai bị lạc — bật/tắt lúc nào cũng được"
         />
 
         {loading ? (
-          <p className="text-zinc-300">Đang tải…</p>
+          <p className="text-zinc-200">Đang tải…</p>
         ) : !state ? (
-          <div className="space-y-6">
-            <section className="rounded-xl border border-white/10 p-4">
-              <h2 className="mb-3 text-lg font-bold text-white">Tạo chuyến mới</h2>
-              <label className="mb-2 block text-sm text-zinc-300" htmlFor="trip-name">
-                Tên chuyến (ví dụ: Đi cà phê Bờ Hồ)
-              </label>
-              <input
-                id="trip-name"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                maxLength={80}
-                className="mb-3 w-full rounded-lg border border-white/15 bg-zinc-900 px-3 py-2 text-[16px] text-white"
-              />
-              <fieldset className="mb-3">
-                <legend className="mb-2 text-sm text-zinc-300">
-                  Tự tắt sau (không có chế độ chia sẻ vĩnh viễn)
-                </legend>
-                <div className="flex gap-2">
-                  {DURATIONS.map((d) => (
-                    <button
-                      key={d.value}
-                      type="button"
-                      onClick={() => setNewDuration(d.value)}
-                      aria-pressed={newDuration === d.value}
-                      className={`min-h-[44px] rounded-lg px-4 text-sm ${
-                        newDuration === d.value
-                          ? 'bg-accent-500 text-[#fff]'
-                          : 'border border-white/15 text-zinc-200'
-                      }`}
-                    >
-                      {d.label}
-                    </button>
-                  ))}
-                </div>
-              </fieldset>
-              <button
-                type="button"
-                onClick={() => void handleCreate()}
-                className="min-h-[44px] rounded-lg bg-accent-500 px-5 font-semibold text-[#fff]"
-              >
-                Tạo chuyến
-              </button>
-            </section>
-
-            <section className="rounded-xl border border-white/10 p-4">
-              <h2 className="mb-3 text-lg font-bold text-white">Vào chuyến bằng mã mời</h2>
-              <div className="flex gap-2">
-                <label className="sr-only" htmlFor="invite-code">
-                  Mã mời
-                </label>
-                <input
-                  id="invite-code"
-                  value={joinCode}
-                  onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                  placeholder="VD: K7M2QP"
-                  className="flex-1 rounded-lg border border-white/15 bg-zinc-900 px-3 py-2 text-[16px] uppercase text-white"
-                />
-                <button
-                  type="button"
-                  onClick={() => void handleJoin()}
-                  className="min-h-[44px] rounded-lg border border-white/15 px-4 text-zinc-100"
-                >
-                  Vào chuyến
-                </button>
-              </div>
-            </section>
-
-            {sessions.length > 0 && (
-              <section className="rounded-xl border border-white/10 p-4">
-                <h2 className="mb-3 text-lg font-bold text-white">Chuyến đang mở của bạn</h2>
-                <ul className="space-y-2">
-                  {sessions.map((s) => (
-                    <li key={s.sessionId}>
-                      <button
-                        type="button"
-                        onClick={() => void refresh(s.sessionId)}
-                        className="flex min-h-[44px] w-full items-center justify-between rounded-lg border border-white/10 px-3 text-left text-zinc-100"
-                      >
-                        <span>
-                          {s.name}{' '}
-                          <span className="text-sm text-zinc-300">· {s.memberCount} người</span>
-                        </span>
-                        <span className="text-sm text-zinc-300">
-                          {formatRemaining(s.expiresAt)}
-                        </span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-          </div>
+          <TripSetup
+            sessions={sessions}
+            onOpen={(id) => void openSession(id)}
+            onCreate={(name, duration) => void handleCreate(name, duration)}
+            onJoin={(code) => void handleJoin(code)}
+            busy={busy}
+          />
         ) : (
           <div className="space-y-4">
-            {/* Công tắc chia sẻ — luôn ở trên cùng, không bao giờ giấu trong menu con */}
-            <section className="rounded-xl border border-white/10 p-4">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <h2 className="text-lg font-bold text-white">{state.name}</h2>
-                  <p className="text-sm text-zinc-300">
-                    <Clock className="mr-1 inline h-4 w-4" aria-hidden="true" />
-                    {formatRemaining(state.expiresAt)} · mã mời{' '}
-                    <strong className="tracking-widest">{state.inviteCode}</strong> ·{' '}
-                    {transport === 'websocket' ? 'cập nhật tức thì' : 'cập nhật mỗi vài giây'}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => void toggleSharing()}
-                  aria-pressed={sharing}
-                  className={`flex min-h-[44px] items-center gap-2 rounded-lg px-5 font-semibold ${
-                    sharing ? 'bg-accent-500 text-[#fff]' : 'border border-white/20 text-zinc-100'
-                  }`}
-                >
-                  {sharing ? (
-                    <RadioTower className="h-5 w-5" aria-hidden="true" />
-                  ) : (
-                    <Radio className="h-5 w-5" aria-hidden="true" />
-                  )}
-                  {sharing ? 'Đang chia sẻ — bấm để TẮT' : 'BẬT chia sẻ vị trí'}
-                </button>
-              </div>
-              <p className="mt-2 text-sm text-zinc-300">
-                <ShieldCheck className="mr-1 inline h-4 w-4" aria-hidden="true" />
-                Tắt chia sẻ là vị trí của bạn bị xoá khỏi máy chủ ngay. Ứng dụng không lưu lịch sử
-                hành trình.
-              </p>
-            </section>
-
+            {/* Cảnh báo đi lạc — thứ khẩn nhất, nên nằm trên cả bản đồ. */}
             {stragglers.length > 0 && (
               <section
-                className="rounded-xl border border-amber-400/40 bg-amber-400/10 p-4"
+                className="rounded-2xl border border-amber-400/50 bg-amber-400/10 p-4"
                 role="status"
               >
-                <h2 className="flex items-center gap-2 font-bold text-amber-100">
+                <h2 className="flex items-center gap-2 font-bold text-amber-100 theme-light:text-amber-900">
                   <AlertTriangle className="h-5 w-5" aria-hidden="true" />
                   Có người đang cách xa nhóm
                 </h2>
-                <ul className="mt-2 space-y-1 text-sm text-amber-50">
-                  {stragglers.map((s) => {
-                    const member = state.members.find((m) => m.userId === s.userId)
+                <ul className="mt-2 space-y-1 text-sm text-zinc-100">
+                  {stragglers.map((straggler) => {
+                    const member = state.members.find((m) => m.userId === straggler.userId)
                     return (
-                      <li key={s.userId}>
-                        {member?.name ?? 'Ai đó'} cách điểm chung {formatDistance(s.distanceM)}
+                      <li key={straggler.userId}>
+                        {member?.name ?? 'Ai đó'} cách {state.meetPoint ? 'điểm hẹn' : 'tâm nhóm'}{' '}
+                        <strong>{formatDistance(straggler.distanceM)}</strong>
                       </li>
                     )
                   })}
@@ -470,133 +361,64 @@ export default function LiveLocation() {
 
             <LiveMap members={state.members} meetPoint={state.meetPoint} myUserId={myUserId} />
 
-            <section className="rounded-xl border border-white/10 p-4">
-              <h2 className="mb-3 text-lg font-bold text-white">Mọi người trong chuyến</h2>
-              <ul className="space-y-3">
-                {state.members.map((member) => {
-                  const distance =
-                    myPosition && member.position && member.userId !== myUserId
-                      ? distanceMeters(myPosition, member.position)
-                      : null
-                  return (
-                    <li
-                      key={member.userId}
-                      className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 pb-2"
-                    >
-                      <div>
-                        <p className="font-semibold text-white">
-                          {member.name}
-                          {member.userId === myUserId && ' (bạn)'}
-                          {member.isOwner && (
-                            <span className="ml-2 text-sm text-zinc-300">· chủ chuyến</span>
-                          )}
-                        </p>
-                        <p className="text-sm text-zinc-300">
-                          {member.sharingEnabled
-                            ? `${distance !== null ? `cách bạn ${formatDistance(distance)} · ` : ''}${formatAgo(member.updatedAt)}`
-                            : 'đang tắt chia sẻ'}
-                          {member.precisionMode === 'approx' &&
-                            member.sharingEnabled &&
-                            ' · vị trí gần đúng'}
-                          {member.position?.batteryPct !== undefined &&
-                            ` · pin ${member.position.batteryPct}%`}
-                        </p>
-                      </div>
-                      {member.position && (
-                        <a
-                          href={buildDirectionsUrl(member.position)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex min-h-[44px] items-center gap-1 rounded-lg border border-white/15 px-3 text-sm text-zinc-100"
-                        >
-                          <Navigation className="h-4 w-4" aria-hidden="true" />
-                          Chỉ đường
-                        </a>
-                      )}
-                    </li>
-                  )
-                })}
-              </ul>
-            </section>
-
-            {pairDistances.length > 0 && (
-              <section className="rounded-xl border border-white/10 p-4">
-                <h2 className="mb-3 text-lg font-bold text-white">Khoảng cách giữa mọi người</h2>
-                <ul className="space-y-2">
-                  {pairDistances.map(({ a, b, distanceM }) => (
-                    <li
-                      key={`${a.userId}-${b.userId}`}
-                      className="flex items-center justify-between gap-2 text-sm"
-                    >
-                      <span className="text-zinc-200">
-                        {a.name}
-                        {a.userId === myUserId && ' (bạn)'} ↔ {b.name}
-                        {b.userId === myUserId && ' (bạn)'}
-                      </span>
-                      <span className="font-semibold text-white">{formatDistance(distanceM)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
+            {state.meetPoint && (
+              <a
+                href={buildDirectionsUrl(state.meetPoint)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="tap-44 flex items-center justify-center gap-2 rounded-xl border border-zinc-700 px-4 font-semibold text-zinc-100"
+              >
+                <Flag className="h-4 w-4" aria-hidden="true" />
+                Chỉ đường tới điểm hẹn
+                <Navigation className="h-4 w-4" aria-hidden="true" />
+              </a>
             )}
 
-            <section className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={copyInvite}
-                className="flex min-h-[44px] items-center gap-2 rounded-lg border border-white/15 px-4 text-zinc-100"
-              >
-                {copied ? (
-                  <Check className="h-4 w-4" aria-hidden="true" />
-                ) : (
-                  <Copy className="h-4 w-4" aria-hidden="true" />
-                )}
-                {copied ? 'Đã chép link mời' : 'Chép link mời'}
-              </button>
-              <button
-                type="button"
-                onClick={() => void togglePrecision()}
-                className="min-h-[44px] rounded-lg border border-white/15 px-4 text-zinc-100"
-              >
-                {me?.precisionMode === 'approx'
-                  ? 'Chuyển sang vị trí chính xác'
-                  : 'Chỉ hiện gần đúng (~500m)'}
-              </button>
-              {state.ownerId === myUserId && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => void setMeetPointHere()}
-                    className="flex min-h-[44px] items-center gap-2 rounded-lg border border-white/15 px-4 text-zinc-100"
-                  >
-                    <Flag className="h-4 w-4" aria-hidden="true" />
-                    Đặt điểm hẹn tại đây
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => void handleExtend()}
-                    className="min-h-[44px] rounded-lg border border-white/15 px-4 text-zinc-100"
-                  >
-                    Gia hạn thêm 1 giờ
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => void handleEnd()}
-                    className="min-h-[44px] rounded-lg border border-rose-400/40 px-4 text-rose-100"
-                  >
-                    Kết thúc chuyến cho cả nhóm
-                  </button>
-                </>
-              )}
-              <button
-                type="button"
-                onClick={() => void handleLeave()}
-                className="flex min-h-[44px] items-center gap-2 rounded-lg border border-white/15 px-4 text-zinc-100"
-              >
-                <LogOut className="h-4 w-4" aria-hidden="true" />
-                Rời chuyến
-              </button>
+            <section className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4">
+              <h2 className="text-lg font-bold text-zinc-100">
+                Mọi người trong chuyến ({state.members.length})
+              </h2>
+              <MemberList
+                members={state.members}
+                myUserId={myUserId}
+                distancesFromMe={distancesFromMe}
+              />
             </section>
+
+            <GroupSpread pairs={pairDistances} myUserId={myUserId} />
+
+            <TripHeader
+              name={state.name}
+              inviteCode={state.inviteCode}
+              expiresAt={state.expiresAt}
+              transport={transport}
+            />
+
+            <TripActions
+              isOwner={state.ownerId === myUserId}
+              precisionMode={me?.precisionMode ?? 'exact'}
+              canSetMeetPoint={!!myPosition}
+              hasMeetPoint={!!state.meetPoint}
+              onTogglePrecision={() => void togglePrecision()}
+              onSetMeetPoint={() => void setMeetPointHere()}
+              onClearMeetPoint={() => void clearMeetPoint()}
+              onExtend={() => void handleExtend()}
+              onEnd={() => void handleEnd()}
+              onLeave={() => void handleLeave()}
+            />
+
+            <p className="flex items-start gap-2 text-sm text-zinc-200">
+              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              Tắt chia sẻ là vị trí của bạn bị xoá khỏi máy chủ ngay. Ứng dụng không lưu lịch sử
+              hành trình của ai.
+            </p>
+
+            <ShareToggle
+              sharing={sharing}
+              otherMemberCount={Math.max(0, state.members.length - 1)}
+              onToggle={() => void toggleSharing()}
+              busy={busy}
+            />
           </div>
         )}
       </main>
