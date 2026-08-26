@@ -2631,45 +2631,56 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   1 trang CEFR (ngân sách LCP ≤ 2,5s · INP ≤ 200ms · CLS ≤ 0,1), và đọc Sentry (lỗi mới chưa
   xem xét) + `pm2 logs`/số lần restart + dung lượng ổ đĩa.
 
-- 🟡 **[2026-08-26 — GỠ ĐƯỢC NỬA ĐẦU] Model `gemini-3.6-flash` ĐÃ CHẠY THẬT trên production;
-  còn lại nợ baseline eval.** Người dùng gửi ảnh trang **Trạng thái tính năng**, lượt tự động
-  **07:00:02 ngày 26/8/2026**: _AI hội thoại — Google Gemini · Hoạt động — 512ms_, cùng lượt
-  Groq 426ms · TTS Google 315ms · R2 817ms · SePay webhook OK · PostgreSQL 90ms; băng tổng
-  "TẤT CẢ TÍNH NĂNG BÌNH THƯỜNG". Vậy tên model đúng, key đúng, đường gọi thông — nỗi lo lớn
-  nhất (404 vì sai tên model) đã hết.
+- 🟢 **[2026-08-26 — ĐÃ GỠ] Baseline eval gia sư ĐÃ CÓ SỐ THẬT, chất lượng sư phạm không tụt.**
+  Chạy trên VPS với key thật: **62/62 câu chấm được**, recall 97,7% · precision 97,7% ·
+  FP-rate 5,6% · specificity 94,4% · Feedback VI 100% · Type-hit 76,7%. 9/11 nhóm lỗi đạt
+  tuyệt đối; chỉ bỏ sót `adj-02` (trật tự tính từ). Số liệu ở
+  `docs/research/eval-tutor-baseline.md`.
 
-  **Nhưng KHÔNG được đóng cả mục.** Health-check chỉ chứng minh **gọi được API**, không chứng
-  minh **chất lượng sư phạm không tụt**: nó gửi một prompt tối thiểu, không chấm recall/precision
-  trên bộ fixture. Baseline `docs/research/eval-tutor-baseline.md` vẫn là bản 2026-08-21, cũ hơn
-  ngày đổi prompt/model 2026-08-24 — nên phần dưới đây giữ nguyên, chỉ hạ mức từ 🔴 xuống 🟡.
+  **Đính chính một điều mục nợ này từng ghi sai:** nó viết "baseline vẫn là bản 2026-08-21".
+  Không đúng — `git log -- docs/research/eval-tutor-baseline.md` cho ĐÚNG MỘT commit trong
+  toàn bộ lịch sử (PR #625), và nội dung là bản mẫu rỗng ghi rõ "⏳ CHƯA CÓ SỐ LIỆU BASELINE".
+  Tức **chưa từng có baseline số nào, ở bất kỳ ngày nào**, và luật ở `CLAUDE.md` mục 8 ("PR
+  sửa prompt/model phải dán bảng so sánh, recall/precision không được tụt") **chưa bao giờ thi
+  hành được** vì không có mốc để so. Lần chạy 2026-08-26 là baseline ĐẦU TIÊN, không phải một
+  lần so sánh. Bài học: một mục nợ khẳng định "bản ngày X" mà không ai mở file ra xem thì nó
+  chỉ là tin đồn được chép lại — kiểm bằng `git log` trước khi chép.
 
-  _Nguyên văn ghi nhận cũ (2026-08-24, xác nhận lại 2026-08-25):_
-  _Audit 2026-08-25 chấm Tầng 4 **FAIL** bằng lệnh, không đoán:_ `git log -1` trên
-  `apps/dhcb/src/prompts` + `packages/core-ai/aiConfig.ts` cho **2026-08-24**, còn trên
-  `docs/research/eval-tutor-baseline.md` cho **2026-08-21** — ngày đổi MỚI HƠN ngày baseline
-  ⇒ baseline đã cũ. (Nội dung tài liệu baseline ghi "2026-08-20", commit là 2026-08-21; lệch
-  1 ngày này không đổi kết luận.) Container audit không có `.env` nên vẫn không chạy được.
+  **Đo đúng đường production.** `chatFallback.ts` gọi theo thứ tự Groq → Anthropic → Gemini,
+  và script eval cũng ưu tiên Groq trước, nên số trên là chất lượng của **provider chính** mà
+  người dùng thật đang gặp. Gemini (`gemini-3.6-flash`) là lớp dự phòng thứ ba — health-check
+  07:00 ngày 26/8 xác nhận nó gọi được (512ms), nhưng chất lượng sư phạm của riêng nhánh đó
+  vẫn chưa đo; chạy `npm run eval:tutor` trên máy KHÔNG có `GROQ_API_KEY`/`ANTHROPIC_API_KEY`
+  thì script sẽ rơi xuống Gemini và đo được. Hai tính năng vision
+  (`visionSolverService.ts`, `ambientVisionService.ts`) dùng chung model đó, cũng chưa thử tay.
 
-  _Bối cảnh gốc (2026-08-24):_ PR #647 — Google đã khai tử hẳn `gemini-2.0-flash` (lỗi
-  404 thật khi chạy `npm run eval:tutor`, sửa ở 4 chỗ — `aiConfig.ts` GEMINI_CHAT_MODEL,
-  `visionSolverService.ts`, `ambientVisionService.ts`, `scripts/eval-tutor.ts`). Tên model mới
-  lấy trực tiếp từ thông báo lỗi của Google, **không phải suy đoán**, nhưng môi trường sửa lỗi
-  không có `GEMINI_API_KEY` nên chưa gọi thử được lần nào.
+  **Ba việc phải làm để chạy được, ghi lại vì đều là bẫy thật:**
+  1. Script đọc `process.env.GROQ_API_KEY` nguyên chuỗi làm Bearer token, trong khi production
+     đi qua `groqKeyPool()` tách nhiều key theo dấu phẩy → 62/62 lỗi `401` và một báo động sự
+     cố production hoàn toàn không có thật. Đã vá.
+  2. Báo lỗi chỉ giữ `lastErr` nên `429` của khoá đang sống bị `401` của khoá hỏng che mất →
+     chẩn đoán sai thêm hai vòng. Nay in trạng thái TỪNG khoá: `[#1→429 #2→429]`. Đã vá.
+  3. Một khoá trong `.env` hỏng vật lý — dài 50 ký tự thay vì 56, kết thúc bằng ký tự `>`, sai
+     định dạng `gsk_[A-Za-z0-9]+`. Bị cắt cụt lúc ghi file, không phải bị thu hồi. Đã thay.
 
-  **Điều kiện gỡ nợ:** người có key thật chạy trên VPS:
+  Groq tính hạn mức theo **TÀI KHOẢN chứ không theo khoá**, nên gộp nhiều khoá cùng một tài
+  khoản vào bể KHÔNG tăng quota — chỉ có giá trị dự phòng khi một khoá bị thu hồi. Đúng cho cả
+  production. Chạy eval cần `--delay 3000` (62 câu ≈ 3–4 phút); `--delay 500` mặc định làm tắc
+  từ câu 22.
 
-  ```bash
-  git pull origin main && npm run eval:tutor -- --write-baseline
-  ```
+- 🟡 **[2026-08-26] Dải nhiễu của eval rộng hơn mức một PR có thể phân biệt được.** Hai lượt
+  chạy liên tiếp, cùng prompt · model · bộ đề · `--delay`, cách nhau vài phút: FP-rate 0% →
+  5,6%, specificity 100% → 94,4%, Type-hit 86,0% → 76,7%. Chỉ MỘT câu đổi phán đoán
+  (`edge-05`: TN → FP) đã làm FP-rate nhảy 5,6 điểm, vì mẫu số chỉ có 18 câu đúng/ca biên.
 
-  Hai khả năng: (a) chạy được → đối chiếu bảng recall/precision với baseline cũ
-  (`docs/research/eval-tutor-baseline.md`, ngày 2026-08-20) xác nhận không tụt chất lượng, rồi
-  merge bản `--write-baseline` mới; (b) vẫn lỗi 404 → `gemini-3.6-flash` cũng sai tên, cần đọc
-  thông báo lỗi mới (Google thường gợi ý tên đúng) và vá lại cả 4 chỗ.
+  Hệ quả: luật "recall/precision không được tụt" ở `CLAUDE.md` mục 8 hiện **không phân biệt
+  được** một prompt tệ đi 5 điểm với nhiễu lấy mẫu — cả hai trông giống hệt nhau. Dải nhiễu và
+  cách đọc đã ghi vào cuối `docs/research/eval-tutor-baseline.md` (chênh ≤ 1 câu không phải
+  bằng chứng; nghi ngờ thì chạy ≥ 3 lượt so trung bình; Type-hit không dùng pass/fail; chỉ số
+  đáng tin nhất là recall theo từng nhóm lỗi).
 
-  Ngoài chat, 2 tính năng vision (`visionSolverService.ts` giải bài STEM bằng ảnh,
-  `ambientVisionService.ts`) dùng chung model — **chưa thử tay lần nào** với key thật, nên cũng
-  coi là chưa xác nhận cho tới khi gỡ nợ trên.
+  **Cách chữa thật** là mở rộng golden set — nhất là nhóm câu đúng/ca biên, hiện chỉ 18 câu —
+  chứ không phải chạy đi chạy lại cùng 62 câu. Chưa làm vì cần soạn fixture mới có đối chiếu.
 
   **Rủi ro nếu để lâu:** Gemini là fallback THỨ 3 trong chat (sau Groq, Anthropic) — sự cố chỉ lộ
   ra khi cả hai provider chính cùng lúc gặp vấn đề, tức âm thầm mất một lớp dự phòng mà không ai
