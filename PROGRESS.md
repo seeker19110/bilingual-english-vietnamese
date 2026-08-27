@@ -1236,7 +1236,18 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   `swiftsim` → M4–M6 nội dung Swift → M7 `kotlinsim` → M8–M9 Kotlin → M10–M11 Paradigm → M12
   giao diện P6**. ⚠️ **Cổng cứng giữa M3 và M4:** interpreter Swift phải qua bộ test đối chiếu
   TRƯỚC khi soạn bài nội dung nào.
-  **Tiến độ:** PR-M0 ✅ · PR-M1 ✅ · PR-M2 ✅ · **PR-M3 ✅ (2026-08-27)** — hạ tầng `swiftsim`
+  **Tiến độ:** PR-M0 ✅ · PR-M1 ✅ · PR-M2 ✅ · PR-M3 ✅ · **PR-M7 ✅ (2026-08-27, LÀM SỚM —
+  xem ngay dưới)**. **ĐÃ ĐẢO THỨ TỰ M7 lên trước M4–M6, người dùng duyệt 2026-08-27:** M4 bị
+  cổng cứng §8 chặn tới khi có người chạy `npm run swift:conformance` trên máy có Xcode, còn M7
+  là bộ chạy KHÁC không đi qua cổng đó (`conformance.test.ts` của Swift chỉ đỏ khi có bài
+  `language: 'swift'`). Cổng cứng M3→M4 **vẫn nguyên vẹn**, PR-M7 không chạm vào.
+  **PR-M7 chi tiết** — hạ tầng `kotlinSim` xong (5.972 dòng, nhật ký
+  `docs/changelog/0184-2026-08-27-pr-m7-ha-tang-kotlinsim.md`): trình thông dịch tập con Kotlin,
+  **tính-null theo KHAI BÁO + smart cast** (trụ cột, đối ứng với "Optional bọc tường minh" của
+  Swift), 347 ca trong 4 cổng, runner + đăng ký ngôn ngữ `kotlin`, `npm run kotlin:conformance`.
+  Đặc tả bộ chạy: `docs/research/dac-ta-bo-chay-kotlin-2026-08-27.md`.
+  ⚠️ **CỔNG §3.4 CHƯA MỞ:** 48 ca chưa chạy trên `kotlinc` thật. **PR-M8 chưa được bắt đầu.**
+  PR-M3 chi tiết — hạ tầng `swiftsim`
   xong: trình thông dịch tập con Swift (~2.900 dòng, 4 file trong
   `packages/subject-programming/swiftSim/`), Optional bọc tường minh, 41 ca đối chiếu + cổng
   "lỗi phải nói được", runner + đăng ký ngôn ngữ `swift`. Đặc tả bộ chạy:
@@ -2416,6 +2427,18 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   **Hệ quả nếu bỏ qua:** PR-M4 (nội dung Swift) không được bắt đầu — `conformance.test.ts` tự
   làm CI đỏ nếu có bài `language: 'swift'` khi ca còn chưa đối chiếu.
 
+- **[2026-08-27] Đối chiếu bộ chạy Kotlin với `kotlinc` THẬT — CHẶN PR-M8 (nội dung Kotlin).**
+  Chạy trên máy có Kotlin toolchain:
+  `npm run kotlin:conformance`
+  Script sinh một file `.kt` gồm đúng 48 ca đối chiếu, chạy bằng `kotlin` (hoặc `kotlinc` +
+  `java`), so từng ca với kết quả kỳ vọng **và** với output của bộ chạy DHCB, rồi in ca nào lệch.
+  Xong thì đặt `daDoiChieu: true` cho các ca đã khớp trong
+  `packages/subject-programming/kotlinSim/conformance.ts`, ghi phiên bản `kotlin -version` vào
+  `docs/research/dac-ta-bo-chay-kotlin-2026-08-27.md` mục 4, rồi commit.
+  **Vì sao AI không tự làm được:** máy dựng PR-M7 không có Kotlin và proxy chặn tải.
+  **Hệ quả nếu bỏ qua:** PR-M8 (nội dung Kotlin) không được bắt đầu — `conformance.test.ts` tự
+  làm CI đỏ nếu có bài `language: 'kotlin'` khi ca còn chưa đối chiếu.
+
 - **Migration `0034`–`0037` (ADR-0002) — CHẠY TRƯỚC KHI DEPLOY.** `npm run migrate:pg` trên VPS
   (`identities`, `entitlements`, `english.user_profile`, xoá 4 cột OAuth cũ trên `users`).
   Sau khi deploy Bước 6, mọi người dùng đang đăng nhập bằng phiên Bearer cũ **phải đăng nhập lại
@@ -2788,9 +2811,15 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
   | Ngân sách            | Số thật   | Ngưỡng | Biên độ          |
   | -------------------- | --------- | ------ | ---------------- |
-  | Initial JS (brotli)  | 124,03 kB | 140 kB | dư **~11,4%**    |
-  | Initial CSS (brotli) | 15,87 kB  | 18 kB  | dư **~11,8%**    |
-  | Coverage branches    | 90,17%    | 90%    | dư **0,17 điểm** |
+  | Initial JS (brotli)  | 124,83 kB | 140 kB | dư **~10,8%**    |
+  | Initial CSS (brotli) | 16,23 kB  | 18 kB  | dư **~9,8%**     |
+  | Coverage branches    | 90,29%    | 90%    | dư **0,29 điểm** |
+
+  **[Đo lại 2026-08-27, sau PR-M7]** Ba con số trên là bản mới nhất. Đợt PR-M7 là ca thực tế
+  đầu tiên nợ này bật ra: bộ chạy Kotlin (~4.000 dòng nguồn) làm branches tụt xuống **88,75%**
+  — CI sẽ đỏ. Đã trả bằng cách **viết thêm test chứ không nâng ngưỡng** (hai file mới phủ bề
+  mặt thư viện và đường lỗi), kéo lên 90,29%. Bài học: PR nào thêm một khối mã lớn thì phải
+  **đo coverage TRƯỚC khi mở PR**, đừng đợi CI báo.
 
   **Phần bundle của nợ này coi như đóng.** Con số "99,7%" ghi ngày 2026-08-25 đã lạc hậu: ngưỡng
   JS được nới 123 → 140 kB và CSS 16 → 18 kB ở các PR sau đó, mà mục nợ không ai cập nhật. Đây

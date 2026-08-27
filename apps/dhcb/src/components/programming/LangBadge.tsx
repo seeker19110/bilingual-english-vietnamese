@@ -32,6 +32,9 @@ const LANGS: Record<Lang, { label: string; dot: string; simulated?: true }> = {
   // Swift (chương trình M, tầng 2): cú pháp Swift THẬT, chạy trên trình thông dịch tập con của
   // DHCB. Là tập con nên phải khai "mô phỏng" — học viên cần biết swiftc thật khắt khe hơn.
   swift: { label: 'Swift', dot: 'bg-orange-500', simulated: true },
+  // Kotlin (chương trình M, tầng 2): cú pháp Kotlin THẬT, chạy trên trình thông dịch tập con
+  // của DHCB. Cũng là tập con nên phải khai "mô phỏng" như Swift.
+  kotlin: { label: 'Kotlin', dot: 'bg-purple-400', simulated: true },
 }
 
 interface Props {

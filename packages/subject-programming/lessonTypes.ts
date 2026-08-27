@@ -40,6 +40,7 @@ export const LESSON_LANGUAGES = [
   'git',
   'bash',
   'swift',
+  'kotlin',
 ] as const
 
 export const LessonSchema = z
