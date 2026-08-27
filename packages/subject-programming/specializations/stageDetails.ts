@@ -1,15 +1,32 @@
 // specializations/stageDetails.ts — Sổ đăng ký CHI TIẾT CHẶNG + hàm tra cứu.
 //
-// Đã soạn: chặng S2 (docs/specs/2026-08-27-chang-s2-huong-chuyen-sau.md), chặng S3
-// (docs/specs/2026-08-27-chang-s3-13-huong.md) và chặng S4
-// (docs/specs/2026-08-27-chi-tiet-chang-s4-13-huong.md) của cả 13 hướng. S2 là chỗ đường của các hướng
-// thật sự rẽ khỏi nhau; S3 là chỗ người học khựng lại vì "chạy được" không còn là đủ tốt, mà
-// "đủ tốt" thì đo được nên đặc tả được. Chặng chưa soạn thì `getSpecStageDetail` trả
-// `undefined` — giao diện hiển thị phần bản đồ sẵn có, KHÔNG bịa nội dung.
+// Đã soạn: ĐỦ BỐN CHẶNG S1→S4 của cả 13 hướng (52 chặng). S1
+// (docs/specs/2026-08-27-chi-tiet-chang-s1-13-huong.md), S2
+// (docs/specs/2026-08-27-chang-s2-huong-chuyen-sau.md), S3
+// (docs/specs/2026-08-27-chang-s3-13-huong.md) và S4
+// (docs/specs/2026-08-27-chi-tiet-chang-s4-13-huong.md). S1 là chặng nhập môn, đo bằng "làm
+// được cái đầu tiên và tự giải thích được"; S2 là chỗ đường của các hướng thật sự rẽ khỏi nhau;
+// S3 là chỗ người học khựng lại vì "chạy được" không còn là đủ tốt, mà "đủ tốt" thì đo được nên
+// đặc tả được; S4 bám vào trách nhiệm — diễn tập, số đo và nghiệm thu.
+// Mã chặng lạ thì `getSpecStageDetail` trả `undefined` — giao diện hiển thị phần bản đồ sẵn có,
+// KHÔNG bịa nội dung.
 //
 // Thêm chặng mới: tạo file `details/<hướng>-<chặng>.ts` theo khuôn rồi thêm 1 import + 1 phần
 // tử vào mảng dưới đây. Test `specStageDetails.test.ts` tự kiểm khuôn dạng.
 import type { SpecStageDetail } from './stageDetailTypes.js'
+import { WEB_S1_DETAIL } from './details/web-s1.js'
+import { MOBILE_S1_DETAIL } from './details/mobile-s1.js'
+import { BACKEND_S1_DETAIL } from './details/backend-s1.js'
+import { DATA_S1_DETAIL } from './details/data-s1.js'
+import { AI_S1_DETAIL } from './details/ai-s1.js'
+import { DEVOPS_S1_DETAIL } from './details/devops-s1.js'
+import { SECURITY_S1_DETAIL } from './details/security-s1.js'
+import { SYSTEMS_S1_DETAIL } from './details/systems-s1.js'
+import { GAME_S1_DETAIL } from './details/game-s1.js'
+import { EMBEDDED_S1_DETAIL } from './details/embedded-s1.js'
+import { DESKTOP_S1_DETAIL } from './details/desktop-s1.js'
+import { ARCHITECTURE_S1_DETAIL } from './details/architecture-s1.js'
+import { ALGO_S1_DETAIL } from './details/algo-s1.js'
 import { WEB_S2_DETAIL } from './details/web-s2.js'
 import { MOBILE_S2_DETAIL } from './details/mobile-s2.js'
 import { BACKEND_S2_DETAIL } from './details/backend-s2.js'
@@ -59,6 +76,21 @@ export type {
 } from './stageDetailTypes.js'
 
 export const SPEC_STAGE_DETAILS: SpecStageDetail[] = [
+  // Chặng S1 — soạn 2026-08-27 (docs/specs/2026-08-27-chi-tiet-chang-s1-13-huong.md).
+  WEB_S1_DETAIL,
+  MOBILE_S1_DETAIL,
+  BACKEND_S1_DETAIL,
+  DATA_S1_DETAIL,
+  AI_S1_DETAIL,
+  DEVOPS_S1_DETAIL,
+  SECURITY_S1_DETAIL,
+  SYSTEMS_S1_DETAIL,
+  GAME_S1_DETAIL,
+  EMBEDDED_S1_DETAIL,
+  DESKTOP_S1_DETAIL,
+  ARCHITECTURE_S1_DETAIL,
+  ALGO_S1_DETAIL,
+  // Chặng S2 — soạn 2026-08-27 (docs/specs/2026-08-27-chang-s2-huong-chuyen-sau.md).
   WEB_S2_DETAIL,
   MOBILE_S2_DETAIL,
   BACKEND_S2_DETAIL,
