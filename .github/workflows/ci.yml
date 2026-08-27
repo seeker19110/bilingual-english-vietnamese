@@ -12,7 +12,7 @@ on:
 # duy nhất branch protection nhìn là commit head. Thêm ở PR #703.
 #
 # KHÔNG phải bản vá cho vụ CI đứng im hôm 2026-08-26: vụ đó là sự cố Actions phía GitHub
-# (major_outage), run kẹt trước cả hàng đợi nên huỷ cũng báo 409. Xem changelog 0157 —
+# (major_outage), run kẹt trước cả hàng đợi nên huỷ cũng báo 409. Xem changelog 0161 —
 # chẩn đoán đầu tiên quy nhầm cho chính chỗ thiếu này.
 #
 # cancel-in-progress CHỈ bật cho pull_request. Push lên main không bao giờ bị huỷ: lượt CI

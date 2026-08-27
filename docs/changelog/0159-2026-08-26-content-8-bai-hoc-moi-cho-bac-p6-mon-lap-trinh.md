@@ -1,4 +1,4 @@
-# 0155 — feat(lessons): 8 bài học mới cho bậc P6 môn Lập trình
+# 0159 — feat(lessons): 8 bài học mới cho bậc P6 môn Lập trình
 
 - **Ngày:** 2026-08-26
 - **PR:** #703

@@ -1,4 +1,4 @@
-# 0156 — feat(ui): hiển thị markdown cho phần lý thuyết bài học môn Lập trình
+# 0160 — feat(ui): hiển thị markdown cho phần lý thuyết bài học môn Lập trình
 
 - **Ngày:** 2026-08-26
 - **PR:** #703 (cùng PR với đợt 0155)

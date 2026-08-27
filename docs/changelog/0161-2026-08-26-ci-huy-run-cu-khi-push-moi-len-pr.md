@@ -1,4 +1,4 @@
-# 0157 — ci: huỷ run của commit cũ khi push mới lên PR (concurrency)
+# 0161 — ci: huỷ run của commit cũ khi push mới lên PR (concurrency)
 
 - **Ngày:** 2026-08-26
 - **PR:** #703
