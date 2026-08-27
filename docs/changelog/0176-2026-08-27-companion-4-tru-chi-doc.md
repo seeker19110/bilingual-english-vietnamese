@@ -2,7 +2,8 @@
 
 - **Ngày:** 2026-08-27
 - **Loại:** feat (chỉ-đọc, không ghi dữ liệu)
-- **PR:** (điền sau khi tạo)
+- **PR:** #717
+- **Đặc tả:** `docs/research/dac-ta-companion-4-tru-chi-doc-2026-08-27.md`
 
 ## Vấn đề phát hiện qua đợt quét trụ cột
 
