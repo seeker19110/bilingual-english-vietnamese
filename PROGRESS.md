@@ -1127,7 +1127,15 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   `swiftsim` → M4–M6 nội dung Swift → M7 `kotlinsim` → M8–M9 Kotlin → M10–M11 Paradigm → M12
   giao diện P6**. ⚠️ **Cổng cứng giữa M3 và M4:** interpreter Swift phải qua bộ test đối chiếu
   TRƯỚC khi soạn bài nội dung nào.
-  **Tiến độ:** PR-M0 ✅ · PR-M1 ✅ · **PR-M2 ✅ (2026-08-27)** — nội dung `p3-u11` nay có 4 bài
+  **Tiến độ:** PR-M0 ✅ · PR-M1 ✅ · PR-M2 ✅ · **PR-M3 ✅ (2026-08-27)** — hạ tầng `swiftsim`
+  xong: trình thông dịch tập con Swift (~2.900 dòng, 4 file trong
+  `packages/subject-programming/swiftSim/`), Optional bọc tường minh, 41 ca đối chiếu + cổng
+  "lỗi phải nói được", runner + đăng ký ngôn ngữ `swift`. Đặc tả bộ chạy:
+  `docs/research/dac-ta-bo-chay-swift-2026-08-27.md`.
+  ⚠️ **CỔNG CỨNG §8 CHƯA MỞ:** 41 ca chưa chạy trên `swift` thật (máy dựng PR không có Swift,
+  proxy chặn tải). **PR-M4 chưa được bắt đầu** — `conformance.test.ts` tự chặn CI nếu có bài
+  `language: 'swift'` khi ca còn `daDoiChieu: false`. Việc tay: xem mục "Cần làm tay".
+  **PR-M2 chi tiết (2026-08-27)** — nội dung `p3-u11` nay có 4 bài
   (l2 đi trong cây thư mục · l3 ống lọc dữ liệu · l4 mini-project viết `bao_cao.sh`), +9 thẻ SRS
   (195 → 204), kèm 2 test trình duyệt cho mạch bash. **Đợt này sửa một lỗi thiết kế của PR-M1**:
   `error` từng được đặt cho mã thoát khác 0 khiến giao diện tô đỏ "lỗi hệ thống" và GIẤU output —
@@ -2285,6 +2293,19 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
 > `SUPABASE_DB_URL`. Xem `docs/migration-thoat-ly-supabase.md`.
 
 ## ⚠️ Cần làm tay (không cần PR)
+
+- **[2026-08-27] Đối chiếu bộ chạy Swift với `swift` THẬT — CHẶN cả chương trình M từ PR-M4.**
+  Chạy trên máy có Xcode hoặc Swift toolchain:
+  `npm run swift:conformance`
+  Script sinh một file `.swift` gồm đúng 41 ca đối chiếu, chạy bằng `swift`, so từng ca với kết
+  quả kỳ vọng **và** với output của bộ chạy DHCB, rồi in ca nào lệch. Xong thì đặt
+  `daDoiChieu: true` cho các ca đã khớp trong
+  `packages/subject-programming/swiftSim/conformance.ts`, ghi phiên bản `swift --version` vào
+  `docs/research/dac-ta-bo-chay-swift-2026-08-27.md` mục 4, rồi commit.
+  **Vì sao AI không tự làm được:** máy dựng PR-M3 không có Swift và proxy chặn tải từ swift.org
+  (đã thử, trả 403). Hiến chương chương trình M §3.4 cấm suy đoán kết quả từ trí nhớ.
+  **Hệ quả nếu bỏ qua:** PR-M4 (nội dung Swift) không được bắt đầu — `conformance.test.ts` tự
+  làm CI đỏ nếu có bài `language: 'swift'` khi ca còn chưa đối chiếu.
 
 - **Migration `0034`–`0037` (ADR-0002) — CHẠY TRƯỚC KHI DEPLOY.** `npm run migrate:pg` trên VPS
   (`identities`, `entitlements`, `english.user_profile`, xoá 4 cột OAuth cũ trên `users`).
