@@ -98,6 +98,9 @@ const ProgrammingProjectPage = lazyWithRetry(
 const ProgrammingSpecializations = lazyWithRetry(
   () => import('./pages/subjects/programming/ProgrammingSpecializations'),
 )
+const ProgrammingSpecStagePage = lazyWithRetry(
+  () => import('./pages/subjects/programming/ProgrammingSpecStagePage'),
+)
 const ProgrammingSpecializationPage = lazyWithRetry(
   () => import('./pages/subjects/programming/ProgrammingSpecializationPage'),
 )
@@ -425,6 +428,16 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <ProgrammingSpecializations />
+                          </RequireAuth>
+                        }
+                      />
+                      {/* Chặng của một hướng — route dài hơn nên đặt TRƯỚC ':specId'
+                          để React Router khớp đúng, không nuốt mất đoạn stageId. */}
+                      <Route
+                        path="/lap-trinh/huong/:specId/:stageId"
+                        element={
+                          <RequireAuth>
+                            <ProgrammingSpecStagePage />
                           </RequireAuth>
                         }
                       />

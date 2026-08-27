@@ -86,6 +86,28 @@ describe('/api/programming/progress', () => {
     expect(query.mock.calls[1]?.[1]).toEqual(['user-1', 'p1-u4-l1', 'completed'])
   })
 
+  // Tầng HƯỚNG CHUYÊN SÂU dùng chung bảng tiến độ (chi tiết chặng S2).
+  it('POST module/tiêu chí hướng chuyên sâu có thật → ghi bình thường', async () => {
+    expect(
+      (await handler(req('POST', { lessonId: 'web-s2-m1', status: 'completed' }))).status,
+    ).toBe(200)
+    expect(query.mock.calls[1]?.[1]).toEqual(['user-1', 'web-s2-m1', 'completed'])
+    vi.clearAllMocks()
+    query.mockResolvedValue({ rows: [] })
+    expect(
+      (await handler(req('POST', { lessonId: 'web-s2-r3', status: 'completed' }))).status,
+    ).toBe(200)
+  })
+
+  it('POST khoá hướng chuyên sâu không tồn tại → 400, KHÔNG ghi DB', async () => {
+    for (const lessonId of ['web-s2-m99', 'khongco-s2-m1', 'web-s1-r1']) {
+      vi.clearAllMocks()
+      const res = await handler(req('POST', { lessonId, status: 'completed' }))
+      expect(res.status, lessonId).toBe(400)
+      expect(query, lessonId).not.toHaveBeenCalled()
+    }
+  })
+
   it('POST body sai khuôn (status lạ) → 400; method lạ → 405', async () => {
     expect((await handler(req('POST', { lessonId: 'p1-u4-l1', status: 'done' }))).status).toBe(400)
     expect((await handler(req('DELETE'))).status).toBe(405)

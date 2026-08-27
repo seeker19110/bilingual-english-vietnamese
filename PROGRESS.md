@@ -1166,9 +1166,19 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   client `apps/dhcb/src/lib/programmingSpecProgress.ts`; hai trang hướng nay hiện "bạn đang theo
   hướng này" + đánh dấu chặng đã xong. ⚠️ **Việc tay:** `npm run migrate:pg` trên VPS (hoặc để
   deploy tự chạy khi merge).
+  **[Đợt 0179, cùng ngày] CHẶNG S2 của cả 13 hướng đã có CHI TIẾT THI HÀNH ĐƯỢC** — tầng khác
+  với hai mục trên, không đè nhau: mỗi module S2 (53 module) có mục tiêu · bài luyện tay · câu
+  tự kiểm · dấu hiệu đã nắm; mỗi chặng có rubric nghiệm thu (65 tiêu chí, mỗi tiêu chí kèm CÁCH
+  CHỨNG MINH) và một **đặc tả mẫu 6 ô**. Dữ liệu `specializations/details/<hướng>-s2.ts` +
+  `stageDetails.ts`; trang chặng `/lap-trinh/huong/:specId/:stageId`. Tiến độ ở **mức MỤC**
+  (module/tiêu chí) lưu qua `/api/programming/progress`, dùng chung `programming.lesson_progress`
+  — không cần migration; tiến độ **mức CHẶNG** vẫn là cơ chế `spec_stage_progress` ở trên. Nhật
+  ký: `docs/changelog/0179-2026-08-27-chang-s2-huong-chuyen-sau.md`.
   **Việc để ngỏ (cố ý):** ~~chưa soạn bài 8 bước cho hướng nào~~ → **hai chặng `web-s1` và
   `architecture-s1` ĐÃ có nội dung thật (2026-08-27, xem hai mục ngay dưới)**; 50 chặng còn lại
-  chưa soạn. Chưa nối tiến độ chặng với tiến độ bài học (đánh dấu chặng vẫn là thao tác tay);
+  chưa soạn bài 8 bước, và chi tiết chặng mới có ở S2 (S1/S3/S4 chưa). **Cố ý KHÔNG làm bài học
+  8 bước cho cả 13 hướng** — 9/13 hướng không có bộ chạy trong trình duyệt, ép khuôn sẽ đẻ nội
+  dung giả. Chưa nối tiến độ chặng với tiến độ bài học (đánh dấu chặng vẫn là thao tác tay);
   chưa gợi ý hướng theo hồ sơ người học.
   **Bài học kỹ thuật:** trong `packages/` **không đặt tên file là `index.ts`** khi file có thể
   vào chunk riêng — Rollup đặt tên chunk theo tên file, `index-*.js` trùng glob "Initial JS" của

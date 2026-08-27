@@ -57,6 +57,7 @@ const ROUTES = [
   '/lap-trinh/huong', // danh sách 13 hướng chuyên sâu (PR-L-SPEC)
   '/lap-trinh/huong/web', // chi tiết một hướng — trang chữ dài, nhiều tương phản
   '/lap-trinh/huong/architecture', // hướng kiến trúc — trang chi tiết dài nhất, nhiều danh sách chữ
+  '/lap-trinh/huong/web/web-s2', // trang CHẶNG: mục tiêu, tự kiểm, rubric, đặc tả 6 ô
 ] as const
 
 // Đếm số phần tử vi phạm NẰM TRONG phần nội dung/tiêu đề (bỏ phần vỏ giao diện).
