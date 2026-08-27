@@ -11,6 +11,53 @@ export const BACKEND_SPECIALIZATION: ProgrammingSpecialization = {
   duration: '10–16 tháng',
   languages: ['Go', 'Python', 'TypeScript (Node.js)', 'Java/Kotlin', 'SQL'],
   coreTools: ['PostgreSQL', 'Redis', 'Kafka hoặc NATS', 'Docker', 'gRPC', 'OpenTelemetry'],
+  architecture: {
+    modules: [
+      {
+        name: 'Biên (HTTP/gRPC handler)',
+        role: 'Validate, xác thực, ánh xạ lỗi. KHÔNG chứa quy tắc nghiệp vụ.',
+      },
+      {
+        name: 'Lõi nghiệp vụ',
+        role: 'Quy tắc và bất biến. Hàm thuần, không biết HTTP, không biết SQL.',
+      },
+      {
+        name: 'Cổng lưu trữ',
+        role: 'Giao diện lõi cần; cài đặt cụ thể (Postgres, Redis) cắm từ ngoài vào.',
+      },
+      {
+        name: 'Việc nền / consumer',
+        role: 'Xử lý sự kiện, việc định kỳ. Phải idempotent vì sẽ bị chạy lại.',
+      },
+      {
+        name: 'Hạ tầng chung',
+        role: 'Log, trace, cấu hình, kết nối. Không module nghiệp vụ nào tự dựng kết nối riêng.',
+      },
+    ],
+    contracts: [
+      'Mỗi endpoint có schema vào/ra và danh sách mã lỗi; phá vỡ hợp đồng phải ra phiên bản mới.',
+      'Sự kiện phát ra là hợp đồng công khai — đổi nghĩa một trường là phá vỡ, kể cả khi kiểu không đổi.',
+      'Mọi thao tác ghi nhận khoá idempotency; consumer giả định at-least-once.',
+      'Transaction không được vượt ra ngoài ranh giới một dịch vụ.',
+    ],
+    keyDecisions: [
+      'Một khối liền có module rõ hay nhiều dịch vụ — tách sớm là tự chuốc bài toán phân tán.',
+      'Nhất quán mạnh hay nhất quán cuối cùng cho từng luồng, và ai chịu hậu quả khi lệch.',
+      'Đồng bộ hay qua hàng đợi: khoá luôn cách xử lý lỗi và trải nghiệm người dùng.',
+      'Ai sở hữu dữ liệu nào — hai dịch vụ cùng ghi một bảng là lỗi kiến trúc, không phải tối ưu.',
+    ],
+    nfrs: [
+      'Độ trễ p95 và p99 có ngưỡng theo endpoint, không chỉ trung bình.',
+      'SLO sẵn sàng công bố + ngân sách lỗi.',
+      'Chịu được mất một phụ thuộc: suy giảm có kiểm soát chứ không sập.',
+    ],
+    specChecklist: [
+      'Điều gì xảy ra khi phụ thuộc timeout — thử lại bao nhiêu lần, rồi sao nữa.',
+      'Bất biến nghiệp vụ nào tuyệt đối không được phá (không âm kho, không tính tiền hai lần).',
+      'Thao tác này có idempotent không, khoá idempotency lấy từ đâu.',
+      'Cần chỉ số/log/trace gì để điều tra khi nó hỏng lúc 3 giờ sáng.',
+    ],
+  },
   stages: [
     {
       id: 'backend-s1',

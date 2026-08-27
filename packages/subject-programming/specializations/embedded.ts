@@ -11,6 +11,54 @@ export const EMBEDDED_SPECIALIZATION: ProgrammingSpecialization = {
   duration: '10–16 tháng',
   languages: ['C', 'C++', 'Rust (embedded)', 'Python (MicroPython, công cụ)'],
   coreTools: ['ESP32/STM32', 'PlatformIO', 'máy hiện sóng / phân tích logic', 'FreeRTOS', 'MQTT'],
+  architecture: {
+    modules: [
+      {
+        name: 'Lớp trừu tượng phần cứng (HAL)',
+        role: 'Nơi DUY NHẤT chạm thanh ghi. Đổi chip chỉ sửa ở đây.',
+      },
+      {
+        name: 'Driver thiết bị',
+        role: 'Nói chuyện với một cảm biến/ngoại vi qua HAL. Không chứa quy tắc nghiệp vụ.',
+      },
+      {
+        name: 'Lõi ứng dụng',
+        role: 'Logic thiết bị làm gì. Thuần, test được TRÊN MÁY TÍNH không cần bo mạch.',
+      },
+      {
+        name: 'Tầng kết nối',
+        role: 'Mạng + hàng đợi cục bộ khi mất sóng. Lõi không biết đang dùng Wi-Fi hay LoRa.',
+      },
+      {
+        name: 'Quản lý nguồn',
+        role: 'Chế độ ngủ và điều kiện đánh thức. Tập trung một chỗ, không rải khắp nơi.',
+      },
+      { name: 'Cập nhật OTA', role: 'Phân vùng A/B, xác minh chữ ký, quay lui khi bản mới hỏng.' },
+    ],
+    contracts: [
+      'Lõi ứng dụng chỉ gọi HAL qua giao diện — điều kiện để test trên máy tính và để đổi phần cứng.',
+      'Thường trình ngắt chỉ đặt cờ và đẩy dữ liệu vào hàng đợi; xử lý nặng ở tác vụ thường.',
+      'Dữ liệu bền phải chịu được mất điện ở BẤT KỲ thời điểm nào (ghi rồi mới đổi con trỏ).',
+      'Gói tin gửi lên server có phiên bản; thiết bị firmware cũ ngoài hiện trường vẫn phải hiểu được.',
+    ],
+    keyDecisions: [
+      'Có RTOS hay vòng lặp siêu đơn giản — đổi về sau chạm mọi module.',
+      'Cấp phát động hay cấm hẳn (nhiều hệ nhúng cấm để tránh phân mảnh sau vài tuần chạy).',
+      'Ngân sách năng lượng: quyết định tần suất gửi dữ liệu, tức là quyết định luôn tuổi thọ pin.',
+      'Có đường OTA ngay từ đầu hay không — thiếu nó thì mỗi lỗi là một chuyến đi hiện trường.',
+    ],
+    nfrs: [
+      'Chạy liên tục N ngày không treo, có watchdog và bằng chứng chạy trường kỳ.',
+      'Tuổi thọ pin tính toán khớp đo thực tế trong sai số đã cam kết.',
+      'Ngân sách RAM và ngăn xếp cho từng tác vụ, không vượt.',
+    ],
+    specChecklist: [
+      'Phần cứng mục tiêu, chân kết nối, ràng buộc điện.',
+      'Hành vi khi mất điện đột ngột và khi mất sóng dài ngày.',
+      'Ngân sách năng lượng, RAM, dung lượng flash cho phần thêm vào.',
+      'Có ảnh hưởng tới thiết bị firmware cũ ngoài hiện trường không.',
+    ],
+  },
   stages: [
     {
       id: 'embedded-s1',

@@ -11,6 +11,48 @@ export const MOBILE_SPECIALIZATION: ProgrammingSpecialization = {
   duration: '9–14 tháng',
   languages: ['Kotlin', 'Swift', 'TypeScript (React Native)', 'Dart (Flutter)'],
   coreTools: ['Android Studio', 'Xcode', 'React Native hoặc Flutter', 'Firebase', 'Fastlane'],
+  architecture: {
+    modules: [
+      {
+        name: 'Màn hình (UI)',
+        role: 'Vẽ và nhận thao tác. KHÔNG gọi mạng trực tiếp, không chứa quy tắc nghiệp vụ.',
+      },
+      {
+        name: 'ViewModel / presenter',
+        role: 'Giữ trạng thái màn, biến sự kiện thành thao tác. Sống sót qua xoay máy.',
+      },
+      {
+        name: 'Kho dữ liệu (repository)',
+        role: 'Nguồn sự thật cho UI: quyết định lấy từ cục bộ hay mạng. UI không biết dữ liệu từ đâu.',
+      },
+      { name: 'Nguồn cục bộ', role: 'CSDL trên máy + hàng đợi thao tác chờ đồng bộ.' },
+      {
+        name: 'Nguồn mạng',
+        role: 'Gọi API, timeout, thử lại. Nơi duy nhất biết hình dạng response.',
+      },
+    ],
+    contracts: [
+      'UI chỉ nhận model của riêng nó, không nhận thẳng model API — đổi API không được làm vỡ màn hình.',
+      'Mọi thao tác ghi khi offline vào hàng đợi có khoá idempotent, đồng bộ lại không nhân đôi.',
+      'Migration CSDL cục bộ bắt buộc có phiên bản: người dùng nhảy từ bản cũ 6 tháng trước lên vẫn phải chạy.',
+    ],
+    keyDecisions: [
+      'Native hay đa nền tảng — khoá luôn chi phí đội ngũ và giới hạn khi cần module native.',
+      'Offline-first hay online-first: quyết định sớm, đổi sau là viết lại tầng dữ liệu.',
+      'Xử lý xung đột khi hai máy sửa cùng bản ghi: bên nào thắng, hay phải hỏi người dùng.',
+    ],
+    nfrs: [
+      'Khởi động lạnh ≤ 2s trên máy mục tiêu; giữ 60 khung hình/giây ở màn danh sách.',
+      'Tỷ lệ phiên không crash ≥ 99,5%.',
+      'App dùng được đủ chức năng chính khi mất mạng.',
+    ],
+    specChecklist: [
+      'Hành vi khi mất mạng và khi có mạng lại — nêu cả ca đồng bộ thất bại.',
+      'Quyền nào phải xin, xin lúc nào, và app cư xử ra sao nếu bị từ chối.',
+      'Trạng thái nào phải sống sót qua xoay máy hoặc bị hệ điều hành giết.',
+      'Bản cũ ngoài thị trường có bị ảnh hưởng không; cần migration dữ liệu gì.',
+    ],
+  },
   stages: [
     {
       id: 'mobile-s1',

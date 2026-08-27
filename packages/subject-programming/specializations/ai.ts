@@ -11,6 +11,56 @@ export const AI_SPECIALIZATION: ProgrammingSpecialization = {
   duration: '12–18 tháng',
   languages: ['Python', 'SQL', 'TypeScript (phần ứng dụng)'],
   coreTools: ['PyTorch', 'scikit-learn', 'Hugging Face', 'MLflow', 'vector database'],
+  architecture: {
+    modules: [
+      {
+        name: 'Tầng prompt / cấu hình mô hình',
+        role: 'Nơi DUY NHẤT chứa prompt và chọn model. Không rải prompt khắp code.',
+      },
+      {
+        name: 'Cổng gọi mô hình',
+        role: 'Timeout, thử lại, cache, đếm chi phí. Đổi nhà cung cấp chỉ sửa ở đây.',
+      },
+      {
+        name: 'Truy hồi (RAG)',
+        role: 'Chia đoạn, tìm kiếm, xếp hạng lại. Trả về đoạn + nguồn, không trả về câu trả lời.',
+      },
+      {
+        name: 'Lõi nghiệp vụ',
+        role: 'Quyết định làm gì với kết quả mô hình. Phải chạy được cả khi mô hình trả rác.',
+      },
+      {
+        name: 'Bộ đánh giá',
+        role: 'Dữ liệu vàng + chỉ số. Chạy trong CI, chặn hồi quy chất lượng.',
+      },
+      {
+        name: 'Kiểm duyệt & giới hạn',
+        role: 'Chặn nội dung hại, giới hạn lượt và ngân sách. Ở SERVER, không ở client.',
+      },
+    ],
+    contracts: [
+      'Đầu ra mô hình phải qua schema; không tin văn bản tự do đi thẳng vào nghiệp vụ.',
+      'Mọi câu trả lời dựa trên tài liệu phải kèm nguồn kiểm chứng được.',
+      'Đổi prompt hoặc model là thay đổi hợp đồng chất lượng — bắt buộc chạy lại bộ đánh giá và dán kết quả.',
+      'Dữ liệu người dùng gửi cho mô hình phải nêu rõ: cái gì gửi, cái gì tuyệt đối không.',
+    ],
+    keyDecisions: [
+      'Prompt tốt hơn hay tinh chỉnh mô hình — tinh chỉnh khoá luôn chi phí vận hành về sau.',
+      'Ranh giới tác tử: được gọi công cụ nào, ngân sách bao nhiêu lượt, ai duyệt thao tác nguy hiểm.',
+      'Nội dung sinh ra được lưu hay không, lưu bao lâu, để làm gì.',
+    ],
+    nfrs: [
+      'Chỉ số chất lượng trên bộ vàng có sàn, tụt là CI đỏ.',
+      'Chi phí trung bình mỗi yêu cầu có trần; có cảnh báo khi vượt.',
+      'Độ trễ p95 cho luồng tương tác; có đường lui khi mô hình chậm hoặc lỗi.',
+    ],
+    specChecklist: [
+      'Bộ đánh giá và ngưỡng chấp nhận — viết TRƯỚC khi chỉnh prompt.',
+      'Hành vi khi mô hình trả sai định dạng, trả rỗng, hoặc timeout.',
+      'Ranh giới an toàn: nội dung cấm, dữ liệu cấm gửi đi, thao tác cấm tự động.',
+      'Trần chi phí và cách đếm lượt cho từng gói người dùng.',
+    ],
+  },
   stages: [
     {
       id: 'ai-s1',

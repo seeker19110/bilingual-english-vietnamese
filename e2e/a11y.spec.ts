@@ -101,6 +101,7 @@ const AUTHED_ROUTES = [
   '/lap-trinh/gioi-thieu', // mô tả khoá học & mục tiêu (PR-UX3) — trang chữ dài, nhiều tương phản
   '/lap-trinh/huong', // danh sách 12 hướng chuyên sâu (PR-L-SPEC)
   '/lap-trinh/huong/web', // chi tiết một hướng (12 hướng dùng chung layout)
+  '/lap-trinh/huong/architecture', // hướng kiến trúc — trang chi tiết dài nhất, nhiều danh sách chữ
 ]
 for (const route of AUTHED_ROUTES) {
   for (const theme of THEMES) {

@@ -17,6 +17,56 @@ export const DESKTOP_SPECIALIZATION: ProgrammingSpecialization = {
     'trình đóng gói cài đặt',
     'CI đa nền tảng',
   ],
+  architecture: {
+    modules: [
+      {
+        name: 'Giao diện',
+        role: 'Vẽ và nhận thao tác. KHÔNG bao giờ làm việc nặng trên luồng này.',
+      },
+      {
+        name: 'Lõi tài liệu / dữ liệu',
+        role: 'Mô hình dữ liệu người dùng + lịch sử hoàn tác. Nguồn sự thật.',
+      },
+      {
+        name: 'Việc nền',
+        role: 'Xử lý nặng, huỷ được, báo tiến độ. Giao tiếp với UI qua thông điệp.',
+      },
+      {
+        name: 'Tầng lưu trữ',
+        role: 'Đọc/ghi tệp và CSDL cục bộ. Ghi an toàn: tệp tạm rồi đổi tên.',
+      },
+      {
+        name: 'Đồng bộ (tuỳ chọn)',
+        role: 'Cắm thêm được, gỡ ra app vẫn chạy đủ chức năng offline.',
+      },
+      {
+        name: 'Cập nhật & cấp phép',
+        role: 'Tách hẳn khỏi nghiệp vụ; hỏng phần này không được làm hỏng dữ liệu.',
+      },
+    ],
+    contracts: [
+      'Mọi thao tác sửa dữ liệu phải hoàn tác được hoặc có bản sao trước khi ghi đè.',
+      'Định dạng tệp/CSDL có phiên bản và đường nâng cấp; bản cũ luôn mở được.',
+      'Việc nền giao tiếp với UI qua thông điệp bất biến, không chia sẻ trạng thái sửa được.',
+      'Đường dẫn thư mục cấu hình/dữ liệu theo chuẩn từng hệ điều hành, không ghi cứng.',
+    ],
+    keyDecisions: [
+      'Nền tảng: web-based hay native — khoá luôn kích thước gói, mức RAM và khả năng tích hợp hệ.',
+      'Offline là mặc định hay bắt buộc có mạng; quyết định toàn bộ tầng dữ liệu.',
+      'Có hệ plugin hay không — có thì API phải ổn định và chạy trong hộp cát ngay từ đầu.',
+    ],
+    nfrs: [
+      'Thời gian mở ứng dụng và mức chiếm RAM có trần trên máy cấu hình thấp.',
+      'Giao diện không đứng quá 100ms khi đang xử lý nặng.',
+      'Không có ca mất dữ liệu người dùng nào; kiểm bằng test cắt điện giữa chừng.',
+    ],
+    specChecklist: [
+      'Thao tác này hoàn tác thế nào; ảnh hưởng gì tới lịch sử hoàn tác.',
+      'Có đổi định dạng dữ liệu không; bản cũ nâng cấp ra sao.',
+      'Chạy trên hệ điều hành nào, phiên bản tối thiểu nào.',
+      'Việc nặng chạy ở đâu, huỷ được không, báo tiến độ thế nào.',
+    ],
+  },
   stages: [
     {
       id: 'desktop-s1',

@@ -11,6 +11,49 @@ export const ALGO_SPECIALIZATION: ProgrammingSpecialization = {
   duration: '6–12 tháng (học đều, mỗi ngày một chút)',
   languages: ['Python', 'C++', 'Java hoặc ngôn ngữ bạn thạo nhất'],
   coreTools: ['LeetCode/Codeforces', 'trình gỡ lỗi', 'giấy bút'],
+  crossCutting: true,
+  architecture: {
+    modules: [
+      {
+        name: 'Bài toán (đặc tả)',
+        role: 'Đầu vào, đầu ra, ràng buộc, ca biên. Viết TRƯỚC khi nghĩ lời giải.',
+      },
+      {
+        name: 'Lời giải chuẩn (ngây thơ)',
+        role: 'Chậm nhưng chắc đúng. Dùng làm mốc đối chiếu, không dùng để nộp.',
+      },
+      {
+        name: 'Lời giải tối ưu',
+        role: 'Phần đi vào sản phẩm. Phải nói được độ phức tạp thời gian và bộ nhớ.',
+      },
+      {
+        name: 'Bộ đối chiếu ngẫu nhiên',
+        role: 'Sinh đầu vào ngẫu nhiên, so hai lời giải. Cách rẻ nhất để bắt lỗi ca biên.',
+      },
+      { name: 'Chuẩn đo', role: 'Đo thời gian thật ở kích thước thật, đối chiếu với lý thuyết.' },
+    ],
+    contracts: [
+      'Mỗi hàm ghi rõ điều kiện đầu vào hợp lệ và độ phức tạp — đó là hợp đồng với người gọi.',
+      'Lời giải tối ưu phải cho cùng kết quả với lời giải chuẩn trên mọi đầu vào sinh ngẫu nhiên.',
+      'Ràng buộc kích thước dữ liệu ghi ra bằng số; vượt ngưỡng thì hành vi được định nghĩa rõ.',
+    ],
+    keyDecisions: [
+      'Độ phức tạp mục tiêu suy từ ràng buộc đề, quyết định trước khi viết dòng nào.',
+      'Chính xác tuyệt đối hay xấp xỉ — với bài NP-khó, cố tìm lời giải hoàn hảo là phí thời gian.',
+      'Đánh đổi bộ nhớ lấy tốc độ: cache/bảng tra có đáng không ở kích thước thật.',
+    ],
+    nfrs: [
+      'Thời gian chạy ở kích thước dữ liệu tối đa có ngưỡng, đo bằng chuẩn đo lặp lại được.',
+      'Bộ nhớ đỉnh có trần.',
+      'Kết quả tất định với cùng đầu vào (nếu có ngẫu nhiên thì phải nhận hạt giống).',
+    ],
+    specChecklist: [
+      'Ràng buộc kích thước và miền giá trị của đầu vào.',
+      'Ca biên bắt buộc đúng: rỗng, một phần tử, trùng nhau, giá trị biên, tràn số.',
+      'Độ phức tạp yêu cầu và ngưỡng thời gian ở kích thước thật.',
+      'Có được phép trả kết quả xấp xỉ không; sai số chấp nhận là bao nhiêu.',
+    ],
+  },
   stages: [
     {
       id: 'algo-s1',

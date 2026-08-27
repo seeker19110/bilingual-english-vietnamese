@@ -25,6 +25,7 @@ export type SpecializationId =
   | 'embedded'
   | 'desktop'
   | 'algo'
+  | 'architecture'
 
 /** Bậc của một chặng trong hướng — 4 bậc cố định cho MỌI hướng để so sánh được với nhau. */
 export type SpecStageTier = 's1' | 's2' | 's3' | 's4'
@@ -61,6 +62,35 @@ export interface SpecStage {
   project: SpecProject
 }
 
+/**
+ * Lát cắt KIẾN TRÚC của một hướng — phần quan trọng nhất với người sẽ ĐẶC TẢ cho người khác
+ * (hoặc cho AI) thi hành thay vì tự gõ từng dòng.
+ *
+ * Vì sao bắt buộc mọi hướng phải có: một đặc tả thiếu ranh giới module thì người thi hành tự
+ * bịa cấu trúc, mỗi lượt một kiểu; thiếu hợp đồng thì hai phần viết xong không ghép được;
+ * thiếu NFR thì code chạy được nhưng chậm/không an toàn; thiếu tiêu chí nghiệm thu thì không có
+ * cách nào chứng minh bên thi hành làm đúng. Bốn ô dưới đây chính là bốn lỗ hổng đó.
+ */
+export interface SpecArchitecture {
+  /** Các module điển hình của một hệ thống trong hướng này, kèm TRÁCH NHIỆM DUY NHẤT của nó. */
+  modules: SpecArchModule[]
+  /** Hợp đồng đi qua ranh giới module: cái gì truyền qua, ràng buộc nào phải giữ. */
+  contracts: string[]
+  /** Quyết định kiến trúc phải chốt SỚM (đổi về sau rất đắt) + đánh đổi kèm theo. */
+  keyDecisions: string[]
+  /** Yêu cầu phi chức năng đặc trưng của hướng — phải ghi thành SỐ trong đặc tả. */
+  nfrs: string[]
+  /** Thứ phải viết rõ trong đặc tả thì bên thi hành mới làm đúng ngay lượt đầu. */
+  specChecklist: string[]
+}
+
+/** Một module trong bản đồ kiến trúc của hướng. */
+export interface SpecArchModule {
+  name: string
+  /** Một câu: module này chịu trách nhiệm DUY NHẤT việc gì, và KHÔNG được làm việc gì. */
+  role: string
+}
+
 export interface ProgrammingSpecialization {
   id: SpecializationId
   /** Tên tiếng Việt hiển thị, ví dụ "Lập trình Web". */
@@ -76,6 +106,13 @@ export interface ProgrammingSpecialization {
   languages: string[]
   /** Công cụ/hệ sinh thái lõi phải quen tay. */
   coreTools: string[]
+  /**
+   * Hướng NỀN cắt ngang (kiến trúc, thuật toán): học SONG SONG với một hướng sản phẩm chứ
+   * không thay thế nó. Giao diện tách riêng nhóm này để người học không chọn nhầm.
+   */
+  crossCutting?: true
+  /** Bản đồ kiến trúc & module của hướng — xem `SpecArchitecture`. */
+  architecture: SpecArchitecture
   /** Đúng 4 chặng S1→S4, theo thứ tự. */
   stages: SpecStage[]
   /** Dự án cuối hướng — bằng chứng nghề, đủ để đem đi xin việc. */

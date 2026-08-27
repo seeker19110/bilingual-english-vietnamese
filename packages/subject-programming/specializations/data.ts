@@ -11,6 +11,42 @@ export const DATA_SPECIALIZATION: ProgrammingSpecialization = {
   duration: '9–14 tháng',
   languages: ['Python', 'SQL'],
   coreTools: ['pandas/Polars', 'dbt', 'Airflow', 'DuckDB/BigQuery', 'Metabase hoặc Superset'],
+  architecture: {
+    modules: [
+      {
+        name: 'Nạp dữ liệu (ingest)',
+        role: 'Đưa dữ liệu thô vào, giữ NGUYÊN VẸN. Không làm sạch ở bước này.',
+      },
+      { name: 'Lớp thô', role: 'Bản sao trung thực của nguồn, để dựng lại được mọi thứ phía sau.' },
+      { name: 'Lớp sạch', role: 'Chuẩn hoá kiểu, khử trùng lặp, áp quy tắc chất lượng.' },
+      { name: 'Lớp phục vụ', role: 'Bảng sự kiện + bảng chiều cho người dùng cuối truy vấn.' },
+      { name: 'Tầng chỉ số', role: 'Nơi DUY NHẤT định nghĩa "doanh thu", "người dùng hoạt động".' },
+      { name: 'Điều phối', role: 'Lịch chạy, phụ thuộc, chạy bù. Không chứa logic biến đổi.' },
+    ],
+    contracts: [
+      'Hợp đồng dữ liệu giữa đội sinh và đội dùng: schema, độ tươi, ý nghĩa từng trường.',
+      'Mỗi bảng phục vụ có chủ sở hữu và mô tả; không có bảng vô chủ.',
+      'Mọi bước biến đổi phải idempotent: chạy lại một ngày cho ra đúng kết quả cũ.',
+      'Một chỉ số chỉ có một định nghĩa; phòng ban muốn khác thì đặt tên khác.',
+    ],
+    keyDecisions: [
+      'ETL hay ELT; biến đổi ở đâu quyết định chi phí và khả năng dựng lại.',
+      'Hạt mịn của bảng sự kiện — chọn sai thì mọi báo cáo về sau bị khoá cứng.',
+      'Theo lô hay theo luồng cho từng nguồn, và ngưỡng độ tươi cam kết.',
+      'Xử lý dữ liệu tới muộn: cắt cửa sổ hay tính lại quá khứ.',
+    ],
+    nfrs: [
+      'Độ tươi cam kết theo bảng (ví dụ ≤ 3 giờ) và có cảnh báo khi trễ.',
+      'Kiểm chất lượng chặn bước sau khi dữ liệu bẩn, không để lọt tới người dùng.',
+      'Chi phí truy vấn hằng tháng có trần và có theo dõi.',
+    ],
+    specChecklist: [
+      'Nguồn dữ liệu, khoá tự nhiên, cách nhận biết bản ghi đã xử lý.',
+      'Quy tắc làm sạch và giả định kèm theo — người sau phải kiểm lại được.',
+      'Chạy bù quá khứ ra sao; chạy lại có gây nhân đôi không.',
+      'Trường nào là dữ liệu cá nhân, ai được xem, giữ bao lâu.',
+    ],
+  },
   stages: [
     {
       id: 'data-s1',

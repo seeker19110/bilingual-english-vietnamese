@@ -13,6 +13,54 @@ export const SECURITY_SPECIALIZATION: ProgrammingSpecialization = {
   duration: '12–18 tháng',
   languages: ['Python', 'Bash', 'C (đọc hiểu)', 'JavaScript'],
   coreTools: ['Burp Suite', 'nmap', 'Wireshark', 'Ghidra', 'Semgrep', 'Docker lab'],
+  architecture: {
+    modules: [
+      {
+        name: 'Ranh giới tin cậy',
+        role: 'Chỗ dữ liệu đi từ vùng không tin sang vùng tin. Mọi kiểm tra đặt ĐÚNG tại đây.',
+      },
+      { name: 'Xác thực', role: 'Xác định anh là ai. Không lẫn với phân quyền.' },
+      {
+        name: 'Phân quyền',
+        role: 'Quyết định anh được làm gì. Ở SERVER, theo từng tài nguyên, không phải ẩn nút trên UI.',
+      },
+      {
+        name: 'Quản lý bí mật',
+        role: 'Nơi duy nhất giữ khoá; ứng dụng nhận qua biến môi trường, có xoay vòng.',
+      },
+      {
+        name: 'Nhật ký kiểm toán',
+        role: 'Ai làm gì với dữ liệu nhạy cảm. Chỉ ghi thêm, không sửa được.',
+      },
+      {
+        name: 'Phát hiện & ứng cứu',
+        role: 'Luật phát hiện + sổ tay xử lý. Không trộn vào log vận hành thường.',
+      },
+    ],
+    contracts: [
+      'Mọi input từ ngoài coi như thù địch cho tới khi qua schema — kể cả input từ dịch vụ nội bộ.',
+      'Phân quyền kiểm ở tầng dữ liệu hoặc handler, không bao giờ chỉ ở giao diện.',
+      'Bí mật không đi qua log, không đi qua báo cáo lỗi, không nằm trong URL.',
+      'Mọi thay đổi quyền phải để lại dấu vết kiểm toán.',
+    ],
+    keyDecisions: [
+      'Mô hình phân quyền: theo vai trò hay theo thuộc tính — đổi về sau phải rà lại mọi endpoint.',
+      'Nguồn danh tính: tự quản hay dùng nhà cung cấp ngoài; kéo theo cả quy trình khôi phục tài khoản.',
+      'Dữ liệu nào mã hoá lúc nghỉ, khoá ai giữ, mất khoá thì sao.',
+      'Bán kính thiệt hại: một tài khoản bị chiếm thì chạm được tới đâu.',
+    ],
+    nfrs: [
+      'Không có bí mật trong repo — quét tự động chặn CI.',
+      'Không có phụ thuộc lỗ hổng mức cao ở nhánh chính.',
+      'Thời gian phát hiện và thời gian ngăn chặn sự cố có mục tiêu bằng số.',
+    ],
+    specChecklist: [
+      'Ai được gọi chức năng này; kiểm quyền ở đâu trong code.',
+      'Dữ liệu nhạy cảm nào đi qua; ghi log cái gì và tuyệt đối KHÔNG ghi cái gì.',
+      'Ca lạm dụng: người dùng cố tình gửi bậy thì hệ thống cư xử ra sao.',
+      'Giới hạn tần suất và ngưỡng cảnh báo cho endpoint này.',
+    ],
+  },
   stages: [
     {
       id: 'security-s1',

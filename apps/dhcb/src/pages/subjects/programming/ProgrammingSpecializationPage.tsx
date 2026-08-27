@@ -2,6 +2,9 @@
 //
 // Bố cục cố ý theo thứ tự câu hỏi của người đang cân nhắc:
 //  ① "hướng này làm ra cái gì, hợp với tôi không?"  → tóm tắt + hợp với ai
+//  ①b "hệ thống của hướng này chia module thế nào?" → bản đồ kiến trúc (module · hợp đồng ·
+//      quyết định lớn · NFR · checklist đặc tả) — khối QUAN TRỌNG NHẤT với người sẽ ĐẶC TẢ cho
+//      người khác hoặc cho AI thi hành thay vì tự gõ code
 //  ② "đi thế nào?"                                   → 4 chặng, mỗi chặng module + dự án
 //  ③ "cuối đường có gì?"                             → capstone
 //  ④ "thế nào là giỏi?"                              → dấu hiệu chuyên gia + nghề nghiệp
@@ -19,11 +22,17 @@ import {
   Briefcase,
   AlertTriangle,
   BookOpen,
+  Boxes,
+  FileSignature,
+  GitBranch,
+  Gauge,
+  ClipboardCheck,
 } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import {
   getSpecialization,
+  countArchitectureItems,
   type SpecProject,
   type SpecStage,
 } from '@dhcb/subject-programming/specializations/registry'
@@ -33,6 +42,34 @@ const TIER_LABEL: Record<string, string> = {
   s2: 'Chặng 2 — vững tay',
   s3: 'Chặng 3 — nâng cao',
   s4: 'Chặng 4 — chuyên gia',
+}
+
+/** Một ô của bản đồ kiến trúc: tiêu đề + danh sách gạch đầu dòng. */
+function ArchList({
+  icon,
+  title,
+  hint,
+  items,
+}: {
+  icon: React.ReactNode
+  title: string
+  hint: string
+  items: string[]
+}) {
+  return (
+    <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 space-y-2">
+      <h3 className="text-sm font-bold text-white flex items-center gap-2">
+        {icon}
+        <span>{title}</span>
+      </h3>
+      <p className="text-xs text-zinc-300 leading-relaxed">{hint}</p>
+      <ul className="text-sm text-zinc-200 leading-relaxed space-y-1.5 list-disc pl-5">
+        {items.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    </div>
+  )
 }
 
 function ProjectBlock({ project, tone }: { project: SpecProject; tone: 'stage' | 'capstone' }) {
@@ -160,6 +197,79 @@ export default function ProgrammingSpecializationPage() {
               <span className="font-semibold">Công cụ lõi:</span> {spec.coreTools.join(' · ')}
             </span>
           </p>
+        </section>
+
+        {/* ①b Bản đồ kiến trúc — khối nặng nhất trang, cố ý đứng TRƯỚC lộ trình học.
+            Người đã đi làm mở trang này thường cần biết "hệ thống chia module thế nào" trước
+            khi quan tâm bài học nào trước bài học nào. */}
+        <section className="space-y-3">
+          <div className="flex items-baseline justify-between gap-3 flex-wrap">
+            <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <Boxes className="w-5 h-5 text-accent-400" aria-hidden="true" />
+              <span>Kiến trúc &amp; module của hướng này</span>
+            </h2>
+            <p className="text-xs text-zinc-300">{countArchitectureItems(spec)} mục</p>
+          </div>
+          <p className="text-sm text-zinc-200 leading-relaxed">
+            Phần này dành cho người sẽ <strong>quyết định và đặc tả</strong> — kể cả khi phần code
+            do AI hoặc người khác viết. Thiếu ranh giới module thì bên thi hành tự bịa cấu trúc;
+            thiếu hợp đồng thì hai phần viết xong không ghép được; thiếu ngưỡng phi chức năng thì
+            code chạy được nhưng chậm hoặc không an toàn.
+          </p>
+
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 space-y-2">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <Boxes className="w-4 h-4 text-accent-400" aria-hidden="true" />
+              <span>Module điển hình &amp; trách nhiệm</span>
+            </h3>
+            <p className="text-xs text-zinc-300 leading-relaxed">
+              Mỗi module chịu trách nhiệm MỘT việc — và quan trọng không kém: không được làm việc
+              gì.
+            </p>
+            <ul className="space-y-2">
+              {spec.architecture.modules.map((mod) => (
+                <li key={mod.name} className="text-sm text-zinc-200 leading-relaxed">
+                  <span className="font-semibold text-white">{mod.name}</span> — {mod.role}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <ArchList
+            icon={<FileSignature className="w-4 h-4 text-accent-400" aria-hidden="true" />}
+            title="Hợp đồng giữa các module"
+            hint="Cái gì đi qua ranh giới và ràng buộc nào phải giữ. Đây là thứ quyết định hai phần code ghép được với nhau."
+            items={spec.architecture.contracts}
+          />
+
+          <ArchList
+            icon={<GitBranch className="w-4 h-4 text-accent-400" aria-hidden="true" />}
+            title="Quyết định phải chốt sớm"
+            hint="Những lựa chọn mà đổi về sau rất đắt. Chốt xong nên ghi thành ADR kèm phương án đã loại."
+            items={spec.architecture.keyDecisions}
+          />
+
+          <ArchList
+            icon={<Gauge className="w-4 h-4 text-accent-400" aria-hidden="true" />}
+            title="Yêu cầu phi chức năng (NFR)"
+            hint="Phải ghi thành SỐ trong đặc tả. NFR không đo được là NFR không tồn tại."
+            items={spec.architecture.nfrs}
+          />
+
+          <div className="rounded-2xl border border-accent-500/40 bg-zinc-900 p-4 space-y-2">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <ClipboardCheck className="w-4 h-4 text-accent-400" aria-hidden="true" />
+              <span>Checklist khi viết đặc tả cho hướng này</span>
+            </h3>
+            <p className="text-xs text-zinc-300 leading-relaxed">
+              Thiếu ô nào thì bên thi hành (người hoặc AI) sẽ tự đoán — và thường đoán sai.
+            </p>
+            <ul className="text-sm text-zinc-200 leading-relaxed space-y-1.5 list-disc pl-5">
+              {spec.architecture.specChecklist.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
         </section>
 
         {/* ② Bốn chặng */}

@@ -11,6 +11,54 @@ export const DEVOPS_SPECIALIZATION: ProgrammingSpecialization = {
   duration: '9–14 tháng',
   languages: ['Bash', 'Python hoặc Go', 'YAML/HCL'],
   coreTools: ['Linux', 'Docker', 'Kubernetes', 'Terraform', 'Prometheus/Grafana', 'GitHub Actions'],
+  architecture: {
+    modules: [
+      {
+        name: 'Hạ tầng như mã nguồn',
+        role: 'Khai báo tài nguyên. Nguồn sự thật DUY NHẤT — sửa tay lên sản xuất là lỗi.',
+      },
+      {
+        name: 'Pipeline CI',
+        role: 'Cổng chất lượng: lint, test, quét bảo mật, build tạo tác có phiên bản.',
+      },
+      { name: 'Pipeline CD', role: 'Phát hành và quay lui. Không build lại tạo tác ở bước này.' },
+      {
+        name: 'Cấu hình & bí mật',
+        role: 'Tách khỏi mã; ứng dụng nhận qua biến môi trường, không tự đọc kho bí mật.',
+      },
+      {
+        name: 'Quan sát',
+        role: 'Metric, log, trace và cảnh báo. Cảnh báo theo triệu chứng người dùng.',
+      },
+      {
+        name: 'Sao lưu & khôi phục',
+        role: 'Bản sao + quy trình khôi phục ĐÃ DIỄN TẬP. Bản chưa thử khôi phục coi như không có.',
+      },
+    ],
+    contracts: [
+      'Tạo tác build một lần, chạy ở mọi môi trường — không build riêng cho sản xuất.',
+      'Ứng dụng phải có health check và tắt êm; nền tảng dựa vào hai thứ này để phát hành an toàn.',
+      'Mọi thay đổi hạ tầng đi qua Git và review, kể cả sửa gấp lúc sự cố (ghi lại ngay sau đó).',
+      'Bí mật không bao giờ nằm trong mã nguồn hay ảnh container; quét tự động chặn CI.',
+    ],
+    keyDecisions: [
+      'Dịch vụ quản lý sẵn hay tự vận hành — đánh đổi giữa tiền và thời gian đội ngũ.',
+      'Ranh giới môi trường: chung tài khoản hay tách; ảnh hưởng trực tiếp tới bán kính thiệt hại.',
+      'Chiến lược phát hành: xanh–lam, theo tỷ lệ, hay thay thế thẳng.',
+      'RPO/RTO chấp nhận được — quyết định này định giá toàn bộ phần sao lưu.',
+    ],
+    nfrs: [
+      'Thời gian từ commit tới sản xuất, và tỷ lệ phát hành thất bại (DORA).',
+      'Thời gian quay lui < 5 phút.',
+      'Dựng lại toàn bộ hạ tầng từ mã nguồn ở vùng khác trong ngưỡng đã cam kết.',
+    ],
+    specChecklist: [
+      'Thay đổi này ảnh hưởng môi trường nào, bán kính thiệt hại tới đâu.',
+      'Kế hoạch quay lui viết TRƯỚC khi thực hiện.',
+      'Cần thêm cảnh báo/chỉ số gì để biết nó hỏng.',
+      'Có đụng dữ liệu sản xuất không; nếu có thì sao lưu và kiểm chứng thế nào.',
+    ],
+  },
   stages: [
     {
       id: 'devops-s1',

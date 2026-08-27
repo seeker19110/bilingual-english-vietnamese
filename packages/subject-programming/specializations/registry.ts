@@ -16,10 +16,13 @@ import { GAME_SPECIALIZATION } from './game.js'
 import { EMBEDDED_SPECIALIZATION } from './embedded.js'
 import { DESKTOP_SPECIALIZATION } from './desktop.js'
 import { ALGO_SPECIALIZATION } from './algo.js'
+import { ARCHITECTURE_SPECIALIZATION } from './architecture.js'
 
 export type {
   ProgrammingSpecialization,
   SpecializationId,
+  SpecArchitecture,
+  SpecArchModule,
   SpecStage,
   SpecStageTier,
   SpecModule,
@@ -27,8 +30,9 @@ export type {
 } from './types.js'
 
 /**
- * Thứ tự hiển thị cố ý: các hướng phổ biến và dễ vào nghề nhất đứng trước, hướng nền tảng
- * bổ trợ (thuật toán) đứng cuối vì nó học SONG SONG chứ không phải chọn thay.
+ * Thứ tự hiển thị cố ý: các hướng SẢN PHẨM đứng trước (chọn MỘT), hai hướng NỀN cắt ngang
+ * (kiến trúc, thuật toán) đứng cuối vì chúng học SONG SONG chứ không phải chọn thay.
+ * Giao diện dựa vào cờ `crossCutting` để tách nhóm, không dựa vào vị trí trong mảng này.
  */
 export const PROGRAMMING_SPECIALIZATIONS: ProgrammingSpecialization[] = [
   WEB_SPECIALIZATION,
@@ -42,6 +46,8 @@ export const PROGRAMMING_SPECIALIZATIONS: ProgrammingSpecialization[] = [
   GAME_SPECIALIZATION,
   EMBEDDED_SPECIALIZATION,
   DESKTOP_SPECIALIZATION,
+  // Hai hướng NỀN — cắt ngang mọi hướng trên.
+  ARCHITECTURE_SPECIALIZATION,
   ALGO_SPECIALIZATION,
 ]
 
@@ -74,4 +80,29 @@ export function specializationsOpenAt(levelId: string): ProgrammingSpecializatio
 /** Tổng số dự án phải nộp của một hướng: 4 dự án chặng + 1 capstone. */
 export function countSpecProjects(spec: ProgrammingSpecialization): number {
   return spec.stages.length + 1
+}
+
+/** Các hướng SẢN PHẨM — chọn MỘT làm hướng chính. */
+export function productSpecializations(): ProgrammingSpecialization[] {
+  return PROGRAMMING_SPECIALIZATIONS.filter((s) => !s.crossCutting)
+}
+
+/** Các hướng NỀN cắt ngang — học song song, không thay thế hướng sản phẩm. */
+export function crossCuttingSpecializations(): ProgrammingSpecialization[] {
+  return PROGRAMMING_SPECIALIZATIONS.filter((s) => s.crossCutting === true)
+}
+
+/**
+ * Đếm số ô đặc tả kiến trúc của một hướng (module + hợp đồng + quyết định + NFR + checklist).
+ * Dùng ở giao diện để nói "bản đồ kiến trúc gồm N mục" mà không phải cộng tay.
+ */
+export function countArchitectureItems(spec: ProgrammingSpecialization): number {
+  const a = spec.architecture
+  return (
+    a.modules.length +
+    a.contracts.length +
+    a.keyDecisions.length +
+    a.nfrs.length +
+    a.specChecklist.length
+  )
 }

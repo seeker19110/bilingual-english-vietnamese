@@ -16,7 +16,8 @@ khác công cụ, khác cả tiêu chuẩn "thế nào là giỏi". Gộp chúng
 
 ## 2. Quyết định
 
-Thêm **tầng HƯỚNG CHUYÊN SÂU** song song với xương sống, gồm **12 hướng**:
+Thêm **tầng HƯỚNG CHUYÊN SÂU** song song với xương sống, gồm **13 hướng** — 11 hướng sản
+phẩm (chọn MỘT) và 2 hướng nền cắt ngang (học song song):
 
 | #   | Hướng                          | Mã         | Vào từ bậc | Thời lượng  |
 | --- | ------------------------------ | ---------- | ---------- | ----------- |
@@ -43,8 +44,10 @@ dạng thay vì kiểm từng chữ:
   chấp nhận đo được.
 - Mỗi hướng còn có: **capstone** (sản phẩm tốt nghiệp hướng), `expertSignals` (dấu hiệu chuyên
   gia), `careers`, `pitfalls`, `resources`.
-- Tổng: **5 sản phẩm phải nộp mỗi hướng** (4 dự án chặng + capstone) — nghĩa là 60 dự án cho
-  toàn bộ 12 hướng.
+- **Bản đồ kiến trúc bắt buộc** (`architecture`, xem §2.4) — 5 ô: module · hợp đồng · quyết định
+  phải chốt sớm · NFR · checklist đặc tả.
+- Tổng: **5 sản phẩm phải nộp mỗi hướng** (4 dự án chặng + capstone) — nghĩa là **65 dự án** cho
+  toàn bộ 13 hướng (52 chặng, 211 module học, 263 mục kiến trúc).
 
 ### 2.2. Ba luật nội dung
 
@@ -57,6 +60,49 @@ dạng thay vì kiểm từng chữ:
 3. **Không hướng nào "xịn hơn" hướng nào.** Không có xếp hạng, không có nhãn "hot". Mỗi hướng
    nói rõ _hợp với ai_ và _không hợp với ai_ để người học tự chọn có thông tin — đúng luật số 1
    của sản phẩm: đây là công cụ chọn việc, không phải bảng chấm điểm con người.
+
+### 2.4. Lát cắt KIẾN TRÚC — bắt buộc ở mọi hướng (bổ sung 2026-08-27)
+
+**Lý do bổ sung (người dùng nêu):** phần lớn việc về sau là _đặc tả kiến trúc cho AI code_, chứ
+không phải tự gõ từng dòng. Bản đầu của tầng này chỉ có "học gì" và "làm dự án gì" — thiếu đúng
+thứ người đặc tả cần. Bốn lỗ hổng cụ thể khi đặc tả thiếu kiến trúc:
+
+| Thiếu                          | Hệ quả khi giao cho AI/người khác thi hành      |
+| ------------------------------ | ----------------------------------------------- |
+| Ranh giới module               | Bên thi hành tự bịa cấu trúc, mỗi lượt một kiểu |
+| Hợp đồng giữa module           | Hai phần viết xong không ghép được              |
+| Yêu cầu phi chức năng (NFR)    | Code chạy được nhưng chậm / không an toàn       |
+| Tiêu chí nghiệm thu + bất biến | Không có cách chứng minh bên thi hành làm đúng  |
+
+Vì vậy **mọi hướng** phải khai đủ `SpecArchitecture` (5 ô, `types.ts`):
+
+1. **`modules`** — module điển hình của hệ thống trong hướng đó, mỗi module ghi **trách nhiệm duy
+   nhất** _và_ việc nó **không được làm**. Test canh: `role` phải > 25 ký tự để loại ô chỉ chép
+   lại tên module.
+2. **`contracts`** — cái gì đi qua ranh giới và ràng buộc phải giữ (schema, tiến hoá không phá,
+   idempotency, mã lỗi).
+3. **`keyDecisions`** — quyết định phải chốt SỚM vì đổi về sau rất đắt, kèm đánh đổi. Chốt xong
+   ghi thành ADR có nêu **phương án bị loại** — nếu không, phiên sau sẽ đề xuất lại đúng nó.
+4. **`nfrs`** — yêu cầu phi chức năng đặc trưng, viết thành **số**. NFR không đo được là NFR
+   không tồn tại.
+5. **`specChecklist`** — thứ phải viết rõ trong đặc tả thì bên thi hành mới làm đúng ngay lượt
+   đầu.
+
+### 2.5. Hướng `architecture` — sáu ô bắt buộc của một đặc tả kín
+
+Hướng thứ 13 dạy chính kỹ năng này. Khuôn **đặc tả kín** mà nó dùng (chặng S3):
+
+1. **Phạm vi** — làm gì _và KHÔNG làm gì_ (ô "không làm" quan trọng ngang ô "làm").
+2. **Điểm chạm** — đường dẫn file cụ thể, không nói chung chung "sửa phần backend".
+3. **Hợp đồng** — kiểu dữ liệu vào/ra viết hẳn ra, kèm ca lỗi.
+4. **Tiêu chí chấp nhận** — đo được, kèm lệnh chạy để chứng minh.
+5. **Bất biến** không được phá + test nào canh nó.
+6. **Quy ước dự án** liên quan — bên thi hành không thấy được hội thoại trước đó.
+
+Bốn chặng của hướng: **S1 ranh giới & module** → **S2 hợp đồng & mô hình miền** → **S3 đặc tả
+thi hành được & nghiệm thu code mình không tự gõ** → **S4 tiến hoá kiến trúc và dẫn dắt nhiều
+bên thi hành**. Điều kiện vào là **P4, cố ý không mở sớm hơn**: chưa tự tay làm hỏng thứ gì thì
+đặc tả chỉ là chữ đẹp (có test canh điều kiện này).
 
 ### 2.3. Điều kiện đầu vào và thứ tự
 
@@ -85,12 +131,24 @@ thành `registry.ts` là hết.
 
 ## 4. Tiêu chí chấp nhận
 
-- [x] 12 hướng, id duy nhất, mỗi hướng đúng 4 chặng theo thứ tự S1→S4.
+- [x] 13 hướng, id duy nhất, mỗi hướng đúng 4 chặng theo thứ tự S1→S4.
+- [x] **Mọi hướng có đủ 5 ô kiến trúc** (≥4 module, ≥3 hợp đồng/quyết định/NFR/checklist); mỗi
+      module nêu trách nhiệm thật, không chỉ chép lại tên.
+- [x] Hai hướng nền tách nhóm đúng; `productSpecializations()` + `crossCuttingSpecializations()`
+      luôn phủ kín danh sách, không chồng lấn.
 - [x] Id module duy nhất toàn bộ và đúng tiền tố chặng; không ô văn bản nào rỗng.
 - [x] Mọi chặng có dự án ≥ 2 tiêu chí chấp nhận; capstone ≥ 3 tiêu chí.
 - [x] `getSpecialization` / `getSpecStage` trả `undefined` với mã lạ — **không đoán bừa**.
-- [x] Hai trang mới qua cả hai cổng a11y (A/AA và AAA) trên 5 theme.
+- [x] Ba route mới qua cả hai cổng a11y (A/AA và AAA) trên 5 theme.
 - [x] Ngân sách bundle không đội: 124,35 kB / 140 kB (baseline trước đợt: 124,08 kB).
+
+## 4.1. Khuôn dùng được ngay trong repo
+
+Sáu ô của §2.5 đã thành file điền được, không phải đọc lại đặc tả rồi tự nhớ:
+
+- `docs/templates/dac-ta-tinh-nang.md` — khuôn đặc tả giao việc (6 ô + ô nghiệm thu).
+- `docs/templates/adr.md` — khuôn ADR, có ô **"vì sao loại các phương án kia"** và ô **"điều kiện
+  xem lại"** (hai ô hay bị bỏ nhất, và là hai ô khiến ADR còn giá trị sau vài tháng).
 
 ## 5. Việc còn để ngỏ (cố ý)
 

@@ -12,6 +12,51 @@ export const GAME_SPECIALIZATION: ProgrammingSpecialization = {
   duration: '10–16 tháng',
   languages: ['C#', 'C++', 'TypeScript', 'GLSL/HLSL'],
   coreTools: ['Godot hoặc Unity', 'Blender', 'Aseprite', 'RenderDoc', 'Git LFS'],
+  architecture: {
+    modules: [
+      { name: 'Vòng lặp game', role: 'Điều phối cập nhật và vẽ. KHÔNG chứa luật chơi cụ thể.' },
+      {
+        name: 'Mô phỏng (luật chơi)',
+        role: 'Trạng thái thế giới và luật. Bước cố định, tất định, tách khỏi tốc độ vẽ.',
+      },
+      {
+        name: 'Trình bày (render + âm thanh)',
+        role: 'Đọc trạng thái để vẽ. KHÔNG được sửa trạng thái mô phỏng.',
+      },
+      {
+        name: 'Nhập liệu',
+        role: 'Biến thao tác thiết bị thành ý định trừu tượng ("nhảy"), không phải phím cụ thể.',
+      },
+      {
+        name: 'Dữ liệu nội dung',
+        role: 'Màn chơi, chỉ số cân bằng nằm NGOÀI mã, sửa không cần biên dịch lại.',
+      },
+      { name: 'Lưu game', role: 'Có phiên bản; bản lưu cũ phải đọc được sau khi cập nhật.' },
+    ],
+    contracts: [
+      'Mô phỏng không bao giờ đọc thời gian thực trực tiếp — chỉ nhận bước thời gian cố định.',
+      'Cùng hạt giống + cùng chuỗi input phải cho cùng kết quả (điều kiện để test và để chơi mạng).',
+      'Định dạng dữ liệu nội dung và bản lưu có phiên bản, có đường nâng cấp.',
+      'Trong chế độ mạng, server là bên quyết định; client chỉ dự đoán.',
+    ],
+    keyDecisions: [
+      'ECS hay cây đối tượng — đổi về sau là viết lại phần lớn gameplay.',
+      'Bước cố định cho mô phỏng: bỏ qua từ đầu thì vật lý và chơi mạng đều hỏng.',
+      'Nội dung sinh theo thủ tục hay dựng tay; kéo theo toàn bộ công cụ soạn nội dung.',
+      'Chơi mạng có quyền quyết định ở server hay ngang hàng — quyết định luôn chuyện chống gian lận.',
+    ],
+    nfrs: [
+      'Giữ ngân sách khung hình (ví dụ 16,6ms) trên máy cấu hình mục tiêu.',
+      'Thời gian tải màn ≤ ngưỡng đặt trước; không giật khi tải nội dung giữa chừng.',
+      'Chơi được mượt ở độ trễ mạng mô phỏng đã cam kết.',
+    ],
+    specChecklist: [
+      'Cảm giác mong muốn mô tả bằng SỐ (gia tốc, thời gian hồi, cửa sổ tha thứ), không bằng tính từ.',
+      'Trạng thái nào thuộc mô phỏng, trạng thái nào chỉ để trình bày.',
+      'Ảnh hưởng tới bản lưu cũ và tới cân bằng hiện có.',
+      'Ngân sách khung hình và máy mục tiêu.',
+    ],
+  },
   stages: [
     {
       id: 'game-s1',

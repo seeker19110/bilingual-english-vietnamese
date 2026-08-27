@@ -11,6 +11,49 @@ export const WEB_SPECIALIZATION: ProgrammingSpecialization = {
   duration: '9–14 tháng (song song đi làm)',
   languages: ['TypeScript', 'JavaScript', 'HTML/CSS', 'SQL'],
   coreTools: ['React', 'Vite', 'Node.js', 'PostgreSQL', 'Playwright', 'Git/CI'],
+  architecture: {
+    modules: [
+      {
+        name: 'UI (component + route)',
+        role: 'Chỉ trình bày và bắt sự kiện. KHÔNG chứa quy tắc nghiệp vụ.',
+      },
+      {
+        name: 'Server state / API client',
+        role: 'Nói chuyện với server, cache, thử lại. Nơi DUY NHẤT biết URL và hình dạng response.',
+      },
+      {
+        name: 'Lõi nghiệp vụ (thuần)',
+        role: 'Tính tiền, kiểm hợp lệ, chuyển trạng thái. Hàm thuần, không đụng mạng/DOM.',
+      },
+      {
+        name: 'API handler (server)',
+        role: 'Kiểm quyền + validate input + gọi lõi. KHÔNG chứa SQL rải rác.',
+      },
+      { name: 'Tầng lưu trữ', role: 'Truy vấn CSDL. Nơi duy nhất biết tên bảng và tên cột.' },
+    ],
+    contracts: [
+      'Kiểu dữ liệu giữa frontend và backend định nghĩa MỘT LẦN ở gói hợp đồng dùng chung, cả hai bên import.',
+      'Response luôn validate lúc chạy ở client — server đúng không có nghĩa mạng giữa đường không hỏng.',
+      'Lỗi trả về có mã máy đọc được; UI ánh xạ mã sang câu tiếng Việt, không so khớp chuỗi.',
+      'Mọi endpoint ghi phải idempotent hoặc nêu rõ vì sao không cần.',
+    ],
+    keyDecisions: [
+      'Render ở server hay client cho từng loại trang — quyết định này khoá luôn SEO và thời gian hiển thị đầu.',
+      'Server state để riêng khỏi client state; nhét chung vào một store toàn cục là bệnh phổ biến nhất.',
+      'Nguồn sự thật của phiên đăng nhập: cookie phiên hay token — kéo theo cả cách chống CSRF.',
+    ],
+    nfrs: [
+      'LCP ≤ 2,5s và INP ≤ 200ms trên máy tầm trung, mạng 4G mô phỏng.',
+      'Ngân sách bundle ban đầu có ngưỡng cứng chặn CI.',
+      'Không vi phạm a11y mức A/AA ở mọi theme; nội dung đọc đạt AAA.',
+    ],
+    specChecklist: [
+      'Bốn trạng thái của mỗi màn: tải / rỗng / lỗi / có dữ liệu — không được bỏ trạng thái nào.',
+      'Ai được xem, ai được sửa; server kiểm quyền chứ không phải UI ẩn nút.',
+      'Hành vi khi mạng chậm hoặc request bị huỷ giữa chừng.',
+      'Ngưỡng hiệu năng và ngân sách bundle cho phần thêm vào.',
+    ],
+  },
   stages: [
     {
       id: 'web-s1',

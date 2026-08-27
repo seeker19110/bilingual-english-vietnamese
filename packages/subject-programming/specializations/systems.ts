@@ -11,6 +11,53 @@ export const SYSTEMS_SPECIALIZATION: ProgrammingSpecialization = {
   duration: '12–18 tháng',
   languages: ['C', 'Rust', 'C++', 'Assembly (đọc hiểu)'],
   coreTools: ['gcc/clang', 'gdb', 'valgrind', 'perf', 'cargo', 'Linux'],
+  architecture: {
+    modules: [
+      {
+        name: 'Lõi thuật toán / cấu trúc dữ liệu',
+        role: 'Phần quyết định tốc độ. Không đụng vào/ra, test được độc lập.',
+      },
+      {
+        name: 'Lớp trừu tượng nền tảng',
+        role: 'Bọc lời gọi hệ thống. Nơi DUY NHẤT biết đây là Linux hay hệ khác.',
+      },
+      {
+        name: 'Quản lý tài nguyên',
+        role: 'Cấp phát, giải phóng, vòng đời. Quy ước ai sở hữu phải viết ra rõ.',
+      },
+      {
+        name: 'Đồng thời',
+        role: 'Luồng, khoá, hàng đợi. Ranh giới dữ liệu chia sẻ nêu tường minh.',
+      },
+      {
+        name: 'Giao diện công khai (API/ABI)',
+        role: 'Hợp đồng với người dùng thư viện. Đổi là phá bản đã biên dịch của họ.',
+      },
+    ],
+    contracts: [
+      'Quy ước sở hữu bộ nhớ viết thành tài liệu: ai cấp, ai giải phóng, sống bao lâu.',
+      'Hàm nào an toàn khi gọi từ nhiều luồng, hàm nào không — ghi ngay tại khai báo.',
+      'Mã lỗi và điều kiện tiên quyết là một phần hợp đồng, không phải chú thích thêm.',
+      'Đổi ABI phải đổi phiên bản thư viện; không lặng lẽ đổi bố cục struct công khai.',
+    ],
+    keyDecisions: [
+      'Cấp phát động hay bộ nhớ tĩnh/pool — quyết định này khoá luôn hành vi khi chạy dài ngày.',
+      'Ngôn ngữ an toàn bộ nhớ hay C; nếu C thì bù bằng sanitizer và fuzzing bắt buộc.',
+      'Mô hình đồng thời: khoá, thông điệp, hay không khoá — độ khó đúng chênh nhau rất xa.',
+      'Bố cục dữ liệu theo cache: chọn sai thì tối ưu vi mô về sau không cứu được.',
+    ],
+    nfrs: [
+      'Ngưỡng thông lượng/độ trễ đo bằng chuẩn đo chạy trong CI, chặn hồi quy.',
+      'Không lỗi bộ nhớ dưới sanitizer trên toàn bộ test.',
+      'Mức chiếm bộ nhớ đỉnh có trần; chạy dài ngày không tăng dần.',
+    ],
+    specChecklist: [
+      'Ràng buộc phần cứng và nền tảng mục tiêu (kiến trúc, hệ điều hành, phiên bản).',
+      'Quy ước sở hữu tài nguyên và ai chịu trách nhiệm giải phóng.',
+      'Ngưỡng hiệu năng và cách đo — kèm lệnh chạy chuẩn đo.',
+      'Hành vi khi lỗi: trả mã lỗi, hay dừng chương trình, hay tự phục hồi.',
+    ],
+  },
   stages: [
     {
       id: 'systems-s1',
