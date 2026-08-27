@@ -20,9 +20,10 @@ export function runBash(code: string, options: BashRunOptions = {}): Promise<Cod
   const r = chayBash(code, options.lenhChuanBi ?? [])
   return Promise.resolve({
     output: r.output,
-    // Mã thoát khác 0 KHÔNG phải "sự cố hệ thống" mà là một phần bài học (chính $? là thứ
-    // tầng 1 dạy): output vẫn giữ nguyên thông báo để học viên đọc, còn trường error cho phép
-    // bộ chấm đánh rớt ca đó.
+    // `error` chỉ mang lỗi ĐỘNG CƠ (cú pháp không phân tích nổi, vượt trần chống treo) — thứ
+    // TestResultList tô ĐỎ như sự cố hệ thống. Mã thoát khác 0 và lệnh gõ sai KHÔNG đi đường
+    // này: chúng là bước học bình thường, thông báo đã nằm sẵn trong output để học viên đọc và
+    // sửa (luật N5 của đặc tả UI/UX).
     ...(r.error ? { error: r.error } : {}),
     timedOut: false,
     durationMs: Date.now() - batDau,
