@@ -47,15 +47,19 @@ export default function AvatarEmbodimentSelector({
             onClick={() => onModeChange(mode.id)}
             className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
               isActive
-                ? 'bg-cyan-500/20 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.25)] border border-cyan-500/40'
+                ? 'bg-cyan-500/20 text-cyan-300 theme-light:text-cyan-800 shadow-[0_0_12px_rgba(6,182,212,0.25)] border border-cyan-500/40'
                 : 'text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-200 border border-transparent'
             }`}
           >
-            <Icon className={`h-3.5 w-3.5 ${isActive ? 'text-cyan-400' : 'text-zinc-500'}`} />
+            <Icon
+              className={`h-3.5 w-3.5 ${isActive ? 'text-cyan-400 theme-light:text-cyan-800' : 'text-zinc-500'}`}
+            />
             <span>{mode.label}</span>
             <span
               className={`rounded px-1.5 py-0.2 text-[9px] font-semibold uppercase ${
-                isActive ? 'bg-cyan-500/30 text-cyan-200' : 'bg-zinc-800 text-zinc-500'
+                isActive
+                  ? 'bg-cyan-500/30 text-cyan-200 theme-light:text-cyan-800'
+                  : 'bg-zinc-800 text-zinc-500'
               }`}
             >
               {mode.badge}

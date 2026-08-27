@@ -57,15 +57,15 @@ import type { MemoryRecord, MemoryNamespace } from '@dhcb/core-contracts/persona
 import type { AutomationGrant, ActionReceipt } from '@dhcb/core-contracts/automation'
 
 const NODE_ICONS: Record<LifeGraphNodeType, React.ReactNode> = {
-  Person: <User className="w-4 h-4 text-blue-400" />,
-  Goal: <Target className="w-4 h-4 text-emerald-400" />,
-  Project: <GitMerge className="w-4 h-4 text-purple-400" />,
-  Skill: <Star className="w-4 h-4 text-amber-400" />,
+  Person: <User className="w-4 h-4 text-blue-400 theme-light:text-blue-800" />,
+  Goal: <Target className="w-4 h-4 text-emerald-400 theme-light:text-emerald-800" />,
+  Project: <GitMerge className="w-4 h-4 text-purple-400 theme-light:text-purple-800" />,
+  Skill: <Star className="w-4 h-4 text-amber-400 theme-light:text-amber-800" />,
   Organization: <Building className="w-4 h-4 text-zinc-400" />,
-  Event: <Calendar className="w-4 h-4 text-pink-400" />,
-  Commitment: <GitCommit className="w-4 h-4 text-orange-400" />,
-  Constraint: <AlertTriangle className="w-4 h-4 text-rose-400" />,
-  Decision: <Activity className="w-4 h-4 text-teal-400" />,
+  Event: <Calendar className="w-4 h-4 text-pink-400 theme-light:text-pink-800" />,
+  Commitment: <GitCommit className="w-4 h-4 text-orange-400 theme-light:text-orange-800" />,
+  Constraint: <AlertTriangle className="w-4 h-4 text-rose-400 theme-light:text-rose-800" />,
+  Decision: <Activity className="w-4 h-4 text-teal-400 theme-light:text-teal-800" />,
 }
 
 const TABS = [
@@ -318,7 +318,7 @@ export default function LifeGraph() {
       <div className="min-h-dvh bg-zinc-950 text-zinc-100 flex flex-col">
         <Layout onBack={() => nav('/trang-ca-nhan')} title="Mạng lưới & Ký ức" />
         <main className="max-w-4xl mx-auto px-4 pt-12 pb-12 flex flex-col items-center justify-center flex-1">
-          <Loader2 className="w-8 h-8 animate-spin text-accent-400 mb-3" />
+          <Loader2 className="w-8 h-8 animate-spin text-accent-400 theme-light:text-accent-800 mb-3" />
           <p className="text-zinc-400 text-sm">Đang tải cấu trúc tri thức cá nhân...</p>
         </main>
       </div>
@@ -348,13 +348,13 @@ export default function LifeGraph() {
               {exporting ? (
                 <RefreshCw className="w-3.5 h-3.5 animate-spin" />
               ) : (
-                <Download className="w-3.5 h-3.5 text-accent-400" />
+                <Download className="w-3.5 h-3.5 text-accent-400 theme-light:text-accent-800" />
               )}
               Xuất JSON
             </button>
             <button
               onClick={() => setShowEraseModal(true)}
-              className="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-xs text-rose-400 font-medium transition flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-xs text-rose-400 theme-light:text-rose-800 font-medium transition flex items-center gap-1.5"
               title="Xóa vĩnh viễn toàn bộ dữ liệu trên toàn bộ 13 schemas"
             >
               <Trash2 className="w-3.5 h-3.5" />
@@ -374,7 +374,7 @@ export default function LifeGraph() {
                 onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition shrink-0 ${
                   isSelected
-                    ? 'bg-accent-500 text-white shadow-md shadow-accent-500/20'
+                    ? 'bg-accent-500 text-black shadow-md shadow-accent-500/20'
                     : 'bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 border border-zinc-800'
                 }`}
               >
@@ -398,7 +398,7 @@ export default function LifeGraph() {
                     onClick={() => setNodeFilter(t)}
                     className={`px-2.5 py-1 rounded-lg text-xs font-medium transition shrink-0 ${
                       nodeFilter === t
-                        ? 'bg-zinc-800 text-accent-300 border border-accent-500/30'
+                        ? 'bg-zinc-800 text-accent-300 theme-light:text-accent-800 border border-accent-500/30'
                         : 'text-zinc-400 hover:text-zinc-200'
                     }`}
                   >
@@ -414,13 +414,13 @@ export default function LifeGraph() {
                   className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-200 transition flex items-center gap-1.5"
                 >
                   <RefreshCw
-                    className={`w-3.5 h-3.5 text-accent-400 ${syncingGraph ? 'animate-spin' : ''}`}
+                    className={`w-3.5 h-3.5 text-accent-400 theme-light:text-accent-800 ${syncingGraph ? 'animate-spin' : ''}`}
                   />
                   Đồng bộ đa miền
                 </button>
                 <button
                   onClick={() => setShowAddNodeModal(true)}
-                  className="px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-white transition flex items-center gap-1.5 shadow-sm"
+                  className="px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-black transition flex items-center gap-1.5 shadow-sm"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Thêm Node
@@ -479,8 +479,10 @@ export default function LifeGraph() {
                               key={e.id}
                               className="text-[11px] text-zinc-300 flex items-center gap-1.5"
                             >
-                              <ArrowRight className="w-3 h-3 text-accent-400 shrink-0" />
-                              <span className="font-mono text-accent-300">{e.relation}</span>
+                              <ArrowRight className="w-3 h-3 text-accent-400 theme-light:text-accent-800 shrink-0" />
+                              <span className="font-mono text-accent-300 theme-light:text-accent-800">
+                                {e.relation}
+                              </span>
                               <span className="text-zinc-500 truncate">({e.provenance})</span>
                             </div>
                           ))}
@@ -507,12 +509,15 @@ export default function LifeGraph() {
           <div className="space-y-4 animate-fade-in">
             <div className="flex items-center justify-between bg-zinc-900/70 p-3.5 rounded-2xl border border-zinc-800/80">
               <div className="text-xs text-zinc-300 font-medium">
-                Tổng cộng: <span className="text-accent-300 font-semibold">{facts.length}</span> sự
-                thật cá nhân
+                Tổng cộng:{' '}
+                <span className="text-accent-300 theme-light:text-accent-800 font-semibold">
+                  {facts.length}
+                </span>{' '}
+                sự thật cá nhân
               </div>
               <button
                 onClick={() => setShowAddFactModal(true)}
-                className="px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-white transition flex items-center gap-1.5 shadow-sm"
+                className="px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-black transition flex items-center gap-1.5 shadow-sm"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Khai báo Sự thật
@@ -533,7 +538,7 @@ export default function LifeGraph() {
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 rounded-md bg-zinc-800 text-accent-300 text-xs font-medium">
+                        <span className="px-2 py-0.5 rounded-md bg-zinc-800 text-accent-300 theme-light:text-accent-800 text-xs font-medium">
                           {fact.namespace}
                         </span>
                         <code className="text-zinc-200 text-xs font-semibold">{fact.key}</code>
@@ -548,7 +553,7 @@ export default function LifeGraph() {
                         Nguồn:{' '}
                         <span className="text-zinc-400">{fact.source?.type || fact.origin}</span> ·
                         Độ tin cậy:{' '}
-                        <span className="text-emerald-400">
+                        <span className="text-emerald-400 theme-light:text-emerald-800">
                           {Math.round((fact.confidence || 1) * 100)}%
                         </span>
                       </div>
@@ -580,7 +585,7 @@ export default function LifeGraph() {
                     onClick={() => setMemoryNamespaceFilter(ns)}
                     className={`px-2.5 py-1 rounded-lg text-xs font-medium transition shrink-0 ${
                       memoryNamespaceFilter === ns
-                        ? 'bg-zinc-800 text-accent-300 border border-accent-500/30'
+                        ? 'bg-zinc-800 text-accent-300 theme-light:text-accent-800 border border-accent-500/30'
                         : 'text-zinc-400 hover:text-zinc-200'
                     }`}
                   >
@@ -591,7 +596,7 @@ export default function LifeGraph() {
 
               <button
                 onClick={() => setShowAddMemoryModal(true)}
-                className="px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-white transition flex items-center gap-1.5 shadow-sm"
+                className="px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-black transition flex items-center gap-1.5 shadow-sm"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Tạo Ký ức
@@ -611,7 +616,7 @@ export default function LifeGraph() {
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-300 text-xs font-medium">
+                        <span className="px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-300 theme-light:text-purple-800 text-xs font-medium">
                           {mem.namespace}
                         </span>
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-950 text-zinc-400 border border-zinc-800">
@@ -651,7 +656,7 @@ export default function LifeGraph() {
             {/* Grants Section */}
             <div>
               <h3 className="text-sm font-semibold text-zinc-200 mb-3 flex items-center gap-1.5">
-                <Shield className="w-4 h-4 text-accent-400" />
+                <Shield className="w-4 h-4 text-accent-400 theme-light:text-accent-800" />
                 Quyền Tự Động Hóa Đã Cấp ({grants.length})
               </h3>
 
@@ -678,10 +683,10 @@ export default function LifeGraph() {
                             <span
                               className={`px-2 py-0.5 rounded-md text-[11px] font-medium ${
                                 isActive
-                                  ? 'bg-emerald-500/10 text-emerald-400'
+                                  ? 'bg-emerald-500/10 text-emerald-400 theme-light:text-emerald-800'
                                   : isPaused
-                                    ? 'bg-amber-500/10 text-amber-400'
-                                    : 'bg-rose-500/10 text-rose-400'
+                                    ? 'bg-amber-500/10 text-amber-400 theme-light:text-amber-800'
+                                    : 'bg-rose-500/10 text-rose-400 theme-light:text-rose-800'
                               }`}
                             >
                               {grant.status}
@@ -690,7 +695,7 @@ export default function LifeGraph() {
                           <div className="text-xs text-zinc-400 mt-1">
                             Trigger: <span className="text-zinc-300">{grant.trigger.type}</span> ·
                             Ngân sách:{' '}
-                            <span className="text-accent-300">
+                            <span className="text-accent-300 theme-light:text-accent-800">
                               {grant.budget.maxRunsPerHour} lượt/h
                             </span>
                           </div>
@@ -700,7 +705,7 @@ export default function LifeGraph() {
                           {isActive && (
                             <button
                               onClick={() => handleToggleGrant(grant, 'pause')}
-                              className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs text-amber-300 font-medium transition"
+                              className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs text-amber-300 theme-light:text-amber-800 font-medium transition"
                             >
                               Tạm dừng
                             </button>
@@ -708,14 +713,14 @@ export default function LifeGraph() {
                           {isPaused && (
                             <button
                               onClick={() => handleToggleGrant(grant, 'resume')}
-                              className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs text-white font-medium transition"
+                              className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-xs text-[#fff] font-medium transition"
                             >
                               Tiếp tục
                             </button>
                           )}
                           <button
                             onClick={() => handleToggleGrant(grant, 'revoke')}
-                            className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-rose-950/40 text-xs text-rose-400 font-medium transition"
+                            className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-rose-950/40 theme-light:bg-rose-50 text-xs text-rose-400 theme-light:text-rose-800 font-medium transition"
                           >
                             Thu hồi
                           </button>
@@ -754,7 +759,9 @@ export default function LifeGraph() {
                       <div className="text-right shrink-0">
                         <span
                           className={`font-semibold ${
-                            rec.status === 'success' ? 'text-emerald-400' : 'text-rose-400'
+                            rec.status === 'success'
+                              ? 'text-emerald-400 theme-light:text-emerald-800'
+                              : 'text-rose-400 theme-light:text-rose-800'
                           }`}
                         >
                           {rec.status}
@@ -829,7 +836,7 @@ export default function LifeGraph() {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-white text-xs font-medium shadow-sm"
+                className="px-4 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-black text-xs font-medium shadow-sm"
               >
                 Thêm Node
               </button>
@@ -918,7 +925,7 @@ export default function LifeGraph() {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-white text-xs font-medium shadow-sm"
+                className="px-4 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-black text-xs font-medium shadow-sm"
               >
                 Lưu Sự Thật
               </button>
@@ -982,7 +989,7 @@ export default function LifeGraph() {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-white text-xs font-medium shadow-sm"
+                className="px-4 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-black text-xs font-medium shadow-sm"
               >
                 Lưu Ký Ức
               </button>
@@ -995,7 +1002,7 @@ export default function LifeGraph() {
       {showEraseModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-zinc-900 border border-rose-500/40 rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4 animate-scale-in">
-            <div className="flex items-center gap-2 text-rose-400">
+            <div className="flex items-center gap-2 text-rose-400 theme-light:text-rose-800">
               <AlertTriangle className="w-5 h-5" />
               <h3 className="font-semibold text-white text-base">Xác Nhận Xóa Sạch Dữ Liệu</h3>
             </div>
@@ -1017,7 +1024,7 @@ export default function LifeGraph() {
               <button
                 onClick={handleFullErase}
                 disabled={erasing}
-                className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-medium shadow-sm flex items-center gap-1.5"
+                className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-[#fff] text-xs font-medium shadow-sm flex items-center gap-1.5"
               >
                 {erasing ? (
                   <RefreshCw className="w-3.5 h-3.5 animate-spin" />

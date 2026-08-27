@@ -264,7 +264,7 @@ export default function Career() {
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => nav('/career/interview')}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-sm font-bold transition shadow-sm"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-bold transition shadow-sm"
               title="Phòng Luyện Phỏng Vấn AI"
             >
               <Sparkles className="w-4 h-4" />
@@ -284,7 +284,7 @@ export default function Career() {
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-emerald-400 animate-spin mb-4" />
+            <Loader2 className="w-8 h-8 text-emerald-400 theme-light:text-emerald-800 animate-spin mb-4" />
             <p className="text-zinc-400 text-sm">Đang tải dữ liệu sự nghiệp...</p>
           </div>
         ) : (
@@ -293,14 +293,14 @@ export default function Career() {
             <div className="bg-zinc-900/70 border border-zinc-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 theme-light:text-emerald-800 shrink-0">
                     <Award className="w-6 h-6" />
                   </div>
                   <div>
                     <h2 className="text-xl font-bold text-zinc-100 flex items-center gap-2">
                       {profile?.targetRole || 'Chưa thiết lập vị trí mục tiêu'}
                       {profile && (
-                        <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-800/40">
+                        <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-950/80 theme-light:bg-emerald-50 text-emerald-400 theme-light:text-emerald-800 border border-emerald-800/40">
                           {profile.yearsOfExperience} năm kinh nghiệm
                         </span>
                       )}
@@ -312,7 +312,7 @@ export default function Career() {
                       {profile?.industry && ` • Ngành: ${profile.industry}`}
                     </p>
                     {(profile?.targetSalaryMin || profile?.targetSalaryMax) && (
-                      <div className="flex items-center gap-1.5 text-xs text-amber-400 mt-2 font-medium">
+                      <div className="flex items-center gap-1.5 text-xs text-amber-400 theme-light:text-amber-800 mt-2 font-medium">
                         <DollarSign className="w-3.5 h-3.5" />
                         Mức lương kỳ vọng: {profile.targetSalaryMin?.toLocaleString()} -{' '}
                         {profile.targetSalaryMax?.toLocaleString()} {profile.currency}
@@ -322,7 +322,7 @@ export default function Career() {
                 </div>
                 <button
                   onClick={() => setShowProfileModal(true)}
-                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold shadow-lg shadow-emerald-900/30 transition self-start md:self-auto"
+                  className="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-[#fff] text-sm font-semibold shadow-lg shadow-emerald-900/30 transition self-start md:self-auto"
                 >
                   {profile ? 'Chỉnh sửa hồ sơ' : 'Thiết lập hồ sơ'}
                 </button>
@@ -337,12 +337,12 @@ export default function Career() {
                 <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-base font-semibold text-zinc-200 flex items-center gap-2">
-                      <Target className="w-5 h-5 text-indigo-400" />
+                      <Target className="w-5 h-5 text-indigo-400 theme-light:text-indigo-800" />
                       Mục Tiêu Sự Nghiệp ({goals.length})
                     </h3>
                     <button
                       onClick={() => setShowGoalModal(true)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 text-xs font-medium transition"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 theme-light:text-indigo-800 border border-indigo-500/30 text-xs font-medium transition"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       Thêm mục tiêu
@@ -364,7 +364,7 @@ export default function Career() {
                             onClick={() => setSelectedGoalId(g.id)}
                             className={`p-4 rounded-xl border transition cursor-pointer ${
                               isSelected
-                                ? 'bg-indigo-950/30 border-indigo-500/50 shadow-md ring-1 ring-indigo-500/30'
+                                ? 'bg-indigo-950/30 theme-light:bg-indigo-50 border-indigo-500/50 shadow-md ring-1 ring-indigo-500/30'
                                 : 'bg-zinc-900/90 border-zinc-800 hover:border-zinc-700'
                             }`}
                           >
@@ -382,7 +382,7 @@ export default function Career() {
                               </p>
                             )}
                             {g.timeframe && (
-                              <p className="text-xs text-indigo-400/80 mt-0.5 font-medium">
+                              <p className="text-xs text-indigo-400/80 theme-light:text-indigo-800/80 mt-0.5 font-medium">
                                 Khung thời gian: {g.timeframe}
                               </p>
                             )}
@@ -407,14 +407,14 @@ export default function Career() {
                 <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-base font-semibold text-zinc-200 flex items-center gap-2">
-                      <Sparkles className="w-5 h-5 text-amber-400" />
+                      <Sparkles className="w-5 h-5 text-amber-400 theme-light:text-amber-800" />
                       Phân Tích Khoảng Cách Kỹ Năng (Skill Gap Analysis)
                     </h3>
                   </div>
 
                   {skillGapLoading ? (
                     <div className="flex items-center justify-center py-8">
-                      <Loader2 className="w-6 h-6 text-amber-400 animate-spin mr-2" />
+                      <Loader2 className="w-6 h-6 text-amber-400 theme-light:text-amber-800 animate-spin mr-2" />
                       <span className="text-zinc-400 text-sm">Đang phân tích kỹ năng...</span>
                     </div>
                   ) : !selectedGoalId ? (
@@ -435,9 +435,9 @@ export default function Career() {
                           <div className="flex items-center justify-between gap-3">
                             <div className="flex items-center gap-3 min-w-0">
                               {item.isFulfilled ? (
-                                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                                <CheckCircle2 className="w-5 h-5 text-emerald-400 theme-light:text-emerald-800 shrink-0" />
                               ) : (
-                                <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
+                                <AlertCircle className="w-5 h-5 text-amber-400 theme-light:text-amber-800 shrink-0" />
                               )}
                               <div className="min-w-0">
                                 <div className="text-sm font-semibold text-zinc-200">
@@ -452,7 +452,7 @@ export default function Career() {
                                     <>
                                       {' '}
                                       • Đã đạt:{' '}
-                                      <span className="text-emerald-400 font-medium">
+                                      <span className="text-emerald-400 theme-light:text-emerald-800 font-medium">
                                         {item.currentMastery}
                                       </span>
                                       {/* Nói rõ con số đến từ đâu — dữ liệu học thật hay tự khai. */}
@@ -473,8 +473,8 @@ export default function Career() {
                             <span
                               className={`text-xs px-2.5 py-1 rounded-full font-medium border shrink-0 ${
                                 item.isFulfilled
-                                  ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/40'
-                                  : 'bg-amber-950/60 text-amber-400 border-amber-800/40'
+                                  ? 'bg-emerald-950/60 theme-light:bg-emerald-50 text-emerald-400 theme-light:text-emerald-800 border-emerald-800/40'
+                                  : 'bg-amber-950/60 theme-light:bg-amber-50 text-amber-400 theme-light:text-amber-800 border-amber-800/40'
                               }`}
                             >
                               {item.isFulfilled ? 'Đã đáp ứng' : 'Cần trau dồi'}
@@ -515,12 +515,12 @@ export default function Career() {
                 <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-base font-semibold text-zinc-200 flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5 text-blue-400" />
+                      <TrendingUp className="w-5 h-5 text-blue-400 theme-light:text-blue-800" />
                       Kinh Nghiệm Làm Việc ({experiences.length})
                     </h3>
                     <button
                       onClick={() => setShowExperienceModal(true)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 text-xs font-medium transition"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 theme-light:text-blue-800 border border-blue-500/30 text-xs font-medium transition"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       Thêm
@@ -540,7 +540,7 @@ export default function Career() {
                             <div className="flex items-start justify-between">
                               <h4 className="font-semibold text-zinc-100 text-sm">{exp.role}</h4>
                               {exp.isCurrent && (
-                                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-800/40">
+                                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950/80 theme-light:bg-emerald-50 text-emerald-400 theme-light:text-emerald-800 border border-emerald-800/40">
                                   Hiện tại
                                 </span>
                               )}
@@ -690,7 +690,7 @@ export default function Career() {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition"
+                    className="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-[#fff] text-sm font-semibold transition"
                   >
                     Lưu Hồ Sơ
                   </button>
@@ -802,7 +802,7 @@ export default function Career() {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition"
+                    className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[#fff] text-sm font-semibold transition"
                   >
                     Thêm Kinh Nghiệm
                   </button>
@@ -890,7 +890,7 @@ export default function Career() {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition"
+                    className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-[#fff] text-sm font-semibold transition"
                   >
                     Tạo Mục Tiêu
                   </button>

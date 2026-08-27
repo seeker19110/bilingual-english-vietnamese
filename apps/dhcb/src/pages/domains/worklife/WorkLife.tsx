@@ -88,7 +88,7 @@ export default function WorkLife() {
                 <Icon className="w-4 h-4" aria-hidden="true" />
                 <span>{t.label}</span>
                 <span
-                  className={`hidden sm:inline text-xs font-normal ${active ? 'text-black/70' : 'text-zinc-300'}`}
+                  className={`hidden sm:inline text-xs font-normal ${active ? 'text-black' : 'text-zinc-300'}`}
                 >
                   · {t.hint}
                 </span>

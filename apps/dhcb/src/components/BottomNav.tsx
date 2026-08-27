@@ -109,7 +109,7 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
           <div className="absolute bottom-2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-accent-500/50 to-transparent" />
           <div className="absolute inset-x-0 top-2 flex justify-center pointer-events-none">
             {isReachabilityOpen ? (
-              <ChevronUp className="w-4 h-4 text-accent-400/70 animate-bounce" />
+              <ChevronUp className="w-4 h-4 text-accent-400/70 theme-light:text-accent-800/70 animate-bounce" />
             ) : (
               <ChevronDown className="w-4 h-4 text-zinc-500 animate-bounce" />
             )}
@@ -185,7 +185,9 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
           </div>
           <span
             className={`truncate max-w-[5.25rem] tracking-tight mt-0.5 text-[10px] sm:text-[11px] font-bold ${
-              isCompanion ? 'text-accent-300' : 'text-zinc-300 group-hover:text-white'
+              isCompanion
+                ? 'text-accent-300 theme-light:text-accent-800'
+                : 'text-zinc-300 group-hover:text-white'
             }`}
           >
             Agent Bạn Đồng Hành

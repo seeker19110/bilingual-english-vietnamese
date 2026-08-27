@@ -55,13 +55,13 @@ export default function MeshHealthMonitorModal({
         </button>
 
         <div className="flex items-center gap-3 border-b border-zinc-800 pb-3">
-          <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+          <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 theme-light:text-cyan-800 border border-cyan-500/30">
             <Radio className="w-5 h-5" />
           </div>
           <div>
             <h3 className="text-sm font-bold text-zinc-100 flex items-center gap-2">
               Giám Sát Mạng Lưới WebSocket Mesh
-              <span className="rounded px-1.5 py-0.2 text-[9px] font-bold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+              <span className="rounded px-1.5 py-0.2 text-[9px] font-bold uppercase bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-800 border border-emerald-500/40">
                 {meshStatus.overallQuality}% Quality
               </span>
             </h3>
@@ -73,7 +73,7 @@ export default function MeshHealthMonitorModal({
           <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800">
             <span className="text-[10px] text-zinc-400 block mb-1">Độ Trễ Mạng (P50/P95)</span>
             <div className="flex items-baseline gap-1">
-              <span className="text-lg font-bold text-emerald-400 font-mono">
+              <span className="text-lg font-bold text-emerald-400 theme-light:text-emerald-800 font-mono">
                 {telemetry.currentLatencyMs}
               </span>
               <span className="text-xs text-zinc-500 font-mono">ms</span>
@@ -83,7 +83,7 @@ export default function MeshHealthMonitorModal({
           <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800">
             <span className="text-[10px] text-zinc-400 block mb-1">Số Node Relay Hoạt Động</span>
             <div className="flex items-baseline gap-1">
-              <span className="text-lg font-bold text-cyan-400 font-mono">
+              <span className="text-lg font-bold text-cyan-400 theme-light:text-cyan-800 font-mono">
                 {meshStatus.activeNodes}
               </span>
               <span className="text-xs text-zinc-500">nodes</span>
@@ -103,7 +103,7 @@ export default function MeshHealthMonitorModal({
           <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800">
             <span className="text-[10px] text-zinc-400 block mb-1">Chi Phí Tích Lũy</span>
             <div className="flex items-baseline gap-1">
-              <span className="text-lg font-bold text-emerald-400 font-mono">
+              <span className="text-lg font-bold text-emerald-400 theme-light:text-emerald-800 font-mono">
                 {telemetry.totalTokens} tokens
               </span>
             </div>
@@ -113,7 +113,7 @@ export default function MeshHealthMonitorModal({
         <div className="rounded-xl bg-zinc-950/80 p-3.5 border border-zinc-800 space-y-2.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-xs font-bold text-zinc-200">
-              <ShieldCheck className="w-4 h-4 text-cyan-400" />
+              <ShieldCheck className="w-4 h-4 text-cyan-400 theme-light:text-cyan-800" />
               <span>Budget Quota Guard (Circuit Breaker)</span>
             </div>
             <span className="text-[10px] text-zinc-400 font-mono">Hạn mức phiên: theo gói</span>

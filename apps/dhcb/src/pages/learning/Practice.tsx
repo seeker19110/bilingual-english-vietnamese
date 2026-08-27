@@ -229,7 +229,7 @@ function VocabListenGuess({
           onClick={() =>
             current && void speak(isA ? current.word : current.vi, isA ? 'en-US' : 'vi-VN')
           }
-          className="flex items-center gap-2 px-6 py-4 rounded-2xl bg-accent-500/15 border border-accent-500/30 text-accent-300 hover:bg-accent-500/25 transition"
+          className="flex items-center gap-2 px-6 py-4 rounded-2xl bg-accent-500/15 border border-accent-500/30 text-accent-300 theme-light:text-accent-800 hover:bg-accent-500/25 transition"
         >
           <Volume2 className="w-6 h-6" />
           <span className="text-sm font-medium">{isA ? 'Nghe lại' : 'Play again'}</span>
@@ -246,9 +246,9 @@ function VocabListenGuess({
               disabled={showState}
               className={`flex items-center justify-between px-4 py-3 min-h-11 rounded-xl text-sm font-medium border transition text-left ${
                 showState && isCorrect
-                  ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300'
+                  ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300 theme-light:text-emerald-800'
                   : showState && opt === picked
-                    ? 'bg-rose-500/15 border-rose-500/40 text-rose-300'
+                    ? 'bg-rose-500/15 border-rose-500/40 text-rose-300 theme-light:text-rose-800'
                     : 'bg-zinc-800/60 border-zinc-700/60 text-zinc-200 hover:bg-zinc-800'
               }`}
             >
@@ -265,7 +265,7 @@ function VocabListenGuess({
             setIdx((i) => i + 1)
             setPicked(null)
           }}
-          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-white text-sm font-semibold hover:bg-accent-400 transition"
+          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition"
         >
           {isA ? 'Câu tiếp theo →' : 'Next →'}
         </button>
@@ -401,7 +401,7 @@ function SentenceScramble({
 
       {checked !== null && (
         <p
-          className={`text-center text-sm font-medium ${checked ? 'text-emerald-400' : 'text-rose-400'}`}
+          className={`text-center text-sm font-medium ${checked ? 'text-emerald-400 theme-light:text-emerald-800' : 'text-rose-400 theme-light:text-rose-800'}`}
         >
           {checked
             ? isA
@@ -415,14 +415,14 @@ function SentenceScramble({
         <button
           onClick={check}
           disabled={bank.length > 0}
-          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-white text-sm font-semibold hover:bg-accent-400 transition disabled:opacity-40 disabled:pointer-events-none"
+          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition disabled:opacity-40 disabled:pointer-events-none"
         >
           {isA ? 'Kiểm tra' : 'Check'}
         </button>
       ) : (
         <button
           onClick={() => setIdx((i) => i + 1)}
-          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-white text-sm font-semibold hover:bg-accent-400 transition"
+          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition"
         >
           {isA ? 'Câu tiếp theo →' : 'Next →'}
         </button>
@@ -495,7 +495,7 @@ function DictationTyping({
       <div className="flex justify-center">
         <button
           onClick={() => void speak(current.text, current.lang)}
-          className="flex items-center gap-2 px-6 py-4 rounded-2xl bg-accent-500/15 border border-accent-500/30 text-accent-300 hover:bg-accent-500/25 transition"
+          className="flex items-center gap-2 px-6 py-4 rounded-2xl bg-accent-500/15 border border-accent-500/30 text-accent-300 theme-light:text-accent-800 hover:bg-accent-500/25 transition"
         >
           <Volume2 className="w-6 h-6" />
           <span className="text-sm font-medium">{isA ? 'Nghe câu' : 'Play sentence'}</span>
@@ -511,7 +511,7 @@ function DictationTyping({
       {checked !== null && (
         <div className="text-center space-y-1">
           <p
-            className={`text-sm font-bold ${checked >= 85 ? 'text-emerald-400' : 'text-rose-400'}`}
+            className={`text-sm font-bold ${checked >= 85 ? 'text-emerald-400 theme-light:text-emerald-800' : 'text-rose-400 theme-light:text-rose-800'}`}
           >
             {checked}%
           </p>
@@ -524,7 +524,7 @@ function DictationTyping({
         <button
           onClick={check}
           disabled={!typed.trim()}
-          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-white text-sm font-semibold hover:bg-accent-400 transition disabled:opacity-40 disabled:pointer-events-none"
+          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition disabled:opacity-40 disabled:pointer-events-none"
         >
           {isA ? 'Kiểm tra' : 'Check'}
         </button>
@@ -535,7 +535,7 @@ function DictationTyping({
             setTyped('')
             setChecked(null)
           }}
-          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-white text-sm font-semibold hover:bg-accent-400 transition"
+          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition"
         >
           {isA ? 'Câu tiếp theo →' : 'Next →'}
         </button>
@@ -625,9 +625,9 @@ function FillBlankQuiz({
               disabled={showState}
               className={`flex items-center justify-between px-4 py-3 min-h-11 rounded-xl text-sm font-medium border transition text-left ${
                 showState && isCorrect
-                  ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300'
+                  ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300 theme-light:text-emerald-800'
                   : showState && opt === picked
-                    ? 'bg-rose-500/15 border-rose-500/40 text-rose-300'
+                    ? 'bg-rose-500/15 border-rose-500/40 text-rose-300 theme-light:text-rose-800'
                     : 'bg-zinc-800/60 border-zinc-700/60 text-zinc-200 hover:bg-zinc-800'
               }`}
             >
@@ -644,7 +644,7 @@ function FillBlankQuiz({
             setIdx((i) => i + 1)
             setPicked(null)
           }}
-          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-white text-sm font-semibold hover:bg-accent-400 transition"
+          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition"
         >
           {isA ? 'Câu tiếp theo →' : 'Next →'}
         </button>
@@ -697,7 +697,7 @@ function PronounceList({
       <PronunciationCheck key={current} target={current} lang={lang} isA={isA} />
       <button
         onClick={() => setIdx((i) => i + 1)}
-        className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-white text-sm font-semibold hover:bg-accent-400 transition"
+        className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition"
       >
         {isA ? 'Tiếp theo →' : 'Next →'}
       </button>
@@ -804,8 +804,8 @@ function Shadowing({ pool, isA, onExit }: { pool: DictEntry[]; isA: boolean; onE
           onClick={status === 'active' ? stop : start}
           className={`flex items-center gap-2 px-6 py-4 rounded-2xl border transition ${
             status === 'active'
-              ? 'bg-rose-500/15 border-rose-500/30 text-rose-300'
-              : 'bg-accent-500/15 border-accent-500/30 text-accent-300 hover:bg-accent-500/25'
+              ? 'bg-rose-500/15 border-rose-500/30 text-rose-300 theme-light:text-rose-800'
+              : 'bg-accent-500/15 border-accent-500/30 text-accent-300 theme-light:text-accent-800 hover:bg-accent-500/25'
           }`}
         >
           {status === 'active' ? (
@@ -827,7 +827,7 @@ function Shadowing({ pool, isA, onExit }: { pool: DictEntry[]; isA: boolean; onE
       {score !== null && (
         <div className="text-center space-y-2">
           <p
-            className={`text-sm font-bold ${score >= SHADOW_PASS_THRESHOLD ? 'text-emerald-400' : 'text-rose-400'}`}
+            className={`text-sm font-bold ${score >= SHADOW_PASS_THRESHOLD ? 'text-emerald-400 theme-light:text-emerald-800' : 'text-rose-400 theme-light:text-rose-800'}`}
           >
             {score}%
           </p>
@@ -837,8 +837,8 @@ function Shadowing({ pool, isA, onExit }: { pool: DictEntry[]; isA: boolean; onE
                 key={i}
                 className={`px-2 py-0.5 rounded-lg text-sm font-medium ${
                   w.ok
-                    ? 'bg-accent-500/15 text-accent-300 border border-accent-500/25'
-                    : 'bg-rose-500/15 text-rose-300 border border-rose-500/25'
+                    ? 'bg-accent-500/15 text-accent-300 theme-light:text-accent-800 border border-accent-500/25'
+                    : 'bg-rose-500/15 text-rose-300 theme-light:text-rose-800 border border-rose-500/25'
                 }`}
               >
                 {w.word}
@@ -850,12 +850,14 @@ function Shadowing({ pool, isA, onExit }: { pool: DictEntry[]; isA: boolean; onE
           </p>
         </div>
       )}
-      {error && <p className="text-xs text-rose-400/80 text-center">{error}</p>}
+      {error && (
+        <p className="text-xs text-rose-400/80 theme-light:text-rose-800/80 text-center">{error}</p>
+      )}
 
       {score !== null && (
         <button
           onClick={() => setIdx((i) => i + 1)}
-          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-white text-sm font-semibold hover:bg-accent-400 transition"
+          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition"
         >
           {isA ? 'Câu tiếp theo →' : 'Next →'}
         </button>
@@ -990,7 +992,7 @@ function ReverseInterview({ isA, user, onExit }: { isA: boolean; user: User; onE
         {idx + 1}/{topics.length}
       </p>
       <div className="text-center space-y-1">
-        <p className="text-[11px] uppercase tracking-wide text-accent-400 font-semibold">
+        <p className="text-[11px] uppercase tracking-wide text-accent-400 theme-light:text-accent-800 font-semibold">
           {isA ? 'AI hỏi' : 'AI asks'}
         </p>
         <p className="text-lg font-semibold text-white px-2">
@@ -1004,8 +1006,8 @@ function ReverseInterview({ isA, user, onExit }: { isA: boolean; user: User; onE
           disabled={grading}
           className={`flex items-center gap-2 px-6 py-4 rounded-2xl border transition disabled:opacity-40 ${
             listening
-              ? 'bg-rose-500/15 border-rose-500/30 text-rose-300'
-              : 'bg-accent-500/15 border-accent-500/30 text-accent-300 hover:bg-accent-500/25'
+              ? 'bg-rose-500/15 border-rose-500/30 text-rose-300 theme-light:text-rose-800'
+              : 'bg-accent-500/15 border-accent-500/30 text-accent-300 theme-light:text-accent-800 hover:bg-accent-500/25'
           }`}
         >
           {listening ? (
@@ -1034,7 +1036,7 @@ function ReverseInterview({ isA, user, onExit }: { isA: boolean; user: User; onE
           <button
             onClick={() => void grade()}
             disabled={grading}
-            className="flex items-center gap-1.5 mx-auto px-4 py-2.5 min-h-11 rounded-xl bg-accent-500 text-white text-sm font-semibold hover:bg-accent-400 transition disabled:opacity-50"
+            className="flex items-center gap-1.5 mx-auto px-4 py-2.5 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition disabled:opacity-50"
           >
             <Sparkles className="w-4 h-4" />
             {grading
@@ -1051,25 +1053,27 @@ function ReverseInterview({ isA, user, onExit }: { isA: boolean; user: User; onE
       {result && (
         <div className="text-center space-y-2 rounded-xl border border-zinc-800 bg-zinc-900/50 p-4">
           <p
-            className={`text-2xl font-bold ${result.score >= 60 ? 'text-emerald-400' : 'text-rose-400'}`}
+            className={`text-2xl font-bold ${result.score >= 60 ? 'text-emerald-400 theme-light:text-emerald-800' : 'text-rose-400 theme-light:text-rose-800'}`}
           >
             {result.score}%
           </p>
           <p className="text-sm text-zinc-200">{result.feedback}</p>
           {result.correction && (
-            <p className="text-xs text-amber-300/90">
+            <p className="text-xs text-amber-300/90 theme-light:text-amber-800/90">
               {isA ? 'Gợi ý câu tốt hơn' : 'Better version'}: {result.correction}
             </p>
           )}
         </div>
       )}
 
-      {error && <p className="text-xs text-rose-400/80 text-center">{error}</p>}
+      {error && (
+        <p className="text-xs text-rose-400/80 theme-light:text-rose-800/80 text-center">{error}</p>
+      )}
 
       {result && (
         <button
           onClick={() => setIdx((i) => i + 1)}
-          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-white text-sm font-semibold hover:bg-accent-400 transition"
+          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition"
         >
           {isA ? 'Câu hỏi tiếp theo →' : 'Next question →'}
         </button>
@@ -1207,7 +1211,7 @@ export default function Practice() {
             <div>
               <div className="flex items-center gap-2 mb-0.5">
                 <h3 className="font-bold text-white text-base">Sổ Tay Sửa Lỗi Đa Môn AI</h3>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-bold border border-rose-500/30">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 theme-light:text-rose-800 font-bold border border-rose-500/30">
                   Smart Mistake Bank
                 </span>
               </div>
@@ -1219,7 +1223,7 @@ export default function Practice() {
           </div>
           <button
             onClick={() => nav('/so-tay-loi-sai')}
-            className="tap-44 w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-rose-500 hover:bg-rose-400 text-zinc-950 font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-rose-500/20 transition active:scale-95 shrink-0"
+            className="tap-44 w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-rose-500 hover:bg-rose-400 text-black font-bold text-xs flex items-center justify-center gap-2 shadow-md shadow-rose-500/20 transition active:scale-95 shrink-0"
           >
             <span>Mở Sổ Lỗi & Ôn Tập</span>
             <ArrowRight className="w-4 h-4" />
@@ -1260,7 +1264,7 @@ export default function Practice() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1 mb-0.5">
                     <h3 className="font-bold text-white text-sm">Toán Học</h3>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-300 font-semibold border border-blue-500/20">
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-300 theme-light:text-blue-800 font-semibold border border-blue-500/20">
                       LaTeX OCR
                     </span>
                   </div>
@@ -1269,7 +1273,7 @@ export default function Practice() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center justify-between text-[11px] text-blue-400 font-medium pt-2 border-t border-zinc-800/80">
+              <div className="flex items-center justify-between text-[11px] text-blue-400 theme-light:text-blue-800 font-medium pt-2 border-t border-zinc-800/80">
                 <span>Giải bài tập & Nhận gợi ý Socratic</span>
                 <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -1287,7 +1291,7 @@ export default function Practice() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1 mb-0.5">
                     <h3 className="font-bold text-white text-sm">Vật Lý</h3>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-500/15 text-cyan-300 font-semibold border border-cyan-500/20">
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-500/15 text-cyan-300 theme-light:text-cyan-800 font-semibold border border-cyan-500/20">
                       Simulators
                     </span>
                   </div>
@@ -1296,7 +1300,7 @@ export default function Practice() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center justify-between text-[11px] text-cyan-400 font-medium pt-2 border-t border-zinc-800/80">
+              <div className="flex items-center justify-between text-[11px] text-cyan-400 theme-light:text-cyan-800 font-medium pt-2 border-t border-zinc-800/80">
                 <span>Luyện giải & Thí nghiệm</span>
                 <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -1314,7 +1318,7 @@ export default function Practice() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1 mb-0.5">
                     <h3 className="font-bold text-white text-sm">Hóa Học</h3>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-300 font-semibold border border-amber-500/20">
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-300 theme-light:text-amber-800 font-semibold border border-amber-500/20">
                       PTHH Step
                     </span>
                   </div>
@@ -1323,7 +1327,7 @@ export default function Practice() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center justify-between text-[11px] text-amber-400 font-medium pt-2 border-t border-zinc-800/80">
+              <div className="flex items-center justify-between text-[11px] text-amber-400 theme-light:text-amber-800 font-medium pt-2 border-t border-zinc-800/80">
                 <span>Luyện chuỗi phản ứng</span>
                 <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -1341,7 +1345,7 @@ export default function Practice() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1 mb-0.5">
                     <h3 className="font-bold text-white text-sm">Sinh Học</h3>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-300 font-semibold border border-emerald-500/20">
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-300 theme-light:text-emerald-800 font-semibold border border-emerald-500/20">
                       Di Truyền
                     </span>
                   </div>
@@ -1350,7 +1354,7 @@ export default function Practice() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center justify-between text-[11px] text-emerald-400 font-medium pt-2 border-t border-zinc-800/80">
+              <div className="flex items-center justify-between text-[11px] text-emerald-400 theme-light:text-emerald-800 font-medium pt-2 border-t border-zinc-800/80">
                 <span>Luyện giải bài tập ADN</span>
                 <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -1368,7 +1372,7 @@ export default function Practice() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1 mb-0.5">
                     <h3 className="font-bold text-white text-sm">Tiếng Anh CEFR</h3>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-purple-500/15 text-purple-300 font-semibold border border-purple-500/20">
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-purple-500/15 text-purple-300 theme-light:text-purple-800 font-semibold border border-purple-500/20">
                       A1 - C2
                     </span>
                   </div>
@@ -1377,7 +1381,7 @@ export default function Practice() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center justify-between text-[11px] text-purple-400 font-medium pt-2 border-t border-zinc-800/80">
+              <div className="flex items-center justify-between text-[11px] text-purple-400 theme-light:text-purple-800 font-medium pt-2 border-t border-zinc-800/80">
                 <span>Khám phá lộ trình</span>
                 <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -1395,7 +1399,7 @@ export default function Practice() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1 mb-0.5">
                     <h3 className="font-bold text-white text-sm">10 Simulators STEM</h3>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-500/15 text-teal-300 font-semibold border border-teal-500/20">
+                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-500/15 text-teal-300 theme-light:text-teal-800 font-semibold border border-teal-500/20">
                       Phòng Thí Nghiệm
                     </span>
                   </div>
@@ -1404,7 +1408,7 @@ export default function Practice() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center justify-between text-[11px] text-teal-400 font-medium pt-2 border-t border-zinc-800/80">
+              <div className="flex items-center justify-between text-[11px] text-teal-400 theme-light:text-teal-800 font-medium pt-2 border-t border-zinc-800/80">
                 <span>Vào phòng thí nghiệm</span>
                 <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -1433,7 +1437,7 @@ export default function Practice() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-1 mb-0.5">
                   <h3 className="font-bold text-white text-sm">Luyện Nói & Chấm Âm IPA</h3>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-sky-500/15 text-sky-300 font-semibold border border-sky-500/20">
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-sky-500/15 text-sky-300 theme-light:text-sky-800 font-semibold border border-sky-500/20">
                     Live STT
                   </span>
                 </div>
@@ -1454,7 +1458,7 @@ export default function Practice() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-1 mb-0.5">
                   <h3 className="font-bold text-white text-sm">Luyện Viết & Chấm IELTS</h3>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-violet-500/15 text-violet-300 font-semibold border border-violet-500/20">
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-violet-500/15 text-violet-300 theme-light:text-violet-800 font-semibold border border-violet-500/20">
                     Band 9.0
                   </span>
                 </div>
@@ -1475,7 +1479,7 @@ export default function Practice() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-1 mb-0.5">
                   <h3 className="font-bold text-white text-sm">Chat Đàm Thoại AI</h3>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-accent-500/15 text-accent-300 font-semibold border border-accent-500/20">
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-accent-500/15 text-accent-300 theme-light:text-accent-800 font-semibold border border-accent-500/20">
                     Socratic
                   </span>
                 </div>
@@ -1496,7 +1500,7 @@ export default function Practice() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-1 mb-0.5">
                   <h3 className="font-bold text-white text-sm">Thư Viện Luyện Nghe</h3>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-rose-500/15 text-rose-300 font-semibold border border-rose-500/20">
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-rose-500/15 text-rose-300 theme-light:text-rose-800 font-semibold border border-rose-500/20">
                     Chirp3 HD
                   </span>
                 </div>
@@ -1523,7 +1527,7 @@ export default function Practice() {
               onClick={() => setMode('vocab-listen')}
               className="tap-44 flex items-center gap-3 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-zinc-700 text-left transition active:scale-[0.98] group"
             >
-              <div className="w-9 h-9 rounded-xl bg-sky-500/15 text-sky-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+              <div className="w-9 h-9 rounded-xl bg-sky-500/15 text-sky-400 theme-light:text-sky-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
                 <Headphones className="w-4 h-4" />
               </div>
               <div className="flex-1 min-w-0">
@@ -1540,7 +1544,7 @@ export default function Practice() {
               onClick={() => setMode('scramble')}
               className="tap-44 flex items-center gap-3 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-zinc-700 text-left transition active:scale-[0.98] group"
             >
-              <div className="w-9 h-9 rounded-xl bg-indigo-500/15 text-indigo-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+              <div className="w-9 h-9 rounded-xl bg-indigo-500/15 text-indigo-400 theme-light:text-indigo-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
                 <Shuffle className="w-4 h-4" />
               </div>
               <div className="flex-1 min-w-0">
@@ -1559,7 +1563,7 @@ export default function Practice() {
               onClick={() => setMode('dictation')}
               className="tap-44 flex items-center gap-3 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-zinc-700 text-left transition active:scale-[0.98] group"
             >
-              <div className="w-9 h-9 rounded-xl bg-violet-500/15 text-violet-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+              <div className="w-9 h-9 rounded-xl bg-violet-500/15 text-violet-400 theme-light:text-violet-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
                 <Keyboard className="w-4 h-4" />
               </div>
               <div className="flex-1 min-w-0">
@@ -1578,7 +1582,7 @@ export default function Practice() {
               onClick={() => setMode('fillblank')}
               className="tap-44 flex items-center gap-3 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-zinc-700 text-left transition active:scale-[0.98] group"
             >
-              <div className="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+              <div className="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-400 theme-light:text-emerald-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
                 <ListChecks className="w-4 h-4" />
               </div>
               <div className="flex-1 min-w-0">
@@ -1597,7 +1601,7 @@ export default function Practice() {
               onClick={() => setMode('pronounce-words')}
               className="tap-44 flex items-center gap-3 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-zinc-700 text-left transition active:scale-[0.98] group"
             >
-              <div className="w-9 h-9 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+              <div className="w-9 h-9 rounded-xl bg-amber-500/15 text-amber-400 theme-light:text-amber-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
                 <Mic className="w-4 h-4" />
               </div>
               <div className="flex-1 min-w-0">
@@ -1616,7 +1620,7 @@ export default function Practice() {
               onClick={() => setMode('read-aloud')}
               className="tap-44 flex items-center gap-3 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-zinc-700 text-left transition active:scale-[0.98] group"
             >
-              <div className="w-9 h-9 rounded-xl bg-rose-500/15 text-rose-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+              <div className="w-9 h-9 rounded-xl bg-rose-500/15 text-rose-400 theme-light:text-rose-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
                 <Volume2 className="w-4 h-4" />
               </div>
               <div className="flex-1 min-w-0">
@@ -1635,7 +1639,7 @@ export default function Practice() {
               onClick={() => setMode('shadowing')}
               className="tap-44 flex items-center gap-3 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-zinc-700 text-left transition active:scale-[0.98] group"
             >
-              <div className="w-9 h-9 rounded-xl bg-accent-500/15 text-accent-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+              <div className="w-9 h-9 rounded-xl bg-accent-500/15 text-accent-400 theme-light:text-accent-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
                 <Sparkles className="w-4 h-4" />
               </div>
               <div className="flex-1 min-w-0">
@@ -1654,7 +1658,7 @@ export default function Practice() {
               onClick={() => setMode('interview')}
               className="tap-44 flex items-center gap-3 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-zinc-700 text-left transition active:scale-[0.98] group"
             >
-              <div className="w-9 h-9 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+              <div className="w-9 h-9 rounded-xl bg-purple-500/15 text-purple-400 theme-light:text-purple-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
                 <MessageCircle className="w-4 h-4" />
               </div>
               <div className="flex-1 min-w-0">
@@ -1685,7 +1689,7 @@ export default function Practice() {
               onClick={() => nav('/so-tay-loi-sai')}
               className="tap-44 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-rose-500/40 text-left transition active:scale-[0.98] group"
             >
-              <div className="w-8 h-8 rounded-xl bg-rose-500/15 text-rose-400 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
+              <div className="w-8 h-8 rounded-xl bg-rose-500/15 text-rose-400 theme-light:text-rose-800 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
                 <AlertCircle className="w-4 h-4" />
               </div>
               <p className="text-xs font-bold text-white truncate">Sổ Tay Lỗi Sai</p>
@@ -1697,7 +1701,7 @@ export default function Practice() {
               onClick={() => nav('/tu-dien')}
               className="tap-44 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-amber-500/40 text-left transition active:scale-[0.98] group"
             >
-              <div className="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
+              <div className="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-400 theme-light:text-amber-800 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
                 <BookOpen className="w-4 h-4" />
               </div>
               <p className="text-xs font-bold text-white truncate">Từ Điển 12k+ IPA</p>
@@ -1709,7 +1713,7 @@ export default function Practice() {
               onClick={() => nav('/truyen-song-ngu')}
               className="tap-44 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-pink-500/40 text-left transition active:scale-[0.98] group"
             >
-              <div className="w-8 h-8 rounded-xl bg-pink-500/15 text-pink-400 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
+              <div className="w-8 h-8 rounded-xl bg-pink-500/15 text-pink-400 theme-light:text-pink-800 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
                 <BookMarked className="w-4 h-4" />
               </div>
               <p className="text-xs font-bold text-white truncate">Truyện Karaoke Text</p>
@@ -1721,7 +1725,7 @@ export default function Practice() {
               onClick={() => nav('/cau-thong-dung')}
               className="tap-44 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-blue-500/40 text-left transition active:scale-[0.98] group"
             >
-              <div className="w-8 h-8 rounded-xl bg-blue-500/15 text-blue-400 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
+              <div className="w-8 h-8 rounded-xl bg-blue-500/15 text-blue-400 theme-light:text-blue-800 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
                 <MessageCircle className="w-4 h-4" />
               </div>
               <p className="text-xs font-bold text-white truncate">Mẫu Câu Giao Tiếp</p>
@@ -1733,7 +1737,7 @@ export default function Practice() {
               onClick={() => nav('/bai-hoc')}
               className="tap-44 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-teal-500/40 text-left transition active:scale-[0.98] group"
             >
-              <div className="w-8 h-8 rounded-xl bg-teal-500/15 text-teal-400 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
+              <div className="w-8 h-8 rounded-xl bg-teal-500/15 text-teal-400 theme-light:text-teal-800 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
                 <Award className="w-4 h-4" />
               </div>
               <p className="text-xs font-bold text-white truncate">100+ Hội Thoại Mẫu</p>
@@ -1745,7 +1749,7 @@ export default function Practice() {
               onClick={() => nav('/thu-thach')}
               className="tap-44 p-3.5 rounded-2xl bg-zinc-900/70 hover:bg-zinc-850 border border-zinc-800/80 hover:border-orange-500/40 text-left transition active:scale-[0.98] group"
             >
-              <div className="w-8 h-8 rounded-xl bg-orange-500/15 text-orange-400 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
+              <div className="w-8 h-8 rounded-xl bg-orange-500/15 text-orange-400 theme-light:text-orange-800 flex items-center justify-center shrink-0 mb-2 group-hover:scale-105 transition">
                 <Video className="w-4 h-4" />
               </div>
               <p className="text-xs font-bold text-white truncate">Thử Thách 1 Phút</p>
