@@ -26,17 +26,22 @@ NNNN-YYYY-MM-DD-slug.md
 - `slug` — chữ thường không dấu, nối bằng dấu gạch ngang.
 
 Hai PR song song có thể cùng lấy một số — git không xung đột (slug khác nhau nên tên file khác
-nhau), **nhưng test `scripts/changelog.test.ts` CHẶN số trùng**: `readEntries()` phải sắp được
-thứ tự nghiêm ngặt, hai file cùng số làm khẳng định đó sai. Nên khi merge `main` về mà thấy số
-của mình đã bị PR khác dùng, **đổi số file của mình cho lớn hơn** rồi sửa các chỗ trỏ tới nó
-(đã gặp thật HAI LẦN chỉ trong 2026-08-26/27 trên cùng một nhánh: `main` dùng 0155–0158 nên
-nhánh dời sang 0159–0161, rồi `main` merge tiếp một PR nữa lấy 0159 nên phải dời lần hai sang
-0160–0162. Nhánh sống càng lâu thì càng phải dời — kiểm lại số ngay trước khi mở PR).
+nhau), **nhưng `scripts/changelog.test.ts` CHẶN số trùng**: `readEntries()` phải sắp được thứ tự
+nghiêm ngặt, hai file cùng số làm khẳng định đó sai. Test **không** chặn khoảng trống — chỉ chặn
+trùng.
 
-_(Đoạn này trước đây ghi "cùng số — không sao", trái với test đang chạy. Đã sửa lại theo hành vi
-thật của test.)_
+**Nhánh sống lâu thì phải dời số, và có thể phải dời nhiều lần.** Đã gặp thật ba lần liên tiếp
+trên cùng một nhánh trong hai ngày 2026-08-26/27: `main` merge PR khác, PR đó lấy đúng số nhánh
+đang giữ, CI đỏ ở `quality`. Mỗi lần lại dời lên một bậc rồi lại bị chiếm tiếp.
 
-Bất biến này được canh bằng test: `scripts/changelog.test.ts`.
+**Cách làm khi rơi vào cảnh đó:** đừng dời sát ngay sau số cuối của `main` — **chừa một khoảng
+an toàn** (vài số) để những PR merge trước bạn có chỗ. Khoảng trống là hợp lệ: không test nào
+chặn, `npm run changelog` sắp theo số nên vẫn đúng thứ tự, và hook đầu phiên chỉ đọc số lớn nhất.
+Kiểm số của `main` ngay trước khi mở PR bằng:
+
+```bash
+git ls-tree --name-only origin/main docs/changelog/ | tail -3
+```
 
 ## Dùng
 
