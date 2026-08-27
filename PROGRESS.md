@@ -1140,8 +1140,8 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
      nhật 19h VN trong `server.ts`), API `/api/companion-link`, giao diện
      `CompanionLinkSection.tsx` trong Hồ sơ, cổng a11y riêng `e2e/a11y-companion-link.spec.ts`.
      ⚠️ **Việc tay:** `npm run migrate:pg` trên VPS (hoặc để deploy tự chạy khi merge).
-     Việc để lại: bản tiếng Anh cho chiều B; thêm dòng "còn N ngày đến kỳ thi" khi chế độ ôn thi
-     xong.
+     Việc để lại: bản chiều B — **nợ có chủ đích, người dùng chốt 2026-08-26**, xem mục "Nợ kỹ
+     thuật còn mở"; thêm dòng "còn N ngày đến kỳ thi" khi chế độ ôn thi xong.
      **Điểm cần người dùng chốt trước khi bắt đầu E1:** kỳ thi đợt 1 có đúng là "vào lớp 10 — Tiếng
      Anh" không (đây là giả định của AI, chọn vì môn Anh chín nhất và không phụ thuộc engine chấm
      đang thiếu).
@@ -2517,6 +2517,37 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   - Kết quả người dùng xác nhận: hết treo, hết OOM, tốc độ xoá orphan "cải thiện rất nhanh".
 
 ## Nợ kỹ thuật còn mở
+
+- 🟡 **[2026-08-26 — NỢ CÓ CHỦ ĐÍCH, người dùng chốt] Hai tính năng mới CHƯA có bản chiều B**
+  (người nước ngoài học tiếng Việt). Người dùng xác nhận: "chiều A là ok rồi, chiều B nợ".
+
+  **Đang thiếu gì.** Cả hai tính năng ra mắt 2026-08-26 mới có tiếng Việt:
+
+  | Tính năng                 | Trạng thái chiều B                                                                                                  |
+  | ------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+  | Người thân theo dõi       | Khối trong Hồ sơ **ẩn hẳn** khi `isA === false` (`Profile.tsx`); nội dung thư chỉ có tiếng Việt (`weeklyReport.ts`) |
+  | Chế độ ôn thi (`/on-thi`) | Trang **hiện nhưng toàn chữ tiếng Việt**; kỳ thi "vào lớp 10 — Tiếng Anh" cũng không hợp với người học chiều B      |
+
+  **Vì sao chọn nợ thay vì làm dở.** Hiện chuỗi ở chiều B sẽ cho ra màn hình nửa Việt nửa Anh —
+  tệ hơn là chưa có. Riêng chế độ ôn thi còn cần một **kỳ thi khác** (người nước ngoài học tiếng
+  Việt thi VSTEP/chứng chỉ tiếng Việt, không thi vào lớp 10), tức là việc nội dung chứ không chỉ
+  việc dịch.
+
+  **Việc phải làm khi trả nợ:**
+
+  1. `apps/server/src/api/_lib/weeklyReport.ts` — tách chuỗi theo `direction`, thêm bộ câu gợi ý
+     tiếng Anh; contract `WeeklyReportData` phải thêm `direction` để `weeklyReportService.ts`
+     biết chọn bản nào (hiện chưa có trường này).
+  2. `apps/dhcb/src/components/CompanionLinkSection.tsx` — thêm prop `isA` như `ReferralSection`,
+     bỏ điều kiện `{isA && ...}` ở `Profile.tsx`.
+  3. `apps/dhcb/src/pages/learning/ExamPlan.tsx` + `apps/dhcb/src/lib/examPlan.ts` — chuỗi song
+     ngữ, và mở `ExamKindSchema` (`packages/core-contracts/examPlan.ts`) cho kỳ thi của chiều B
+     kèm phạm vi từ vựng tương ứng.
+  4. Nới hai cổng a11y (`e2e/a11y-companion-link.spec.ts`, `e2e/a11y-exam-plan.spec.ts`) sang
+     `uiLang: 'en'` — `mockLogin` đã nhận tham số này sẵn.
+
+  **Điều kiện gỡ nợ:** cả hai tính năng chạy được ở `direction === 'B'` với 0 chuỗi tiếng Việt
+  lọt ra, và hai cổng a11y xanh ở cả hai ngôn ngữ giao diện.
 
 - 🔴 **[2026-08-26] Rate limit BỊ NÉ HOÀN TOÀN bằng header giả — đã vá tầng app, CÒN THIẾU
   tầng nginx trên VPS.** Đo thật trên production: 40 request liên tiếp vào `/api/app-settings`
