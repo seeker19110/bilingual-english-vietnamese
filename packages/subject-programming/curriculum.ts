@@ -393,6 +393,21 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Hướng Web S1 — accessibility nhập môn',
         topics: 'Bàn phím đi hết luồng, focus thấy được; 4 trạng thái màn hình, aria-live',
       },
+      {
+        id: 'p6-u19',
+        title: 'Hướng Kiến trúc S1 — module có ranh giới & luật phụ thuộc',
+        topics: 'Trách nhiệm duy nhất đo được; phụ thuộc một chiều, đảo phụ thuộc, vòng',
+      },
+      {
+        id: 'p6-u20',
+        title: 'Hướng Kiến trúc S1 — vẽ bản đồ & đọc hệ thống người khác',
+        topics: 'C4 bốn tầng, bản đồ kiểm được bằng máy; điểm nóng fan-in, dò vòng bóc lá',
+      },
+      {
+        id: 'p6-u21',
+        title: 'Hướng Kiến trúc S1 — đặc tả kín & sổ quyết định ADR',
+        topics: 'Sáu ô bắt buộc, tiêu chí đo được; ADR có phương án bị loại, điều kiện xem lại',
+      },
     ],
   },
 ]

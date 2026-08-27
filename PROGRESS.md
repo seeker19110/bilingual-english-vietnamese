@@ -1179,8 +1179,27 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   **Bài học kỹ thuật:** cổng nội dung yêu cầu **đáp án bước ④ Predict phải là output THẬT** của
   đoạn code (lựa chọn sai không được khớp) — soạn Predict kiểu "chọn câu giải thích đúng" là CI
   đỏ. Cả 7 bài dính lỗi này ở bản đầu.
-  **Việc tiếp theo của mạch này:** chặng S1 hướng `architecture`, rồi lưu tiến độ hướng xuống
-  Postgres.
+  **Việc tiếp theo của mạch này:** ~~chặng S1 hướng `architecture`~~ → **đã xong, xem mục ngay
+  dưới**; rồi lưu tiến độ hướng xuống Postgres.
+
+- **[2026-08-27] Môn Lập trình — NỘI DUNG CHẶNG S1 HƯỚNG KIẾN TRÚC — ✅ XONG.** Nhật ký:
+  `docs/changelog/0177-2026-08-27-feat-noi-dung-chang-s1-huong-kien-truc.md`. **6 bài học 8
+  bước** phủ đủ 4 module của `architecture-s1`, đặt trong 3 unit mới của P6: `p6-u19` (trách
+  nhiệm duy nhất đo được · luật phụ thuộc một chiều + đảo phụ thuộc), `p6-u20` (bản đồ C4 kiểm
+  được bằng máy · điểm nóng fan-in + dò vòng bằng bóc lá), `p6-u21` (đặc tả kín sáu ô · ADR có
+  ô "vì sao loại" và điều kiện xem lại). Nối tiếp dải unit của hướng Web: `p6-u16…u18` là Web,
+  `p6-u19…u21` là Kiến trúc.
+  **Quyết định nội dung đáng ghi:** hướng này dạy KỸ NĂNG ĐẶC TẢ chứ không dạy cú pháp, mà bài
+  Make thì phải chấm được bằng test-case. Cách giải: mỗi luật kiến trúc được biến thành MỘT HÀM
+  THUẦN đọc bản mô tả hệ thống rồi trả báo cáo vi phạm — đúng loại máy kiểm mà dự án thật đặt
+  trong CI (`npm run codemap`, lint luật phụ thuộc). Học viên ra khỏi chặng là có công cụ dùng
+  được, không phải chỉ có ý thức. Cả 6 bài dùng `language: 'typescript'` nên đi qua cổng tsc
+  thật (`lessonsTs.test.ts`).
+  Hai khuôn `docs/templates/dac-ta-tinh-nang.md` và `docs/templates/adr.md` được dạy ở `p6-u21`
+  ở đúng phần KIỂM ĐƯỢC BẰNG MÁY (đủ ô · tiêu chí có ngưỡng số · ADR có ≥ 2 phương án); phần
+  nội dung sâu vẫn để dành cho chặng S3.
+  **Việc tiếp theo của mạch này:** lưu tiến độ hướng xuống Postgres; sau đó chọn chặng S1 của
+  một hướng sản phẩm khác (gợi ý: `backend` hoặc `data`).
 
 - **[2026-08-26] Môn Lập trình — CHƯƠNG TRÌNH M (mở rộng ngôn ngữ & tư duy), 12 PR.** Hiến
   chương: `docs/research/dac-ta-mo-rong-ngon-ngu-va-tu-duy-2026-08-26.md` (PR-M0 ✅ xong).

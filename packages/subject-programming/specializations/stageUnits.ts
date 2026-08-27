@@ -13,6 +13,8 @@ import type { SpecializationId } from './types.js'
 export const SPEC_STAGE_UNITS: Record<string, string[]> = {
   // Hướng Web, chặng S1 — soạn 2026-08-27 (3 unit).
   'web-s1': ['p6-u16', 'p6-u17', 'p6-u18'],
+  // Hướng Kiến trúc, chặng S1 — soạn 2026-08-27 (3 unit).
+  'architecture-s1': ['p6-u19', 'p6-u20', 'p6-u21'],
 }
 
 /** Unit của một chặng; mảng RỖNG nghĩa là chặng chưa có bài (giao diện phải nói rõ điều đó). */
