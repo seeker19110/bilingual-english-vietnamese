@@ -1,4 +1,4 @@
-# 0162 — ci: cổng `metadata` đọc PR SỐNG thay vì ảnh chụp trong payload
+# 0166 — ci: cổng `metadata` đọc PR SỐNG thay vì ảnh chụp trong payload
 
 - **Ngày:** 2026-08-26
 - **PR:** #703
@@ -29,7 +29,7 @@ có cụm "Approved for implementation"? True
 
 Cổng đọc `context.payload.pull_request.body`. Payload là **ẢNH CHỤP tại thời điểm sự kiện
 webhook**, không phải trạng thái hiện tại của PR. Hôm đó Actions đang sự cố
-(xem changelog 0161) nên GitHub phát lại hàng tồn: run được tạo muộn hàng chục phút trong khi
+(xem changelog 0165) nên GitHub phát lại hàng tồn: run được tạo muộn hàng chục phút trong khi
 payload đóng băng từ lúc sự kiện phát sinh.
 
 | Run  | `head_sha` | Sự kiện lúc | Run tạo lúc |
