@@ -1,7 +1,7 @@
 # 0167 — ci: changelog chấp nhận số trùng, chốt quy ước cấp số "quét rồi +1"
 
 - **Ngày:** 2026-08-27
-- **PR:** (điền số sau khi mở PR)
+- **PR:** #708
 - **Nhánh:** `claude/programming-lessons-tl3tbg`
 
 ## Vấn đề
