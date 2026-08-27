@@ -260,6 +260,38 @@ phải đọc log, **tái hiện lỗi ở máy**, sửa và push cho tới khi 
 người dùng. Nếu `main` tiến lên gây xung đột thì merge `main` vào nhánh, giải xung đột, rồi
 **chạy lại toàn bộ cổng trên kết quả đã merge** (mục 9) trước khi push.
 
+## 11.1. Quy ước CI (chốt 2026-08-27, PR #713 + #714)
+
+CI là thứ đứng giữa mọi PR và `main`, nên nó **chậm là tốn của cả dự án**: auto-merge bật cho
+mọi PR, mỗi lần push sửa là chờ lại từ đầu. Bốn luật dưới đây áp cho MỌI thay đổi
+`.github/workflows/ci.yml` từ nay.
+
+**1. Song song, không nối đuôi.** Mỗi bước cổng đứng ở một job riêng chạy đồng thời
+(`static` · `unit` · `build` · `audit`), thời gian tường bằng nhánh chậm nhất chứ không bằng
+tổng. Thêm bước kiểm mới thì **gắn vào job con hợp lý nhất**, đừng nối thêm vào một job đã dài;
+nếu bước mới nặng và không phụ thuộc ai, cho nó job riêng.
+
+**2. Tên `quality` và `e2e` là BẤT BIẾN.** Đây là required status check của branch protection
+nhánh `main` (cùng `metadata`). Hai job đó nay chỉ là **job tổng hợp** — `needs:` các job con và
+`exit 1` nếu có job nào không `success`. Đổi id chúng = auto-merge kẹt vĩnh viễn trên mọi PR
+đang mở, và **hỏng im lặng**: không PR nào đỏ để lần ra nguyên nhân. Thêm job con mới thì
+**phải** nối vào `needs` của một trong hai, nếu không kết quả của nó không được tính vào cổng.
+
+**3. E2E luôn chia mảnh.** `--shard=N/M` trên matrix + `fail-fast: false` (một mảnh đỏ không
+giết các mảnh kia — xem hết lỗi trong MỘT vòng thay vì sửa từng cái một). Playwright chia mảnh
+theo **số test chứ không theo thời gian**, nên cụm test nặng dồn vào một mảnh sẽ tự mình quyết
+định thời gian tường; số mảnh chọn theo ĐO THẬT, không theo cảm giác.
+
+**4. Chỉ upload artifact khi ĐỎ (`if: failure()`).** Báo cáo Playwright của một mảnh xanh đo
+được là ~29 giây trên đường tới hạn để tạo ra file không ai mở.
+
+**Cách làm việc bắt buộc khi động vào CI: ĐO, đừng đoán.** Sau khi đổi, đọc thời gian thật của
+từng job trong run CI của chính PR đó (`started_at`/`completed_at`), và đọc mốc `##[group]Run`
+trong log job để biết từng BƯỚC tốn bao lâu. Tối ưu chỗ chưa đo là đoán mò.
+
+Ba luật đầu + luật 4 có **test canh gác chặn CI**: `scripts/ci-workflow-policy.test.ts`. Sửa
+`ci.yml` mà test đó đỏ nghĩa là đang phá một luật — sửa cho đúng luật, **đừng sửa test cho vừa**.
+
 ## 12. Khi nào PHẢI dừng và hỏi
 
 Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác (xóa dữ liệu, đổi schema phá vỡ) · mâu thuẫn với code/thiết kế hiện có · breaking change ảnh hưởng nhiều nơi · nhiều giải pháp đánh đổi khác nhau đáng kể · đụng bảo mật, thanh toán, dữ liệu người dùng thật.
