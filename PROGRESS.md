@@ -1127,12 +1127,20 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   `swiftsim` → M4–M6 nội dung Swift → M7 `kotlinsim` → M8–M9 Kotlin → M10–M11 Paradigm → M12
   giao diện P6**. ⚠️ **Cổng cứng giữa M3 và M4:** interpreter Swift phải qua bộ test đối chiếu
   TRƯỚC khi soạn bài nội dung nào.
-  **Tiến độ:** PR-M0 ✅ · **PR-M1 ✅ (2026-08-27)** — hạ tầng `bash` xong:
+  **Tiến độ:** PR-M0 ✅ · PR-M1 ✅ · **PR-M2 ✅ (2026-08-27)** — nội dung `p3-u11` nay có 4 bài
+  (l2 đi trong cây thư mục · l3 ống lọc dữ liệu · l4 mini-project viết `bao_cao.sh`), +9 thẻ SRS
+  (195 → 204), kèm 2 test trình duyệt cho mạch bash. **Đợt này sửa một lỗi thiết kế của PR-M1**:
+  `error` từng được đặt cho mã thoát khác 0 khiến giao diện tô đỏ "lỗi hệ thống" và GIẤU output —
+  nơi chứa câu tiếng Việt chỉ cách sửa; nay `error` chỉ mang lỗi động cơ, và cổng nội dung canh
+  riêng "code mẫu phải kết thúc mã thoát 0". Bài học: cổng CI xanh KHÔNG chứng minh đường đi
+  trong trình duyệt đúng — PR hạ tầng M3/M7 phải kèm test trình duyệt.
+  **Việc tiếp theo: PR-M3** — hạ tầng `swiftsim` (đắt nhất; cổng cứng: bộ test đối chiếu phải
+  xanh TRƯỚC khi soạn nội dung).
+  PR-M1 chi tiết — hạ tầng `bash` xong:
   `packages/subject-programming/bashSim.ts` (máy ảo shell thuần TS, đủ tập lệnh hiến chương §4,
   tất định, 2 trần cứng chống treo) + `apps/dhcb/src/lib/bashRunner.ts` + đăng ký ngôn ngữ
   `bash` (schema · codeRunner · LangBadge · trang bài học) + 56 test engine + cổng nội dung
-  `lessonsBash.test.ts` dựng sẵn cho PR-M2. **Việc tiếp theo: PR-M2** — nội dung `p3-u11` mở
-  rộng 1 → 4 bài dòng lệnh.
+  `lessonsBash.test.ts` dựng sẵn cho PR-M2.
 
 - **[2026-08-03] Thưởng cho Huy hiệu & mốc (migration 0026) — ✅ XONG, admin cấu hình được.**
   Mỗi huy hiệu/mốc (19 huy hiệu hiện có, `src/data/achievements.ts`) tặng thêm N ngày gói
