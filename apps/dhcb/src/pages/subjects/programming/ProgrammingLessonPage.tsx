@@ -33,7 +33,7 @@ import AiHelpPanel from '../../../components/programming/AiHelpPanel'
 import LessonProse from '../../../components/programming/LessonProse'
 import CodeEditor from '../../../components/CodeEditor'
 import { useAuth } from '../../../context/useAuth'
-import { runLessonCode, resetLessonRunners } from '../../../lib/codeRunner'
+import { runLessonCode, resetLessonRunners, laBaiDongLenh } from '../../../lib/codeRunner'
 import { saveLessonProgress } from '../../../lib/programmingProgress'
 import { addLessonCardsToSrs } from '../../../lib/programmingSrs'
 import { getLesson } from '@dhcb/subject-programming/lessons'
@@ -195,7 +195,7 @@ export default function ProgrammingLessonPage() {
               ) : (
                 <Play className="w-4 h-4" />
               )}
-              <span>{lesson.language === 'git' ? 'Chạy thử các lệnh' : 'Chạy ví dụ'}</span>
+              <span>{laBaiDongLenh(lesson.language) ? 'Chạy thử các lệnh' : 'Chạy ví dụ'}</span>
             </button>
             <RunOutput state={exampleState} output={exampleOutput} />
           </section>
@@ -247,7 +247,7 @@ export default function ProgrammingLessonPage() {
               // Bài Git/dòng lệnh: học viên gõ LỆNH chứ không phải code — nhãn phải nói đúng
               // thứ đang làm, nhất là với người dùng trình đọc màn hình.
               ariaLabel={
-                lesson.language === 'git' ? 'Ô gõ lệnh bài tự viết' : 'Ô soạn code bài tự viết'
+                laBaiDongLenh(lesson.language) ? 'Ô gõ lệnh bài tự viết' : 'Ô soạn code bài tự viết'
               }
             />
             <LivePreview language={lesson.language} domHtml={lesson.domHtml} code={code} />

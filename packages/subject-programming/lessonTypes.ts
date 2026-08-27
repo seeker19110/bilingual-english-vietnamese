@@ -38,6 +38,7 @@ export const LESSON_LANGUAGES = [
   'dom',
   'fetch',
   'git',
+  'bash',
 ] as const
 
 export const LessonSchema = z
