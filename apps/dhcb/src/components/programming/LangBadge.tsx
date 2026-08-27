@@ -26,6 +26,9 @@ const LANGS: Record<Lang, { label: string; dot: string; simulated?: true }> = {
   dom: { label: 'JS trên trang', dot: 'bg-amber-400' },
   fetch: { label: 'JS gọi API', dot: 'bg-amber-400', simulated: true },
   git: { label: 'Git', dot: 'bg-rose-400', simulated: true },
+  // Dòng lệnh (chương trình M, tầng 1): hệ thống file trong bộ nhớ, dựng lại mỗi lượt chạy —
+  // không phải bash thật, nên huy hiệu phải tự khai đúng như bài Git.
+  bash: { label: 'Dòng lệnh (bash)', dot: 'bg-emerald-400', simulated: true },
 }
 
 interface Props {
