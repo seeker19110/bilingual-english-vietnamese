@@ -1116,6 +1116,24 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **[2026-08-26] Môn Lập trình — CHƯƠNG TRÌNH M (mở rộng ngôn ngữ & tư duy), 12 PR.** Hiến
+  chương: `docs/research/dac-ta-mo-rong-ngon-ngu-va-tu-duy-2026-08-26.md` (PR-M0 ✅ xong).
+  Người dùng chốt mở cả ba tầng: tầng 1 thêm **`bash`**, tầng 2 thêm **Kotlin + Swift**, tầng 3
+  thêm **PARADIGM** (không thêm ngôn ngữ). Quyết định trụ cột: **bộ chạy TẬP CON viết bằng
+  TypeScript chạy trong Worker** — học viên gõ cú pháp Swift/Kotlin thật và được chấm bằng
+  test-case, không dựng judge server (bác lần thứ ba), không dựng hệ bậc song song S1–S5.
+  Xếp chỗ: `bash` mở rộng `p3-u11` · Kotlin `p6-u5…u7` · Swift `p6-u8…u12` · Paradigm
+  `p6-u13…u15` (P6 giãn 4 → 15 unit). Thứ tự: **M1 `bashSim` → M2 nội dung bash → M3
+  `swiftsim` → M4–M6 nội dung Swift → M7 `kotlinsim` → M8–M9 Kotlin → M10–M11 Paradigm → M12
+  giao diện P6**. ⚠️ **Cổng cứng giữa M3 và M4:** interpreter Swift phải qua bộ test đối chiếu
+  TRƯỚC khi soạn bài nội dung nào.
+  **Tiến độ:** PR-M0 ✅ · **PR-M1 ✅ (2026-08-27)** — hạ tầng `bash` xong:
+  `packages/subject-programming/bashSim.ts` (máy ảo shell thuần TS, đủ tập lệnh hiến chương §4,
+  tất định, 2 trần cứng chống treo) + `apps/dhcb/src/lib/bashRunner.ts` + đăng ký ngôn ngữ
+  `bash` (schema · codeRunner · LangBadge · trang bài học) + 56 test engine + cổng nội dung
+  `lessonsBash.test.ts` dựng sẵn cho PR-M2. **Việc tiếp theo: PR-M2** — nội dung `p3-u11` mở
+  rộng 1 → 4 bài dòng lệnh.
+
 - **[2026-08-03] Thưởng cho Huy hiệu & mốc (migration 0026) — ✅ XONG, admin cấu hình được.**
   Mỗi huy hiệu/mốc (19 huy hiệu hiện có, `src/data/achievements.ts`) tặng thêm N ngày gói
   Pro/VIP khi đạt được, nhận **1 lần duy nhất/tài khoản** (khác nhiệm vụ lặp cooldown ở

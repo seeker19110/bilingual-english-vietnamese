@@ -10,6 +10,7 @@ import { runJavaScript, resetJsWorker } from './jsRunner'
 import { runSql, resetSqlWorker } from './sqlRunner'
 import { runHtml } from './htmlRunner'
 import { runGit } from './gitRunner'
+import { runBash } from './bashRunner'
 import { runDom, resetDomWorker } from './domRunner'
 import { runFetchLesson, resetFetchWorker } from './fetchRunner'
 import { runTypeScript } from './tsRunner'
@@ -17,6 +18,12 @@ import type { FetchApi } from '@dhcb/subject-programming/fetchPrelude'
 import { laLanPython, fileCuaLan, noiCodeTheoLan } from '@dhcb/subject-programming/pyLanes'
 
 export type LessonLanguage = ProgrammingLesson['language']
+
+/** Bài mà học viên gõ LỆNH chứ không phải code (Git ở P3-U10/U11, dòng lệnh ở chương trình M).
+ *  Khai ở đây để giao diện không phải liệt kê tay từng ngôn ngữ ở mỗi chỗ cần đổi chữ. */
+export function laBaiDongLenh(language: LessonLanguage): boolean {
+  return language === 'git' || language === 'bash'
+}
 
 export interface LessonRunOptions {
   stdinLines?: string[]
@@ -70,6 +77,13 @@ export function runLessonCode(
     // bối cảnh (kho đã có sẵn vài commit…), tái dùng đúng ô có sẵn như bài DOM đã làm.
     const { stdinLines } = options
     return runGit(code, { ...(stdinLines ? { lenhChuanBi: stdinLines } : {}) })
+  }
+  if (language === 'bash') {
+    // Bài dòng lệnh (chương trình M tầng 1): giống hệt bài Git về mặt đường đi — "code" là
+    // script học viên gõ, `stdinLines` mang lệnh dựng bối cảnh (tạo sẵn file/thư mục cho đề
+    // bài). Bộ mô phỏng khác (bashSim), khái niệm giao diện thì không đổi.
+    const { stdinLines } = options
+    return runBash(code, { ...(stdinLines ? { lenhChuanBi: stdinLines } : {}) })
   }
   if (language === 'html') {
     // Bài HTML/CSS không có input() và không chạy script — "chạy" nghĩa là dựng cây DOM rồi
