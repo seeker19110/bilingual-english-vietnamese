@@ -59,7 +59,6 @@
     "expectedIntent": "set_learning_goal",
     "expectedDomain": "learning"
   },
-
   {
     "id": "dict-1",
     "input": "Từ này nghĩa là gì?",
@@ -120,7 +119,6 @@
     "expectedIntent": "dictionary_lookup",
     "expectedDomain": "learning"
   },
-
   {
     "id": "prof-1",
     "input": "tôi thích màu đỏ",
@@ -181,7 +179,6 @@
     "expectedIntent": "update_profile_fact",
     "expectedDomain": "profile"
   },
-
   {
     "id": "mem-1",
     "input": "ghi nhớ: tôi hay quên từ vựng",
@@ -242,65 +239,136 @@
     "expectedIntent": "create_memory",
     "expectedDomain": "personal"
   },
-
   {
     "id": "gen-1",
     "input": "chào bạn",
     "expectedIntent": "general_conversation",
-    "expectedDomain": "learning"
+    "expectedDomain": "general"
   },
   {
     "id": "gen-2",
     "input": "hôm nay trời đẹp quá",
     "expectedIntent": "general_conversation",
-    "expectedDomain": "learning"
+    "expectedDomain": "general"
   },
   {
     "id": "gen-3",
     "input": "bạn có khỏe không?",
     "expectedIntent": "general_conversation",
-    "expectedDomain": "learning"
+    "expectedDomain": "general"
   },
   {
     "id": "gen-4",
     "input": "let's talk about sports",
     "expectedIntent": "general_conversation",
-    "expectedDomain": "learning"
+    "expectedDomain": "general"
   },
   {
     "id": "gen-5",
     "input": "tôi cảm thấy buồn",
     "expectedIntent": "general_conversation",
-    "expectedDomain": "learning"
+    "expectedDomain": "general"
   },
   {
     "id": "gen-6",
     "input": "kể tôi nghe một câu chuyện",
     "expectedIntent": "general_conversation",
-    "expectedDomain": "learning"
+    "expectedDomain": "general"
   },
   {
     "id": "gen-7",
     "input": "hello there",
     "expectedIntent": "general_conversation",
-    "expectedDomain": "learning"
+    "expectedDomain": "general"
   },
   {
     "id": "gen-8",
     "input": "bạn làm được những gì",
     "expectedIntent": "general_conversation",
-    "expectedDomain": "learning"
+    "expectedDomain": "general"
   },
   {
     "id": "gen-9",
     "input": "chúc ngủ ngon",
     "expectedIntent": "general_conversation",
-    "expectedDomain": "learning"
+    "expectedDomain": "general"
   },
   {
     "id": "gen-10",
     "input": "ai tạo ra bạn",
     "expectedIntent": "general_conversation",
-    "expectedDomain": "learning"
+    "expectedDomain": "general"
+  },
+  {
+    "id": "dom-career-1",
+    "input": "Tôi muốn thăng tiến trong sự nghiệp",
+    "expectedIntent": "domain_conversation",
+    "expectedDomain": "career"
+  },
+  {
+    "id": "dom-career-2",
+    "input": "Chuẩn bị phỏng vấn vị trí mới thế nào",
+    "expectedIntent": "domain_conversation",
+    "expectedDomain": "career"
+  },
+  {
+    "id": "dom-career-3",
+    "input": "Mục tiêu sự nghiệp của tôi là gì?",
+    "expectedIntent": "domain_conversation",
+    "expectedDomain": "career"
+  },
+  {
+    "id": "dom-work-1",
+    "input": "Dự án này sắp tới deadline rồi",
+    "expectedIntent": "domain_conversation",
+    "expectedDomain": "work"
+  },
+  {
+    "id": "dom-work-2",
+    "input": "Làm sao tăng năng suất công việc",
+    "expectedIntent": "domain_conversation",
+    "expectedDomain": "work"
+  },
+  {
+    "id": "dom-work-3",
+    "input": "Tuần này tôi có mấy cuộc họp?",
+    "expectedIntent": "domain_conversation",
+    "expectedDomain": "work"
+  },
+  {
+    "id": "dom-startup-1",
+    "input": "Tôi đang khởi nghiệp mảng edtech",
+    "expectedIntent": "domain_conversation",
+    "expectedDomain": "startup"
+  },
+  {
+    "id": "dom-startup-2",
+    "input": "Cần kiểm chứng giả định về khách hàng mục tiêu",
+    "expectedIntent": "domain_conversation",
+    "expectedDomain": "startup"
+  },
+  {
+    "id": "dom-startup-3",
+    "input": "Khi nào thì nên gọi vốn",
+    "expectedIntent": "domain_conversation",
+    "expectedDomain": "startup"
+  },
+  {
+    "id": "dom-life-1",
+    "input": "Tôi muốn xây thói quen dậy sớm",
+    "expectedIntent": "domain_conversation",
+    "expectedDomain": "life"
+  },
+  {
+    "id": "dom-life-2",
+    "input": "Dạo này giấc ngủ của tôi kém",
+    "expectedIntent": "domain_conversation",
+    "expectedDomain": "life"
+  },
+  {
+    "id": "dom-life-3",
+    "input": "Tôi hay bị stress vào cuối tuần",
+    "expectedIntent": "domain_conversation",
+    "expectedDomain": "life"
   }
 ]
