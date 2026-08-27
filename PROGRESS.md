@@ -1159,10 +1159,17 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   **Quan hệ với CHƯƠNG TRÌNH M:** hai việc KHÔNG đè nhau — M thêm _unit dạy học_ vào P6
   (`p6-u5…u15`), còn tầng này là _bản đồ nghề_ nằm ngoài dòng unit. Bốn unit `p6-u1…u4` nay đặt
   tên là "Dẫn nhập hướng …" cho khớp.
-  **Việc để ngỏ (cố ý):** ~~chưa soạn bài 8 bước cho hướng nào~~ → **chặng `web-s1` ĐÃ có nội
-  dung thật (2026-08-27, xem mục ngay dưới)**; các chặng còn lại chưa soạn. Chưa lưu tiến độ
-  hướng xuống Postgres (id chặng/module đã đặt ổn định để sau không phải di trú); chưa gợi ý
-  hướng theo hồ sơ người học.
+  **Tiến độ hướng đã LƯU XUỐNG POSTGRES (2026-08-27, nhật ký `docs/changelog/0178-*.md`)** —
+  migration `0071_programming_specializations.sql` (bảng `programming.spec_enrollment` với
+  partial unique index "một hướng chính mỗi người" + `programming.spec_stage_progress`), service
+  `packages/subject-programming/specProgressService.ts`, API `/api/programming/specialization`,
+  client `apps/dhcb/src/lib/programmingSpecProgress.ts`; hai trang hướng nay hiện "bạn đang theo
+  hướng này" + đánh dấu chặng đã xong. ⚠️ **Việc tay:** `npm run migrate:pg` trên VPS (hoặc để
+  deploy tự chạy khi merge).
+  **Việc để ngỏ (cố ý):** ~~chưa soạn bài 8 bước cho hướng nào~~ → **hai chặng `web-s1` và
+  `architecture-s1` ĐÃ có nội dung thật (2026-08-27, xem hai mục ngay dưới)**; 50 chặng còn lại
+  chưa soạn. Chưa nối tiến độ chặng với tiến độ bài học (đánh dấu chặng vẫn là thao tác tay);
+  chưa gợi ý hướng theo hồ sơ người học.
   **Bài học kỹ thuật:** trong `packages/` **không đặt tên file là `index.ts`** khi file có thể
   vào chunk riêng — Rollup đặt tên chunk theo tên file, `index-*.js` trùng glob "Initial JS" của
   `.size-limit.json` và làm ngân sách đội 27 kB (đã dính thật, đổi thành `registry.ts` là hết).

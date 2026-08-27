@@ -7,10 +7,19 @@
 //
 // Nguyên tắc trình bày (luật số 1 của sản phẩm): đây là CÔNG CỤ CHỌN VIỆC, không phải bảng xếp
 // hạng người. Không hướng nào được gắn nhãn "xịn hơn"; mỗi thẻ nói rõ hợp với ai và cần bậc nào.
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Compass, Clock, Lock, ArrowRight, Boxes, Layers } from 'lucide-react'
+import { Compass, Clock, Lock, ArrowRight, Boxes, Layers, CheckCircle2 } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
+import { useAuth } from '../../../context/useAuth'
+import {
+  fetchSpecProgress,
+  countCompletedStages,
+  isEnrolled,
+  EMPTY_SPEC_PROGRESS,
+  type SpecProgressSnapshot,
+} from '../../../lib/programmingSpecProgress'
 import {
   PROGRAMMING_SPECIALIZATIONS,
   productSpecializations,
@@ -19,17 +28,36 @@ import {
   type ProgrammingSpecialization,
 } from '@dhcb/subject-programming/specializations/registry'
 
-function SpecCard({ spec, onOpen }: { spec: ProgrammingSpecialization; onOpen: () => void }) {
+function SpecCard({
+  spec,
+  onOpen,
+  theo,
+  soChangXong,
+}: {
+  spec: ProgrammingSpecialization
+  onOpen: () => void
+  /** Học viên đang theo hướng này (chính hoặc nền) — nhãn lấy từ tiến độ đã lưu ở server. */
+  theo: boolean
+  soChangXong: number
+}) {
   return (
     <li>
       <button
         onClick={onOpen}
-        className="tap-44 w-full h-full text-left rounded-3xl border border-zinc-800 bg-zinc-900/80 p-5 space-y-3 hover:border-accent-500/60 transition active:scale-[0.99]"
+        className={`tap-44 w-full h-full text-left rounded-3xl border bg-zinc-900/80 p-5 space-y-3 hover:border-accent-500/60 transition active:scale-[0.99] ${
+          theo ? 'border-emerald-500/60' : 'border-zinc-800'
+        }`}
       >
         <div className="flex items-start justify-between gap-3">
           <h2 className="text-base font-bold text-white leading-snug">{spec.name}</h2>
           <ArrowRight className="w-4 h-4 text-accent-400 shrink-0 mt-1" aria-hidden="true" />
         </div>
+        {theo && (
+          <p className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/15 border border-emerald-500/50 text-emerald-200">
+            <CheckCircle2 className="w-3 h-3" aria-hidden="true" />
+            Bạn đang theo hướng này · {soChangXong}/{spec.stages.length} chặng xong
+          </p>
+        )}
         <p className="text-sm text-zinc-200 leading-relaxed">{spec.tagline}</p>
         <div className="flex items-center gap-2 flex-wrap">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-zinc-950 border border-zinc-800 text-zinc-300">
@@ -59,6 +87,14 @@ function SpecCard({ spec, onOpen }: { spec: ProgrammingSpecialization; onOpen: (
 
 export default function ProgrammingSpecializations() {
   const nav = useNavigate()
+  const { user } = useAuth()
+  const [progress, setProgress] = useState<SpecProgressSnapshot>(EMPTY_SPEC_PROGRESS)
+
+  // Chưa đăng nhập thì không có tiến độ để tải — trang vẫn xem được đầy đủ, chỉ không có nhãn.
+  useEffect(() => {
+    if (!user) return
+    void fetchSpecProgress(user.id).then(setProgress)
+  }, [user])
 
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
@@ -108,6 +144,8 @@ export default function ProgrammingSpecializations() {
               <SpecCard
                 key={spec.id}
                 spec={spec}
+                theo={isEnrolled(progress, spec.id)}
+                soChangXong={countCompletedStages(progress, spec.id)}
                 onOpen={() => nav(`/lap-trinh/huong/${spec.id}`)}
               />
             ))}
@@ -131,6 +169,8 @@ export default function ProgrammingSpecializations() {
               <SpecCard
                 key={spec.id}
                 spec={spec}
+                theo={isEnrolled(progress, spec.id)}
+                soChangXong={countCompletedStages(progress, spec.id)}
                 onOpen={() => nav(`/lap-trinh/huong/${spec.id}`)}
               />
             ))}
