@@ -982,6 +982,11 @@ lại có phải bug thật không rồi sửa riêng.
   **chưa biết môn Toán/KHTN bị sửa cụ thể những gì**. Bộ SGK Toán trong tay nay đã là **ấn bản
   chính thức** (không còn bản mẫu 2023), nhưng vẫn chưa có bản đối chứng của SGK chỉnh sửa theo
   TT 17/2025 — xem điểm cần giáo viên duyệt ở trên.
+- ⚠️ **[Sửa lại 2026-08-26] `packages/core-grading` KHÔNG CÒN TRONG REPO** — đã bị xoá ở đợt
+  cải tổ cấu trúc 2026-08-23 vì "mồ côi" (không gói nào import). Code còn nguyên trong lịch
+  sử git: 9 file tại commit `9fa6f59`, khôi phục bằng `git checkout 9fa6f59 -- packages/core-grading`
+  rồi gắn lại `package.json`/`tsconfig.json` composite + project reference. Phần mô tả ngay dưới
+  đây viết ở thì hiện tại là mô tả **code trong lịch sử**, không phải code đang có.
 - **✅ `packages/core-grading` — ENGINE CHẤM DÙNG CHUNG, ĐÃ VIẾT XONG + 74 test** (99% câu lệnh,
   90,6% nhánh — cao hơn ngưỡng chung của repo vì chấm sai làm mất niềm tin người học ngay).
   Đặc tả: `docs/research/dac-ta-engine-cham-dung-chung.md`. Không có AI trong luồng chấm; hàm
@@ -1116,6 +1121,29 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **[2026-08-26] ✅ HAI TÍNH NĂNG GIỮ CHÂN ĐÃ LÀM XONG (đặc tả + code + test + cổng a11y).**
+  Đợt research-first 2026-08-26 (`docs/changelog/0168-*.md`) rồi thi hành trọn vẹn cùng ngày
+  (`0169-*.md` và `0170-*.md`):
+  1. **Chế độ ôn thi có hạn chót** — ✅ **XONG E1–E4 (2026-08-26)**, xem
+     `docs/changelog/0170-*.md`. Gói mới `packages/core-examplan` (lập lịch ngược, hàm thuần),
+     migration `0070_exam_plans.sql`, API `/api/exam-plan`, trang `/on-thi`
+     (`apps/dhcb/src/pages/learning/ExamPlan.tsx`), FSRS nhận `request_retention` theo giai đoạn
+     (`apps/dhcb/src/lib/srs.ts`, có cờ tắt `localStorage.srs_retention_off = '1'`), cổng a11y
+     `e2e/a11y-exam-plan.spec.ts`. Phạm vi đợt 1: **một kỳ thi duy nhất** — vào lớp 10, Tiếng Anh,
+     phạm vi từ vựng A1→B1. ⚠️ **Việc tay:** `npm run migrate:pg` trên VPS.
+     Việc để lại: thi thử full-length (chặn bởi ngân hàng đề + `core-grading` đã bị xoá khỏi
+     repo, xem mục GĐ2); kỳ thi thứ hai; ghép "còn N ngày" vào báo cáo tuần.
+  2. **Người thân theo dõi (báo cáo tuần cho phụ huynh)** — ✅ **XONG C1–C4 (2026-08-26)**,
+     xem `docs/changelog/0169-*.md`. Migration `0069_companion_links.sql`, service
+     `packages/core-personal/companionLinkService.ts`, nội dung thư
+     `apps/server/src/api/_lib/weeklyReport.ts`, gửi `weeklyReportService.ts` (bộ hẹn giờ chủ
+     nhật 19h VN trong `server.ts`), API `/api/companion-link`, giao diện
+     `CompanionLinkSection.tsx` trong Hồ sơ, cổng a11y riêng `e2e/a11y-companion-link.spec.ts`.
+     ⚠️ **Việc tay:** `npm run migrate:pg` trên VPS (hoặc để deploy tự chạy khi merge).
+     Việc để lại: bản chiều B — **nợ có chủ đích, người dùng chốt 2026-08-26**, xem mục "Nợ kỹ
+     thuật còn mở"; thêm dòng "còn N ngày đến kỳ thi" khi chế độ ôn thi xong.
+     **Kỳ thi đợt 1 đã chốt:** "vào lớp 10 — Tiếng Anh" (người dùng xác nhận 2026-08-26). Đổi kỳ
+     thi chỉ cần sửa `ExamKindSchema` + phạm vi từ vựng ở `apps/dhcb/src/lib/examPlan.ts`.
 - **[2026-08-26] Môn Lập trình — CHƯƠNG TRÌNH M (mở rộng ngôn ngữ & tư duy), 12 PR.** Hiến
   chương: `docs/research/dac-ta-mo-rong-ngon-ngu-va-tu-duy-2026-08-26.md` (PR-M0 ✅ xong).
   Người dùng chốt mở cả ba tầng: tầng 1 thêm **`bash`**, tầng 2 thêm **Kotlin + Swift**, tầng 3
@@ -2534,6 +2562,37 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   - Kết quả người dùng xác nhận: hết treo, hết OOM, tốc độ xoá orphan "cải thiện rất nhanh".
 
 ## Nợ kỹ thuật còn mở
+
+- 🟡 **[2026-08-26 — NỢ CÓ CHỦ ĐÍCH, người dùng chốt] Hai tính năng mới CHƯA có bản chiều B**
+  (người nước ngoài học tiếng Việt). Người dùng xác nhận: "chiều A là ok rồi, chiều B nợ".
+
+  **Đang thiếu gì.** Cả hai tính năng ra mắt 2026-08-26 mới có tiếng Việt:
+
+  | Tính năng                 | Trạng thái chiều B                                                                                                  |
+  | ------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+  | Người thân theo dõi       | Khối trong Hồ sơ **ẩn hẳn** khi `isA === false` (`Profile.tsx`); nội dung thư chỉ có tiếng Việt (`weeklyReport.ts`) |
+  | Chế độ ôn thi (`/on-thi`) | Trang **hiện nhưng toàn chữ tiếng Việt**; kỳ thi "vào lớp 10 — Tiếng Anh" cũng không hợp với người học chiều B      |
+
+  **Vì sao chọn nợ thay vì làm dở.** Hiện chuỗi ở chiều B sẽ cho ra màn hình nửa Việt nửa Anh —
+  tệ hơn là chưa có. Riêng chế độ ôn thi còn cần một **kỳ thi khác** (người nước ngoài học tiếng
+  Việt thi VSTEP/chứng chỉ tiếng Việt, không thi vào lớp 10), tức là việc nội dung chứ không chỉ
+  việc dịch.
+
+  **Việc phải làm khi trả nợ:**
+
+  1. `apps/server/src/api/_lib/weeklyReport.ts` — tách chuỗi theo `direction`, thêm bộ câu gợi ý
+     tiếng Anh; contract `WeeklyReportData` phải thêm `direction` để `weeklyReportService.ts`
+     biết chọn bản nào (hiện chưa có trường này).
+  2. `apps/dhcb/src/components/CompanionLinkSection.tsx` — thêm prop `isA` như `ReferralSection`,
+     bỏ điều kiện `{isA && ...}` ở `Profile.tsx`.
+  3. `apps/dhcb/src/pages/learning/ExamPlan.tsx` + `apps/dhcb/src/lib/examPlan.ts` — chuỗi song
+     ngữ, và mở `ExamKindSchema` (`packages/core-contracts/examPlan.ts`) cho kỳ thi của chiều B
+     kèm phạm vi từ vựng tương ứng.
+  4. Nới hai cổng a11y (`e2e/a11y-companion-link.spec.ts`, `e2e/a11y-exam-plan.spec.ts`) sang
+     `uiLang: 'en'` — `mockLogin` đã nhận tham số này sẵn.
+
+  **Điều kiện gỡ nợ:** cả hai tính năng chạy được ở `direction === 'B'` với 0 chuỗi tiếng Việt
+  lọt ra, và hai cổng a11y xanh ở cả hai ngôn ngữ giao diện.
 
 - 🟢 **[2026-08-26 — ĐÃ GỠ, kiểm chứng bằng bài thử] Rate limit từng bị né hoàn toàn bằng
   header `X-Forwarded-For` giả; nay đã bịt cả hai tầng.**

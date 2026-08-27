@@ -36,7 +36,67 @@ const RATING_MAP: Record<Rating, Grade> = {
   easy: FsrsRating.Easy,
 }
 
-const scheduler = fsrs({ enable_short_term: false })
+// ── Mức nhớ mục tiêu (FSRS `request_retention`) ─────────────────────────────
+// [2026-08-26, chế độ ôn thi — docs/research/dac-ta-che-do-on-thi-2026-08-26.md]
+//
+// FSRS mặc định lập lịch để giữ khả năng nhớ ~90% VÔ THỜI HẠN. Khi người học có KỲ THI, cái họ
+// cần khác: nhớ chắc ĐÚNG VÀO NGÀY THI. Càng gần ngày thi thì đặt mức nhớ mục tiêu càng cao →
+// FSRS tự hẹn ôn dày hơn, kéo các thẻ "vừa đủ nhớ" về trước ngày thi thay vì rơi vào sau đó.
+//
+// Đây là đổi THAM SỐ, không đụng thuật toán: mọi thẻ đã có vẫn tính bằng cùng công thức.
+// Giá trị do trang Ôn thi ghi vào (theo giai đoạn build/consolidate/taper), đọc lại ở đây ngay
+// lúc lập lịch nên không cần truyền xuyên qua mọi lời gọi.
+const DEFAULT_RETENTION = 0.9
+// Chặn hai đầu: dưới 0,7 thì lịch thưa tới mức quên sạch; trên 0,97 thì số lượt ôn bùng nổ.
+const MIN_RETENTION = 0.7
+const MAX_RETENTION = 0.97
+const RETENTION_KEY = (uid: string) => `srs_retention_${uid}`
+/** Cờ TẮT khẩn cấp: đặt `localStorage.srs_retention_off = '1'` là mọi người quay về 0,9. */
+const RETENTION_OFF_KEY = 'srs_retention_off'
+
+function readRetention(uid: string): number {
+  try {
+    if (localStorage.getItem(RETENTION_OFF_KEY) === '1') return DEFAULT_RETENTION
+    const raw = Number(localStorage.getItem(RETENTION_KEY(uid)))
+    if (!Number.isFinite(raw) || raw < MIN_RETENTION || raw > MAX_RETENTION) {
+      return DEFAULT_RETENTION
+    }
+    return raw
+  } catch {
+    // Trình duyệt chặn localStorage → lập lịch như bình thường, không được ném ra ngoài.
+    return DEFAULT_RETENTION
+  }
+}
+
+/**
+ * Đặt mức nhớ mục tiêu theo giai đoạn ôn thi. `null` = trả về mặc định (kết thúc kế hoạch).
+ * Giá trị ngoài dải cho phép bị BỎ QUA (về mặc định) chứ không kẹp — giá trị lạ nghĩa là nơi gọi
+ * đang sai, kẹp lại chỉ giấu lỗi đi.
+ */
+export function setExamRetention(uid: string, retention: number | null): void {
+  try {
+    if (retention === null) localStorage.removeItem(RETENTION_KEY(uid))
+    else localStorage.setItem(RETENTION_KEY(uid), String(retention))
+  } catch {
+    // Không lưu được thì thôi — lịch vẫn chạy ở mức mặc định.
+  }
+}
+
+export function getExamRetention(uid: string): number {
+  return readRetention(uid)
+}
+
+// Mỗi mức nhớ là một scheduler riêng; cache lại để không dựng mới mỗi lượt ôn.
+const schedulerCache = new Map<number, ReturnType<typeof fsrs>>()
+function getScheduler(uid: string) {
+  const retention = readRetention(uid)
+  let s = schedulerCache.get(retention)
+  if (!s) {
+    s = fsrs({ enable_short_term: false, request_retention: retention })
+    schedulerCache.set(retention, s)
+  }
+  return s
+}
 
 // Từ ≥3 lần "Quên" SAU KHI đã học được (state Review, đúng ngữ nghĩa FSRS —
 // KHÔNG tính lần trượt đầu tiên lúc thẻ còn mới) bị xem là "leech" — tự động
@@ -157,7 +217,7 @@ export function addToSRSKnown(uid: string, word: string, intervalDays = KNOWN_IN
   if (!data[key]) {
     const now = Date.now()
     const empty = createEmptyCard(new Date(now))
-    const { card } = scheduler.next(empty, new Date(now), FsrsRating.Good)
+    const { card } = getScheduler(uid).next(empty, new Date(now), FsrsRating.Good)
     data[key] = { ...toStored(card), due: now + intervalDays * MS }
     save(uid, data)
     pushProgress(uid) // đồng bộ lịch ôn lên Supabase
@@ -170,7 +230,7 @@ export function reviewWord(uid: string, word: string, rating: Rating) {
   const key = word.toLowerCase()
   const now = Date.now()
   const existing: SRSCard = data[key] ?? toStored(createEmptyCard(new Date(now)))
-  const { card } = scheduler.next(existing, new Date(now), RATING_MAP[rating])
+  const { card } = getScheduler(uid).next(existing, new Date(now), RATING_MAP[rating])
   const stored = toStored(card)
   // 'again' (Quên): hẹn ôn lại NGAY trong phiên này (due = bây giờ) — đúng như gợi ý UI
   // "Quên → ôn sớm" và để SRSReview tải lại thẻ này cho người dùng drill tới khi nhớ.

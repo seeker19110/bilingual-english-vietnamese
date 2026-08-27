@@ -17,6 +17,8 @@ import {
   reviewGrammar,
   getDueGrammarLessonIds,
   _resetSrsMemCacheForTests,
+  setExamRetention,
+  getExamRetention,
 } from './srs'
 import type { DictEntry } from '../types'
 
@@ -215,5 +217,75 @@ describe('SRS ngữ pháp (đề xuất E) — dùng chung kho FSRS, khoá tiề
     const capped = getDueGrammarLessonIds('u1', ['lesson-b', 'lesson-a'], 1)
     expect(capped).toEqual(['lesson-a'])
     vi.useRealTimers()
+  })
+})
+
+// ── Mức nhớ mục tiêu theo giai đoạn ôn thi (E4) ──────────────────────────────
+// Không chỉ kiểm "hàm set/get chạy": kiểm ĐÚNG CÁI QUAN TRỌNG — retention cao hơn thì FSRS hẹn
+// ôn SỚM HƠN. Nếu ai đó lỡ tay bỏ `request_retention` khỏi lời gọi fsrs(), test này đỏ.
+describe('setExamRetention — mức nhớ mục tiêu', () => {
+  const UID = 'u-retention'
+
+  beforeEach(() => {
+    localStorage.clear()
+    _resetSrsMemCacheForTests()
+  })
+
+  it('mặc định 0,9 khi chưa đặt gì', () => {
+    expect(getExamRetention(UID)).toBe(0.9)
+  })
+
+  it('đặt rồi đọc lại đúng; null trả về mặc định', () => {
+    setExamRetention(UID, 0.95)
+    expect(getExamRetention(UID)).toBe(0.95)
+    setExamRetention(UID, null)
+    expect(getExamRetention(UID)).toBe(0.9)
+  })
+
+  it('giá trị ngoài dải cho phép bị BỎ QUA, không kẹp (giấu lỗi nơi gọi)', () => {
+    setExamRetention(UID, 0.5)
+    expect(getExamRetention(UID)).toBe(0.9)
+    setExamRetention(UID, 0.999)
+    expect(getExamRetention(UID)).toBe(0.9)
+  })
+
+  it('cờ tắt khẩn cấp đưa mọi người về 0,9', () => {
+    setExamRetention(UID, 0.95)
+    localStorage.setItem('srs_retention_off', '1')
+    expect(getExamRetention(UID)).toBe(0.9)
+  })
+
+  // Đo thật bằng ts-fsrs: LƯỢT ÔN ĐẦU cho khoảng cách GIỐNG NHAU ở mọi mức retention (đều 3
+  // ngày) — khác biệt chỉ xuất hiện từ lượt thứ hai (0,9: 14 ngày · 0,95: 6 ngày). Nên test phải
+  // ôn ít nhất hai lượt; ôn một lượt rồi kết luận "retention không có tác dụng" là kết luận sai.
+  it('retention CAO hơn ⇒ FSRS hẹn ôn SỚM hơn (đây mới là điều cần đúng)', () => {
+    const wordA = 'retention-test-a'
+    const wordB = 'retention-test-b'
+
+    // Phải TUA THỜI GIAN tới hạn giữa hai lượt ôn: ôn hai lần trong cùng một khoảnh khắc thì
+    // FSRS thấy elapsed_days = 0 và cho ra cùng một lịch bất kể retention.
+    function twoReviews(word: string): number {
+      vi.setSystemTime(new Date('2026-01-01T00:00:00Z'))
+      addToSRS(UID, word)
+      reviewWord(UID, word, 'good')
+      vi.setSystemTime(getNextReview(UID, word)!)
+      reviewWord(UID, word, 'good')
+      return getNextReview(UID, word)!.getTime()
+    }
+
+    let dueDefault = 0
+    let dueTaper = 0
+    vi.useFakeTimers()
+    try {
+      setExamRetention(UID, null)
+      dueDefault = twoReviews(wordA)
+
+      setExamRetention(UID, 0.95)
+      dueTaper = twoReviews(wordB)
+    } finally {
+      vi.useRealTimers()
+    }
+
+    expect(dueTaper).toBeLessThan(dueDefault)
   })
 })
