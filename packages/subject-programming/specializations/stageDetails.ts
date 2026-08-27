@@ -1,7 +1,8 @@
 // specializations/stageDetails.ts — Sổ đăng ký CHI TIẾT CHẶNG + hàm tra cứu.
 //
-// Đã soạn: chặng S2 (docs/specs/2026-08-27-chang-s2-huong-chuyen-sau.md) và chặng S3
-// (docs/specs/2026-08-27-chang-s3-13-huong.md) của cả 13 hướng. S2 là chỗ đường của các hướng
+// Đã soạn: chặng S2 (docs/specs/2026-08-27-chang-s2-huong-chuyen-sau.md), chặng S3
+// (docs/specs/2026-08-27-chang-s3-13-huong.md) và chặng S4
+// (docs/specs/2026-08-27-chi-tiet-chang-s4-13-huong.md) của cả 13 hướng. S2 là chỗ đường của các hướng
 // thật sự rẽ khỏi nhau; S3 là chỗ người học khựng lại vì "chạy được" không còn là đủ tốt, mà
 // "đủ tốt" thì đo được nên đặc tả được. Chặng chưa soạn thì `getSpecStageDetail` trả
 // `undefined` — giao diện hiển thị phần bản đồ sẵn có, KHÔNG bịa nội dung.
@@ -35,6 +36,19 @@ import { EMBEDDED_S3_DETAIL } from './details/embedded-s3.js'
 import { DESKTOP_S3_DETAIL } from './details/desktop-s3.js'
 import { ARCHITECTURE_S3_DETAIL } from './details/architecture-s3.js'
 import { ALGO_S3_DETAIL } from './details/algo-s3.js'
+import { WEB_S4_DETAIL } from './details/web-s4.js'
+import { MOBILE_S4_DETAIL } from './details/mobile-s4.js'
+import { BACKEND_S4_DETAIL } from './details/backend-s4.js'
+import { DATA_S4_DETAIL } from './details/data-s4.js'
+import { AI_S4_DETAIL } from './details/ai-s4.js'
+import { DEVOPS_S4_DETAIL } from './details/devops-s4.js'
+import { SECURITY_S4_DETAIL } from './details/security-s4.js'
+import { SYSTEMS_S4_DETAIL } from './details/systems-s4.js'
+import { GAME_S4_DETAIL } from './details/game-s4.js'
+import { EMBEDDED_S4_DETAIL } from './details/embedded-s4.js'
+import { DESKTOP_S4_DETAIL } from './details/desktop-s4.js'
+import { ARCHITECTURE_S4_DETAIL } from './details/architecture-s4.js'
+import { ALGO_S4_DETAIL } from './details/algo-s4.js'
 
 export type {
   SpecStageDetail,
@@ -72,6 +86,20 @@ export const SPEC_STAGE_DETAILS: SpecStageDetail[] = [
   DESKTOP_S3_DETAIL,
   ARCHITECTURE_S3_DETAIL,
   ALGO_S3_DETAIL,
+  // Chặng S4 — soạn 2026-08-27 (docs/specs/2026-08-27-chi-tiet-chang-s4-13-huong.md).
+  WEB_S4_DETAIL,
+  MOBILE_S4_DETAIL,
+  BACKEND_S4_DETAIL,
+  DATA_S4_DETAIL,
+  AI_S4_DETAIL,
+  DEVOPS_S4_DETAIL,
+  SECURITY_S4_DETAIL,
+  SYSTEMS_S4_DETAIL,
+  GAME_S4_DETAIL,
+  EMBEDDED_S4_DETAIL,
+  DESKTOP_S4_DETAIL,
+  ARCHITECTURE_S4_DETAIL,
+  ALGO_S4_DETAIL,
 ]
 
 const detailMap = new Map<string, SpecStageDetail>(SPEC_STAGE_DETAILS.map((d) => [d.stageId, d]))
