@@ -25,10 +25,23 @@ NNNN-YYYY-MM-DD-slug.md
 - `YYYY-MM-DD` — ngày làm đợt việc đó.
 - `slug` — chữ thường không dấu, nối bằng dấu gạch ngang.
 
-Hai PR song song có thể cùng lấy một số — git không xung đột (slug khác nhau nên tên file khác
-nhau), **nhưng `scripts/changelog.test.ts` CHẶN số trùng**: `readEntries()` phải sắp được thứ tự
-nghiêm ngặt, hai file cùng số làm khẳng định đó sai. Test **không** chặn khoảng trống — chỉ chặn
-trùng.
+Hai PR song song có thể cùng lấy một số, và git sẽ KHÔNG xung đột (slug khác nhau nên tên file
+khác nhau) — nhưng test `scripts/changelog.test.ts` yêu cầu số **tăng nghiêm ngặt**, nên PR nào
+merge sau sẽ đỏ CI. Cách xử lý: sau khi merge nhánh chính vào, chạy lại `npm run changelog` xem
+số kế tiếp rồi **đổi tên file của mình lên số đó** (nhớ sửa cả tiêu đề `#` bên trong file).
+Đã dính thật ở PR #703 (trùng số 0154 với PR rate-limit merge trước).
+
+**Nhánh sống lâu thì dời một bậc là KHÔNG đủ.** PR #706 phải dời số **bốn lần** trong hai ngày
+2026-08-26/27: mỗi lần vừa dời sát số cuối của `main` thì PR kế tiếp merge trước lại chiếm đúng
+số đó. Test chỉ chặn số **trùng**, KHÔNG chặn khoảng trống — nên khi rơi vào cảnh này hãy **chừa
+hẳn một khoảng an toàn** (khoảng 8-10 số) thay vì bám sát. Khoảng trống vô hại: `npm run
+changelog` sắp theo số nên thứ tự vẫn đúng, hook đầu phiên chỉ đọc số lớn nhất.
+
+Kiểm số của nhánh chính ngay trước khi mở PR:
+
+```bash
+git ls-tree --name-only origin/main docs/changelog/ | tail -3
+```
 
 **Nhánh sống lâu thì phải dời số, và có thể phải dời nhiều lần.** Đã gặp thật ba lần liên tiếp
 trên cùng một nhánh trong hai ngày 2026-08-26/27: `main` merge PR khác, PR đó lấy đúng số nhánh

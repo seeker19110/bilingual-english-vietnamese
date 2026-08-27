@@ -4,6 +4,20 @@ on:
   pull_request:
     types: [opened, edited, synchronize, reopened, ready_for_review]
 
+# Mỗi lần push mới lên một PR làm run của commit CŨ thành vô nghĩa, nhưng GitHub không tự
+# huỷ chúng — để chúng chạy tiếp là đốt phút Actions cho một kết quả không ai đọc, vì thứ
+# duy nhất branch protection nhìn là commit head. Thêm ở PR #703.
+#
+# KHÔNG phải bản vá cho vụ CI đứng im hôm 2026-08-26: vụ đó là sự cố Actions phía GitHub
+# (major_outage), run kẹt trước cả hàng đợi nên huỷ cũng báo 409. Xem changelog 0165 —
+# chẩn đoán đầu tiên quy nhầm cho chính chỗ thiếu này.
+#
+# cancel-in-progress CHỈ bật cho pull_request. Push lên main không bao giờ bị huỷ: lượt CI
+# trên main là double-check trước khi deploy.yml chạy, huỷ nó là mất lưới an toàn cuối.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions:
   contents: read
   pull-requests: read
@@ -17,7 +31,19 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const pr = context.payload.pull_request;
+            // ĐỌC PR SỐNG QUA API, KHÔNG dùng context.payload.pull_request.
+            //
+            // Payload là ẢNH CHỤP tại thời điểm sự kiện webhook, không phải trạng thái hiện
+            // tại. Sửa mô tả PR cho đạt cổng rồi mà run vẫn đọc mô tả cũ thì cổng đánh trượt
+            // oan; ngược lại, gỡ sạch mô tả sau khi cổng đã xanh thì nó không hề biết. Cả hai
+            // chiều đều sai. Thấy thật ở PR #703 ngày 2026-08-26: Actions sự cố nên phát lại
+            // hàng tồn, run tạo lúc 16:23 nhưng đọc mô tả lúc 15:56 — đỏ ba lượt liền vì một
+            // lỗi đã sửa từ 16:08.
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
             const title = pr.title;
             const body = pr.body || "";
             const conventional = /^(feat|fix|refactor|docs|test|chore|style|perf|build|ci|revert)(\([a-z0-9._/-]+\))?!?: .+/;
