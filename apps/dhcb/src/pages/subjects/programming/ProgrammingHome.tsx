@@ -11,7 +11,17 @@
 // đang ở bài nào rồi bấm ba lần mới tới nơi. Đó là khiếm khuyết nặng nhất về giữ chân người học.
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Code2, Rocket, Store, Play, Brain, BookOpen, Trophy, PartyPopper } from 'lucide-react'
+import {
+  Code2,
+  Rocket,
+  Store,
+  Play,
+  Brain,
+  BookOpen,
+  Trophy,
+  PartyPopper,
+  Compass,
+} from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import LangBadge from '../../../components/programming/LangBadge'
@@ -25,6 +35,7 @@ import {
 } from '../../../lib/programmingNextLesson'
 import { PROGRAMMING_LEVELS } from '@dhcb/subject-programming/curriculum'
 import { PROJECT_STAGES } from '@dhcb/subject-programming/projectSteps'
+import { PROGRAMMING_SPECIALIZATIONS } from '@dhcb/subject-programming/specializations/registry'
 
 export default function ProgrammingHome() {
   const nav = useNavigate()
@@ -213,6 +224,25 @@ export default function ProgrammingHome() {
             onOpen={(levelId) => nav(`/lap-trinh/${levelId}`)}
             currentLevelId={next?.levelId}
           />
+        </section>
+
+        {/* ⑥ Sau xương sống là gì — trả lời câu "học xong môn này rồi sao nữa?" ngay tại đây,
+            thay vì để học viên tự hỏi lúc gần hết P5. */}
+        <section className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 space-y-3 shadow-sm">
+          <h2 className="text-base font-bold text-white flex items-center gap-2">
+            <Compass className="w-5 h-5 text-accent-400" aria-hidden="true" />
+            <span>Sau P5: chọn hướng chuyên sâu</span>
+          </h2>
+          <p className="text-sm text-zinc-300 leading-relaxed">
+            Xong xương sống là bạn lập trình được. Từ đó có{' '}
+            <strong>{PROGRAMMING_SPECIALIZATIONS.length} con đường</strong> đi tới mức chuyên gia —
+            web, di động, backend, dữ liệu, AI, hệ thống, game, nhúng… Mỗi hướng 4 chặng và 5 sản
+            phẩm phải nộp. Xem trước để biết mình đang học vì cái gì.
+          </p>
+          <button onClick={() => nav('/lap-trinh/huong')} className={`${nutPhu} w-full`}>
+            <Compass className="w-4 h-4 text-accent-400" />
+            <span>Xem {PROGRAMMING_SPECIALIZATIONS.length} hướng chuyên sâu</span>
+          </button>
         </section>
       </main>
     </div>

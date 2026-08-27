@@ -1144,6 +1144,28 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
      thuật còn mở"; thêm dòng "còn N ngày đến kỳ thi" khi chế độ ôn thi xong.
      **Kỳ thi đợt 1 đã chốt:** "vào lớp 10 — Tiếng Anh" (người dùng xác nhận 2026-08-26). Đổi kỳ
      thi chỉ cần sửa `ExamKindSchema` + phạm vi từ vựng ở `apps/dhcb/src/lib/examPlan.ts`.
+- **[2026-08-27] Môn Lập trình — 13 HƯỚNG CHUYÊN SÂU + BẢN ĐỒ KIẾN TRÚC (bản đồ sau P5) — ✅ XONG.** Đặc tả:
+  `docs/research/dac-ta-huong-chuyen-sau-mon-lap-trinh-2026-08-27.md`; nhật ký:
+  `docs/changelog/0175-2026-08-27-feat-huong-chuyen-sau-mon-lap-trinh.md`. Dữ liệu ở
+  `packages/subject-programming/specializations/` (13 hướng × 4 chặng S1→S4 = 52 chặng, 211
+  module học, 65 dự án), giao diện `/lap-trinh/huong` + `/lap-trinh/huong/:specId`.
+  **MỌI hướng có lát cắt KIẾN TRÚC bắt buộc** (`SpecArchitecture`, 5 ô: module + trách nhiệm ·
+  hợp đồng qua ranh giới · quyết định phải chốt sớm · NFR thành số · checklist đặc tả) — tổng
+  263 mục, 72 module. Hướng thứ 13 `architecture` ("Kiến trúc hệ thống & Đặc tả cho AI thi
+  hành") dạy chính kỹ năng viết đặc tả kín và nghiệm thu code mình không tự gõ; `architecture`
+  và `algo` mang cờ `crossCutting` (học SONG SONG, không thay hướng chính).
+  **Khuôn dùng ngay:** `docs/templates/dac-ta-tinh-nang.md` (6 ô bắt buộc + ô nghiệm thu) và
+  `docs/templates/adr.md` — copy ra dùng khi giao việc cho AI.
+  **Quan hệ với CHƯƠNG TRÌNH M:** hai việc KHÔNG đè nhau — M thêm _unit dạy học_ vào P6
+  (`p6-u5…u15`), còn tầng này là _bản đồ nghề_ nằm ngoài dòng unit. Bốn unit `p6-u1…u4` nay đặt
+  tên là "Dẫn nhập hướng …" cho khớp.
+  **Việc để ngỏ (cố ý):** chưa soạn bài 8 bước cho hướng nào (nên bắt đầu từ `web`); chưa lưu
+  tiến độ hướng xuống Postgres (id chặng/module đã đặt ổn định để sau không phải di trú); chưa
+  gợi ý hướng theo hồ sơ người học.
+  **Bài học kỹ thuật:** trong `packages/` **không đặt tên file là `index.ts`** khi file có thể
+  vào chunk riêng — Rollup đặt tên chunk theo tên file, `index-*.js` trùng glob "Initial JS" của
+  `.size-limit.json` và làm ngân sách đội 27 kB (đã dính thật, đổi thành `registry.ts` là hết).
+
 - **[2026-08-26] Môn Lập trình — CHƯƠNG TRÌNH M (mở rộng ngôn ngữ & tư duy), 12 PR.** Hiến
   chương: `docs/research/dac-ta-mo-rong-ngon-ngu-va-tu-duy-2026-08-26.md` (PR-M0 ✅ xong).
   Người dùng chốt mở cả ba tầng: tầng 1 thêm **`bash`**, tầng 2 thêm **Kotlin + Swift**, tầng 3

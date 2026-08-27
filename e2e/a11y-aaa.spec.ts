@@ -54,6 +54,9 @@ const ROUTES = [
   '/lap-trinh/du-an', // dự án trục chặng P1 (PR-L3b)
   '/lap-trinh/on-tap', // ôn thẻ SRS môn Lập trình (PR-L10) — màn rỗng khi chưa có thẻ
   '/lap-trinh/gioi-thieu', // mô tả khoá học & mục tiêu (PR-UX3) — trang gần như toàn chữ đọc
+  '/lap-trinh/huong', // danh sách 12 hướng chuyên sâu (PR-L-SPEC)
+  '/lap-trinh/huong/web', // chi tiết một hướng — trang chữ dài, nhiều tương phản
+  '/lap-trinh/huong/architecture', // hướng kiến trúc — trang chi tiết dài nhất, nhiều danh sách chữ
 ] as const
 
 // Đếm số phần tử vi phạm NẰM TRONG phần nội dung/tiêu đề (bỏ phần vỏ giao diện).

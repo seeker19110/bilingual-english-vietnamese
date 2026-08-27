@@ -354,16 +354,27 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
     id: 'p6',
     name: 'Chuyên sâu',
     canDo:
-      'Chuyên đề tự chọn: hệ thống (C/Rust), phân tán/cloud (Go), AI ứng dụng (Python), luyện phỏng vấn thuật toán.',
-    duration: 'Mở',
-    languages: ['Tự chọn theo track'],
-    projectStage: 'Track tự chọn (soạn sau khi P1–P5 chạy thật)',
-    projectMilestone: 'Sản phẩm thứ hai theo track chuyên sâu tự chọn.',
+      'Chọn MỘT trong 12 hướng chuyên sâu (web, di động, backend, dữ liệu, AI, DevOps, bảo mật, hệ thống, game, nhúng, desktop, thuật toán) và đi hết 4 chặng của hướng đó tới mức chuyên gia.',
+    duration: 'Mở — mỗi hướng 8–18 tháng',
+    languages: ['Tuỳ hướng đã chọn'],
+    projectStage: 'Hướng chuyên sâu tự chọn — xem `specializations/registry.ts`',
+    projectMilestone: 'Sản phẩm tốt nghiệp (capstone) của hướng đã chọn, đủ làm bằng chứng nghề.',
+    // 4 unit dưới đây là các unit DẪN NHẬP mở đầu bốn hướng phổ biến nhất. Nội dung đầy đủ của
+    // cả 12 hướng nằm ở `specializations/` (mỗi hướng 4 chặng × module + 5 dự án) — đó mới là
+    // nguồn thi hành, các unit này chỉ là cửa vào trong dòng bài học tuần tự.
     units: [
-      { id: 'p6-u1', title: 'Track AI ứng dụng', topics: 'Python: gọi LLM API, RAG cơ bản' },
-      { id: 'p6-u2', title: 'Track backend cloud', topics: 'Go: goroutine, Docker, CI/CD' },
-      { id: 'p6-u3', title: 'Track hệ thống', topics: 'C nền tảng bộ nhớ → Rust ownership' },
-      { id: 'p6-u4', title: 'Track phỏng vấn thuật toán', topics: 'Luyện đề có Socratic hints' },
+      { id: 'p6-u1', title: 'Dẫn nhập hướng AI', topics: 'Python: gọi LLM API, RAG cơ bản' },
+      {
+        id: 'p6-u2',
+        title: 'Dẫn nhập hướng backend/cloud',
+        topics: 'Go: goroutine, Docker, CI/CD',
+      },
+      {
+        id: 'p6-u3',
+        title: 'Dẫn nhập hướng hệ thống',
+        topics: 'C nền tảng bộ nhớ → Rust ownership',
+      },
+      { id: 'p6-u4', title: 'Dẫn nhập hướng thuật toán', topics: 'Luyện đề có Socratic hints' },
     ],
   },
 ]

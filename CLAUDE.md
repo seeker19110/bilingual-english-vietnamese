@@ -65,6 +65,16 @@ Ba chế độ:
   `docs/research/luong-nguoi-moi-ho-so-nang-luc-an-2026-08-23.md` (**luồng người mới**: 5 câu hỏi
   ~90 giây → hồ sơ năng lực ẩn → gợi ý ĐÚNG MỘT việc; **luật ngôn ngữ cấm/cho phép** + 7 test bất
   biến chặn CI để con số năng lực không rò lên giao diện).
+- `docs/research/dac-ta-huong-chuyen-sau-mon-lap-trinh-2026-08-27.md` — **13 hướng chuyên sâu của
+  môn Lập trình** (11 hướng sản phẩm: web · di động · backend · dữ liệu · AI · DevOps · bảo mật ·
+  hệ thống · game · nhúng · desktop; 2 hướng nền cắt ngang: **kiến trúc** · thuật toán), mỗi hướng
+  4 chặng S1→S4 + 5 dự án + **bản đồ kiến trúc bắt buộc** (module · hợp đồng · quyết định phải
+  chốt sớm · NFR · checklist đặc tả). Dữ liệu thi hành:
+  `packages/subject-programming/specializations/`. Đọc trước khi đụng bậc P6 hoặc nội dung sau P5.
+- `docs/templates/dac-ta-tinh-nang.md` + `docs/templates/adr.md` — **khuôn đặc tả giao việc và
+  khuôn ADR**. Dùng khi cần viết đặc tả cho AI/người khác thi hành: 6 ô bắt buộc (phạm vi có mục
+  "KHÔNG làm" · điểm chạm file · hợp đồng vào-ra · tiêu chí chấp nhận đo được · bất biến + test
+  canh · quy ước dự án) và ô nghiệm thu. Cơ sở lý thuyết ở đặc tả hướng chuyên sâu §2.5.
 - `docs/deploy-vps-ubuntu.md` — hướng dẫn deploy VPS. ADR (quyết định kiến trúc lớn): đặt ở `docs/adr/` khi có.
 - `docs/ke-hoach-khoi-phuc-su-co-server.md` — **quy trình khôi phục khi server sập/gặp sự cố** (chẩn đoán nhanh → kịch bản xử lý → restore backup → post-mortem). Đọc khi có sự cố thật hoặc chuẩn bị runbook. Khác `docs/DEPLOY.md` (deploy + fix nhanh) và `docs/rollback-runbook.md` (rollback cấu hình theo PR cụ thể).
 - `docs/MASTER_SPEC.md` — tầm nhìn kiến trúc Đồng Hành Platform (THAM KHẢO tầm nhìn).

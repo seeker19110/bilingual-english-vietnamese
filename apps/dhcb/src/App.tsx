@@ -95,6 +95,12 @@ const ProgrammingReview = lazyWithRetry(
 const ProgrammingProjectPage = lazyWithRetry(
   () => import('./pages/subjects/programming/ProgrammingProjectPage'),
 )
+const ProgrammingSpecializations = lazyWithRetry(
+  () => import('./pages/subjects/programming/ProgrammingSpecializations'),
+)
+const ProgrammingSpecializationPage = lazyWithRetry(
+  () => import('./pages/subjects/programming/ProgrammingSpecializationPage'),
+)
 const ChatPage = lazyWithRetry(() => import('./pages/subjects/english/ChatPage'))
 
 // Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang.
@@ -409,6 +415,24 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <ProgrammingPlayground />
+                          </RequireAuth>
+                        }
+                      />
+                      {/* Hướng chuyên sâu — đặt TRƯỚC route param :levelId để 'huong'
+                          không bị hiểu nhầm là mã bậc. */}
+                      <Route
+                        path="/lap-trinh/huong"
+                        element={
+                          <RequireAuth>
+                            <ProgrammingSpecializations />
+                          </RequireAuth>
+                        }
+                      />
+                      <Route
+                        path="/lap-trinh/huong/:specId"
+                        element={
+                          <RequireAuth>
+                            <ProgrammingSpecializationPage />
                           </RequireAuth>
                         }
                       />
