@@ -1,4 +1,4 @@
-# 0176 — Chặng S2: chi tiết thi hành được cho cả 13 hướng chuyên sâu (2026-08-27)
+# 0179 — Chặng S2: chi tiết thi hành được cho cả 13 hướng chuyên sâu (2026-08-27)
 
 **Nhánh:** `claude/s2-specification-byj1ov` · **Đặc tả:** `docs/specs/2026-08-27-chang-s2-huong-chuyen-sau.md`
 

@@ -11,8 +11,11 @@
 //  ⑤ "cái gì làm người ta khựng lại?"                → bẫy thường gặp + nguồn học
 //
 // Mã hướng lạ thì nói KHÔNG BIẾT và mời quay lại danh sách — tuyệt đối không đoán bừa một hướng.
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
+  CheckCircle2,
+  Circle,
   Clock,
   Lock,
   Wrench,
@@ -27,15 +30,29 @@ import {
   GitBranch,
   Gauge,
   ClipboardCheck,
+  GraduationCap,
 } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
+import { useAuth } from '../../../context/useAuth'
+import {
+  fetchSpecProgress,
+  enrollSpec,
+  unenrollSpec,
+  setStageStatus,
+  isStageCompleted,
+  isEnrolled,
+  EMPTY_SPEC_PROGRESS,
+  type SpecProgressSnapshot,
+} from '../../../lib/programmingSpecProgress'
 import {
   getSpecialization,
   countArchitectureItems,
   type SpecProject,
   type SpecStage,
 } from '@dhcb/subject-programming/specializations/registry'
+import { unitsOfStage } from '@dhcb/subject-programming/specializations/stageUnits'
+import { getProgrammingLevel } from '@dhcb/subject-programming/curriculum'
 
 const TIER_LABEL: Record<string, string> = {
   s1: 'Chặng 1 — căn bản',
@@ -100,9 +117,58 @@ function ProjectBlock({ project, tone }: { project: SpecProject; tone: 'stage' |
   )
 }
 
-function StageBlock({ stage, onOpen }: { stage: SpecStage; onOpen: () => void }) {
+/**
+ * Khối "vào học" — CHỈ hiện khi chặng đã có bài thật (bảng `SPEC_STAGE_UNITS`). Chặng chưa
+ * soạn thì không hiện nút nào: hứa một nút dẫn tới trang rỗng còn tệ hơn là chưa có nút.
+ */
+function StageLessons({ stageId }: { stageId: string }) {
+  const nav = useNavigate()
+  const units = unitsOfStage(stageId)
+  if (units.length === 0) return null
+  const p6 = getProgrammingLevel('p6')
+  const tieuDe = (id: string) => p6?.units.find((u) => u.id === id)?.title ?? id
   return (
-    <li className="rounded-3xl border border-zinc-800 bg-zinc-900/80 p-5 space-y-4">
+    <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-4 space-y-2">
+      <h4 className="text-sm font-bold text-white flex items-center gap-2">
+        <GraduationCap className="w-4 h-4 text-emerald-400 shrink-0" aria-hidden="true" />
+        <span>Chặng này đã có bài học ({units.length} phần)</span>
+      </h4>
+      <ul className="text-sm text-zinc-100 leading-relaxed space-y-1 list-disc pl-5">
+        {units.map((id) => (
+          <li key={id}>{tieuDe(id)}</li>
+        ))}
+      </ul>
+      <button
+        onClick={() => nav('/lap-trinh/p6')}
+        className="tap-44 w-full py-3 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition"
+      >
+        Vào học chặng này
+      </button>
+    </div>
+  )
+}
+
+function StageBlock({
+  stage,
+  xong,
+  onToggle,
+  onOpen,
+  dangLuu,
+}: {
+  stage: SpecStage
+  xong: boolean
+  /** Mở trang chặng: nơi có bài luyện tay, câu tự kiểm và rubric nghiệm thu. */
+  onOpen: () => void
+  /** null khi chưa đăng nhập — không hiện nút đánh dấu, trang vẫn đọc được đầy đủ. */
+  onToggle: (() => void) | null
+  dangLuu: boolean
+}) {
+  return (
+    <li
+      className={`rounded-3xl border bg-zinc-900/80 p-5 space-y-4 ${
+        xong ? 'border-emerald-500/60' : 'border-zinc-800'
+      }`}
+    >
       <div className="space-y-1.5">
         {/* Nhãn chặng dùng zinc-300 chứ không phải accent-400: accent ở theme nền sáng
             không đạt tương phản AA cho CHỮ (cổng e2e/a11y.spec.ts bắt được). */}
@@ -134,15 +200,38 @@ function StageBlock({ stage, onOpen }: { stage: SpecStage; onOpen: () => void })
         ))}
       </ol>
 
+      <StageLessons stageId={stage.id} />
+
       <ProjectBlock project={stage.project} tone="stage" />
 
-      {/* Lối vào trang chặng: nơi có bài luyện tay, câu tự kiểm và rubric nghiệm thu. */}
       <button
         onClick={onOpen}
         className="tap-44 w-full py-3 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition"
       >
-        Mở chặng {stage.tier.toUpperCase()} — xem chi tiết & đánh dấu tiến độ
+        Mở chặng {stage.tier.toUpperCase()} — chi tiết & nghiệm thu
       </button>
+
+      {onToggle && (
+        <button
+          onClick={onToggle}
+          // Đã xong là trạng thái CHỐT ở server (không kéo lùi) — nút khoá lại thay vì để bấm
+          // rồi không có gì đổi, người học tưởng hỏng.
+          disabled={dangLuu || xong}
+          aria-pressed={xong}
+          className={`tap-44 w-full flex items-center justify-center gap-2 py-3 rounded-2xl border font-semibold text-sm transition disabled:opacity-60 ${
+            xong
+              ? 'bg-emerald-500/15 border-emerald-500/50 text-emerald-200'
+              : 'bg-zinc-950 border-zinc-700 text-zinc-100 hover:border-accent-500/60'
+          }`}
+        >
+          {xong ? (
+            <CheckCircle2 className="w-4 h-4" aria-hidden="true" />
+          ) : (
+            <Circle className="w-4 h-4" aria-hidden="true" />
+          )}
+          {xong ? 'Đã xong chặng này' : 'Đánh dấu đã xong chặng này'}
+        </button>
+      )}
     </li>
   )
 }
@@ -150,7 +239,29 @@ function StageBlock({ stage, onOpen }: { stage: SpecStage; onOpen: () => void })
 export default function ProgrammingSpecializationPage() {
   const nav = useNavigate()
   const { specId } = useParams<{ specId: string }>()
+  const { user } = useAuth()
   const spec = getSpecialization(specId ?? '')
+  const [progress, setProgress] = useState<SpecProgressSnapshot>(EMPTY_SPEC_PROGRESS)
+  const [dangLuu, setDangLuu] = useState(false)
+
+  useEffect(() => {
+    if (!user) return
+    void fetchSpecProgress(user.id).then(setProgress)
+  }, [user])
+
+  // Một lần lưu = một lần gọi server rồi đọc lại snapshot (server là nguồn sự thật, kể cả khi
+  // nó tự đổi vai trò hướng hoặc từ chối id lạ).
+  async function luu(work: () => Promise<SpecProgressSnapshot>) {
+    setDangLuu(true)
+    try {
+      setProgress(await work())
+    } finally {
+      setDangLuu(false)
+    }
+  }
+
+  const dangTheo = spec ? isEnrolled(progress, spec.id) : false
+  const laHuongNen = spec?.crossCutting === true
 
   if (!spec) {
     return (
@@ -165,7 +276,7 @@ export default function ProgrammingSpecializationPage() {
             onClick={() => nav('/lap-trinh/huong')}
             className="tap-44 w-full py-3.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition"
           >
-            Xem 12 hướng chuyên sâu
+            Xem 13 hướng chuyên sâu
           </button>
         </main>
       </div>
@@ -178,6 +289,40 @@ export default function ProgrammingSpecializationPage() {
 
       <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
         <PageHeader title={spec.name} subtitle={spec.tagline} />
+
+        {/* Chọn/bỏ hướng — tiến độ lưu ở server, không phải localStorage, nên đổi máy vẫn còn. */}
+        {user && (
+          <section
+            className={`rounded-3xl border p-5 space-y-3 ${
+              dangTheo ? 'border-emerald-500/60 bg-emerald-500/10' : 'border-zinc-800 bg-zinc-900'
+            }`}
+          >
+            <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-emerald-300" aria-hidden="true" />
+              <span>{dangTheo ? 'Bạn đang theo hướng này' : 'Theo hướng này?'}</span>
+            </h2>
+            <p className="text-sm text-zinc-100 leading-relaxed">
+              {laHuongNen
+                ? 'Đây là hướng NỀN — theo hướng này không thay hướng chính của bạn, hai bên học song song.'
+                : 'Đây là hướng SẢN PHẨM — mỗi lúc chỉ theo MỘT hướng chính. Chọn hướng này sẽ thay hướng chính đang theo (nếu có); tiến độ chặng của hướng cũ vẫn còn nguyên.'}
+            </p>
+            <button
+              onClick={() =>
+                void luu(() =>
+                  dangTheo ? unenrollSpec(user.id, spec.id) : enrollSpec(user.id, spec.id),
+                )
+              }
+              disabled={dangLuu}
+              className={`tap-44 w-full py-3.5 rounded-2xl font-semibold text-sm transition disabled:opacity-60 ${
+                dangTheo
+                  ? 'bg-zinc-950 border border-zinc-700 text-zinc-100 hover:border-accent-500/60'
+                  : 'bg-accent-500 hover:bg-accent-400 text-black'
+              }`}
+            >
+              {dangLuu ? 'Đang lưu…' : dangTheo ? 'Bỏ theo hướng này' : 'Chọn hướng này'}
+            </button>
+          </section>
+        )}
 
         {/* ① Hợp với ai + điều kiện vào */}
         <section className="rounded-3xl border border-accent-500/40 bg-zinc-900 p-5 space-y-3">
@@ -290,7 +435,12 @@ export default function ProgrammingSpecializationPage() {
               <StageBlock
                 key={stage.id}
                 stage={stage}
+                xong={isStageCompleted(progress, stage.id)}
                 onOpen={() => nav(`/lap-trinh/huong/${spec.id}/${stage.id}`)}
+                dangLuu={dangLuu}
+                onToggle={
+                  user ? () => void luu(() => setStageStatus(user.id, stage.id, 'completed')) : null
+                }
               />
             ))}
           </ol>

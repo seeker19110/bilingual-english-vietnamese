@@ -1159,20 +1159,64 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   **Quan hệ với CHƯƠNG TRÌNH M:** hai việc KHÔNG đè nhau — M thêm _unit dạy học_ vào P6
   (`p6-u5…u15`), còn tầng này là _bản đồ nghề_ nằm ngoài dòng unit. Bốn unit `p6-u1…u4` nay đặt
   tên là "Dẫn nhập hướng …" cho khớp.
-  **[Cập nhật 2026-08-27, đợt 0176 — CHẶNG S2 của cả 13 hướng đã có CHI TIẾT THI HÀNH ĐƯỢC.]**
-  Mỗi module S2 (53 module) có mục tiêu · bài luyện tay · câu tự kiểm · dấu hiệu đã nắm; mỗi
-  chặng có rubric nghiệm thu (65 tiêu chí, mỗi tiêu chí kèm CÁCH CHỨNG MINH) và một **đặc tả
-  mẫu 6 ô**. Dữ liệu `specializations/details/<hướng>-s2.ts` + `stageDetails.ts`; trang
-  `/lap-trinh/huong/:specId/:stageId`. **Tiến độ đã lưu Postgres** (khoá `web-s2-m1`/`web-s2-r3`
-  dùng chung `programming.lesson_progress`, KHÔNG cần migration). Nhật ký:
-  `docs/changelog/0176-2026-08-27-chang-s2-huong-chuyen-sau.md`.
-  **Việc để ngỏ (cố ý):** chưa soạn chi tiết cho S1/S3/S4 (khuôn đã sẵn, thêm chặng = thêm 1
-  file nội dung + 1 dòng import); **cố ý KHÔNG làm bài học 8 bước cho tầng hướng** — 9/13 hướng
-  không có bộ chạy trong trình duyệt, ép khuôn sẽ đẻ nội dung giả; chưa gợi ý hướng theo hồ sơ
-  người học.
+  **Tiến độ hướng đã LƯU XUỐNG POSTGRES (2026-08-27, nhật ký `docs/changelog/0178-*.md`)** —
+  migration `0071_programming_specializations.sql` (bảng `programming.spec_enrollment` với
+  partial unique index "một hướng chính mỗi người" + `programming.spec_stage_progress`), service
+  `packages/subject-programming/specProgressService.ts`, API `/api/programming/specialization`,
+  client `apps/dhcb/src/lib/programmingSpecProgress.ts`; hai trang hướng nay hiện "bạn đang theo
+  hướng này" + đánh dấu chặng đã xong. ⚠️ **Việc tay:** `npm run migrate:pg` trên VPS (hoặc để
+  deploy tự chạy khi merge).
+  **[Đợt 0179, cùng ngày] CHẶNG S2 của cả 13 hướng đã có CHI TIẾT THI HÀNH ĐƯỢC** — tầng khác
+  với hai mục trên, không đè nhau: mỗi module S2 (53 module) có mục tiêu · bài luyện tay · câu
+  tự kiểm · dấu hiệu đã nắm; mỗi chặng có rubric nghiệm thu (65 tiêu chí, mỗi tiêu chí kèm CÁCH
+  CHỨNG MINH) và một **đặc tả mẫu 6 ô**. Dữ liệu `specializations/details/<hướng>-s2.ts` +
+  `stageDetails.ts`; trang chặng `/lap-trinh/huong/:specId/:stageId`. Tiến độ ở **mức MỤC**
+  (module/tiêu chí) lưu qua `/api/programming/progress`, dùng chung `programming.lesson_progress`
+  — không cần migration; tiến độ **mức CHẶNG** vẫn là cơ chế `spec_stage_progress` ở trên. Nhật
+  ký: `docs/changelog/0179-2026-08-27-chang-s2-huong-chuyen-sau.md`.
+  **Việc để ngỏ (cố ý):** ~~chưa soạn bài 8 bước cho hướng nào~~ → **hai chặng `web-s1` và
+  `architecture-s1` ĐÃ có nội dung thật (2026-08-27, xem hai mục ngay dưới)**; 50 chặng còn lại
+  chưa soạn bài 8 bước, và chi tiết chặng mới có ở S2 (S1/S3/S4 chưa). **Cố ý KHÔNG làm bài học
+  8 bước cho cả 13 hướng** — 9/13 hướng không có bộ chạy trong trình duyệt, ép khuôn sẽ đẻ nội
+  dung giả. Chưa nối tiến độ chặng với tiến độ bài học (đánh dấu chặng vẫn là thao tác tay);
+  chưa gợi ý hướng theo hồ sơ người học.
   **Bài học kỹ thuật:** trong `packages/` **không đặt tên file là `index.ts`** khi file có thể
   vào chunk riêng — Rollup đặt tên chunk theo tên file, `index-*.js` trùng glob "Initial JS" của
   `.size-limit.json` và làm ngân sách đội 27 kB (đã dính thật, đổi thành `registry.ts` là hết).
+
+- **[2026-08-27] Môn Lập trình — NỘI DUNG CHẶNG S1 HƯỚNG WEB — ✅ XONG.** Nhật ký:
+  `docs/changelog/0176-2026-08-27-feat-noi-dung-chang-s1-huong-web.md`. **7 bài học 8 bước** phủ
+  đủ 5 module của `web-s1`, đặt trong 3 unit mới của P6: `p6-u16` (event loop · Grid/Flex ·
+  mobile-first · design token), `p6-u17` (UI là hàm của state · union phân biệt 4 trạng thái ·
+  không tin `as`), `p6-u18` (bàn phím & focus · 4 trạng thái màn hình + `aria-live`).
+  **Mã unit của nội dung hướng chuyên sâu bắt đầu từ `p6-u16`** — dải `p6-u5…u15` vẫn thuộc
+  CHƯƠNG TRÌNH M, không được lấn (mã unit là khoá tiến độ Postgres).
+  Cầu nối chặng ↔ bài: `specializations/stageUnits.ts` + cổng `stageUnits.test.ts`; trang chi
+  tiết hướng hiện khối "Vào học chặng này" CHỈ ở chặng đã có bài.
+  **Bài học kỹ thuật:** cổng nội dung yêu cầu **đáp án bước ④ Predict phải là output THẬT** của
+  đoạn code (lựa chọn sai không được khớp) — soạn Predict kiểu "chọn câu giải thích đúng" là CI
+  đỏ. Cả 7 bài dính lỗi này ở bản đầu.
+  **Việc tiếp theo của mạch này:** ~~chặng S1 hướng `architecture`~~ → **đã xong, xem mục ngay
+  dưới**; rồi lưu tiến độ hướng xuống Postgres.
+
+- **[2026-08-27] Môn Lập trình — NỘI DUNG CHẶNG S1 HƯỚNG KIẾN TRÚC — ✅ XONG.** Nhật ký:
+  `docs/changelog/0177-2026-08-27-feat-noi-dung-chang-s1-huong-kien-truc.md`. **6 bài học 8
+  bước** phủ đủ 4 module của `architecture-s1`, đặt trong 3 unit mới của P6: `p6-u19` (trách
+  nhiệm duy nhất đo được · luật phụ thuộc một chiều + đảo phụ thuộc), `p6-u20` (bản đồ C4 kiểm
+  được bằng máy · điểm nóng fan-in + dò vòng bằng bóc lá), `p6-u21` (đặc tả kín sáu ô · ADR có
+  ô "vì sao loại" và điều kiện xem lại). Nối tiếp dải unit của hướng Web: `p6-u16…u18` là Web,
+  `p6-u19…u21` là Kiến trúc.
+  **Quyết định nội dung đáng ghi:** hướng này dạy KỸ NĂNG ĐẶC TẢ chứ không dạy cú pháp, mà bài
+  Make thì phải chấm được bằng test-case. Cách giải: mỗi luật kiến trúc được biến thành MỘT HÀM
+  THUẦN đọc bản mô tả hệ thống rồi trả báo cáo vi phạm — đúng loại máy kiểm mà dự án thật đặt
+  trong CI (`npm run codemap`, lint luật phụ thuộc). Học viên ra khỏi chặng là có công cụ dùng
+  được, không phải chỉ có ý thức. Cả 6 bài dùng `language: 'typescript'` nên đi qua cổng tsc
+  thật (`lessonsTs.test.ts`).
+  Hai khuôn `docs/templates/dac-ta-tinh-nang.md` và `docs/templates/adr.md` được dạy ở `p6-u21`
+  ở đúng phần KIỂM ĐƯỢC BẰNG MÁY (đủ ô · tiêu chí có ngưỡng số · ADR có ≥ 2 phương án); phần
+  nội dung sâu vẫn để dành cho chặng S3.
+  **Việc tiếp theo của mạch này:** lưu tiến độ hướng xuống Postgres; sau đó chọn chặng S1 của
+  một hướng sản phẩm khác (gợi ý: `backend` hoặc `data`).
 
 - **[2026-08-26] Môn Lập trình — CHƯƠNG TRÌNH M (mở rộng ngôn ngữ & tư duy), 12 PR.** Hiến
   chương: `docs/research/dac-ta-mo-rong-ngon-ngu-va-tu-duy-2026-08-26.md` (PR-M0 ✅ xong).

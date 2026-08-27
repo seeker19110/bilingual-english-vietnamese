@@ -152,19 +152,29 @@ Sáu ô của §2.5 đã thành file điền được, không phải đọc lạ
 
 ## 5. Việc còn để ngỏ (cố ý)
 
-1. ~~**Chưa có bài học 8 bước cho các hướng.**~~ **[Cập nhật 2026-08-27, đợt 0176]** Đã bổ sung
-   tầng **CHI TIẾT CHẶNG** cho **S2 của cả 13 hướng**: mỗi module có mục tiêu · bài luyện tay ·
-   câu tự kiểm · dấu hiệu đã nắm; mỗi chặng có rubric nghiệm thu (kèm cách chứng minh) và một
-   **đặc tả mẫu 6 ô** theo §2.5. Dữ liệu:
-   `packages/subject-programming/specializations/details/<hướng>-s2.ts` + sổ đăng ký
-   `stageDetails.ts`; trang `/lap-trinh/huong/:specId/:stageId`.
-   **Vẫn CỐ Ý không làm bài học 8 bước** (Predict/Parsons/Make chấm tự động) cho tầng hướng:
-   9/13 hướng không có bộ chạy trong trình duyệt, ép khuôn lên chúng sẽ đẻ ra nội dung giả.
-   Còn lại: chi tiết cho S1/S3/S4 — khuôn đã sẵn, thêm chặng là thêm 1 file nội dung.
-2. ~~**Chưa lưu tiến độ hướng xuống Postgres.**~~ **[Xong 2026-08-27, đợt 0176]** Module và
-   tiêu chí rubric đánh dấu được, lưu qua `/api/programming/progress` với khoá `web-s2-m1` /
-   `web-s2-r3` — dùng chung bảng `programming.lesson_progress`, **không cần migration**.
-   Ghi chú cũ: Khi soạn bài thật mới cần bảng tiến độ; id chặng và
+1. ~~**Chưa có bài học 8 bước cho các hướng.**~~ Hai đợt bổ sung trong cùng ngày 2026-08-27,
+   **hai tầng khác nhau, không đè nhau**:
+   - **Bài học 8 bước** — chặng `web-s1` (7 bài, `p6-u16…u18`) và `architecture-s1`
+     (6 bài, `p6-u19…u21`). Hai luật rút ra, áp cho mọi chặng sau: mã unit của nội dung hướng
+     **bắt đầu từ `p6-u16`** (dải `p6-u5…u15` thuộc CHƯƠNG TRÌNH M, mã unit là khoá tiến độ
+     Postgres nên không được lấn); chặng nào đã có bài phải khai vào
+     `specializations/stageUnits.ts` thì giao diện mới hiện lối "Vào học" — cổng
+     `stageUnits.test.ts` kiểm chéo.
+   - **Chi tiết chặng (đợt 0179)** — **S2 của cả 13 hướng**: mỗi module có mục tiêu · bài luyện
+     tay · câu tự kiểm · dấu hiệu đã nắm; mỗi chặng có rubric nghiệm thu (kèm cách chứng minh)
+     và **đặc tả mẫu 6 ô** theo §2.5. Dữ liệu `specializations/details/<hướng>-s2.ts` + sổ đăng
+     ký `stageDetails.ts`; trang `/lap-trinh/huong/:specId/:stageId`.
+     **Cố ý KHÔNG làm bài học 8 bước cho cả 13 hướng**: 9/13 hướng không có bộ chạy trong trình
+     duyệt, ép khuôn Predict/Parsons/Make lên chúng sẽ đẻ ra nội dung giả — tầng này là bản đồ
+     và nghiệm thu, chấm code tự động vẫn thuộc xương sống P1–P5.
+     Còn lại: chi tiết cho S1/S3/S4 và bài học cho các chặng khác — khuôn đã sẵn ở cả hai tầng.
+2. ~~**Chưa lưu tiến độ hướng xuống Postgres.**~~ **[Xong 2026-08-27]** Hai mức, bổ sung cho nhau:
+   **mức CHẶNG** — bảng `programming.spec_enrollment` + `spec_stage_progress` (migration `0071`,
+   endpoint `/api/programming/specialization`): đang theo hướng nào, chặng nào đã xong.
+   **Mức MỤC trong chặng (đợt 0179)** — từng module và từng tiêu chí rubric đánh dấu được qua
+   `/api/programming/progress` với khoá `web-s2-m1` / `web-s2-r3`, dùng chung bảng
+   `programming.lesson_progress`, không cần migration.
+   Ghi chú cũ giữ lại: id chặng và
    id module đã đặt ổn định từ bây giờ để làm khoá tiến độ sau này không phải di trú.
 3. **Chưa có gợi ý hướng theo hồ sơ người học.** Cố ý: gợi ý sai còn tệ hơn không gợi ý. Muốn làm
    thì phải bám `dac-ta-nang-luc-ca-nhan-theo-do-tuoi-2026-08-23.md` và tuyệt đối không hiện con

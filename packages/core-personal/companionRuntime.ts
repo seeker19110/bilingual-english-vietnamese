@@ -29,6 +29,7 @@ import {
   getProgrammingProgressSummary,
   formatProgrammingProgressForContext,
 } from '@dhcb/core-learner/programmingReadModelService'
+import { getDomainReadModelForContext } from '@dhcb/core-domains/domainReadModelService'
 import { callGroqChatWithKeyPool, callAnthropicChat } from '@dhcb/core-ai/chatProviders'
 import { callGemini } from '@dhcb/core-ai/geminiApi'
 import { ALLOWED_MODEL, GEMINI_CHAT_MODEL, GROQ_CHAT_MODEL } from '@dhcb/core-ai/aiConfig'
@@ -96,6 +97,53 @@ export interface CompanionResponse {
 }
 
 /**
+ * Từ khoá nhận diện 4 trụ Career · Work · Startup · Life trong câu người dùng.
+ *
+ * Cố ý dùng bảng từ khoá TẤT ĐỊNH thay vì hỏi LLM: bước này chạy trước cả khi dựng ngữ cảnh,
+ * nên nó phải rẻ, nhanh và cho ra cùng một kết quả mỗi lần với cùng một câu (test kiểm được).
+ * Nhận diện sai thì hậu quả chỉ là nạp thiếu/thừa một khối tóm tắt, không phá hỏng lượt thoại.
+ *
+ * GIỚI HẠN đã biết: câu gọi tên NHIỀU trụ cùng lúc (vd "cân bằng cuộc sống và công việc") sẽ
+ * lấy trụ đứng trước trong bảng — ở đây là Work. Không có đáp án đúng duy nhất cho loại câu đó,
+ * nên bảng cố ý KHÔNG cố xử lý; nếu người dùng cần trụ khác thì giao diện vẫn truyền
+ * `targetDomain` tường minh và giá trị đó luôn thắng bảng từ khoá.
+ */
+const DOMAIN_KEYWORDS: ReadonlyArray<readonly [domain: string, keywords: readonly string[]]> = [
+  [
+    'career',
+    ['sự nghiệp', 'nghề nghiệp', 'thăng tiến', 'tuyển dụng', 'phỏng vấn', 'cv ', 'career'],
+  ],
+  [
+    'startup',
+    ['khởi nghiệp', 'startup', 'venture', 'gọi vốn', 'mvp', 'giả định', 'khách hàng mục tiêu'],
+  ],
+  [
+    'work',
+    ['công việc', 'dự án', 'deadline', 'cuộc họp', 'task', 'kanban', 'năng suất', 'công ty'],
+  ],
+  [
+    'life',
+    [
+      'đời sống',
+      'cuộc sống',
+      'thói quen',
+      'sức khoẻ',
+      'sức khỏe',
+      'giấc ngủ',
+      'cân bằng',
+      'stress',
+    ],
+  ],
+]
+
+export function detectDomainByKeyword(lowerCaseMessage: string): string | null {
+  for (const [domain, keywords] of DOMAIN_KEYWORDS) {
+    if (keywords.some((k) => lowerCaseMessage.includes(k))) return domain
+  }
+  return null
+}
+
+/**
  * 1. Intent & Domain Resolver
  * Deterministically extracts intent and domain based on pattern analysis or user specification.
  */
@@ -110,6 +158,12 @@ export function resolveIntentAndDomain(
 
   const msg = userMessage.trim().toLowerCase()
 
+  // Bảng từ khoá 4 trụ. Tính sẵn ở đây nhưng CHỈ dùng ở hai chỗ có kiểm soát bên dưới —
+  // KHÔNG cho nó chặn đầu mọi nhánh, vì các ý định HÀNH ĐỘNG (tra từ, ghi nhớ, cập nhật hồ sơ)
+  // phải được ưu tiên: câu "ghi nhớ giúp tôi cuộc họp ngày mai" chứa từ khoá trụ Work nhưng
+  // việc người dùng muốn là LƯU GHI NHỚ, không phải bàn chuyện công việc.
+  const domainByKeyword = detectDomainByKeyword(msg)
+
   // Goal-setting patterns
   if (
     msg.includes('mục tiêu') ||
@@ -118,6 +172,15 @@ export function resolveIntentAndDomain(
     msg.includes('học ielts') ||
     msg.includes('ielts')
   ) {
+    // "mục tiêu" là từ CHUNG của cả 5 trụ. Chỉ coi là mục tiêu HỌC TẬP khi câu không nói rõ
+    // về trụ nào khác — nếu không, câu "mục tiêu sự nghiệp của tôi là gì" sẽ bị gán
+    // domain='learning' và Companion nạp nhầm ngữ cảnh học tập.
+    if (domainByKeyword) {
+      return {
+        intent: explicitIntent ?? 'domain_conversation',
+        domain: explicitDomain ?? domainByKeyword,
+      }
+    }
     return {
       intent: explicitIntent ?? 'set_learning_goal',
       domain: explicitDomain ?? 'learning',
@@ -166,9 +229,22 @@ export function resolveIntentAndDomain(
     }
   }
 
+  // Không khớp ý định hành động nào — giờ mới tới lượt bảng từ khoá trụ.
+  if (domainByKeyword) {
+    return {
+      intent: explicitIntent ?? 'domain_conversation',
+      domain: explicitDomain ?? domainByKeyword,
+    }
+  }
+
+  // Mặc định là 'general', KHÔNG phải 'learning'. Trước đây mọi câu không nhận diện được đều
+  // bị gán 'learning' → Companion nạp ngữ cảnh học tập và nói với LLM "lĩnh vực trọng tâm:
+  // learning" ngay cả khi người dùng đang hỏi chuyện khác. 'general' đã được
+  // synthesizeCompanionReply xử lý sẵn (bỏ dòng "lĩnh vực trọng tâm"), tức là giá trị trung
+  // tính vốn đã có chỗ đứng trong mã.
   return {
     intent: explicitIntent ?? 'general_conversation',
-    domain: explicitDomain ?? 'learning',
+    domain: explicitDomain ?? 'general',
   }
 }
 
@@ -494,6 +570,19 @@ export async function executeCompanionTurn(
         sourceId: personId,
         content: programming ? `${learningContext}\n${programming}` : learningContext,
         provenance: 'learning:read_model',
+      }
+    } catch {
+      // Graceful fallback
+    }
+  } else {
+    // 4 trụ Career/Work/Startup/Life — cùng khuôn "read model nạp vào ngữ cảnh" như Learning.
+    // Hỏng thì đi tiếp với ngữ cảnh rỗng: thiếu một khối tóm tắt vẫn hơn là không trả lời được.
+    // Việc khối này có THỰC SỰ được nạp hay không do cổng `isConsentActive(personId, domain,
+    // purpose)` trong contextEngine quyết định — ở đây KHÔNG lách cổng đó.
+    try {
+      const content = await getDomainReadModelForContext(pool, personId, domain)
+      if (content) {
+        domainState = { sourceId: personId, content, provenance: `${domain}:read_model` }
       }
     } catch {
       // Graceful fallback

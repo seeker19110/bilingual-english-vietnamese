@@ -3,6 +3,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest'
 import type { Pool } from 'pg'
 import {
   resolveIntentAndDomain,
+  detectDomainByKeyword,
   generatePlan,
   synthesizeReply,
   synthesizeCompanionReply,
@@ -16,6 +17,14 @@ const SOURCE_ID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb'
 
 const contextEngineMock = vi.hoisted(() => ({
   buildContextPackage: vi.fn(),
+}))
+
+const domainReadModelMock = vi.hoisted(() => ({
+  getDomainReadModelForContext: vi.fn(),
+}))
+vi.mock('@dhcb/core-domains/domainReadModelService', () => ({
+  getDomainReadModelForContext: (...a: unknown[]) =>
+    domainReadModelMock.getDomainReadModelForContext(...a),
 }))
 
 vi.mock('./contextEngine.js', () => ({
@@ -54,6 +63,7 @@ const pool = {} as Pool
 
 beforeEach(() => {
   vi.clearAllMocks()
+  domainReadModelMock.getDomainReadModelForContext.mockResolvedValue(null)
   contextEngineMock.buildContextPackage.mockResolvedValue({
     id: CTX_ID,
     personId: PERSON_ID,
@@ -112,10 +122,46 @@ describe('resolveIntentAndDomain', () => {
     expect(res.domain).toBe('personal')
   })
 
+  // [2026-08-27] ĐỔI CÓ CHỦ Ý: mặc định cũ là 'learning'. Câu không nhận diện được mà bị gán
+  // 'learning' thì Companion nạp ngữ cảnh học tập và nói với LLM "lĩnh vực trọng tâm: learning"
+  // kể cả khi người dùng đang hỏi chuyện khác. 'general' là giá trị trung tính đã được
+  // synthesizeCompanionReply xử lý sẵn (bỏ dòng "lĩnh vực trọng tâm").
+  // Bốn trụ ngoài Learning: trước đây KHÔNG có mẫu nào nhận ra chúng, mọi câu hỏi về sự
+  // nghiệp/công việc/khởi nghiệp/đời sống đều rơi vào mặc định 'learning'.
+  it.each([
+    ['Tôi muốn thăng tiến trong sự nghiệp', 'career'],
+    ['Chuẩn bị phỏng vấn thế nào?', 'career'],
+    ['Dự án này sắp tới deadline rồi', 'work'],
+    ['Làm sao tăng năng suất công việc', 'work'],
+    ['Tôi đang khởi nghiệp mảng edtech', 'startup'],
+    ['Cần kiểm chứng giả định về khách hàng mục tiêu', 'startup'],
+    ['Tôi muốn xây thói quen dậy sớm', 'life'],
+    ['Dạo này giấc ngủ của tôi kém', 'life'],
+  ])('nhận diện đúng trụ cho câu %s', (msg, domain) => {
+    const res = resolveIntentAndDomain(msg)
+    expect(res.domain).toBe(domain)
+    expect(res.intent).toBe('domain_conversation')
+  })
+
+  // "mục tiêu" là từ chung của mọi trụ. Nhánh nhận diện trụ phải chạy TRƯỚC nhánh mục tiêu,
+  // nếu không câu này bị gán 'learning' và nạp nhầm ngữ cảnh học tập.
+  it('câu có chữ "mục tiêu" nhưng nói về sự nghiệp thì KHÔNG rơi vào learning', () => {
+    expect(resolveIntentAndDomain('Mục tiêu sự nghiệp của tôi là gì?').domain).toBe('career')
+  })
+
+  it('explicit domain luôn thắng bảng từ khoá', () => {
+    const res = resolveIntentAndDomain('Tôi muốn thăng tiến trong sự nghiệp', undefined, 'life')
+    expect(res.domain).toBe('life')
+  })
+
+  it('detectDomainByKeyword trả null khi không có từ khoá nào', () => {
+    expect(detectDomainByKeyword('chào bạn buổi sáng')).toBeNull()
+  })
+
   it('falls back to general_conversation', () => {
     const res = resolveIntentAndDomain('Chào bạn buổi sáng')
     expect(res.intent).toBe('general_conversation')
-    expect(res.domain).toBe('learning')
+    expect(res.domain).toBe('general')
   })
 })
 
@@ -436,13 +482,70 @@ describe('executeCompanionTurn — nhánh ngữ cảnh & đếm trạng thái', 
     expect(ctxOptions.tokenBudget).toBeUndefined()
   })
 
+  // [2026-08-27] Companion "xuyên suốt 5 trụ": trước đây CHỈ trụ Learning có read model nạp vào
+  // ngữ cảnh, nên hỏi về sự nghiệp/công việc/khởi nghiệp/đời sống thì AI không thấy dữ liệu
+  // người dùng đã nhập ở đúng những trụ đó.
+  it.each(['career', 'work', 'startup', 'life'])(
+    'trụ %s → nạp read model của trụ đó vào ngữ cảnh',
+    async (domain) => {
+      domainReadModelMock.getDomainReadModelForContext.mockResolvedValue(
+        `[Domain: ${domain}] tóm tắt`,
+      )
+      const queryMock = vi.fn().mockResolvedValue({ rows: [] })
+      const livePool = { query: queryMock } as unknown as Pool
+
+      await executeCompanionTurn(livePool, {
+        personId: PERSON_ID,
+        userMessage: 'Kể tôi nghe tình hình',
+        targetDomain: domain,
+        intent: 'domain_conversation',
+      })
+
+      expect(domainReadModelMock.getDomainReadModelForContext).toHaveBeenCalledWith(
+        livePool,
+        PERSON_ID,
+        domain,
+      )
+      const ctxOptions = contextEngineMock.buildContextPackage.mock.calls[0]![1] as {
+        domainState?: { content: string; provenance: string }
+      }
+      expect(ctxOptions.domainState?.content).toBe(`[Domain: ${domain}] tóm tắt`)
+      expect(ctxOptions.domainState?.provenance).toBe(`${domain}:read_model`)
+      // KHÔNG chạm vào nhánh Learning Read Model.
+      expect(
+        queryMock.mock.calls.map((c) => String(c[0])).some((q) => q.includes('personal.persons')),
+      ).toBe(false)
+    },
+  )
+
+  it('read model của trụ hỏng → vẫn trả lời được, chỉ là thiếu ngữ cảnh', async () => {
+    domainReadModelMock.getDomainReadModelForContext.mockRejectedValue(new Error('db sập'))
+    const livePool = { query: vi.fn().mockResolvedValue({ rows: [] }) } as unknown as Pool
+
+    const res = await executeCompanionTurn(livePool, {
+      personId: PERSON_ID,
+      userMessage: 'Tình hình khởi nghiệp của tôi ra sao',
+      targetDomain: 'startup',
+      intent: 'domain_conversation',
+    })
+
+    expect(res.targetDomain).toBe('startup')
+    const ctxOptions = contextEngineMock.buildContextPackage.mock.calls[0]![1] as {
+      domainState?: unknown
+    }
+    expect(ctxOptions.domainState).toBeUndefined()
+  })
+
   it('không tìm thấy person row → dùng personId thay cho userId', async () => {
     const queryMock = vi.fn().mockResolvedValue({ rows: [] })
     const livePool = { query: queryMock } as unknown as Pool
 
     await executeCompanionTurn(livePool, {
       personId: PERSON_ID,
+      // Nêu rõ domain='learning': từ 2026-08-27 câu chào chung rơi vào 'general' nên KHÔNG
+      // vào nhánh Learning Read Model nữa — mà đúng nhánh đó mới là thứ test này đang kiểm.
       userMessage: 'Chào bạn',
+      targetDomain: 'learning',
     })
 
     expect(queryMock).toHaveBeenCalledWith('select user_id from personal.persons where id = $1', [

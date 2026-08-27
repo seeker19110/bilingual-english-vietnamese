@@ -68,7 +68,7 @@ làm** — đúng kỹ năng mà §2.4/§2.5 đặt làm trọng tâm của cả
 | Sửa  | `apps/dhcb/src/pages/subjects/programming/ProgrammingSpecializationPage.tsx`            | nút "Mở chặng" ở mỗi thẻ chặng                                              |
 | Sửa  | `apps/server/src/api/subjects/programming/progress.ts`                                  | nới `lessonId` + kiểm tồn tại qua registry hướng                            |
 | Sửa  | `e2e/a11y.spec.ts`, `e2e/a11y-aaa.spec.ts`                                              | thêm 1 route mẫu `/lap-trinh/huong/web/web-s2`                              |
-| Thêm | `docs/changelog/0176-2026-08-27-chang-s2-huong-chuyen-sau.md`                           | nhật ký đợt việc                                                            |
+| Thêm | `docs/changelog/0179-2026-08-27-chang-s2-huong-chuyen-sau.md`                           | nhật ký đợt việc                                                            |
 | Sửa  | `PROGRESS.md`, `docs/research/dac-ta-huong-chuyen-sau-mon-lap-trinh-2026-08-27.md` §5.1 | cập nhật trạng thái việc còn để ngỏ                                         |
 
 **Ảnh hưởng lan ra:** chạy `npm run codemap -- impact` cho `progress.ts`, `registry.ts`,
@@ -215,4 +215,4 @@ npm run codemap -- impact apps/server/src/api/subjects/programming/progress.ts
 - **Bất biến ⑤:** không phá. Khoá tiến độ cũ (`p1-u4-l1`, `p1-s1`) vẫn hợp lệ, có test hồi quy;
   khoá hướng không tồn tại bị chặn 400 và không ghi DB.
 - **Còn để ngỏ:** chi tiết S1/S3/S4 (khuôn đã sẵn); bài học 8 bước cho tầng hướng — cố ý không làm,
-  lý do ghi ở ô ① và trong nhật ký `docs/changelog/0176-2026-08-27-chang-s2-huong-chuyen-sau.md`.
+  lý do ghi ở ô ① và trong nhật ký `docs/changelog/0179-2026-08-27-chang-s2-huong-chuyen-sau.md`.

@@ -26,9 +26,13 @@ describe('Eval V2 Routing', () => {
     expect(result.domain).toBe('personal')
   })
 
+  // [2026-08-27] ĐỔI CÓ CHỦ Ý: mặc định cũ là 'learning' — mọi câu không nhận diện được đều bị
+  // gán trụ Học tập, khiến Companion nạp ngữ cảnh học tập và nói với LLM "lĩnh vực trọng tâm:
+  // learning" kể cả khi người dùng hỏi chuyện khác. 'general' là giá trị trung tính vốn đã
+  // được synthesizeCompanionReply xử lý sẵn.
   it('should correctly resolve general_conversation', () => {
     const result = resolveIntentAndDomain('chào bạn')
     expect(result.intent).toBe('general_conversation')
-    expect(result.domain).toBe('learning')
+    expect(result.domain).toBe('general')
   })
 })
