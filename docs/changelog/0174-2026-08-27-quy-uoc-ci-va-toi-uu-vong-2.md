@@ -2,7 +2,7 @@
 
 - **Ngày:** 2026-08-27
 - **Loại:** ci
-- **PR:** (điền sau khi tạo)
+- **PR:** #714
 
 ## Số đo THẬT của vòng 1 (run CI của PR #713, không phải ước lượng)
 
