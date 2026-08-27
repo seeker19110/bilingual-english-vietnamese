@@ -408,6 +408,23 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Hướng Kiến trúc S1 — đặc tả kín & sổ quyết định ADR',
         topics: 'Sáu ô bắt buộc, tiêu chí đo được; ADR có phương án bị loại, điều kiện xem lại',
       },
+      // Từ u22 trở đi là chặng S4 (bậc chuyên gia) của các hướng — đặc tả:
+      // `docs/specs/2026-08-27-chang-s4-13-huong.md` (dải u22…u60, 3 unit mỗi hướng).
+      {
+        id: 'p6-u22',
+        title: 'Hướng Web S4 — thời gian thực: thứ tự, gửi lại, presence',
+        topics: 'Hoà giải gói tin theo seq, lũy đẳng khi gửi lại; presence bằng dấu vết sống',
+      },
+      {
+        id: 'p6-u23',
+        title: 'Hướng Web S4 — offline: chọn chiến lược cache, đồng bộ khi có mạng lại',
+        topics: 'Cache-first/network-first/SWR theo rủi ro; hàng đợi ghi, LWW tất định',
+      },
+      {
+        id: 'p6-u24',
+        title: 'Hướng Web S4 — vận hành: đọc p95, cảnh báo theo triệu chứng người dùng',
+        topics: 'Log/metric/trace; phân vị nearest-rank; SLO, ngân sách lỗi, tốc độ tiêu',
+      },
     ],
   },
 ]

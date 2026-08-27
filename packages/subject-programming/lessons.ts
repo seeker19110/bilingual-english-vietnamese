@@ -73,6 +73,9 @@ import { P6U18_LESSONS } from './lessons/p6u18.js'
 import { P6U19_LESSONS } from './lessons/p6u19.js'
 import { P6U20_LESSONS } from './lessons/p6u20.js'
 import { P6U21_LESSONS } from './lessons/p6u21.js'
+import { P6U22_LESSONS } from './lessons/p6u22.js'
+import { P6U23_LESSONS } from './lessons/p6u23.js'
+import { P6U24_LESSONS } from './lessons/p6u24.js'
 
 export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...P1U1_LESSONS,
@@ -139,6 +142,9 @@ export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...P6U19_LESSONS,
   ...P6U20_LESSONS,
   ...P6U21_LESSONS,
+  ...P6U22_LESSONS,
+  ...P6U23_LESSONS,
+  ...P6U24_LESSONS,
 ]
 
 const lessonMap = new Map(PROGRAMMING_LESSONS.map((l) => [l.id, l]))
