@@ -1,4 +1,4 @@
-// specStageDetails.test.ts — Test BẤT BIẾN cho chi tiết chặng (đã soạn: S2 và S3 của 13 hướng).
+// specStageDetails.test.ts — Test BẤT BIẾN cho chi tiết chặng (đã soạn: S2, S3 và S4 của 13 hướng).
 //
 // Vì sao test khuôn dạng chứ không test từng chữ: nội dung sẽ còn được sửa, nhưng KHUÔN phải
 // giữ — thiếu một ô là người học mất đúng thứ khiến chặng đi được. Test ở đây bắt đúng những
@@ -27,6 +27,14 @@ describe('chi tiết chặng — phủ đủ và khớp bản đồ', () => {
     expect(s3).toHaveLength(PROGRAMMING_SPECIALIZATIONS.length)
     for (const spec of PROGRAMMING_SPECIALIZATIONS) {
       expect(getSpecStageDetail(`${spec.id}-s3`), `thiếu chi tiết ${spec.id}-s3`).toBeDefined()
+    }
+  })
+
+  it('mỗi hướng có đúng một chi tiết cho chặng S4', () => {
+    const s4 = SPEC_STAGE_DETAILS.filter((d) => d.stageId.endsWith('-s4'))
+    expect(s4).toHaveLength(PROGRAMMING_SPECIALIZATIONS.length)
+    for (const spec of PROGRAMMING_SPECIALIZATIONS) {
+      expect(getSpecStageDetail(`${spec.id}-s4`), `thiếu chi tiết ${spec.id}-s4`).toBeDefined()
     }
   })
 
