@@ -57,19 +57,19 @@ làm** — đúng kỹ năng mà §2.4/§2.5 đặt làm trọng tâm của cả
 
 ## ② Điểm chạm
 
-| Việc | Đường dẫn                                                                              | Ghi chú                                             |
-| ---- | -------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| Thêm | `packages/subject-programming/specializations/stageDetailTypes.ts`                      | `SpecStageDetail`, `SpecModuleDetail`, `SpecRubricItem`, `SpecBrief` |
+| Việc | Đường dẫn                                                                               | Ghi chú                                                                     |
+| ---- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Thêm | `packages/subject-programming/specializations/stageDetailTypes.ts`                      | `SpecStageDetail`, `SpecModuleDetail`, `SpecRubricItem`, `SpecBrief`        |
 | Thêm | `packages/subject-programming/specializations/details/<id>-s2.ts` × 13                  | nội dung, mỗi hướng một file (KHÔNG đặt tên `index.ts` — xem §3 đặc tả gốc) |
-| Thêm | `packages/subject-programming/specializations/stageDetails.ts`                          | sổ đăng ký + `getSpecStageDetail`                   |
-| Thêm | `packages/subject-programming/specStageDetails.test.ts`                                 | test bất biến khuôn dạng                            |
-| Thêm | `apps/dhcb/src/pages/subjects/programming/ProgrammingSpecStagePage.tsx`                 | trang chặng (nạp lười như 2 trang hướng hiện có)    |
-| Sửa  | `apps/dhcb/src/App.tsx`                                                                 | route `/lap-trinh/huong/:specId/:stageId` đặt SAU route `:specId` |
-| Sửa  | `apps/dhcb/src/pages/subjects/programming/ProgrammingSpecializationPage.tsx`            | nút "Mở chặng" ở mỗi thẻ chặng                      |
-| Sửa  | `apps/server/src/api/subjects/programming/progress.ts`                                  | nới `lessonId` + kiểm tồn tại qua registry hướng    |
-| Sửa  | `e2e/a11y.spec.ts`, `e2e/a11y-aaa.spec.ts`                                              | thêm 1 route mẫu `/lap-trinh/huong/web/web-s2`      |
-| Thêm | `docs/changelog/0176-2026-08-27-chang-s2-huong-chuyen-sau.md`                            | nhật ký đợt việc                                    |
-| Sửa  | `PROGRESS.md`, `docs/research/dac-ta-huong-chuyen-sau-mon-lap-trinh-2026-08-27.md` §5.1 | cập nhật trạng thái việc còn để ngỏ                 |
+| Thêm | `packages/subject-programming/specializations/stageDetails.ts`                          | sổ đăng ký + `getSpecStageDetail`                                           |
+| Thêm | `packages/subject-programming/specStageDetails.test.ts`                                 | test bất biến khuôn dạng                                                    |
+| Thêm | `apps/dhcb/src/pages/subjects/programming/ProgrammingSpecStagePage.tsx`                 | trang chặng (nạp lười như 2 trang hướng hiện có)                            |
+| Sửa  | `apps/dhcb/src/App.tsx`                                                                 | route `/lap-trinh/huong/:specId/:stageId` đặt SAU route `:specId`           |
+| Sửa  | `apps/dhcb/src/pages/subjects/programming/ProgrammingSpecializationPage.tsx`            | nút "Mở chặng" ở mỗi thẻ chặng                                              |
+| Sửa  | `apps/server/src/api/subjects/programming/progress.ts`                                  | nới `lessonId` + kiểm tồn tại qua registry hướng                            |
+| Sửa  | `e2e/a11y.spec.ts`, `e2e/a11y-aaa.spec.ts`                                              | thêm 1 route mẫu `/lap-trinh/huong/web/web-s2`                              |
+| Thêm | `docs/changelog/0176-2026-08-27-chang-s2-huong-chuyen-sau.md`                           | nhật ký đợt việc                                                            |
+| Sửa  | `PROGRESS.md`, `docs/research/dac-ta-huong-chuyen-sau-mon-lap-trinh-2026-08-27.md` §5.1 | cập nhật trạng thái việc còn để ngỏ                                         |
 
 **Ảnh hưởng lan ra:** chạy `npm run codemap -- impact` cho `progress.ts`, `registry.ts`,
 `App.tsx` trước khi sửa và ghi kết quả vào mô tả PR. Điểm rủi ro đã biết: `progress.ts` cũng
@@ -129,13 +129,13 @@ export function getSpecStageDetail(stageId: string): SpecStageDetail | undefined
 
 **Ca lỗi:**
 
-| Tình huống                       | Mã  | Hành vi                                                        |
-| -------------------------------- | --- | -------------------------------------------------------------- |
-| `lessonId` sai khuôn             | 400 | thông báo Zod, không ghi DB                                    |
-| Khoá đúng khuôn nhưng không tồn tại (`web-s2-m99`) | 400 | `"Bài học ... không tồn tại"` — không ghi rác |
-| Chưa đăng nhập                   | 401 | Unauthorized (giữ nguyên)                                      |
-| `specId`/`stageId` lạ trên URL   | —   | trang nói KHÔNG BIẾT + nút quay lại danh sách, không đoán bừa   |
-| Chặng chưa có chi tiết (S1/S3/S4) | —  | hiện phần bản đồ + ghi chú "đang soạn", không lỗi, không trắng  |
+| Tình huống                                         | Mã  | Hành vi                                                        |
+| -------------------------------------------------- | --- | -------------------------------------------------------------- |
+| `lessonId` sai khuôn                               | 400 | thông báo Zod, không ghi DB                                    |
+| Khoá đúng khuôn nhưng không tồn tại (`web-s2-m99`) | 400 | `"Bài học ... không tồn tại"` — không ghi rác                  |
+| Chưa đăng nhập                                     | 401 | Unauthorized (giữ nguyên)                                      |
+| `specId`/`stageId` lạ trên URL                     | —   | trang nói KHÔNG BIẾT + nút quay lại danh sách, không đoán bừa  |
+| Chặng chưa có chi tiết (S1/S3/S4)                  | —   | hiện phần bản đồ + ghi chú "đang soạn", không lỗi, không trắng |
 
 ## ④ Tiêu chí chấp nhận
 
@@ -168,15 +168,15 @@ npm run codemap -- impact apps/server/src/api/subjects/programming/progress.ts
 
 ## ⑤ Bất biến không được phá
 
-| Bất biến                                                             | Test canh                                             |
-| -------------------------------------------------------------------- | ----------------------------------------------------- |
-| 13 hướng, mỗi hướng đúng 4 chặng S1→S4, id chặng/module không đổi     | `packages/subject-programming/specializations.test.ts` |
-| Chi tiết chặng luôn khớp bản đồ (không có moduleId mồ côi)            | `specStageDetails.test.ts` (mới)                       |
-| Tra mã lạ trả `undefined`, không đoán bừa                             | `specStageDetails.test.ts` (mới)                       |
-| Khoá tiến độ cũ (P1–P6) vẫn hợp lệ sau khi nới regex                  | `apps/server/src/api/subjects/programming/progress.test.ts` |
-| Không ghi tiến độ cho khoá không tồn tại                              | như trên                                               |
-| A/AA 0 vi phạm + AAA cho nội dung, 5 theme                            | `e2e/a11y.spec.ts`, `e2e/a11y-aaa.spec.ts`             |
-| Ngân sách bundle + sàn coverage (branches ≥ 90%)                      | cổng CI `quality`                                      |
+| Bất biến                                                          | Test canh                                                   |
+| ----------------------------------------------------------------- | ----------------------------------------------------------- |
+| 13 hướng, mỗi hướng đúng 4 chặng S1→S4, id chặng/module không đổi | `packages/subject-programming/specializations.test.ts`      |
+| Chi tiết chặng luôn khớp bản đồ (không có moduleId mồ côi)        | `specStageDetails.test.ts` (mới)                            |
+| Tra mã lạ trả `undefined`, không đoán bừa                         | `specStageDetails.test.ts` (mới)                            |
+| Khoá tiến độ cũ (P1–P6) vẫn hợp lệ sau khi nới regex              | `apps/server/src/api/subjects/programming/progress.test.ts` |
+| Không ghi tiến độ cho khoá không tồn tại                          | như trên                                                    |
+| A/AA 0 vi phạm + AAA cho nội dung, 5 theme                        | `e2e/a11y.spec.ts`, `e2e/a11y-aaa.spec.ts`                  |
+| Ngân sách bundle + sàn coverage (branches ≥ 90%)                  | cổng CI `quality`                                           |
 
 ## ⑥ Quy ước dự án liên quan
 
@@ -204,9 +204,15 @@ npm run codemap -- impact apps/server/src/api/subjects/programming/progress.ts
 4. `feat`: tiến độ (nới endpoint + test hồi quy + nối UI).
 5. `docs`: changelog + PROGRESS + cập nhật §5.1 đặc tả gốc.
 
-## Nghiệm thu (điền sau khi làm xong)
+## Nghiệm thu (điền sau khi làm xong — 2026-08-27)
 
-- Lệnh đã chạy + kết quả thật:
-- Tiêu chí ④ đạt hết chưa:
-- Có phá bất biến ⑤ nào không:
-- Còn để ngỏ:
+- **Lệnh đã chạy + kết quả thật:** `npm run typecheck` ✅ · `npm run lint` ✅ (0 cảnh báo) ·
+  `npm run build` ✅ · `npx vitest run packages/subject-programming apps/server/src/api/subjects/programming`
+  → **996/996 xanh (28 file)** · `npx playwright test e2e/a11y.spec.ts e2e/a11y-aaa.spec.ts -g "web-s2"`
+  → **10/10 xanh** (5 theme × 2 cổng) · `npm run budget` → Initial JS 124,78/140 kB, CSS 16,27/18 kB.
+- **Tiêu chí ④:** đạt hết. Ngân sách JS tăng 0,43 kB so với baseline 124,35 kB của đợt trước —
+  trong hạn +0,5 kB đã đặt; phần tăng là mã trang mới, dữ liệu nội dung nằm ở chunk nạp lười.
+- **Bất biến ⑤:** không phá. Khoá tiến độ cũ (`p1-u4-l1`, `p1-s1`) vẫn hợp lệ, có test hồi quy;
+  khoá hướng không tồn tại bị chặn 400 và không ghi DB.
+- **Còn để ngỏ:** chi tiết S1/S3/S4 (khuôn đã sẵn); bài học 8 bước cho tầng hướng — cố ý không làm,
+  lý do ghi ở ô ① và trong nhật ký `docs/changelog/0176-2026-08-27-chang-s2-huong-chuyen-sau.md`.

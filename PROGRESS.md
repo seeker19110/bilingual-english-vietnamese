@@ -1159,9 +1159,17 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   **Quan hệ với CHƯƠNG TRÌNH M:** hai việc KHÔNG đè nhau — M thêm _unit dạy học_ vào P6
   (`p6-u5…u15`), còn tầng này là _bản đồ nghề_ nằm ngoài dòng unit. Bốn unit `p6-u1…u4` nay đặt
   tên là "Dẫn nhập hướng …" cho khớp.
-  **Việc để ngỏ (cố ý):** chưa soạn bài 8 bước cho hướng nào (nên bắt đầu từ `web`); chưa lưu
-  tiến độ hướng xuống Postgres (id chặng/module đã đặt ổn định để sau không phải di trú); chưa
-  gợi ý hướng theo hồ sơ người học.
+  **[Cập nhật 2026-08-27, đợt 0176 — CHẶNG S2 của cả 13 hướng đã có CHI TIẾT THI HÀNH ĐƯỢC.]**
+  Mỗi module S2 (53 module) có mục tiêu · bài luyện tay · câu tự kiểm · dấu hiệu đã nắm; mỗi
+  chặng có rubric nghiệm thu (65 tiêu chí, mỗi tiêu chí kèm CÁCH CHỨNG MINH) và một **đặc tả
+  mẫu 6 ô**. Dữ liệu `specializations/details/<hướng>-s2.ts` + `stageDetails.ts`; trang
+  `/lap-trinh/huong/:specId/:stageId`. **Tiến độ đã lưu Postgres** (khoá `web-s2-m1`/`web-s2-r3`
+  dùng chung `programming.lesson_progress`, KHÔNG cần migration). Nhật ký:
+  `docs/changelog/0176-2026-08-27-chang-s2-huong-chuyen-sau.md`.
+  **Việc để ngỏ (cố ý):** chưa soạn chi tiết cho S1/S3/S4 (khuôn đã sẵn, thêm chặng = thêm 1
+  file nội dung + 1 dòng import); **cố ý KHÔNG làm bài học 8 bước cho tầng hướng** — 9/13 hướng
+  không có bộ chạy trong trình duyệt, ép khuôn sẽ đẻ nội dung giả; chưa gợi ý hướng theo hồ sơ
+  người học.
   **Bài học kỹ thuật:** trong `packages/` **không đặt tên file là `index.ts`** khi file có thể
   vào chunk riêng — Rollup đặt tên chunk theo tên file, `index-*.js` trùng glob "Initial JS" của
   `.size-limit.json` và làm ngân sách đội 27 kB (đã dính thật, đổi thành `registry.ts` là hết).
