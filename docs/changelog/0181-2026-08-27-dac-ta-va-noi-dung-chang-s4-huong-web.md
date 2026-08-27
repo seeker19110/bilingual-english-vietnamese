@@ -59,6 +59,18 @@ chưa hướng nào có bài. Đợt này làm hai việc: **viết đặc tả 
 - `stageUnits.test.ts`: ca "chặng chưa soạn bài trả về mảng rỗng" đổi mốc từ `web-s4` (nay đã có
   bài) sang `web-s2` — cổng vẫn canh đúng điều nó cần canh.
 
+## Va chạm với hai PR song song (#718, #719)
+
+Trong lúc đợt này đang chạy, PR #718 và #719 vào `main` mở **tầng "chi tiết chặng"**
+(`specializations/details/<hướng>-<chặng>.ts` + trang `ProgrammingSpecStagePage`) cho S2 và S3
+của cả 13 hướng. Hai việc KHÔNG đè nhau — đó là hai tầng khác nhau của cùng một chặng: chi tiết
+chặng để ĐỌC, bài học 8 bước để GÕ CODE và được chấm. Đã ghi rõ quan hệ hai tầng vào đầu đặc tả
+S4 để đợt sau không lẫn.
+
+Hai việc dọn kèm theo: số changelog của đợt này đổi từ `0179` (trùng với PR #718) sang `0181`;
+và cổng đã chạy lại đủ trên kết quả đã gộp `main` vì hai bên cùng chạm luồng trang hướng
+(CLAUDE.md mục 11).
+
 ## Việc để ngỏ (cố ý)
 
 - **12 hướng còn lại của chặng S4** (`architecture` → `desktop`, dải `p6-u25`…`p6-u60`): đặc tả đã
