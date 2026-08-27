@@ -1144,6 +1144,21 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
      thuật còn mở"; thêm dòng "còn N ngày đến kỳ thi" khi chế độ ôn thi xong.
      **Kỳ thi đợt 1 đã chốt:** "vào lớp 10 — Tiếng Anh" (người dùng xác nhận 2026-08-26). Đổi kỳ
      thi chỉ cần sửa `ExamKindSchema` + phạm vi từ vựng ở `apps/dhcb/src/lib/examPlan.ts`.
+- **[2026-08-27] Môn Lập trình — 12 HƯỚNG CHUYÊN SÂU (bản đồ sau P5) — ✅ XONG.** Đặc tả:
+  `docs/research/dac-ta-huong-chuyen-sau-mon-lap-trinh-2026-08-27.md`; nhật ký:
+  `docs/changelog/0171-2026-08-27-feat-huong-chuyen-sau-mon-lap-trinh.md`. Dữ liệu ở
+  `packages/subject-programming/specializations/` (12 hướng × 4 chặng S1→S4 = 48 chặng, 195
+  module, 60 dự án), giao diện `/lap-trinh/huong` + `/lap-trinh/huong/:specId`.
+  **Quan hệ với CHƯƠNG TRÌNH M:** hai việc KHÔNG đè nhau — M thêm _unit dạy học_ vào P6
+  (`p6-u5…u15`), còn tầng này là _bản đồ nghề_ nằm ngoài dòng unit. Bốn unit `p6-u1…u4` nay đặt
+  tên là "Dẫn nhập hướng …" cho khớp.
+  **Việc để ngỏ (cố ý):** chưa soạn bài 8 bước cho hướng nào (nên bắt đầu từ `web`); chưa lưu
+  tiến độ hướng xuống Postgres (id chặng/module đã đặt ổn định để sau không phải di trú); chưa
+  gợi ý hướng theo hồ sơ người học.
+  **Bài học kỹ thuật:** trong `packages/` **không đặt tên file là `index.ts`** khi file có thể
+  vào chunk riêng — Rollup đặt tên chunk theo tên file, `index-*.js` trùng glob "Initial JS" của
+  `.size-limit.json` và làm ngân sách đội 27 kB (đã dính thật, đổi thành `registry.ts` là hết).
+
 - **[2026-08-26] Môn Lập trình — CHƯƠNG TRÌNH M (mở rộng ngôn ngữ & tư duy), 12 PR.** Hiến
   chương: `docs/research/dac-ta-mo-rong-ngon-ngu-va-tu-duy-2026-08-26.md` (PR-M0 ✅ xong).
   Người dùng chốt mở cả ba tầng: tầng 1 thêm **`bash`**, tầng 2 thêm **Kotlin + Swift**, tầng 3

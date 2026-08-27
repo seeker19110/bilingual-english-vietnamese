@@ -65,6 +65,10 @@ Ba chế độ:
   `docs/research/luong-nguoi-moi-ho-so-nang-luc-an-2026-08-23.md` (**luồng người mới**: 5 câu hỏi
   ~90 giây → hồ sơ năng lực ẩn → gợi ý ĐÚNG MỘT việc; **luật ngôn ngữ cấm/cho phép** + 7 test bất
   biến chặn CI để con số năng lực không rò lên giao diện).
+- `docs/research/dac-ta-huong-chuyen-sau-mon-lap-trinh-2026-08-27.md` — **12 hướng chuyên sâu của
+  môn Lập trình** (web · di động · backend · dữ liệu · AI · DevOps · bảo mật · hệ thống · game ·
+  nhúng · desktop · thuật toán), mỗi hướng 4 chặng S1→S4 + 5 dự án phải nộp. Dữ liệu thi hành:
+  `packages/subject-programming/specializations/`. Đọc trước khi đụng bậc P6 hoặc nội dung sau P5.
 - `docs/deploy-vps-ubuntu.md` — hướng dẫn deploy VPS. ADR (quyết định kiến trúc lớn): đặt ở `docs/adr/` khi có.
 - `docs/ke-hoach-khoi-phuc-su-co-server.md` — **quy trình khôi phục khi server sập/gặp sự cố** (chẩn đoán nhanh → kịch bản xử lý → restore backup → post-mortem). Đọc khi có sự cố thật hoặc chuẩn bị runbook. Khác `docs/DEPLOY.md` (deploy + fix nhanh) và `docs/rollback-runbook.md` (rollback cấu hình theo PR cụ thể).
 - `docs/MASTER_SPEC.md` — tầm nhìn kiến trúc Đồng Hành Platform (THAM KHẢO tầm nhìn).

@@ -1,0 +1,91 @@
+// specializations/types.ts — Kiểu dữ liệu tầng HƯỚNG CHUYÊN SÂU của môn Lập trình.
+//
+// Vì sao có tầng này: P1–P5 (curriculum.ts) là XƯƠNG SỐNG chung — ai học lập trình cũng cần.
+// Nhưng "trở thành chuyên gia" thì không có đường chung: người làm web app, người làm hệ
+// thống, người làm nhúng đi ba con đường khác hẳn nhau. Tầng này mở P6 "Chuyên sâu" thành
+// 12 hướng riêng biệt, mỗi hướng đi từ căn bản của hướng đó tới mức chuyên gia.
+//
+// Lưu ý đặt tên: KHÔNG dùng chữ "track" — trong môn này `PROJECT_TRACKS` (curriculum.ts) đã
+// mang nghĩa "chủ đề dự án trục T1/T2/T3". Ở đây dùng "specialization" / "hướng".
+//
+// Dữ liệu là hằng biên dịch, không I/O, không phụ thuộc thời gian — để test kiểm được và để
+// mỗi lần mở app ra cùng một lộ trình.
+
+/** Mã hướng chuyên sâu — ổn định, dùng làm khoá tiến độ và làm URL `/lap-trinh/huong/<id>`. */
+export type SpecializationId =
+  | 'web'
+  | 'mobile'
+  | 'backend'
+  | 'systems'
+  | 'data'
+  | 'ai'
+  | 'devops'
+  | 'security'
+  | 'game'
+  | 'embedded'
+  | 'desktop'
+  | 'algo'
+
+/** Bậc của một chặng trong hướng — 4 bậc cố định cho MỌI hướng để so sánh được với nhau. */
+export type SpecStageTier = 's1' | 's2' | 's3' | 's4'
+
+/** Một module kiến thức trong chặng (làn LUYỆN của hướng). */
+export interface SpecModule {
+  /** `<hướng>-<chặng>-m<số>`, ví dụ `web-s1-m2`. */
+  id: string
+  title: string
+  /** 3–6 ý kiến thức chính. Ngắn, mỗi ý một khái niệm kiểm tra được. */
+  topics: string[]
+}
+
+/** Dự án của một chặng (làn DỰ ÁN) — thứ nộp được, không phải bài tập lẻ. */
+export interface SpecProject {
+  name: string
+  /** Một câu: xây cái gì, cho ai dùng. */
+  brief: string
+  /** Tiêu chí chấp nhận — "xong" nghĩa là gì, đo được. */
+  requirements: string[]
+  /** Phần mở rộng cho ai muốn đi xa hơn (không bắt buộc để qua chặng). */
+  stretch?: string[]
+}
+
+export interface SpecStage {
+  /** `<hướng>-<tier>`, ví dụ `web-s1`. */
+  id: string
+  tier: SpecStageTier
+  name: string
+  /** Mục tiêu đầu ra đo được của chặng (can-do). */
+  canDo: string
+  duration: string
+  modules: SpecModule[]
+  project: SpecProject
+}
+
+export interface ProgrammingSpecialization {
+  id: SpecializationId
+  /** Tên tiếng Việt hiển thị, ví dụ "Lập trình Web". */
+  name: string
+  /** Một câu bán hàng — người học đọc là biết hướng này làm ra cái gì. */
+  tagline: string
+  /** Hướng này hợp với ai / không hợp với ai. */
+  forWho: string
+  /** Bậc xương sống tối thiểu nên xong trước khi vào hướng ('p3'…'p5'). */
+  prerequisite: 'p3' | 'p4' | 'p5'
+  /** Tổng thời lượng ước tính cả 4 chặng. */
+  duration: string
+  languages: string[]
+  /** Công cụ/hệ sinh thái lõi phải quen tay. */
+  coreTools: string[]
+  /** Đúng 4 chặng S1→S4, theo thứ tự. */
+  stages: SpecStage[]
+  /** Dự án cuối hướng — bằng chứng nghề, đủ để đem đi xin việc. */
+  capstone: SpecProject
+  /** Dấu hiệu ĐÃ là chuyên gia — hành vi quan sát được, không phải "số năm kinh nghiệm". */
+  expertSignals: string[]
+  /** Vị trí công việc mở ra. */
+  careers: string[]
+  /** Bẫy thường gặp khiến người học đứng lại ở mức trung bình. */
+  pitfalls: string[]
+  /** Nguồn học chuẩn của ngành (tên tài liệu, không phải link — link chết theo thời gian). */
+  resources: string[]
+}
