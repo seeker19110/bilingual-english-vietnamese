@@ -21,19 +21,24 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+# CẤU TRÚC (đổi 2026-08-27 — chia nhỏ để tăng tốc):
+#   Trước: 2 job tuần tự dài (quality ~9 bước nối đuôi, e2e 1 worker chạy hết ~180 test).
+#   Nay:   các bước con chạy SONG SONG trên nhiều runner, rồi hai job TỔNG HỢP tên
+#          `quality` và `e2e` gom kết quả lại.
+#   Tên `quality` / `e2e` PHẢI GIỮ NGUYÊN: đó là required status check của branch
+#   protection nhánh main (xem CLAUDE.md mục 13.6). Đổi tên = auto-merge kẹt vĩnh viễn.
 jobs:
-  quality:
+  # ── Nhánh 1: type + lint + format (không cần build) ────────────────────────
+  static:
+    name: Type + Lint + Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v7
         with:
           node-version: 22 # khớp engines trong package.json (>=22)
           cache: npm
-
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
 
       - name: Typecheck (frontend + API)
         run: npm run typecheck
@@ -44,8 +49,32 @@ jobs:
       - name: Format check (Prettier)
         run: npm run format:check
 
+  # ── Nhánh 2: unit test + coverage gate ─────────────────────────────────────
+  unit:
+    name: Unit tests + coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
       - name: Unit tests + coverage gate
         run: npm run test:coverage
+
+  # ── Nhánh 3: build + ngân sách bundle + boot check ─────────────────────────
+  build:
+    name: Build + budget + boot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
 
       - name: Build
         run: npm run build
@@ -73,6 +102,18 @@ jobs:
           done
           echo "❌ Server không trả /api/health sau 20s"; kill $SERVER_PID || true; exit 1
 
+  # ── Nhánh 4: cổng bảo mật + kiến trúc (nhẹ, chạy riêng cho nhanh) ──────────
+  audit:
+    name: npm audit + chu trình import
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
       # Gate bảo mật dependency: 0 lỗ hổng ở production deps (tiêu chuẩn N5, 2026-08-23).
       # devDependencies vá qua overrides trong package.json, không chặn ở đây.
       - name: npm audit (production deps, 0 lỗ hổng)
@@ -82,31 +123,69 @@ jobs:
       - name: Chu trình import (codemap cycles = 0)
         run: npm run codemap -- cycles | grep -q "Không có chu trình import"
 
-  e2e:
+  # ── Job TỔNG HỢP: đây là required status check `quality` ───────────────────
+  quality:
+    name: quality
     runs-on: ubuntu-latest
+    needs: [static, unit, build, audit]
+    if: ${{ !cancelled() }}
+    steps:
+      - name: Gom kết quả 4 nhánh
+        run: |
+          echo "static=${{ needs.static.result }}"
+          echo "unit=${{ needs.unit.result }}"
+          echo "build=${{ needs.build.result }}"
+          echo "audit=${{ needs.audit.result }}"
+          if [ "${{ needs.static.result }}" != "success" ] \
+            || [ "${{ needs.unit.result }}" != "success" ] \
+            || [ "${{ needs.build.result }}" != "success" ] \
+            || [ "${{ needs.audit.result }}" != "success" ]; then
+            echo "❌ Có nhánh chất lượng KHÔNG xanh"; exit 1
+          fi
+          echo "✅ Toàn bộ cổng chất lượng xanh"
+
+  # ── E2E chia 4 mảnh chạy song song ─────────────────────────────────────────
+  e2e-shard:
+    name: E2E shard ${{ matrix.shard }}/4
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v7
         with:
-          node-version: 22 # khớp engines trong package.json (>=22)
+          node-version: 22
           cache: npm
-
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
 
       # Trên CI không có Chromium cài sẵn → tự cài (playwright.config.ts sẽ tự
       # bỏ executablePath khi đường dẫn /opt/pw-browsers không tồn tại).
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: E2E (Playwright + axe)
-        run: npm run test:e2e
+      - name: E2E (Playwright + axe) — mảnh ${{ matrix.shard }}/4
+        run: npm run test:e2e -- --shard=${{ matrix.shard }}/4
 
       - name: Upload Playwright report (khi lỗi)
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-shard-${{ matrix.shard }}
           path: playwright-report/
           retention-days: 7
+
+  # ── Job TỔNG HỢP: đây là required status check `e2e` ───────────────────────
+  e2e:
+    name: e2e
+    runs-on: ubuntu-latest
+    needs: [e2e-shard]
+    if: ${{ !cancelled() }}
+    steps:
+      - name: Gom kết quả các mảnh E2E
+        run: |
+          if [ "${{ needs.e2e-shard.result }}" != "success" ]; then
+            echo "❌ Có mảnh E2E KHÔNG xanh"; exit 1
+          fi
+          echo "✅ Toàn bộ 4 mảnh E2E xanh"

@@ -15,7 +15,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // Trên CI mỗi mảnh (shard) chạy trên một runner 4 nhân riêng → 2 worker là an toàn và
+  // nhanh gấp đôi so với 1. Đổi 2026-08-27 cùng lúc với việc chia E2E thành 4 mảnh.
+  workers: process.env.CI ? 2 : undefined,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL,
