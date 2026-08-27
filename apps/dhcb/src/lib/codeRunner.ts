@@ -11,6 +11,7 @@ import { runSql, resetSqlWorker } from './sqlRunner'
 import { runHtml } from './htmlRunner'
 import { runGit } from './gitRunner'
 import { runBash } from './bashRunner'
+import { runSwift } from './swiftRunner'
 import { runDom, resetDomWorker } from './domRunner'
 import { runFetchLesson, resetFetchWorker } from './fetchRunner'
 import { runTypeScript } from './tsRunner'
@@ -84,6 +85,11 @@ export function runLessonCode(
     // bài). Bộ mô phỏng khác (bashSim), khái niệm giao diện thì không đổi.
     const { stdinLines } = options
     return runBash(code, { ...(stdinLines ? { lenhChuanBi: stdinLines } : {}) })
+  }
+  if (language === 'swift') {
+    // Bài Swift chạy trên trình thông dịch tập con (swiftSim) — không Worker, không mạng, và
+    // KHÔNG có readLine() nên bài lấy dữ liệu từ hằng trong đề, đúng khuôn ví dụ sách Swift.
+    return runSwift(code)
   }
   if (language === 'html') {
     // Bài HTML/CSS không có input() và không chạy script — "chạy" nghĩa là dựng cây DOM rồi
