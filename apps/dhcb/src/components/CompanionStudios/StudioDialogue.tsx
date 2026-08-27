@@ -128,7 +128,7 @@ export default function StudioDialogue({
             onClick={() => setViewMode('chat')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
               viewMode === 'chat'
-                ? 'bg-accent-500 text-white shadow-md shadow-accent-500/20'
+                ? 'bg-accent-500 text-black shadow-md shadow-accent-500/20'
                 : 'text-zinc-400 hover:text-zinc-200'
             }`}
           >
@@ -196,7 +196,7 @@ export default function StudioDialogue({
           <div className="w-full max-w-lg bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 shadow-xl space-y-3">
             <div className="flex items-center justify-between text-xs pb-2 border-b border-zinc-800">
               <span className="text-zinc-400 font-medium">Trạng thái Companion:</span>
-              <span className="font-semibold uppercase tracking-wider text-accent-400 bg-accent-500/10 px-2 py-0.5 rounded-full">
+              <span className="font-semibold uppercase tracking-wider text-accent-400 theme-light:text-accent-800 bg-accent-500/10 px-2 py-0.5 rounded-full">
                 {voice.state === 'recording'
                   ? 'Đang nghe bạn...'
                   : voice.state === 'transcribing'
@@ -211,14 +211,16 @@ export default function StudioDialogue({
 
             <div className="min-h-[60px] text-xs space-y-1.5">
               {lastUserMsg && (
-                <div className="text-sky-300">
+                <div className="text-sky-300 theme-light:text-sky-800">
                   <span className="font-semibold text-zinc-400 mr-1.5">Bạn:</span>
                   {lastUserMsg.text}
                 </div>
               )}
               {lastCompanionMsg && (
                 <div className="text-zinc-200">
-                  <span className="font-semibold text-accent-400 mr-1.5">Đồng Hành:</span>
+                  <span className="font-semibold text-accent-400 theme-light:text-accent-800 mr-1.5">
+                    Đồng Hành:
+                  </span>
                   {lastCompanionMsg.text}
                 </div>
               )}
@@ -227,7 +229,11 @@ export default function StudioDialogue({
                   Nhấn nút mic bên dưới để bắt đầu nói...
                 </p>
               )}
-              {voice.error && <p className="text-rose-400 text-center py-1">{voice.error}</p>}
+              {voice.error && (
+                <p className="text-rose-400 theme-light:text-rose-800 text-center py-1">
+                  {voice.error}
+                </p>
+              )}
             </div>
           </div>
 
@@ -251,7 +257,7 @@ export default function StudioDialogue({
                 </button>
                 <button
                   onClick={voice.stop}
-                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-rose-600/90 hover:bg-rose-500 text-white text-xs font-bold shadow-lg shadow-rose-600/20 transition animate-pulse"
+                  className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-rose-600/90 hover:bg-rose-500 text-black text-xs font-bold shadow-lg shadow-rose-600/20 transition animate-pulse"
                 >
                   <MicOff className="w-4 h-4" />
                   Dừng Ghi Âm
@@ -262,7 +268,7 @@ export default function StudioDialogue({
                 onClick={voice.stopSession}
                 className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-semibold transition"
               >
-                <Volume2 className="w-4 h-4 text-amber-400" />
+                <Volume2 className="w-4 h-4 text-amber-400 theme-light:text-amber-800" />
                 Dừng
               </button>
             )}
@@ -320,7 +326,7 @@ export default function StudioDialogue({
                     {isBot && (msg.domain || msg.intent) && (
                       <div className="flex flex-wrap items-center gap-2 mb-3 pb-2.5 border-b border-zinc-800/70 text-[11px]">
                         {msg.domain && (
-                          <span className="px-2.5 py-0.5 rounded-full bg-accent-500/15 text-accent-300 border border-accent-500/25 font-semibold">
+                          <span className="px-2.5 py-0.5 rounded-full bg-accent-500/15 text-accent-300 theme-light:text-accent-800 border border-accent-500/25 font-semibold">
                             {getDomainLabel(msg.domain)}
                           </span>
                         )}
@@ -360,7 +366,7 @@ export default function StudioDialogue({
                     {isBot && msg.proposedActions && msg.proposedActions.length > 0 && (
                       <div className="mt-4 pt-3.5 border-t border-zinc-800/80 space-y-2.5">
                         <div className="flex items-center gap-1.5 text-xs font-bold text-zinc-200 mb-1.5">
-                          <Shield className="w-4 h-4 text-accent-400" />
+                          <Shield className="w-4 h-4 text-accent-400 theme-light:text-accent-800" />
                           Tác vụ đề xuất ({msg.proposedActions.length}):
                         </div>
 
@@ -390,10 +396,10 @@ export default function StudioDialogue({
                                     <span
                                       className={`font-semibold ${
                                         action.riskLevel === 'low'
-                                          ? 'text-emerald-400'
+                                          ? 'text-emerald-400 theme-light:text-emerald-800'
                                           : action.riskLevel === 'medium'
-                                            ? 'text-amber-400'
-                                            : 'text-rose-400'
+                                            ? 'text-amber-400 theme-light:text-amber-800'
+                                            : 'text-rose-400 theme-light:text-rose-800'
                                       }`}
                                     >
                                       {action.riskLevel}
@@ -402,17 +408,17 @@ export default function StudioDialogue({
                                 </div>
 
                                 {isCommitted && (
-                                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 font-semibold shrink-0 border border-emerald-500/25">
+                                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 theme-light:text-emerald-800 font-semibold shrink-0 border border-emerald-500/25">
                                     <CheckCircle2 className="w-3.5 h-3.5" /> Đã thực thi
                                   </span>
                                 )}
                                 {isRejected && (
-                                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-300 font-semibold shrink-0 border border-rose-500/25">
+                                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-300 theme-light:text-rose-800 font-semibold shrink-0 border border-rose-500/25">
                                     <XCircle className="w-3.5 h-3.5" /> Đã từ chối
                                   </span>
                                 )}
                                 {isPending && (
-                                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 font-semibold shrink-0 border border-amber-500/25">
+                                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 theme-light:text-amber-800 font-semibold shrink-0 border border-amber-500/25">
                                     <Clock className="w-3.5 h-3.5" /> Chờ duyệt
                                   </span>
                                 )}
@@ -423,7 +429,7 @@ export default function StudioDialogue({
                                   <button
                                     onClick={() => handleConfirmAction(action)}
                                     disabled={isActionLoading}
-                                    className="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 shadow-sm active:scale-98"
+                                    className="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-black font-semibold transition-all duration-200 flex items-center justify-center gap-1.5 shadow-sm active:scale-98"
                                   >
                                     {isActionLoading ? (
                                       <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -468,7 +474,7 @@ export default function StudioDialogue({
                   <Bot className="w-4.5 h-4.5 text-white" />
                 </div>
                 <div className="bg-zinc-900 border border-zinc-800/80 rounded-3xl px-5 py-3.5 text-zinc-300 text-sm flex items-center gap-2.5 shadow-sm">
-                  <RefreshCw className="w-4 h-4 animate-spin text-accent-400" />
+                  <RefreshCw className="w-4 h-4 animate-spin text-accent-400 theme-light:text-accent-800" />
                   Đang suy nghĩ & tra cứu ngữ cảnh đa miền...
                 </div>
               </div>
@@ -523,13 +529,15 @@ export default function StudioDialogue({
               <button
                 type="submit"
                 disabled={!input.trim() || loading}
+                // Nút chỉ có icon → phải có tên cho trình đọc màn hình (axe: button-name).
+                aria-label="Gửi tin nhắn"
                 className={`p-2.5 rounded-xl transition flex items-center justify-center shrink-0 ${
                   input.trim() && !loading
-                    ? 'bg-accent-500 hover:bg-accent-400 text-white shadow-md shadow-accent-500/25'
+                    ? 'bg-accent-500 hover:bg-accent-400 text-black shadow-md shadow-accent-500/25'
                     : 'bg-zinc-800 text-zinc-400 cursor-not-allowed'
                 }`}
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-4 h-4" aria-hidden="true" />
               </button>
             </form>
           </div>

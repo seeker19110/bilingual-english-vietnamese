@@ -55,7 +55,7 @@ export default function InteractiveQuestionCard({
   return (
     <div className="mt-4 pt-3.5 border-t border-zinc-800/80 space-y-3.5">
       <div className="flex items-center gap-1.5 text-xs font-bold text-zinc-200">
-        <ListChecks className="w-4 h-4 text-accent-400" />
+        <ListChecks className="w-4 h-4 text-accent-400 theme-light:text-accent-800" />
         Chọn nhanh câu trả lời ({questions.length} câu):
       </div>
 
@@ -122,7 +122,7 @@ export default function InteractiveQuestionCard({
         disabled={!canSubmit}
         className={`w-full min-h-[44px] py-2.5 px-4 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 transition-all ${
           canSubmit
-            ? 'bg-accent-500 hover:bg-accent-400 text-white shadow-md shadow-accent-500/25 active:scale-98'
+            ? 'bg-accent-500 hover:bg-accent-400 text-black shadow-md shadow-accent-500/25 active:scale-98'
             : 'bg-zinc-800 text-zinc-400 cursor-not-allowed'
         }`}
       >

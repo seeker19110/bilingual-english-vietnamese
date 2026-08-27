@@ -36,35 +36,35 @@ const SUBJECT_COLORS: Record<
   english: {
     gradient: 'from-emerald-500 to-teal-400',
     glow: 'shadow-emerald-500/20',
-    text: 'text-emerald-400',
+    text: 'text-emerald-400 theme-light:text-emerald-800',
     bg: 'bg-emerald-500/10',
     border: 'border-emerald-500/30 hover:border-emerald-500/60',
   },
   mathematics: {
     gradient: 'from-blue-500 to-cyan-400',
     glow: 'shadow-blue-500/20',
-    text: 'text-blue-400',
+    text: 'text-blue-400 theme-light:text-blue-800',
     bg: 'bg-blue-500/10',
     border: 'border-blue-500/30 hover:border-blue-500/60',
   },
   physics: {
     gradient: 'from-purple-500 to-indigo-400',
     glow: 'shadow-purple-500/20',
-    text: 'text-purple-400',
+    text: 'text-purple-400 theme-light:text-purple-800',
     bg: 'bg-purple-500/10',
     border: 'border-purple-500/30 hover:border-purple-500/60',
   },
   chemistry: {
     gradient: 'from-amber-500 to-orange-400',
     glow: 'shadow-amber-500/20',
-    text: 'text-amber-400',
+    text: 'text-amber-400 theme-light:text-amber-800',
     bg: 'bg-amber-500/10',
     border: 'border-amber-500/30 hover:border-amber-500/60',
   },
   biology: {
     gradient: 'from-rose-500 to-pink-400',
     glow: 'shadow-rose-500/20',
-    text: 'text-rose-400',
+    text: 'text-rose-400 theme-light:text-rose-800',
     bg: 'bg-rose-500/10',
     border: 'border-rose-500/30 hover:border-rose-500/60',
   },
@@ -124,7 +124,7 @@ export default function Subjects() {
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-accent-400 bg-accent-500/15 px-2 py-0.5 rounded-full border border-accent-500/25">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-accent-400 theme-light:text-accent-800 bg-accent-500/15 px-2 py-0.5 rounded-full border border-accent-500/25">
                     AI Socratic Tutor
                   </span>
                   <span className="text-xs text-zinc-400 font-medium">Chẩn đoán năng lực</span>
@@ -136,15 +136,20 @@ export default function Subjects() {
             </div>
 
             <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-950/60 border border-zinc-800 text-xs text-zinc-300">
-              <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+              <TrendingUp className="w-3.5 h-3.5 text-emerald-400 theme-light:text-emerald-800" />
               <span>Tiến độ tổng thể: 78%</span>
             </div>
           </div>
 
           <p className="text-xs sm:text-sm text-zinc-300 mt-3 leading-relaxed">
             Dựa trên lịch sử giải bài và bài kiểm tra gần nhất, AI khuyến nghị bạn ưu tiên củng cố:{' '}
-            <strong className="text-blue-300 font-semibold">Khảo sát hàm số (Toán 12)</strong> và{' '}
-            <strong className="text-emerald-300 font-semibold">Phát âm IPA Vowels (CEFR B1)</strong>
+            <strong className="text-blue-300 theme-light:text-blue-800 font-semibold">
+              Khảo sát hàm số (Toán 12)
+            </strong>{' '}
+            và{' '}
+            <strong className="text-emerald-300 theme-light:text-emerald-800 font-semibold">
+              Phát âm IPA Vowels (CEFR B1)
+            </strong>
             .
           </p>
 
@@ -154,12 +159,12 @@ export default function Subjects() {
               className="tap-44 flex items-center justify-between p-3 rounded-2xl bg-zinc-950/70 hover:bg-zinc-800 border border-blue-500/30 hover:border-blue-500/60 text-left transition-all active:scale-[0.98] group"
             >
               <div className="flex items-center gap-2.5 min-w-0">
-                <Calculator className="w-4 h-4 text-blue-400 shrink-0" />
+                <Calculator className="w-4 h-4 text-blue-400 theme-light:text-blue-800 shrink-0" />
                 <span className="text-xs font-semibold text-zinc-200 truncate">
                   Giải bài tập Toán 12 từng bước
                 </span>
               </div>
-              <ChevronRight className="w-4 h-4 text-blue-400 group-hover:translate-x-1 transition-transform shrink-0" />
+              <ChevronRight className="w-4 h-4 text-blue-400 theme-light:text-blue-800 group-hover:translate-x-1 transition-transform shrink-0" />
             </button>
 
             <button
@@ -167,12 +172,12 @@ export default function Subjects() {
               className="tap-44 flex items-center justify-between p-3 rounded-2xl bg-zinc-950/70 hover:bg-zinc-800 border border-cyan-500/30 hover:border-cyan-500/60 text-left transition-all active:scale-[0.98] group"
             >
               <div className="flex items-center gap-2.5 min-w-0">
-                <Sparkles className="w-4 h-4 text-cyan-400 shrink-0" />
+                <Sparkles className="w-4 h-4 text-cyan-400 theme-light:text-cyan-800 shrink-0" />
                 <span className="text-xs font-semibold text-zinc-200 truncate">
                   10 Phòng thí nghiệm Simulators
                 </span>
               </div>
-              <ChevronRight className="w-4 h-4 text-cyan-400 group-hover:translate-x-1 transition-transform shrink-0" />
+              <ChevronRight className="w-4 h-4 text-cyan-400 theme-light:text-cyan-800 group-hover:translate-x-1 transition-transform shrink-0" />
             </button>
           </div>
         </section>
@@ -195,7 +200,7 @@ export default function Subjects() {
               onClick={() => setFilter('all')}
               className={`tap-44 px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
                 filter === 'all'
-                  ? 'bg-accent-500 text-white shadow-md shadow-accent-500/20'
+                  ? 'bg-accent-500 text-black shadow-md shadow-accent-500/20'
                   : 'bg-zinc-900/80 border border-zinc-800 text-zinc-400 hover:text-white'
               }`}
             >
@@ -205,7 +210,7 @@ export default function Subjects() {
               onClick={() => setFilter('language')}
               className={`tap-44 px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
                 filter === 'language'
-                  ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20'
+                  ? 'bg-emerald-500 text-black shadow-md shadow-emerald-500/20'
                   : 'bg-zinc-900/80 border border-zinc-800 text-zinc-400 hover:text-white'
               }`}
             >
@@ -215,7 +220,7 @@ export default function Subjects() {
               onClick={() => setFilter('stem')}
               className={`tap-44 px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
                 filter === 'stem'
-                  ? 'bg-blue-500 text-white shadow-md shadow-blue-500/20'
+                  ? 'bg-blue-500 text-black shadow-md shadow-blue-500/20'
                   : 'bg-zinc-900/80 border border-zinc-800 text-zinc-400 hover:text-white'
               }`}
             >
@@ -230,12 +235,12 @@ export default function Subjects() {
           className="p-5 rounded-3xl bg-gradient-to-r from-accent-600/20 via-blue-600/20 to-purple-600/20 border border-accent-500/40 hover:border-accent-500/80 cursor-pointer transition-all flex items-center justify-between group shadow-lg shadow-accent-500/5 active:scale-[0.99]"
         >
           <div className="flex items-center gap-4">
-            <div className="p-3.5 rounded-2xl bg-accent-500/20 text-accent-400 group-hover:scale-110 transition">
+            <div className="p-3.5 rounded-2xl bg-accent-500/20 text-accent-400 theme-light:text-accent-800 group-hover:scale-110 transition">
               <Sparkles className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] px-2 py-0.5 rounded bg-accent-500/20 text-accent-300 font-bold">
+                <span className="text-[10px] px-2 py-0.5 rounded bg-accent-500/20 text-accent-300 theme-light:text-accent-800 font-bold">
                   MỚI: REAL-LIFE LAB
                 </span>
                 <span className="text-xs text-zinc-400">10 Simulators Tương Tác</span>
@@ -249,7 +254,7 @@ export default function Subjects() {
               </p>
             </div>
           </div>
-          <ChevronRight className="w-5 h-5 text-accent-400 group-hover:translate-x-1 transition shrink-0 ml-2" />
+          <ChevronRight className="w-5 h-5 text-accent-400 theme-light:text-accent-800 group-hover:translate-x-1 transition shrink-0 ml-2" />
         </div>
 
         {/* Danh sách thẻ môn học */}
@@ -288,8 +293,8 @@ export default function Subjects() {
                           <span
                             className={`inline-block text-[11px] px-2 py-0.5 rounded-full font-semibold mt-0.5 uppercase ${
                               sub.category === 'language'
-                                ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/20'
-                                : 'bg-blue-500/15 text-blue-300 border border-blue-500/20'
+                                ? 'bg-emerald-500/15 text-emerald-300 theme-light:text-emerald-800 border border-emerald-500/20'
+                                : 'bg-blue-500/15 text-blue-300 theme-light:text-blue-800 border border-blue-500/20'
                             }`}
                           >
                             {sub.category}
@@ -343,8 +348,8 @@ export default function Subjects() {
                     }}
                     className={`w-full mt-2 tap-44 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-semibold transition active:scale-[0.98] ${
                       sub.id === 'english'
-                        ? 'bg-emerald-500 hover:bg-emerald-400 text-zinc-950 shadow-md shadow-emerald-500/20'
-                        : 'bg-accent-500 hover:bg-accent-400 text-white shadow-md shadow-accent-500/20'
+                        ? 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-md shadow-emerald-500/20'
+                        : 'bg-accent-500 hover:bg-accent-400 text-black shadow-md shadow-accent-500/20'
                     }`}
                   >
                     <Bot className="w-4 h-4" />

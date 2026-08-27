@@ -220,13 +220,16 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => nav('/work/kanban')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-400 text-white text-sm font-bold transition shadow-sm"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-400 text-black text-sm font-bold transition shadow-sm"
             title="Bảng Kanban Tương Tác"
           >
             <FolderKanban className="w-4 h-4" />
             Bảng Kanban
           </button>
           <select
+            // Ô lọc không có nhãn hiển thị (chỉ có option "Tất cả dự án") → cần
+            // aria-label để trình đọc màn hình biết ô này lọc theo cái gì.
+            aria-label="Lọc theo dự án"
             value={selectedProjectId}
             onChange={(e) => setSelectedProjectId(e.target.value)}
             className="px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 text-sm focus:outline-none"
@@ -255,7 +258,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
           onClick={() => setActiveTab('tasks')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
             activeTab === 'tasks'
-              ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
+              ? 'bg-blue-600/20 text-blue-400 theme-light:text-blue-800 border border-blue-500/30'
               : 'text-zinc-400 hover:text-zinc-200'
           }`}
         >
@@ -266,7 +269,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
           onClick={() => setActiveTab('projects')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
             activeTab === 'projects'
-              ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
+              ? 'bg-blue-600/20 text-blue-400 theme-light:text-blue-800 border border-blue-500/30'
               : 'text-zinc-400 hover:text-zinc-200'
           }`}
         >
@@ -277,7 +280,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
           onClick={() => setActiveTab('meetings')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
             activeTab === 'meetings'
-              ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
+              ? 'bg-blue-600/20 text-blue-400 theme-light:text-blue-800 border border-blue-500/30'
               : 'text-zinc-400 hover:text-zinc-200'
           }`}
         >
@@ -288,7 +291,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
           onClick={() => setActiveTab('documents')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
             activeTab === 'documents'
-              ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
+              ? 'bg-blue-600/20 text-blue-400 theme-light:text-blue-800 border border-blue-500/30'
               : 'text-zinc-400 hover:text-zinc-200'
           }`}
         >
@@ -299,7 +302,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 text-blue-400 animate-spin mb-4" />
+          <Loader2 className="w-8 h-8 text-blue-400 theme-light:text-blue-800 animate-spin mb-4" />
           <p className="text-zinc-400 text-sm">Đang tải dữ liệu công việc...</p>
         </div>
       ) : (
@@ -311,7 +314,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                 <h3 className="text-base font-semibold text-zinc-200">Danh Sách Công Việc</h3>
                 <button
                   onClick={() => setShowTaskModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-[#fff] text-xs font-semibold shadow-md transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Thêm công việc
@@ -341,7 +344,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                             className="mt-0.5 text-zinc-400 hover:text-emerald-400 transition"
                           >
                             {isDone ? (
-                              <CheckCircle className="w-5 h-5 text-emerald-400" />
+                              <CheckCircle className="w-5 h-5 text-emerald-400 theme-light:text-emerald-800" />
                             ) : (
                               <Circle className="w-5 h-5 text-zinc-500" />
                             )}
@@ -358,9 +361,9 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                               <span
                                 className={`text-[10px] px-2 py-0.5 rounded font-medium uppercase ${
                                   task.priority === 'urgent'
-                                    ? 'bg-red-950/80 text-red-400 border border-red-800/40'
+                                    ? 'bg-red-950/80 theme-light:bg-red-50 text-red-400 theme-light:text-red-800 border border-red-800/40'
                                     : task.priority === 'high'
-                                      ? 'bg-amber-950/80 text-amber-400 border border-amber-800/40'
+                                      ? 'bg-amber-950/80 theme-light:bg-amber-50 text-amber-400 theme-light:text-amber-800 border border-amber-800/40'
                                       : 'bg-zinc-800 text-zinc-400 border border-zinc-700/50'
                                 }`}
                               >
@@ -390,7 +393,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                 <h3 className="text-base font-semibold text-zinc-200">Dự Án Đang Thực Hiện</h3>
                 <button
                   onClick={() => setShowProjectModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-[#fff] text-xs font-semibold shadow-md transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Tạo dự án mới
@@ -413,8 +416,8 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                         <span
                           className={`text-[10px] px-2 py-0.5 rounded font-medium uppercase border ${
                             proj.status === 'completed'
-                              ? 'bg-emerald-950/80 text-emerald-400 border-emerald-800/40'
-                              : 'bg-blue-950/80 text-blue-400 border-blue-800/40'
+                              ? 'bg-emerald-950/80 theme-light:bg-emerald-50 text-emerald-400 theme-light:text-emerald-800 border-emerald-800/40'
+                              : 'bg-blue-950/80 theme-light:bg-blue-50 text-blue-400 theme-light:text-blue-800 border-blue-800/40'
                           }`}
                         >
                           {proj.status}
@@ -426,7 +429,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                         </p>
                       )}
                       {proj.deadline && (
-                        <div className="flex items-center gap-1.5 text-xs text-amber-400/90 mt-4">
+                        <div className="flex items-center gap-1.5 text-xs text-amber-400/90 theme-light:text-amber-800/90 mt-4">
                           <Calendar className="w-3.5 h-3.5" />
                           Hạn chót: {new Date(proj.deadline).toLocaleDateString()}
                         </div>
@@ -460,7 +463,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                 </h3>
                 <button
                   onClick={() => setShowMeetingModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-[#fff] text-xs font-semibold shadow-md transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Ghi lại cuộc họp
@@ -519,7 +522,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                 <h3 className="text-base font-semibold text-zinc-200">Tài Liệu Nghiệp Vụ</h3>
                 <button
                   onClick={() => setShowDocModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-[#fff] text-xs font-semibold shadow-md transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Thêm tài liệu
@@ -545,7 +548,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                       </div>
                       <p className="text-xs text-zinc-300 mt-2">{doc.summary}</p>
                       {doc.contentUri && (
-                        <div className="text-xs text-blue-400 mt-3 truncate">
+                        <div className="text-xs text-blue-400 theme-light:text-blue-800 mt-3 truncate">
                           URI: {doc.contentUri}
                         </div>
                       )}
@@ -616,7 +619,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition"
+                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[#fff] text-sm font-semibold transition"
                 >
                   Tạo Dự Án
                 </button>
@@ -655,8 +658,14 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">Dự án</label>
+                  <label
+                    htmlFor="work-task-project"
+                    className="block text-xs font-medium text-zinc-400 mb-1"
+                  >
+                    Dự án
+                  </label>
                   <select
+                    id="work-task-project"
                     value={taskForm.projectId}
                     onChange={(e) => setTaskForm({ ...taskForm, projectId: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
@@ -670,8 +679,14 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">Độ ưu tiên</label>
+                  <label
+                    htmlFor="work-task-priority"
+                    className="block text-xs font-medium text-zinc-400 mb-1"
+                  >
+                    Độ ưu tiên
+                  </label>
                   <select
+                    id="work-task-priority"
                     value={taskForm.priority}
                     onChange={(e) =>
                       setTaskForm({
@@ -707,7 +722,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition"
+                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[#fff] text-sm font-semibold transition"
                 >
                   Tạo Công Việc
                 </button>
@@ -808,7 +823,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition"
+                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[#fff] text-sm font-semibold transition"
                 >
                   Lưu Biên Bản
                 </button>
@@ -847,10 +862,14 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
+                  <label
+                    htmlFor="work-doc-kind"
+                    className="block text-xs font-medium text-zinc-400 mb-1"
+                  >
                     Loại tài liệu
                   </label>
                   <select
+                    id="work-doc-kind"
                     value={docForm.documentType}
                     onChange={(e) =>
                       setDocForm({
@@ -869,8 +888,14 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">Dự án</label>
+                  <label
+                    htmlFor="work-doc-project"
+                    className="block text-xs font-medium text-zinc-400 mb-1"
+                  >
+                    Dự án
+                  </label>
                   <select
+                    id="work-doc-project"
                     value={docForm.projectId}
                     onChange={(e) => setDocForm({ ...docForm, projectId: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
@@ -919,7 +944,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition"
+                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[#fff] text-sm font-semibold transition"
                 >
                   Lưu Tài Liệu
                 </button>

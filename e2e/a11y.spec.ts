@@ -99,9 +99,24 @@ const AUTHED_ROUTES = [
   '/lap-trinh/du-an', // dự án trục chặng P1 (PR-L3b)
   '/lap-trinh/on-tap', // ôn thẻ SRS môn Lập trình (PR-L10) — màn rỗng khi chưa có thẻ
   '/lap-trinh/gioi-thieu', // mô tả khoá học & mục tiêu (PR-UX3) — trang chữ dài, nhiều tương phản
-  '/lap-trinh/huong', // danh sách 12 hướng chuyên sâu (PR-L-SPEC)
-  '/lap-trinh/huong/web', // chi tiết một hướng (12 hướng dùng chung layout)
+  '/lap-trinh/huong', // danh sách 13 hướng chuyên sâu (PR-L-SPEC)
+  '/lap-trinh/huong/web', // chi tiết một hướng (13 hướng dùng chung layout)
   '/lap-trinh/huong/architecture', // hướng kiến trúc — trang chi tiết dài nhất, nhiều danh sách chữ
+  // [2026-08-27] MỞ CỔNG SANG 4 TRỤ CÒN LẠI. Trước đây danh sách này chỉ có trụ Learning
+  // (Tiếng Anh + Lập trình), nên Career/Work/Startup/Life/Companion và hub Môn học chưa
+  // từng bị cổng a11y nào soi — dù CLAUDE.md mục 4.5 ghi cổng là "sàn cứng, dung sai 0,
+  // không baseline/ngoại lệ". Đo lần đầu: 41/50 tổ hợp trang×theme vi phạm, có cả mức
+  // critical. Đã sửa hết về 0 trước khi thêm vào đây (xem docs/changelog).
+  '/mon-hoc', // hub Môn học — cửa vào trụ Learning cho các môn ngoài Tiếng Anh
+  '/su-nghiep', // trụ Career
+  '/cong-viec-cuoc-song', // trụ Work + Life (hai mục trong một trang)
+  '/khoi-nghiep', // trụ Startup
+  '/life/wheel', // Bánh xe cuộc đời — 8 thanh trượt chấm điểm
+  '/life-graph', // Đồ thị cuộc đời
+  '/ban-dong-hanh', // Companion — tác tử xuyên suốt
+  '/action-canvas', // Bảng hành động của Companion
+  '/ung-dung-thuc-te', // Ứng dụng thực tế — 22 thanh trượt mô phỏng
+  '/luyen-tap', // Phòng luyện tập
 ]
 for (const route of AUTHED_ROUTES) {
   for (const theme of THEMES) {

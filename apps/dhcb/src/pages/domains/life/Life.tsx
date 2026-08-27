@@ -238,7 +238,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => nav('/life/wheel')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-rose-500 hover:bg-rose-400 text-white text-sm font-bold shadow-sm transition"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-rose-500 hover:bg-rose-400 text-black text-sm font-bold shadow-sm transition"
             title="Bánh xe cuộc đời"
           >
             <Heart className="w-4 h-4" />
@@ -261,51 +261,51 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
           onClick={() => setActiveTab('habits')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
             activeTab === 'habits'
-              ? 'bg-rose-600/20 text-rose-400 border border-rose-500/30'
+              ? 'bg-rose-600/20 text-rose-400 theme-light:text-rose-800 border border-rose-500/30'
               : 'text-zinc-400 hover:text-zinc-200'
           }`}
         >
-          <Flame className="w-4 h-4 text-amber-400" />
+          <Flame className="w-4 h-4 text-amber-400 theme-light:text-amber-800" />
           Thói quen ({habits.length})
         </button>
         <button
           onClick={() => setActiveTab('wellbeing')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
             activeTab === 'wellbeing'
-              ? 'bg-rose-600/20 text-rose-400 border border-rose-500/30'
+              ? 'bg-rose-600/20 text-rose-400 theme-light:text-rose-800 border border-rose-500/30'
               : 'text-zinc-400 hover:text-zinc-200'
           }`}
         >
-          <Smile className="w-4 h-4 text-emerald-400" />
+          <Smile className="w-4 h-4 text-emerald-400 theme-light:text-emerald-800" />
           Sức khỏe & Tâm trạng ({wellbeingChecks.length})
         </button>
         <button
           onClick={() => setActiveTab('plans')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
             activeTab === 'plans'
-              ? 'bg-rose-600/20 text-rose-400 border border-rose-500/30'
+              ? 'bg-rose-600/20 text-rose-400 theme-light:text-rose-800 border border-rose-500/30'
               : 'text-zinc-400 hover:text-zinc-200'
           }`}
         >
-          <Calendar className="w-4 h-4 text-blue-400" />
+          <Calendar className="w-4 h-4 text-blue-400 theme-light:text-blue-800" />
           Kế hoạch ({plans.length})
         </button>
         <button
           onClick={() => setActiveTab('milestones')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
             activeTab === 'milestones'
-              ? 'bg-rose-600/20 text-rose-400 border border-rose-500/30'
+              ? 'bg-rose-600/20 text-rose-400 theme-light:text-rose-800 border border-rose-500/30'
               : 'text-zinc-400 hover:text-zinc-200'
           }`}
         >
-          <Trophy className="w-4 h-4 text-yellow-400" />
+          <Trophy className="w-4 h-4 text-yellow-400 theme-light:text-yellow-800" />
           Cột mốc ({milestones.length})
         </button>
       </div>
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 text-rose-400 animate-spin mb-4" />
+          <Loader2 className="w-8 h-8 text-rose-400 theme-light:text-rose-800 animate-spin mb-4" />
           <p className="text-zinc-400 text-sm">Đang tải dữ liệu cuộc sống...</p>
         </div>
       ) : (
@@ -319,7 +319,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                 </h3>
                 <button
                   onClick={() => setShowHabitModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold shadow-md transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-[#fff] text-xs font-semibold shadow-md transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Thêm thói quen
@@ -344,15 +344,15 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                           <span
                             className={`text-[10px] px-2 py-0.5 rounded font-semibold uppercase ${
                               habit.habitType === 'build'
-                                ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800/40'
-                                : 'bg-amber-950/80 text-amber-400 border border-amber-800/40'
+                                ? 'bg-emerald-950/80 theme-light:bg-emerald-50 text-emerald-400 theme-light:text-emerald-800 border border-emerald-800/40'
+                                : 'bg-amber-950/80 theme-light:bg-amber-50 text-amber-400 theme-light:text-amber-800 border border-amber-800/40'
                             }`}
                           >
                             {habit.habitType}
                           </span>
                         </div>
                         <div className="flex items-center gap-3 mt-3 text-xs">
-                          <span className="flex items-center gap-1 text-amber-400 font-bold text-sm">
+                          <span className="flex items-center gap-1 text-amber-400 theme-light:text-amber-800 font-bold text-sm">
                             <Flame className="w-4 h-4 fill-amber-400" />
                             {habit.currentStreak} ngày
                           </span>
@@ -363,7 +363,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                       <div className="mt-4 pt-3 border-t border-zinc-800 flex justify-end">
                         <button
                           onClick={() => handleLogHabit(habit.id)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 theme-light:text-emerald-800 border border-emerald-500/30 text-xs font-semibold transition"
                         >
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           Hoàn thành hôm nay
@@ -385,7 +385,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                 </h3>
                 <button
                   onClick={() => setShowWellbeingModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold shadow-md transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-[#fff] text-xs font-semibold shadow-md transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Check-in Tâm Trạng
@@ -411,7 +411,8 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                       <div className="grid grid-cols-3 gap-2 text-center my-3">
                         <div className="bg-zinc-950 p-2.5 rounded-lg border border-zinc-800">
                           <div className="text-[11px] text-zinc-400 flex items-center justify-center gap-1">
-                            <Smile className="w-3 h-3 text-emerald-400" /> Tâm trạng
+                            <Smile className="w-3 h-3 text-emerald-400 theme-light:text-emerald-800" />{' '}
+                            Tâm trạng
                           </div>
                           <div className="text-base font-bold text-zinc-100 mt-1">
                             {check.moodScore}/10
@@ -419,7 +420,8 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                         </div>
                         <div className="bg-zinc-950 p-2.5 rounded-lg border border-zinc-800">
                           <div className="text-[11px] text-zinc-400 flex items-center justify-center gap-1">
-                            <Zap className="w-3 h-3 text-amber-400" /> Năng lượng
+                            <Zap className="w-3 h-3 text-amber-400 theme-light:text-amber-800" />{' '}
+                            Năng lượng
                           </div>
                           <div className="text-base font-bold text-zinc-100 mt-1">
                             {check.energyScore}/10
@@ -427,7 +429,8 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                         </div>
                         <div className="bg-zinc-950 p-2.5 rounded-lg border border-zinc-800">
                           <div className="text-[11px] text-zinc-400 flex items-center justify-center gap-1">
-                            <Activity className="w-3 h-3 text-rose-400" /> Căng thẳng
+                            <Activity className="w-3 h-3 text-rose-400 theme-light:text-rose-800" />{' '}
+                            Căng thẳng
                           </div>
                           <div className="text-base font-bold text-zinc-100 mt-1">
                             {check.stressScore}/10
@@ -453,7 +456,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                 <h3 className="text-base font-semibold text-zinc-200">Kế Hoạch Cuộc Sống</h3>
                 <button
                   onClick={() => setShowPlanModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold shadow-md transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-[#fff] text-xs font-semibold shadow-md transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Tạo kế hoạch
@@ -495,7 +498,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                               p.status === 'completed' ? 'active' : 'completed',
                             ).then(loadData)
                           }
-                          className="text-xs text-rose-400 hover:text-rose-300 transition font-medium"
+                          className="text-xs text-rose-400 theme-light:text-rose-800 hover:text-rose-300 transition font-medium"
                         >
                           {p.status === 'completed' ? 'Mở lại' : 'Hoàn tất'}
                         </button>
@@ -516,7 +519,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                 </h3>
                 <button
                   onClick={() => setShowMilestoneModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold shadow-md transition"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-[#fff] text-xs font-semibold shadow-md transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Thêm cột mốc
@@ -535,7 +538,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                       <div>
                         <div className="flex items-start justify-between">
                           <h4 className="font-semibold text-zinc-100 text-sm">{m.title}</h4>
-                          <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-yellow-400 border border-zinc-700 uppercase">
+                          <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-yellow-400 theme-light:text-yellow-800 border border-zinc-700 uppercase">
                             {m.area}
                           </span>
                         </div>
@@ -588,10 +591,14 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
+                  <label
+                    htmlFor="life-habit-goal"
+                    className="block text-xs font-medium text-zinc-400 mb-1"
+                  >
                     Mục tiêu thói quen
                   </label>
                   <select
+                    id="life-habit-goal"
                     value={habitForm.habitType}
                     onChange={(e) =>
                       setHabitForm({
@@ -606,8 +613,14 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">Tần suất</label>
+                  <label
+                    htmlFor="life-habit-frequency"
+                    className="block text-xs font-medium text-zinc-400 mb-1"
+                  >
+                    Tần suất
+                  </label>
                   <select
+                    id="life-habit-frequency"
                     value={habitForm.frequency}
                     onChange={(e) =>
                       setHabitForm({
@@ -633,7 +646,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-semibold transition"
+                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-[#fff] text-sm font-semibold transition"
                 >
                   Tạo Thói Quen
                 </button>
@@ -722,7 +735,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-semibold transition"
+                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-[#fff] text-sm font-semibold transition"
                 >
                   Lưu Check-in
                 </button>
@@ -760,8 +773,14 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Loại chu kỳ</label>
+                <label
+                  htmlFor="life-plan-cycle"
+                  className="block text-xs font-medium text-zinc-400 mb-1"
+                >
+                  Loại chu kỳ
+                </label>
                 <select
+                  id="life-plan-cycle"
                   value={planForm.planType}
                   onChange={(e) =>
                     setPlanForm({ ...planForm, planType: e.target.value as LifePlan['planType'] })
@@ -811,7 +830,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-semibold transition"
+                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-[#fff] text-sm font-semibold transition"
                 >
                   Lưu Kế Hoạch
                 </button>
@@ -850,8 +869,14 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">Lĩnh vực</label>
+                  <label
+                    htmlFor="life-milestone-domain"
+                    className="block text-xs font-medium text-zinc-400 mb-1"
+                  >
+                    Lĩnh vực
+                  </label>
                   <select
+                    id="life-milestone-domain"
                     value={milestoneForm.area}
                     onChange={(e) =>
                       setMilestoneForm({
@@ -909,7 +934,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-semibold transition"
+                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-[#fff] text-sm font-semibold transition"
                 >
                   Lưu Cột Mốc
                 </button>
