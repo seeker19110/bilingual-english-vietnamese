@@ -88,15 +88,15 @@ describe('/api/programming/progress', () => {
 
   // Tầng HƯỚNG CHUYÊN SÂU dùng chung bảng tiến độ (chi tiết chặng S2).
   it('POST module/tiêu chí hướng chuyên sâu có thật → ghi bình thường', async () => {
-    expect((await handler(req('POST', { lessonId: 'web-s2-m1', status: 'completed' }))).status).toBe(
-      200,
-    )
+    expect(
+      (await handler(req('POST', { lessonId: 'web-s2-m1', status: 'completed' }))).status,
+    ).toBe(200)
     expect(query.mock.calls[1]?.[1]).toEqual(['user-1', 'web-s2-m1', 'completed'])
     vi.clearAllMocks()
     query.mockResolvedValue({ rows: [] })
-    expect((await handler(req('POST', { lessonId: 'web-s2-r3', status: 'completed' }))).status).toBe(
-      200,
-    )
+    expect(
+      (await handler(req('POST', { lessonId: 'web-s2-r3', status: 'completed' }))).status,
+    ).toBe(200)
   })
 
   it('POST khoá hướng chuyên sâu không tồn tại → 400, KHÔNG ghi DB', async () => {
