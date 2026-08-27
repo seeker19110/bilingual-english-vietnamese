@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { BookOpen, Eye, EyeOff, Mic, PenLine, MessageCircle } from 'lucide-react'
 import {
   login,
@@ -88,11 +88,11 @@ export default function Login() {
     }
   }
 
-  // Đã đăng nhập → về trang chủ
-  if (user) {
-    nav('/')
-    return null
-  }
+  // Đã đăng nhập → về trang chủ.
+  // KHÔNG gọi nav() ngay trong thân render: đó là side effect trong lúc React đang render,
+  // React bỏ qua nên URL vẫn đứng ở /login trong khi component đã `return null` → người dùng
+  // thấy TRANG TRẮNG. Dùng <Navigate> (một component, chuyển hướng ở giai đoạn commit).
+  if (user) return <Navigate to="/" replace />
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
