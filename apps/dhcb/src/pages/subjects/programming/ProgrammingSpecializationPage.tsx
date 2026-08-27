@@ -152,10 +152,13 @@ function StageBlock({
   stage,
   xong,
   onToggle,
+  onOpen,
   dangLuu,
 }: {
   stage: SpecStage
   xong: boolean
+  /** Mở trang chặng: nơi có bài luyện tay, câu tự kiểm và rubric nghiệm thu. */
+  onOpen: () => void
   /** null khi chưa đăng nhập — không hiện nút đánh dấu, trang vẫn đọc được đầy đủ. */
   onToggle: (() => void) | null
   dangLuu: boolean
@@ -200,6 +203,13 @@ function StageBlock({
       <StageLessons stageId={stage.id} />
 
       <ProjectBlock project={stage.project} tone="stage" />
+
+      <button
+        onClick={onOpen}
+        className="tap-44 w-full py-3 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition"
+      >
+        Mở chặng {stage.tier.toUpperCase()} — chi tiết & nghiệm thu
+      </button>
 
       {onToggle && (
         <button
@@ -426,6 +436,7 @@ export default function ProgrammingSpecializationPage() {
                 key={stage.id}
                 stage={stage}
                 xong={isStageCompleted(progress, stage.id)}
+                onOpen={() => nav(`/lap-trinh/huong/${spec.id}/${stage.id}`)}
                 dangLuu={dangLuu}
                 onToggle={
                   user ? () => void luu(() => setStageStatus(user.id, stage.id, 'completed')) : null

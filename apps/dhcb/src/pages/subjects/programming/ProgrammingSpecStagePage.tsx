@@ -1,0 +1,382 @@
+// ProgrammingSpecStagePage — MỘT CHẶNG của hướng chuyên sâu (`/lap-trinh/huong/:specId/:stageId`).
+//
+// Trang chi tiết hướng trả lời "đi thế nào"; trang này trả lời hai câu tiếp theo mà bản đồ
+// không trả lời được:
+//   ① "module này học xong tôi LÀM ĐƯỢC gì, làm sao biết đã nắm?" → mục tiêu · luyện tay ·
+//      tự kiểm · dấu hiệu đã nắm (dữ liệu ở specializations/details/).
+//   ② "dự án chặng coi là XONG khi nào?"                          → rubric có cách chứng minh
+//      + đặc tả mẫu 6 ô để viết trước khi làm.
+//
+// Chặng CHƯA soạn chi tiết (đợt đầu chỉ có S2) vẫn mở được: hiện phần bản đồ sẵn có kèm ghi
+// chú đang soạn — KHÔNG bịa nội dung, cũng không trả trang lỗi.
+//
+// Tiến độ: mỗi module và mỗi tiêu chí rubric là một mục đánh dấu được, lưu qua
+// /api/programming/progress (khoá 'web-s2-m1' / 'web-s2-r3') — cùng bảng với bài học P1–P6.
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import {
+  Check,
+  ClipboardCheck,
+  Clock,
+  FileSignature,
+  ListChecks,
+  Target,
+  Trophy,
+} from 'lucide-react'
+import Layout from '../../../components/Layout'
+import PageHeader from '../../../components/PageHeader'
+import { useAuth } from '../../../context/useAuth'
+import {
+  fetchProgress,
+  saveLessonProgress,
+  type ProgrammingLessonProgress,
+} from '../../../lib/programmingProgress'
+import { getSpecialization } from '@dhcb/subject-programming/specializations/registry'
+import {
+  getSpecStageDetail,
+  type SpecBrief,
+  type SpecModuleDetail,
+} from '@dhcb/subject-programming/specializations/stageDetails'
+
+const TIER_LABEL: Record<string, string> = {
+  s1: 'Chặng 1 — căn bản',
+  s2: 'Chặng 2 — vững tay',
+  s3: 'Chặng 3 — nâng cao',
+  s4: 'Chặng 4 — chuyên gia',
+}
+
+/** Ô đánh dấu xong một mục tiến độ. Đã xong thì KHÔNG bỏ được — cùng bất biến với server. */
+function DoneToggle({ done, label, onDone }: { done: boolean; label: string; onDone: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={done ? undefined : onDone}
+      aria-pressed={done}
+      aria-label={done ? `Đã xong: ${label}` : `Đánh dấu đã xong: ${label}`}
+      disabled={done}
+      className={`tap-44 shrink-0 w-9 h-9 rounded-xl border flex items-center justify-center transition ${
+        done
+          ? 'border-emerald-500/60 bg-emerald-500/20 text-emerald-300'
+          : 'border-zinc-700 bg-zinc-950 text-zinc-400 hover:border-accent-500 hover:text-accent-400'
+      }`}
+    >
+      <Check className="w-4 h-4" aria-hidden="true" />
+    </button>
+  )
+}
+
+function ModuleBlock({
+  index,
+  title,
+  topics,
+  detail,
+  done,
+  onDone,
+}: {
+  index: number
+  title: string
+  topics: string[]
+  detail?: SpecModuleDetail
+  done: boolean
+  onDone: () => void
+}) {
+  return (
+    <li className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 space-y-3">
+      <div className="flex items-start gap-3">
+        <div className="flex-1 space-y-1.5">
+          <h3 className="text-sm font-bold text-white">
+            {index}. {title}
+          </h3>
+          {detail && (
+            <p className="text-sm text-zinc-200 leading-relaxed">
+              <span className="font-semibold">Học xong làm được:</span> {detail.objective}
+            </p>
+          )}
+        </div>
+        <DoneToggle done={done} label={title} onDone={onDone} />
+      </div>
+
+      <div className="space-y-1.5">
+        <p className="text-xs font-semibold text-zinc-200 uppercase tracking-wide">Kiến thức</p>
+        <ul className="text-sm text-zinc-200 leading-relaxed space-y-1 list-disc pl-5">
+          {topics.map((t) => (
+            <li key={t}>{t}</li>
+          ))}
+        </ul>
+      </div>
+
+      {detail && (
+        <>
+          <div className="space-y-1.5">
+            <p className="text-xs font-semibold text-zinc-200 uppercase tracking-wide">
+              Tự tay làm
+            </p>
+            <ul className="text-sm text-zinc-200 leading-relaxed space-y-1 list-disc pl-5">
+              {detail.practice.map((p) => (
+                <li key={p}>{p}</li>
+              ))}
+            </ul>
+          </div>
+
+          <details className="rounded-xl border border-zinc-800 bg-zinc-900/80 p-3">
+            <summary className="tap-44 text-sm font-semibold text-zinc-100 cursor-pointer">
+              Tự kiểm ({detail.selfCheck.length} câu)
+            </summary>
+            <ul className="mt-2 space-y-2">
+              {detail.selfCheck.map((c) => (
+                <li key={c.q} className="space-y-1">
+                  <p className="text-sm text-zinc-100 font-semibold leading-relaxed">{c.q}</p>
+                  <p className="text-sm text-zinc-200 leading-relaxed">{c.a}</p>
+                </li>
+              ))}
+            </ul>
+          </details>
+
+          <div className="space-y-1.5">
+            <p className="text-xs font-semibold text-zinc-200 uppercase tracking-wide">
+              Dấu hiệu đã nắm
+            </p>
+            <ul className="text-sm text-zinc-200 leading-relaxed space-y-1 list-disc pl-5">
+              {detail.doneSignals.map((s) => (
+                <li key={s}>{s}</li>
+              ))}
+            </ul>
+          </div>
+        </>
+      )}
+    </li>
+  )
+}
+
+/** Đặc tả mẫu 6 ô — thứ phải viết TRƯỚC khi bắt tay vào dự án chặng. */
+function BriefBlock({ brief }: { brief: SpecBrief }) {
+  const boxes: { title: string; hint: string; items: string[] }[] = [
+    {
+      title: 'Phạm vi — LÀM',
+      hint: 'Việc quan sát được, không nói chung chung.',
+      items: brief.scopeDo,
+    },
+    {
+      title: 'Phạm vi — KHÔNG làm',
+      hint: 'Ô quan trọng ngang ô trên: nó giữ cho dự án không phình.',
+      items: brief.scopeDont,
+    },
+    { title: 'Điểm chạm', hint: 'Chỗ nào trong mã sẽ bị đụng tới.', items: brief.touchpoints },
+    {
+      title: 'Hợp đồng',
+      hint: 'Cái gì đi qua ranh giới và ràng buộc phải giữ.',
+      items: brief.contracts,
+    },
+    { title: 'Tiêu chí chấp nhận', hint: 'Đo được, kèm cách chứng minh.', items: brief.acceptance },
+    {
+      title: 'Bất biến',
+      hint: 'Điều luôn đúng bất kể thao tác nào — phải có test canh.',
+      items: brief.invariants,
+    },
+    {
+      title: 'Quy ước',
+      hint: 'Bên thi hành không thấy hội thoại trước đó.',
+      items: brief.conventions,
+    },
+  ]
+  return (
+    <section className="rounded-3xl border border-zinc-800 bg-zinc-900/80 p-5 space-y-3">
+      <h2 className="text-base font-bold text-white flex items-center gap-2">
+        <FileSignature className="w-5 h-5 text-accent-400" aria-hidden="true" />
+        <span>Đặc tả mẫu cho dự án chặng</span>
+      </h2>
+      <p className="text-sm text-zinc-200 leading-relaxed">
+        Viết đủ sáu ô này TRƯỚC khi gõ dòng mã đầu tiên. Đây cũng là khuôn bạn dùng khi giao việc
+        cho người khác hoặc cho AI thi hành.
+      </p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {boxes.map((b) => (
+          <div
+            key={b.title}
+            className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 space-y-2"
+          >
+            <h3 className="text-sm font-bold text-white">{b.title}</h3>
+            <p className="text-xs text-zinc-300 leading-relaxed">{b.hint}</p>
+            <ul className="text-sm text-zinc-200 leading-relaxed space-y-1 list-disc pl-5">
+              {b.items.map((i) => (
+                <li key={i}>{i}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+export default function ProgrammingSpecStagePage() {
+  const nav = useNavigate()
+  const { user } = useAuth()
+  const { specId, stageId } = useParams<{ specId: string; stageId: string }>()
+  const spec = getSpecialization(specId ?? '')
+  const stage = spec?.stages.find((s) => s.id === (stageId ?? '').trim().toLowerCase())
+  const detail = stage ? getSpecStageDetail(stage.id) : undefined
+
+  const [progress, setProgress] = useState<ProgrammingLessonProgress[]>([])
+
+  useEffect(() => {
+    if (!user) return
+    let alive = true
+    void fetchProgress(user.id).then((rows) => {
+      if (alive) setProgress(rows)
+    })
+    return () => {
+      alive = false
+    }
+  }, [user])
+
+  const doneIds = useMemo(
+    () => new Set(progress.filter((p) => p.status === 'completed').map((p) => p.lessonId)),
+    [progress],
+  )
+
+  const markDone = useCallback(
+    (id: string) => {
+      // Cập nhật lạc quan: mất mạng vẫn thấy đã tick, server là nguồn sự thật khi quay lại.
+      setProgress((rows) =>
+        rows.some((r) => r.lessonId === id)
+          ? rows.map((r) => (r.lessonId === id ? { ...r, status: 'completed' as const } : r))
+          : [...rows, { lessonId: id, status: 'completed' as const, completedAt: Date.now() }],
+      )
+      if (user) void saveLessonProgress(user.id, id, 'completed')
+    },
+    [user],
+  )
+
+  if (!spec || !stage) {
+    return (
+      <div className="min-h-dvh bg-zinc-950 text-zinc-100">
+        <Layout onBack={() => nav('/lap-trinh/huong')} />
+        <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-4">
+          <PageHeader
+            title="Không có chặng này"
+            subtitle="Đường dẫn không khớp chặng nào của hướng nào. Quay lại danh sách để chọn hướng có thật."
+          />
+          <button
+            onClick={() => nav('/lap-trinh/huong')}
+            className="tap-44 w-full py-3.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition"
+          >
+            Xem các hướng chuyên sâu
+          </button>
+        </main>
+      </div>
+    )
+  }
+
+  const totalItems = stage.modules.length + (detail?.rubric.length ?? 0)
+  const doneCount =
+    stage.modules.filter((m) => doneIds.has(m.id)).length +
+    (detail?.rubric.filter((r) => doneIds.has(r.id)).length ?? 0)
+  const percent = totalItems === 0 ? 0 : Math.round((doneCount / totalItems) * 100)
+
+  return (
+    <div className="min-h-dvh bg-zinc-950 text-zinc-100">
+      <Layout onBack={() => nav(`/lap-trinh/huong/${spec.id}`)} />
+
+      <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
+        <PageHeader title={stage.name} subtitle={`${spec.name} · ${TIER_LABEL[stage.tier]}`} />
+
+        <section className="rounded-3xl border border-accent-500/40 bg-zinc-900 p-5 space-y-3">
+          <h2 className="text-base font-bold text-white flex items-center gap-2">
+            <Target className="w-5 h-5 text-accent-400" aria-hidden="true" />
+            <span>Học xong chặng này làm được</span>
+          </h2>
+          <p className="text-sm text-zinc-200 leading-relaxed">{stage.canDo}</p>
+          <p className="text-xs text-zinc-300 flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5" aria-hidden="true" />
+            <span>{stage.duration}</span>
+          </p>
+          <p className="text-sm text-zinc-200 leading-relaxed">
+            <span className="font-semibold">Đã đánh dấu xong:</span> {doneCount}/{totalItems} mục (
+            {percent}%)
+          </p>
+        </section>
+
+        {!detail && (
+          <p className="rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4 text-sm text-zinc-200 leading-relaxed">
+            Chặng này mới có bản đồ (module và dự án). Phần chi tiết — bài luyện tay, câu tự kiểm và
+            tiêu chí nghiệm thu — đang được soạn ở đợt sau; hiện tại chặng S2 của mọi hướng đã có
+            đủ.
+          </p>
+        )}
+
+        <section className="space-y-3">
+          <h2 className="text-base font-bold text-white flex items-center gap-2">
+            <ListChecks className="w-5 h-5 text-accent-400" aria-hidden="true" />
+            <span>Module của chặng</span>
+          </h2>
+          <ol className="space-y-3">
+            {stage.modules.map((m, i) => (
+              <ModuleBlock
+                key={m.id}
+                index={i + 1}
+                title={m.title}
+                topics={m.topics}
+                detail={detail?.modules.find((d) => d.moduleId === m.id)}
+                done={doneIds.has(m.id)}
+                onDone={() => markDone(m.id)}
+              />
+            ))}
+          </ol>
+        </section>
+
+        <section className="rounded-3xl border border-emerald-500/40 bg-emerald-500/10 p-5 space-y-3">
+          <h2 className="text-base font-bold text-white flex items-center gap-2">
+            <Trophy className="w-5 h-5 text-accent-400" aria-hidden="true" />
+            <span>Dự án: {stage.project.name}</span>
+          </h2>
+          <p className="text-sm text-zinc-200 leading-relaxed">{stage.project.brief}</p>
+
+          {detail ? (
+            <>
+              <p className="text-xs font-semibold text-zinc-200 uppercase tracking-wide">
+                Nghiệm thu — mỗi dòng phải chứng minh được
+              </p>
+              <ul className="space-y-2">
+                {detail.rubric.map((r) => (
+                  <li
+                    key={r.id}
+                    className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 flex items-start gap-3"
+                  >
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm text-zinc-100 font-semibold leading-relaxed">
+                        {r.text}
+                      </p>
+                      <p className="text-sm text-zinc-200 leading-relaxed flex items-start gap-1.5">
+                        <ClipboardCheck
+                          className="w-4 h-4 text-accent-400 shrink-0 mt-0.5"
+                          aria-hidden="true"
+                        />
+                        <span>
+                          <span className="font-semibold">Chứng minh:</span> {r.howToProve}
+                        </span>
+                      </p>
+                    </div>
+                    <DoneToggle
+                      done={doneIds.has(r.id)}
+                      label={r.text}
+                      onDone={() => markDone(r.id)}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <ul className="text-sm text-zinc-200 leading-relaxed space-y-1 list-disc pl-5">
+              {stage.project.requirements.map((req) => (
+                <li key={req}>{req}</li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        {detail && <BriefBlock brief={detail.specBrief} />}
+      </main>
+    </div>
+  )
+}

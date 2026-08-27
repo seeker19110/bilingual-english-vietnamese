@@ -102,6 +102,7 @@ const AUTHED_ROUTES = [
   '/lap-trinh/huong', // danh sách 13 hướng chuyên sâu (PR-L-SPEC)
   '/lap-trinh/huong/web', // chi tiết một hướng (13 hướng dùng chung layout)
   '/lap-trinh/huong/architecture', // hướng kiến trúc — trang chi tiết dài nhất, nhiều danh sách chữ
+  '/lap-trinh/huong/web/web-s2', // trang CHẶNG: mục tiêu, tự kiểm, rubric, đặc tả 6 ô
   // [2026-08-27] MỞ CỔNG SANG 4 TRỤ CÒN LẠI. Trước đây danh sách này chỉ có trụ Learning
   // (Tiếng Anh + Lập trình), nên Career/Work/Startup/Life/Companion và hub Môn học chưa
   // từng bị cổng a11y nào soi — dù CLAUDE.md mục 4.5 ghi cổng là "sàn cứng, dung sai 0,
