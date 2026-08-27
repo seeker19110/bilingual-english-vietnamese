@@ -293,13 +293,32 @@ const API_ROUTES: { prefix: string; module: string }[] = [
   { prefix: '/api/companion', module: '/apps/server/src/api/personal/companion.ts' },
 ]
 
+/**
+ * Khớp route theo RANH GIỚI đoạn đường dẫn, không phải `startsWith` thô.
+ *
+ * [2026-08-26] `startsWith` từng khớp NHẦM: `/api/companion-link` (tính năng "Người thân theo
+ * dõi") rơi vào handler `/api/companion` (tác tử AI) chỉ vì trùng tiền tố — request treo vô hạn
+ * trong dev, khiến `waitForLoadState('networkidle')` của `e2e/chat.spec.ts` hết giờ 30s. Lỗi này
+ * KHÔNG lộ ra ở production (Express khớp đường dẫn chính xác), chỉ ở dev middleware.
+ *
+ * Hợp lệ: đúng bằng prefix, hoặc theo sau là `/` (đường dẫn con) hay `?` (query).
+ * Không hợp lệ: ký tự khác ngay sau prefix — `-link`, `_v2`, `.json`…
+ */
+function findApiRoute(url: string): { prefix: string; module: string } | undefined {
+  return API_ROUTES.find((r) => {
+    if (!url.startsWith(r.prefix)) return false
+    const next = url.charAt(r.prefix.length)
+    return next === '' || next === '/' || next === '?'
+  })
+}
+
 function apiEdgeDevMiddleware(): Plugin {
   return {
     name: 'api-edge-dev-middleware',
     configureServer(server: ViteDevServer) {
       server.middlewares.use(
         async (req: IncomingMessage, res: ServerResponse, next: () => void) => {
-          const route = req.url ? API_ROUTES.find((r) => req.url!.startsWith(r.prefix)) : undefined
+          const route = req.url ? findApiRoute(req.url) : undefined
           if (!route) {
             next()
             return
