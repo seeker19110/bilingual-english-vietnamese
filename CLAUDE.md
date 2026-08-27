@@ -237,14 +237,23 @@ tự merge tay.
    nháp thì bỏ nháp NGAY. Lý do: GitHub từ chối bật auto-merge trên PR nháp ("Pull request is a
    draft" — đã dính thật ở PR #693).
 2. **Bật auto-merge (squash) ngay** — không hỏi lại.
-3. **Nhánh phải KHÔNG tụt sau `main`.** Đây là bài học từ PR #709: cả ba check đã xanh mà PR vẫn
-   nằm im, vì `mergeable_state` là `behind` — branch protection của repo đòi nhánh cập nhật với
-   `main` trước khi merge. Xử lý: `git fetch origin main` → `git merge origin/main` → **chạy lại
-   toàn bộ cổng TRÊN KẾT QUẢ ĐÃ GỘP** (mục 9) → push. Sau khi CI xanh lần nữa, auto-merge tự nổ.
-   KHÔNG merge tay để đi tắt.
+3. **Chỉ gộp `main` khi THẬT SỰ CẦN, đừng gộp theo phản xạ.** Bối cảnh: PR #709 từng kẹt vì
+   `mergeable_state` là `behind` — repo khi đó bật "Require branches to be up to date before
+   merging", khiến mỗi lần có PR khác merge là mọi PR đang mở phải gộp `main` rồi chờ CI lại
+   ~15–20 phút, trong khi `main` có thể tiến tiếp. **Người dùng đã TẮT ô đó (2026-08-27)**, nên
+   nhánh tụt sau `main` KHÔNG còn chặn merge nữa. Từ nay chỉ gộp `main` khi:
+   - GitHub báo **xung đột** (`mergeable_state: dirty`) — bắt buộc, xem mục 11 phần auto-merge; hoặc
+   - `main` vừa đổi thứ mà PR này cũng đụng (cùng file/luồng), tức có nguy cơ **xung đột ngữ
+     nghĩa** mà git không báo.
+
+**Chạy lại cổng ở máy sau khi gộp — chỉ khi cần:** merge SẠCH (không xung đột, không đụng file
+chung) thì KHÔNG chạy lại toàn bộ cổng ở máy, vì CI đã chạy đúng trên kết quả đã gộp rồi — chạy
+lại là làm hai lần cùng một việc, tốn ~10 phút mỗi vòng. Merge CÓ xung đột, hoặc `main` chạm file
+mà PR cũng chạm → mới chạy lại đủ cổng ở máy (đây đúng là ca luật mục 9 nhắm tới).
 
 Mục đích của cả ba: **CI xanh là PR tự vào `main`, không cần ai bấm nút.** Việc của AI là giữ cho
-PR luôn ở trạng thái auto-merge nổ được — ready, có auto-merge, và không tụt sau `main`.
+PR luôn ở trạng thái auto-merge nổ được — ready, có auto-merge, không xung đột. **Không merge tay
+để đi tắt** khi CI chưa xanh.
 
 **Bật auto-merge KHÔNG phải là hết trách nhiệm.** PR mình tạo là PR của mình: nếu CI đỏ thì
 phải đọc log, **tái hiện lỗi ở máy**, sửa và push cho tới khi xanh — không để PR nằm đỏ chờ
