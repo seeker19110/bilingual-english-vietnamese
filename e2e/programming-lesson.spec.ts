@@ -379,6 +379,38 @@ test('bài Git: quên git add thì báo lỗi dạy được, không im lặng �
   await expect(page.getByText(/vung cho/).first()).toBeVisible({ timeout: 60_000 })
 })
 
+// PR-M2 — bài DÒNG LỆNH (p3-u11-l2..l4), chạy trên bashSim.ts (PR-M1). Cùng lý do với bài
+// Git ở trên: cổng CI gọi thẳng chayBash() nên đã chứng minh nội dung đúng, nhưng chỉ test
+// trình duyệt mới chốt được ĐƯỜNG ĐI — trang chọn đúng bộ chạy theo language 'bash', và luật
+// tự khai (dòng [GIA LAP]) tới được mắt học viên chứ không chỉ nằm trong engine.
+test('bài dòng lệnh p3-u11-l4: code mẫu đạt hết test-case, có dòng tự khai mô phỏng', async ({
+  page,
+}) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p3-u11-l4', { waitUntil: 'domcontentloaded' })
+
+  // Huy hiệu ngôn ngữ phải tự khai là mô phỏng NGAY trước khi học viên vào bài.
+  await expect(page.getByText('Dòng lệnh (bash)').first()).toBeVisible()
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page.getByRole('button', { name: 'Xem code mẫu' }).click()
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 60_000 })
+})
+
+test('bài dòng lệnh: gõ sai lệnh thì hiện thông báo dạy được ngay tại chỗ', async ({ page }) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p3-u11-l2', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page.getByRole('textbox').first().fill('mkdir bao_cao\nrm bao_cao')
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  // Bộ chạy phải NÓI RA cách sửa (thêm -r), không im lặng đánh rớt.
+  await expect(page.getByText(/them "-r"/).first()).toBeVisible({ timeout: 60_000 })
+})
+
 test('bài DOM: vòng lặp vô hạn khi CHẤM bị ngắt, trang không treo', async ({ page }) => {
   test.setTimeout(120_000)
   await mockLogin(page, 'vi', 'dark-blue')

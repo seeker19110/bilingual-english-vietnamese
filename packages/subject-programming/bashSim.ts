@@ -1292,9 +1292,16 @@ function lenhTest(args: string[], ctx: NguCanh): KetQuaLenh {
  * đúng cơ chế `lenhChuanBi` của gitSim, dùng lại nguyên để trang bài học không phải biết thêm
  * khái niệm mới.
  *
- * `error` chỉ được đặt khi MÃ THOÁT CUỐI CÙNG khác 0 — đúng ngữ nghĩa shell thật ("script này
- * thất bại"). Lệnh lỗi giữa chừng vẫn in thông báo vào output và script vẫn chạy tiếp, vì đó
- * cũng là điều bash thật làm (khác gitSim: ở đó gõ sai là dừng hẳn).
+ * `error` CHỈ dùng cho lỗi ĐỘNG CƠ — thứ học viên không tự sửa được bằng cách nghĩ thêm: cú
+ * pháp hỏng tới mức không phân tích nổi, vượt trần lệnh/output, hoặc bối cảnh đề bài sai.
+ *
+ * MÃ THOÁT KHÁC 0 KHÔNG PHẢI LỖI ĐỘNG CƠ — nó là kết quả học tập bình thường, trả về ở
+ * `exitCode`. Sửa ở PR-M2 sau khi test trình duyệt chỉ ra hậu quả thật của cách làm cũ: đặt
+ * `error` cho mã thoát khác 0 khiến giao diện xếp bài vào ô "lỗi hệ thống" (đỏ) và GIẤU MẤT
+ * output — mà output mới là nơi chứa câu tiếng Việt chỉ đúng cách sửa. Vừa sai luật N5 của đặc
+ * tả UI/UX ("thất bại là bước học bình thường"), vừa giấu đi thứ đáng giá nhất của bộ chạy này.
+ * Lệnh lỗi giữa chừng vẫn in thông báo vào output và script vẫn chạy tiếp, như bash thật (khác
+ * gitSim: ở đó gõ sai là dừng hẳn).
  */
 export function chayBash(script: string, lenhChuanBi: string[] = []): BashRunResult {
   const may = taoMay()
@@ -1330,13 +1337,7 @@ export function chayBash(script: string, lenhChuanBi: string[] = []): BashRunRes
   const r = chayTungDong(script, ctx)
   const output = DONG_TU_KHAI + '\n' + dongRa.join('')
   if (r.loi) return { output: `${output}${r.loi}\n`, error: r.loi, exitCode: 1 }
-  return {
-    output,
-    ...(r.code !== 0
-      ? { error: `Script ket thuc voi ma thoat ${r.code} (khac 0 = that bai).` }
-      : {}),
-    exitCode: r.code,
-  }
+  return { output, exitCode: r.code }
 }
 
 /**
