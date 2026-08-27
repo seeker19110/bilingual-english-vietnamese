@@ -231,6 +231,21 @@ Ngay sau khi tạo PR: **bỏ nháp (nếu đang là draft) → bật auto-merge
 Nếu bật auto-merge thất bại (quyền, hoặc repo tắt tính năng), báo lại cho người dùng chứ đừng
 tự merge tay.
 
+**BA BƯỚC BẮT BUỘC KHI TẠO PR (quy ước người dùng chốt 2026-08-27) — làm liền một mạch:**
+
+1. **Tạo PR ở trạng thái SẴN SÀNG (ready), không bao giờ để nháp.** Nếu công cụ mặc định tạo
+   nháp thì bỏ nháp NGAY. Lý do: GitHub từ chối bật auto-merge trên PR nháp ("Pull request is a
+   draft" — đã dính thật ở PR #693).
+2. **Bật auto-merge (squash) ngay** — không hỏi lại.
+3. **Nhánh phải KHÔNG tụt sau `main`.** Đây là bài học từ PR #709: cả ba check đã xanh mà PR vẫn
+   nằm im, vì `mergeable_state` là `behind` — branch protection của repo đòi nhánh cập nhật với
+   `main` trước khi merge. Xử lý: `git fetch origin main` → `git merge origin/main` → **chạy lại
+   toàn bộ cổng TRÊN KẾT QUẢ ĐÃ GỘP** (mục 9) → push. Sau khi CI xanh lần nữa, auto-merge tự nổ.
+   KHÔNG merge tay để đi tắt.
+
+Mục đích của cả ba: **CI xanh là PR tự vào `main`, không cần ai bấm nút.** Việc của AI là giữ cho
+PR luôn ở trạng thái auto-merge nổ được — ready, có auto-merge, và không tụt sau `main`.
+
 **Bật auto-merge KHÔNG phải là hết trách nhiệm.** PR mình tạo là PR của mình: nếu CI đỏ thì
 phải đọc log, **tái hiện lỗi ở máy**, sửa và push cho tới khi xanh — không để PR nằm đỏ chờ
 người dùng. Nếu `main` tiến lên gây xung đột thì merge `main` vào nhánh, giải xung đột, rồi
