@@ -178,11 +178,20 @@ describe('bashSim — ống, mã thoát, && và ||', () => {
     expect(ra('true || echo chay')).toBe('')
   })
 
-  it('mã thoát cuối cùng khác 0 → kết quả có error (script thất bại)', () => {
+  // Ranh giới này do TEST TRÌNH DUYỆT của PR-M2 chỉ ra: giao diện tô ĐỎ (ô "lỗi hệ thống") mọi
+  // ca có `error` và GIẤU output đi. Mà với bộ chạy bash, output CHÍNH LÀ chỗ chứa câu tiếng
+  // Việt chỉ cách sửa. Nên lệnh gõ sai phải đi đường "kết quả học tập" chứ không phải "sự cố".
+  it('lệnh gõ sai KHÔNG bị coi là lỗi hệ thống — chỉ trả mã thoát và thông báo trong output', () => {
     expect(chayBash('true').error).toBeUndefined()
-    const r = chayBash('false')
+    const r = chayBash('mkdir d\nrm d')
+    expect(r.error).toBeUndefined()
     expect(r.exitCode).toBe(1)
-    expect(r.error).toContain('ma thoat 1')
+    expect(r.output).toContain('them "-r"')
+  })
+
+  it('lỗi ĐỘNG CƠ (vượt trần, cú pháp không phân tích nổi) mới đặt error', () => {
+    expect(chayBash('echo "chua dong').error).toContain('nhay kep')
+    expect(chayBash('sleep 1 &').error).toContain('tien trinh nen')
   })
 
   it('lệnh lỗi giữa chừng KHÔNG dừng script (khác gitSim — đúng như bash thật)', () => {

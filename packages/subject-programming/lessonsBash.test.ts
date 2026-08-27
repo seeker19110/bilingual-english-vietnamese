@@ -47,6 +47,16 @@ describe('nội dung DÒNG LỆNH môn Lập trình chạy THẬT', () => {
     expect(allTestsPassed(results), `Bài ${lesson.id}: ${describeFailures(results)}`).toBe(true)
   })
 
+  // `error` nay chỉ mang lỗi ĐỘNG CƠ, nên cổng phải canh riêng mã thoát: một code mẫu kết thúc
+  // bằng lệnh thất bại gần như luôn là lỗi của người soạn (gõ nhầm tên file, quên tạo thư mục),
+  // và nó dạy học viên đúng cái thói quen xấu là bỏ qua mã thoát.
+  it.each(BASH_LESSONS)('$id — code mẫu kết thúc với mã thoát 0', (lesson: ProgrammingLesson) => {
+    for (const c of lesson.make.testCases) {
+      const r = chayBash(lesson.make.sampleSolution, c.stdinLines)
+      expect(r.exitCode, `Bài ${lesson.id} [${c.label}] mã thoát ${r.exitCode}`).toBe(0)
+    }
+  })
+
   it.each(BASH_LESSONS)('$id — ví dụ mẫu chạy không lỗi', (lesson: ProgrammingLesson) => {
     const r = chayBash(lesson.workedExample.code, lesson.workedExample.stdinLines)
     expect(r.error, `Bài ${lesson.id} ví dụ mẫu lỗi: ${r.error}`).toBeUndefined()
