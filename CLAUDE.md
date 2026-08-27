@@ -324,4 +324,25 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
       (migration `0068`). Thiết kế lại UI/UX + 7 lỗi a11y dùng chung: PR #693. Đặc tả:
       `docs/research/dac-ta-chia-se-vi-tri-2026-08-26.md`.
 
+- [x] **"Người thân theo dõi" — báo cáo tuần cho phụ huynh/thầy cô**: người học tự tạo mã mời
+      (dùng MỘT LẦN, hạn 24 giờ) cho tối đa 2 người thân; tối chủ nhật 19h hệ thống gửi email
+      tổng hợp tuần, luôn kết bằng một câu gợi ý để hỏi chuyện. **Riêng tư là ràng buộc kỹ
+      thuật:** chỉ NGƯỜI HỌC cấp quyền (không có đường ngược lại) · mặc định TẮT · gỡ là ngừng
+      ngay · danh sách trường được xem là ĐÓNG, chốt trong contract và có test canh gác —
+      KHÔNG bao giờ gồm nội dung chat với Companion, nhật ký cảm xúc, hay bất kỳ con số năng
+      lực nào · không có endpoint xem tiến độ thời gian thực (cố ý). PR #706 (migration `0069`).
+      Đặc tả: `docs/research/dac-ta-nguoi-dong-hanh-2026-08-26.md`. ⚠️ Chưa có bản chiều B.
+
+- [x] **Chế độ ôn thi có hạn chót ("Đếm ngược kỳ thi", `/on-thi`)**: khai ngày thi → lập lịch
+      NGƯỢC từ ngày đó về hôm nay. Lõi là `packages/core-examplan` — hàm thuần, tất định,
+      KHÔNG có AI (lập lịch phải kiểm chứng được bằng test, và mỗi lần mở app không được ra một
+      lịch khác nhau). Ba giai đoạn `build`/`consolidate`/`taper` nâng dần `request_retention`
+      của FSRS (0,90 → 0,93 → 0,95); T-3 trở đi KHÔNG thêm mục mới. Trễ thì **nén lịch, không
+      phạt**; không kịp thì **nói thẳng** và đề xuất cắt phạm vi. Màn hình chính là đồng hồ đếm
+      ngược + đúng 3 việc hôm nay, KHÔNG phải bảng điểm (luật số 1 của sản phẩm). Lịch tính ở
+      CLIENT, server chỉ giữ ý định. Đợt 1 một kỳ thi duy nhất: vào lớp 10 — Tiếng Anh, phạm vi
+      từ vựng A1→B1. Cờ tắt khẩn cấp phần FSRS: `localStorage.srs_retention_off = '1'`.
+      PR #706 (migration `0070`). Đặc tả: `docs/research/dac-ta-che-do-on-thi-2026-08-26.md`.
+      ⚠️ Chưa có bản chiều B (cần kỳ thi khác, là việc nội dung không phải việc dịch).
+
 Chú thích: `[x]` xong · `[~]` làm một phần · `[ ]` chưa làm.
