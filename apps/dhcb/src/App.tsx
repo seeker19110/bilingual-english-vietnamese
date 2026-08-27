@@ -781,6 +781,11 @@ export default function App() {
                       />
                       <Route path="/tieng-anh" element={<Navigate to="/hoc-tieng-anh" replace />} />
                       <Route path="/english" element={<Navigate to="/hoc-tieng-anh" replace />} />
+                      {/* Môn Lập trình trước đây THIẾU alias tiếng Anh: mọi trụ/môn khác đều
+                          có cặp Việt–Anh (/tieng-anh ↔ /english, /su-nghiep ↔ /career,
+                          /khoi-nghiep ↔ /startup…), riêng /programming rơi vào route `*` và bị
+                          đẩy về trang chủ — không phải trang môn, cũng không phải 404. */}
+                      <Route path="/programming" element={<Navigate to="/lap-trinh" replace />} />
                       <Route path="/profile" element={<Navigate to="/trang-ca-nhan" replace />} />
                       <Route
                         path="/phong-luyen-tap"
