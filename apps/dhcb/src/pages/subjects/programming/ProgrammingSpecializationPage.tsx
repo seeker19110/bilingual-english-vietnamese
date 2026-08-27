@@ -100,7 +100,7 @@ function ProjectBlock({ project, tone }: { project: SpecProject; tone: 'stage' |
   )
 }
 
-function StageBlock({ stage }: { stage: SpecStage }) {
+function StageBlock({ stage, onOpen }: { stage: SpecStage; onOpen: () => void }) {
   return (
     <li className="rounded-3xl border border-zinc-800 bg-zinc-900/80 p-5 space-y-4">
       <div className="space-y-1.5">
@@ -135,6 +135,14 @@ function StageBlock({ stage }: { stage: SpecStage }) {
       </ol>
 
       <ProjectBlock project={stage.project} tone="stage" />
+
+      {/* Lối vào trang chặng: nơi có bài luyện tay, câu tự kiểm và rubric nghiệm thu. */}
+      <button
+        onClick={onOpen}
+        className="tap-44 w-full py-3 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition"
+      >
+        Mở chặng {stage.tier.toUpperCase()} — xem chi tiết & đánh dấu tiến độ
+      </button>
     </li>
   )
 }
@@ -279,7 +287,11 @@ export default function ProgrammingSpecializationPage() {
           </h2>
           <ol className="space-y-4">
             {spec.stages.map((stage) => (
-              <StageBlock key={stage.id} stage={stage} />
+              <StageBlock
+                key={stage.id}
+                stage={stage}
+                onOpen={() => nav(`/lap-trinh/huong/${spec.id}/${stage.id}`)}
+              />
             ))}
           </ol>
         </section>

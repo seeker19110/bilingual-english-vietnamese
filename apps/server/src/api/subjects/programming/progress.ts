@@ -20,14 +20,32 @@ import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
 import { jsonResponse, getClientIp, internalErrorResponse } from '@dhcb/core-http/http'
 import { getLesson } from '@dhcb/subject-programming/lessons'
 import { getProjectStep } from '@dhcb/subject-programming/projectSteps'
+import { getSpecStage } from '@dhcb/subject-programming/specializations/registry'
+import { getSpecStageDetail } from '@dhcb/subject-programming/specializations/stageDetails'
 
 const UpdateSchema = z
   .object({
-    // Bài học ('p1-u4-l1') HOẶC bước dự án trục ('p1-s1') — cùng một bảng tiến độ.
-    lessonId: z.string().regex(/^p[1-6]-(u\d+-l\d+|s\d+)$/),
+    // Ba loại khoá dùng CHUNG một bảng tiến độ:
+    //  · bài học xương sống          'p1-u4-l1'
+    //  · bước dự án trục             'p1-s1'
+    //  · module/tiêu chí hướng chuyên sâu 'web-s2-m1' / 'web-s2-r3' (chi tiết chặng S2)
+    lessonId: z.string().regex(/^(p[1-6]-(u\d+-l\d+|s\d+)|[a-z]+-s[1-4]-[mr]\d+)$/),
     status: z.enum(['in_progress', 'completed']),
   })
   .strict()
+
+/**
+ * Khoá tiến độ của tầng HƯỚNG CHUYÊN SÂU có thật hay không.
+ * 'web-s2-m1' → module phải có trong bản đồ chặng; 'web-s2-r3' → tiêu chí phải có trong
+ * chi tiết chặng. Kiểm để không ghi khoá rác vào bảng tiến độ.
+ */
+function isSpecProgressKey(id: string): boolean {
+  const stageId = id.split('-').slice(0, 2).join('-')
+  const stage = getSpecStage(stageId)
+  if (!stage) return false
+  if (stage.modules.some((m) => m.id === id)) return true
+  return getSpecStageDetail(stageId)?.rubric.some((r) => r.id === id) ?? false
+}
 
 interface LessonRow {
   lesson_id: string
@@ -94,7 +112,7 @@ export default async function handler(req: Request): Promise<Response> {
       return jsonResponse({ error: validated.error.message }, validated.error.status, headers)
 
     const { lessonId, status } = validated.data
-    if (!getLesson(lessonId) && !getProjectStep(lessonId)) {
+    if (!getLesson(lessonId) && !getProjectStep(lessonId) && !isSpecProgressKey(lessonId)) {
       return jsonResponse({ error: `Bài học "${lessonId}" không tồn tại` }, 400, headers)
     }
 
