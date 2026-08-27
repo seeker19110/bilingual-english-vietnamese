@@ -21,17 +21,31 @@ lệnh này đọc thẳng thư mục.
 NNNN-YYYY-MM-DD-slug.md
 ```
 
-- `NNNN` — số thứ tự **tăng dần theo thời gian**; số lớn nhất là đợt mới nhất.
+- `NNNN` — số thứ tự tăng dần theo thời gian; số lớn nhất là đợt mới nhất.
 - `YYYY-MM-DD` — ngày làm đợt việc đó.
 - `slug` — chữ thường không dấu, nối bằng dấu gạch ngang.
 
-Hai PR song song có thể cùng lấy một số, và git sẽ KHÔNG xung đột (slug khác nhau nên tên file
-khác nhau) — nhưng test `scripts/changelog.test.ts` yêu cầu số **tăng nghiêm ngặt**, nên PR nào
-merge sau sẽ đỏ CI. Cách xử lý: sau khi merge nhánh chính vào, chạy lại `npm run changelog` xem
-số kế tiếp rồi **đổi tên file của mình lên số đó** (nhớ sửa cả tiêu đề `#` bên trong file).
-Đã dính thật ở PR #703 (trùng số 0154 với PR rate-limit merge trước).
+### Cấp số: quét rồi lấy số lớn nhất + 1
 
-Bất biến này được canh bằng test: `scripts/changelog.test.ts`.
+Mỗi nhánh/PR mới, khi thêm đợt việc đầu tiên của mình, chạy `npm run changelog` — dòng cuối in
+sẵn **số kế tiếp** — rồi dùng số đó. Chỉ vậy, không cần hỏi ai, không cần khoá gì.
+
+**Trùng số là CHUYỆN BÌNH THƯỜNG, không phải lỗi.** Hai nhánh soạn cùng lúc thì cùng thấy một
+số lớn nhất nên cùng chọn một số — hệ quả tất yếu của cách cấp số phi tập trung. Tên file vẫn
+khác nhau (slug khác nhau) nên git không xung đột, thứ tự đọc vẫn đúng, và **CI không đỏ**:
+`scripts/changelog.test.ts` chấp nhận số trùng, chỉ đòi thứ tự không giảm. Đừng đổi tên file để
+"chữa" — không có gì cần chữa.
+
+Số trùng thì hai đợt nằm cạnh nhau, sắp theo quy tắc phá hoà cố định: **ngày mới hơn trước, rồi
+tới tên file**.
+
+> Luật này được đặt lại ngày 2026-08-27 sau khi PR #703 dính **bốn lượt CI đỏ** liên tiếp vì
+> trùng số (0154, rồi 0155/0156/0157 cùng lúc, rồi 0159, rồi 0160), mỗi lượt tốn một vòng chạy
+> và một lượt đổi tên file. Cổng cũ đòi số _tăng nghiêm ngặt_, trong khi `scripts/changelog.ts`
+> vẫn ghi "trùng số không sao" — công cụ và cổng mâu thuẫn nhau, và cổng thắng.
+
+Bất biến này được canh bằng test: `scripts/changelog.test.ts` (có ca thử số trùng và ca thử
+thứ tự phá hoà, chạy trên thư mục giả nên không phụ thuộc nội dung thư mục thật).
 
 ## Dùng
 
