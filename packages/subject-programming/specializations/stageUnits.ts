@@ -18,6 +18,9 @@ export const SPEC_STAGE_UNITS: Record<string, string[]> = {
   // Hướng Web, chặng S4 — soạn 2026-08-27 (3 unit). Đặc tả:
   // `docs/specs/2026-08-27-chang-s4-13-huong.md`.
   'web-s4': ['p6-u22', 'p6-u23', 'p6-u24'],
+  // Hướng Backend, chặng S1 — soạn 2026-08-27 (3 unit). Dải `p6-u61…p6-u93` dành cho S1 của
+  // 11 hướng còn lại; đặc tả: `docs/specs/2026-08-27-dai-ma-unit-s1-cac-huong-con-lai.md`.
+  'backend-s1': ['p6-u61', 'p6-u62', 'p6-u63'],
 }
 
 /** Unit của một chặng; mảng RỖNG nghĩa là chặng chưa có bài (giao diện phải nói rõ điều đó). */

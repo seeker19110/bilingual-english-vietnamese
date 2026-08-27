@@ -425,6 +425,24 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Hướng Web S4 — vận hành: đọc p95, cảnh báo theo triệu chứng người dùng',
         topics: 'Log/metric/trace; phân vị nearest-rank; SLO, ngân sách lỗi, tốc độ tiêu',
       },
+      // Từ u61 trở đi là chặng S1 của 11 hướng CÒN LẠI (web và architecture đã có ở u16…u21).
+      // Đặc tả S4 chiếm trọn u22…u60 mà quên chừa chỗ cho S1 của 11 hướng này — vá ở
+      // `docs/specs/2026-08-27-dai-ma-unit-s1-cac-huong-con-lai.md`.
+      {
+        id: 'p6-u61',
+        title: 'Hướng Backend S1 — HTTP đúng nghĩa: mã trạng thái & phân trang',
+        topics: 'Chọn mã theo ai-phải-sửa; 401≠403, 409/422; con trỏ thay offset',
+      },
+      {
+        id: 'p6-u62',
+        title: 'Hướng Backend S1 — đúng đắn dữ liệu: kiểm ở biên & lũy đẳng',
+        topics: 'Kiểu tĩnh không cứu lúc chạy; bỏ trường lạ; khoá lũy đẳng, tiền số nguyên',
+      },
+      {
+        id: 'p6-u63',
+        title: 'Hướng Backend S1 — vận hành: ba nhóm lỗi, log lần ra được, tắt êm',
+        topics: 'Ai bị đánh thức; log có cấu trúc + mã yêu cầu, che dữ liệu nhạy cảm; tắt êm',
+      },
     ],
   },
 ]
