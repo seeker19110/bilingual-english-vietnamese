@@ -18,6 +18,14 @@ import { DESKTOP_SPECIALIZATION } from './desktop.js'
 import { ALGO_SPECIALIZATION } from './algo.js'
 import { ARCHITECTURE_SPECIALIZATION } from './architecture.js'
 
+export type { SpecStageDetail, SpecModuleDrill, SpecRubricRow } from './stageDetailTypes.js'
+export {
+  SPEC_STAGE_DETAILS,
+  getStageDetail,
+  countStageDetails,
+  countDrills,
+} from './s3/registry.js'
+
 export type {
   ProgrammingSpecialization,
   SpecializationId,

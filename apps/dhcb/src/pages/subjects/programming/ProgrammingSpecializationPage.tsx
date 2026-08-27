@@ -27,14 +27,20 @@ import {
   GitBranch,
   Gauge,
   ClipboardCheck,
+  DoorOpen,
+  Dumbbell,
+  ListChecks,
+  Flag,
 } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import {
   getSpecialization,
   countArchitectureItems,
+  getStageDetail,
   type SpecProject,
   type SpecStage,
+  type SpecStageDetail,
 } from '@dhcb/subject-programming/specializations/registry'
 
 const TIER_LABEL: Record<string, string> = {
@@ -100,7 +106,87 @@ function ProjectBlock({ project, tone }: { project: SpecProject; tone: 'stage' |
   )
 }
 
+/**
+ * Chi tiết THI HÀNH của một chặng — chỉ hiện với chặng đã soạn (hiện tại là S3).
+ * Chặng chưa có chi tiết thì ẩn HẲN khối, không hiện khung rỗng.
+ */
+function StageDetailBlock({ detail }: { detail: SpecStageDetail }) {
+  return (
+    <div className="space-y-3">
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 space-y-2">
+        <h4 className="text-sm font-bold text-white flex items-center gap-2">
+          <DoorOpen className="w-4 h-4 text-accent-400 shrink-0" aria-hidden="true" />
+          <span>Vào chặng này khi đã có</span>
+        </h4>
+        <p className="text-xs text-zinc-300 leading-relaxed">
+          Thiếu một mục là học chặng này sẽ trôi tuột — quay lại chặng trước rẻ hơn nhiều.
+        </p>
+        <ul className="text-sm text-zinc-200 leading-relaxed space-y-1 list-disc pl-5">
+          {detail.entryGate.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 space-y-3">
+        <h4 className="text-sm font-bold text-white flex items-center gap-2">
+          <ListChecks className="w-4 h-4 text-accent-400 shrink-0" aria-hidden="true" />
+          <span>Thang chấm dự án chặng</span>
+        </h4>
+        <p className="text-xs text-zinc-300 leading-relaxed">
+          Mức ĐẠT luôn là một con số. &quot;Nhanh hơn&quot; không phải tiêu chí.
+        </p>
+        <ul className="space-y-2">
+          {detail.projectRubric.map((row) => (
+            <li key={row.criterion} className="rounded-xl border border-zinc-800 p-3 space-y-1">
+              <p className="text-sm font-semibold text-white">{row.criterion}</p>
+              <p className="text-sm text-zinc-200 leading-relaxed">
+                <span className="font-semibold">Đạt:</span> {row.pass}
+              </p>
+              <p className="text-sm text-zinc-200 leading-relaxed">
+                <span className="font-semibold">Chưa đạt:</span> {row.fail}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 space-y-2">
+          <h4 className="text-sm font-bold text-white flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-accent-400 shrink-0" aria-hidden="true" />
+            <span>Bẫy riêng của chặng</span>
+          </h4>
+          <ul className="text-sm text-zinc-200 leading-relaxed space-y-1 list-disc pl-5">
+            {detail.pitfalls.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 space-y-2">
+          <h4 className="text-sm font-bold text-white flex items-center gap-2">
+            <Flag className="w-4 h-4 text-accent-400 shrink-0" aria-hidden="true" />
+            <span>Dấu hiệu đã qua chặng</span>
+          </h4>
+          <ul className="text-sm text-zinc-200 leading-relaxed space-y-1 list-disc pl-5">
+            {detail.exitSignals.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <p className="text-sm text-zinc-200 leading-relaxed">
+        <span className="font-semibold">Chuẩn bị cho chặng sau:</span> {detail.nextStagePrep}
+      </p>
+    </div>
+  )
+}
+
 function StageBlock({ stage }: { stage: SpecStage }) {
+  // Chi tiết thi hành mới soạn cho chặng S3; chặng khác trả undefined và khối bị ẩn hẳn.
+  const detail = getStageDetail(stage.id)
+  const drillOf = (moduleId: string) => detail?.moduleDrills.find((d) => d.moduleId === moduleId)
   return (
     <li className="rounded-3xl border border-zinc-800 bg-zinc-900/80 p-5 space-y-4">
       <div className="space-y-1.5">
@@ -120,21 +206,45 @@ function StageBlock({ stage }: { stage: SpecStage }) {
       </div>
 
       <ol className="space-y-3">
-        {stage.modules.map((mod, i) => (
-          <li key={mod.id} className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 space-y-2">
-            <h4 className="text-sm font-bold text-white">
-              {i + 1}. {mod.title}
-            </h4>
-            <ul className="text-sm text-zinc-200 leading-relaxed space-y-1 list-disc pl-5">
-              {mod.topics.map((topic) => (
-                <li key={topic}>{topic}</li>
-              ))}
-            </ul>
-          </li>
-        ))}
+        {stage.modules.map((mod, i) => {
+          const drill = drillOf(mod.id)
+          return (
+            <li
+              key={mod.id}
+              className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 space-y-2"
+            >
+              <h4 className="text-sm font-bold text-white">
+                {i + 1}. {mod.title}
+              </h4>
+              <ul className="text-sm text-zinc-200 leading-relaxed space-y-1 list-disc pl-5">
+                {mod.topics.map((topic) => (
+                  <li key={topic}>{topic}</li>
+                ))}
+              </ul>
+              {drill && (
+                <div className="rounded-xl border border-zinc-800 p-3 space-y-1">
+                  <p className="text-sm text-zinc-200 leading-relaxed flex items-start gap-2">
+                    <Dumbbell
+                      className="w-4 h-4 text-accent-400 shrink-0 mt-0.5"
+                      aria-hidden="true"
+                    />
+                    <span>
+                      <span className="font-semibold">Bài luyện:</span> {drill.drill}
+                    </span>
+                  </p>
+                  <p className="text-sm text-zinc-200 leading-relaxed">
+                    <span className="font-semibold">Bằng chứng phải nộp:</span> {drill.evidence}
+                  </p>
+                </div>
+              )}
+            </li>
+          )
+        })}
       </ol>
 
       <ProjectBlock project={stage.project} tone="stage" />
+
+      {detail && <StageDetailBlock detail={detail} />}
     </li>
   )
 }
@@ -157,7 +267,7 @@ export default function ProgrammingSpecializationPage() {
             onClick={() => nav('/lap-trinh/huong')}
             className="tap-44 w-full py-3.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition"
           >
-            Xem 12 hướng chuyên sâu
+            Xem 13 hướng chuyên sâu
           </button>
         </main>
       </div>
