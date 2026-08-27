@@ -29,7 +29,9 @@ Hai PR song song có thể cùng lấy một số — git không xung đột (sl
 nhau), **nhưng test `scripts/changelog.test.ts` CHẶN số trùng**: `readEntries()` phải sắp được
 thứ tự nghiêm ngặt, hai file cùng số làm khẳng định đó sai. Nên khi merge `main` về mà thấy số
 của mình đã bị PR khác dùng, **đổi số file của mình cho lớn hơn** rồi sửa các chỗ trỏ tới nó
-(đã gặp thật 2026-08-26: `main` dùng 0155–0158, nhánh phải dời sang 0159–0161).
+(đã gặp thật HAI LẦN chỉ trong 2026-08-26/27 trên cùng một nhánh: `main` dùng 0155–0158 nên
+nhánh dời sang 0159–0161, rồi `main` merge tiếp một PR nữa lấy 0159 nên phải dời lần hai sang
+0160–0162. Nhánh sống càng lâu thì càng phải dời — kiểm lại số ngay trước khi mở PR).
 
 _(Đoạn này trước đây ghi "cùng số — không sao", trái với test đang chạy. Đã sửa lại theo hành vi
 thật của test.)_

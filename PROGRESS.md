@@ -1122,10 +1122,10 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
 - **[2026-08-26] ✅ HAI TÍNH NĂNG GIỮ CHÂN ĐÃ LÀM XONG (đặc tả + code + test + cổng a11y).**
-  Đợt research-first 2026-08-26 (`docs/changelog/0159-*.md`) rồi thi hành trọn vẹn cùng ngày
-  (`0160-*.md` và `0161-*.md`):
+  Đợt research-first 2026-08-26 (`docs/changelog/0160-*.md`) rồi thi hành trọn vẹn cùng ngày
+  (`0161-*.md` và `0162-*.md`):
   1. **Chế độ ôn thi có hạn chót** — ✅ **XONG E1–E4 (2026-08-26)**, xem
-     `docs/changelog/0161-*.md`. Gói mới `packages/core-examplan` (lập lịch ngược, hàm thuần),
+     `docs/changelog/0162-*.md`. Gói mới `packages/core-examplan` (lập lịch ngược, hàm thuần),
      migration `0070_exam_plans.sql`, API `/api/exam-plan`, trang `/on-thi`
      (`apps/dhcb/src/pages/learning/ExamPlan.tsx`), FSRS nhận `request_retention` theo giai đoạn
      (`apps/dhcb/src/lib/srs.ts`, có cờ tắt `localStorage.srs_retention_off = '1'`), cổng a11y
@@ -1134,7 +1134,7 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
      Việc để lại: thi thử full-length (chặn bởi ngân hàng đề + `core-grading` đã bị xoá khỏi
      repo, xem mục GĐ2); kỳ thi thứ hai; ghép "còn N ngày" vào báo cáo tuần.
   2. **Người thân theo dõi (báo cáo tuần cho phụ huynh)** — ✅ **XONG C1–C4 (2026-08-26)**,
-     xem `docs/changelog/0160-*.md`. Migration `0069_companion_links.sql`, service
+     xem `docs/changelog/0161-*.md`. Migration `0069_companion_links.sql`, service
      `packages/core-personal/companionLinkService.ts`, nội dung thư
      `apps/server/src/api/_lib/weeklyReport.ts`, gửi `weeklyReportService.ts` (bộ hẹn giờ chủ
      nhật 19h VN trong `server.ts`), API `/api/companion-link`, giao diện
