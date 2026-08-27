@@ -22,7 +22,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 # CẤU TRÚC (đổi 2026-08-27 — chia nhỏ để tăng tốc):
-#   Trước: 2 job tuần tự dài (quality ~9 bước nối đuôi, e2e 1 worker chạy hết ~180 test).
+#   Trước: 2 job tuần tự dài (quality ~9 bước nối đuôi, e2e 1 worker chạy hết 563 test).
 #   Nay:   các bước con chạy SONG SONG trên nhiều runner, rồi hai job TỔNG HỢP tên
 #          `quality` và `e2e` gom kết quả lại.
 #   Tên `quality` / `e2e` PHẢI GIỮ NGUYÊN: đó là required status check của branch
@@ -144,14 +144,22 @@ jobs:
           fi
           echo "✅ Toàn bộ cổng chất lượng xanh"
 
-  # ── E2E chia 4 mảnh chạy song song ─────────────────────────────────────────
+  # ── E2E chia 6 mảnh chạy song song ─────────────────────────────────────────
+  #
+  # VÌ SAO 6 CHỨ KHÔNG 4 (đo thật ở run của PR #713, không phải ước lượng):
+  #   mảnh 1 ~2m24 · mảnh 2 ~2m32 · mảnh 3 ~1m57 · mảnh 4 **4m16**
+  # Playwright chia mảnh theo SỐ TEST, không theo THỜI GIAN — mảnh 4 ôm cụm test nặng
+  # (`programming-lesson.spec.ts`: SQLite/WASM + Worker trong trình duyệt) nên lệch 1,5 lần
+  # so với trung bình và một mình nó quyết định thời gian tường của cả CI.
+  # Chia nhỏ hơn = cụm nặng bị tách ra, mảnh chậm nhất tụt xuống gần mức trung bình.
+  # Giá phải trả: thêm 2 runner × ~40 giây phí cố định (checkout + npm ci + cài Chromium).
   e2e-shard:
-    name: E2E shard ${{ matrix.shard }}/4
+    name: E2E shard ${{ matrix.shard }}/6
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2, 3, 4, 5, 6]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v7
@@ -165,12 +173,15 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: E2E (Playwright + axe) — mảnh ${{ matrix.shard }}/4
-        run: npm run test:e2e -- --shard=${{ matrix.shard }}/4
+      - name: E2E (Playwright + axe) — mảnh ${{ matrix.shard }}/6
+        run: npm run test:e2e -- --shard=${{ matrix.shard }}/6
 
-      - name: Upload Playwright report (khi lỗi)
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+      # CHỈ upload khi ĐỎ. Đo ở run PR #713: upload báo cáo 6,4 MB của một mảnh XANH mất
+      # **29 giây** — hơn 8% thời gian tường của cả CI, để tạo ra một file không ai mở.
+      # `failure()` (thay cho `!cancelled()` trước đây) giữ nguyên giá trị chẩn đoán khi đỏ.
+      - name: Upload Playwright report (CHỈ khi mảnh này đỏ)
+        if: failure()
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-report-shard-${{ matrix.shard }}
           path: playwright-report/
@@ -188,4 +199,4 @@ jobs:
           if [ "${{ needs.e2e-shard.result }}" != "success" ]; then
             echo "❌ Có mảnh E2E KHÔNG xanh"; exit 1
           fi
-          echo "✅ Toàn bộ 4 mảnh E2E xanh"
+          echo "✅ Toàn bộ 6 mảnh E2E xanh"
