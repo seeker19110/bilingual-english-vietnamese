@@ -1,4 +1,4 @@
-# 0177 — Companion nhìn thấy dữ liệu 4 trụ Career/Work/Startup/Life (chỉ-đọc)
+# 0176 — Companion nhìn thấy dữ liệu 4 trụ Career/Work/Startup/Life (chỉ-đọc)
 
 - **Ngày:** 2026-08-27
 - **Loại:** feat (chỉ-đọc, không ghi dữ liệu)
