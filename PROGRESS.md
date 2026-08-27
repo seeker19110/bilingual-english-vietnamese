@@ -1122,10 +1122,10 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
 - **[2026-08-26] ✅ HAI TÍNH NĂNG GIỮ CHÂN ĐÃ LÀM XONG (đặc tả + code + test + cổng a11y).**
-  Đợt research-first 2026-08-26 (`docs/changelog/0155-*.md`) rồi thi hành trọn vẹn cùng ngày
-  (`0156-*.md` và `0157-*.md`):
+  Đợt research-first 2026-08-26 (`docs/changelog/0159-*.md`) rồi thi hành trọn vẹn cùng ngày
+  (`0160-*.md` và `0161-*.md`):
   1. **Chế độ ôn thi có hạn chót** — ✅ **XONG E1–E4 (2026-08-26)**, xem
-     `docs/changelog/0157-*.md`. Gói mới `packages/core-examplan` (lập lịch ngược, hàm thuần),
+     `docs/changelog/0161-*.md`. Gói mới `packages/core-examplan` (lập lịch ngược, hàm thuần),
      migration `0070_exam_plans.sql`, API `/api/exam-plan`, trang `/on-thi`
      (`apps/dhcb/src/pages/learning/ExamPlan.tsx`), FSRS nhận `request_retention` theo giai đoạn
      (`apps/dhcb/src/lib/srs.ts`, có cờ tắt `localStorage.srs_retention_off = '1'`), cổng a11y
@@ -1134,7 +1134,7 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
      Việc để lại: thi thử full-length (chặn bởi ngân hàng đề + `core-grading` đã bị xoá khỏi
      repo, xem mục GĐ2); kỳ thi thứ hai; ghép "còn N ngày" vào báo cáo tuần.
   2. **Người thân theo dõi (báo cáo tuần cho phụ huynh)** — ✅ **XONG C1–C4 (2026-08-26)**,
-     xem `docs/changelog/0156-*.md`. Migration `0069_companion_links.sql`, service
+     xem `docs/changelog/0160-*.md`. Migration `0069_companion_links.sql`, service
      `packages/core-personal/companionLinkService.ts`, nội dung thư
      `apps/server/src/api/_lib/weeklyReport.ts`, gửi `weeklyReportService.ts` (bộ hẹn giờ chủ
      nhật 19h VN trong `server.ts`), API `/api/companion-link`, giao diện
@@ -1142,9 +1142,19 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
      ⚠️ **Việc tay:** `npm run migrate:pg` trên VPS (hoặc để deploy tự chạy khi merge).
      Việc để lại: bản chiều B — **nợ có chủ đích, người dùng chốt 2026-08-26**, xem mục "Nợ kỹ
      thuật còn mở"; thêm dòng "còn N ngày đến kỳ thi" khi chế độ ôn thi xong.
-     **Điểm cần người dùng chốt trước khi bắt đầu E1:** kỳ thi đợt 1 có đúng là "vào lớp 10 — Tiếng
-     Anh" không (đây là giả định của AI, chọn vì môn Anh chín nhất và không phụ thuộc engine chấm
-     đang thiếu).
+     **Kỳ thi đợt 1 đã chốt:** "vào lớp 10 — Tiếng Anh" (người dùng xác nhận 2026-08-26). Đổi kỳ
+     thi chỉ cần sửa `ExamKindSchema` + phạm vi từ vựng ở `apps/dhcb/src/lib/examPlan.ts`.
+- **[2026-08-26] Môn Lập trình — CHƯƠNG TRÌNH M (mở rộng ngôn ngữ & tư duy), 12 PR.** Hiến
+  chương: `docs/research/dac-ta-mo-rong-ngon-ngu-va-tu-duy-2026-08-26.md` (PR-M0 ✅ xong).
+  Người dùng chốt mở cả ba tầng: tầng 1 thêm **`bash`**, tầng 2 thêm **Kotlin + Swift**, tầng 3
+  thêm **PARADIGM** (không thêm ngôn ngữ). Quyết định trụ cột: **bộ chạy TẬP CON viết bằng
+  TypeScript chạy trong Worker** — học viên gõ cú pháp Swift/Kotlin thật và được chấm bằng
+  test-case, không dựng judge server (bác lần thứ ba), không dựng hệ bậc song song S1–S5.
+  Xếp chỗ: `bash` mở rộng `p3-u11` · Kotlin `p6-u5…u7` · Swift `p6-u8…u12` · Paradigm
+  `p6-u13…u15` (P6 giãn 4 → 15 unit). Thứ tự: **M1 `bashSim` → M2 nội dung bash → M3
+  `swiftsim` → M4–M6 nội dung Swift → M7 `kotlinsim` → M8–M9 Kotlin → M10–M11 Paradigm → M12
+  giao diện P6**. ⚠️ **Cổng cứng giữa M3 và M4:** interpreter Swift phải qua bộ test đối chiếu
+  TRƯỚC khi soạn bài nội dung nào.
 
 - **[2026-08-03] Thưởng cho Huy hiệu & mốc (migration 0026) — ✅ XONG, admin cấu hình được.**
   Mỗi huy hiệu/mốc (19 huy hiệu hiện có, `src/data/achievements.ts`) tặng thêm N ngày gói
@@ -2549,39 +2559,32 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   **Điều kiện gỡ nợ:** cả hai tính năng chạy được ở `direction === 'B'` với 0 chuỗi tiếng Việt
   lọt ra, và hai cổng a11y xanh ở cả hai ngôn ngữ giao diện.
 
-- 🔴 **[2026-08-26] Rate limit BỊ NÉ HOÀN TOÀN bằng header giả — đã vá tầng app, CÒN THIẾU
-  tầng nginx trên VPS.** Đo thật trên production: 40 request liên tiếp vào `/api/app-settings`
-  (giới hạn **30/phút**) với `X-Forwarded-For` ngẫu nhiên mỗi lần → **40 lần `200`, KHÔNG một
-  `429`**.
+- 🟢 **[2026-08-26 — ĐÃ GỠ, kiểm chứng bằng bài thử] Rate limit từng bị né hoàn toàn bằng
+  header `X-Forwarded-For` giả; nay đã bịt cả hai tầng.**
 
-  **Cơ chế:** nginx dùng `$proxy_add_x_forwarded_for` — NỐI ip thật vào CUỐI chuỗi client gửi
-  lên. `getClientIp()` bản cũ đọc phần tử ĐẦU, tức chính giá trị client tự khai. Đổi header mỗi
-  request là mỗi request một khoá rate limit khác nhau.
+  **Trước khi vá** — 40 request vào `/api/app-settings` (giới hạn 30/phút) với IP giả ngẫu
+  nhiên mỗi lần: **40 lần `200`, không một `429`**. Nguyên nhân: nginx dùng
+  `$proxy_add_x_forwarded_for` (NỐI ip thật vào CUỐI) trong khi `getClientIp()` đọc phần tử
+  ĐẦU — tức giá trị client tự khai.
 
-  **Vì sao nghiêm trọng hơn mọi nợ khác đang mở:** rate limit là tuyến phòng thủ DUY NHẤT cho
-  hạn mức gọi AI TRẢ PHÍ. Ở quy mô hiện tại còn ít người biết; ở 5.000 DAU thì xác suất có
-  người thử là chuyện thời gian.
+  **Sau khi vá** — chạy lại đúng hai bài thử ở `docs/cloudflare-setup.md`:
 
-  **Đã vá (tầng app, PR này):** `getClientIp()` đọc theo thứ tự `CF-Connecting-IP` →
-  `X-Real-IP` → `X-Forwarded-For` phần tử **CUỐI**. Cloudflare GHI ĐÈ `CF-Connecting-IP` ở biên
-  (khác nginx là nối), nên client không tự khai được khi đi qua CF — xác nhận 2026-08-26 site
-  đang chạy sau Cloudflare (`server: cloudflare` + `cf-ray`). Có 7 test chặn hồi quy
-  (`packages/core-http/http.test.ts`).
+  | Bài thử                           | Kết quả                            | Đọc thế nào                                                                                                        |
+  | --------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+  | A — IP giả **ngẫu nhiên** mỗi lần | **30 × `200`, rồi 10 × `429`**     | Khớp CHÍNH XÁC giới hạn 30/phút ⇒ đếm theo IP thật, header giả vô tác dụng                                         |
+  | B — IP giả **cố định**            | **40 × `429`** ngay từ request đầu | Chạy từ cùng máy với A nên cùng IP thật; quota đã bị A dùng hết ⇒ hai bài dùng CHUNG một bộ đếm, đúng như phải thế |
 
-  **CÒN THIẾU — việc tay trên VPS, chưa làm:** ai gọi THẲNG vào IP VPS (bỏ qua Cloudflare) vẫn
-  tự đặt được `CF-Connecting-IP`. Bịt bằng:
+  Bài B trả `429` ngay từ đầu thoạt nhìn có vẻ lạ, nhưng đó mới là bằng chứng mạnh nhất: nếu
+  rate limit còn tin header giả thì B đã có bộ đếm riêng và trả `200`.
 
-  ```bash
-  cd /var/www/dhcb && git pull origin main
-  sudo bash scripts/update-cloudflare-ips.sh
-  sudo cp nginx/en-vi.conf /etc/nginx/sites-available/en-vi
-  sudo nginx -t && sudo systemctl reload nginx
-  ```
+  **Hai tầng đã áp:** (1) `getClientIp()` đọc `CF-Connecting-IP` → `X-Real-IP` → XFF phần tử
+  CUỐI (PR #701, 7 test chặn hồi quy trong `packages/core-http/http.test.ts`); (2) nginx
+  `cloudflare-realip.conf` chỉ nhận header từ đúng dải IP Cloudflare — người dùng đã áp lên VPS
+  cùng ngày.
 
-  (Cùng lúc gỡ luôn nợ #6 — `en-vi.conf` trong repo vốn đã sửa mà chưa áp lên VPS.)
-
-  **Điều kiện gỡ nợ:** chạy lại BÀI THỬ ở `docs/cloudflare-setup.md` mục "Cách kiểm tra đã chạy
-  đúng" — cả hai ca A (IP giả ngẫu nhiên) và B (IP giả cố định) đều phải thấy `429`.
+  **Bài học ghi lại:** lỗ hổng sống sót qua nhiều lần rà soát vì cách kiểm chứng cũ hỏi sai
+  câu — _"IP hiển thị có đúng không?"_ (nhìn log là trả lời được) thay vì _"IP có ghi đè được
+  không?"_ (chỉ trả lời được bằng cách tự tấn công mình). Tài liệu đã đổi sang câu thứ hai.
 
 - 🟡 **[2026-08-26 — HẠ MỨC sau khi chẩn đoán; ban đầu ghi 🔴 là ĐÁNH GIÁ QUÁ NẶNG] Redis rớt
   kết nối 7 lần/ngày, mỗi lần DƯỚI MỘT GIÂY.** `pm2 logs dhcb --err` cho thấy 7 cặp log
@@ -2647,7 +2650,7 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   Toàn bộ là cảnh báo Redis rớt (mục trên) và 2 lỗi TTS Gemini có xử lý sẵn. Vậy 64 là cộng
   dồn qua các lần `pm2 reload` khi deploy — bình thường.
 
-- 🟡 **[2026-08-25] `nginx/en-vi.conf` đã sửa trong repo nhưng CHƯA áp lên VPS thật.** Audit
+- 🟢 **[2026-08-25 → ĐÃ GỠ 2026-08-26] `nginx/en-vi.conf` nay ĐÃ áp lên VPS thật** (làm cùng lúc với việc áp `cloudflare-realip.conf` để bịt lỗ hổng rate limit — xác nhận bằng bài thử A/B ở mục trên). Ghi lại bối cảnh gốc: Audit
   2026-08-25 (F5) phát hiện bản `Content-Security-Policy-Report-Only` trong nginx còn whitelist
   `*.supabase.co` dù dự án rời Supabase từ 2026-07-20, lại thiếu facebook/apple/microsoft,
   `media-src blob:` và `frame-src accounts.google.com` so với CSP thật — nên nó chỉ sinh báo cáo
@@ -2699,45 +2702,56 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   1 trang CEFR (ngân sách LCP ≤ 2,5s · INP ≤ 200ms · CLS ≤ 0,1), và đọc Sentry (lỗi mới chưa
   xem xét) + `pm2 logs`/số lần restart + dung lượng ổ đĩa.
 
-- 🟡 **[2026-08-26 — GỠ ĐƯỢC NỬA ĐẦU] Model `gemini-3.6-flash` ĐÃ CHẠY THẬT trên production;
-  còn lại nợ baseline eval.** Người dùng gửi ảnh trang **Trạng thái tính năng**, lượt tự động
-  **07:00:02 ngày 26/8/2026**: _AI hội thoại — Google Gemini · Hoạt động — 512ms_, cùng lượt
-  Groq 426ms · TTS Google 315ms · R2 817ms · SePay webhook OK · PostgreSQL 90ms; băng tổng
-  "TẤT CẢ TÍNH NĂNG BÌNH THƯỜNG". Vậy tên model đúng, key đúng, đường gọi thông — nỗi lo lớn
-  nhất (404 vì sai tên model) đã hết.
+- 🟢 **[2026-08-26 — ĐÃ GỠ] Baseline eval gia sư ĐÃ CÓ SỐ THẬT, chất lượng sư phạm không tụt.**
+  Chạy trên VPS với key thật: **62/62 câu chấm được**, recall 97,7% · precision 97,7% ·
+  FP-rate 5,6% · specificity 94,4% · Feedback VI 100% · Type-hit 76,7%. 9/11 nhóm lỗi đạt
+  tuyệt đối; chỉ bỏ sót `adj-02` (trật tự tính từ). Số liệu ở
+  `docs/research/eval-tutor-baseline.md`.
 
-  **Nhưng KHÔNG được đóng cả mục.** Health-check chỉ chứng minh **gọi được API**, không chứng
-  minh **chất lượng sư phạm không tụt**: nó gửi một prompt tối thiểu, không chấm recall/precision
-  trên bộ fixture. Baseline `docs/research/eval-tutor-baseline.md` vẫn là bản 2026-08-21, cũ hơn
-  ngày đổi prompt/model 2026-08-24 — nên phần dưới đây giữ nguyên, chỉ hạ mức từ 🔴 xuống 🟡.
+  **Đính chính một điều mục nợ này từng ghi sai:** nó viết "baseline vẫn là bản 2026-08-21".
+  Không đúng — `git log -- docs/research/eval-tutor-baseline.md` cho ĐÚNG MỘT commit trong
+  toàn bộ lịch sử (PR #625), và nội dung là bản mẫu rỗng ghi rõ "⏳ CHƯA CÓ SỐ LIỆU BASELINE".
+  Tức **chưa từng có baseline số nào, ở bất kỳ ngày nào**, và luật ở `CLAUDE.md` mục 8 ("PR
+  sửa prompt/model phải dán bảng so sánh, recall/precision không được tụt") **chưa bao giờ thi
+  hành được** vì không có mốc để so. Lần chạy 2026-08-26 là baseline ĐẦU TIÊN, không phải một
+  lần so sánh. Bài học: một mục nợ khẳng định "bản ngày X" mà không ai mở file ra xem thì nó
+  chỉ là tin đồn được chép lại — kiểm bằng `git log` trước khi chép.
 
-  _Nguyên văn ghi nhận cũ (2026-08-24, xác nhận lại 2026-08-25):_
-  _Audit 2026-08-25 chấm Tầng 4 **FAIL** bằng lệnh, không đoán:_ `git log -1` trên
-  `apps/dhcb/src/prompts` + `packages/core-ai/aiConfig.ts` cho **2026-08-24**, còn trên
-  `docs/research/eval-tutor-baseline.md` cho **2026-08-21** — ngày đổi MỚI HƠN ngày baseline
-  ⇒ baseline đã cũ. (Nội dung tài liệu baseline ghi "2026-08-20", commit là 2026-08-21; lệch
-  1 ngày này không đổi kết luận.) Container audit không có `.env` nên vẫn không chạy được.
+  **Đo đúng đường production.** `chatFallback.ts` gọi theo thứ tự Groq → Anthropic → Gemini,
+  và script eval cũng ưu tiên Groq trước, nên số trên là chất lượng của **provider chính** mà
+  người dùng thật đang gặp. Gemini (`gemini-3.6-flash`) là lớp dự phòng thứ ba — health-check
+  07:00 ngày 26/8 xác nhận nó gọi được (512ms), nhưng chất lượng sư phạm của riêng nhánh đó
+  vẫn chưa đo; chạy `npm run eval:tutor` trên máy KHÔNG có `GROQ_API_KEY`/`ANTHROPIC_API_KEY`
+  thì script sẽ rơi xuống Gemini và đo được. Hai tính năng vision
+  (`visionSolverService.ts`, `ambientVisionService.ts`) dùng chung model đó, cũng chưa thử tay.
 
-  _Bối cảnh gốc (2026-08-24):_ PR #647 — Google đã khai tử hẳn `gemini-2.0-flash` (lỗi
-  404 thật khi chạy `npm run eval:tutor`, sửa ở 4 chỗ — `aiConfig.ts` GEMINI_CHAT_MODEL,
-  `visionSolverService.ts`, `ambientVisionService.ts`, `scripts/eval-tutor.ts`). Tên model mới
-  lấy trực tiếp từ thông báo lỗi của Google, **không phải suy đoán**, nhưng môi trường sửa lỗi
-  không có `GEMINI_API_KEY` nên chưa gọi thử được lần nào.
+  **Ba việc phải làm để chạy được, ghi lại vì đều là bẫy thật:**
+  1. Script đọc `process.env.GROQ_API_KEY` nguyên chuỗi làm Bearer token, trong khi production
+     đi qua `groqKeyPool()` tách nhiều key theo dấu phẩy → 62/62 lỗi `401` và một báo động sự
+     cố production hoàn toàn không có thật. Đã vá.
+  2. Báo lỗi chỉ giữ `lastErr` nên `429` của khoá đang sống bị `401` của khoá hỏng che mất →
+     chẩn đoán sai thêm hai vòng. Nay in trạng thái TỪNG khoá: `[#1→429 #2→429]`. Đã vá.
+  3. Một khoá trong `.env` hỏng vật lý — dài 50 ký tự thay vì 56, kết thúc bằng ký tự `>`, sai
+     định dạng `gsk_[A-Za-z0-9]+`. Bị cắt cụt lúc ghi file, không phải bị thu hồi. Đã thay.
 
-  **Điều kiện gỡ nợ:** người có key thật chạy trên VPS:
+  Groq tính hạn mức theo **TÀI KHOẢN chứ không theo khoá**, nên gộp nhiều khoá cùng một tài
+  khoản vào bể KHÔNG tăng quota — chỉ có giá trị dự phòng khi một khoá bị thu hồi. Đúng cho cả
+  production. Chạy eval cần `--delay 3000` (62 câu ≈ 3–4 phút); `--delay 500` mặc định làm tắc
+  từ câu 22.
 
-  ```bash
-  git pull origin main && npm run eval:tutor -- --write-baseline
-  ```
+- 🟡 **[2026-08-26] Dải nhiễu của eval rộng hơn mức một PR có thể phân biệt được.** Hai lượt
+  chạy liên tiếp, cùng prompt · model · bộ đề · `--delay`, cách nhau vài phút: FP-rate 0% →
+  5,6%, specificity 100% → 94,4%, Type-hit 86,0% → 76,7%. Chỉ MỘT câu đổi phán đoán
+  (`edge-05`: TN → FP) đã làm FP-rate nhảy 5,6 điểm, vì mẫu số chỉ có 18 câu đúng/ca biên.
 
-  Hai khả năng: (a) chạy được → đối chiếu bảng recall/precision với baseline cũ
-  (`docs/research/eval-tutor-baseline.md`, ngày 2026-08-20) xác nhận không tụt chất lượng, rồi
-  merge bản `--write-baseline` mới; (b) vẫn lỗi 404 → `gemini-3.6-flash` cũng sai tên, cần đọc
-  thông báo lỗi mới (Google thường gợi ý tên đúng) và vá lại cả 4 chỗ.
+  Hệ quả: luật "recall/precision không được tụt" ở `CLAUDE.md` mục 8 hiện **không phân biệt
+  được** một prompt tệ đi 5 điểm với nhiễu lấy mẫu — cả hai trông giống hệt nhau. Dải nhiễu và
+  cách đọc đã ghi vào cuối `docs/research/eval-tutor-baseline.md` (chênh ≤ 1 câu không phải
+  bằng chứng; nghi ngờ thì chạy ≥ 3 lượt so trung bình; Type-hit không dùng pass/fail; chỉ số
+  đáng tin nhất là recall theo từng nhóm lỗi).
 
-  Ngoài chat, 2 tính năng vision (`visionSolverService.ts` giải bài STEM bằng ảnh,
-  `ambientVisionService.ts`) dùng chung model — **chưa thử tay lần nào** với key thật, nên cũng
-  coi là chưa xác nhận cho tới khi gỡ nợ trên.
+  **Cách chữa thật** là mở rộng golden set — nhất là nhóm câu đúng/ca biên, hiện chỉ 18 câu —
+  chứ không phải chạy đi chạy lại cùng 62 câu. Chưa làm vì cần soạn fixture mới có đối chiếu.
 
   **Rủi ro nếu để lâu:** Gemini là fallback THỨ 3 trong chat (sau Groq, Anthropic) — sự cố chỉ lộ
   ra khi cả hai provider chính cùng lúc gặp vấn đề, tức âm thầm mất một lớp dự phòng mà không ai

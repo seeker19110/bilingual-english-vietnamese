@@ -25,8 +25,14 @@ NNNN-YYYY-MM-DD-slug.md
 - `YYYY-MM-DD` — ngày làm đợt việc đó.
 - `slug` — chữ thường không dấu, nối bằng dấu gạch ngang.
 
-Hai PR song song có thể cùng lấy một số — **không sao**: slug khác nhau nên tên file khác nhau,
-git vẫn không xung đột. Thứ tự trong cùng một ngày hiếm khi quan trọng.
+Hai PR song song có thể cùng lấy một số — git không xung đột (slug khác nhau nên tên file khác
+nhau), **nhưng test `scripts/changelog.test.ts` CHẶN số trùng**: `readEntries()` phải sắp được
+thứ tự nghiêm ngặt, hai file cùng số làm khẳng định đó sai. Nên khi merge `main` về mà thấy số
+của mình đã bị PR khác dùng, **đổi số file của mình cho lớn hơn** rồi sửa các chỗ trỏ tới nó
+(đã gặp thật 2026-08-26: `main` dùng 0155–0158, nhánh phải dời sang 0159–0161).
+
+_(Đoạn này trước đây ghi "cùng số — không sao", trái với test đang chạy. Đã sửa lại theo hành vi
+thật của test.)_
 
 Bất biến này được canh bằng test: `scripts/changelog.test.ts`.
 
