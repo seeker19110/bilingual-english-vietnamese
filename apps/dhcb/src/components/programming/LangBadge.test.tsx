@@ -11,7 +11,7 @@ import LangBadge from './LangBadge'
 const LANGS = LESSON_LANGUAGES
 
 // Làn chạy trên module giả lập nằm sẵn trong máy, không có gói tin nào rời trình duyệt.
-const SIMULATED = ['pytest', 'httpsim', 'apisim', 'fetch', 'git', 'bash']
+const SIMULATED = ['pytest', 'httpsim', 'apisim', 'fetch', 'git', 'bash', 'swift']
 
 describe('LangBadge', () => {
   it('mọi ngôn ngữ trong schema đều render ra nhãn chữ, không có huy hiệu trống', () => {
