@@ -1,4 +1,4 @@
-// specStageDetails.test.ts — Test BẤT BIẾN cho chi tiết chặng (đã soạn: S2, S3 và S4 của 13 hướng).
+// specStageDetails.test.ts — Test BẤT BIẾN cho chi tiết chặng (đã soạn ĐỦ S1→S4 của 13 hướng).
 //
 // Vì sao test khuôn dạng chứ không test từng chữ: nội dung sẽ còn được sửa, nhưng KHUÔN phải
 // giữ — thiếu một ô là người học mất đúng thứ khiến chặng đi được. Test ở đây bắt đúng những
@@ -14,6 +14,14 @@ import {
 } from './specializations/stageDetails.js'
 
 describe('chi tiết chặng — phủ đủ và khớp bản đồ', () => {
+  it('mỗi hướng có đúng một chi tiết cho chặng S1', () => {
+    const s1 = SPEC_STAGE_DETAILS.filter((d) => d.stageId.endsWith('-s1'))
+    expect(s1).toHaveLength(PROGRAMMING_SPECIALIZATIONS.length)
+    for (const spec of PROGRAMMING_SPECIALIZATIONS) {
+      expect(getSpecStageDetail(`${spec.id}-s1`), `thiếu chi tiết ${spec.id}-s1`).toBeDefined()
+    }
+  })
+
   it('mỗi hướng có đúng một chi tiết cho chặng S2', () => {
     const s2 = SPEC_STAGE_DETAILS.filter((d) => d.stageId.endsWith('-s2'))
     expect(s2).toHaveLength(PROGRAMMING_SPECIALIZATIONS.length)
@@ -36,6 +44,16 @@ describe('chi tiết chặng — phủ đủ và khớp bản đồ', () => {
     for (const spec of PROGRAMMING_SPECIALIZATIONS) {
       expect(getSpecStageDetail(`${spec.id}-s4`), `thiếu chi tiết ${spec.id}-s4`).toBeDefined()
     }
+  })
+
+  it('KHÔNG chặng nào của bản đồ còn thiếu chi tiết — phủ trọn 4 chặng × 13 hướng', () => {
+    const thieu: string[] = []
+    for (const spec of PROGRAMMING_SPECIALIZATIONS) {
+      for (const stage of spec.stages) {
+        if (!getSpecStageDetail(stage.id)) thieu.push(stage.id)
+      }
+    }
+    expect(thieu, `chặng thiếu chi tiết: ${thieu.join(', ')}`).toEqual([])
   })
 
   it('id chặng duy nhất và trỏ tới chặng có thật trong bản đồ', () => {
@@ -166,7 +184,7 @@ describe('hàm tra cứu', () => {
   it('trả undefined với mã lạ, KHÔNG đoán bừa', () => {
     expect(getSpecStageDetail('khong-co')).toBeUndefined()
     expect(getSpecStageDetail('web-s9')).toBeUndefined()
-    expect(getSpecStageDetail('web-s1')).toBeUndefined() // chưa soạn — không được bịa
+    expect(getSpecStageDetail('web-s5')).toBeUndefined() // chặng không có trong bản đồ
     expect(getSpecModuleDetail('web-s2-m99')).toBeUndefined()
     expect(getSpecModuleDetail('linh-tinh')).toBeUndefined()
   })

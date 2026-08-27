@@ -1174,12 +1174,19 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   (module/tiêu chí) lưu qua `/api/programming/progress`, dùng chung `programming.lesson_progress`
   — không cần migration; tiến độ **mức CHẶNG** vẫn là cơ chế `spec_stage_progress` ở trên. Nhật
   ký: `docs/changelog/0179-2026-08-27-chang-s2-huong-chuyen-sau.md`.
-  **Việc để ngỏ (cố ý):** ~~chưa soạn bài 8 bước cho hướng nào~~ → **hai chặng `web-s1` và
-  `architecture-s1` ĐÃ có nội dung thật (2026-08-27, xem hai mục ngay dưới)**; 50 chặng còn lại
-  chưa soạn bài 8 bước, và chi tiết chặng mới có ở S2 (S1/S3/S4 chưa). **Cố ý KHÔNG làm bài học
-  8 bước cho cả 13 hướng** — 9/13 hướng không có bộ chạy trong trình duyệt, ép khuôn sẽ đẻ nội
-  dung giả. Chưa nối tiến độ chặng với tiến độ bài học (đánh dấu chặng vẫn là thao tác tay);
-  chưa gợi ý hướng theo hồ sơ người học.
+  **[Đợt 0183, 2026-08-27] CHI TIẾT CHẶNG NAY ĐỦ 4/4 CHẶNG × 13 HƯỚNG (52 chặng) — mảng này
+  ĐÓNG.** S1 soạn ở đợt này (53 module, 58 tiêu chí; nhật ký
+  `docs/changelog/0183-2026-08-27-chi-tiet-chang-s1-13-huong.md`), S2 ở đợt 0179, S3 ở 0180, S4 ở 0182. Cổng `specStageDetails.test.ts` nay có ca quét thẳng bản đồ: **thêm chặng mới mà quên
+  soạn chi tiết là CI đỏ**, không phải trang thiếu nội dung.
+  **Việc để ngỏ (cố ý):** ~~chưa soạn bài 8 bước cho hướng nào~~ → **ba chặng `web-s1`,
+  `architecture-s1` và `web-s4` ĐÃ có bài 8 bước**; **49/52 chặng còn lại chưa có** (tầng khác
+  với chi tiết chặng, `stageUnits.ts`). **Cố ý KHÔNG làm bài học 8 bước cho cả 13 hướng** — 9/13
+  hướng không có bộ chạy trong trình duyệt, ép khuôn sẽ đẻ nội dung giả. Chưa nối tiến độ chặng
+  với tiến độ bài học (đánh dấu chặng vẫn là thao tác tay); chưa gợi ý hướng theo hồ sơ người học.
+  **Bài học kỹ thuật (đợt 0183):** một test dùng "thứ chưa làm" làm ví dụ phản chứng sẽ tự hết
+  hạn đúng vào ngày thứ đó được làm — `progress.test.ts` từng lấy `web-s1-r1` làm khoá "không
+  tồn tại" và đỏ ngay khi S1 được soạn. Phản chứng phải chọn thứ **không bao giờ tồn tại**
+  (`-r99`, `-s5`), đừng chọn thứ đang trống trong kế hoạch.
   **Bài học kỹ thuật:** trong `packages/` **không đặt tên file là `index.ts`** khi file có thể
   vào chunk riêng — Rollup đặt tên chunk theo tên file, `index-*.js` trùng glob "Initial JS" của
   `.size-limit.json` và làm ngân sách đội 27 kB (đã dính thật, đổi thành `registry.ts` là hết).
