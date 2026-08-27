@@ -298,12 +298,12 @@ export default function CyberTutorAvatar3D({
               }`}
             />
           </div>
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-cyan-300">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-cyan-300 theme-light:text-cyan-800">
             {isListening ? 'Listening...' : isSpeaking ? 'Speaking...' : 'Ready / 3D Cyber Tutor'}
           </span>
         </div>
         <div className="flex items-center gap-2 text-[10px] text-zinc-400">
-          <span className="rounded bg-cyan-950/80 px-1.5 py-0.5 border border-cyan-800/40 text-cyan-300 font-mono">
+          <span className="rounded bg-cyan-950/80 px-1.5 py-0.5 border border-cyan-800/40 text-cyan-300 theme-light:text-cyan-800 font-mono">
             {fps} FPS
           </span>
           <span className="rounded bg-zinc-900/80 px-1.5 py-0.5 border border-zinc-800 font-mono uppercase text-zinc-400">
@@ -319,15 +319,15 @@ export default function CyberTutorAvatar3D({
       />
       <div className="mt-1 flex items-center gap-4 text-[11px] text-zinc-400">
         <div className="flex items-center gap-1.5 text-zinc-300">
-          <Eye className="h-3.5 w-3.5 text-cyan-400" />
+          <Eye className="h-3.5 w-3.5 text-cyan-400 theme-light:text-cyan-800" />
           <span>Interactive Gaze Active</span>
         </div>
         <div className="flex items-center gap-1.5 text-zinc-300">
-          <Cpu className="h-3.5 w-3.5 text-sky-400" />
+          <Cpu className="h-3.5 w-3.5 text-sky-400 theme-light:text-sky-800" />
           <span>15 Oculus Morphing</span>
         </div>
         <div className="flex items-center gap-1.5 text-zinc-300">
-          <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+          <ShieldCheck className="h-3.5 w-3.5 text-emerald-400 theme-light:text-emerald-800" />
           <span>PBR Cyber Shader</span>
         </div>
       </div>

@@ -390,7 +390,7 @@ export default function Companion() {
                 onClick={() => setActiveStudio(tab.id)}
                 className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 relative ${
                   isCurrent
-                    ? 'bg-accent-500 text-zinc-950 shadow-md shadow-accent-500/20 scale-[1.02]'
+                    ? 'bg-accent-500 text-black shadow-md shadow-accent-500/20 scale-[1.02]'
                     : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/60'
                 }`}
               >
@@ -453,7 +453,7 @@ export default function Companion() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-lg w-full p-5 shadow-2xl flex flex-col max-h-[85vh] animate-scale-in">
             <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
               <div className="flex items-center gap-2">
-                <Layers className="w-5 h-5 text-accent-400" />
+                <Layers className="w-5 h-5 text-accent-400 theme-light:text-accent-800" />
                 <h3 className="font-semibold text-white text-base">Minh Bạch Ngữ Cảnh</h3>
               </div>
               <button
@@ -474,7 +474,7 @@ export default function Companion() {
                 </div>
                 <div>
                   <div className="text-zinc-400">Token Sử Dụng</div>
-                  <div className="font-medium text-accent-300 mt-0.5">
+                  <div className="font-medium text-accent-300 theme-light:text-accent-800 mt-0.5">
                     {activeContext.tokenUsed} / {activeContext.tokenBudget} tokens
                   </div>
                 </div>
@@ -496,7 +496,9 @@ export default function Companion() {
                         className="bg-zinc-950 p-3 rounded-xl border border-zinc-800/80"
                       >
                         <div className="flex items-center justify-between gap-2 mb-1">
-                          <span className="font-medium text-accent-300">{item.sourceType}</span>
+                          <span className="font-medium text-accent-300 theme-light:text-accent-800">
+                            {item.sourceType}
+                          </span>
                           <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400">
                             {item.sensitivity}
                           </span>

@@ -245,7 +245,7 @@ export default function Startup() {
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => nav('/startup/canvas')}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-purple-500 hover:bg-purple-400 text-white text-sm font-bold shadow-sm transition"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-purple-500 hover:bg-purple-400 text-black text-sm font-bold shadow-sm transition"
               title="Khung Lean Canvas 9 Ô"
             >
               <Rocket className="w-4 h-4" />
@@ -271,7 +271,7 @@ export default function Startup() {
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 text-purple-400 animate-spin mb-4" />
+            <Loader2 className="w-8 h-8 text-purple-400 theme-light:text-purple-800 animate-spin mb-4" />
             <p className="text-zinc-400 text-sm">Đang tải dữ liệu khởi nghiệp...</p>
           </div>
         ) : ventures.length === 0 ? (
@@ -283,7 +283,7 @@ export default function Startup() {
             </p>
             <button
               onClick={() => setShowVentureModal(true)}
-              className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold shadow-lg shadow-purple-900/30 transition"
+              className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-[#fff] text-sm font-semibold shadow-lg shadow-purple-900/30 transition"
             >
               Tạo Dự Án Đầu Tiên
             </button>
@@ -306,7 +306,7 @@ export default function Startup() {
                         </option>
                       ))}
                     </select>
-                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-purple-950/80 text-purple-400 border border-purple-800/40 uppercase font-semibold">
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-purple-950/80 theme-light:bg-purple-50 text-purple-400 theme-light:text-purple-800 border border-purple-800/40 uppercase font-semibold">
                       {currentVenture?.stage}
                     </span>
                   </div>
@@ -324,7 +324,7 @@ export default function Startup() {
                         onClick={() => handleUpdateStage(stg)}
                         className={`text-xs px-3 py-1.5 rounded-lg font-medium transition ${
                           currentVenture?.stage === stg
-                            ? 'bg-purple-600 text-white shadow-md'
+                            ? 'bg-purple-600 text-[#fff] shadow-md'
                             : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'
                         }`}
                       >
@@ -342,7 +342,7 @@ export default function Startup() {
                 onClick={() => setActiveTab('canvas')}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
                   activeTab === 'canvas'
-                    ? 'bg-purple-600/20 text-purple-400 border border-purple-500/30'
+                    ? 'bg-purple-600/20 text-purple-400 theme-light:text-purple-800 border border-purple-500/30'
                     : 'text-zinc-400 hover:text-zinc-200'
                 }`}
               >
@@ -353,7 +353,7 @@ export default function Startup() {
                 onClick={() => setActiveTab('evidence')}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
                   activeTab === 'evidence'
-                    ? 'bg-purple-600/20 text-purple-400 border border-purple-500/30'
+                    ? 'bg-purple-600/20 text-purple-400 theme-light:text-purple-800 border border-purple-500/30'
                     : 'text-zinc-400 hover:text-zinc-200'
                 }`}
               >
@@ -369,12 +369,12 @@ export default function Startup() {
                 <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-base font-semibold text-zinc-200 flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5 text-red-400" />
+                      <TrendingUp className="w-5 h-5 text-red-400 theme-light:text-red-800" />
                       Bài Toán Khách Hàng (Problems)
                     </h3>
                     <button
                       onClick={() => setShowProblemModal(true)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/30 text-xs font-medium transition"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-300 theme-light:text-red-800 border border-red-500/30 text-xs font-medium transition"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       Thêm bài toán
@@ -397,9 +397,9 @@ export default function Startup() {
                             <span
                               className={`text-[10px] px-2 py-0.5 rounded font-medium uppercase border ${
                                 p.severity === 'critical'
-                                  ? 'bg-red-950/80 text-red-400 border-red-800/40'
+                                  ? 'bg-red-950/80 theme-light:bg-red-50 text-red-400 theme-light:text-red-800 border-red-800/40'
                                   : p.severity === 'major'
-                                    ? 'bg-amber-950/80 text-amber-400 border-amber-800/40'
+                                    ? 'bg-amber-950/80 theme-light:bg-amber-50 text-amber-400 theme-light:text-amber-800 border-amber-800/40'
                                     : 'bg-zinc-800 text-zinc-400 border-zinc-700/50'
                               }`}
                             >
@@ -421,12 +421,12 @@ export default function Startup() {
                 <div className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-base font-semibold text-zinc-200 flex items-center gap-2">
-                      <Lightbulb className="w-5 h-5 text-amber-400" />
+                      <Lightbulb className="w-5 h-5 text-amber-400 theme-light:text-amber-800" />
                       Giả Thuyết Cần Kiểm Chứng (Hypotheses)
                     </h3>
                     <button
                       onClick={() => setShowHypothesisModal(true)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/30 text-xs font-medium transition"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 theme-light:text-amber-800 border border-amber-500/30 text-xs font-medium transition"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       Thêm giả thuyết
@@ -454,10 +454,10 @@ export default function Startup() {
                             <span
                               className={`text-xs font-medium flex items-center gap-1 ${
                                 h.status === 'supported'
-                                  ? 'text-emerald-400'
+                                  ? 'text-emerald-400 theme-light:text-emerald-800'
                                   : h.status === 'refuted'
-                                    ? 'text-red-400'
-                                    : 'text-amber-400'
+                                    ? 'text-red-400 theme-light:text-red-800'
+                                    : 'text-amber-400 theme-light:text-amber-800'
                               }`}
                             >
                               {h.status === 'supported' ? (
@@ -473,13 +473,13 @@ export default function Startup() {
                             <div className="flex items-center gap-1 text-xs">
                               <button
                                 onClick={() => handleUpdateHypothesisStatus(h.id, 'supported')}
-                                className="px-2 py-0.5 rounded bg-emerald-950/60 hover:bg-emerald-950 text-emerald-400 border border-emerald-800/40 text-[11px]"
+                                className="px-2 py-0.5 rounded bg-emerald-950/60 theme-light:bg-emerald-50 hover:bg-emerald-950 text-emerald-400 theme-light:text-emerald-800 border border-emerald-800/40 text-[11px]"
                               >
                                 Xác thực
                               </button>
                               <button
                                 onClick={() => handleUpdateHypothesisStatus(h.id, 'refuted')}
-                                className="px-2 py-0.5 rounded bg-red-950/60 hover:bg-red-950 text-red-400 border border-red-800/40 text-[11px]"
+                                className="px-2 py-0.5 rounded bg-red-950/60 theme-light:bg-red-50 hover:bg-red-950 text-red-400 theme-light:text-red-800 border border-red-800/40 text-[11px]"
                               >
                                 Bác bỏ
                               </button>
@@ -499,7 +499,7 @@ export default function Startup() {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className="text-base font-semibold text-zinc-200 flex items-center gap-2">
-                      <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                      <ShieldCheck className="w-5 h-5 text-emerald-400 theme-light:text-emerald-800" />
                       Nhật Ký Bằng Chứng Đã Xác Thực (Validated Evidence)
                     </h3>
                     <p className="text-xs text-zinc-400 mt-1">
@@ -509,7 +509,7 @@ export default function Startup() {
                   </div>
                   <button
                     onClick={() => setShowEvidenceModal(true)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md transition shrink-0"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-[#fff] text-xs font-semibold shadow-md transition shrink-0"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     Ghi nhận bằng chứng
@@ -532,14 +532,14 @@ export default function Startup() {
                           <span
                             className={`text-[10px] px-2 py-0.5 rounded font-medium border ${
                               ev.supportsHypothesis
-                                ? 'bg-emerald-950/80 text-emerald-400 border-emerald-800/40'
-                                : 'bg-red-950/80 text-red-400 border-red-800/40'
+                                ? 'bg-emerald-950/80 theme-light:bg-emerald-50 text-emerald-400 theme-light:text-emerald-800 border-emerald-800/40'
+                                : 'bg-red-950/80 theme-light:bg-red-50 text-red-400 theme-light:text-red-800 border-red-800/40'
                             }`}
                           >
                             {ev.supportsHypothesis ? 'Ủng hộ giả thuyết' : 'Bác bỏ giả thuyết'}
                           </span>
                         </div>
-                        <div className="text-xs text-purple-400/90 font-medium mt-1">
+                        <div className="text-xs text-purple-400/90 theme-light:text-purple-800/90 font-medium mt-1">
                           Nguồn: <span className="text-zinc-300 font-normal">{ev.provenance}</span>{' '}
                           • Loại: {ev.evidenceType}
                         </div>
@@ -623,7 +623,7 @@ export default function Startup() {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold transition"
+                    className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-[#fff] text-sm font-semibold transition"
                   >
                     Tạo Dự Án
                   </button>
@@ -706,7 +706,7 @@ export default function Startup() {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-sm font-semibold transition"
+                    className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-black text-sm font-semibold transition"
                   >
                     Lưu Bài Toán
                   </button>
@@ -775,7 +775,7 @@ export default function Startup() {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-sm font-semibold transition"
+                    className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-[#fff] text-sm font-semibold transition"
                   >
                     Tạo Giả Thuyết
                   </button>
@@ -913,7 +913,7 @@ export default function Startup() {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition"
+                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-[#fff] text-sm font-semibold transition"
                   >
                     Lưu Bằng Chứng
                   </button>

@@ -225,21 +225,29 @@ export default function LifeWheel() {
                 Điểm cân bằng trung bình
               </span>
               <div className="text-4xl font-extrabold text-white flex items-baseline justify-center md:justify-start gap-1">
-                <span className="text-rose-400">{avgScore}</span>
+                <span className="text-rose-400 theme-light:text-rose-800">{avgScore}</span>
                 <span className="text-sm text-zinc-500 font-normal">/ 10</span>
               </div>
             </div>
 
             <div className="p-3.5 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-1.5 text-xs text-zinc-300">
-              <span className="font-semibold text-accent-400 block">💡 Phân tích từ AI:</span>
+              <span className="font-semibold text-accent-400 theme-light:text-accent-800 block">
+                💡 Phân tích từ AI:
+              </span>
               <p className="leading-relaxed">
                 Cuộc sống của bạn đang phát triển tốt ở mảng{' '}
-                <strong className="text-emerald-400">{dimensions[5]!.label}</strong> và{' '}
-                <strong className="text-emerald-400">{dimensions[0]!.label}</strong>.
+                <strong className="text-emerald-400 theme-light:text-emerald-800">
+                  {dimensions[5]!.label}
+                </strong>{' '}
+                và{' '}
+                <strong className="text-emerald-400 theme-light:text-emerald-800">
+                  {dimensions[0]!.label}
+                </strong>
+                .
               </p>
               <p className="leading-relaxed text-zinc-400">
                 Hãy tập trung cải thiện thêm ở:{' '}
-                <span className="text-amber-300 font-medium">
+                <span className="text-amber-300 theme-light:text-amber-800 font-medium">
                   {lowestDimensions.map((d) => d.label).join(', ')}
                 </span>
                 .
@@ -249,7 +257,7 @@ export default function LifeWheel() {
             <button
               onClick={handleSaveAssessment}
               disabled={saving}
-              className="tap-44 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-bold text-xs transition shadow-md shadow-rose-500/20 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+              className="tap-44 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-400 text-black font-bold text-xs transition shadow-md shadow-rose-500/20 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <Save className="w-4 h-4" />
               <span>{saving ? 'Đang lưu…' : 'Lưu kết quả đánh giá'}</span>
@@ -260,7 +268,7 @@ export default function LifeWheel() {
         {/* Bảng trượt chấm điểm 8 khía cạnh */}
         <section className="space-y-3">
           <h3 className="text-sm font-bold text-white flex items-center gap-2">
-            <Activity className="w-4 h-4 text-rose-400" />
+            <Activity className="w-4 h-4 text-rose-400 theme-light:text-rose-800" />
             <span>Tùy chỉnh mức độ hài lòng từng khía cạnh (Thang điểm 1 - 10)</span>
           </h3>
 
@@ -275,10 +283,15 @@ export default function LifeWheel() {
                     {d.label}
                   </span>
                   <span
-                    className="text-xs font-bold px-2.5 py-0.5 rounded-lg border font-mono"
+                    // Màu chữ KHÔNG lấy theo `d.color`: nền huy hiệu là chính màu đó pha
+                    // loãng 8% trên nền trang, nên ở theme tối nó ra tối còn ở theme sáng
+                    // ra sáng — một mã màu cố định không thể đạt AA ở cả hai (đo được
+                    // 1,88–3,95:1). Dùng token chữ `text-zinc-200` (thang tự đảo theo
+                    // theme, đã có cổng tương phản riêng ở themeContrast.test.ts); phần
+                    // nhận diện màu của miền vẫn giữ ở viền, nền pha loãng và vòng tròn.
+                    className="text-xs font-bold px-2.5 py-0.5 rounded-lg border font-mono text-zinc-200"
                     style={{
                       backgroundColor: `${d.color}15`,
-                      color: d.color,
                       borderColor: `${d.color}30`,
                     }}
                   >
