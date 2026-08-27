@@ -1,9 +1,10 @@
 // specializations/stageDetails.ts — Sổ đăng ký CHI TIẾT CHẶNG + hàm tra cứu.
 //
-// Đợt đầu chỉ có chặng S2 của cả 13 hướng (xem docs/specs/2026-08-27-chang-s2-huong-chuyen-sau.md):
-// S2 là chỗ đường của các hướng thật sự rẽ khỏi nhau, và là dự án đầu tiên đủ lớn để phải
-// ĐẶC TẢ trước khi làm. Chặng chưa soạn thì `getSpecStageDetail` trả `undefined` — giao diện
-// hiển thị phần bản đồ sẵn có, KHÔNG bịa nội dung.
+// Đã soạn: chặng S2 (docs/specs/2026-08-27-chang-s2-huong-chuyen-sau.md) và chặng S3
+// (docs/specs/2026-08-27-chang-s3-13-huong.md) của cả 13 hướng. S2 là chỗ đường của các hướng
+// thật sự rẽ khỏi nhau; S3 là chỗ người học khựng lại vì "chạy được" không còn là đủ tốt, mà
+// "đủ tốt" thì đo được nên đặc tả được. Chặng chưa soạn thì `getSpecStageDetail` trả
+// `undefined` — giao diện hiển thị phần bản đồ sẵn có, KHÔNG bịa nội dung.
 //
 // Thêm chặng mới: tạo file `details/<hướng>-<chặng>.ts` theo khuôn rồi thêm 1 import + 1 phần
 // tử vào mảng dưới đây. Test `specStageDetails.test.ts` tự kiểm khuôn dạng.
@@ -21,6 +22,19 @@ import { EMBEDDED_S2_DETAIL } from './details/embedded-s2.js'
 import { DESKTOP_S2_DETAIL } from './details/desktop-s2.js'
 import { ARCHITECTURE_S2_DETAIL } from './details/architecture-s2.js'
 import { ALGO_S2_DETAIL } from './details/algo-s2.js'
+import { WEB_S3_DETAIL } from './details/web-s3.js'
+import { MOBILE_S3_DETAIL } from './details/mobile-s3.js'
+import { BACKEND_S3_DETAIL } from './details/backend-s3.js'
+import { DATA_S3_DETAIL } from './details/data-s3.js'
+import { AI_S3_DETAIL } from './details/ai-s3.js'
+import { DEVOPS_S3_DETAIL } from './details/devops-s3.js'
+import { SECURITY_S3_DETAIL } from './details/security-s3.js'
+import { SYSTEMS_S3_DETAIL } from './details/systems-s3.js'
+import { GAME_S3_DETAIL } from './details/game-s3.js'
+import { EMBEDDED_S3_DETAIL } from './details/embedded-s3.js'
+import { DESKTOP_S3_DETAIL } from './details/desktop-s3.js'
+import { ARCHITECTURE_S3_DETAIL } from './details/architecture-s3.js'
+import { ALGO_S3_DETAIL } from './details/algo-s3.js'
 
 export type {
   SpecStageDetail,
@@ -44,6 +58,20 @@ export const SPEC_STAGE_DETAILS: SpecStageDetail[] = [
   DESKTOP_S2_DETAIL,
   ARCHITECTURE_S2_DETAIL,
   ALGO_S2_DETAIL,
+  // Chặng S3 — soạn 2026-08-27 (docs/specs/2026-08-27-chang-s3-13-huong.md).
+  WEB_S3_DETAIL,
+  MOBILE_S3_DETAIL,
+  BACKEND_S3_DETAIL,
+  DATA_S3_DETAIL,
+  AI_S3_DETAIL,
+  DEVOPS_S3_DETAIL,
+  SECURITY_S3_DETAIL,
+  SYSTEMS_S3_DETAIL,
+  GAME_S3_DETAIL,
+  EMBEDDED_S3_DETAIL,
+  DESKTOP_S3_DETAIL,
+  ARCHITECTURE_S3_DETAIL,
+  ALGO_S3_DETAIL,
 ]
 
 const detailMap = new Map<string, SpecStageDetail>(SPEC_STAGE_DETAILS.map((d) => [d.stageId, d]))
