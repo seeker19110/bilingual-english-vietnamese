@@ -152,9 +152,14 @@ Sáu ô của §2.5 đã thành file điền được, không phải đọc lạ
 
 ## 5. Việc còn để ngỏ (cố ý)
 
-1. **Chưa có bài học 8 bước cho các hướng.** Tầng này là _bản đồ_ (module + dự án + tiêu chí),
-   chưa phải nội dung dạy từng bài như P1–P5. Soạn bài cho một hướng là một đợt việc riêng, nên
-   bắt đầu từ `web` vì nó dùng lại được hạ tầng `htmlPrelude`/`domPrelude`/`fetchPrelude` sẵn có.
+1. ~~**Chưa có bài học 8 bước cho các hướng.**~~ → **Chặng `web-s1` đã soạn xong (2026-08-27,
+   7 bài trong `p6-u16…u18`)**, đúng khuyến nghị bắt đầu từ `web` vì nó dùng lại được hạ tầng
+   `htmlPrelude`/`domPrelude` sẵn có. 51 chặng còn lại vẫn ở dạng bản đồ. Hai luật rút ra khi
+   soạn, áp cho mọi chặng sau:
+   - **Mã unit của nội dung hướng bắt đầu từ `p6-u16`** — dải `p6-u5…u15` thuộc CHƯƠNG TRÌNH M.
+     Mã unit là khoá tiến độ Postgres nên không được lấn.
+   - Chặng nào đã có bài phải khai vào `specializations/stageUnits.ts` thì giao diện mới hiện
+     lối "Vào học"; cổng `stageUnits.test.ts` kiểm chéo unit có thật và đã có bài.
 2. **Chưa lưu tiến độ hướng xuống Postgres.** Khi soạn bài thật mới cần bảng tiến độ; id chặng và
    id module đã đặt ổn định từ bây giờ để làm khoá tiến độ sau này không phải di trú.
 3. **Chưa có gợi ý hướng theo hồ sơ người học.** Cố ý: gợi ý sai còn tệ hơn không gợi ý. Muốn làm

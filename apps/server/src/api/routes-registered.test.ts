@@ -29,6 +29,7 @@ const CUSTOM_PATH: Record<string, string> = {
   // Môn Lập trình gom dưới tiền tố /api/programming/* (PR-L3/L3b)
   progress: 'programming/progress',
   project: 'programming/project',
+  specialization: 'programming/specialization',
   'ts-check': 'programming/ts-check',
 }
 
