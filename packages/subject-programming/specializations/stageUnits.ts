@@ -15,6 +15,9 @@ export const SPEC_STAGE_UNITS: Record<string, string[]> = {
   'web-s1': ['p6-u16', 'p6-u17', 'p6-u18'],
   // Hướng Kiến trúc, chặng S1 — soạn 2026-08-27 (3 unit).
   'architecture-s1': ['p6-u19', 'p6-u20', 'p6-u21'],
+  // Hướng Web, chặng S4 — soạn 2026-08-27 (3 unit). Đặc tả:
+  // `docs/specs/2026-08-27-chang-s4-13-huong.md`.
+  'web-s4': ['p6-u22', 'p6-u23', 'p6-u24'],
 }
 
 /** Unit của một chặng; mảng RỖNG nghĩa là chặng chưa có bài (giao diện phải nói rõ điều đó). */

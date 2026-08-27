@@ -26,14 +26,20 @@ function render(specId: string) {
 const NHAN_VAO_HOC = 'Vào học chặng này'
 
 describe('ProgrammingSpecializationPage — lối vào bài học', () => {
+  // Số chặng đã soạn của hướng `web` còn tăng theo từng đợt nội dung, nên đếm TỪ DỮ LIỆU
+  // chứ không ghi cứng — ghi cứng thì mỗi đợt soạn bài mới là cổng này đỏ oan một lần.
+  const CHANG_WEB_DA_CO_BAI = ['web-s1', 'web-s4'].filter((id) => unitsOfStage(id).length > 0)
+
   it('hướng đã soạn bài: hiện lối vào ĐÚNG bằng số chặng đã có bài, kèm tên unit thật', () => {
     const html = render('web')
-    expect(html.split(NHAN_VAO_HOC).length - 1).toBe(1)
+    expect(html.split(NHAN_VAO_HOC).length - 1).toBe(CHANG_WEB_DA_CO_BAI.length)
     const p6 = getProgrammingLevel('p6')!
-    for (const unitId of unitsOfStage('web-s1')) {
-      // renderToStaticMarkup escape dấu & thành &amp; — so chuỗi thô sẽ trượt oan.
-      const title = p6.units.find((u) => u.id === unitId)!.title.replace(/&/g, '&amp;')
-      expect(html, `thiếu tên unit ${unitId} trên trang`).toContain(title)
+    for (const stageId of CHANG_WEB_DA_CO_BAI) {
+      for (const unitId of unitsOfStage(stageId)) {
+        // renderToStaticMarkup escape dấu & thành &amp; — so chuỗi thô sẽ trượt oan.
+        const title = p6.units.find((u) => u.id === unitId)!.title.replace(/&/g, '&amp;')
+        expect(html, `thiếu tên unit ${unitId} trên trang`).toContain(title)
+      }
     }
   })
 
