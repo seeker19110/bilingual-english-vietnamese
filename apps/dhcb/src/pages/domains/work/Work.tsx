@@ -227,6 +227,9 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
             Bảng Kanban
           </button>
           <select
+            // Ô lọc không có nhãn hiển thị (chỉ có option "Tất cả dự án") → cần
+            // aria-label để trình đọc màn hình biết ô này lọc theo cái gì.
+            aria-label="Lọc theo dự án"
             value={selectedProjectId}
             onChange={(e) => setSelectedProjectId(e.target.value)}
             className="px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-300 text-sm focus:outline-none"
@@ -655,8 +658,14 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">Dự án</label>
+                  <label
+                    htmlFor="work-task-project"
+                    className="block text-xs font-medium text-zinc-400 mb-1"
+                  >
+                    Dự án
+                  </label>
                   <select
+                    id="work-task-project"
                     value={taskForm.projectId}
                     onChange={(e) => setTaskForm({ ...taskForm, projectId: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
@@ -670,8 +679,14 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">Độ ưu tiên</label>
+                  <label
+                    htmlFor="work-task-priority"
+                    className="block text-xs font-medium text-zinc-400 mb-1"
+                  >
+                    Độ ưu tiên
+                  </label>
                   <select
+                    id="work-task-priority"
                     value={taskForm.priority}
                     onChange={(e) =>
                       setTaskForm({
@@ -847,10 +862,14 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
+                  <label
+                    htmlFor="work-doc-kind"
+                    className="block text-xs font-medium text-zinc-400 mb-1"
+                  >
                     Loại tài liệu
                   </label>
                   <select
+                    id="work-doc-kind"
                     value={docForm.documentType}
                     onChange={(e) =>
                       setDocForm({
@@ -869,8 +888,14 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">Dự án</label>
+                  <label
+                    htmlFor="work-doc-project"
+                    className="block text-xs font-medium text-zinc-400 mb-1"
+                  >
+                    Dự án
+                  </label>
                   <select
+                    id="work-doc-project"
                     value={docForm.projectId}
                     onChange={(e) => setDocForm({ ...docForm, projectId: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"

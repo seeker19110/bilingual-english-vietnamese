@@ -292,6 +292,10 @@ export default function LifeWheel() {
                   type="range"
                   min="1"
                   max="10"
+                  // Tên miền đời sống nằm ở <span> bên trên, KHÔNG gắn với thanh trượt →
+                  // trình đọc màn hình chỉ đọc "slider" chung chung (axe: label). Gắn tên
+                  // riêng cho từng thanh để biết đang chấm điểm miền nào.
+                  aria-label={`Điểm hài lòng: ${d.label}`}
                   value={d.score}
                   onChange={(e) => handleScoreChange(d.id, parseInt(e.target.value, 10))}
                   className="w-full h-1.5 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-rose-500"

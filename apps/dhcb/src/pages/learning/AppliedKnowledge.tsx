@@ -41,6 +41,8 @@ import {
   type BloodType,
 } from '../../lib/simulators'
 
+// Mọi thanh trượt mô phỏng đều lấy chữ mô tả từ <span> bên trên, KHÔNG gắn với ô nhập
+// → trình đọc màn hình chỉ đọc "slider" (axe: label). Gắn aria-label cho từng thanh.
 export default function AppliedKnowledge() {
   const nav = useNavigate()
   const [activeTab, setActiveTab] = useState<'simulators' | 'library' | 'explainer' | 'projects'>(
@@ -458,6 +460,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Chi phí cố định mặt bằng và nhân công (F)"
                         min="200000"
                         max="5000000"
                         step="100000"
@@ -476,6 +479,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Giá vốn mỗi đơn vị sản phẩm (c)"
                         min="5000"
                         max="50000"
                         step="1000"
@@ -494,6 +498,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Lượng khách cơ sở ở giá vốn (Q 0)"
                         min="100"
                         max="1500"
                         step="50"
@@ -512,6 +517,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Độ nhạy giá của khách hàng (Elasticity k)"
                         min="0.001"
                         max="0.015"
                         step="0.001"
@@ -591,6 +597,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Vốn ban đầu (P)"
                         min="0"
                         max="100000000"
                         step="5000000"
@@ -609,6 +616,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Tích lũy định kỳ mỗi tháng (PMT)"
                         min="500000"
                         max="20000000"
                         step="500000"
@@ -625,6 +633,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Lãi suất đầu tư hàng năm kỳ vọng (r)"
                         min="4"
                         max="18"
                         step="0.5"
@@ -641,6 +650,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Tỷ lệ lạm phát kỳ vọng/năm (i)"
                         min="2"
                         max="8"
                         step="0.5"
@@ -657,6 +667,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Số năm đầu tư (n)"
                         min="3"
                         max="30"
                         step="1"
@@ -743,6 +754,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Số tiền vay ngân hàng"
                         min="200000000"
                         max="5000000000"
                         step="100000000"
@@ -759,6 +771,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Lãi suất vay ưu đãi/năm"
                         min="5"
                         max="16"
                         step="0.25"
@@ -775,6 +788,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Thời hạn vay"
                         min="3"
                         max="30"
                         step="1"
@@ -851,6 +865,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Thời gian bật điều hòa"
                         min="0"
                         max="24"
                         step="1"
@@ -877,6 +892,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Nhiệt độ cài đặt điều hòa"
                         min="18"
                         max="29"
                         step="1"
@@ -893,6 +909,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Thời gian bật bình nóng lạnh"
                         min="0"
                         max="120"
                         step="10"
@@ -909,6 +926,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Sử dụng máy tính / TV"
                         min="0"
                         max="16"
                         step="1"
@@ -925,6 +943,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Tủ lạnh, đèn và thiết bị khác"
                         min="30"
                         max="200"
                         step="10"
@@ -1000,6 +1019,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Số ngày vệ tinh bay không bù trừ hiệu ứng Einstein"
                         min="1"
                         max="30"
                         step="1"
@@ -1088,6 +1108,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Vận tốc di chuyển của xe (v)"
                         min="20"
                         max="140"
                         step="5"
@@ -1115,6 +1136,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Thời gian phản xạ người lái (t phản xạ)"
                         min="0.5"
                         max="2.5"
                         step="0.1"
@@ -1137,6 +1159,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Hệ số ma sát mặt đường (mu)"
                         min="0.25"
                         max="0.85"
                         step="0.05"
@@ -1205,6 +1228,7 @@ export default function AppliedKnowledge() {
                       </div>
                       <input
                         type="range"
+                        aria-label="Thể tích cồn 70° mong muốn pha chế"
                         min="100"
                         max="2000"
                         step="50"

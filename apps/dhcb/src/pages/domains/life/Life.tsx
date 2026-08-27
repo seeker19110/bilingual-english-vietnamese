@@ -588,10 +588,14 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
+                  <label
+                    htmlFor="life-habit-goal"
+                    className="block text-xs font-medium text-zinc-400 mb-1"
+                  >
                     Mục tiêu thói quen
                   </label>
                   <select
+                    id="life-habit-goal"
                     value={habitForm.habitType}
                     onChange={(e) =>
                       setHabitForm({
@@ -606,8 +610,14 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">Tần suất</label>
+                  <label
+                    htmlFor="life-habit-frequency"
+                    className="block text-xs font-medium text-zinc-400 mb-1"
+                  >
+                    Tần suất
+                  </label>
                   <select
+                    id="life-habit-frequency"
                     value={habitForm.frequency}
                     onChange={(e) =>
                       setHabitForm({
@@ -760,8 +770,14 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Loại chu kỳ</label>
+                <label
+                  htmlFor="life-plan-cycle"
+                  className="block text-xs font-medium text-zinc-400 mb-1"
+                >
+                  Loại chu kỳ
+                </label>
                 <select
+                  id="life-plan-cycle"
                   value={planForm.planType}
                   onChange={(e) =>
                     setPlanForm({ ...planForm, planType: e.target.value as LifePlan['planType'] })
@@ -850,8 +866,14 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">Lĩnh vực</label>
+                  <label
+                    htmlFor="life-milestone-domain"
+                    className="block text-xs font-medium text-zinc-400 mb-1"
+                  >
+                    Lĩnh vực
+                  </label>
                   <select
+                    id="life-milestone-domain"
                     value={milestoneForm.area}
                     onChange={(e) =>
                       setMilestoneForm({

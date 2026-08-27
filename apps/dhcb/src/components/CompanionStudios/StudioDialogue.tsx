@@ -523,13 +523,15 @@ export default function StudioDialogue({
               <button
                 type="submit"
                 disabled={!input.trim() || loading}
+                // Nút chỉ có icon → phải có tên cho trình đọc màn hình (axe: button-name).
+                aria-label="Gửi tin nhắn"
                 className={`p-2.5 rounded-xl transition flex items-center justify-center shrink-0 ${
                   input.trim() && !loading
                     ? 'bg-accent-500 hover:bg-accent-400 text-white shadow-md shadow-accent-500/25'
                     : 'bg-zinc-800 text-zinc-400 cursor-not-allowed'
                 }`}
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-4 h-4" aria-hidden="true" />
               </button>
             </form>
           </div>
