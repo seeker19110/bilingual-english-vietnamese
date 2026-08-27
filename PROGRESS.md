@@ -1159,12 +1159,28 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   **Quan hệ với CHƯƠNG TRÌNH M:** hai việc KHÔNG đè nhau — M thêm _unit dạy học_ vào P6
   (`p6-u5…u15`), còn tầng này là _bản đồ nghề_ nằm ngoài dòng unit. Bốn unit `p6-u1…u4` nay đặt
   tên là "Dẫn nhập hướng …" cho khớp.
-  **Việc để ngỏ (cố ý):** chưa soạn bài 8 bước cho hướng nào (nên bắt đầu từ `web`); chưa lưu
-  tiến độ hướng xuống Postgres (id chặng/module đã đặt ổn định để sau không phải di trú); chưa
-  gợi ý hướng theo hồ sơ người học.
+  **Việc để ngỏ (cố ý):** ~~chưa soạn bài 8 bước cho hướng nào~~ → **chặng `web-s1` ĐÃ có nội
+  dung thật (2026-08-27, xem mục ngay dưới)**; các chặng còn lại chưa soạn. Chưa lưu tiến độ
+  hướng xuống Postgres (id chặng/module đã đặt ổn định để sau không phải di trú); chưa gợi ý
+  hướng theo hồ sơ người học.
   **Bài học kỹ thuật:** trong `packages/` **không đặt tên file là `index.ts`** khi file có thể
   vào chunk riêng — Rollup đặt tên chunk theo tên file, `index-*.js` trùng glob "Initial JS" của
   `.size-limit.json` và làm ngân sách đội 27 kB (đã dính thật, đổi thành `registry.ts` là hết).
+
+- **[2026-08-27] Môn Lập trình — NỘI DUNG CHẶNG S1 HƯỚNG WEB — ✅ XONG.** Nhật ký:
+  `docs/changelog/0176-2026-08-27-feat-noi-dung-chang-s1-huong-web.md`. **7 bài học 8 bước** phủ
+  đủ 5 module của `web-s1`, đặt trong 3 unit mới của P6: `p6-u16` (event loop · Grid/Flex ·
+  mobile-first · design token), `p6-u17` (UI là hàm của state · union phân biệt 4 trạng thái ·
+  không tin `as`), `p6-u18` (bàn phím & focus · 4 trạng thái màn hình + `aria-live`).
+  **Mã unit của nội dung hướng chuyên sâu bắt đầu từ `p6-u16`** — dải `p6-u5…u15` vẫn thuộc
+  CHƯƠNG TRÌNH M, không được lấn (mã unit là khoá tiến độ Postgres).
+  Cầu nối chặng ↔ bài: `specializations/stageUnits.ts` + cổng `stageUnits.test.ts`; trang chi
+  tiết hướng hiện khối "Vào học chặng này" CHỈ ở chặng đã có bài.
+  **Bài học kỹ thuật:** cổng nội dung yêu cầu **đáp án bước ④ Predict phải là output THẬT** của
+  đoạn code (lựa chọn sai không được khớp) — soạn Predict kiểu "chọn câu giải thích đúng" là CI
+  đỏ. Cả 7 bài dính lỗi này ở bản đầu.
+  **Việc tiếp theo của mạch này:** chặng S1 hướng `architecture`, rồi lưu tiến độ hướng xuống
+  Postgres.
 
 - **[2026-08-26] Môn Lập trình — CHƯƠNG TRÌNH M (mở rộng ngôn ngữ & tư duy), 12 PR.** Hiến
   chương: `docs/research/dac-ta-mo-rong-ngon-ngu-va-tu-duy-2026-08-26.md` (PR-M0 ✅ xong).

@@ -27,6 +27,7 @@ import {
   GitBranch,
   Gauge,
   ClipboardCheck,
+  GraduationCap,
 } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
@@ -36,6 +37,8 @@ import {
   type SpecProject,
   type SpecStage,
 } from '@dhcb/subject-programming/specializations/registry'
+import { unitsOfStage } from '@dhcb/subject-programming/specializations/stageUnits'
+import { getProgrammingLevel } from '@dhcb/subject-programming/curriculum'
 
 const TIER_LABEL: Record<string, string> = {
   s1: 'Chặng 1 — căn bản',
@@ -100,6 +103,37 @@ function ProjectBlock({ project, tone }: { project: SpecProject; tone: 'stage' |
   )
 }
 
+/**
+ * Khối "vào học" — CHỈ hiện khi chặng đã có bài thật (bảng `SPEC_STAGE_UNITS`). Chặng chưa
+ * soạn thì không hiện nút nào: hứa một nút dẫn tới trang rỗng còn tệ hơn là chưa có nút.
+ */
+function StageLessons({ stageId }: { stageId: string }) {
+  const nav = useNavigate()
+  const units = unitsOfStage(stageId)
+  if (units.length === 0) return null
+  const p6 = getProgrammingLevel('p6')
+  const tieuDe = (id: string) => p6?.units.find((u) => u.id === id)?.title ?? id
+  return (
+    <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-4 space-y-2">
+      <h4 className="text-sm font-bold text-white flex items-center gap-2">
+        <GraduationCap className="w-4 h-4 text-emerald-400 shrink-0" aria-hidden="true" />
+        <span>Chặng này đã có bài học ({units.length} phần)</span>
+      </h4>
+      <ul className="text-sm text-zinc-100 leading-relaxed space-y-1 list-disc pl-5">
+        {units.map((id) => (
+          <li key={id}>{tieuDe(id)}</li>
+        ))}
+      </ul>
+      <button
+        onClick={() => nav('/lap-trinh/p6')}
+        className="tap-44 w-full py-3 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition"
+      >
+        Vào học chặng này
+      </button>
+    </div>
+  )
+}
+
 function StageBlock({ stage }: { stage: SpecStage }) {
   return (
     <li className="rounded-3xl border border-zinc-800 bg-zinc-900/80 p-5 space-y-4">
@@ -134,6 +168,8 @@ function StageBlock({ stage }: { stage: SpecStage }) {
         ))}
       </ol>
 
+      <StageLessons stageId={stage.id} />
+
       <ProjectBlock project={stage.project} tone="stage" />
     </li>
   )
@@ -157,7 +193,7 @@ export default function ProgrammingSpecializationPage() {
             onClick={() => nav('/lap-trinh/huong')}
             className="tap-44 w-full py-3.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition"
           >
-            Xem 12 hướng chuyên sâu
+            Xem 13 hướng chuyên sâu
           </button>
         </main>
       </div>

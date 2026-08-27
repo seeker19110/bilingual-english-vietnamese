@@ -354,13 +354,13 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
     id: 'p6',
     name: 'Chuyên sâu',
     canDo:
-      'Chọn MỘT trong 12 hướng chuyên sâu (web, di động, backend, dữ liệu, AI, DevOps, bảo mật, hệ thống, game, nhúng, desktop, thuật toán) và đi hết 4 chặng của hướng đó tới mức chuyên gia.',
+      'Chọn MỘT trong 13 hướng chuyên sâu (web, di động, backend, dữ liệu, AI, DevOps, bảo mật, hệ thống, game, nhúng, desktop, kiến trúc, thuật toán) và đi hết 4 chặng của hướng đó tới mức chuyên gia.',
     duration: 'Mở — mỗi hướng 8–18 tháng',
     languages: ['Tuỳ hướng đã chọn'],
     projectStage: 'Hướng chuyên sâu tự chọn — xem `specializations/registry.ts`',
     projectMilestone: 'Sản phẩm tốt nghiệp (capstone) của hướng đã chọn, đủ làm bằng chứng nghề.',
     // 4 unit dưới đây là các unit DẪN NHẬP mở đầu bốn hướng phổ biến nhất. Nội dung đầy đủ của
-    // cả 12 hướng nằm ở `specializations/` (mỗi hướng 4 chặng × module + 5 dự án) — đó mới là
+    // cả 13 hướng nằm ở `specializations/` (mỗi hướng 4 chặng × module + 5 dự án) — đó mới là
     // nguồn thi hành, các unit này chỉ là cửa vào trong dòng bài học tuần tự.
     units: [
       { id: 'p6-u1', title: 'Dẫn nhập hướng AI', topics: 'Python: gọi LLM API, RAG cơ bản' },
@@ -375,6 +375,24 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         topics: 'C nền tảng bộ nhớ → Rust ownership',
       },
       { id: 'p6-u4', title: 'Dẫn nhập hướng thuật toán', topics: 'Luyện đề có Socratic hints' },
+      // Từ u16 trở đi là NỘI DUNG HỌC THẬT của các hướng chuyên sâu (bản đồ hướng ở
+      // `specializations/`). Dải u5…u15 đã được CHƯƠNG TRÌNH M giữ chỗ (Kotlin · Swift ·
+      // paradigm), nên nội dung hướng bắt đầu từ u16 để hai dòng việc không tranh mã unit.
+      {
+        id: 'p6-u16',
+        title: 'Hướng Web S1 — trình duyệt làm gì & bố cục hiện đại',
+        topics: 'Event loop, long task; Grid vs Flex, mobile-first, design token',
+      },
+      {
+        id: 'p6-u17',
+        title: 'Hướng Web S1 — UI là hàm của state, TypeScript cho giao diện',
+        topics: 'State là nguồn sự thật; union phân biệt 4 trạng thái; không tin `as`',
+      },
+      {
+        id: 'p6-u18',
+        title: 'Hướng Web S1 — accessibility nhập môn',
+        topics: 'Bàn phím đi hết luồng, focus thấy được; 4 trạng thái màn hình, aria-live',
+      },
     ],
   },
 ]
