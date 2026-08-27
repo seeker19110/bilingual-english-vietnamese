@@ -1146,7 +1146,7 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
      thi chỉ cần sửa `ExamKindSchema` + phạm vi từ vựng ở `apps/dhcb/src/lib/examPlan.ts`.
 - **[2026-08-27] Môn Lập trình — 13 HƯỚNG CHUYÊN SÂU + BẢN ĐỒ KIẾN TRÚC (bản đồ sau P5) — ✅ XONG.** Đặc tả:
   `docs/research/dac-ta-huong-chuyen-sau-mon-lap-trinh-2026-08-27.md`; nhật ký:
-  `docs/changelog/0174-2026-08-27-feat-huong-chuyen-sau-mon-lap-trinh.md`. Dữ liệu ở
+  `docs/changelog/0175-2026-08-27-feat-huong-chuyen-sau-mon-lap-trinh.md`. Dữ liệu ở
   `packages/subject-programming/specializations/` (13 hướng × 4 chặng S1→S4 = 52 chặng, 211
   module học, 65 dự án), giao diện `/lap-trinh/huong` + `/lap-trinh/huong/:specId`.
   **MỌI hướng có lát cắt KIẾN TRÚC bắt buộc** (`SpecArchitecture`, 5 ô: module + trách nhiệm ·
