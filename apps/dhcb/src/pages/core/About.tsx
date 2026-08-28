@@ -21,6 +21,7 @@ import {
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import { useLang } from '../../context/useLang'
+import { navigateTo } from '../../lib/subjectsHost'
 
 type IconType = typeof BookOpen
 
@@ -250,7 +251,7 @@ export default function About() {
               <button
                 key={p.titleVi}
                 type="button"
-                onClick={() => nav(p.path)}
+                onClick={() => navigateTo(nav, p.path)}
                 className="tap-44 text-left bg-zinc-900/80 border border-zinc-800/80 hover:border-accent-500/40 rounded-2xl p-4 flex items-start gap-3 transition"
               >
                 <div className="w-10 h-10 rounded-xl bg-accent-500/15 flex items-center justify-center shrink-0">

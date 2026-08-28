@@ -18,6 +18,7 @@ import { useAuth } from '../context/useAuth'
 import { getStreak } from '../lib/storage'
 import ThemeToggle from './ThemeToggle'
 import OfflineStatusBanner from './OfflineStatusBanner'
+import { navigateTo } from '../lib/subjectsHost'
 
 interface Props {
   // title/subtitle KHÔNG bắt buộc: nhiều trang nay hiển thị tiêu đề LỚN ngay dưới header
@@ -198,7 +199,7 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
                       key={st.id}
                       onClick={() => {
                         setSwitcherOpen(false)
-                        nav(st.to)
+                        navigateTo(nav, st.to)
                       }}
                       className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-left transition-all ${
                         isActive

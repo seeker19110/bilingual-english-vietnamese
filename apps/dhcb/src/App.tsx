@@ -11,6 +11,7 @@ import BottomNav from './components/BottomNav'
 import PromoEndingBanner from './components/PromoEndingBanner'
 import PlanExpiryBanner from './components/PlanExpiryBanner'
 import { lazyWithRetry } from './lib/lazyWithRetry'
+import { isSubjectsHost } from './lib/subjectsHost'
 import { refreshAppSettings } from './lib/appSettings'
 import { refreshPlanFeatures } from './lib/planFeatures'
 import { refreshPlanMarketing } from './lib/planMarketing'
@@ -203,6 +204,9 @@ function SubjectRedirect() {
 
 export default function App() {
   usePrefetchPages()
+  // Host trụ Học tập đổi HÌNH DẠNG bảng route (xem chú thích ở route "/"). Đọc một lần lúc
+  // dựng: hostname không đổi trong vòng đời một trang.
+  const onSubjectsHost = isSubjectsHost(window.location.hostname)
   // Kéo toàn bộ nội dung trang xuống 1 tay (Reachability) — xem lib/useOneHandedDrag.ts
   const oneHandedDrag = useOneHandedDrag()
   // Đồng bộ hạn mức/khuyến mãi thật từ server: ngay lúc mở app, định kỳ mỗi 1h nếu app mở
@@ -515,14 +519,28 @@ export default function App() {
                           </RequireAuth>
                         }
                       />
+                      {/* Trên host trụ Học tập (hoc-tap.donghanhcungban.org) trang gốc LÀ danh
+                          sách môn, và mã môn nằm thẳng ở cấp 1 (`/mathematics`) — tiền tố
+                          `/mon-hoc` đã bỏ. Ở mọi host khác (kể cả localhost/dev) giữ nguyên như
+                          cũ. Server 301 mọi đường dẫn ngoài trụ Học tập khỏi host này nên
+                          `/:subjectId` không nuốt route nào của app nền tảng.
+                          Xem apps/dhcb/src/lib/subjectsHost.ts + apps/server/src/subjectsRouting.ts */}
                       <Route
                         path="/"
                         element={
-                          <RequireAuth>
-                            <Home />
-                          </RequireAuth>
+                          <RequireAuth>{onSubjectsHost ? <Subjects /> : <Home />}</RequireAuth>
                         }
                       />
+                      {onSubjectsHost && (
+                        <Route
+                          path="/:subjectId"
+                          element={
+                            <RequireAuth>
+                              <SubjectDetail />
+                            </RequireAuth>
+                          }
+                        />
+                      )}
                       <Route
                         path="/hoc-tieng-anh"
                         element={

@@ -19,6 +19,7 @@ import {
 import { fetchProactiveBriefing } from '../../lib/proactiveBriefingApi'
 import { speak } from '../../lib/tts'
 import type { ProactiveBriefing } from '@dhcb/core-contracts/proactiveBriefing'
+import { goToSubjects } from '../../lib/subjectsHost'
 
 interface Props {
   userName?: string
@@ -253,7 +254,7 @@ export default function HomeAiBriefingCard({
           </button>
         ) : (
           <button
-            onClick={() => nav('/mon-hoc')}
+            onClick={() => goToSubjects(nav)}
             className="tap-44 flex items-center justify-between p-3 rounded-2xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 hover:border-blue-500/50 text-left transition-all duration-200 active:scale-[0.98] group shadow-sm"
           >
             <div className="flex items-center gap-3 min-w-0">

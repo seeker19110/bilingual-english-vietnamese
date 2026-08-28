@@ -5,6 +5,7 @@ import { Home, GraduationCap, Dumbbell, Sparkles, User, ChevronDown, ChevronUp }
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import type { useOneHandedDrag } from '../lib/useOneHandedDrag'
+import SubjectsLink from './SubjectsLink'
 
 const HIDDEN_PATHS = ['/login', '/onboarding']
 
@@ -144,9 +145,8 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
         </Link>
 
         {/* Tab 2: Phòng Học */}
-        <Link
-          to="/mon-hoc"
-          aria-current={isLearning ? 'page' : undefined}
+        <SubjectsLink
+          ariaCurrent={isLearning ? 'page' : undefined}
           className={`tap-44 relative flex flex-col items-center justify-center gap-1 text-center text-xs font-medium transition-all duration-200 group ${
             isLearning
               ? 'text-emerald-400 theme-light:text-emerald-800 font-semibold'
@@ -165,7 +165,7 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
             />
           </div>
           <span className="truncate max-w-[4.5rem] tracking-tight">Phòng Học</span>
-        </Link>
+        </SubjectsLink>
 
         {/* Tab 3: Agent Bạn Đồng Hành (Nút tâm điểm Orb Glow) */}
         <Link

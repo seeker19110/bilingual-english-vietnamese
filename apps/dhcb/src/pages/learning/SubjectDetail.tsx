@@ -25,6 +25,7 @@ import { speak } from '../../lib/tts'
 import IntegrationsModal from '../../components/IntegrationsModal'
 import { STEM_CURRICULUM } from '../../data/stemCurriculum'
 import type { SubjectManifest } from '@dhcb/core-contracts/subjectManifest'
+import { goToSubjects } from '../../lib/subjectsHost'
 
 interface SolvedStep {
   title: string
@@ -99,7 +100,7 @@ export default function SubjectDetail() {
         }
       })
       .catch(() => {
-        nav('/mon-hoc')
+        goToSubjects(nav)
       })
   }, [subjectId, nav])
 
@@ -264,7 +265,7 @@ export default function SubjectDetail() {
 
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
-      <Layout onBack={() => nav('/mon-hoc')} />
+      <Layout onBack={() => goToSubjects(nav)} />
 
       <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
         <PageHeader

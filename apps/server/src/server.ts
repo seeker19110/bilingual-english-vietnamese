@@ -17,6 +17,8 @@ dotenv.config()
 import { initSentryServer, captureServerException } from './api/_lib/sentry.js'
 import { registerApiRoutes, applyCommonSecurityHeaders } from './routes.js'
 import { parseHubHostnames, resolveDistDir } from './staticApps.js'
+import { decideRedirect } from './subjectsRouting.js'
+import { listSupportedSubjects } from '@dhcb/core-learner/subjectRegistry'
 import { warnIfClusterWithoutRedis, reportRedisStatusAtStartup } from '@dhcb/core-auth/security'
 
 // Bật Sentry (error tracking) — no-op nếu chưa cấu hình SENTRY_DSN (xem api/_lib/sentry.ts).
@@ -137,6 +139,33 @@ function staticCacheHeaders(res: express.Response, filePath: string) {
     res.setHeader('Content-Type', 'text/html; charset=utf-8')
   }
 }
+
+// ── Trụ Học tập ở subdomain riêng: 301 TRƯỚC khi phục vụ static ────────────────────────────
+// Phải đứng trước static, nếu không `hoc-tap…/tien-do` sẽ được trả index.html (nội dung trùng ở
+// hai host — đúng thứ phương án subdomain sinh ra để tránh). Luật + lý do ở subjectsRouting.ts,
+// có 46 test canh gác. `/api/*` đã xử lý xong phía trên nên không đi qua đây.
+const SUBJECT_IDS = listSupportedSubjects().map((s) => s.id)
+
+app.use((req, res, next) => {
+  const decision = decideRedirect({
+    hostname: req.hostname,
+    pathname: req.path,
+    // req.originalUrl gồm cả query; cắt lấy phần từ dấu '?' để giữ nguyên tham số khi chuyển.
+    search: req.originalUrl.slice(
+      req.originalUrl.indexOf('?') >= 0 ? req.originalUrl.indexOf('?') : req.originalUrl.length,
+    ),
+    subjectIds: SUBJECT_IDS,
+    // Không đặt SUBJECTS_HOSTNAME = tính năng TẮT, mọi thứ giữ nguyên như trước (xem
+    // subjectsRouting.ts để biết vì sao mặc định là tắt).
+    ...(process.env.SUBJECTS_HOSTNAME ? { subjectsHostname: process.env.SUBJECTS_HOSTNAME } : {}),
+    ...(process.env.CANONICAL_HOSTNAME
+      ? { canonicalHostname: process.env.CANONICAL_HOSTNAME }
+      : {}),
+  })
+  if (!decision) return next()
+  // 301 (vĩnh viễn) chứ không 302: gom SEO về một địa chỉ, đúng quyết định của chủ dự án.
+  res.redirect(301, decision.location)
+})
 
 // Hai handler static dựng SẴN một lần (đừng tạo mới mỗi request — express.static giữ cache
 // nội bộ), rồi chọn theo host.

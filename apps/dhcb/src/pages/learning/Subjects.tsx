@@ -19,6 +19,7 @@ import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import { listSubjects } from '../../lib/subjectApi'
 import type { SubjectManifest } from '@dhcb/core-contracts/subjectManifest'
+import { goToSubjects } from '../../lib/subjectsHost'
 
 const SUBJECT_ICONS: Record<string, typeof BookOpen> = {
   english: BookOpen,
@@ -147,7 +148,7 @@ export default function Subjects() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-4">
             <button
-              onClick={() => nav('/mon-hoc/mathematics')}
+              onClick={() => goToSubjects(nav, 'mathematics')}
               className="tap-44 flex items-center justify-between p-3 rounded-2xl bg-zinc-950/70 hover:bg-zinc-800 border border-blue-500/30 hover:border-blue-500/60 text-left transition-all active:scale-[0.98] group"
             >
               <div className="flex items-center gap-2.5 min-w-0">
