@@ -72,7 +72,7 @@ export async function sendVerificationCode(userId: string): Promise<SendResult> 
 
   const mail = await sendMailWithQuota({
     to: user.email,
-    subject: `${code} là mã xác thực Gia sư tiếng Anh AI`,
+    subject: `${code} là mã xác thực Đồng Hành Cùng Bạn`,
     text: `Mã xác thực của bạn là: ${code}\n\nMã có hiệu lực trong 15 phút.\nNếu bạn không đăng ký tài khoản, hãy bỏ qua email này.`,
     html: `<p>Mã xác thực của bạn là:</p>
 <p style="font-size:28px;font-weight:700;letter-spacing:6px;margin:16px 0">${code}</p>

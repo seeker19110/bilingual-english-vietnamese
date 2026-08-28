@@ -1,5 +1,12 @@
 // api/subjects.ts — V2-12 Multi-Subject Learning API.
 // Exposes supported subject manifests & taxonomy details.
+//
+// CÔNG KHAI CÓ CHỦ ĐÍCH — KHÔNG gọi validateAuth. Endpoint chỉ trả manifest/taxonomy của các môn
+// học (danh sách môn, tên, bậc, chủ đề) — là DỮ LIỆU CẤU HÌNH của sản phẩm, giống app-settings.ts
+// và plan-features.ts, không phải dữ liệu riêng tư của bất kỳ người dùng nào. Trang giới thiệu và
+// bộ chọn môn cần đọc nó trước khi người dùng đăng nhập. Chống lạm dụng bằng checkRateLimit theo
+// IP. Mọi endpoint ĐỌC/SỬA tiến độ học của một người đều ở file khác và đều bắt validateAuth —
+// đừng thêm dữ liệu theo user vào file này (audit 2026-08-28, F3).
 import {
   getCorsHeaders,
   SECURITY_HEADERS,

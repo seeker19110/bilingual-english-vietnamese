@@ -192,6 +192,30 @@ describe('packages/core-ui/clientAuth.ts', () => {
       expect(localStorage.getItem('gsa_session_token_v1')).toBe('session-jwt')
     })
 
+    // TEST CANH GÁC (audit 2026-08-28, F7): `state` của OAuth là token chống CSRF nên phải sinh
+    // từ `crypto.getRandomValues`, không phải `Math.random`. Cách canh giống F6: ghim
+    // `Math.random` về hằng số — nếu code quay lại dùng nó thì hai lần gọi cho ra cùng một
+    // `state`, và Math.random sẽ bị gọi thật.
+    it('state của OAuth KHÔNG phụ thuộc Math.random (nguồn mật mã)', async () => {
+      const { loginWithGoogleRedirect } = await import('./clientAuth.js')
+      const spy = vi.spyOn(Math, 'random').mockReturnValue(0.5)
+      vi.stubEnv('VITE_GOOGLE_CLIENT_ID', 'test-client-id.apps.googleusercontent.com')
+      const states: string[] = []
+      try {
+        for (let i = 0; i < 2; i++) {
+          sessionStorage.removeItem('oauth_state_google')
+          loginWithGoogleRedirect()
+          states.push(sessionStorage.getItem('oauth_state_google') ?? '')
+        }
+        expect(states[0]).toMatch(/^[0-9a-f]{32}$/)
+        expect(states[0]).not.toBe(states[1])
+        expect(spy).not.toHaveBeenCalled()
+      } finally {
+        spy.mockRestore()
+        vi.unstubAllEnvs()
+      }
+    })
+
     it('preloadOAuthProviders chạy an toàn mà không quăng lỗi', async () => {
       const { preloadOAuthProviders } = await import('./clientAuth.js')
       expect(() => preloadOAuthProviders()).not.toThrow()

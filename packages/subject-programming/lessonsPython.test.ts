@@ -127,29 +127,49 @@ function describeFailures(results: ReturnType<typeof gradeAll>): string {
     .join(' | ')
 }
 
+// Mọi test trong khối này SINH TIẾN TRÌNH python3 thật, nên thời gian chạy phụ thuộc tải máy chứ
+// không chỉ phụ thuộc code. Mặc định 5s của vitest quá sát: lúc máy rảnh bài chậm nhất đo được
+// 2,4s (dư ~2x), nhưng khi chạy cùng lúc với bộ E2E thì `p5-u6-l1` mất 5,35s và ĐỎ — dù code
+// hoàn toàn không sai (audit 2026-08-28, F8). Nới lên 30s: đủ rộng để tải máy không quyết định
+// kết quả, vẫn đủ chặt để một bài treo thật thì lộ ra. Sửa TEST chứ không sửa code sản phẩm —
+// bản thân bộ chạy không có gì sai.
+const PYTHON_TEST_TIMEOUT_MS = 30_000
+
 describe.skipIf(!hasPython)('nội dung môn Lập trình chạy THẬT bằng python3', () => {
-  it('có python3 và chạy được (chống test rỗng vô nghĩa)', () => {
-    expect(runPython3('print("ok")', []).output.trim()).toBe('ok')
-  })
+  it(
+    'có python3 và chạy được (chống test rỗng vô nghĩa)',
+    () => {
+      expect(runPython3('print("ok")', []).output.trim()).toBe('ok')
+    },
+    PYTHON_TEST_TIMEOUT_MS,
+  )
 
-  it.each(PYTHON_LESSONS)('$id — code mẫu đạt HẾT test-case', (lesson) => {
-    const results = gradeAllTheoLan(
-      lesson.language as PythonLane,
-      lesson.make.sampleSolution,
-      lesson.make.testCases,
-    )
-    expect(allTestsPassed(results), `Bài ${lesson.id}: ${describeFailures(results)}`).toBe(true)
-  })
+  it.each(PYTHON_LESSONS)(
+    '$id — code mẫu đạt HẾT test-case',
+    (lesson) => {
+      const results = gradeAllTheoLan(
+        lesson.language as PythonLane,
+        lesson.make.sampleSolution,
+        lesson.make.testCases,
+      )
+      expect(allTestsPassed(results), `Bài ${lesson.id}: ${describeFailures(results)}`).toBe(true)
+    },
+    PYTHON_TEST_TIMEOUT_MS,
+  )
 
-  it.each(PYTHON_LESSONS)('$id — ví dụ mẫu chạy không lỗi', (lesson) => {
-    const r = chayTheoLan(
-      lesson.language as PythonLane,
-      lesson.workedExample.code,
-      lesson.workedExample.stdinLines,
-    )
-    expect(r.error, `Bài ${lesson.id} ví dụ mẫu lỗi: ${r.error}`).toBeUndefined()
-    expect(r.output.trim().length, `Bài ${lesson.id}: ví dụ mẫu không in gì`).toBeGreaterThan(0)
-  })
+  it.each(PYTHON_LESSONS)(
+    '$id — ví dụ mẫu chạy không lỗi',
+    (lesson) => {
+      const r = chayTheoLan(
+        lesson.language as PythonLane,
+        lesson.workedExample.code,
+        lesson.workedExample.stdinLines,
+      )
+      expect(r.error, `Bài ${lesson.id} ví dụ mẫu lỗi: ${r.error}`).toBeUndefined()
+      expect(r.output.trim().length, `Bài ${lesson.id}: ví dụ mẫu không in gì`).toBeGreaterThan(0)
+    },
+    PYTHON_TEST_TIMEOUT_MS,
+  )
 
   it.each(PYTHON_LESSONS)('$id — đáp án Predict khớp output thật', (lesson) => {
     const r = chayTheoLan(lesson.language as PythonLane, lesson.predict.code, [])

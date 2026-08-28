@@ -132,7 +132,7 @@ export default function ShareResultCard({
   title,
   lines,
   isA,
-  appName = 'Gia sư tiếng Anh AI',
+  appName = 'Đồng Hành Cùng Bạn',
 }: ShareResultCardProps) {
   const [busy, setBusy] = useState(false)
   const toast = useToast()

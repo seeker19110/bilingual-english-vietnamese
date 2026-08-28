@@ -227,13 +227,24 @@ export async function loginWithGoogle(): Promise<AppUser | null> {
   })
 }
 
+// `state` của OAuth là token CHỐNG CSRF: kẻ tấn công đoán được nó thì ghép được phản hồi đăng
+// nhập của mình vào phiên của nạn nhân. Vì vậy phải lấy từ `crypto.getRandomValues` (nguồn mật
+// mã của trình duyệt), KHÔNG phải Math.random — V8 dùng xorshift128+, suy được trạng thái từ
+// vài giá trị đã thấy nên token sinh ra đoán được (audit 2026-08-28, F7).
+// 16 byte = 128 bit, hiện dạng hex.
+function randomStateToken(): string {
+  const bytes = new Uint8Array(16)
+  crypto.getRandomValues(bytes)
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
+}
+
 // ── Đăng nhập Google qua Luồng Chuyển Hướng (Universal OAuth2 Redirect Flow) ───────────
 export function loginWithGoogleRedirect(redirectPath = '/login'): void {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined
   if (!clientId) throw new Error('Thiếu VITE_GOOGLE_CLIENT_ID')
 
   const redirectUri = `${window.location.origin}${redirectPath}`
-  const state = Math.random().toString(36).substring(2, 15)
+  const state = randomStateToken()
   try {
     sessionStorage.setItem('oauth_state_google', state)
   } catch {

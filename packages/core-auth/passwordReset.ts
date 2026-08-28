@@ -96,7 +96,7 @@ async function doRequestPasswordReset(rawEmail: string): Promise<void> {
   const link = `${siteUrl()}/reset-password?token=${rawToken}`
   await sendMailWithQuota({
     to: email,
-    subject: 'Đặt lại mật khẩu — Gia sư tiếng Anh AI',
+    subject: 'Đặt lại mật khẩu — Đồng Hành Cùng Bạn',
     text: `Bấm vào link sau để đặt mật khẩu mới (hết hạn sau 30 phút):\n${link}\n\nNếu bạn không yêu cầu đổi mật khẩu, hãy bỏ qua email này — mật khẩu hiện tại vẫn an toàn.`,
     html: `<p>Bấm vào nút bên dưới để đặt mật khẩu mới. Link có hiệu lực trong <strong>30 phút</strong>.</p>
 <p><a href="${link}" style="display:inline-block;background:#0ea5e9;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600">Đặt mật khẩu mới</a></p>

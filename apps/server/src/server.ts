@@ -265,7 +265,7 @@ function startLocationPurgeScheduler() {
 // ── Khởi động ─────────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 3000
 const server = app.listen(PORT, () => {
-  console.log(`✅ English Tutor đang chạy tại http://localhost:${PORT}`)
+  console.log(`✅ Đồng Hành Cùng Bạn (DHCB) đang chạy tại http://localhost:${PORT}`)
   console.log(`   NODE_ENV : ${process.env.NODE_ENV || 'production'}`)
   console.log(`   Node.js  : ${process.version}`)
   // PM2 cluster: chỉ instance 0 chạy scheduler — trước đây CẢ 3 instance cùng chạy nên

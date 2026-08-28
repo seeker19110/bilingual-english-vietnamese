@@ -16,6 +16,7 @@
 // Cùng khuôn `consentService.ts`: nhận `pool` làm tham số đầu (test mock được), quyền sở hữu
 // luôn kiểm bằng `learner_id` NGAY TRONG câu SQL — không tin id client gửi lên.
 
+import { randomInt } from 'node:crypto'
 import type { Pool } from 'pg'
 import { withTransaction } from '@dhcb/core-db/transaction'
 import { ForbiddenError, NotFoundError } from '@dhcb/core-errors/appError'
@@ -44,10 +45,17 @@ export const INVITE_TTL_MS = 24 * 60 * 60 * 1000
  */
 export const MAX_WATCHERS_PER_LEARNER = 2
 
+// randomInt của node:crypto — ngẫu nhiên an toàn, KHÔNG dùng Math.random. Lý do phải là crypto
+// chứ không phải "mã đủ dài": lập luận 59 bit ở trên chỉ đúng khi mỗi ký tự thật sự ngẫu nhiên
+// độc lập. Math.random của V8 là xorshift128+ — không phải nguồn mật mã, suy được trạng thái từ
+// vài giá trị đã thấy, nên độ dài mã không cứu được. Mã này mở quyền XEM tiến độ học của người
+// khác, ngang hàng về mức nhạy cảm với referral.ts/emailVerification.ts/sepay.ts — cả ba đã dùng
+// crypto từ trước, thống nhất nốt chỗ này (audit 2026-08-28, F6). randomInt còn tránh luôn lệch
+// phân bố do modulo.
 function randomCode(): string {
   let out = ''
   for (let i = 0; i < CODE_LENGTH; i++) {
-    out += CODE_ALPHABET[Math.floor(Math.random() * CODE_ALPHABET.length)]
+    out += CODE_ALPHABET[randomInt(CODE_ALPHABET.length)]
   }
   return out
 }
