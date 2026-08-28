@@ -16,6 +16,7 @@ dotenv.config()
 
 import { initSentryServer, captureServerException } from './api/_lib/sentry.js'
 import { registerApiRoutes, applyCommonSecurityHeaders } from './routes.js'
+import { parseHubHostnames, resolveDistDir } from './staticApps.js'
 import { warnIfClusterWithoutRedis, reportRedisStatusAtStartup } from '@dhcb/core-auth/security'
 
 // Bật Sentry (error tracking) — no-op nếu chưa cấu hình SENTRY_DSN (xem api/_lib/sentry.ts).
@@ -85,19 +86,36 @@ app.use(
   }),
 )
 
-// ── Phục vụ frontend (React build) — chọn app theo Host header (PR-7) ───────
-// Một tiến trình Express phục vụ NHIỀU app tĩnh (mức 2 kiến trúc đã chốt, ADR-0001): app
-// tiếng Anh ở dist/ (gốc, giữ nguyên đường dẫn cũ để KHÔNG đổi hành vi production hiện tại)
-// và apps/hub/dist/ cho mọi host còn lại (apex, subdomain môn chưa mở, domain lạ). Route
-// /api/* đã xử lý xong ở trên, không đi qua bảng này.
+// ── Phục vụ frontend (React build) — chọn app theo Host header ─────────────
+// Một tiến trình Express phục vụ HAI app tĩnh (mức 2 kiến trúc đã chốt, ADR-0001):
 //
-// EN_VI_HOSTNAME mặc định đúng domain production hiện tại — nếu không đặt biến môi trường,
-// hành vi cho host đó giữ y hệt trước PR-7. Host nào Nginx CHƯA có server_name trỏ vào tiến
-// trình này thì nhánh "hub" ở đây là code chết cho tới khi thêm cấu hình Nginx/DNS/cert thật
-// (xem docs/nginx-hub-apex.md — phần hạ tầng thật cần làm tay, PR-7 mới chỉ dựng code).
-// Nhận NHIỀU host phân cách dấu phẩy (vd đang chuyển đổi .com → .org song song, xem
-// docs/doi-ten-mien-chinh-org.md) — cả 2 domain cùng phục vụ app tiếng Anh trong lúc test.
+//   · `dist/` (gốc repo)      — app nền tảng `@dhcb/app`: MẶC ĐỊNH cho mọi host.
+//   · `apps/hub/dist/`        — landing giới thiệu nền tảng `@dhcb/hub`: CHỈ cho host trong
+//                               HUB_HOSTNAME.
+//
+// Route /api/* đã xử lý xong ở trên, không đi qua bảng này.
+//
+// [2026-08-28] Trước đây khối này chỉ có MỘT `express.static(appDistDir)` cho mọi host, trong
+// khi comment lại mô tả một cơ chế "chọn app theo Host header" qua biến `EN_VI_HOSTNAME` —
+// biến đó KHÔNG hề được đọc ở bất kỳ đâu trong code. Hậu quả: `apps/hub` được build lại mỗi
+// lần deploy rồi bỏ đi, không người dùng nào thấy được. Audit toàn diện 2026-08-28 bắt được;
+// nay cài đặt THẬT phần định tuyến đó, và chốt bằng test để comment không trôi khỏi code lần
+// nữa.
+//
+// Vì sao mặc định là app nền tảng chứ không phải hub: chọn nhầm phía nào cũng có giá, nhưng
+// chọn sai theo hướng "host lạ → app nền tảng" thì người dùng vẫn vào được chỗ họ cần; sai
+// theo hướng ngược lại thì domain đang chạy thật mất trắng. Nên hub phải được GỌI TÊN tường
+// minh mới nhận, còn lại giữ nguyên hành vi cũ.
 const appDistDir = path.join(__dirname, 'dist')
+const hubDistDir = path.join(__dirname, 'apps', 'hub', 'dist')
+
+// Host phục vụ landing hub. `req.hostname` của Express đã bỏ cổng sẵn; so khớp không phân biệt
+// hoa thường. Logic chọn app + lý do chọn mặc định nằm ở staticApps.ts (có test canh gác).
+const HUB_HOSTNAMES = parseHubHostnames(process.env.HUB_HOSTNAME)
+
+function distDirForHost(hostname: string | undefined): string {
+  return resolveDistDir({ hostname, hubHostnames: HUB_HOSTNAMES, appDistDir, hubDistDir })
+}
 
 function staticCacheHeaders(res: express.Response, filePath: string) {
   // index.html không được cache (luôn fetch mới)
@@ -120,13 +138,16 @@ function staticCacheHeaders(res: express.Response, filePath: string) {
   }
 }
 
-// Phục vụ toàn bộ ứng dụng học tập và Bạn Đồng Hành AI đầy đủ tính năng
-app.use(
-  express.static(appDistDir, {
-    maxAge: '1y',
-    setHeaders: staticCacheHeaders,
-  }),
-)
+// Hai handler static dựng SẴN một lần (đừng tạo mới mỗi request — express.static giữ cache
+// nội bộ), rồi chọn theo host.
+const serveAppStatic = express.static(appDistDir, { maxAge: '1y', setHeaders: staticCacheHeaders })
+const serveHubStatic = express.static(hubDistDir, { maxAge: '1y', setHeaders: staticCacheHeaders })
+
+// Phục vụ toàn bộ ứng dụng học tập và Bạn Đồng Hành AI đầy đủ tính năng (hoặc landing hub)
+app.use((req, res, next) => {
+  if (distDirForHost(req.hostname) === hubDistDir) serveHubStatic(req, res, next)
+  else serveAppStatic(req, res, next)
+})
 
 // /api/* không khớp route nào ở trên → JSON 404 rõ ràng. Trước đây rơi xuống catch-all
 // SPA bên dưới, trả index.html 200 — client tưởng thành công, khó debug
@@ -136,11 +157,11 @@ app.all('/api/*', (_req, res) => {
 })
 
 // Mọi route client SPA (Toán, Tiếng Anh, Lộ trình, Luyện nói, Đồng Hành, Simulators, v.v.) đều trả index.html đầy đủ
-app.get('*', (_req, res) => {
+app.get('*', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
   res.setHeader('Pragma', 'no-cache')
   res.setHeader('Expires', '0')
-  res.sendFile(path.join(appDistDir, 'index.html'))
+  res.sendFile(path.join(distDirForHost(req.hostname), 'index.html'))
 })
 
 // ── Bộ hẹn giờ nhắc học (web push) ───────────────────────────────────────────
