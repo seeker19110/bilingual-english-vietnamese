@@ -487,9 +487,51 @@ export async function logout(): Promise<void> {
   clearStoredToken()
 }
 
+/**
+ * Không có token trong `localStorage` KHÔNG có nghĩa là chưa đăng nhập.
+ *
+ * Server xác thực bằng COOKIE `session_token` (Bước 6 — `validateAuth` bỏ qua hẳn header
+ * `Authorization`), và cookie đó có `Domain=.donghanhcungban.org` nên đi theo mọi subdomain.
+ * Tức là trên `hub.`/`hoc-tap.` thì API vốn đã gọi được. Thứ hỏng là PHÍA GIAO DIỆN: app dùng
+ * "có token trong localStorage không" làm cờ đã-đăng-nhập, mà localStorage cô lập theo origin
+ * — nên người dùng bị hiện thành khách dù phiên vẫn sống.
+ *
+ * Hàm này nạp lại cờ đó đúng MỘT lần lúc khởi động, để những chỗ tự kiểm `getStoredToken()`
+ * (`cloud.ts`, `challengeCloud.ts`, `tutorFeedback.ts`) chạy như trên origin cũ.
+ *
+ * Trả về `null` khi không có cookie hoặc cookie hết hạn — đó là "thật sự chưa đăng nhập".
+ */
+async function adoptSessionFromCookie(): Promise<AppUser | null> {
+  try {
+    const resp = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ action: 'session-from-cookie' }),
+    })
+    if (!resp.ok) return null
+    const data = (await resp.json()) as { token?: string; user?: AppUser }
+    if (!data.token || !data.user) return null
+    setStoredToken(data.token)
+    return data.user
+  } catch {
+    // Mất mạng / server không phản hồi — coi như chưa đăng nhập, KHÔNG ném lỗi ra ngoài để
+    // AuthProvider vẫn dựng được giao diện (nhánh chưa đăng nhập).
+    return null
+  }
+}
+
 export async function getCurrentUser(): Promise<AppUser | null> {
-  const auth = getAuthHeader()
-  if (!auth.Authorization) return null
+  let auth = getAuthHeader()
+  if (!auth.Authorization) {
+    // Kho cục bộ rỗng — có thể là origin mới chứ chưa chắc là chưa đăng nhập. Hỏi cookie.
+    const adopted = await adoptSessionFromCookie()
+    if (!adopted) return null
+    auth = getAuthHeader()
+    // Không lấy được header sau khi lưu (localStorage bị chặn — chế độ ẩn danh nghiêm ngặt):
+    // dùng luôn hồ sơ vừa nhận cho phiên hiện tại, khỏi tốn thêm một vòng mạng.
+    if (!auth.Authorization) return adopted
+  }
 
   const resp = await fetch('/api/auth?action=me', {
     headers: auth,

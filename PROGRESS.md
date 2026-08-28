@@ -2682,14 +2682,17 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   (changelog 0191) đã sửa CẢ HAI cho khớp, nhưng đó là chữa triệu chứng. Việc cần làm: SSH lên
   VPS đọc `/etc/nginx/sites-enabled/`, giữ đúng một file trong repo, xoá file kia và sửa tài
   liệu trỏ theo.
-- 🟡 **[2026-08-28] Đăng nhập KHÔNG tự nối tiếp sang subdomain khác dù cookie đã dùng chung.**
-  `packages/core-auth/sessionCookie.ts` đã phát cookie `Domain=.donghanhcungban.org` cho mọi
-  subdomain và `validateAuth` chấp nhận cookie khi thiếu Bearer — nhưng phía client
-  `getCurrentUser()` (`packages/core-ui/clientAuth.ts:491`) **trả `null` ngay** nếu không có
-  token trong `localStorage`, không thử cookie. Vì `localStorage` cô lập theo origin, người
-  dùng đang đăng nhập ở `www.` mở `hub.`/subdomain môn mới sẽ thấy mình bị đăng xuất, dù cookie
-  vẫn còn. Chưa gây hại vì hub là trang giới thiệu công khai; nhưng phải xử lý TRƯỚC khi đưa
-  bất kỳ trang CẦN ĐĂNG NHẬP nào sang subdomain riêng.
+- 🟢 **[ĐÓNG 2026-08-28] Giao diện coi người dùng là khách khi mở subdomain khác.**
+  **Đính chính mô tả ban đầu của mục này:** nó viết "`validateAuth` chấp nhận cookie khi thiếu
+  Bearer" — SAI. Từ Bước 6 (`docs/adr/0002-quan-ly-nguoi-dung.md`), `validateAuth` **chỉ** đọc
+  cookie `session_token` và **bỏ qua hoàn toàn** header `Authorization`. Đo trực tiếp trên
+  server đã build với DB thật: cùng một phiên, gọi `/api/auth?action=me` chỉ với cookie → 200,
+  chỉ với Bearer → 401. Nghĩa là API trên subdomain mới **vốn đã xác thực được** nhờ cookie
+  `Domain=.donghanhcungban.org`.
+  Chỗ thật sự hỏng nằm ở CLIENT: app dùng "có token trong `localStorage` không" làm cờ
+  đã-đăng-nhập, mà `localStorage` cô lập theo origin — `getCurrentUser()` thoát sớm, và
+  `cloud.ts`/`challengeCloud.ts`/`tutorFeedback.ts` lặng lẽ bỏ qua đồng bộ. Đã vá bằng action
+  `session-from-cookie`: nạp lại cờ đó đúng một lần lúc khởi động.
 
 - 🟡 **[2026-08-28 — rà UI/UX 5 trang trụ cột, xem `docs/changelog/0186-*.md`] Ba việc còn để
   ngỏ, cần người dùng quyết hoặc tách đợt riêng.**
