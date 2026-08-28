@@ -3,26 +3,30 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Chặn bôi đen/copy text toàn app (yêu cầu 2026-08-01) — chỉ những nơi CHỦ ĐỘNG cho
-   phép mới bôi đen/copy được: ô nhập liệu (input/textarea/contenteditable), mã hiển
-   thị dạng <code> (vd mã mời ở ReferralSection.tsx — đã có nút "Chép" riêng cho việc
-   copy thật sự), và bất kỳ chỗ nào gắn class "select-text" (Tailwind có sẵn). Những
-   nơi "chia sẻ" (ShareProgress, ShareResultCard) đã copy qua nút bấm + Web Share API
+/* Chặn bôi đen/copy text (yêu cầu 2026-08-01, NỚI CHO DESKTOP 2026-08-28) — chỉ còn
+   khoá trên MOBILE/TOUCH (`pointer: coarse`); web desktop (chuột, `pointer: fine`)
+   được bôi đen/copy bình thường. Trên mobile, những nơi CHỦ ĐỘNG cho phép vẫn bôi
+   đen/copy được: ô nhập liệu (input/textarea/contenteditable), mã hiển thị dạng
+   <code> (vd mã mời ở ReferralSection.tsx — đã có nút "Chép" riêng cho việc copy
+   thật sự), và bất kỳ chỗ nào gắn class "select-text" (Tailwind có sẵn). Những nơi
+   "chia sẻ" (ShareProgress, ShareResultCard) đã copy qua nút bấm + Web Share API
    sẵn, không cần bôi đen tay nên không cần ngoại lệ riêng. */
-@layer base {
-  body {
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none; /* Tắt menu "Copy/Look Up" khi giữ tay lâu trên iOS */
-  }
-  input,
-  textarea,
-  [contenteditable='true'],
-  code,
-  pre {
-    -webkit-user-select: text;
-    user-select: text;
-    -webkit-touch-callout: default;
+@media (pointer: coarse) {
+  @layer base {
+    body {
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none; /* Tắt menu "Copy/Look Up" khi giữ tay lâu trên iOS */
+    }
+    input,
+    textarea,
+    [contenteditable='true'],
+    code,
+    pre {
+      -webkit-user-select: text;
+      user-select: text;
+      -webkit-touch-callout: default;
+    }
   }
 }
 

@@ -114,6 +114,20 @@ describe('extractInteractiveQuestions', () => {
     expect(result.questions).toEqual([])
   })
 
+  it('khối bị cắt cụt giữa chừng (LLM hết token, chưa có dấu ``` đóng) → giấu khỏi lời văn', () => {
+    const reply =
+      'Chào bạn! Mình muốn hỏi thêm:\n\n---\n\n' +
+      '```' +
+      INTERACTIVE_QUESTION_FENCE +
+      '\n{"schemaVersion":1,"questions":[{"id":"linh_vuc","text":"Bạn muốn khám phá lĩnh vực nào ' +
+      'nhất?","multi":true,"options":[{"id":"a","label":"A"'
+    const result = extractInteractiveQuestions(reply)
+    expect(result.questions).toEqual([])
+    expect(result.text).toBe('Chào bạn! Mình muốn hỏi thêm:\n\n---')
+    expect(result.text).not.toContain(INTERACTIVE_QUESTION_FENCE)
+    expect(result.text).not.toContain('schemaVersion')
+  })
+
   it('chỉ lấy khối ĐẦU TIÊN khi LLM lỡ xuất hai khối', () => {
     const second = structuredClone(VALID_SET)
     second.questions[0]!.id = 'khac'
