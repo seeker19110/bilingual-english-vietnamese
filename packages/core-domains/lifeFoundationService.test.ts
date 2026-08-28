@@ -109,8 +109,9 @@ describe('LifeFoundationService', () => {
       created_at: now,
     }
     mockQuery.mockResolvedValueOnce({ rows: [{ ...habitRow, current_streak: 0, best_streak: 0 }] })
-    mockQuery.mockResolvedValueOnce({ rows: [logRow] })
-    mockQuery.mockResolvedValueOnce({ rows: [] })
+    mockQuery.mockResolvedValueOnce({ rows: [{ ...logRow, inserted: true }] }) // insert
+    mockQuery.mockResolvedValueOnce({ rows: [] }) // chưa có ngày nào trước đó
+    mockQuery.mockResolvedValueOnce({ rows: [] }) // update streak
     const log = await logHabit(pool, PERSON_ID, { habitId: ID_1 })
     expect(log.count).toBe(1)
 
@@ -167,7 +168,8 @@ describe('LifeFoundationService', () => {
       created_at: now,
     }
     mockQuery.mockResolvedValueOnce({ rows: [habitRow] })
-    mockQuery.mockResolvedValueOnce({ rows: [logRow] })
+    mockQuery.mockResolvedValueOnce({ rows: [{ ...logRow, inserted: true }] })
+    mockQuery.mockResolvedValueOnce({ rows: [{ logged_at: '2026-08-15' }] }) // hôm trước có
     mockQuery.mockResolvedValueOnce({ rows: [] })
     const customLog = await logHabit(pool, PERSON_ID, {
       habitId: ID_1,
@@ -177,6 +179,73 @@ describe('LifeFoundationService', () => {
     })
     expect(customLog.note).toBe('2 glasses in the morning')
     expect(customLog.count).toBe(2)
+  })
+
+  // ── Canh gác streak (lỗi thật, sửa 2026-08-28) ───────────────────────────────
+  // logHabit() cũ luôn `current_streak + 1` mỗi lần gọi: bấm "Hoàn thành hôm nay"
+  // 5 lần là streak nhảy 5 ngày, và bỏ lỡ cả tuần rồi quay lại vẫn cộng tiếp như
+  // chưa hề đứt. Ba test dưới canh đúng ba nhánh đó.
+  const streakHabit = (currentStreak: number, bestStreak: number) => ({
+    id: ID_1,
+    person_id: PERSON_ID,
+    title: 'Đọc sách',
+    habit_type: 'build',
+    frequency: 'daily',
+    target_count: 1,
+    current_streak: currentStreak,
+    best_streak: bestStreak,
+    is_active: true,
+    version: 1,
+    created_at: now,
+    updated_at: now,
+  })
+  const streakLog = (count: number, inserted: boolean) => ({
+    id: ID_1,
+    habit_id: ID_1,
+    person_id: PERSON_ID,
+    logged_at: new Date('2026-08-20'),
+    count,
+    note: null,
+    created_at: now,
+    inserted,
+  })
+
+  it('check-in lần hai trong cùng một ngày KHÔNG tăng streak', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [streakHabit(3, 9)] })
+    // insert ... on conflict do update -> hàng CŨ bị cập nhật, inserted = false
+    mockQuery.mockResolvedValueOnce({ rows: [streakLog(2, false)] })
+
+    const log = await logHabit(pool, PERSON_ID, { habitId: ID_1, loggedAt: '2026-08-20' })
+
+    expect(log.count).toBe(2) // lượt trong ngày vẫn được cộng dồn
+    // Chỉ 2 truy vấn: KHÔNG có select ngày trước, KHÔNG có update streak.
+    expect(mockQuery).toHaveBeenCalledTimes(2)
+    expect(mockQuery.mock.calls.some((c) => String(c[0]).includes('current_streak'))).toBe(false)
+  })
+
+  it('check-in nối tiếp ngày hôm trước thì streak +1', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [streakHabit(3, 9)] })
+    mockQuery.mockResolvedValueOnce({ rows: [streakLog(1, true)] })
+    mockQuery.mockResolvedValueOnce({ rows: [{ logged_at: '2026-08-19' }] })
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+
+    await logHabit(pool, PERSON_ID, { habitId: ID_1, loggedAt: '2026-08-20' })
+
+    const update = mockQuery.mock.calls.find((c) => String(c[0]).includes('set current_streak'))
+    expect(update?.[1]).toEqual([4, 9, ID_1]) // 3 + 1; kỷ lục 9 giữ nguyên
+  })
+
+  it('bỏ lỡ ngày thì streak reset về 1 (không cộng tiếp)', async () => {
+    mockQuery.mockResolvedValueOnce({ rows: [streakHabit(12, 12)] })
+    mockQuery.mockResolvedValueOnce({ rows: [streakLog(1, true)] })
+    // lần gần nhất là 4 ngày trước -> chuỗi đã đứt
+    mockQuery.mockResolvedValueOnce({ rows: [{ logged_at: '2026-08-16' }] })
+    mockQuery.mockResolvedValueOnce({ rows: [] })
+
+    await logHabit(pool, PERSON_ID, { habitId: ID_1, loggedAt: '2026-08-20' })
+
+    const update = mockQuery.mock.calls.find((c) => String(c[0]).includes('set current_streak'))
+    expect(update?.[1]).toEqual([1, 12, ID_1]) // reset về 1, kỷ lục cũ 12 vẫn giữ
   })
 
   it('records wellbeing checks with notes and lists with custom limit', async () => {
