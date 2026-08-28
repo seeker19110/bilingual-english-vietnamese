@@ -72,9 +72,9 @@ const STUDIOS = [
   },
   {
     id: 'career',
-    title: 'Sự Nghiệp Của Tôi',
-    subtitle: 'Phỏng vấn STAR & Kanban Board',
-    to: '/su-nghiep',
+    title: 'Sự Nghiệp & Khởi Nghiệp',
+    subtitle: 'Phỏng vấn STAR · Lean Canvas',
+    to: '/su-nghiep-khoi-nghiep',
     icon: Briefcase,
     badge: 'Career',
     color: 'text-purple-400 bg-purple-500/10 border-purple-500/30 hover:border-purple-500/60',

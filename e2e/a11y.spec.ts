@@ -109,9 +109,9 @@ const AUTHED_ROUTES = [
   // không baseline/ngoại lệ". Đo lần đầu: 41/50 tổ hợp trang×theme vi phạm, có cả mức
   // critical. Đã sửa hết về 0 trước khi thêm vào đây (xem docs/changelog).
   '/mon-hoc', // hub Môn học — cửa vào trụ Learning cho các môn ngoài Tiếng Anh
-  '/su-nghiep', // trụ Career
+  '/su-nghiep-khoi-nghiep', // trụ GỘP Career + Startup
   '/cong-viec-cuoc-song', // trụ Work + Life (hai mục trong một trang)
-  '/khoi-nghiep', // trụ Startup
+  '/su-nghiep-khoi-nghiep?muc=khoi-nghiep', // nửa Startup của trụ gộp
   '/life/wheel', // Bánh xe cuộc đời — 8 thanh trượt chấm điểm
   '/life-graph', // Đồ thị cuộc đời
   '/ban-dong-hanh', // Companion — tác tử xuyên suốt

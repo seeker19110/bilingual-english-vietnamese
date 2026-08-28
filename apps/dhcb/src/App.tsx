@@ -50,11 +50,10 @@ const Practice = lazyWithRetry(() => import('./pages/learning/Practice'))
 const AppliedKnowledge = lazyWithRetry(() => import('./pages/learning/AppliedKnowledge'))
 
 // ── 4. Life Synthesis Domains (Sự nghiệp, Công việc, Khởi nghiệp, Cuộc sống)
-const Career = lazyWithRetry(() => import('./pages/domains/career/Career'))
+const CareerStartup = lazyWithRetry(() => import('./pages/domains/careerstartup/CareerStartup'))
 const CareerInterview = lazyWithRetry(() => import('./pages/domains/career/CareerInterview'))
 const WorkLife = lazyWithRetry(() => import('./pages/domains/worklife/WorkLife'))
 const WorkKanban = lazyWithRetry(() => import('./pages/domains/work/WorkKanban'))
-const Startup = lazyWithRetry(() => import('./pages/domains/startup/Startup'))
 const StartupCanvas = lazyWithRetry(() => import('./pages/domains/startup/StartupCanvas'))
 const LifeGraph = lazyWithRetry(() => import('./pages/domains/life/LifeGraph'))
 const LifeWheel = lazyWithRetry(() => import('./pages/domains/life/LifeWheel'))
@@ -327,13 +326,20 @@ export default function App() {
                         }
                       />
                       {/* V2 Specialized Domain Hubs & Hoc-* Routes */}
+                      {/* Trụ GỘP "Sự nghiệp & Khởi nghiệp" (2026-08-28). Hai route cũ
+                          /su-nghiep và /khoi-nghiep vẫn vào được — chuyển hướng sang đúng
+                          tab của trang gộp, nên link cũ và bookmark không gãy. */}
                       <Route
-                        path="/su-nghiep"
+                        path="/su-nghiep-khoi-nghiep"
                         element={
                           <RequireAuth>
-                            <Career />
+                            <CareerStartup />
                           </RequireAuth>
                         }
+                      />
+                      <Route
+                        path="/su-nghiep"
+                        element={<Navigate to="/su-nghiep-khoi-nghiep?muc=su-nghiep" replace />}
                       />
                       {/* Trụ GỘP "Công việc & Đời sống" (2026-08-25). Hai route cũ
                           /cong-viec và /cuoc-song vẫn vào được — chuyển hướng sang đúng
@@ -352,11 +358,7 @@ export default function App() {
                       />
                       <Route
                         path="/khoi-nghiep"
-                        element={
-                          <RequireAuth>
-                            <Startup />
-                          </RequireAuth>
-                        }
+                        element={<Navigate to="/su-nghiep-khoi-nghiep?muc=khoi-nghiep" replace />}
                       />
                       <Route
                         path="/cuoc-song"
@@ -732,12 +734,18 @@ export default function App() {
                           redirect — đúng loại lỗi trùng nội dung vừa sửa ở tầng tên miền (PR #645),
                           nhưng ở tầng route. Nay mỗi trang có MỘT URL chính thức (tiếng Việt);
                           các URL cũ vẫn sống, chỉ chuyển hướng — không ai mất bookmark. */}
-                      <Route path="/career" element={<Navigate to="/su-nghiep" replace />} />
+                      <Route
+                        path="/career"
+                        element={<Navigate to="/su-nghiep-khoi-nghiep?muc=su-nghiep" replace />}
+                      />
                       <Route
                         path="/su-nghiep-cua-toi"
-                        element={<Navigate to="/su-nghiep" replace />}
+                        element={<Navigate to="/su-nghiep-khoi-nghiep?muc=su-nghiep" replace />}
                       />
-                      <Route path="/hoc-su-nghiep" element={<Navigate to="/su-nghiep" replace />} />
+                      <Route
+                        path="/hoc-su-nghiep"
+                        element={<Navigate to="/su-nghiep-khoi-nghiep?muc=su-nghiep" replace />}
+                      />
                       <Route
                         path="/work"
                         element={<Navigate to="/cong-viec-cuoc-song?muc=cong-viec" replace />}
@@ -750,14 +758,17 @@ export default function App() {
                         path="/hoc-cong-viec"
                         element={<Navigate to="/cong-viec-cuoc-song?muc=cong-viec" replace />}
                       />
-                      <Route path="/startup" element={<Navigate to="/khoi-nghiep" replace />} />
+                      <Route
+                        path="/startup"
+                        element={<Navigate to="/su-nghiep-khoi-nghiep?muc=khoi-nghiep" replace />}
+                      />
                       <Route
                         path="/toi-khoi-nghiep"
-                        element={<Navigate to="/khoi-nghiep" replace />}
+                        element={<Navigate to="/su-nghiep-khoi-nghiep?muc=khoi-nghiep" replace />}
                       />
                       <Route
                         path="/hoc-khoi-nghiep"
-                        element={<Navigate to="/khoi-nghiep" replace />}
+                        element={<Navigate to="/su-nghiep-khoi-nghiep?muc=khoi-nghiep" replace />}
                       />
                       <Route
                         path="/life"

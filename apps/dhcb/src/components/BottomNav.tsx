@@ -53,6 +53,7 @@ const PROFILE_PATHS = [
   '/su-nghiep-cua-toi',
   '/hoc-su-nghiep',
   '/su-nghiep',
+  '/su-nghiep-khoi-nghiep',
   '/career',
   '/cong-viec-cua-toi',
   '/hoc-cong-viec',

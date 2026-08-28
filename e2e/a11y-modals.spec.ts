@@ -34,7 +34,7 @@ type ModalCase = { tab?: string; trigger: string; title: string }
 const PAGES: { name: string; route: string; modals: ModalCase[] }[] = [
   {
     name: 'Sự nghiệp',
-    route: '/su-nghiep',
+    route: '/su-nghiep-khoi-nghiep?muc=su-nghiep',
     modals: [
       { trigger: 'Thiết lập hồ sơ', title: 'Thiết Lập Hồ Sơ Sự Nghiệp' },
       { trigger: 'Thêm mục tiêu', title: 'Thêm Mục Tiêu Sự Nghiệp' },
@@ -43,7 +43,7 @@ const PAGES: { name: string; route: string; modals: ModalCase[] }[] = [
   },
   {
     name: 'Khởi nghiệp',
-    route: '/khoi-nghiep',
+    route: '/su-nghiep-khoi-nghiep?muc=khoi-nghiep',
     modals: [
       { trigger: 'Dự án mới', title: 'Tạo Dự Án Khởi Nghiệp' },
       { trigger: 'Thêm bài toán', title: 'Thêm Bài Toán Khách Hàng' },
