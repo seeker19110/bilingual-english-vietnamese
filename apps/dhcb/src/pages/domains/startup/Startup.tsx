@@ -13,8 +13,10 @@ import {
   XCircle,
   HelpCircle,
   TrendingUp,
-  X,
 } from 'lucide-react'
+import Modal from '../../../components/Modal'
+import Field from '../../../components/Field'
+import LoadError from '../../../components/LoadError'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { useToast } from '@core/ToastProvider'
@@ -41,6 +43,10 @@ export default function Startup() {
   const [hypotheses, setHypotheses] = useState<Hypothesis[]>([])
   const [evidenceList, setEvidenceList] = useState<ValidatedEvidence[]>([])
   const [loading, setLoading] = useState(true)
+  // Lỗi TẢI dữ liệu — tách khỏi trạng thái rỗng, xem components/LoadError.tsx.
+  const [loadError, setLoadError] = useState<string | null>(null)
+  // Chặn gửi trùng: mạng chậm mà bấm "Lưu" hai lần sẽ tạo ra hai bản ghi.
+  const [submitting, setSubmitting] = useState(false)
   const [activeTab, setActiveTab] = useState<'canvas' | 'evidence'>('canvas')
 
   // Modals
@@ -82,12 +88,13 @@ export default function Startup() {
       if (vList.length > 0 && !selectedVentureId) {
         setSelectedVentureId(vList[0]!.id)
       }
-    } catch {
-      toast.error('Không thể tải danh sách dự án khởi nghiệp')
+      setLoadError(null)
+    } catch (err: unknown) {
+      setLoadError(err instanceof Error ? err.message : 'Không thể tải danh sách dự án khởi nghiệp')
     } finally {
       setLoading(false)
     }
-  }, [toast, selectedVentureId])
+  }, [selectedVentureId])
 
   useEffect(() => {
     // Gọi qua then() để mọi setState chạy trong callback bất đồng bộ
@@ -100,9 +107,9 @@ export default function Startup() {
       if (!vId) return
       try {
         const [pList, hList, eList] = await Promise.all([
-          listProblems(vId).catch(() => []),
-          listHypotheses(vId).catch(() => []),
-          listEvidence(vId).catch(() => []),
+          listProblems(vId),
+          listHypotheses(vId),
+          listEvidence(vId),
         ])
         setProblems(pList)
         setHypotheses(hList)
@@ -123,6 +130,8 @@ export default function Startup() {
 
   const handleCreateVenture = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     try {
       const created = await createVenture({
         name: ventureForm.name,
@@ -136,6 +145,8 @@ export default function Startup() {
       toast.success('Đã tạo dự án khởi nghiệp mới!')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Lỗi khi tạo dự án')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -152,6 +163,8 @@ export default function Startup() {
 
   const handleCreateProblem = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     if (!selectedVentureId) return
     try {
       const created = await createProblem({
@@ -166,11 +179,15 @@ export default function Startup() {
       toast.success('Đã ghi nhận bài toán khách hàng!')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Lỗi khi tạo bài toán')
+    } finally {
+      setSubmitting(false)
     }
   }
 
   const handleCreateHypothesis = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     if (!selectedVentureId) return
     try {
       const created = await createHypothesis({
@@ -184,6 +201,8 @@ export default function Startup() {
       toast.success('Đã thêm giả thuyết kinh doanh!')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Lỗi khi tạo giả thuyết')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -202,6 +221,8 @@ export default function Startup() {
 
   const handleRecordEvidence = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     if (!selectedVentureId) return
     try {
       const created = await recordEvidence({
@@ -226,6 +247,8 @@ export default function Startup() {
       toast.success('Đã lưu bằng chứng kiểm chứng!')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Lỗi khi ghi nhận bằng chứng')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -245,7 +268,7 @@ export default function Startup() {
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => nav('/startup/canvas')}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-purple-500 hover:bg-purple-400 text-black text-sm font-bold shadow-sm transition"
+              className="tap-44 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-purple-500 hover:bg-purple-400 text-black text-sm font-bold shadow-sm transition"
               title="Khung Lean Canvas 9 Ô"
             >
               <Rocket className="w-4 h-4" />
@@ -253,7 +276,7 @@ export default function Startup() {
             </button>
             <button
               onClick={() => setShowVentureModal(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-sm font-medium border border-zinc-800 shadow-md transition"
+              className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-sm font-medium border border-zinc-800 shadow-md transition"
             >
               <Plus className="w-4 h-4" />
               Dự án mới
@@ -261,7 +284,7 @@ export default function Startup() {
             <button
               onClick={loadVentures}
               disabled={loading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-sm font-medium border border-zinc-800 transition shadow-sm"
+              className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-sm font-medium border border-zinc-800 transition shadow-sm"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               Làm mới
@@ -274,6 +297,12 @@ export default function Startup() {
             <Loader2 className="w-8 h-8 text-purple-400 theme-light:text-purple-800 animate-spin mb-4" />
             <p className="text-zinc-400 text-sm">Đang tải dữ liệu khởi nghiệp...</p>
           </div>
+        ) : loadError ? (
+          // Lỗi TẢI phải được ưu tiên hơn trạng thái rỗng: nếu không, mất mạng lại
+          // hiện ra đúng màn "chưa có gì" và người dùng tưởng mất dữ liệu.
+          <div className="mt-6">
+            <LoadError message={loadError} onRetry={() => void loadVentures()} retrying={loading} />
+          </div>
         ) : ventures.length === 0 ? (
           <div className="text-center py-20 bg-zinc-900/40 border border-zinc-800 rounded-2xl mt-6">
             <Rocket className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
@@ -283,7 +312,7 @@ export default function Startup() {
             </p>
             <button
               onClick={() => setShowVentureModal(true)}
-              className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-[#fff] text-sm font-semibold shadow-lg shadow-purple-900/30 transition"
+              className="tap-44 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-[#fff] text-sm font-semibold shadow-lg shadow-purple-900/30 transition"
             >
               Tạo Dự Án Đầu Tiên
             </button>
@@ -296,6 +325,7 @@ export default function Startup() {
                 <div>
                   <div className="flex items-center gap-3">
                     <select
+                      aria-label="Chọn dự án khởi nghiệp"
                       value={selectedVentureId}
                       onChange={(e) => setSelectedVentureId(e.target.value)}
                       className="text-xl font-bold bg-transparent text-zinc-100 border-b border-zinc-700 pb-1 focus:outline-none focus:border-purple-500 cursor-pointer"
@@ -322,7 +352,7 @@ export default function Startup() {
                       <button
                         key={stg}
                         onClick={() => handleUpdateStage(stg)}
-                        className={`text-xs px-3 py-1.5 rounded-lg font-medium transition ${
+                        className={`tap-44 text-xs px-3 py-1.5 rounded-lg font-medium transition ${
                           currentVenture?.stage === stg
                             ? 'bg-purple-600 text-[#fff] shadow-md'
                             : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'
@@ -340,7 +370,7 @@ export default function Startup() {
             <div className="flex items-center gap-2 border-b border-zinc-800 pb-2">
               <button
                 onClick={() => setActiveTab('canvas')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
+                className={`tap-44 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
                   activeTab === 'canvas'
                     ? 'bg-purple-600/20 text-purple-400 theme-light:text-purple-800 border border-purple-500/30'
                     : 'text-zinc-400 hover:text-zinc-200'
@@ -351,7 +381,7 @@ export default function Startup() {
               </button>
               <button
                 onClick={() => setActiveTab('evidence')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
+                className={`tap-44 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
                   activeTab === 'evidence'
                     ? 'bg-purple-600/20 text-purple-400 theme-light:text-purple-800 border border-purple-500/30'
                     : 'text-zinc-400 hover:text-zinc-200'
@@ -374,7 +404,7 @@ export default function Startup() {
                     </h3>
                     <button
                       onClick={() => setShowProblemModal(true)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-300 theme-light:text-red-800 border border-red-500/30 text-xs font-medium transition"
+                      className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-300 theme-light:text-red-800 border border-red-500/30 text-xs font-medium transition"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       Thêm bài toán
@@ -426,7 +456,7 @@ export default function Startup() {
                     </h3>
                     <button
                       onClick={() => setShowHypothesisModal(true)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 theme-light:text-amber-800 border border-amber-500/30 text-xs font-medium transition"
+                      className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 theme-light:text-amber-800 border border-amber-500/30 text-xs font-medium transition"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       Thêm giả thuyết
@@ -473,13 +503,13 @@ export default function Startup() {
                             <div className="flex items-center gap-1 text-xs">
                               <button
                                 onClick={() => handleUpdateHypothesisStatus(h.id, 'supported')}
-                                className="px-2 py-0.5 rounded bg-emerald-950/60 theme-light:bg-emerald-50 hover:bg-emerald-950 text-emerald-400 theme-light:text-emerald-800 border border-emerald-800/40 text-[11px]"
+                                className="tap-44 px-2 py-0.5 rounded bg-emerald-950/60 theme-light:bg-emerald-50 hover:bg-emerald-950 text-emerald-400 theme-light:text-emerald-800 border border-emerald-800/40 text-[11px]"
                               >
                                 Xác thực
                               </button>
                               <button
                                 onClick={() => handleUpdateHypothesisStatus(h.id, 'refuted')}
-                                className="px-2 py-0.5 rounded bg-red-950/60 theme-light:bg-red-50 hover:bg-red-950 text-red-400 theme-light:text-red-800 border border-red-800/40 text-[11px]"
+                                className="tap-44 px-2 py-0.5 rounded bg-red-950/60 theme-light:bg-red-50 hover:bg-red-950 text-red-400 theme-light:text-red-800 border border-red-800/40 text-[11px]"
                               >
                                 Bác bỏ
                               </button>
@@ -509,7 +539,7 @@ export default function Startup() {
                   </div>
                   <button
                     onClick={() => setShowEvidenceModal(true)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-[#fff] text-xs font-semibold shadow-md transition shrink-0"
+                    className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-[#fff] text-xs font-semibold shadow-md transition shrink-0"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     Ghi nhận bằng chứng
@@ -557,370 +587,372 @@ export default function Startup() {
 
         {/* Modal Create Venture */}
         {showVentureModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in-95">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-zinc-100">Tạo Dự Án Khởi Nghiệp</h3>
+          <Modal title="Tạo Dự Án Khởi Nghiệp" onClose={() => setShowVentureModal(false)}>
+            <form onSubmit={handleCreateVenture} className="space-y-4">
+              <div>
+                <Field label="Tên dự án" required>
+                  {(id) => (
+                    <input
+                      id={id}
+                      type="text"
+                      required
+                      value={ventureForm.name}
+                      onChange={(e) => setVentureForm({ ...ventureForm, name: e.target.value })}
+                      placeholder="VD: EdTech AI Assistant"
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-purple-500 focus:outline-none"
+                    />
+                  )}
+                </Field>
+              </div>
+              <div>
+                <Field label="Giai đoạn ban đầu">
+                  {(id) => (
+                    <select
+                      id={id}
+                      value={ventureForm.stage}
+                      onChange={(e) =>
+                        setVentureForm({
+                          ...ventureForm,
+                          stage: e.target.value as Venture['stage'],
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-purple-500 focus:outline-none"
+                    >
+                      <option value="ideation">Ideation (Hình thành ý tưởng)</option>
+                      <option value="validation">Validation (Kiểm chứng thị trường)</option>
+                      <option value="mvp">MVP (Sản phẩm tối thiểu)</option>
+                      <option value="growth">Growth (Tăng trưởng)</option>
+                    </select>
+                  )}
+                </Field>
+              </div>
+              <div>
+                <Field label="Mô tả tóm tắt">
+                  {(id) => (
+                    <textarea
+                      id={id}
+                      rows={3}
+                      value={ventureForm.description}
+                      onChange={(e) =>
+                        setVentureForm({ ...ventureForm, description: e.target.value })
+                      }
+                      placeholder="Tầm nhìn, mô hình kinh doanh sơ bộ..."
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-purple-500 focus:outline-none"
+                    />
+                  )}
+                </Field>
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
                 <button
+                  type="button"
                   onClick={() => setShowVentureModal(false)}
-                  className="text-zinc-500 hover:text-zinc-300"
+                  disabled={submitting}
+                  className="tap-44 px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
                 >
-                  <X className="w-5 h-5" />
+                  Huỷ
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="tap-44 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-[#fff] text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {submitting ? 'Đang lưu…' : 'Tạo Dự Án'}
                 </button>
               </div>
-              <form onSubmit={handleCreateVenture} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Tên dự án (*)
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={ventureForm.name}
-                    onChange={(e) => setVentureForm({ ...ventureForm, name: e.target.value })}
-                    placeholder="VD: EdTech AI Assistant"
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-purple-500 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Giai đoạn ban đầu
-                  </label>
-                  <select
-                    value={ventureForm.stage}
-                    onChange={(e) =>
-                      setVentureForm({ ...ventureForm, stage: e.target.value as Venture['stage'] })
-                    }
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-purple-500 focus:outline-none"
-                  >
-                    <option value="ideation">Ideation (Hình thành ý tưởng)</option>
-                    <option value="validation">Validation (Kiểm chứng thị trường)</option>
-                    <option value="mvp">MVP (Sản phẩm tối thiểu)</option>
-                    <option value="growth">Growth (Tăng trưởng)</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Mô tả tóm tắt
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={ventureForm.description}
-                    onChange={(e) =>
-                      setVentureForm({ ...ventureForm, description: e.target.value })
-                    }
-                    placeholder="Tầm nhìn, mô hình kinh doanh sơ bộ..."
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-purple-500 focus:outline-none"
-                  />
-                </div>
-                <div className="flex justify-end gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowVentureModal(false)}
-                    className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
-                  >
-                    Huỷ
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-[#fff] text-sm font-semibold transition"
-                  >
-                    Tạo Dự Án
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+            </form>
+          </Modal>
         )}
 
         {/* Modal Problem */}
         {showProblemModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in-95">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-zinc-100">Thêm Bài Toán Khách Hàng</h3>
-                <button
-                  onClick={() => setShowProblemModal(false)}
-                  className="text-zinc-500 hover:text-zinc-300"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              <form onSubmit={handleCreateProblem} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Mô tả bài toán / Nỗi đau (*)
-                  </label>
-                  <textarea
-                    rows={3}
-                    required
-                    value={problemForm.statement}
-                    onChange={(e) => setProblemForm({ ...problemForm, statement: e.target.value })}
-                    placeholder="VD: Học viên thiếu môi trường luyện nói tiếng Anh tương tác 1-1..."
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-red-500 focus:outline-none"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-400 mb-1">
-                      Phân khúc đối tượng (*)
-                    </label>
-                    <input
-                      type="text"
+          <Modal title="Thêm Bài Toán Khách Hàng" onClose={() => setShowProblemModal(false)}>
+            <form onSubmit={handleCreateProblem} className="space-y-4">
+              <div>
+                <Field label="Mô tả bài toán / Nỗi đau" required>
+                  {(id) => (
+                    <textarea
+                      id={id}
+                      rows={3}
                       required
-                      value={problemForm.customerSegment}
+                      value={problemForm.statement}
                       onChange={(e) =>
-                        setProblemForm({ ...problemForm, customerSegment: e.target.value })
+                        setProblemForm({ ...problemForm, statement: e.target.value })
                       }
-                      placeholder="VD: Người đi làm, Sinh viên ĐH"
+                      placeholder="VD: Học viên thiếu môi trường luyện nói tiếng Anh tương tác 1-1..."
                       className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-red-500 focus:outline-none"
                     />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-400 mb-1">
-                      Mức độ nghiêm trọng
-                    </label>
-                    <select
-                      value={problemForm.severity}
-                      onChange={(e) =>
-                        setProblemForm({
-                          ...problemForm,
-                          severity: e.target.value as 'critical' | 'major' | 'minor',
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-red-500 focus:outline-none"
-                    >
-                      <option value="critical">Critical (Cấp bách)</option>
-                      <option value="major">Major (Quan trọng)</option>
-                      <option value="minor">Minor (Nhẹ)</option>
-                    </select>
-                  </div>
+                  )}
+                </Field>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Field label="Phân khúc đối tượng" required>
+                    {(id) => (
+                      <input
+                        id={id}
+                        type="text"
+                        required
+                        value={problemForm.customerSegment}
+                        onChange={(e) =>
+                          setProblemForm({ ...problemForm, customerSegment: e.target.value })
+                        }
+                        placeholder="VD: Người đi làm, Sinh viên ĐH"
+                        className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-red-500 focus:outline-none"
+                      />
+                    )}
+                  </Field>
                 </div>
-                <div className="flex justify-end gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowProblemModal(false)}
-                    className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
-                  >
-                    Huỷ
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-black text-sm font-semibold transition"
-                  >
-                    Lưu Bài Toán
-                  </button>
+                <div>
+                  <Field label="Mức độ nghiêm trọng">
+                    {(id) => (
+                      <select
+                        id={id}
+                        value={problemForm.severity}
+                        onChange={(e) =>
+                          setProblemForm({
+                            ...problemForm,
+                            severity: e.target.value as 'critical' | 'major' | 'minor',
+                          })
+                        }
+                        className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-red-500 focus:outline-none"
+                      >
+                        <option value="critical">Critical (Cấp bách)</option>
+                        <option value="major">Major (Quan trọng)</option>
+                        <option value="minor">Minor (Nhẹ)</option>
+                      </select>
+                    )}
+                  </Field>
                 </div>
-              </form>
-            </div>
-          </div>
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowProblemModal(false)}
+                  disabled={submitting}
+                  className="tap-44 px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
+                >
+                  Huỷ
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="tap-44 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-[#fff] text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {submitting ? 'Đang lưu…' : 'Lưu Bài Toán'}
+                </button>
+              </div>
+            </form>
+          </Modal>
         )}
 
         {/* Modal Hypothesis */}
         {showHypothesisModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in-95">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-zinc-100">Thêm Giả Thuyết Cần Kiểm Chứng</h3>
+          <Modal
+            title="Thêm Giả Thuyết Cần Kiểm Chứng"
+            onClose={() => setShowHypothesisModal(false)}
+          >
+            <form onSubmit={handleCreateHypothesis} className="space-y-4">
+              <div>
+                <Field label="Nội dung giả thuyết" required>
+                  {(id) => (
+                    <textarea
+                      id={id}
+                      rows={3}
+                      required
+                      value={hypForm.statement}
+                      onChange={(e) => setHypForm({ ...hypForm, statement: e.target.value })}
+                      placeholder="VD: Người dùng sẵn sàng trả 99k/tháng nếu AI có thể chấm phát âm từng âm vị..."
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-amber-500 focus:outline-none"
+                    />
+                  )}
+                </Field>
+              </div>
+              <div>
+                <Field label="Loại giả thuyết">
+                  {(id) => (
+                    <select
+                      id={id}
+                      value={hypForm.hypothesisType}
+                      onChange={(e) =>
+                        setHypForm({
+                          ...hypForm,
+                          hypothesisType: e.target.value as
+                            'market' | 'customer' | 'problem' | 'solution' | 'business_model',
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-amber-500 focus:outline-none"
+                    >
+                      <option value="solution">Solution (Giải pháp)</option>
+                      <option value="customer">Customer (Khách hàng)</option>
+                      <option value="business_model">
+                        Business Model (Mô hình kinh doanh/Giá)
+                      </option>
+                      <option value="market">Market (Quy mô thị trường)</option>
+                      <option value="problem">Problem (Mức độ tồn tại của vấn đề)</option>
+                    </select>
+                  )}
+                </Field>
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
                 <button
+                  type="button"
                   onClick={() => setShowHypothesisModal(false)}
-                  className="text-zinc-500 hover:text-zinc-300"
+                  disabled={submitting}
+                  className="tap-44 px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
                 >
-                  <X className="w-5 h-5" />
+                  Huỷ
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="tap-44 px-4 py-2 rounded-xl bg-amber-700 hover:bg-amber-800 text-[#fff] text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {submitting ? 'Đang lưu…' : 'Tạo Giả Thuyết'}
                 </button>
               </div>
-              <form onSubmit={handleCreateHypothesis} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Nội dung giả thuyết (*)
-                  </label>
-                  <textarea
-                    rows={3}
-                    required
-                    value={hypForm.statement}
-                    onChange={(e) => setHypForm({ ...hypForm, statement: e.target.value })}
-                    placeholder="VD: Người dùng sẵn sàng trả 99k/tháng nếu AI có thể chấm phát âm từng âm vị..."
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-amber-500 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Loại giả thuyết
-                  </label>
-                  <select
-                    value={hypForm.hypothesisType}
-                    onChange={(e) =>
-                      setHypForm({
-                        ...hypForm,
-                        hypothesisType: e.target.value as
-                          'market' | 'customer' | 'problem' | 'solution' | 'business_model',
-                      })
-                    }
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-amber-500 focus:outline-none"
-                  >
-                    <option value="solution">Solution (Giải pháp)</option>
-                    <option value="customer">Customer (Khách hàng)</option>
-                    <option value="business_model">Business Model (Mô hình kinh doanh/Giá)</option>
-                    <option value="market">Market (Quy mô thị trường)</option>
-                    <option value="problem">Problem (Mức độ tồn tại của vấn đề)</option>
-                  </select>
-                </div>
-                <div className="flex justify-end gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowHypothesisModal(false)}
-                    className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
-                  >
-                    Huỷ
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-[#fff] text-sm font-semibold transition"
-                  >
-                    Tạo Giả Thuyết
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+            </form>
+          </Modal>
         )}
 
         {/* Modal Evidence */}
         {showEvidenceModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in-95">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-zinc-100">Ghi Nhận Bằng Chứng Kiểm Chứng</h3>
+          <Modal title="Ghi Nhận Bằng Chứng Kiểm Chứng" onClose={() => setShowEvidenceModal(false)}>
+            <form onSubmit={handleRecordEvidence} className="space-y-4">
+              <div>
+                <Field label="Tiêu đề bằng chứng" required>
+                  {(id) => (
+                    <input
+                      id={id}
+                      type="text"
+                      required
+                      value={evidenceForm.title}
+                      onChange={(e) => setEvidenceForm({ ...evidenceForm, title: e.target.value })}
+                      placeholder="VD: Khảo sát 50 người dùng thử nghiệm"
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
+                    />
+                  )}
+                </Field>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Field label="Loại bằng chứng">
+                    {(id) => (
+                      <select
+                        id={id}
+                        value={evidenceForm.evidenceType}
+                        onChange={(e) =>
+                          setEvidenceForm({
+                            ...evidenceForm,
+                            evidenceType: e.target.value as
+                              | 'interview'
+                              | 'survey'
+                              | 'analytics'
+                              | 'test'
+                              | 'revenue'
+                              | 'observation',
+                          })
+                        }
+                        className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
+                      >
+                        <option value="interview">Phỏng vấn 1-1 (Interview)</option>
+                        <option value="survey">Khảo sát diện rộng (Survey)</option>
+                        <option value="analytics">Dữ liệu phân tích (Analytics)</option>
+                        <option value="test">A/B Test / Thử nghiệm</option>
+                        <option value="revenue">Doanh thu thực tế (Revenue)</option>
+                        <option value="observation">Quan sát thực tế (Observation)</option>
+                      </select>
+                    )}
+                  </Field>
+                </div>
+                <div>
+                  <Field label="Giả thuyết liên quan">
+                    {(id) => (
+                      <select
+                        id={id}
+                        value={evidenceForm.hypothesisId}
+                        onChange={(e) =>
+                          setEvidenceForm({ ...evidenceForm, hypothesisId: e.target.value })
+                        }
+                        className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
+                      >
+                        <option value="">Chung (không gắn giả thuyết)</option>
+                        {hypotheses.map((h) => (
+                          <option key={h.id} value={h.id}>
+                            {h.statement.substring(0, 35)}...
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </Field>
+                </div>
+              </div>
+              <div>
+                <Field label="Nguồn gốc / Bằng chứng thực tế (Provenance)" required>
+                  {(id) => (
+                    <input
+                      id={id}
+                      type="text"
+                      required
+                      value={evidenceForm.provenance}
+                      onChange={(e) =>
+                        setEvidenceForm({ ...evidenceForm, provenance: e.target.value })
+                      }
+                      placeholder="VD: Link Google Sheet khảo sát, File ghi âm phỏng vấn #04"
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
+                    />
+                  )}
+                </Field>
+              </div>
+              <div>
+                <Field label="Phát hiện cốt lõi (Findings)" required>
+                  {(id) => (
+                    <textarea
+                      id={id}
+                      rows={3}
+                      required
+                      value={evidenceForm.findings}
+                      onChange={(e) =>
+                        setEvidenceForm({ ...evidenceForm, findings: e.target.value })
+                      }
+                      placeholder="85% người dùng phản hồi rằng..."
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
+                    />
+                  )}
+                </Field>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="supportsHyp"
+                  checked={evidenceForm.supportsHypothesis}
+                  onChange={(e) =>
+                    setEvidenceForm({ ...evidenceForm, supportsHypothesis: e.target.checked })
+                  }
+                  className="rounded bg-zinc-950 border-zinc-800 text-emerald-600 focus:ring-emerald-500"
+                />
+                <label htmlFor="supportsHyp" className="text-xs text-zinc-300">
+                  Bằng chứng này ủng hộ giả thuyết đã chọn
+                </label>
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
                 <button
+                  type="button"
                   onClick={() => setShowEvidenceModal(false)}
-                  className="text-zinc-500 hover:text-zinc-300"
+                  disabled={submitting}
+                  className="tap-44 px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
                 >
-                  <X className="w-5 h-5" />
+                  Huỷ
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="tap-44 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-[#fff] text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {submitting ? 'Đang lưu…' : 'Lưu Bằng Chứng'}
                 </button>
               </div>
-              <form onSubmit={handleRecordEvidence} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Tiêu đề bằng chứng (*)
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={evidenceForm.title}
-                    onChange={(e) => setEvidenceForm({ ...evidenceForm, title: e.target.value })}
-                    placeholder="VD: Khảo sát 50 người dùng thử nghiệm"
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-400 mb-1">
-                      Loại bằng chứng
-                    </label>
-                    <select
-                      value={evidenceForm.evidenceType}
-                      onChange={(e) =>
-                        setEvidenceForm({
-                          ...evidenceForm,
-                          evidenceType: e.target.value as
-                            | 'interview'
-                            | 'survey'
-                            | 'analytics'
-                            | 'test'
-                            | 'revenue'
-                            | 'observation',
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
-                    >
-                      <option value="interview">Phỏng vấn 1-1 (Interview)</option>
-                      <option value="survey">Khảo sát diện rộng (Survey)</option>
-                      <option value="analytics">Dữ liệu phân tích (Analytics)</option>
-                      <option value="test">A/B Test / Thử nghiệm</option>
-                      <option value="revenue">Doanh thu thực tế (Revenue)</option>
-                      <option value="observation">Quan sát thực tế (Observation)</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-400 mb-1">
-                      Giả thuyết liên quan
-                    </label>
-                    <select
-                      value={evidenceForm.hypothesisId}
-                      onChange={(e) =>
-                        setEvidenceForm({ ...evidenceForm, hypothesisId: e.target.value })
-                      }
-                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
-                    >
-                      <option value="">Chung (không gắn giả thuyết)</option>
-                      {hypotheses.map((h) => (
-                        <option key={h.id} value={h.id}>
-                          {h.statement.substring(0, 35)}...
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Nguồn gốc / Bằng chứng thực tế (Provenance) (*)
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={evidenceForm.provenance}
-                    onChange={(e) =>
-                      setEvidenceForm({ ...evidenceForm, provenance: e.target.value })
-                    }
-                    placeholder="VD: Link Google Sheet khảo sát, File ghi âm phỏng vấn #04"
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Phát hiện cốt lõi (Findings) (*)
-                  </label>
-                  <textarea
-                    rows={3}
-                    required
-                    value={evidenceForm.findings}
-                    onChange={(e) => setEvidenceForm({ ...evidenceForm, findings: e.target.value })}
-                    placeholder="85% người dùng phản hồi rằng..."
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="supportsHyp"
-                    checked={evidenceForm.supportsHypothesis}
-                    onChange={(e) =>
-                      setEvidenceForm({ ...evidenceForm, supportsHypothesis: e.target.checked })
-                    }
-                    className="rounded bg-zinc-950 border-zinc-800 text-emerald-600 focus:ring-emerald-500"
-                  />
-                  <label htmlFor="supportsHyp" className="text-xs text-zinc-300">
-                    Bằng chứng này ủng hộ giả thuyết đã chọn
-                  </label>
-                </div>
-                <div className="flex justify-end gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowEvidenceModal(false)}
-                    className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
-                  >
-                    Huỷ
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-[#fff] text-sm font-semibold transition"
-                  >
-                    Lưu Bằng Chứng
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+            </form>
+          </Modal>
         )}
       </main>
     </div>

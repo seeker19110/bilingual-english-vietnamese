@@ -13,8 +13,10 @@ import {
   Clock,
   CheckCircle,
   Circle,
-  X,
 } from 'lucide-react'
+import Modal from '../../../components/Modal'
+import Field from '../../../components/Field'
+import LoadError from '../../../components/LoadError'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { useToast } from '@core/ToastProvider'
@@ -48,6 +50,10 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
   const [documents, setDocuments] = useState<WorkDocument[]>([])
   const [selectedProjectId, setSelectedProjectId] = useState<string>('')
   const [loading, setLoading] = useState(true)
+  // Lỗi TẢI dữ liệu — tách khỏi trạng thái rỗng, xem components/LoadError.tsx.
+  const [loadError, setLoadError] = useState<string | null>(null)
+  // Chặn gửi trùng: mạng chậm mà bấm "Lưu" hai lần sẽ tạo ra hai bản ghi.
+  const [submitting, setSubmitting] = useState(false)
 
   // Modals
   const [showProjectModal, setShowProjectModal] = useState(false)
@@ -82,21 +88,22 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
     setLoading(true)
     try {
       const [projData, taskData, meetData, docData] = await Promise.all([
-        listWorkProjects().catch(() => []),
-        listWorkTasks(selectedProjectId || undefined).catch(() => []),
-        listWorkMeetings().catch(() => []),
-        listWorkDocuments(selectedProjectId || undefined).catch(() => []),
+        listWorkProjects(),
+        listWorkTasks(selectedProjectId || undefined),
+        listWorkMeetings(),
+        listWorkDocuments(selectedProjectId || undefined),
       ])
       setProjects(projData)
       setTasks(taskData)
       setMeetings(meetData)
       setDocuments(docData)
-    } catch {
-      toast.error('Không thể tải dữ liệu không gian làm việc')
+      setLoadError(null)
+    } catch (err: unknown) {
+      setLoadError(err instanceof Error ? err.message : 'Không thể tải dữ liệu không gian làm việc')
     } finally {
       setLoading(false)
     }
-  }, [toast, selectedProjectId])
+  }, [selectedProjectId])
 
   useEffect(() => {
     // Gọi qua then() để mọi setState chạy trong callback bất đồng bộ
@@ -106,6 +113,8 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
 
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     try {
       const created = await createWorkProject({
         name: projectForm.name,
@@ -118,11 +127,15 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
       toast.success('Đã tạo dự án thành công!')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Lỗi khi tạo dự án')
+    } finally {
+      setSubmitting(false)
     }
   }
 
   const handleCreateTask = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     try {
       const created = await createWorkTask({
         title: taskForm.title,
@@ -136,6 +149,8 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
       toast.success('Đã tạo công việc!')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Lỗi khi tạo công việc')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -152,6 +167,8 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
 
   const handleRecordMeeting = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     try {
       const actionItems = meetingForm.actionItems
         .split('\n')
@@ -176,11 +193,15 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
       toast.success('Đã ghi nhận biên bản cuộc họp!')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Lỗi khi lưu cuộc họp')
+    } finally {
+      setSubmitting(false)
     }
   }
 
   const handleCreateDocument = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     try {
       const created = await createWorkDocument({
         title: docForm.title,
@@ -195,6 +216,8 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
       toast.success('Đã thêm tài liệu!')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Lỗi khi tạo tài liệu')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -220,7 +243,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => nav('/work/kanban')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-400 text-black text-sm font-bold transition shadow-sm"
+            className="tap-44 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-blue-500 hover:bg-blue-400 text-black text-sm font-bold transition shadow-sm"
             title="Bảng Kanban Tương Tác"
           >
             <FolderKanban className="w-4 h-4" />
@@ -244,7 +267,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
           <button
             onClick={loadData}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-sm font-medium border border-zinc-800 transition shadow-sm"
+            className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-sm font-medium border border-zinc-800 transition shadow-sm"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             Làm mới
@@ -256,7 +279,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
       <div className="flex items-center gap-2 border-b border-zinc-800 pb-2">
         <button
           onClick={() => setActiveTab('tasks')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
+          className={`tap-44 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
             activeTab === 'tasks'
               ? 'bg-blue-600/20 text-blue-400 theme-light:text-blue-800 border border-blue-500/30'
               : 'text-zinc-400 hover:text-zinc-200'
@@ -267,7 +290,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
         </button>
         <button
           onClick={() => setActiveTab('projects')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
+          className={`tap-44 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
             activeTab === 'projects'
               ? 'bg-blue-600/20 text-blue-400 theme-light:text-blue-800 border border-blue-500/30'
               : 'text-zinc-400 hover:text-zinc-200'
@@ -278,7 +301,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
         </button>
         <button
           onClick={() => setActiveTab('meetings')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
+          className={`tap-44 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
             activeTab === 'meetings'
               ? 'bg-blue-600/20 text-blue-400 theme-light:text-blue-800 border border-blue-500/30'
               : 'text-zinc-400 hover:text-zinc-200'
@@ -289,7 +312,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
         </button>
         <button
           onClick={() => setActiveTab('documents')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
+          className={`tap-44 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
             activeTab === 'documents'
               ? 'bg-blue-600/20 text-blue-400 theme-light:text-blue-800 border border-blue-500/30'
               : 'text-zinc-400 hover:text-zinc-200'
@@ -305,6 +328,12 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
           <Loader2 className="w-8 h-8 text-blue-400 theme-light:text-blue-800 animate-spin mb-4" />
           <p className="text-zinc-400 text-sm">Đang tải dữ liệu công việc...</p>
         </div>
+      ) : loadError ? (
+        // Lỗi TẢI phải được ưu tiên hơn trạng thái rỗng: nếu không, mất mạng lại
+        // hiện ra đúng màn "chưa có gì" và người dùng tưởng mất dữ liệu.
+        <div className="mt-6">
+          <LoadError message={loadError} onRetry={() => void loadData()} retrying={loading} />
+        </div>
       ) : (
         <div>
           {/* Tab 1: Tasks */}
@@ -314,7 +343,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                 <h3 className="text-base font-semibold text-zinc-200">Danh Sách Công Việc</h3>
                 <button
                   onClick={() => setShowTaskModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-[#fff] text-xs font-semibold shadow-md transition"
+                  className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-[#fff] text-xs font-semibold shadow-md transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Thêm công việc
@@ -341,7 +370,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                         <div className="flex items-start gap-3 flex-1 min-w-0">
                           <button
                             onClick={() => handleToggleTaskStatus(task)}
-                            className="mt-0.5 text-zinc-400 hover:text-emerald-400 transition"
+                            className="tap-44 mt-0.5 text-zinc-400 hover:text-emerald-400 transition"
                           >
                             {isDone ? (
                               <CheckCircle className="w-5 h-5 text-emerald-400 theme-light:text-emerald-800" />
@@ -393,7 +422,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                 <h3 className="text-base font-semibold text-zinc-200">Dự Án Đang Thực Hiện</h3>
                 <button
                   onClick={() => setShowProjectModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-[#fff] text-xs font-semibold shadow-md transition"
+                  className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-[#fff] text-xs font-semibold shadow-md transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Tạo dự án mới
@@ -442,7 +471,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                               proj.status === 'completed' ? 'active' : 'completed',
                             ).then(loadData)
                           }
-                          className="text-xs text-zinc-400 hover:text-zinc-200 transition font-medium"
+                          className="tap-44 text-xs text-zinc-400 hover:text-zinc-200 transition font-medium"
                         >
                           {proj.status === 'completed' ? 'Mở lại dự án' : 'Đánh dấu hoàn thành'}
                         </button>
@@ -463,7 +492,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                 </h3>
                 <button
                   onClick={() => setShowMeetingModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-[#fff] text-xs font-semibold shadow-md transition"
+                  className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-[#fff] text-xs font-semibold shadow-md transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Ghi lại cuộc họp
@@ -522,7 +551,7 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
                 <h3 className="text-base font-semibold text-zinc-200">Tài Liệu Nghiệp Vụ</h3>
                 <button
                   onClick={() => setShowDocModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-[#fff] text-xs font-semibold shadow-md transition"
+                  className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-[#fff] text-xs font-semibold shadow-md transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Thêm tài liệu
@@ -563,395 +592,393 @@ export default function Work({ embedded = false }: { embedded?: boolean } = {}) 
 
       {/* Modal Create Project */}
       {showProjectModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-zinc-100">Tạo Dự Án Mới</h3>
+        <Modal title="Tạo Dự Án Mới" onClose={() => setShowProjectModal(false)}>
+          <form onSubmit={handleCreateProject} className="space-y-4">
+            <div>
+              <Field label="Tên dự án" required>
+                {(id) => (
+                  <input
+                    id={id}
+                    type="text"
+                    required
+                    value={projectForm.name}
+                    onChange={(e) => setProjectForm({ ...projectForm, name: e.target.value })}
+                    placeholder="VD: Nâng cấp Platform V2"
+                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
+                  />
+                )}
+              </Field>
+            </div>
+            <div>
+              <Field label="Mô tả dự án">
+                {(id) => (
+                  <textarea
+                    id={id}
+                    rows={3}
+                    value={projectForm.description}
+                    onChange={(e) =>
+                      setProjectForm({ ...projectForm, description: e.target.value })
+                    }
+                    placeholder="Chi tiết phạm vi và mục tiêu..."
+                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
+                  />
+                )}
+              </Field>
+            </div>
+            <div>
+              <Field label="Hạn chót (Deadline)">
+                {(id) => (
+                  <input
+                    id={id}
+                    type="date"
+                    value={projectForm.deadline}
+                    onChange={(e) => setProjectForm({ ...projectForm, deadline: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
+                  />
+                )}
+              </Field>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
               <button
+                type="button"
                 onClick={() => setShowProjectModal(false)}
-                className="text-zinc-500 hover:text-zinc-300"
+                disabled={submitting}
+                className="tap-44 px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
               >
-                <X className="w-5 h-5" />
+                Huỷ
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="tap-44 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[#fff] text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {submitting ? 'Đang lưu…' : 'Tạo Dự Án'}
               </button>
             </div>
-            <form onSubmit={handleCreateProject} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  Tên dự án (*)
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={projectForm.name}
-                  onChange={(e) => setProjectForm({ ...projectForm, name: e.target.value })}
-                  placeholder="VD: Nâng cấp Platform V2"
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Mô tả dự án</label>
-                <textarea
-                  rows={3}
-                  value={projectForm.description}
-                  onChange={(e) => setProjectForm({ ...projectForm, description: e.target.value })}
-                  placeholder="Chi tiết phạm vi và mục tiêu..."
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  Hạn chót (Deadline)
-                </label>
-                <input
-                  type="date"
-                  value={projectForm.deadline}
-                  onChange={(e) => setProjectForm({ ...projectForm, deadline: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowProjectModal(false)}
-                  className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
-                >
-                  Huỷ
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[#fff] text-sm font-semibold transition"
-                >
-                  Tạo Dự Án
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+          </form>
+        </Modal>
       )}
 
       {/* Modal Create Task */}
       {showTaskModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-zinc-100">Thêm Công Việc Mới</h3>
+        <Modal title="Thêm Công Việc Mới" onClose={() => setShowTaskModal(false)}>
+          <form onSubmit={handleCreateTask} className="space-y-4">
+            <div>
+              <Field label="Tiêu đề công việc" required>
+                {(id) => (
+                  <input
+                    id={id}
+                    type="text"
+                    required
+                    value={taskForm.title}
+                    onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
+                    placeholder="VD: Viết Unit tests cho Career API"
+                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
+                  />
+                )}
+              </Field>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label
+                  htmlFor="work-task-project"
+                  className="block text-xs font-medium text-zinc-400 mb-1"
+                >
+                  Dự án
+                </label>
+                <select
+                  id="work-task-project"
+                  value={taskForm.projectId}
+                  onChange={(e) => setTaskForm({ ...taskForm, projectId: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
+                >
+                  <option value="">Không gán dự án</option>
+                  {projects.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label
+                  htmlFor="work-task-priority"
+                  className="block text-xs font-medium text-zinc-400 mb-1"
+                >
+                  Độ ưu tiên
+                </label>
+                <select
+                  id="work-task-priority"
+                  value={taskForm.priority}
+                  onChange={(e) =>
+                    setTaskForm({
+                      ...taskForm,
+                      priority: e.target.value as 'low' | 'medium' | 'high' | 'urgent',
+                    })
+                  }
+                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
+                >
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                  <option value="urgent">Urgent</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <Field label="Hạn chót">
+                {(id) => (
+                  <input
+                    id={id}
+                    type="date"
+                    value={taskForm.dueAt}
+                    onChange={(e) => setTaskForm({ ...taskForm, dueAt: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
+                  />
+                )}
+              </Field>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
               <button
+                type="button"
                 onClick={() => setShowTaskModal(false)}
-                className="text-zinc-500 hover:text-zinc-300"
+                disabled={submitting}
+                className="tap-44 px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
               >
-                <X className="w-5 h-5" />
+                Huỷ
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="tap-44 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[#fff] text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {submitting ? 'Đang lưu…' : 'Tạo Công Việc'}
               </button>
             </div>
-            <form onSubmit={handleCreateTask} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  Tiêu đề công việc (*)
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={taskForm.title}
-                  onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
-                  placeholder="VD: Viết Unit tests cho Career API"
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label
-                    htmlFor="work-task-project"
-                    className="block text-xs font-medium text-zinc-400 mb-1"
-                  >
-                    Dự án
-                  </label>
-                  <select
-                    id="work-task-project"
-                    value={taskForm.projectId}
-                    onChange={(e) => setTaskForm({ ...taskForm, projectId: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
-                  >
-                    <option value="">Không gán dự án</option>
-                    {projects.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label
-                    htmlFor="work-task-priority"
-                    className="block text-xs font-medium text-zinc-400 mb-1"
-                  >
-                    Độ ưu tiên
-                  </label>
-                  <select
-                    id="work-task-priority"
-                    value={taskForm.priority}
-                    onChange={(e) =>
-                      setTaskForm({
-                        ...taskForm,
-                        priority: e.target.value as 'low' | 'medium' | 'high' | 'urgent',
-                      })
-                    }
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="urgent">Urgent</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Hạn chót</label>
-                <input
-                  type="date"
-                  value={taskForm.dueAt}
-                  onChange={(e) => setTaskForm({ ...taskForm, dueAt: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowTaskModal(false)}
-                  className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
-                >
-                  Huỷ
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[#fff] text-sm font-semibold transition"
-                >
-                  Tạo Công Việc
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+          </form>
+        </Modal>
       )}
 
       {/* Modal Record Meeting */}
       {showMeetingModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-zinc-100">Ghi Lại Cuộc Họp</h3>
+        <Modal title="Ghi Lại Cuộc Họp" onClose={() => setShowMeetingModal(false)}>
+          <form onSubmit={handleRecordMeeting} className="space-y-4">
+            <div>
+              <Field label="Tiêu đề cuộc họp" required>
+                {(id) => (
+                  <input
+                    id={id}
+                    type="text"
+                    required
+                    value={meetingForm.title}
+                    onChange={(e) => setMeetingForm({ ...meetingForm, title: e.target.value })}
+                    placeholder="VD: Weekly Sprint Planning"
+                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
+                  />
+                )}
+              </Field>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Field label="Thời gian diễn ra" required>
+                  {(id) => (
+                    <input
+                      id={id}
+                      type="datetime-local"
+                      required
+                      value={meetingForm.scheduledAt}
+                      onChange={(e) =>
+                        setMeetingForm({ ...meetingForm, scheduledAt: e.target.value })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
+                    />
+                  )}
+                </Field>
+              </div>
+              <div>
+                <Field label="Thời lượng (Phút)">
+                  {(id) => (
+                    <input
+                      id={id}
+                      type="number"
+                      min={5}
+                      value={meetingForm.durationMinutes}
+                      onChange={(e) =>
+                        setMeetingForm({ ...meetingForm, durationMinutes: Number(e.target.value) })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
+                    />
+                  )}
+                </Field>
+              </div>
+            </div>
+            <div>
+              <Field label="Tóm tắt nội dung">
+                {(id) => (
+                  <textarea
+                    id={id}
+                    rows={3}
+                    value={meetingForm.summary}
+                    onChange={(e) => setMeetingForm({ ...meetingForm, summary: e.target.value })}
+                    placeholder="Các quyết định và thảo luận chính..."
+                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
+                  />
+                )}
+              </Field>
+            </div>
+            <div>
+              <Field label="Action items (Mỗi dòng 1 mục)">
+                {(id) => (
+                  <textarea
+                    id={id}
+                    rows={2}
+                    value={meetingForm.actionItems}
+                    onChange={(e) =>
+                      setMeetingForm({ ...meetingForm, actionItems: e.target.value })
+                    }
+                    placeholder="VD: Nam hoàn thiện tài liệu API&#10;Hoa deploy staging..."
+                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
+                  />
+                )}
+              </Field>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
               <button
+                type="button"
                 onClick={() => setShowMeetingModal(false)}
-                className="text-zinc-500 hover:text-zinc-300"
+                disabled={submitting}
+                className="tap-44 px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
               >
-                <X className="w-5 h-5" />
+                Huỷ
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="tap-44 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[#fff] text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {submitting ? 'Đang lưu…' : 'Lưu Biên Bản'}
               </button>
             </div>
-            <form onSubmit={handleRecordMeeting} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  Tiêu đề cuộc họp (*)
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={meetingForm.title}
-                  onChange={(e) => setMeetingForm({ ...meetingForm, title: e.target.value })}
-                  placeholder="VD: Weekly Sprint Planning"
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Thời gian diễn ra (*)
-                  </label>
-                  <input
-                    type="datetime-local"
-                    required
-                    value={meetingForm.scheduledAt}
-                    onChange={(e) =>
-                      setMeetingForm({ ...meetingForm, scheduledAt: e.target.value })
-                    }
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Thời lượng (Phút)
-                  </label>
-                  <input
-                    type="number"
-                    min={5}
-                    value={meetingForm.durationMinutes}
-                    onChange={(e) =>
-                      setMeetingForm({ ...meetingForm, durationMinutes: Number(e.target.value) })
-                    }
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  Tóm tắt nội dung
-                </label>
-                <textarea
-                  rows={3}
-                  value={meetingForm.summary}
-                  onChange={(e) => setMeetingForm({ ...meetingForm, summary: e.target.value })}
-                  placeholder="Các quyết định và thảo luận chính..."
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  Action items (Mỗi dòng 1 mục)
-                </label>
-                <textarea
-                  rows={2}
-                  value={meetingForm.actionItems}
-                  onChange={(e) => setMeetingForm({ ...meetingForm, actionItems: e.target.value })}
-                  placeholder="VD: Nam hoàn thiện tài liệu API&#10;Hoa deploy staging..."
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowMeetingModal(false)}
-                  className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
-                >
-                  Huỷ
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[#fff] text-sm font-semibold transition"
-                >
-                  Lưu Biên Bản
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+          </form>
+        </Modal>
       )}
 
       {/* Modal Create Document */}
       {showDocModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-zinc-100">Thêm Tài Liệu</h3>
+        <Modal title="Thêm Tài Liệu" onClose={() => setShowDocModal(false)}>
+          <form onSubmit={handleCreateDocument} className="space-y-4">
+            <div>
+              <Field label="Tiêu đề tài liệu" required>
+                {(id) => (
+                  <input
+                    id={id}
+                    type="text"
+                    required
+                    value={docForm.title}
+                    onChange={(e) => setDocForm({ ...docForm, title: e.target.value })}
+                    placeholder="VD: Architecture Spec V2"
+                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
+                  />
+                )}
+              </Field>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label
+                  htmlFor="work-doc-kind"
+                  className="block text-xs font-medium text-zinc-400 mb-1"
+                >
+                  Loại tài liệu
+                </label>
+                <select
+                  id="work-doc-kind"
+                  value={docForm.documentType}
+                  onChange={(e) =>
+                    setDocForm({
+                      ...docForm,
+                      documentType: e.target.value as
+                        'spec' | 'minutes' | 'proposal' | 'report' | 'note',
+                    })
+                  }
+                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
+                >
+                  <option value="spec">Technical Spec</option>
+                  <option value="minutes">Meeting Minutes</option>
+                  <option value="proposal">Proposal</option>
+                  <option value="report">Report</option>
+                  <option value="note">Note</option>
+                </select>
+              </div>
+              <div>
+                <label
+                  htmlFor="work-doc-project"
+                  className="block text-xs font-medium text-zinc-400 mb-1"
+                >
+                  Dự án
+                </label>
+                <select
+                  id="work-doc-project"
+                  value={docForm.projectId}
+                  onChange={(e) => setDocForm({ ...docForm, projectId: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
+                >
+                  <option value="">Không gán dự án</option>
+                  {projects.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div>
+              <Field label="Tóm tắt nội dung" required>
+                {(id) => (
+                  <textarea
+                    id={id}
+                    rows={3}
+                    required
+                    value={docForm.summary}
+                    onChange={(e) => setDocForm({ ...docForm, summary: e.target.value })}
+                    placeholder="Tóm tắt điểm cốt lõi của tài liệu..."
+                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
+                  />
+                )}
+              </Field>
+            </div>
+            <div>
+              <Field label="Đường dẫn tài liệu (URI)">
+                {(id) => (
+                  <input
+                    id={id}
+                    type="text"
+                    value={docForm.contentUri}
+                    onChange={(e) => setDocForm({ ...docForm, contentUri: e.target.value })}
+                    placeholder="VD: docs/specs/v2-spec.md hoặc https://..."
+                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
+                  />
+                )}
+              </Field>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
               <button
+                type="button"
                 onClick={() => setShowDocModal(false)}
-                className="text-zinc-500 hover:text-zinc-300"
+                disabled={submitting}
+                className="tap-44 px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
               >
-                <X className="w-5 h-5" />
+                Huỷ
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="tap-44 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[#fff] text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {submitting ? 'Đang lưu…' : 'Lưu Tài Liệu'}
               </button>
             </div>
-            <form onSubmit={handleCreateDocument} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  Tiêu đề tài liệu (*)
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={docForm.title}
-                  onChange={(e) => setDocForm({ ...docForm, title: e.target.value })}
-                  placeholder="VD: Architecture Spec V2"
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label
-                    htmlFor="work-doc-kind"
-                    className="block text-xs font-medium text-zinc-400 mb-1"
-                  >
-                    Loại tài liệu
-                  </label>
-                  <select
-                    id="work-doc-kind"
-                    value={docForm.documentType}
-                    onChange={(e) =>
-                      setDocForm({
-                        ...docForm,
-                        documentType: e.target.value as
-                          'spec' | 'minutes' | 'proposal' | 'report' | 'note',
-                      })
-                    }
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
-                  >
-                    <option value="spec">Technical Spec</option>
-                    <option value="minutes">Meeting Minutes</option>
-                    <option value="proposal">Proposal</option>
-                    <option value="report">Report</option>
-                    <option value="note">Note</option>
-                  </select>
-                </div>
-                <div>
-                  <label
-                    htmlFor="work-doc-project"
-                    className="block text-xs font-medium text-zinc-400 mb-1"
-                  >
-                    Dự án
-                  </label>
-                  <select
-                    id="work-doc-project"
-                    value={docForm.projectId}
-                    onChange={(e) => setDocForm({ ...docForm, projectId: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
-                  >
-                    <option value="">Không gán dự án</option>
-                    {projects.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  Tóm tắt nội dung (*)
-                </label>
-                <textarea
-                  rows={3}
-                  required
-                  value={docForm.summary}
-                  onChange={(e) => setDocForm({ ...docForm, summary: e.target.value })}
-                  placeholder="Tóm tắt điểm cốt lõi của tài liệu..."
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  Đường dẫn tài liệu (URI)
-                </label>
-                <input
-                  type="text"
-                  value={docForm.contentUri}
-                  onChange={(e) => setDocForm({ ...docForm, contentUri: e.target.value })}
-                  placeholder="VD: docs/specs/v2-spec.md hoặc https://..."
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowDocModal(false)}
-                  className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
-                >
-                  Huỷ
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[#fff] text-sm font-semibold transition"
-                >
-                  Lưu Tài Liệu
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+          </form>
+        </Modal>
       )}
     </main>
   )

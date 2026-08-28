@@ -12,7 +12,6 @@ import {
   Layers,
   Sparkles,
   Search,
-  TrendingUp,
   Brain,
   Bot,
 } from 'lucide-react'
@@ -127,30 +126,23 @@ export default function Subjects() {
                   <span className="text-[11px] font-bold uppercase tracking-wider text-accent-400 theme-light:text-accent-800 bg-accent-500/15 px-2 py-0.5 rounded-full border border-accent-500/25">
                     AI Socratic Tutor
                   </span>
-                  <span className="text-xs text-zinc-400 font-medium">Chẩn đoán năng lực</span>
+                  <span className="text-xs text-zinc-400 font-medium">Học cùng gia sư AI</span>
                 </div>
                 <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                  Lộ Trình Trọng Tâm Đề Xuất Hôm Nay
+                  Bắt Đầu Từ Đâu Hôm Nay
                 </h3>
               </div>
             </div>
-
-            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-950/60 border border-zinc-800 text-xs text-zinc-300">
-              <TrendingUp className="w-3.5 h-3.5 text-emerald-400 theme-light:text-emerald-800" />
-              <span>Tiến độ tổng thể: 78%</span>
-            </div>
           </div>
 
+          {/* [Rà UI/UX 2026-08-28] Ô này trước đây in "Tiến độ tổng thể: 78%" và một
+              "khuyến nghị của AI" nêu đích danh hai chủ đề — TẤT CẢ đều là chuỗi cứng
+              trong mã, không đọc từ dữ liệu người dùng: ai mở trang cũng thấy y hệt,
+              kể cả người vừa đăng ký. Đã bỏ hẳn thay vì tô lại, vì con số bịa làm hỏng
+              lòng tin nặng hơn là không có con số nào. Hai nút bên dưới là điều hướng
+              thật nên giữ nguyên. */}
           <p className="text-xs sm:text-sm text-zinc-300 mt-3 leading-relaxed">
-            Dựa trên lịch sử giải bài và bài kiểm tra gần nhất, AI khuyến nghị bạn ưu tiên củng cố:{' '}
-            <strong className="text-blue-300 theme-light:text-blue-800 font-semibold">
-              Khảo sát hàm số (Toán 12)
-            </strong>{' '}
-            và{' '}
-            <strong className="text-emerald-300 theme-light:text-emerald-800 font-semibold">
-              Phát âm IPA Vowels (CEFR B1)
-            </strong>
-            .
+            Chọn một môn bên dưới để vào phòng học, hoặc mở thẳng hai lối tắt hay dùng nhất:
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-4">
@@ -230,9 +222,11 @@ export default function Subjects() {
         </div>
 
         {/* Banner dẫn vào Phòng Thí Nghiệm Mô Phỏng Ứng Dụng Thực Tế */}
-        <div
+        {/* Trước đây là <div onClick>: không focus/Enter được bằng bàn phím. */}
+        <button
+          type="button"
           onClick={() => nav('/ung-dung-thuc-te')}
-          className="p-5 rounded-3xl bg-gradient-to-r from-accent-600/20 via-blue-600/20 to-purple-600/20 border border-accent-500/40 hover:border-accent-500/80 cursor-pointer transition-all flex items-center justify-between group shadow-lg shadow-accent-500/5 active:scale-[0.99]"
+          className="tap-44 w-full text-left p-5 rounded-3xl bg-gradient-to-r from-accent-600/20 via-blue-600/20 to-purple-600/20 border border-accent-500/40 hover:border-accent-500/80 cursor-pointer transition-all flex items-center justify-between group shadow-lg shadow-accent-500/5 active:scale-[0.99]"
         >
           <div className="flex items-center gap-4">
             <div className="p-3.5 rounded-2xl bg-accent-500/20 text-accent-400 theme-light:text-accent-800 group-hover:scale-110 transition">
@@ -255,7 +249,7 @@ export default function Subjects() {
             </div>
           </div>
           <ChevronRight className="w-5 h-5 text-accent-400 theme-light:text-accent-800 group-hover:translate-x-1 transition shrink-0 ml-2" />
-        </div>
+        </button>
 
         {/* Danh sách thẻ môn học */}
         {loading ? (

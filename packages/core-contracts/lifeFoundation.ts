@@ -39,6 +39,13 @@ export const HabitSchema = versionedObject(
     targetCount: z.number().int().positive(),
     currentStreak: z.number().int().nonnegative(),
     bestStreak: z.number().int().nonnegative(),
+    // Ngày check-in gần nhất (YYYY-MM-DD, múi giờ VN) — để giao diện biết hôm nay đã
+    // làm chưa mà khoá nút lại. Null khi thói quen chưa từng được check-in.
+    lastLoggedAt: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/)
+      .nullable()
+      .optional(),
     isActive: z.boolean(),
     version: z.number().int().positive().optional(),
     createdAt: IsoDateTimeSchema,

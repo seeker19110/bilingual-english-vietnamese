@@ -2675,6 +2675,24 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- 🟡 **[2026-08-28 — rà UI/UX 5 trang trụ cột, xem `docs/changelog/0186-*.md`] Ba việc còn để
+  ngỏ, cần người dùng quyết hoặc tách đợt riêng.**
+
+  1. **`Career.tsx` vẫn hỏi "Số năm kinh nghiệm"** — mâu thuẫn với
+     `docs/research/dac-ta-nang-luc-ca-nhan-theo-do-tuoi-2026-08-23.md`, vốn chốt thay thước đo
+     đó bằng **thang 5 bậc thành thạo**; chính trang này đã có `PROFICIENCY_BAND` rồi, nên hai
+     thước đo mâu thuẫn đang sống song song. **Cần người dùng xác nhận** là cố ý hay sót —
+     đổi thước đo là quyết định sản phẩm, không phải việc dọn UI.
+  2. **`Work.tsx`/`Life.tsx` đặt `<Layout>` ở CUỐI JSX** (Career/Startup đặt ở đầu) → thứ tự Tab
+     của thanh điều hướng khác nhau giữa các trụ. Sửa được nhưng đụng thứ tự DOM của trang gộp
+     `/cong-viec-cuoc-song`, nên tách đợt riêng.
+  3. **`components/FeedbackModal.tsx` thiếu Escape + bẫy tiêu điểm** (đã có `role="dialog"` và
+     `aria-modal`). Nó có bố cục riêng nên chuyển sang `components/Modal.tsx` chung sẽ đổi giao
+     diện — nằm ngoài phạm vi "trang trụ cột" của đợt đó.
+
+  Ngoài ra: **4 trang trụ Career/Work/Startup/Life vẫn chưa có bản chiều B** (0/4 file dùng
+  `direction`, toàn bộ chuỗi hardcode tiếng Việt) — cùng loại nợ với mục ngay dưới đây.
+
 - 🟡 **[2026-08-26 — NỢ CÓ CHỦ ĐÍCH, người dùng chốt] Hai tính năng mới CHƯA có bản chiều B**
   (người nước ngoài học tiếng Việt). Người dùng xác nhận: "chiều A là ok rồi, chiều B nợ".
 

@@ -13,8 +13,10 @@ import {
   DollarSign,
   Award,
   Sparkles,
-  X,
 } from 'lucide-react'
+import Modal from '../../../components/Modal'
+import Field from '../../../components/Field'
+import LoadError from '../../../components/LoadError'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { useToast } from '@core/ToastProvider'
@@ -49,6 +51,10 @@ export default function Career() {
   const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null)
   const [skillGap, setSkillGap] = useState<CareerSkillGapAnalysis | null>(null)
   const [loading, setLoading] = useState(true)
+  // Lỗi TẢI dữ liệu — tách khỏi trạng thái rỗng, xem components/LoadError.tsx.
+  const [loadError, setLoadError] = useState<string | null>(null)
+  // Chặn gửi trùng: mạng chậm mà bấm "Lưu" hai lần sẽ tạo ra hai bản ghi.
+  const [submitting, setSubmitting] = useState(false)
   const [skillGapLoading, setSkillGapLoading] = useState(false)
   // Kỹ năng đang được lưu bậc — chặn bấm liên tiếp và cho người dùng thấy phản hồi.
   const [savingSkill, setSavingSkill] = useState<string | null>(null)
@@ -89,9 +95,9 @@ export default function Career() {
     setLoading(true)
     try {
       const [profData, expData, goalData] = await Promise.all([
-        fetchCareerProfile().catch(() => null),
-        listCareerExperiences().catch(() => []),
-        listCareerGoals().catch(() => []),
+        fetchCareerProfile(),
+        listCareerExperiences(),
+        listCareerGoals(),
       ])
       setProfile(profData)
       if (profData) {
@@ -110,12 +116,13 @@ export default function Career() {
       if (goalData.length > 0 && !selectedGoalId) {
         setSelectedGoalId(goalData[0]!.id)
       }
-    } catch {
-      toast.error('Không thể tải dữ liệu sự nghiệp')
+      setLoadError(null)
+    } catch (err: unknown) {
+      setLoadError(err instanceof Error ? err.message : 'Không thể tải dữ liệu sự nghiệp')
     } finally {
       setLoading(false)
     }
-  }, [toast, selectedGoalId])
+  }, [selectedGoalId])
 
   useEffect(() => {
     // Gọi qua then() để mọi setState chạy trong callback bất đồng bộ
@@ -165,6 +172,8 @@ export default function Career() {
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     try {
       const saved = await saveCareerProfile({
         targetRole: profileForm.targetRole,
@@ -184,11 +193,15 @@ export default function Career() {
       toast.success('Đã lưu hồ sơ sự nghiệp thành công!')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Lỗi khi lưu hồ sơ')
+    } finally {
+      setSubmitting(false)
     }
   }
 
   const handleAddExperience = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     try {
       const achievements = expForm.achievements
         .split('\n')
@@ -215,11 +228,15 @@ export default function Career() {
       toast.success('Đã thêm kinh nghiệm làm việc!')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Lỗi khi thêm kinh nghiệm')
+    } finally {
+      setSubmitting(false)
     }
   }
 
   const handleCreateGoal = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     try {
       const skills = goalForm.skillsRequired
         .split(',')
@@ -247,6 +264,8 @@ export default function Career() {
       toast.success('Đã thêm mục tiêu sự nghiệp!')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Lỗi khi tạo mục tiêu')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -264,7 +283,7 @@ export default function Career() {
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => nav('/career/interview')}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-bold transition shadow-sm"
+              className="tap-44 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-sm font-bold transition shadow-sm"
               title="Phòng Luyện Phỏng Vấn AI"
             >
               <Sparkles className="w-4 h-4" />
@@ -273,7 +292,7 @@ export default function Career() {
             <button
               onClick={loadData}
               disabled={loading}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-sm font-medium border border-zinc-800 transition shadow-sm"
+              className="tap-44 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-sm font-medium border border-zinc-800 transition shadow-sm"
               title="Làm mới"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -286,6 +305,12 @@ export default function Career() {
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="w-8 h-8 text-emerald-400 theme-light:text-emerald-800 animate-spin mb-4" />
             <p className="text-zinc-400 text-sm">Đang tải dữ liệu sự nghiệp...</p>
+          </div>
+        ) : loadError ? (
+          // Lỗi TẢI phải được ưu tiên hơn trạng thái rỗng: nếu không, mất mạng lại
+          // hiện ra đúng màn "chưa có gì" và người dùng tưởng mất dữ liệu.
+          <div className="mt-6">
+            <LoadError message={loadError} onRetry={() => void loadData()} retrying={loading} />
           </div>
         ) : (
           <div className="space-y-8 mt-6">
@@ -322,7 +347,7 @@ export default function Career() {
                 </div>
                 <button
                   onClick={() => setShowProfileModal(true)}
-                  className="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-[#fff] text-sm font-semibold shadow-lg shadow-emerald-900/30 transition self-start md:self-auto"
+                  className="tap-44 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-[#fff] text-sm font-semibold shadow-lg shadow-emerald-900/30 transition self-start md:self-auto"
                 >
                   {profile ? 'Chỉnh sửa hồ sơ' : 'Thiết lập hồ sơ'}
                 </button>
@@ -342,7 +367,7 @@ export default function Career() {
                     </h3>
                     <button
                       onClick={() => setShowGoalModal(true)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 theme-light:text-indigo-800 border border-indigo-500/30 text-xs font-medium transition"
+                      className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 theme-light:text-indigo-800 border border-indigo-500/30 text-xs font-medium transition"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       Thêm mục tiêu
@@ -359,10 +384,16 @@ export default function Career() {
                       {goals.map((g) => {
                         const isSelected = selectedGoalId === g.id
                         return (
-                          <div
+                          // Trước đây là <div onClick>: không focus được bằng bàn phím,
+                          // Enter/Space không kích hoạt. Đây là nút CHỌN nên dùng
+                          // <button> + aria-pressed để trình đọc màn hình biết mục nào
+                          // đang được chọn.
+                          <button
                             key={g.id}
+                            type="button"
+                            aria-pressed={isSelected}
                             onClick={() => setSelectedGoalId(g.id)}
-                            className={`p-4 rounded-xl border transition cursor-pointer ${
+                            className={`tap-44 w-full text-left p-4 rounded-xl border transition cursor-pointer ${
                               isSelected
                                 ? 'bg-indigo-950/30 theme-light:bg-indigo-50 border-indigo-500/50 shadow-md ring-1 ring-indigo-500/30'
                                 : 'bg-zinc-900/90 border-zinc-800 hover:border-zinc-700'
@@ -396,7 +427,7 @@ export default function Career() {
                                 </span>
                               ))}
                             </div>
-                          </div>
+                          </button>
                         )
                       })}
                     </div>
@@ -520,7 +551,7 @@ export default function Career() {
                     </h3>
                     <button
                       onClick={() => setShowExperienceModal(true)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 theme-light:text-blue-800 border border-blue-500/30 text-xs font-medium transition"
+                      className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 theme-light:text-blue-800 border border-blue-500/30 text-xs font-medium transition"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       Thêm
@@ -578,326 +609,339 @@ export default function Career() {
 
         {/* Modal Profile */}
         {showProfileModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in-95">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-zinc-100">Thiết Lập Hồ Sơ Sự Nghiệp</h3>
+          <Modal title="Thiết Lập Hồ Sơ Sự Nghiệp" onClose={() => setShowProfileModal(false)}>
+            <form onSubmit={handleSaveProfile} className="space-y-4">
+              <div>
+                <Field label="Vị trí mục tiêu" required>
+                  {(id) => (
+                    <input
+                      id={id}
+                      type="text"
+                      required
+                      value={profileForm.targetRole}
+                      onChange={(e) =>
+                        setProfileForm({ ...profileForm, targetRole: e.target.value })
+                      }
+                      placeholder="VD: Senior Frontend Engineer, AI Product Manager"
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
+                    />
+                  )}
+                </Field>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Field label="Chức danh hiện tại">
+                    {(id) => (
+                      <input
+                        id={id}
+                        type="text"
+                        value={profileForm.currentTitle}
+                        onChange={(e) =>
+                          setProfileForm({ ...profileForm, currentTitle: e.target.value })
+                        }
+                        placeholder="VD: Fullstack Developer"
+                        className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
+                      />
+                    )}
+                  </Field>
+                </div>
+                <div>
+                  <Field label="Số năm kinh nghiệm">
+                    {(id) => (
+                      <input
+                        id={id}
+                        type="number"
+                        min={0}
+                        value={profileForm.yearsOfExperience}
+                        onChange={(e) =>
+                          setProfileForm({
+                            ...profileForm,
+                            yearsOfExperience: Number(e.target.value),
+                          })
+                        }
+                        className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
+                      />
+                    )}
+                  </Field>
+                </div>
+              </div>
+              <div>
+                <Field label="Ngành nghề (Industry)">
+                  {(id) => (
+                    <input
+                      id={id}
+                      type="text"
+                      value={profileForm.industry}
+                      onChange={(e) => setProfileForm({ ...profileForm, industry: e.target.value })}
+                      placeholder="VD: EdTech, Fintech, AI SaaS"
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
+                    />
+                  )}
+                </Field>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Field label="Lương tối thiểu">
+                    {(id) => (
+                      <input
+                        id={id}
+                        type="number"
+                        min={0}
+                        value={profileForm.targetSalaryMin}
+                        onChange={(e) =>
+                          setProfileForm({
+                            ...profileForm,
+                            targetSalaryMin: Number(e.target.value),
+                          })
+                        }
+                        placeholder="VD: 30000000"
+                        className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
+                      />
+                    )}
+                  </Field>
+                </div>
+                <div>
+                  <Field label="Lương tối đa">
+                    {(id) => (
+                      <input
+                        id={id}
+                        type="number"
+                        min={0}
+                        value={profileForm.targetSalaryMax}
+                        onChange={(e) =>
+                          setProfileForm({
+                            ...profileForm,
+                            targetSalaryMax: Number(e.target.value),
+                          })
+                        }
+                        placeholder="VD: 50000000"
+                        className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
+                      />
+                    )}
+                  </Field>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
                 <button
+                  type="button"
                   onClick={() => setShowProfileModal(false)}
-                  className="text-zinc-500 hover:text-zinc-300"
+                  disabled={submitting}
+                  className="tap-44 px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
                 >
-                  <X className="w-5 h-5" />
+                  Huỷ
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="tap-44 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-[#fff] text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {submitting ? 'Đang lưu…' : 'Lưu Hồ Sơ'}
                 </button>
               </div>
-              <form onSubmit={handleSaveProfile} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Vị trí mục tiêu (*)
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={profileForm.targetRole}
-                    onChange={(e) => setProfileForm({ ...profileForm, targetRole: e.target.value })}
-                    placeholder="VD: Senior Frontend Engineer, AI Product Manager"
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-400 mb-1">
-                      Chức danh hiện tại
-                    </label>
-                    <input
-                      type="text"
-                      value={profileForm.currentTitle}
-                      onChange={(e) =>
-                        setProfileForm({ ...profileForm, currentTitle: e.target.value })
-                      }
-                      placeholder="VD: Fullstack Developer"
-                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-400 mb-1">
-                      Số năm kinh nghiệm
-                    </label>
-                    <input
-                      type="number"
-                      min={0}
-                      value={profileForm.yearsOfExperience}
-                      onChange={(e) =>
-                        setProfileForm({
-                          ...profileForm,
-                          yearsOfExperience: Number(e.target.value),
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Ngành nghề (Industry)
-                  </label>
-                  <input
-                    type="text"
-                    value={profileForm.industry}
-                    onChange={(e) => setProfileForm({ ...profileForm, industry: e.target.value })}
-                    placeholder="VD: EdTech, Fintech, AI SaaS"
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-400 mb-1">
-                      Lương tối thiểu
-                    </label>
-                    <input
-                      type="number"
-                      min={0}
-                      value={profileForm.targetSalaryMin}
-                      onChange={(e) =>
-                        setProfileForm({ ...profileForm, targetSalaryMin: Number(e.target.value) })
-                      }
-                      placeholder="VD: 30000000"
-                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-400 mb-1">
-                      Lương tối đa
-                    </label>
-                    <input
-                      type="number"
-                      min={0}
-                      value={profileForm.targetSalaryMax}
-                      onChange={(e) =>
-                        setProfileForm({ ...profileForm, targetSalaryMax: Number(e.target.value) })
-                      }
-                      placeholder="VD: 50000000"
-                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-end gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowProfileModal(false)}
-                    className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
-                  >
-                    Huỷ
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-[#fff] text-sm font-semibold transition"
-                  >
-                    Lưu Hồ Sơ
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+            </form>
+          </Modal>
         )}
 
         {/* Modal Experience */}
         {showExperienceModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in-95">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-zinc-100">Thêm Kinh Nghiệm Làm Việc</h3>
-                <button
-                  onClick={() => setShowExperienceModal(false)}
-                  className="text-zinc-500 hover:text-zinc-300"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              <form onSubmit={handleAddExperience} className="space-y-4">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-400 mb-1">
-                      Công ty (*)
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={expForm.company}
-                      onChange={(e) => setExpForm({ ...expForm, company: e.target.value })}
-                      placeholder="VD: Google, VNG"
-                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-400 mb-1">
-                      Vai trò / Chức danh (*)
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={expForm.role}
-                      onChange={(e) => setExpForm({ ...expForm, role: e.target.value })}
-                      placeholder="VD: Software Engineer"
-                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-400 mb-1">
-                      Bắt đầu (*)
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={expForm.startDate}
-                      onChange={(e) => setExpForm({ ...expForm, startDate: e.target.value })}
-                      placeholder="VD: 2022-01"
-                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-400 mb-1">Kết thúc</label>
-                    <input
-                      type="text"
-                      disabled={expForm.isCurrent}
-                      value={expForm.endDate}
-                      onChange={(e) => setExpForm({ ...expForm, endDate: e.target.value })}
-                      placeholder={expForm.isCurrent ? 'Hiện tại' : 'VD: 2024-06'}
-                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none disabled:opacity-50"
-                    />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="isCurrent"
-                    checked={expForm.isCurrent}
-                    onChange={(e) => setExpForm({ ...expForm, isCurrent: e.target.checked })}
-                    className="rounded bg-zinc-950 border-zinc-800 text-emerald-600 focus:ring-emerald-500"
-                  />
-                  <label htmlFor="isCurrent" className="text-xs text-zinc-300">
-                    Tôi hiện đang làm việc tại đây
-                  </label>
+          <Modal title="Thêm Kinh Nghiệm Làm Việc" onClose={() => setShowExperienceModal(false)}>
+            <form onSubmit={handleAddExperience} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Field label="Công ty" required>
+                    {(id) => (
+                      <input
+                        id={id}
+                        type="text"
+                        required
+                        value={expForm.company}
+                        onChange={(e) => setExpForm({ ...expForm, company: e.target.value })}
+                        placeholder="VD: Google, VNG"
+                        className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
+                      />
+                    )}
+                  </Field>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Thành tựu chính (Mỗi dòng 1 mục)
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={expForm.achievements}
-                    onChange={(e) => setExpForm({ ...expForm, achievements: e.target.value })}
-                    placeholder="VD: Thiết kế hệ thống microservices phục vụ 100k người dùng..."
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
-                  />
+                  <Field label="Vai trò / Chức danh" required>
+                    {(id) => (
+                      <input
+                        id={id}
+                        type="text"
+                        required
+                        value={expForm.role}
+                        onChange={(e) => setExpForm({ ...expForm, role: e.target.value })}
+                        placeholder="VD: Software Engineer"
+                        className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
+                      />
+                    )}
+                  </Field>
                 </div>
-                <div className="flex justify-end gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowExperienceModal(false)}
-                    className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
-                  >
-                    Huỷ
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[#fff] text-sm font-semibold transition"
-                  >
-                    Thêm Kinh Nghiệm
-                  </button>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Field label="Bắt đầu" required>
+                    {(id) => (
+                      <input
+                        id={id}
+                        type="text"
+                        required
+                        value={expForm.startDate}
+                        onChange={(e) => setExpForm({ ...expForm, startDate: e.target.value })}
+                        placeholder="VD: 2022-01"
+                        className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
+                      />
+                    )}
+                  </Field>
                 </div>
-              </form>
-            </div>
-          </div>
+                <div>
+                  <Field label="Kết thúc">
+                    {(id) => (
+                      <input
+                        id={id}
+                        type="text"
+                        disabled={expForm.isCurrent}
+                        value={expForm.endDate}
+                        onChange={(e) => setExpForm({ ...expForm, endDate: e.target.value })}
+                        placeholder={expForm.isCurrent ? 'Hiện tại' : 'VD: 2024-06'}
+                        className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none disabled:opacity-50"
+                      />
+                    )}
+                  </Field>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="isCurrent"
+                  checked={expForm.isCurrent}
+                  onChange={(e) => setExpForm({ ...expForm, isCurrent: e.target.checked })}
+                  className="rounded bg-zinc-950 border-zinc-800 text-emerald-600 focus:ring-emerald-500"
+                />
+                <label htmlFor="isCurrent" className="text-xs text-zinc-300">
+                  Tôi hiện đang làm việc tại đây
+                </label>
+              </div>
+              <div>
+                <Field label="Thành tựu chính (Mỗi dòng 1 mục)">
+                  {(id) => (
+                    <textarea
+                      id={id}
+                      rows={3}
+                      value={expForm.achievements}
+                      onChange={(e) => setExpForm({ ...expForm, achievements: e.target.value })}
+                      placeholder="VD: Thiết kế hệ thống microservices phục vụ 100k người dùng..."
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-emerald-500 focus:outline-none"
+                    />
+                  )}
+                </Field>
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowExperienceModal(false)}
+                  disabled={submitting}
+                  className="tap-44 px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
+                >
+                  Huỷ
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="tap-44 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-[#fff] text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {submitting ? 'Đang lưu…' : 'Thêm Kinh Nghiệm'}
+                </button>
+              </div>
+            </form>
+          </Modal>
         )}
 
         {/* Modal Goal */}
         {showGoalModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in-95">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-zinc-100">Thêm Mục Tiêu Sự Nghiệp</h3>
+          <Modal title="Thêm Mục Tiêu Sự Nghiệp" onClose={() => setShowGoalModal(false)}>
+            <form onSubmit={handleCreateGoal} className="space-y-4">
+              <div>
+                <Field label="Chức danh / Mục tiêu" required>
+                  {(id) => (
+                    <input
+                      id={id}
+                      type="text"
+                      required
+                      value={goalForm.targetTitle}
+                      onChange={(e) => setGoalForm({ ...goalForm, targetTitle: e.target.value })}
+                      placeholder="VD: Tech Lead, Principal Architect"
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-indigo-500 focus:outline-none"
+                    />
+                  )}
+                </Field>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Field label="Loại hình doanh nghiệp">
+                    {(id) => (
+                      <input
+                        id={id}
+                        type="text"
+                        value={goalForm.targetCompanyType}
+                        onChange={(e) =>
+                          setGoalForm({ ...goalForm, targetCompanyType: e.target.value })
+                        }
+                        placeholder="VD: Big Tech, Startup Series A"
+                        className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-indigo-500 focus:outline-none"
+                      />
+                    )}
+                  </Field>
+                </div>
+                <div>
+                  <Field label="Khung thời gian">
+                    {(id) => (
+                      <input
+                        id={id}
+                        type="text"
+                        value={goalForm.timeframe}
+                        onChange={(e) => setGoalForm({ ...goalForm, timeframe: e.target.value })}
+                        placeholder="VD: 1-2 năm, Q4 2026"
+                        className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-indigo-500 focus:outline-none"
+                      />
+                    )}
+                  </Field>
+                </div>
+              </div>
+              <div>
+                <Field label="Kỹ năng yêu cầu (*) (Phân cách bằng dấu phẩy)" required>
+                  {(id) => (
+                    <input
+                      id={id}
+                      type="text"
+                      required
+                      value={goalForm.skillsRequired}
+                      onChange={(e) => setGoalForm({ ...goalForm, skillsRequired: e.target.value })}
+                      placeholder="VD: System Design, Kubernetes, English C1, Leadership"
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-indigo-500 focus:outline-none"
+                    />
+                  )}
+                </Field>
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
                 <button
+                  type="button"
                   onClick={() => setShowGoalModal(false)}
-                  className="text-zinc-500 hover:text-zinc-300"
+                  disabled={submitting}
+                  className="tap-44 px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
                 >
-                  <X className="w-5 h-5" />
+                  Huỷ
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="tap-44 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-[#fff] text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {submitting ? 'Đang lưu…' : 'Tạo Mục Tiêu'}
                 </button>
               </div>
-              <form onSubmit={handleCreateGoal} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Chức danh / Mục tiêu (*)
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={goalForm.targetTitle}
-                    onChange={(e) => setGoalForm({ ...goalForm, targetTitle: e.target.value })}
-                    placeholder="VD: Tech Lead, Principal Architect"
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-indigo-500 focus:outline-none"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-400 mb-1">
-                      Loại hình doanh nghiệp
-                    </label>
-                    <input
-                      type="text"
-                      value={goalForm.targetCompanyType}
-                      onChange={(e) =>
-                        setGoalForm({ ...goalForm, targetCompanyType: e.target.value })
-                      }
-                      placeholder="VD: Big Tech, Startup Series A"
-                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-indigo-500 focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-zinc-400 mb-1">
-                      Khung thời gian
-                    </label>
-                    <input
-                      type="text"
-                      value={goalForm.timeframe}
-                      onChange={(e) => setGoalForm({ ...goalForm, timeframe: e.target.value })}
-                      placeholder="VD: 1-2 năm, Q4 2026"
-                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-indigo-500 focus:outline-none"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Kỹ năng yêu cầu (*) (Phân cách bằng dấu phẩy)
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={goalForm.skillsRequired}
-                    onChange={(e) => setGoalForm({ ...goalForm, skillsRequired: e.target.value })}
-                    placeholder="VD: System Design, Kubernetes, English C1, Leadership"
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-indigo-500 focus:outline-none"
-                  />
-                </div>
-                <div className="flex justify-end gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowGoalModal(false)}
-                    className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
-                  >
-                    Huỷ
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-[#fff] text-sm font-semibold transition"
-                  >
-                    Tạo Mục Tiêu
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+            </form>
+          </Modal>
         )}
       </main>
     </div>

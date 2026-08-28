@@ -12,9 +12,12 @@ import {
   Calendar,
   CheckCircle2,
   Trophy,
-  X,
   Heart,
 } from 'lucide-react'
+import Modal from '../../../components/Modal'
+import Field from '../../../components/Field'
+import { vnDateStr } from '../../../lib/date'
+import LoadError from '../../../components/LoadError'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { useToast } from '@core/ToastProvider'
@@ -49,6 +52,10 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
   const [wellbeingChecks, setWellbeingChecks] = useState<WellbeingCheck[]>([])
   const [milestones, setMilestones] = useState<GrowthMilestone[]>([])
   const [loading, setLoading] = useState(true)
+  // Lỗi TẢI dữ liệu — tách khỏi trạng thái rỗng, xem components/LoadError.tsx.
+  const [loadError, setLoadError] = useState<string | null>(null)
+  // Chặn gửi trùng: mạng chậm mà bấm "Lưu" hai lần sẽ tạo ra hai bản ghi.
+  const [submitting, setSubmitting] = useState(false)
   const [activeTab, setActiveTab] = useState<'habits' | 'wellbeing' | 'plans' | 'milestones'>(
     'habits',
   )
@@ -89,21 +96,22 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
     setLoading(true)
     try {
       const [hList, wList, pList, mList] = await Promise.all([
-        listHabits().catch(() => []),
-        listWellbeingChecks().catch(() => []),
-        listLifePlans().catch(() => []),
-        listGrowthMilestones().catch(() => []),
+        listHabits(),
+        listWellbeingChecks(),
+        listLifePlans(),
+        listGrowthMilestones(),
       ])
       setHabits(hList)
       setWellbeingChecks(wList)
       setPlans(pList)
       setMilestones(mList)
-    } catch {
-      toast.error('Lỗi khi tải dữ liệu Life Foundation')
+      setLoadError(null)
+    } catch (err: unknown) {
+      setLoadError(err instanceof Error ? err.message : 'Lỗi khi tải dữ liệu Life Foundation')
     } finally {
       setLoading(false)
     }
-  }, [toast])
+  }, [])
 
   useEffect(() => {
     // Gọi qua then() để mọi setState chạy trong callback bất đồng bộ
@@ -113,6 +121,8 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
 
   const handleCreateHabit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     try {
       const created = await createHabit({
         title: habitForm.title,
@@ -126,33 +136,37 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
       toast.success('Đã thêm thói quen mới!')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Lỗi khi tạo thói quen')
+    } finally {
+      setSubmitting(false)
     }
   }
 
+  // Đang gửi check-in cho thói quen nào (khoá nút, chặn bấm dồn).
+  const [loggingHabitId, setLoggingHabitId] = useState<string | null>(null)
+  // Hôm nay theo múi giờ VN — cùng luật với server (packages/core-db/date.ts).
+  const today = vnDateStr()
+
   const handleLogHabit = async (habitId: string) => {
+    if (loggingHabitId) return
+    setLoggingHabitId(habitId)
     try {
       await logHabit({ habitId, count: 1 })
-      setHabits((prev) =>
-        prev.map((h) => {
-          if (h.id === habitId) {
-            const nextStreak = h.currentStreak + 1
-            return {
-              ...h,
-              currentStreak: nextStreak,
-              bestStreak: Math.max(h.bestStreak, nextStreak),
-            }
-          }
-          return h
-        }),
-      )
+      // Đọc LẠI từ server thay vì tự cộng `currentStreak + 1` ở client: streak là
+      // chuỗi ngày liên tiếp do server tính (đứt quãng thì reset, cùng ngày thì
+      // không cộng), client đoán sẽ lệch với con số thật.
+      setHabits(await listHabits())
       toast.success('🔥 Check-in thói quen thành công!')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Lỗi khi check-in thói quen')
+    } finally {
+      setLoggingHabitId(null)
     }
   }
 
   const handleRecordWellbeing = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     try {
       const created = await recordWellbeingCheck({
         moodScore: Number(wellbeingForm.moodScore),
@@ -166,11 +180,15 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
       toast.success('Đã lưu nhật ký tâm trạng & sức khỏe!')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Lỗi khi lưu wellbeing')
+    } finally {
+      setSubmitting(false)
     }
   }
 
   const handleCreatePlan = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     try {
       const created = await createLifePlan({
         title: planForm.title,
@@ -189,11 +207,15 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
       toast.success('Đã tạo kế hoạch cuộc sống!')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Lỗi khi tạo kế hoạch')
+    } finally {
+      setSubmitting(false)
     }
   }
 
   const handleCreateMilestone = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
     try {
       const created = await createGrowthMilestone({
         title: milestoneForm.title,
@@ -212,6 +234,8 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
       toast.success('🎉 Đã thêm cột mốc phát triển bản thân!')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Lỗi khi tạo cột mốc')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -238,7 +262,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => nav('/life/wheel')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-rose-500 hover:bg-rose-400 text-black text-sm font-bold shadow-sm transition"
+            className="tap-44 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-rose-500 hover:bg-rose-400 text-black text-sm font-bold shadow-sm transition"
             title="Bánh xe cuộc đời"
           >
             <Heart className="w-4 h-4" />
@@ -247,7 +271,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
           <button
             onClick={loadData}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-sm font-medium border border-zinc-800 transition shadow-sm"
+            className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-sm font-medium border border-zinc-800 transition shadow-sm"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             Làm mới
@@ -259,7 +283,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
       <div className="flex items-center gap-2 border-b border-zinc-800 pb-2">
         <button
           onClick={() => setActiveTab('habits')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
+          className={`tap-44 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
             activeTab === 'habits'
               ? 'bg-rose-600/20 text-rose-400 theme-light:text-rose-800 border border-rose-500/30'
               : 'text-zinc-400 hover:text-zinc-200'
@@ -270,7 +294,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
         </button>
         <button
           onClick={() => setActiveTab('wellbeing')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
+          className={`tap-44 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
             activeTab === 'wellbeing'
               ? 'bg-rose-600/20 text-rose-400 theme-light:text-rose-800 border border-rose-500/30'
               : 'text-zinc-400 hover:text-zinc-200'
@@ -281,7 +305,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
         </button>
         <button
           onClick={() => setActiveTab('plans')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
+          className={`tap-44 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
             activeTab === 'plans'
               ? 'bg-rose-600/20 text-rose-400 theme-light:text-rose-800 border border-rose-500/30'
               : 'text-zinc-400 hover:text-zinc-200'
@@ -292,7 +316,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
         </button>
         <button
           onClick={() => setActiveTab('milestones')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
+          className={`tap-44 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition ${
             activeTab === 'milestones'
               ? 'bg-rose-600/20 text-rose-400 theme-light:text-rose-800 border border-rose-500/30'
               : 'text-zinc-400 hover:text-zinc-200'
@@ -308,6 +332,12 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
           <Loader2 className="w-8 h-8 text-rose-400 theme-light:text-rose-800 animate-spin mb-4" />
           <p className="text-zinc-400 text-sm">Đang tải dữ liệu cuộc sống...</p>
         </div>
+      ) : loadError ? (
+        // Lỗi TẢI phải được ưu tiên hơn trạng thái rỗng: nếu không, mất mạng lại
+        // hiện ra đúng màn "chưa có gì" và người dùng tưởng mất dữ liệu.
+        <div className="mt-6">
+          <LoadError message={loadError} onRetry={() => void loadData()} retrying={loading} />
+        </div>
       ) : (
         <div>
           {/* Tab 1: Habits */}
@@ -319,7 +349,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                 </h3>
                 <button
                   onClick={() => setShowHabitModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-[#fff] text-xs font-semibold shadow-md transition"
+                  className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-[#fff] text-xs font-semibold shadow-md transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Thêm thói quen
@@ -361,12 +391,20 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                       </div>
 
                       <div className="mt-4 pt-3 border-t border-zinc-800 flex justify-end">
+                        {/* Đã check-in hôm nay thì nút phải NÓI RA điều đó và khoá lại:
+                            trước đây nút bấm được vô hạn, mỗi lần bấm streak lại nhảy
+                            thêm một ngày. */}
                         <button
                           onClick={() => handleLogHabit(habit.id)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 theme-light:text-emerald-800 border border-emerald-500/30 text-xs font-semibold transition"
+                          disabled={habit.lastLoggedAt === today || loggingHabitId === habit.id}
+                          className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600/20 enabled:hover:bg-emerald-600/30 text-emerald-300 theme-light:text-emerald-800 border border-emerald-500/30 text-xs font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
                         >
                           <CheckCircle2 className="w-3.5 h-3.5" />
-                          Hoàn thành hôm nay
+                          {habit.lastLoggedAt === today
+                            ? 'Đã xong hôm nay ✓'
+                            : loggingHabitId === habit.id
+                              ? 'Đang ghi nhận…'
+                              : 'Hoàn thành hôm nay'}
                         </button>
                       </div>
                     </div>
@@ -385,7 +423,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                 </h3>
                 <button
                   onClick={() => setShowWellbeingModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-[#fff] text-xs font-semibold shadow-md transition"
+                  className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-[#fff] text-xs font-semibold shadow-md transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Check-in Tâm Trạng
@@ -456,7 +494,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                 <h3 className="text-base font-semibold text-zinc-200">Kế Hoạch Cuộc Sống</h3>
                 <button
                   onClick={() => setShowPlanModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-[#fff] text-xs font-semibold shadow-md transition"
+                  className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-[#fff] text-xs font-semibold shadow-md transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Tạo kế hoạch
@@ -498,7 +536,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                               p.status === 'completed' ? 'active' : 'completed',
                             ).then(loadData)
                           }
-                          className="text-xs text-rose-400 theme-light:text-rose-800 hover:text-rose-300 transition font-medium"
+                          className="tap-44 text-xs text-rose-400 theme-light:text-rose-800 hover:text-rose-300 transition font-medium"
                         >
                           {p.status === 'completed' ? 'Mở lại' : 'Hoàn tất'}
                         </button>
@@ -519,7 +557,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                 </h3>
                 <button
                   onClick={() => setShowMilestoneModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-[#fff] text-xs font-semibold shadow-md transition"
+                  className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-[#fff] text-xs font-semibold shadow-md transition"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Thêm cột mốc
@@ -564,384 +602,378 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
 
       {/* Modal Habit */}
       {showHabitModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-zinc-100">Thêm Thói Quen Mới</h3>
-              <button
-                onClick={() => setShowHabitModal(false)}
-                className="text-zinc-500 hover:text-zinc-300"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <form onSubmit={handleCreateHabit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  Tên thói quen (*)
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={habitForm.title}
-                  onChange={(e) => setHabitForm({ ...habitForm, title: e.target.value })}
-                  placeholder="VD: Luyện phát âm 15 phút, Đọc sách"
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label
-                    htmlFor="life-habit-goal"
-                    className="block text-xs font-medium text-zinc-400 mb-1"
-                  >
-                    Mục tiêu thói quen
-                  </label>
-                  <select
-                    id="life-habit-goal"
-                    value={habitForm.habitType}
-                    onChange={(e) =>
-                      setHabitForm({
-                        ...habitForm,
-                        habitType: e.target.value as 'build' | 'break',
-                      })
-                    }
+        <Modal title="Thêm Thói Quen Mới" onClose={() => setShowHabitModal(false)}>
+          <form onSubmit={handleCreateHabit} className="space-y-4">
+            <div>
+              <Field label="Tên thói quen" required>
+                {(id) => (
+                  <input
+                    id={id}
+                    type="text"
+                    required
+                    value={habitForm.title}
+                    onChange={(e) => setHabitForm({ ...habitForm, title: e.target.value })}
+                    placeholder="VD: Luyện phát âm 15 phút, Đọc sách"
                     className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
-                  >
-                    <option value="build">Build (Xây dựng)</option>
-                    <option value="break">Break (Bỏ thói quen xấu)</option>
-                  </select>
-                </div>
-                <div>
-                  <label
-                    htmlFor="life-habit-frequency"
-                    className="block text-xs font-medium text-zinc-400 mb-1"
-                  >
-                    Tần suất
-                  </label>
-                  <select
-                    id="life-habit-frequency"
-                    value={habitForm.frequency}
-                    onChange={(e) =>
-                      setHabitForm({
-                        ...habitForm,
-                        frequency: e.target.value as 'daily' | 'weekly' | 'custom',
-                      })
-                    }
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
-                  >
-                    <option value="daily">Hàng ngày (Daily)</option>
-                    <option value="weekly">Hàng tuần (Weekly)</option>
-                    <option value="custom">Tùy biến</option>
-                  </select>
-                </div>
-              </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowHabitModal(false)}
-                  className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
-                >
-                  Huỷ
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-[#fff] text-sm font-semibold transition"
-                >
-                  Tạo Thói Quen
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Modal Wellbeing */}
-      {showWellbeingModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-zinc-100">Check-in Sức Khỏe & Tâm Trạng</h3>
-              <button
-                onClick={() => setShowWellbeingModal(false)}
-                className="text-zinc-500 hover:text-zinc-300"
-              >
-                <X className="w-5 h-5" />
-              </button>
+                  />
+                )}
+              </Field>
             </div>
-            <form onSubmit={handleRecordWellbeing} className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <div className="flex justify-between text-xs font-medium text-zinc-400 mb-1">
-                  <span>Tâm trạng (Mood): {wellbeingForm.moodScore}/10</span>
-                </div>
-                <input
-                  type="range"
-                  min={1}
-                  max={10}
-                  value={wellbeingForm.moodScore}
-                  onChange={(e) =>
-                    setWellbeingForm({ ...wellbeingForm, moodScore: Number(e.target.value) })
-                  }
-                  className="w-full accent-emerald-500"
-                />
-              </div>
-              <div>
-                <div className="flex justify-between text-xs font-medium text-zinc-400 mb-1">
-                  <span>Mức năng lượng (Energy): {wellbeingForm.energyScore}/10</span>
-                </div>
-                <input
-                  type="range"
-                  min={1}
-                  max={10}
-                  value={wellbeingForm.energyScore}
-                  onChange={(e) =>
-                    setWellbeingForm({ ...wellbeingForm, energyScore: Number(e.target.value) })
-                  }
-                  className="w-full accent-amber-500"
-                />
-              </div>
-              <div>
-                <div className="flex justify-between text-xs font-medium text-zinc-400 mb-1">
-                  <span>Mức căng thẳng (Stress): {wellbeingForm.stressScore}/10</span>
-                </div>
-                <input
-                  type="range"
-                  min={1}
-                  max={10}
-                  value={wellbeingForm.stressScore}
-                  onChange={(e) =>
-                    setWellbeingForm({ ...wellbeingForm, stressScore: Number(e.target.value) })
-                  }
-                  className="w-full accent-rose-500"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">Ghi chú thêm</label>
-                <textarea
-                  rows={2}
-                  value={wellbeingForm.notes}
-                  onChange={(e) => setWellbeingForm({ ...wellbeingForm, notes: e.target.value })}
-                  placeholder="Hôm nay bạn cảm thấy thế nào? Có điều gì đáng nhớ..."
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
-                />
-              </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowWellbeingModal(false)}
-                  className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
+                <label
+                  htmlFor="life-habit-goal"
+                  className="block text-xs font-medium text-zinc-400 mb-1"
                 >
-                  Huỷ
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-[#fff] text-sm font-semibold transition"
-                >
-                  Lưu Check-in
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Modal Plan */}
-      {showPlanModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-zinc-100">Tạo Kế Hoạch Cuộc Sống</h3>
-              <button
-                onClick={() => setShowPlanModal(false)}
-                className="text-zinc-500 hover:text-zinc-300"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <form onSubmit={handleCreatePlan} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  Tiêu đề kế hoạch (*)
+                  Mục tiêu thói quen
                 </label>
-                <input
-                  type="text"
-                  required
-                  value={planForm.title}
-                  onChange={(e) => setPlanForm({ ...planForm, title: e.target.value })}
-                  placeholder="VD: Kế hoạch rèn luyện Q4"
+                <select
+                  id="life-habit-goal"
+                  value={habitForm.habitType}
+                  onChange={(e) =>
+                    setHabitForm({
+                      ...habitForm,
+                      habitType: e.target.value as 'build' | 'break',
+                    })
+                  }
                   className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
-                />
+                >
+                  <option value="build">Build (Xây dựng)</option>
+                  <option value="break">Break (Bỏ thói quen xấu)</option>
+                </select>
               </div>
               <div>
                 <label
-                  htmlFor="life-plan-cycle"
+                  htmlFor="life-habit-frequency"
                   className="block text-xs font-medium text-zinc-400 mb-1"
                 >
-                  Loại chu kỳ
+                  Tần suất
                 </label>
                 <select
-                  id="life-plan-cycle"
-                  value={planForm.planType}
+                  id="life-habit-frequency"
+                  value={habitForm.frequency}
                   onChange={(e) =>
-                    setPlanForm({ ...planForm, planType: e.target.value as LifePlan['planType'] })
+                    setHabitForm({
+                      ...habitForm,
+                      frequency: e.target.value as 'daily' | 'weekly' | 'custom',
+                    })
                   }
                   className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
                 >
                   <option value="daily">Hàng ngày (Daily)</option>
                   <option value="weekly">Hàng tuần (Weekly)</option>
-                  <option value="monthly">Hàng tháng (Monthly)</option>
-                  <option value="quarterly">Hàng quý (Quarterly)</option>
-                  <option value="yearly">Hàng năm (Yearly)</option>
+                  <option value="custom">Tùy biến</option>
                 </select>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Ngày bắt đầu (*)
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={planForm.periodStart}
-                    onChange={(e) => setPlanForm({ ...planForm, periodStart: e.target.value })}
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowHabitModal(false)}
+                disabled={submitting}
+                className="tap-44 px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
+              >
+                Huỷ
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="tap-44 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-[#fff] text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {submitting ? 'Đang lưu…' : 'Tạo Thói Quen'}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {/* Modal Wellbeing */}
+      {showWellbeingModal && (
+        <Modal title="Check-in Sức Khỏe & Tâm Trạng" onClose={() => setShowWellbeingModal(false)}>
+          <form onSubmit={handleRecordWellbeing} className="space-y-4">
+            <div>
+              <label
+                htmlFor="life-wellbeing-mood"
+                className="flex justify-between text-xs font-medium text-zinc-400 mb-1"
+              >
+                <span>Tâm trạng (Mood): {wellbeingForm.moodScore}/10</span>
+              </label>
+              <input
+                id="life-wellbeing-mood"
+                type="range"
+                min={1}
+                max={10}
+                value={wellbeingForm.moodScore}
+                onChange={(e) =>
+                  setWellbeingForm({ ...wellbeingForm, moodScore: Number(e.target.value) })
+                }
+                className="w-full accent-emerald-500"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="life-wellbeing-energy"
+                className="flex justify-between text-xs font-medium text-zinc-400 mb-1"
+              >
+                <span>Mức năng lượng (Energy): {wellbeingForm.energyScore}/10</span>
+              </label>
+              <input
+                id="life-wellbeing-energy"
+                type="range"
+                min={1}
+                max={10}
+                value={wellbeingForm.energyScore}
+                onChange={(e) =>
+                  setWellbeingForm({ ...wellbeingForm, energyScore: Number(e.target.value) })
+                }
+                className="w-full accent-amber-500"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="life-wellbeing-stress"
+                className="flex justify-between text-xs font-medium text-zinc-400 mb-1"
+              >
+                <span>Mức căng thẳng (Stress): {wellbeingForm.stressScore}/10</span>
+              </label>
+              <input
+                id="life-wellbeing-stress"
+                type="range"
+                min={1}
+                max={10}
+                value={wellbeingForm.stressScore}
+                onChange={(e) =>
+                  setWellbeingForm({ ...wellbeingForm, stressScore: Number(e.target.value) })
+                }
+                className="w-full accent-rose-500"
+              />
+            </div>
+            <div>
+              <Field label="Ghi chú thêm">
+                {(id) => (
+                  <textarea
+                    id={id}
+                    rows={2}
+                    value={wellbeingForm.notes}
+                    onChange={(e) => setWellbeingForm({ ...wellbeingForm, notes: e.target.value })}
+                    placeholder="Hôm nay bạn cảm thấy thế nào? Có điều gì đáng nhớ..."
                     className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
                   />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Ngày kết thúc (*)
-                  </label>
+                )}
+              </Field>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowWellbeingModal(false)}
+                disabled={submitting}
+                className="tap-44 px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
+              >
+                Huỷ
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="tap-44 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-[#fff] text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {submitting ? 'Đang lưu…' : 'Lưu Check-in'}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {/* Modal Plan */}
+      {showPlanModal && (
+        <Modal title="Tạo Kế Hoạch Cuộc Sống" onClose={() => setShowPlanModal(false)}>
+          <form onSubmit={handleCreatePlan} className="space-y-4">
+            <div>
+              <Field label="Tiêu đề kế hoạch" required>
+                {(id) => (
                   <input
-                    type="date"
+                    id={id}
+                    type="text"
                     required
-                    value={planForm.periodEnd}
-                    onChange={(e) => setPlanForm({ ...planForm, periodEnd: e.target.value })}
+                    value={planForm.title}
+                    onChange={(e) => setPlanForm({ ...planForm, title: e.target.value })}
+                    placeholder="VD: Kế hoạch rèn luyện Q4"
                     className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
                   />
-                </div>
+                )}
+              </Field>
+            </div>
+            <div>
+              <label
+                htmlFor="life-plan-cycle"
+                className="block text-xs font-medium text-zinc-400 mb-1"
+              >
+                Loại chu kỳ
+              </label>
+              <select
+                id="life-plan-cycle"
+                value={planForm.planType}
+                onChange={(e) =>
+                  setPlanForm({ ...planForm, planType: e.target.value as LifePlan['planType'] })
+                }
+                className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
+              >
+                <option value="daily">Hàng ngày (Daily)</option>
+                <option value="weekly">Hàng tuần (Weekly)</option>
+                <option value="monthly">Hàng tháng (Monthly)</option>
+                <option value="quarterly">Hàng quý (Quarterly)</option>
+                <option value="yearly">Hàng năm (Yearly)</option>
+              </select>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Field label="Ngày bắt đầu" required>
+                  {(id) => (
+                    <input
+                      id={id}
+                      type="date"
+                      required
+                      value={planForm.periodStart}
+                      onChange={(e) => setPlanForm({ ...planForm, periodStart: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
+                    />
+                  )}
+                </Field>
               </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowPlanModal(false)}
-                  className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
-                >
-                  Huỷ
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-[#fff] text-sm font-semibold transition"
-                >
-                  Lưu Kế Hoạch
-                </button>
+              <div>
+                <Field label="Ngày kết thúc" required>
+                  {(id) => (
+                    <input
+                      id={id}
+                      type="date"
+                      required
+                      value={planForm.periodEnd}
+                      onChange={(e) => setPlanForm({ ...planForm, periodEnd: e.target.value })}
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
+                    />
+                  )}
+                </Field>
               </div>
-            </form>
-          </div>
-        </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowPlanModal(false)}
+                disabled={submitting}
+                className="tap-44 px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
+              >
+                Huỷ
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="tap-44 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-[#fff] text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {submitting ? 'Đang lưu…' : 'Lưu Kế Hoạch'}
+              </button>
+            </div>
+          </form>
+        </Modal>
       )}
 
       {/* Modal Milestone */}
       {showMilestoneModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-zinc-100">Thêm Cột Mốc Bản Thân</h3>
-              <button
-                onClick={() => setShowMilestoneModal(false)}
-                className="text-zinc-500 hover:text-zinc-300"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <form onSubmit={handleCreateMilestone} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  Tiêu đề cột mốc (*)
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={milestoneForm.title}
-                  onChange={(e) => setMilestoneForm({ ...milestoneForm, title: e.target.value })}
-                  placeholder="VD: Đạt chứng chỉ IELTS 7.5, Mua nhà đầu tiên"
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label
-                    htmlFor="life-milestone-domain"
-                    className="block text-xs font-medium text-zinc-400 mb-1"
-                  >
-                    Lĩnh vực
-                  </label>
-                  <select
-                    id="life-milestone-domain"
-                    value={milestoneForm.area}
-                    onChange={(e) =>
-                      setMilestoneForm({
-                        ...milestoneForm,
-                        area: e.target.value as GrowthMilestone['area'],
-                      })
-                    }
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
-                  >
-                    <option value="learning">Học tập (Learning)</option>
-                    <option value="career">Sự nghiệp (Career)</option>
-                    <option value="health">Sức khỏe (Health)</option>
-                    <option value="finances">Tài chính (Finances)</option>
-                    <option value="relationships">Mối quan hệ</option>
-                    <option value="creativity">Sáng tạo</option>
-                    <option value="spirituality">Tâm thức</option>
-                    <option value="other">Khác</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-zinc-400 mb-1">
-                    Ngày hoàn thành
-                  </label>
+        <Modal title="Thêm Cột Mốc Bản Thân" onClose={() => setShowMilestoneModal(false)}>
+          <form onSubmit={handleCreateMilestone} className="space-y-4">
+            <div>
+              <Field label="Tiêu đề cột mốc" required>
+                {(id) => (
                   <input
-                    type="date"
-                    value={milestoneForm.achievedAt}
-                    onChange={(e) =>
-                      setMilestoneForm({ ...milestoneForm, achievedAt: e.target.value })
-                    }
+                    id={id}
+                    type="text"
+                    required
+                    value={milestoneForm.title}
+                    onChange={(e) => setMilestoneForm({ ...milestoneForm, title: e.target.value })}
+                    placeholder="VD: Đạt chứng chỉ IELTS 7.5, Mua nhà đầu tiên"
                     className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
                   />
-                </div>
+                )}
+              </Field>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label
+                  htmlFor="life-milestone-domain"
+                  className="block text-xs font-medium text-zinc-400 mb-1"
+                >
+                  Lĩnh vực
+                </label>
+                <select
+                  id="life-milestone-domain"
+                  value={milestoneForm.area}
+                  onChange={(e) =>
+                    setMilestoneForm({
+                      ...milestoneForm,
+                      area: e.target.value as GrowthMilestone['area'],
+                    })
+                  }
+                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
+                >
+                  <option value="learning">Học tập (Learning)</option>
+                  <option value="career">Sự nghiệp (Career)</option>
+                  <option value="health">Sức khỏe (Health)</option>
+                  <option value="finances">Tài chính (Finances)</option>
+                  <option value="relationships">Mối quan hệ</option>
+                  <option value="creativity">Sáng tạo</option>
+                  <option value="spirituality">Tâm thức</option>
+                  <option value="other">Khác</option>
+                </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-400 mb-1">
-                  Mô tả chi tiết
-                </label>
-                <textarea
-                  rows={2}
-                  value={milestoneForm.description}
-                  onChange={(e) =>
-                    setMilestoneForm({ ...milestoneForm, description: e.target.value })
-                  }
-                  placeholder="Cảm xúc, ý nghĩa của cột mốc..."
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
-                />
+                <Field label="Ngày hoàn thành">
+                  {(id) => (
+                    <input
+                      id={id}
+                      type="date"
+                      value={milestoneForm.achievedAt}
+                      onChange={(e) =>
+                        setMilestoneForm({ ...milestoneForm, achievedAt: e.target.value })
+                      }
+                      className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
+                    />
+                  )}
+                </Field>
               </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowMilestoneModal(false)}
-                  className="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
-                >
-                  Huỷ
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-[#fff] text-sm font-semibold transition"
-                >
-                  Lưu Cột Mốc
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+            </div>
+            <div>
+              <Field label="Mô tả chi tiết">
+                {(id) => (
+                  <textarea
+                    id={id}
+                    rows={2}
+                    value={milestoneForm.description}
+                    onChange={(e) =>
+                      setMilestoneForm({ ...milestoneForm, description: e.target.value })
+                    }
+                    placeholder="Cảm xúc, ý nghĩa của cột mốc..."
+                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 text-sm focus:border-rose-500 focus:outline-none"
+                  />
+                )}
+              </Field>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowMilestoneModal(false)}
+                disabled={submitting}
+                className="tap-44 px-4 py-2 rounded-xl bg-zinc-800 text-zinc-300 text-sm hover:bg-zinc-700 transition"
+              >
+                Huỷ
+              </button>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="tap-44 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-[#fff] text-sm font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {submitting ? 'Đang lưu…' : 'Lưu Cột Mốc'}
+              </button>
+            </div>
+          </form>
+        </Modal>
       )}
     </main>
   )
