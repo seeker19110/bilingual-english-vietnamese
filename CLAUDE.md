@@ -116,7 +116,7 @@ Hệ thống được chuẩn hóa theo 10 bộ quy chuẩn SOTA chuyên biệt 
      `CLAUDE.md`/`PROJECT.md`/`docs/*` nếu thay đổi chạm tới.
   2. **Đánh dấu hoàn thành trong dự án** — mục tương ứng ở `PROGRESS.md` (và mục 13 dưới đây nếu
      là hạng mục lớn) chuyển sang trạng thái xong, kèm số PR.
-  3. **Bật auto-merge (squash) ngay** — xem mục 11.
+  3. **Bật auto-merge (squash) ngay; bật không được thì tự merge khi CI xanh** — xem mục 11.
      Lý do: để phiên sau đọc `PROGRESS.md` là biết đủ, không phải lần lại `git log` hay hỏi lại
      người dùng — và không còn cảnh dồn một đống PR đã merge mới ngồi ghi bù.
 - **PR KHÔNG ĐỂ Ở DẠNG NHÁP (draft).** GitHub **từ chối** bật auto-merge trên PR nháp
@@ -238,15 +238,30 @@ Mỗi tính năng/sửa lỗi một nhánh riêng · commit nhỏ, mỗi commit 
 Ngay sau khi tạo PR: **bỏ nháp (nếu đang là draft) → bật auto-merge (squash)** — không hỏi lại.
 Điều này AN TOÀN vì nhánh `main` đã có branch protection với required status check (`quality`,
 `e2e`, `metadata`): auto-merge chỉ merge khi CẢ BA check xanh, check đỏ thì PR nằm nguyên đó.
-Nếu bật auto-merge thất bại (quyền, hoặc repo tắt tính năng), báo lại cho người dùng chứ đừng
-tự merge tay.
+**Bật auto-merge THẤT BẠI thì TỰ MERGE TAY, miễn là CI đã xanh (quy ước người dùng chốt
+2026-08-28, thay cho luật cũ "báo lại người dùng chứ đừng tự merge tay").** Điều kiện đủ để
+merge tay: đã xong TẤT CẢ việc được giao trong phiên + CI xanh (`quality`, `e2e`, `metadata`)
+
+- không xung đột. Khi đó merge (squash) NGAY, không hỏi lại — dù auto-merge có bật được hay
+  không.
+
+Vì sao đổi: auto-merge chỉ là cơ chế XẾP HÀNG CHỜ, nên GitHub từ chối nó ở CẢ HAI đầu —
+lúc CI đang chạy ("unstable status") lẫn lúc CI đã xong ("already in clean status, merge
+directly"). Ở PR #724 nó không có nổi một cửa sổ để bật, khiến PR nằm chờ người dùng bấm
+tay dù mọi cổng đã xanh — đúng thứ mà quy ước auto-merge sinh ra để tránh. Cái người dùng
+muốn là **CI xanh thì PR vào `main`**, không phải **auto-merge phải được bật**; nên khi
+phương tiện hỏng thì đi thẳng tới mục đích.
+
+Vẫn giữ nguyên: **KHÔNG merge tay để đi tắt khi CI CHƯA xanh.** Đó mới là điều cấm.
 
 **BA BƯỚC BẮT BUỘC KHI TẠO PR (quy ước người dùng chốt 2026-08-27) — làm liền một mạch:**
 
 1. **Tạo PR ở trạng thái SẴN SÀNG (ready), không bao giờ để nháp.** Nếu công cụ mặc định tạo
    nháp thì bỏ nháp NGAY. Lý do: GitHub từ chối bật auto-merge trên PR nháp ("Pull request is a
    draft" — đã dính thật ở PR #693).
-2. **Bật auto-merge (squash) ngay** — không hỏi lại.
+2. **Bật auto-merge (squash) ngay** — không hỏi lại. **Bật không được thì cứ để đó và quay lại
+   merge tay khi CI xanh** (xem luật ngay trên): mục tiêu là PR vào `main`, auto-merge chỉ là
+   một cách đạt mục tiêu đó.
 3. **Chỉ gộp `main` khi THẬT SỰ CẦN, đừng gộp theo phản xạ.** Bối cảnh: PR #709 từng kẹt vì
    `mergeable_state` là `behind` — repo khi đó bật "Require branches to be up to date before
    merging", khiến mỗi lần có PR khác merge là mọi PR đang mở phải gộp `main` rồi chờ CI lại
@@ -261,9 +276,9 @@ chung) thì KHÔNG chạy lại toàn bộ cổng ở máy, vì CI đã chạy �
 lại là làm hai lần cùng một việc, tốn ~10 phút mỗi vòng. Merge CÓ xung đột, hoặc `main` chạm file
 mà PR cũng chạm → mới chạy lại đủ cổng ở máy (đây đúng là ca luật mục 9 nhắm tới).
 
-Mục đích của cả ba: **CI xanh là PR tự vào `main`, không cần ai bấm nút.** Việc của AI là giữ cho
-PR luôn ở trạng thái auto-merge nổ được — ready, có auto-merge, không xung đột. **Không merge tay
-để đi tắt** khi CI chưa xanh.
+Mục đích của cả ba: **CI xanh là PR vào `main`, không cần NGƯỜI DÙNG bấm nút.** Việc của AI là
+đưa PR tới đích đó — ready, không xung đột, CI xanh — rồi để auto-merge nổ, hoặc tự merge (squash)
+nếu auto-merge không bật được. **Không merge tay để đi tắt** khi CI chưa xanh.
 
 **Bật auto-merge KHÔNG phải là hết trách nhiệm.** PR mình tạo là PR của mình: nếu CI đỏ thì
 phải đọc log, **tái hiện lỗi ở máy**, sửa và push cho tới khi xanh — không để PR nằm đỏ chờ
