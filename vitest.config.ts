@@ -22,7 +22,8 @@ export default defineConfig({
     // không tốn API, chỉ logic. KHÔNG gồm chính script chạy AI (scripts/eval-tutor.ts) vì nó tốn phí.
     include: [
       'apps/dhcb/src/**/*.test.{ts,tsx}',
-      'apps/server/src/api/**/*.test.ts',
+      // Cả `api/**` lẫn test nằm thẳng trong `apps/server/src/` (vd staticApps.test.ts).
+      'apps/server/src/**/*.test.ts',
       'packages/**/*.test.{ts,tsx}',
       'scripts/**/*.test.ts',
     ],
@@ -33,7 +34,14 @@ export default defineConfig({
       provider: 'v8',
       // Chỉ đo phần LOGIC THUẦN (lib + api). Bỏ UI (.tsx/pages/components),
       // điểm khởi tạo (server.ts) và dữ liệu tĩnh — nơi unit test ít giá trị.
-      include: ['apps/dhcb/src/lib/**/*.ts', 'apps/server/src/api/**/*.ts', 'packages/**/*.ts'],
+      include: [
+        'apps/dhcb/src/lib/**/*.ts',
+        'apps/server/src/api/**/*.ts',
+        // Logic chọn app tĩnh theo Host — hàm thuần, tách khỏi server.ts để đo và test được
+        // (server.ts vẫn nằm ngoài phép đo vì là điểm khởi tạo).
+        'apps/server/src/staticApps.ts',
+        'packages/**/*.ts',
+      ],
       // Loại khỏi phép đo những file mà unit test KHÔNG mang lại giá trị thật — chúng chỉ là
       // lớp vỏ mỏng bọc API trình duyệt/nền tảng, hoặc hook React, hoặc mã khởi tạo. Test cho
       // chúng chủ yếu kiểm chứng chính cái mock ta vừa dựng, gãy mỗi lần refactor, và rủi ro

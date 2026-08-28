@@ -2675,6 +2675,22 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+- 🟡 **[2026-08-28] Repo có HAI file cấu hình Nginx mô tả cùng một server.** `nginx/dhcb.conf`
+  tự nhận là "cấu hình ĐANG CHẠY THẬT trên VPS", trong khi `docs/cloudflare-setup.md` và
+  `docs/runbook-dung-vps-moi-tu-dau.md` lại hướng dẫn copy `nginx/en-vi.conf`. Không biết bản
+  nào mới là bản trên VPS thì mọi thay đổi Nginx đều là đoán. Đợt thêm `hub.donghanhcungban.org`
+  (changelog 0191) đã sửa CẢ HAI cho khớp, nhưng đó là chữa triệu chứng. Việc cần làm: SSH lên
+  VPS đọc `/etc/nginx/sites-enabled/`, giữ đúng một file trong repo, xoá file kia và sửa tài
+  liệu trỏ theo.
+- 🟡 **[2026-08-28] Đăng nhập KHÔNG tự nối tiếp sang subdomain khác dù cookie đã dùng chung.**
+  `packages/core-auth/sessionCookie.ts` đã phát cookie `Domain=.donghanhcungban.org` cho mọi
+  subdomain và `validateAuth` chấp nhận cookie khi thiếu Bearer — nhưng phía client
+  `getCurrentUser()` (`packages/core-ui/clientAuth.ts:491`) **trả `null` ngay** nếu không có
+  token trong `localStorage`, không thử cookie. Vì `localStorage` cô lập theo origin, người
+  dùng đang đăng nhập ở `www.` mở `hub.`/subdomain môn mới sẽ thấy mình bị đăng xuất, dù cookie
+  vẫn còn. Chưa gây hại vì hub là trang giới thiệu công khai; nhưng phải xử lý TRƯỚC khi đưa
+  bất kỳ trang CẦN ĐĂNG NHẬP nào sang subdomain riêng.
+
 - 🟡 **[2026-08-28 — rà UI/UX 5 trang trụ cột, xem `docs/changelog/0186-*.md`] Ba việc còn để
   ngỏ, cần người dùng quyết hoặc tách đợt riêng.**
 
