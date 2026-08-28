@@ -89,6 +89,13 @@ export const KHAC_BIET = [
       'Đủ cho mọi bài của khoá, nơi thuộc tính tính chỉ dẫn xuất từ dữ liệu không đổi. Bài nào cần tính lại theo trạng thái thay đổi thì phải dùng hàm.',
   },
   {
+    diem: '`super` với THUỘC TÍNH',
+    boChay: '`super.f()` (hàm) chạy đúng; `super.x` với x là thuộc tính bị ghi đè thì báo lỗi.',
+    kotlinThat: '`super.x` lấy được giá trị bản khai ở lớp cha.',
+    viSao:
+      'Bộ chạy giữ MỘT ô nhớ cho mỗi tên thuộc tính, nên bản ghi đè thay chỗ bản của cha — không còn gì để trả về. Báo lỗi thẳng còn hơn trả âm thầm giá trị của lớp con.',
+  },
+  {
     diem: 'Tràn số nguyên',
     boChay: 'Dùng số của JavaScript — số rất lớn mất độ chính xác thay vì tràn vòng.',
     kotlinThat: 'Int 32-bit tràn vòng, Long 64-bit.',

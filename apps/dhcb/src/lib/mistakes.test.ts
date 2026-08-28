@@ -12,6 +12,7 @@ import {
   deleteMistake,
   syncMistakes,
   scheduleMistakeSync,
+  deleteMistakeSynced,
   type MistakeInput,
 } from './mistakes'
 
@@ -231,5 +232,162 @@ describe('Mistake Bank (sổ lỗi cá nhân)', () => {
       vi.unstubAllGlobals()
       vi.useRealTimers()
     })
+  })
+})
+
+// ── Ca biên: dữ liệu hỏng, hết dung lượng, trần lưu trữ, đồng bộ thất bại ─────────────────
+//
+// Những đường này đều là nhánh "nuốt lỗi" — cả module cố ý không bao giờ throw để việc lưu sổ
+// lỗi không làm gãy luồng Chat/Viết/Nói. Không có test canh thì một lần refactor lỡ tay để lọt
+// exception ra ngoài sẽ làm hỏng đúng những luồng đó, và không cổng nào bắt được.
+describe('Mistake Bank — ca biên', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('localStorage chua JSON hong thi coi nhu so rong, khong nem loi', () => {
+    localStorage.setItem('et_mistakes_u9', '{khong-phai-json')
+    expect(getMistakes('u9')).toEqual([])
+  })
+
+  it('localStorage chua JSON hop le nhung khong phai mang thi coi nhu so rong', () => {
+    localStorage.setItem('et_mistakes_u9', '{"a":1}')
+    expect(getMistakes('u9')).toEqual([])
+  })
+
+  it('localStorage het dung luong (setItem nem loi) thi addMistake khong nem ra ngoai', () => {
+    const goc = Storage.prototype.setItem
+    Storage.prototype.setItem = () => {
+      throw new Error('QuotaExceededError')
+    }
+    try {
+      expect(() => addMistake('u9', M())).not.toThrow()
+    } finally {
+      Storage.prototype.setItem = goc
+    }
+  })
+
+  it('cat bot truong qua dai (tran 500 ky tu)', () => {
+    addMistake('u9', M({ wrong: 'x'.repeat(600), corrected: 'y'.repeat(600) }))
+    const [m] = getMistakes('u9')
+    expect(m!.wrong).toHaveLength(500)
+    expect(m!.corrected).toHaveLength(500)
+  })
+
+  it('vuot tran 200 the thi giu lai the LAP NHIEU nhat', () => {
+    // 200 thẻ lặp 1 lần + 1 thẻ lặp 2 lần; thẻ thứ 201 phải đẩy một thẻ lặp-1 ra ngoài.
+    addMistake('u9', M({ wrong: 'lap nhieu lan' }))
+    addMistake('u9', M({ wrong: 'lap nhieu lan' })) // count = 2
+    for (let i = 0; i < 205; i++) addMistake('u9', M({ wrong: `cau sai so ${i}` }))
+    const all = getMistakes('u9')
+    expect(all).toHaveLength(200)
+    expect(all.some((m) => m.wrong === 'lap nhieu lan')).toBe(true)
+  })
+
+  it('syncMistakes: server tra ve khong-ok thi giu nguyen so cuc bo', async () => {
+    addMistake('u9', M())
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, json: async () => ({}) }))
+    const r = await syncMistakes('u9')
+    expect(r).toHaveLength(1)
+    vi.unstubAllGlobals()
+  })
+
+  it('syncMistakes: than phan hoi khong co mang "mistakes" thi giu nguyen so cuc bo', async () => {
+    addMistake('u9', M())
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => ({ ok: 1 }) }))
+    const r = await syncMistakes('u9')
+    expect(r).toHaveLength(1)
+    vi.unstubAllGlobals()
+  })
+
+  it('syncMistakes: mat mang thi tra ve so cuc bo, khong nem loi', async () => {
+    addMistake('u9', M())
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')))
+    await expect(syncMistakes('u9')).resolves.toHaveLength(1)
+    vi.unstubAllGlobals()
+  })
+
+  it('syncMistakes: chua dang nhap thi tra ve rong va khong goi server', async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    await expect(syncMistakes('')).resolves.toEqual([])
+    expect(fetchMock).not.toHaveBeenCalled()
+    vi.unstubAllGlobals()
+  })
+
+  it('hop nhat voi ban server: count/reviewCount lay gia tri LON hon', async () => {
+    addMistake('u9', M())
+    const cuc = getMistakes('u9')[0]!
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          mistakes: [{ ...cuc, count: 7, reviewCount: 4, lastReviewedAt: 1_000 }],
+        }),
+      }),
+    )
+    const r = await syncMistakes('u9')
+    expect(r).toHaveLength(1)
+    expect(r[0]!.count).toBe(7)
+    expect(r[0]!.reviewCount).toBe(4)
+    // Bản cục bộ chưa ôn (null) → "cần ôn lại" thắng.
+    expect(r[0]!.lastReviewedAt).toBeNull()
+    vi.unstubAllGlobals()
+  })
+
+  it('hop nhat: the CHI CO o server duoc giu lai', async () => {
+    addMistake('u9', M())
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          mistakes: [
+            {
+              id: 'tu-server',
+              wrong: 'chi co o server',
+              corrected: 'ban dung',
+              explanation: 'gt',
+              source: 'chat',
+              dir: 'A',
+              createdAt: 5,
+              count: 1,
+              lastReviewedAt: null,
+              reviewCount: 0,
+            },
+          ],
+        }),
+      }),
+    )
+    const r = await syncMistakes('u9')
+    expect(r.map((m) => m.wrong)).toContain('chi co o server')
+    vi.unstubAllGlobals()
+  })
+
+  it('deleteMistakeSynced xoa cuc bo ngay va bao server', async () => {
+    addMistake('u9', M())
+    const id = getMistakes('u9')[0]!.id
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true })
+    vi.stubGlobal('fetch', fetchMock)
+    await deleteMistakeSynced('u9', id)
+    expect(getMistakes('u9')).toEqual([])
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    vi.unstubAllGlobals()
+  })
+
+  it('deleteMistakeSynced: server loi thi van xoa cuc bo, khong nem ra ngoai', async () => {
+    addMistake('u9', M())
+    const id = getMistakes('u9')[0]!.id
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')))
+    await expect(deleteMistakeSynced('u9', id)).resolves.toBeUndefined()
+    expect(getMistakes('u9')).toEqual([])
+    vi.unstubAllGlobals()
+  })
+
+  it('deleteMistakeSynced bo qua khi userId rong', async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    await deleteMistakeSynced('', 'bat-ky')
+    expect(fetchMock).not.toHaveBeenCalled()
+    vi.unstubAllGlobals()
   })
 })

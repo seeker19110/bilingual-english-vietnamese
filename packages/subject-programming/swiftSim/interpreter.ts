@@ -353,9 +353,8 @@ export class BoChay {
     this.demBuoc(l.vt.dong)
     switch (l.k) {
       case 'khaiBao': {
-        if (moi.co(l.ten) && moi.tim(l.ten) && this.toanCuc !== moi) {
-          // Swift cho phép che biến ở scope trong; chỉ chặn khai TRÙNG trong cùng một scope.
-        }
+        // Ghi chú: Swift cho phép CHE biến ở scope trong, nên khai trùng tên không phải lỗi ở
+        // đây — bộ chạy không kiểm gì thêm trước khi khai.
         const tho = l.gia ? this.bieuThuc(l.gia, moi) : KHONG
         const gia = this.bocTheoKieu(chepGia(tho), l.kieu)
         this.kiemKieuKhai(gia, l.kieu, l.ten, l.vt.dong)
