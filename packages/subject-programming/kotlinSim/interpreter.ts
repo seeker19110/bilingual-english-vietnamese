@@ -72,6 +72,12 @@ export interface TuyChonChay {
   tranKyTu?: number
 }
 
+/**
+ * Khoá ẩn giữ tên lớp CHA của lớp đang khai phương thức chạy dở — chỗ `super.x` bắt đầu tra.
+ * Có "$" nên lexer không sinh ra được định danh trùng, không sợ va chạm với biến của học viên.
+ */
+const KHOA_SUPER = 'super$lop'
+
 /** Lỗi do `throw` của học viên — khác LoiKotlin (lỗi của bộ chạy khi mã sai). */
 export class LoiNem extends Error {
   constructor(
@@ -132,7 +138,8 @@ export function inGia(g: Gia): string {
     case 'unit':
       return 'kotlin.Unit'
     case 'ds':
-      return g.tap === true ? `[${g.pt.map(inGia).join(', ')}]` : `[${g.pt.map(inGia).join(', ')}]`
+      // Kotlin in Set y hệt List: `[1, 2]` — nên không tách nhánh theo `g.tap`.
+      return `[${g.pt.map(inGia).join(', ')}]`
     case 'map':
       return `{${g.cap.map((c) => `${inGia(c.khoa)}=${inGia(c.gia)}`).join(', ')}}`
     case 'cap':
@@ -1039,27 +1046,64 @@ export class BoChay {
         e.vt.dong,
       )
     }
-    return this.thanhVien(o, e.ten, e.vt)
+    return this.thanhVien(
+      o,
+      e.ten,
+      e.vt,
+      e.doiTuong.k === 'super' ? this.lopSuperCua(mt, e.vt) : undefined,
+    )
   }
 
-  private thanhVien(o: Gia, ten: string, vt: ViTri): Gia {
+  /** Lớp CHA để `super` bắt đầu tra — không có nghĩa là lớp hiện tại không kế thừa ai. */
+  private lopSuperCua(mt: MoiTruong, vt: ViTri): string | undefined {
+    const o = mt.timO(KHOA_SUPER)
+    if (o === undefined || o.gia.k !== 'lop') {
+      throw new LoiKotlin(
+        'Lop nay khong ke thua lop nao nen khong dung duoc "super". Them ": LopCha()" vao khai bao lop, hoac bo "super".',
+        vt.dong,
+      )
+    }
+    return o.gia.ten
+  }
+
+  /**
+   * `batDauTu` = tên lớp bắt đầu tra phương thức. Chỉ `super.x` truyền vào (lớp CHA của lớp
+   * đang khai phương thức chạy dở); mọi lời gọi thường để trống và tra từ lớp của đối tượng.
+   */
+  private thanhVien(o: Gia, ten: string, vt: ViTri, batDauTu?: string): Gia {
     // Thuộc tính của đối tượng / enum
     if (o.k === 'doiTuong' || o.k === 'enum') {
-      const t = o.truong.get(ten)
+      const t = batDauTu === undefined ? o.truong.get(ten) : undefined
       if (t !== undefined) return t.gia
-      if (o.k === 'enum') {
+      if (o.k === 'enum' && batDauTu === undefined) {
         if (ten === 'name') return { k: 'chuoi', gia: o.ten }
         if (ten === 'ordinal') return { k: 'int', gia: o.thuTu }
       }
-      const h = this.timHam(tenKieuCua(o), ten)
-      if (h !== undefined) {
+      const tim = this.timHamKemLop(batDauTu ?? tenKieuCua(o), ten)
+      if (tim !== undefined) {
+        const h = tim.ham
         // Kotlin cho viết `ten` thay cho `this.ten` trong thân lớp, nên môi trường của phương
         // thức phải thấy thẳng các thuộc tính của chính đối tượng — thiếu bước này thì mọi
         // phương thức đọc thuộc tính đều báo "chua khai bao".
         const dong = new MoiTruong(this.toanCuc)
         dong.khai('this', { gia: o, hangSo: true, coTheNull: false })
         for (const [k2, v] of o.truong) dong.khai(k2, v)
+        // Ghi lớp cha của lớp KHAI phương thức này, để `super.x` bên trong thân tra đúng chỗ.
+        // Tên có "$" nên không định danh Kotlin nào trùng được (lexer chỉ nhận chữ/số/gạch dưới).
+        const cha = this.lop.get(tim.lopKhaiBao)?.cha?.ten
+        if (cha !== undefined) {
+          dong.khai(KHOA_SUPER, { gia: { k: 'lop', ten: cha }, hangSo: true, coTheNull: false })
+        }
         return { k: 'ham', ten, thamSo: h.thamSo, than: h.than, dong, tuThan: o }
+      }
+      // `super.ten` với `ten` là THUỘC TÍNH: bộ chạy chỉ giữ MỘT ô cho mỗi tên, nên giá trị của
+      // lớp cha đã bị bản ghi đè thay thế — không có gì để trả về. Nói thẳng ra thay vì báo
+      // "lop khong co ten" (sai lệch: lớp có, chỉ là super không lấy được).
+      if (batDauTu !== undefined && o.truong.has(ten)) {
+        throw new LoiKotlin(
+          `"super.${ten}" khong dung duoc trong bo chay nay vi "${ten}" la THUOC TINH, khong phai ham — bo chay chi giu mot o cho moi ten nen gia tri cua lop cha khong con. Doi thanh ham roi goi "super.${ten}()", hoac dat hai ten khac nhau.`,
+          vt.dong,
+        )
       }
       // Thuộc tính tính (get()) đã được dựng sẵn khi tạo đối tượng, nên tới đây là không có.
       throw new LoiKotlin(
@@ -1104,17 +1148,30 @@ export class BoChay {
   }
 
   private timHam(lop: string, ten: string): KhaiBaoHam | undefined {
+    return this.timHamKemLop(lop, ten)?.ham
+  }
+
+  /**
+   * Như `timHam`, nhưng trả kèm TÊN LỚP đã khai hàm đó.
+   *
+   * Cần tên lớp khai báo để `super.f()` biết bắt đầu tra từ đâu: nếu chỉ biết lớp của đối
+   * tượng thì `super.f()` trong thân `f` sẽ tìm lại đúng `f` vừa ghi đè và gọi vòng vô tận.
+   */
+  private timHamKemLop(
+    lop: string,
+    ten: string,
+  ): { ham: KhaiBaoHam; lopKhaiBao: string } | undefined {
     let cur: string | undefined = lop
     while (cur !== undefined) {
       const kb: KhaiBaoKieu | undefined = this.lop.get(cur)
       if (kb === undefined) return undefined
       const h = kb.ham.find((x) => x.ten === ten && !x.truuTuong)
-      if (h !== undefined) return h
+      if (h !== undefined) return { ham: h, lopKhaiBao: cur }
       // Hàm mặc định của interface.
       for (const g of kb.giaoDien) {
         const kg = this.lop.get(g)
         const hg = kg?.ham.find((x) => x.ten === ten && !x.truuTuong)
-        if (hg !== undefined) return hg
+        if (hg !== undefined) return { ham: hg, lopKhaiBao: g }
       }
       cur = kb.cha?.ten
     }
@@ -1173,6 +1230,12 @@ export class BoChay {
           `Goi "${nhan.ten}()" tren mot gia tri dang la null. Dung "?.${nhan.ten}()".`,
           e.vt.dong,
         )
+      }
+      // `super.f(...)`: bỏ qua thành viên dựng sẵn và tra thẳng từ lớp CHA, nếu không lời gọi
+      // sẽ tìm lại đúng hàm vừa ghi đè và lặp vô tận.
+      const lopSuper = nhan.doiTuong.k === 'super' ? this.lopSuperCua(mt, e.vt) : undefined
+      if (lopSuper !== undefined) {
+        return this.goiGiaTri(this.thanhVien(o, nhan.ten, e.vt, lopSuper), ts, e.vt)
       }
       const r = this.goiThanhVien(o, nhan.ten, ts, e.vt, mt)
       if (r !== undefined) return r

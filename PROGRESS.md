@@ -2839,7 +2839,7 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   | -------------------- | --------- | ------ | ---------------- |
   | Initial JS (brotli)  | 124,83 kB | 140 kB | dư **~10,8%**    |
   | Initial CSS (brotli) | 16,23 kB  | 18 kB  | dư **~9,8%**     |
-  | Coverage branches    | 90,29%    | 90%    | dư **0,29 điểm** |
+  | Coverage branches    | 90,54%    | 90%    | dư **0,54 điểm** |
 
   **[Đo lại 2026-08-27, sau PR-M7]** Ba con số trên là bản mới nhất. Đợt PR-M7 là ca thực tế
   đầu tiên nợ này bật ra: bộ chạy Kotlin (~4.000 dòng nguồn) làm branches tụt xuống **88,75%**
@@ -2852,8 +2852,12 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   đúng loại lệch mà Tầng 6b của quy trình audit sinh ra để bắt — tài liệu điều hành nói một
   đằng, số thật một nẻo — nên ghi lại để lần sau đo trước khi tin.
 
-  **Phần coverage thì VẪN nguyên:** dư 0,17 điểm branches là đủ để một PR quên viết test làm CI
-  đỏ, và người viết PR đó lãnh trọn cái nợ các PR trước đã tiêu dần.
+  **[Đo lại 2026-08-28] Phần coverage đã NỚI GẤP ĐÔI, chưa đóng.** Biên độ branches từ 0,27 lên
+  **0,54 điểm** (90,27 → 90,54%) nhờ 90 test bù cho `kotlinSim`/`swiftSim`/`mistakes.ts` —
+  xem `docs/changelog/0187-2026-08-28-super-kotlin-va-bien-do-coverage.md`. Đợt đó cũng bắt ra
+  một lỗi thật nhờ đi tìm nhánh thiếu test (`super.f()` gọi vòng vô tận làm sập bộ chạy Kotlin),
+  tức bản thân việc vá coverage có giá trị chứ không chỉ là làm đẹp con số. Vẫn còn mỏng: nửa
+  điểm là đủ để một PR thêm khối mã lớn mà quên test làm CI đỏ.
 
   **Đo lại bất cứ lúc nào:** `npm run build && npm run test:coverage && npm run budget`
   (`scripts/check-budget-margin.ts`, thêm ở PR #664 — in biên độ còn lại thành số, cảnh báo khi

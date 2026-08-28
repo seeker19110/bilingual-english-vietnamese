@@ -31,9 +31,6 @@ export default defineConfig({
     coverage: {
       // v8 = đo coverage bằng bộ máy V8 (nhanh, không cần biến đổi mã).
       provider: 'v8',
-      // json-summary thêm vào bộ mặc định để `npm run budget` đọc được BIÊN ĐỘ còn lại của
-      // ngưỡng coverage (scripts/check-budget-margin.ts) — audit 2026-08-25, F3.
-      reporter: ['text', 'html', 'json-summary'],
       // Chỉ đo phần LOGIC THUẦN (lib + api). Bỏ UI (.tsx/pages/components),
       // điểm khởi tạo (server.ts) và dữ liệu tĩnh — nơi unit test ít giá trị.
       include: ['apps/dhcb/src/lib/**/*.ts', 'apps/server/src/api/**/*.ts', 'packages/**/*.ts'],
@@ -95,6 +92,10 @@ export default defineConfig({
         // Tạo connection pool — chạy thật cần Postgres, đã có test tích hợp che.
         'packages/core-db/pgPool.ts',
       ],
+      // json-summary thêm vào bộ mặc định để `npm run budget` đọc được BIÊN ĐỘ còn lại của
+      // ngưỡng coverage (scripts/check-budget-margin.ts) — audit 2026-08-25, F3.
+      // MỘT khai báo duy nhất: trước đây khoá này bị viết hai lần trong cùng object, bản trên
+      // bị bản dưới ghi đè im lặng (esbuild cảnh báo "Duplicate key" mỗi lượt chạy test).
       reporter: ['text', 'text-summary', 'html', 'json-summary'],
       // SÀN CHUNG 90% cho cả 4 chỉ số (quyết định của người dùng 2026-08-13: "set toàn bộ
       // coverage 90%... cao thì mặc kệ, miễn từ 90 trở lên là được").
