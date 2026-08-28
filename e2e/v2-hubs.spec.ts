@@ -347,15 +347,16 @@ test.describe('Platform V2 Specialized Domain Hubs & Companion E2E', () => {
     await page.goto('/')
     await expect(page.getByRole('heading', { name: /Bạn Đồng Hành AI/ })).toBeVisible()
 
-    // Trang Cá nhân nay liệt kê 3 thẻ trụ: Work và Life đã GỘP thành một thẻ "Công việc &
-    // Đời sống" (migration 0066) nên KHÔNG còn hai thẻ "Công việc" và "Đời sống" tách rời.
+    // Trang Cá nhân nay liệt kê 2 thẻ trụ, vì cả hai cặp đều đã GỘP:
+    //   · Work + Life  → "Công việc & Đời sống" (migration 0066)
+    //   · Career + Startup → "Sự nghiệp & Khởi nghiệp" (2026-08-28)
     await page.goto('/profile')
-    await expect(page.getByText('Sự nghiệp', { exact: true })).toBeVisible()
-    await expect(page.getByText('Khởi nghiệp', { exact: true })).toBeVisible()
+    await expect(page.getByText('Sự nghiệp & Khởi nghiệp', { exact: true })).toBeVisible()
     await expect(page.getByText('Công việc & Đời sống', { exact: true })).toBeVisible()
-    // Chốt chặn để không âm thầm quay lại kiểu cũ: hai thẻ tách rời phải KHÔNG còn.
-    await expect(page.getByText('Công việc', { exact: true })).toHaveCount(0)
-    await expect(page.getByText('Đời sống', { exact: true })).toHaveCount(0)
+    // Chốt chặn để không âm thầm quay lại kiểu cũ: bốn thẻ tách rời phải KHÔNG còn.
+    for (const cu of ['Sự nghiệp', 'Khởi nghiệp', 'Công việc', 'Đời sống']) {
+      await expect(page.getByText(cu, { exact: true })).toHaveCount(0)
+    }
   })
 
   test('Luồng Bạn Đồng Hành AI: gửi tin nhắn, nhận phản hồi và duyệt Proposed Action', async ({

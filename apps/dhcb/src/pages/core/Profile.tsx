@@ -14,7 +14,6 @@ import {
   ChevronRight,
   Loader2,
   Briefcase,
-  Rocket,
   Heart,
   GitMerge,
   Bot,
@@ -122,22 +121,15 @@ export default function Profile() {
 
   const SPECIAL_HUBS = [
     {
-      path: '/su-nghiep',
-      title: isA ? 'Sự nghiệp' : 'Career Hub',
-      desc: isA ? 'Hồ sơ, mục tiêu & phân tích kỹ năng' : 'Profile, goals & skill gap analysis',
+      // Hai trụ gộp làm một trang (2026-08-28) — vào thẳng tab "Sự nghiệp".
+      path: '/su-nghiep-khoi-nghiep',
+      title: isA ? 'Sự nghiệp & Khởi nghiệp' : 'Career & Startup Hub',
+      desc: isA
+        ? 'Hồ sơ nghề, mục tiêu, Lean Canvas & kiểm chứng giả thuyết'
+        : 'Career profile, goals, lean canvas & hypothesis validation',
       icon: Briefcase,
       color: 'text-emerald-400',
       bg: 'bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/60',
-    },
-    {
-      path: '/khoi-nghiep',
-      title: isA ? 'Khởi nghiệp' : 'Startup Hub',
-      desc: isA
-        ? 'Lean discovery canvas & kiểm chứng giả thuyết'
-        : 'Lean canvas & hypothesis validation',
-      icon: Rocket,
-      color: 'text-purple-400',
-      bg: 'bg-purple-500/10 border-purple-500/30 hover:border-purple-500/60',
     },
     {
       path: '/cong-viec-cuoc-song',

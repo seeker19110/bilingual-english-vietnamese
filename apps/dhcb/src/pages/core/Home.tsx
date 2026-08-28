@@ -379,22 +379,13 @@ export default function Home() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <button
-                  onClick={() => nav('/su-nghiep')}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 theme-light:text-purple-800 border border-purple-500/30 font-semibold text-xs transition active:scale-[0.98]"
-                >
-                  <span>Vào Không Gian Sự Nghiệp Của Tôi</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  onClick={() => nav('/khoi-nghiep')}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 theme-light:text-orange-800 border border-orange-500/30 font-semibold text-xs transition active:scale-[0.98]"
-                >
-                  <span>Vào Không Gian Tôi Khởi Nghiệp</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              <button
+                onClick={() => nav('/su-nghiep-khoi-nghiep')}
+                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 theme-light:text-purple-800 border border-purple-500/30 font-semibold text-xs transition active:scale-[0.98]"
+              >
+                <span>Vào Không Gian Sự Nghiệp &amp; Khởi Nghiệp</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
             </div>
           </div>
         </section>

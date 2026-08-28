@@ -51,7 +51,7 @@ const PILLARS: Pillar[] = [
   },
   {
     icon: Compass,
-    path: '/su-nghiep',
+    path: '/su-nghiep-khoi-nghiep?muc=su-nghiep',
     titleVi: 'Sự nghiệp',
     titleEn: 'Career',
     descVi:
@@ -61,7 +61,7 @@ const PILLARS: Pillar[] = [
   },
   {
     icon: Rocket,
-    path: '/khoi-nghiep',
+    path: '/su-nghiep-khoi-nghiep?muc=khoi-nghiep',
     titleVi: 'Khởi nghiệp',
     titleEn: 'Startup',
     descVi: 'Dựng mô hình kinh doanh, ghi rõ giả định và tìm cách kiểm chứng rẻ nhất.',

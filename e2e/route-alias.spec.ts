@@ -11,8 +11,9 @@ const ALIASES: ReadonlyArray<readonly [alias: string, dich: string]> = [
   ['/english', '/hoc-tieng-anh'],
   ['/tieng-anh', '/hoc-tieng-anh'],
   ['/programming', '/lap-trinh'],
-  ['/career', '/su-nghiep'],
-  ['/startup', '/khoi-nghiep'],
+  // Hai trụ gộp thành một trang (2026-08-28) — alias tiếng Anh vào thẳng đúng tab.
+  ['/career', '/su-nghiep-khoi-nghiep'],
+  ['/startup', '/su-nghiep-khoi-nghiep'],
   ['/profile', '/trang-ca-nhan'],
   ['/companion', '/ban-dong-hanh'],
   ['/subjects', '/mon-hoc'],
