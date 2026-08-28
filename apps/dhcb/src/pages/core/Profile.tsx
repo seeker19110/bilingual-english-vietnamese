@@ -50,6 +50,7 @@ import {
 } from '../../lib/achievementRewards'
 import { ACHIEVEMENTS } from '../../data/achievements'
 import { logout } from '../../lib/auth'
+import { navigateTo } from '../../lib/subjectsHost'
 
 export default function Profile() {
   const nav = useNavigate()
@@ -267,7 +268,7 @@ export default function Profile() {
               return (
                 <button
                   key={hub.path}
-                  onClick={() => nav(hub.path)}
+                  onClick={() => navigateTo(nav, hub.path)}
                   className={`tap-44 flex items-start gap-3.5 p-4 rounded-2xl border text-left transition group active:scale-[0.99] ${hub.bg}`}
                 >
                   <div className="w-10 h-10 rounded-xl bg-zinc-950/60 flex items-center justify-center shrink-0 border border-zinc-800/80 group-hover:scale-105 transition-transform">

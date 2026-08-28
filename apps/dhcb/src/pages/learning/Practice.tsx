@@ -54,6 +54,7 @@ import { getLimits } from '../../lib/appSettings'
 import { CHALLENGE_TOPICS } from '../../data/challengeTopics'
 import type { DictEntry, User } from '../../types'
 import { shuffle } from '@dhcb/core-contracts/shuffle'
+import { goToSubjects } from '../../lib/subjectsHost'
 
 type Mode =
   | 'hub'
@@ -1243,7 +1244,7 @@ export default function Practice() {
               1. Luyện Tập 5 Môn Học & Giải Đề Từng Bước
             </h2>
             <button
-              onClick={() => nav('/mon-hoc')}
+              onClick={() => goToSubjects(nav)}
               className="text-[11px] text-zinc-400 hover:text-blue-300 transition flex items-center gap-1 font-medium"
             >
               <span>Xem tất cả môn</span>
@@ -1254,7 +1255,7 @@ export default function Practice() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {/* Toán Học */}
             <button
-              onClick={() => nav('/mon-hoc/mathematics')}
+              onClick={() => goToSubjects(nav, 'mathematics')}
               className="tap-44 p-4 rounded-3xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-blue-500/30 hover:border-blue-500/60 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex flex-col justify-between"
             >
               <div className="flex items-start gap-3 mb-2">
@@ -1281,7 +1282,7 @@ export default function Practice() {
 
             {/* Vật Lý */}
             <button
-              onClick={() => nav('/mon-hoc/physics')}
+              onClick={() => goToSubjects(nav, 'physics')}
               className="tap-44 p-4 rounded-3xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-cyan-500/30 hover:border-cyan-500/60 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex flex-col justify-between"
             >
               <div className="flex items-start gap-3 mb-2">
@@ -1308,7 +1309,7 @@ export default function Practice() {
 
             {/* Hóa Học */}
             <button
-              onClick={() => nav('/mon-hoc/chemistry')}
+              onClick={() => goToSubjects(nav, 'chemistry')}
               className="tap-44 p-4 rounded-3xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-amber-500/30 hover:border-amber-500/60 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex flex-col justify-between"
             >
               <div className="flex items-start gap-3 mb-2">
@@ -1335,7 +1336,7 @@ export default function Practice() {
 
             {/* Sinh Học */}
             <button
-              onClick={() => nav('/mon-hoc/biology')}
+              onClick={() => goToSubjects(nav, 'biology')}
               className="tap-44 p-4 rounded-3xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-emerald-500/30 hover:border-emerald-500/60 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex flex-col justify-between"
             >
               <div className="flex items-start gap-3 mb-2">
