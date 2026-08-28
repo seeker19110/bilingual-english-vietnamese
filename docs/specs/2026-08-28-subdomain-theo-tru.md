@@ -127,13 +127,20 @@ curl -s -H "Host: www.donghanhcungban.org" localhost:3998/ | grep -c manifest.we
 | Thiếu bản build hub → không 404 cả domain                                | cùng file                                           |
 | **Đăng nhập không đứt khi đổi subdomain** (chặn đợt 2, xem dưới)         | **CHƯA CÓ — phải viết trước khi chuyển `/mon-hoc`** |
 
-> **Bất biến cuối là điều kiện chặn của đợt 2.** `packages/core-auth/sessionCookie.ts` đã phát
-> cookie `Domain=.donghanhcungban.org` cho mọi subdomain và `validateAuth` chấp nhận cookie khi
-> thiếu Bearer. NHƯNG phía client `getCurrentUser()` (`packages/core-ui/clientAuth.ts`) trả `null`
-> NGAY nếu `localStorage` không có token — mà `localStorage` cô lập theo origin. Hậu quả: người
-> đang đăng nhập ở `www.` mở subdomain mới sẽ thấy mình bị đăng xuất dù cookie còn nguyên.
-> Đợt 1 không chạm vào vì hub là trang giới thiệu công khai; `/mon-hoc` thì nằm sau `RequireAuth`
-> nên **phải vá trước**.
+> **Bất biến cuối là điều kiện chặn của đợt 2 — ĐÃ VÁ 2026-08-28.**
+>
+> **Đính chính bản viết đầu tiên của mục này:** nó ghi "`validateAuth` chấp nhận cookie khi
+> thiếu Bearer", tức mô tả cơ chế dual-accept của Bước 3. SAI — Bước 6
+> (`docs/adr/0002-quan-ly-nguoi-dung.md`) đã bỏ hẳn Bearer: `validateAuth` CHỈ đọc cookie
+> `session_token`. Đo trên server đã build với DB thật: cùng một phiên, `?action=me` chỉ với
+> cookie → **200**, chỉ với Bearer → **401**.
+>
+> Hệ quả: API trên subdomain mới **vốn đã xác thực được** (cookie `Domain=.donghanhcungban.org`
+> đi theo mọi subdomain). Chỗ hỏng nằm ở CLIENT — app dùng "có token trong `localStorage`
+> không" làm cờ đã-đăng-nhập, mà `localStorage` cô lập theo origin, nên người dùng bị hiện
+> thành khách và `cloud.ts`/`challengeCloud.ts`/`tutorFeedback.ts` bỏ qua đồng bộ.
+>
+> Đã vá bằng action `session-from-cookie` (POST): nạp lại cờ đó đúng một lần lúc khởi động.
 
 ## ⑥ Quy ước dự án liên quan
 

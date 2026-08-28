@@ -38,6 +38,7 @@ const authService = vi.hoisted(() => ({
     planExpiresAt: null,
   })),
   getUserById: vi.fn(),
+  validateSessionToken: vi.fn(),
   SESSION_TTL_MS: 30 * 24 * 60 * 60 * 1000,
 }))
 vi.mock('./authService.js', () => authService)
@@ -192,6 +193,78 @@ describe('/api/auth — action register/login (đối chiếu hành vi trước 
     )
     expect(resp.status).toBe(401)
     expect(authService.createSession).not.toHaveBeenCalled()
+  })
+})
+
+describe('/api/auth — action session-from-cookie (đăng nhập nối tiếp giữa các subdomain)', () => {
+  // Token trả về KHÔNG phải chứng chỉ xác thực: từ Bước 6, validateAuth chỉ đọc cookie
+  // `session_token` và bỏ qua header Authorization. Cookie có Domain=.donghanhcungban.org nên
+  // API trên subdomain mới vốn đã gọi được; endpoint này chỉ nạp lại CỜ đã-đăng-nhập mà giao
+  // diện đọc từ localStorage (cô lập theo origin).
+  // happy-dom (môi trường test) CHẶN set header "Cookie" qua `new Request(...)` — đó là
+  // forbidden header name theo spec fetch, giống trình duyệt thật. Node thật (server.ts chạy
+  // undici) KHÔNG chặn vì đây không phải script trong trang. Giả một Request tối giản, đúng
+  // idiom đã dùng ở sessionCookie.test.ts.
+  function makeCookieRequest(cookie?: string, method = 'POST'): Request {
+    const body = JSON.stringify({ action: 'session-from-cookie' })
+    return {
+      method,
+      url: 'http://localhost/api/auth',
+      headers: {
+        get: (name: string) => {
+          const n = name.toLowerCase()
+          if (n === 'cookie') return cookie ?? null
+          if (n === 'content-type') return 'application/json'
+          return null
+        },
+      },
+      text: async () => body,
+    } as unknown as Request
+  }
+
+  it('cookie hợp lệ → trả ĐÚNG token trong cookie, KHÔNG tạo phiên mới', async () => {
+    authService.validateSessionToken.mockResolvedValue({ userId: 'user-1' })
+    authService.getUserById.mockResolvedValue({ id: 'user-1', email: 'a@b.c' })
+
+    const resp = await handler(makeCookieRequest('session_token=token-abc'))
+    expect(resp.status).toBe(200)
+    const body = (await resp.json()) as { token: string; user: { email: string } }
+
+    expect(body.token).toBe('token-abc')
+    expect(body.user.email).toBe('a@b.c')
+    // Bất biến: không sinh thêm bản ghi phiên, không kéo dài hạn — cookie CHÍNH LÀ token.
+    expect(authService.createSession).not.toHaveBeenCalled()
+  })
+
+  it('không có cookie → 401', async () => {
+    const resp = await handler(makeCookieRequest())
+    expect(resp.status).toBe(401)
+    expect(authService.validateSessionToken).not.toHaveBeenCalled()
+  })
+
+  it('cookie hết hạn / không hợp lệ → 401, không lộ token', async () => {
+    authService.validateSessionToken.mockResolvedValue(null)
+    const resp = await handler(makeCookieRequest('session_token=token-cu'))
+    expect(resp.status).toBe(401)
+    expect(await resp.json()).toEqual({ error: 'Unauthorized' })
+  })
+
+  it('validateSessionToken ném lỗi (DB chập) → 401 chứ không 500', async () => {
+    authService.validateSessionToken.mockRejectedValue(new Error('db down'))
+    const resp = await handler(makeCookieRequest('session_token=token-abc'))
+    expect(resp.status).toBe(401)
+  })
+
+  it('phiên hợp lệ nhưng user đã bị xoá → 401', async () => {
+    authService.validateSessionToken.mockResolvedValue({ userId: 'user-1' })
+    authService.getUserById.mockResolvedValue(null)
+    const resp = await handler(makeCookieRequest('session_token=token-abc'))
+    expect(resp.status).toBe(401)
+  })
+
+  it('GET không dùng được — chỉ POST (SameSite=Lax chặn POST chéo site)', async () => {
+    const resp = await handler(makeCookieRequest('session_token=token-abc', 'GET'))
+    expect(resp.status).toBe(405)
   })
 })
 

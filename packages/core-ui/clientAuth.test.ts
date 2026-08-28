@@ -216,6 +216,90 @@ describe('packages/core-ui/clientAuth.ts', () => {
       }
     })
 
+    // ── Nạp lại cờ đã-đăng-nhập trên origin mới (2026-08-28) ──────────────────────────────
+    // Server xác thực bằng COOKIE (Bearer bị bỏ qua từ Bước 6), và cookie đi theo mọi
+    // subdomain — nên API vốn đã gọi được. Thứ hỏng là giao diện: nó đọc localStorage (cô lập
+    // theo origin) để biết đã đăng nhập chưa, nên người dùng bị hiện thành khách dù phiên còn.
+    it('localStorage rỗng nhưng cookie còn hiệu lực → nhận phiên và LƯU cờ cho origin này', async () => {
+      const { getCurrentUser } = await import('./clientAuth.js')
+      localStorage.removeItem('gsa_session_token_v1')
+      const mockUser = {
+        id: 'u-1',
+        email: 'a@b.c',
+        name: 'A',
+        plan: 'free' as const,
+        onboarded: true,
+        createdAt: Date.now(),
+      }
+      const fetchSpy = vi
+        .spyOn(global, 'fetch')
+        // 1) POST session-from-cookie → trả token + user
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({ token: 'token-tu-cookie', user: mockUser }),
+        } as unknown as Response)
+        // 2) GET ?action=me bằng token vừa nhận
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => mockUser,
+        } as unknown as Response)
+
+      const user = await getCurrentUser()
+
+      expect(user?.email).toBe('a@b.c')
+      // PHẢI lưu lại: cloud.ts/challengeCloud.ts/tutorFeedback.ts kiểm getStoredToken()
+      // để quyết định có đồng bộ hay không.
+      expect(localStorage.getItem('gsa_session_token_v1')).toBe('token-tu-cookie')
+
+      const [url, init] = fetchSpy.mock.calls[0] as [string, RequestInit]
+      expect(url).toBe('/api/auth')
+      // POST, không phải GET: SameSite=Lax không gửi cookie kèm POST từ site khác.
+      expect(init.method).toBe('POST')
+      expect(init.credentials).toBe('include')
+      expect(JSON.parse(init.body as string)).toEqual({ action: 'session-from-cookie' })
+    })
+
+    it('localStorage rỗng và KHÔNG có cookie hợp lệ → null, không gọi thêm ?action=me', async () => {
+      const { getCurrentUser } = await import('./clientAuth.js')
+      localStorage.removeItem('gsa_session_token_v1')
+      const fetchSpy = vi
+        .spyOn(global, 'fetch')
+        .mockResolvedValueOnce({ ok: false, status: 401 } as unknown as Response)
+
+      expect(await getCurrentUser()).toBeNull()
+      expect(fetchSpy).toHaveBeenCalledTimes(1)
+      expect(localStorage.getItem('gsa_session_token_v1')).toBeNull()
+    })
+
+    it('mất mạng lúc đổi cookie → null chứ KHÔNG ném lỗi (AuthProvider vẫn dựng được UI)', async () => {
+      const { getCurrentUser } = await import('./clientAuth.js')
+      localStorage.removeItem('gsa_session_token_v1')
+      vi.spyOn(global, 'fetch').mockRejectedValueOnce(new Error('network down'))
+      await expect(getCurrentUser()).resolves.toBeNull()
+    })
+
+    it('ĐÃ có cờ trong localStorage → KHÔNG gọi session-from-cookie (không thêm vòng mạng)', async () => {
+      const { getCurrentUser } = await import('./clientAuth.js')
+      localStorage.setItem('gsa_session_token_v1', 'token-san-co')
+      const mockUser = {
+        id: 'u-2',
+        email: 'c@d.e',
+        name: 'C',
+        plan: 'free' as const,
+        onboarded: true,
+        createdAt: Date.now(),
+      }
+      const fetchSpy = vi
+        .spyOn(global, 'fetch')
+        .mockResolvedValueOnce({ ok: true, json: async () => mockUser } as unknown as Response)
+
+      const user = await getCurrentUser()
+
+      expect(user?.email).toBe('c@d.e')
+      expect(fetchSpy).toHaveBeenCalledTimes(1)
+      expect(fetchSpy.mock.calls[0]![0]).toBe('/api/auth?action=me')
+    })
+
     it('preloadOAuthProviders chạy an toàn mà không quăng lỗi', async () => {
       const { preloadOAuthProviders } = await import('./clientAuth.js')
       expect(() => preloadOAuthProviders()).not.toThrow()

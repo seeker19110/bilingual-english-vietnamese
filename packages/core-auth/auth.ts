@@ -31,6 +31,7 @@ import {
   revokeSession,
   ensureProfileRow,
   getUserById,
+  validateSessionToken,
 } from './authService.js'
 import type { Plan } from '@dhcb/core-billing/plan'
 import {
@@ -93,6 +94,10 @@ const MicrosoftSchema = z.object({
   action: z.literal('microsoft'),
   idToken: z.string().min(10),
 })
+// Đổi cookie phiên (dùng chung mọi subdomain của .donghanhcungban.org) lấy Bearer token cho
+// origin hiện tại. Xem khối xử lý bên dưới để biết vì sao cần và vì sao là POST.
+const SessionFromCookieSchema = z.object({ action: z.literal('session-from-cookie') })
+
 const LogoutSchema = z.object({ action: z.literal('logout') })
 // Gửi lại mã xác thực email (cần đăng nhập) — chống email giả cày thưởng mời bạn.
 const SendVerificationSchema = z.object({ action: z.literal('send-verification') })
@@ -130,6 +135,7 @@ const BodySchema = z.union([
   AppleSchema,
   MicrosoftSchema,
   LogoutSchema,
+  SessionFromCookieSchema,
   SendVerificationSchema,
   VerifyEmailSchema,
   ChangeEmailSchema,
@@ -237,6 +243,44 @@ export default async function handler(req: Request): Promise<Response> {
   const result = validateBody(BodySchema, parsedBody.raw)
   if (!result.ok)
     return jsonResponse({ error: result.error.message }, result.error.status, allHeaders)
+
+  // ── Nạp lại "cờ đã đăng nhập" cho một origin mới ─────────────────────────────────────────
+  //
+  // ĐỌC KỸ KẺO HIỂU NHẦM: token trả về ở đây KHÔNG phải chứng chỉ xác thực. Từ Bước 6
+  // (docs/adr/0002-quan-ly-nguoi-dung.md) `validateAuth` CHỈ đọc cookie `session_token`;
+  // header `Authorization: Bearer` bị bỏ qua hoàn toàn — đo trực tiếp 2026-08-28: cùng một
+  // phiên, gọi `?action=me` chỉ với cookie → 200, chỉ với Bearer → 401.
+  //
+  // VÌ SAO VẪN CẦN: cookie có `Domain=.donghanhcungban.org` nên trình duyệt gửi nó cho MỌI
+  // subdomain — nghĩa là API đã xác thực được ngay trên subdomain mới. Nhưng PHÍA CLIENT lại
+  // dùng "có token trong localStorage hay không" làm cờ đã-đăng-nhập, mà localStorage thì cô
+  // lập theo origin. Người đang đăng nhập ở `www.` mở `hoc-tap.` sẽ bị giao diện coi là khách:
+  // `getCurrentUser()` thoát sớm, và các chỗ tự kiểm `getStoredToken()` (`cloud.ts`,
+  // `challengeCloud.ts`, `tutorFeedback.ts`) lặng lẽ bỏ qua việc đồng bộ. Endpoint này nạp lại
+  // đúng cờ đó một lần lúc khởi động, để không phải sửa rải rác hàng chục chỗ.
+  //
+  // VÌ SAO POST chứ không GET: `SameSite=Lax` KHÔNG gửi cookie kèm request POST từ site khác,
+  // nên site lạ không gọi được endpoint này. Với GET thì cookie đi kèm điều hướng cấp cao nhất
+  // — CORS vẫn chặn đọc phản hồi, nhưng POST đóng cửa sớm hơn một lớp và không có lý do gì
+  // chọn lớp yếu hơn.
+  //
+  // KHÔNG tạo phiên mới: cookie CHÍNH LÀ session token (xem sessionCookie.ts), nên đây chỉ là
+  // trả lại đúng token đó sau khi xác minh — không sinh thêm bản ghi phiên, không kéo dài hạn.
+  if (result.data.action === 'session-from-cookie') {
+    const cookieToken = readSessionCookie(req)
+    if (!cookieToken) return jsonResponse({ error: 'Unauthorized' }, 401, allHeaders)
+
+    const session = await validateSessionToken(cookieToken).catch(() => null)
+    if (!session) return jsonResponse({ error: 'Unauthorized' }, 401, allHeaders)
+
+    const [user, profile] = await Promise.all([
+      getUserById(session.userId),
+      ensureProfileRow(session.userId, ''),
+    ])
+    if (!user) return jsonResponse({ error: 'Unauthorized' }, 401, allHeaders)
+
+    return jsonResponse(authResponse(cookieToken, user, profile), 200, allHeaders)
+  }
 
   if (result.data.action === 'register') {
     const { email, name, password } = result.data

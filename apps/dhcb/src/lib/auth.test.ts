@@ -122,13 +122,22 @@ describe('src/lib/auth.ts', () => {
   })
 
   describe('getCurrentUser', () => {
-    it('chưa đăng nhập (không có token) → trả null, KHÔNG gọi fetch', async () => {
+    // [2026-08-28] Ca này TRƯỚC ĐÂY khẳng định "không có token → KHÔNG gọi fetch". Khẳng định
+    // đó đã sai kể từ khi cookie phiên dùng chung giữa các subdomain: `localStorage` cô lập
+    // theo origin, nên kho cục bộ rỗng KHÔNG còn đồng nghĩa với "chưa đăng nhập" — người dùng
+    // mở `hoc-tap.`/`hub.` vẫn có cookie hợp lệ. Nay đúng một lượt gọi để hỏi cookie; chỉ khi
+    // cookie cũng không có mới kết luận chưa đăng nhập.
+    it('không token và cookie cũng không hợp lệ → null, đúng MỘT lượt hỏi cookie', async () => {
       const { getCurrentUser } = await import('./auth')
+      fetchMock.mockResolvedValue({ ok: false, status: 401 })
 
       const user = await getCurrentUser()
 
       expect(user).toBeNull()
-      expect(fetchMock).not.toHaveBeenCalled()
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+      expect(fetchMock.mock.calls[0]![0]).toBe('/api/auth')
+      // Không được gọi tiếp ?action=me khi đã biết chắc là chưa đăng nhập.
+      expect(fetchMock.mock.calls.some((c) => String(c[0]).includes('action=me'))).toBe(false)
     })
 
     it('có token, server trả 200 → trả profile kèm createdAt', async () => {
