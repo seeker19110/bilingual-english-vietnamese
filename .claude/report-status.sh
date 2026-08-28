@@ -46,18 +46,20 @@ echo "   3. 🟢 Facebook/Apple/Microsoft OAuth tạm hoãn thêm domain .org (�
 echo "   4. 🟢 PM2 cluster mode ĐÃ chạy song song thật — VPS nâng lên 3 vCPU / 3GB RAM" \
      "(2026-08-21), 3 instance khai thác đủ 3 core. Việc tách Postgres/Redis ra máy riêng vẫn" \
      "thuộc GĐ2 kế hoạch scale."
-echo "   5. 🟡 [2026-08-26] Model Gemini (gemini-3.6-flash, PR #647) ĐÃ XÁC NHẬN CHẠY THẬT trên" \
-     "production: trang Trạng thái tính năng lượt 07:00 26/8/2026 báo AI hội thoại — Google" \
-     "Gemini hoạt động 512ms (Groq 426ms, TTS 315ms, R2 817ms, SePay OK). Phần CÒN LẠI của" \
-     "nợ này: baseline eval:tutor vẫn là bản 2026-08-21, cũ hơn ngày đổi prompt/model 2026-08-24" \
-     "— gọi được API KHÔNG chứng minh chất lượng sư phạm không tụt. Cần chạy tay trên VPS:" \
-     "npm run eval:tutor -- --write-baseline (có key thật)."
-echo "   6. 🟡 [2026-08-25] nginx/en-vi.conf đã sửa trong repo (bỏ CSP-Report-Only lạc hậu còn" \
-     "trỏ supabase) nhưng CHƯA áp lên VPS thật — cần copy + nginx -t + systemctl reload nginx."
-echo "   7. 🟡 [đo lại 2026-08-26] Ngân sách BUNDLE nay RỘNG, không còn 99,7% như ghi trước:" \
-     "Initial JS 124,03/140 kB (dư ~11,4%), CSS 15,87/18 kB (dư ~11,8%) — ngưỡng đã được nới ở" \
-     "các PR gần đây mà mục nợ chưa cập nhật. Thứ VẪN mỏng là COVERAGE: branches 90,17% trên" \
-     "sàn 90 = dư 0,17 điểm, đủ để một PR quên viết test là CI đỏ. Chạy npm run budget để xem số hiện tại."
+echo "   5. 🟢 [ĐÓNG 2026-08-28] Model Gemini (gemini-3.6-flash, PR #647) chạy thật trên" \
+     "production, VÀ baseline eval:tutor đã chạy lại ngày 2026-08-26 (recall 97,7% / precision" \
+     "97,7% — docs/research/eval-tutor-baseline.md), MỚI HƠN lần đổi nội dung prompt/model gần" \
+     "nhất (2026-08-25). Cả hai vế của nợ này đã xong."
+echo "   6. 🟢 [ĐÓNG 2026-08-26] nginx/en-vi.conf đã sửa trong repo (bỏ CSP-Report-Only lạc" \
+     "hậu còn trỏ supabase) VÀ đã áp lên VPS thật, cùng lượt với cloudflare-realip.conf để bịt" \
+     "lỗ hổng rate limit (xác nhận bằng bài thử A/B — xem PROGRESS.md)."
+echo "   7. 🟡 [đo lại 2026-08-28, audit toàn diện] Ngân sách BUNDLE rộng: Initial JS" \
+     "124,83/140 kB (dư ~10,8%), CSS 16,26/18 kB (dư ~9,7%) — CSS mỏng hơn JS. COVERAGE:" \
+     "branches 90,56% trên sàn 90 = dư 0,56 điểm, vẫn là biên độ hẹp nhất trong 4 chỉ số" \
+     "(stmts 95,28 · funcs 95,34 · lines 95,28). Chạy npm run budget để xem số hiện tại."
+echo "   8. 🟡 [2026-08-28] 3 cặp migration TRÙNG SỐ: 0026 · 0027 · 0059. Không cặp nào chạm" \
+     "chung bảng nên thứ tự không rủi ro, và runner theo dõi theo TÊN FILE nên không bỏ sót." \
+     "CỐ Ý KHÔNG đổi số: migration đã chạy trên production, đổi tên file = chạy lại lần nữa."
 
 # Git status
 echo ""

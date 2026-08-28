@@ -83,6 +83,26 @@ describe('createInvite', () => {
     expect(ttl).toBeLessThanOrEqual(INVITE_TTL_MS)
   })
 
+  // TEST CANH GÁC (audit 2026-08-28, F6): mã mời mở quyền XEM tiến độ học của người khác nên
+  // phải sinh từ nguồn MẬT MÃ (`crypto.randomInt`), không phải `Math.random`. Cách canh: ghim
+  // `Math.random` về một hằng số — nếu code lỡ quay lại dùng nó, mọi ký tự trong mã sẽ giống
+  // hệt nhau và hai mã liên tiếp sẽ trùng nhau. Với crypto thì ghim vô hại.
+  it('sinh mã KHÔNG phụ thuộc Math.random (nguồn mật mã)', async () => {
+    const spy = vi.spyOn(Math, 'random').mockReturnValue(0.5)
+    try {
+      const { pool } = mockPool(() => [])
+      const a = await createInvite(pool, LEARNER)
+      const b = await createInvite(pool, LEARNER)
+
+      expect(a.code).not.toBe(b.code)
+      // Không phải 12 lần cùng một ký tự (dấu hiệu Math.random bị ghim).
+      expect(new Set(a.code).size).toBeGreaterThan(1)
+      expect(spy).not.toHaveBeenCalled()
+    } finally {
+      spy.mockRestore()
+    }
+  })
+
   it('mã trùng (23505) thì thử mã khác, không ném lỗi ra ngoài', async () => {
     let inserts = 0
     const query = vi.fn(async (sql: string) => {

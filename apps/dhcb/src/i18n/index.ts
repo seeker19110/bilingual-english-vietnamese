@@ -86,8 +86,8 @@ export const t = {
     listenDescB: 'Hội thoại mẫu tiếng Việt hàng ngày + kho câu thông dụng thực tế, có phát âm.',
 
     // Login
-    loginBrand: 'Gia sư tiếng Anh AI',
-    loginTagline: 'Luyện nói · Viết · Nhận xét bằng tiếng Việt',
+    loginBrand: 'Đồng Hành Cùng Bạn',
+    loginTagline: 'Học tập · Sự nghiệp · Công việc · Khởi nghiệp · Đời sống',
     loginTabLogin: 'Đăng nhập',
     loginTabRegister: 'Đăng ký',
     namePlaceholder: 'Tên của bạn',
@@ -292,8 +292,8 @@ export const t = {
     listenDescB: 'Everyday Vietnamese dialogues + a library of common sentences, with audio.',
 
     // Login
-    loginBrand: 'AI Language Tutor',
-    loginTagline: 'Speak · Write · Instant feedback',
+    loginBrand: 'Đồng Hành Cùng Bạn',
+    loginTagline: 'Learning · Career · Work · Startup · Life',
     loginTabLogin: 'Log in',
     loginTabRegister: 'Sign up',
     namePlaceholder: 'Your name',
