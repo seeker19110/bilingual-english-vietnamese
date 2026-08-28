@@ -247,34 +247,39 @@ BA check xanh, check đỏ thì PR nằm nguyên đó.
 tay: đã xong TẤT CẢ việc được giao trong phiên, CI xanh cả ba check, và không xung đột. Đủ ba
 điều đó thì merge (squash) NGAY, không hỏi lại — dù auto-merge có bật được hay không.
 
-Vì sao đổi: auto-merge chỉ là cơ chế XẾP HÀNG CHỜ, nên nó chỉ bật được trong CỬA SỔ lúc các
-check còn đang chạy. CI đã xong thì GitHub từ chối thẳng ("already in clean status, merge
-directly"), và PR nằm chờ người dùng bấm tay dù mọi cổng đã xanh — đúng thứ mà quy ước
-auto-merge sinh ra để tránh. Cái người dùng muốn là **CI xanh thì PR vào `main`**, không phải
-**auto-merge phải được bật**; nên khi không bật được thì đi thẳng tới mục đích.
+Vì sao đổi: auto-merge chỉ là cơ chế XẾP HÀNG CHỜ, nên GitHub từ chối nó ở CẢ HAI đầu — lúc CI
+đang chạy ("unstable status") lẫn lúc CI đã xong ("already in clean status, merge directly").
+Ở PR #724 nó không có nổi một cửa sổ để bật, khiến PR nằm chờ người dùng bấm tay dù mọi cổng đã
+xanh — đúng thứ mà quy ước auto-merge sinh ra để tránh. Cái người dùng muốn là **CI xanh thì PR
+vào `main`**, không phải **auto-merge phải được bật**; nên khi phương tiện hỏng thì đi thẳng tới
+mục đích.
 
-**[Đính chính 2026-08-28, PR #726] Cửa sổ đó HẸP chứ không phải KHÔNG CÓ — đừng coi
-auto-merge là hỏng sẵn.** Ghi chép trước đây (từ PR #724) kết luận GitHub từ chối auto-merge ở
-CẢ HAI đầu, kể cả lúc CI đang chạy. Chẩn đoán đó KHÔNG đầy đủ. Ở PR #726, lần gọi đầu tiên bị
-từ chối với thông báo:
+**[Đo lại 2026-08-28, PR #726 + #727 — ĐỪNG tin chữ "failing" trong thông báo lỗi.]** Khi
+auto-merge không bật được lúc CI đang chạy, GitHub trả về:
 
 > The pull request is in unstable status (**required checks are failing**)
 
-"failing", không phải "pending" — nghĩa là đã có check ĐỎ, chứ không phải "CI đang chạy nên
-chưa cho bật". Thủ phạm: cổng `metadata` đỏ sau 4 giây vì **tiêu đề PR sai quy ước** (viết
-`fix(kotlinSim)`, mà regex chỉ nhận scope chữ thường). Tức auto-merge bị chặn bởi LỖI CỦA MÌNH,
-không phải bởi cơ chế GitHub. Hệ quả thực hành: **gọi bật auto-merge NGAY trong cùng nhịp với
-lệnh tạo PR** — lúc đó check còn pending, đúng cửa sổ; và **kiểm tiêu đề TRƯỚC khi tạo PR** để
-không tự tay làm đỏ cổng nhanh nhất.
+Câu này GÂY HIỂU NHẦM: "failing" ở đây KHÔNG có nghĩa là có check đỏ — nó chỉ là cách GitHub
+diễn đạt trạng thái `unstable`. Đã đo trực tiếp ở PR #727: `metadata` **xanh**, mọi check khác
+đang `in_progress`/`queued`, **không một check nào đỏ**, mà vẫn bị từ chối bằng đúng câu đó.
+
+Vì sao ghi lại: ở PR #726 câu thông báo này xuất hiện đúng lúc `metadata` vừa đỏ (tiêu đề sai
+quy ước), nên rất dễ kết luận nhầm rằng "sửa cho hết đỏ là bật được". PR #727 bác bỏ điều đó —
+tiêu đề đúng, `metadata` xanh, vẫn bị từ chối. **Trùng hợp, không phải nhân quả.**
+
+Kết luận giữ nguyên như cũ: **auto-merge qua công cụ hiện có coi như không bật được**, nên đừng
+tốn thời gian chẩn đoán nó. Cứ gọi một lần trong cùng nhịp tạo PR (rẻ, biết đâu repo/công cụ đổi),
+thất bại thì đi thẳng tới mục đích: theo dõi CI, xanh là merge (squash) ngay.
 
 Vẫn giữ nguyên: **KHÔNG merge tay để đi tắt khi CI CHƯA xanh.** Đó mới là điều cấm.
 
 **BỐN BƯỚC BẮT BUỘC KHI TẠO PR (chốt 2026-08-27, bổ sung bước 1 ngày 2026-08-28) — làm liền
 một mạch, KHÔNG hỏi lại giữa chừng:**
 
-1. **Kiểm TIÊU ĐỀ khớp quy ước TRƯỚC khi tạo PR.** Cổng `metadata` chạy xong trong ~4 giây, nên
-   tiêu đề sai là check đỏ NGAY — và một check đỏ thì auto-merge không bật được nữa (PR #726).
-   Regex thật ở `.github/workflows/pr-policy.yml`:
+1. **Kiểm TIÊU ĐỀ khớp quy ước TRƯỚC khi tạo PR.** Cổng `metadata` là required status check, nên
+   tiêu đề sai = PR KHÔNG vào được `main` cho tới khi sửa; nó lại chạy xong trong ~4 giây nên đỏ
+   gần như tức thì (đã dính ở PR #726). Sửa được bằng cách đổi tiêu đề, nhưng mất thêm một vòng
+   CI — rẻ hơn nhiều nếu kiểm trước. Regex thật ở `.github/workflows/pr-policy.yml`:
 
    ```
    ^(feat|fix|refactor|docs|test|chore|style|perf|build|ci|revert)(\([a-z0-9._/-]+\))?!?: .+
@@ -286,10 +291,11 @@ một mạch, KHÔNG hỏi lại giữa chừng:**
 2. **Tạo PR ở trạng thái SẴN SÀNG (ready), không bao giờ để nháp.** Nếu công cụ mặc định tạo
    nháp thì bỏ nháp NGAY. Lý do: GitHub từ chối bật auto-merge trên PR nháp ("Pull request is a
    draft" — đã dính thật ở PR #693).
-3. **Bật auto-merge (squash) NGAY TRONG CÙNG NHỊP với lệnh tạo PR** — không hỏi lại, không kiểm
-   gì xen giữa. Chậm một nhịp là check kịp chạy xong hoặc kịp đỏ, và cửa sổ đóng lại.
-   **Bật không được thì KHÔNG bỏ mặc PR:** theo dõi nó, và **CI xanh là merge (squash) ngay**,
-   không chờ người dùng bấm. Mục tiêu là PR vào `main`; auto-merge chỉ là một cách đạt tới đó.
+3. **Bật auto-merge (squash) ngay sau lệnh tạo PR** — gọi MỘT lần, không hỏi lại. Thực tế đo
+   được là nó gần như luôn thất bại (xem đính chính ở trên), nên **đừng chẩn đoán, đừng gọi lại
+   nhiều lần, và tuyệt đối đừng coi đó là lý do để dừng.** Thất bại thì **KHÔNG bỏ mặc PR:**
+   theo dõi nó, và **CI xanh + không xung đột là merge (squash) NGAY**, không chờ người dùng bấm.
+   Mục tiêu là PR vào `main`; auto-merge chỉ là một cách đạt tới đó, và là cách hay hỏng.
 4. **Chỉ gộp `main` khi THẬT SỰ CẦN, đừng gộp theo phản xạ.** Bối cảnh: PR #709 từng kẹt vì
    `mergeable_state` là `behind` — repo khi đó bật "Require branches to be up to date before
    merging", khiến mỗi lần có PR khác merge là mọi PR đang mở phải gộp `main` rồi chờ CI lại

@@ -1,66 +1,67 @@
-# docs: đính chính luật auto-merge — cửa sổ hẹp, không phải hỏng sẵn (2026-08-28)
+# docs: đính chính luật auto-merge — đừng tin chữ "failing" trong thông báo lỗi (2026-08-28)
 
 **Nhánh:** `claude/hien-trang-du-an-dbch0x`
 
 ## Bối cảnh
 
-Ở PR #726 (đợt trước, đã merge), lần gọi bật auto-merge đầu tiên bị GitHub từ chối. Tôi đọc
-`CLAUDE.md` mục 11 — nơi ghi "GitHub từ chối auto-merge ở CẢ HAI đầu, PR #724 không có nổi một
-cửa sổ để bật" — rồi báo lại người dùng đúng theo cách hiểu đó.
+Ở PR #726, lần gọi bật auto-merge đầu tiên bị GitHub từ chối. Người dùng hỏi lại **"bật ngay từ
+đầu được không?"**, nên phải đọc kỹ thông báo lỗi thật thay vì chỉ tin ghi chép cũ.
 
-Người dùng hỏi lại: **"bật ngay từ đầu được không?"** Câu hỏi đó buộc phải đọc kỹ lại thông báo
-lỗi thật, và hoá ra chẩn đoán trong tài liệu **chưa đầy đủ**.
+## Chẩn đoán sai — và cách nó bị bác bỏ
 
-## Vấn đề: tài liệu điều hành nói sai nguyên nhân
-
-Thông báo GitHub trả về ở lần gọi đầu:
+Thông báo GitHub trả về:
 
 > The pull request is in unstable status (**required checks are failing**)
 
-"**failing**", không phải "pending". Nghĩa là đã có check **ĐỎ** — chứ không phải "CI đang chạy
-nên chưa cho bật" như tài liệu mô tả.
+Đọc chữ "failing" (chứ không phải "pending"), tôi kết luận: đã có check **ĐỎ** — và đúng lúc đó
+cổng `metadata` vừa đỏ sau 4 giây vì tiêu đề PR sai quy ước (`fix(kotlinSim)`, mà regex chỉ nhận
+scope chữ thường). Suy ra: **auto-merge bị chặn bởi lỗi của mình, sửa tiêu đề là bật được.**
 
-Thủ phạm: cổng `metadata` đỏ sau **4 giây** vì tiêu đề PR sai quy ước. Tôi đặt
-`fix(kotlinSim): …`, mà regex ở `.github/workflows/pr-policy.yml` chỉ nhận scope **chữ thường**:
+**Suy luận đó SAI, và đã bị bác bỏ bằng thí nghiệm ngay trong đợt này.** PR #727 (chính PR
+mang thay đổi này) được tạo với tiêu đề ĐÚNG quy ước — kiểm bằng cách chạy chính regex đó trước
+khi tạo. Đo trạng thái ngay sau lời gọi bật auto-merge thất bại:
 
-```
-^(feat|fix|refactor|docs|test|chore|style|perf|build|ci|revert)(\([a-z0-9._/-]+\))?!?: .+
-```
+| Check            | Trạng thái               |
+| ---------------- | ------------------------ |
+| `metadata`       | ✅ **success**           |
+| 10 check còn lại | `in_progress` / `queued` |
+| Check đỏ         | **KHÔNG CÓ CÁI NÀO**     |
 
-Tức auto-merge bị chặn bởi **lỗi của người tạo PR**, không phải bởi cơ chế GitHub. Sau khi sửa
-tiêu đề thành `fix(programming): …`, cổng xanh — nhưng lúc đó CI đã chạy xong, nên lần gọi thứ
-hai bị từ chối bằng lý do KHÁC: `already in clean status, merge directly`. Cửa sổ đã đóng.
+Vẫn bị từ chối bằng **đúng câu thông báo đó**. Nên:
 
-Đây đúng loại lệch mà **Tầng 6b của quy trình audit** sinh ra để bắt: tài liệu điều hành nói một
-đằng (auto-merge hỏng sẵn, đừng trông cậy), cơ chế thật một nẻo (auto-merge dùng được, chỉ là
-cửa sổ hẹp và mình tự đóng nó). Để nguyên thì mọi phiên sau đều bỏ qua auto-merge vì tin rằng
-nó không hoạt động.
+- Chữ "failing" trong thông báo **không có nghĩa là có check đỏ** — nó chỉ là cách GitHub diễn
+  đạt trạng thái `unstable`.
+- Việc `metadata` đỏ ở PR #726 là **trùng hợp, không phải nhân quả**.
+- **Ghi chép cũ trong `CLAUDE.md` ("từ chối ở cả hai đầu, không có cửa sổ để bật") hoá ra ĐÚNG.**
+
+Suýt nữa thì đợt này ghi một chẩn đoán sai vào tài liệu điều hành — đúng loại lỗi mà nó ra đời
+để sửa. Bài học chung: **một quan sát trùng khớp không phải là bằng chứng nhân quả**; muốn kết
+luận thì phải có ca đối chứng (ở đây là PR tiêu đề đúng mà vẫn bị từ chối).
 
 ## Đã sửa gì trong `CLAUDE.md`
 
-Sửa **tại chỗ** mục 3 và mục 11, không chồng thêm mục mới.
+Sửa **tại chỗ** mục 3 và mục 11, không chồng thêm mục mới. **Luật không đổi.**
 
-1. **Đính chính đoạn "Vì sao đổi" ở mục 11.** Bỏ khẳng định "từ chối ở CẢ HAI đầu"; ghi rõ
-   auto-merge chỉ bật được trong cửa sổ lúc check còn **pending**, kèm nguyên văn thông báo lỗi
-   của PR #726 và nguyên nhân thật.
-2. **"Ba bước bắt buộc khi tạo PR" → BỐN bước**, thêm bước 1 mới: **kiểm tiêu đề khớp regex
-   TRƯỚC khi tạo PR**, chép nguyên văn regex và nêu đúng cái bẫy đã dính (scope chữ thường).
-3. **Bước bật auto-merge nói rõ "NGAY TRONG CÙNG NHỊP với lệnh tạo PR"** — không chờ, không kiểm
-   gì xen giữa, vì chậm một nhịp là cửa sổ đóng. Và bật không được thì **không bỏ mặc PR**: theo
-   dõi, CI xanh là merge (squash) ngay, không chờ người dùng bấm.
+1. **Giữ nguyên kết luận cũ** ("GitHub từ chối auto-merge ở CẢ HAI đầu"), nhưng **thêm cảnh báo
+   về chữ "failing"** kèm bảng đo của PR #727 — để phiên sau không lặp lại đúng suy luận nhầm này
+   và đi sửa lung tung.
+2. **Bước bật auto-merge:** nói rõ gọi **MỘT lần**, đừng chẩn đoán, đừng gọi lại nhiều lần, và
+   **tuyệt đối đừng coi thất bại đó là lý do để dừng** — theo dõi CI, xanh + không xung đột là
+   merge (squash) NGAY, không chờ người dùng bấm.
+3. **"Ba bước bắt buộc khi tạo PR" → BỐN bước**, thêm bước 1: **kiểm tiêu đề khớp regex TRƯỚC khi
+   tạo PR**. Lý do đã sửa cho đúng — **không phải** vì nó chặn auto-merge (đã bác bỏ), mà vì
+   `metadata` là required status check: tiêu đề sai = PR không vào được `main` cho tới khi sửa,
+   mất thêm một vòng CI ~15 phút. Chép nguyên văn regex và nêu cái bẫy đã dính (scope chữ thường).
 4. **Sửa một lỗi định dạng làm vỡ nghĩa câu.** Đoạn điều kiện merge tay có dòng
    `- không xung đột.` bị Prettier hiểu thành gạch đầu dòng, cắt câu "CI xanh + không xung đột"
-   làm đôi. Viết lại thành câu liền mạch.
-5. Mục 3 (ba việc phải làm khi tạo PR) cập nhật cho khớp, có trỏ sang mục 11.
+   làm đôi giữa hai khối. Viết lại thành câu liền mạch.
+5. **Mục 3** cập nhật cho khớp, trỏ sang mục 11.
 
 ## Bằng chứng
 
+- Bảng trạng thái check ở trên đọc trực tiếp từ API GitHub trên PR #727, tại thời điểm lời gọi
+  bật auto-merge thất bại — không phải suy đoán.
 - Regex chép vào `CLAUDE.md` đã đối chiếu **từng ký tự** với `.github/workflows/pr-policy.yml`
-  dòng 49 — không chép theo trí nhớ.
-- `npx prettier --write CLAUDE.md` sạch.
-- Chỉ sửa tài liệu, không chạm mã nguồn: cổng build/typecheck/lint/test không bị ảnh hưởng.
-
-## Ghi chú
-
-Luật KHÔNG đổi, chỉ chẩn đoán đổi: vẫn là "tạo PR → bật auto-merge ngay → không bật được thì CI
-xanh là merge ngay", và vẫn **cấm merge tay khi CI chưa xanh**.
+  dòng 49.
+- Thông báo lỗi trích trong tài liệu là **nguyên văn** của GitHub.
+- Chỉ sửa tài liệu, không chạm mã nguồn.
