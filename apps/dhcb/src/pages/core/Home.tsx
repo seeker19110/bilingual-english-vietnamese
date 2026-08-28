@@ -12,7 +12,6 @@ import {
   Sparkles,
   Calculator,
   Briefcase,
-  Rocket,
   GraduationCap,
 } from 'lucide-react'
 import Layout from '../../components/Layout.js'
@@ -227,7 +226,7 @@ export default function Home() {
             <h2 className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
               Các Không Gian & Bộ Môn
             </h2>
-            <span className="text-[11px] text-zinc-500 font-medium">4 Không gian chuyên sâu</span>
+            <span className="text-[11px] text-zinc-500 font-medium">3 Không gian chuyên sâu</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -327,28 +326,33 @@ export default function Home() {
               </button>
             </div>
 
-            {/* KHÔNG GIAN 3: SỰ NGHIỆP & CÔNG VIỆC */}
-            <div className="p-4 rounded-3xl bg-zinc-900/90 border border-purple-500/30 hover:border-purple-500/60 transition-all duration-200 shadow-md group flex flex-col justify-between space-y-3.5">
+            {/* KHÔNG GIAN 3: SỰ NGHIỆP, KHỞI NGHIỆP & ĐỜI SỐNG (gộp 2 thẻ cũ làm 1) */}
+            <div className="sm:col-span-2 p-4 rounded-3xl bg-zinc-900/90 border border-purple-500/30 hover:border-purple-500/60 transition-all duration-200 shadow-md group flex flex-col justify-between space-y-3.5">
               <div className="flex items-start gap-3.5">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shrink-0 shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 flex items-center justify-center shrink-0 shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform">
                   <Briefcase className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <h3 className="font-bold text-white text-base">Sự Nghiệp & Công Việc</h3>
+                  <div className="flex flex-wrap items-center gap-2 mb-0.5">
+                    <h3 className="font-bold text-white text-base">
+                      Sự Nghiệp, Khởi Nghiệp &amp; Đời Sống
+                    </h3>
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 theme-light:text-purple-800 font-bold border border-purple-500/30">
                       Career Hub
                     </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 theme-light:text-orange-800 font-bold border border-orange-500/30">
+                      Life OS
+                    </span>
                   </div>
-                  <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
-                    Mô phỏng phỏng vấn thử việc STAR với AI Recruiter, Action Canvas và Bảng điều
-                    khiển công việc Kanban.
+                  <p className="text-xs text-zinc-400 leading-relaxed">
+                    Phỏng vấn thử STAR với AI Recruiter, Kanban công việc; cố vấn Lean Startup
+                    Canvas, cân bằng 8 khía cạnh Bánh xe cuộc đời và mạng lưới Life Graph.
                   </p>
                 </div>
               </div>
 
-              {/* Lối tắt con trong Career */}
-              <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-zinc-800/80">
+              {/* Lối tắt con: 2 của Sự nghiệp + 2 của Khởi nghiệp/Đời sống */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1 border-t border-zinc-800/80">
                 <button
                   onClick={() => nav('/career/interview')}
                   className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-purple-300 transition text-center truncate"
@@ -361,39 +365,6 @@ export default function Home() {
                 >
                   Công Việc Của Tôi
                 </button>
-              </div>
-
-              <button
-                onClick={() => nav('/su-nghiep')}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 theme-light:text-purple-800 border border-purple-500/30 font-semibold text-xs transition active:scale-[0.98]"
-              >
-                <span>Vào Không Gian Sự Nghiệp Của Tôi</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            {/* KHÔNG GIAN 4: KHỞI NGHIỆP & ĐỜI SỐNG */}
-            <div className="p-4 rounded-3xl bg-zinc-900/90 border border-orange-500/30 hover:border-orange-500/60 transition-all duration-200 shadow-md group flex flex-col justify-between space-y-3.5">
-              <div className="flex items-start gap-3.5">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shrink-0 shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform">
-                  <Rocket className="w-6 h-6 text-zinc-950 font-black" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <h3 className="font-bold text-white text-base">Tôi Khởi Nghiệp & Đời Sống</h3>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 theme-light:text-orange-800 font-bold border border-orange-500/30">
-                      Life OS
-                    </span>
-                  </div>
-                  <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
-                    Cố vấn mô hình kinh doanh Lean Startup Canvas, cân bằng 8 khía cạnh Bánh xe cuộc
-                    đời và mạng lưới Life Graph.
-                  </p>
-                </div>
-              </div>
-
-              {/* Lối tắt con trong Startup/Life */}
-              <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-zinc-800/80">
                 <button
                   onClick={() => nav('/startup/canvas')}
                   className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-orange-300 transition text-center truncate"
@@ -408,13 +379,22 @@ export default function Home() {
                 </button>
               </div>
 
-              <button
-                onClick={() => nav('/khoi-nghiep')}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 theme-light:text-orange-800 border border-orange-500/30 font-semibold text-xs transition active:scale-[0.98]"
-              >
-                <span>Vào Không Gian Tôi Khởi Nghiệp</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button
+                  onClick={() => nav('/su-nghiep')}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 theme-light:text-purple-800 border border-purple-500/30 font-semibold text-xs transition active:scale-[0.98]"
+                >
+                  <span>Vào Không Gian Sự Nghiệp Của Tôi</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => nav('/khoi-nghiep')}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-orange-500/15 hover:bg-orange-500/25 text-orange-300 theme-light:text-orange-800 border border-orange-500/30 font-semibold text-xs transition active:scale-[0.98]"
+                >
+                  <span>Vào Không Gian Tôi Khởi Nghiệp</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
           </div>
         </section>
