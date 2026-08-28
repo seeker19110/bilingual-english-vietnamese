@@ -430,7 +430,7 @@ export async function synthesizeCompanionReply(
         GROQ_CHAT_MODEL,
         systemPrompt,
         messages,
-        1024,
+        2048,
         30_000,
       )
       if (groqRes.kind === 'success' && groqRes.text.trim()) {
@@ -457,7 +457,7 @@ export async function synthesizeCompanionReply(
         ALLOWED_MODEL,
         systemPrompt,
         messages,
-        1024,
+        2048,
         30_000,
       )
       if (
@@ -497,7 +497,7 @@ export async function synthesizeCompanionReply(
         GEMINI_CHAT_MODEL,
         systemPrompt,
         messages as Array<{ role: 'user' | 'assistant'; content: string }>,
-        1024,
+        2048,
         undefined,
         (usage) => {
           geminiUsage = usage

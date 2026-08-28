@@ -86,6 +86,12 @@ const FENCE_PATTERN = new RegExp(
   'm',
 )
 
+// Chỉ bắt dòng MỞ khối (không cần dấu đóng) — dùng khi khối bị cắt cụt giữa chừng.
+const OPEN_FENCE_PATTERN = new RegExp(
+  '^[ \\t]*```[ \\t]*' + INTERACTIVE_QUESTION_FENCE + '[ \\t]*\\r?\\n',
+  'm',
+)
+
 export interface ExtractedInteractiveQuestions {
   /** Lời văn hiển thị cho người dùng — đã gỡ khối JSON ra khỏi câu trả lời. */
   text: string
@@ -103,6 +109,13 @@ export interface ExtractedInteractiveQuestions {
 export function extractInteractiveQuestions(reply: string): ExtractedInteractiveQuestions {
   const match = FENCE_PATTERN.exec(reply)
   if (!match) {
+    // Khối mở ra (```dhcb-questions) nhưng chưa có dấu đóng — thường do LLM bị cắt cụt giữa
+    // chừng (hết token). Vẫn phải giấu khỏi người dùng: hiện JSON dở dang còn tệ hơn không hiện
+    // gì, nên cắt bỏ mọi thứ từ điểm mở khối trở đi.
+    const openMatch = OPEN_FENCE_PATTERN.exec(reply)
+    if (openMatch) {
+      return { text: reply.slice(0, openMatch.index).trimEnd(), questions: [] }
+    }
     return { text: reply, questions: [] }
   }
 
