@@ -1,7 +1,7 @@
 # 0196 — URL bài học có chuỗi mô tả (slug SEO)
 
 **Ngày:** 2026-08-29
-**PR:** (điền số PR sau khi tạo)
+**PR:** [#736](https://github.com/seeker19110/donghanh/pull/736)
 
 ## Việc đã làm
 
