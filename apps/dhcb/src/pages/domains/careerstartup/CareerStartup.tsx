@@ -12,9 +12,8 @@
 // test sẵn có của hai trụ giữ nguyên hành vi.
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Briefcase, Rocket } from 'lucide-react'
+import { Briefcase, Rocket, ArrowRight } from 'lucide-react'
 import Layout from '../../../components/Layout'
-import PageHeader from '../../../components/PageHeader'
 import Career from '../career/Career'
 import Startup from '../startup/Startup'
 
@@ -25,6 +24,29 @@ type Tab = 'su-nghiep' | 'khoi-nghiep'
 function readTab(raw: string | null): Tab {
   return raw === 'khoi-nghiep' ? 'khoi-nghiep' : 'su-nghiep'
 }
+
+const TABS: {
+  id: Tab
+  label: string
+  hint: string
+  icon: typeof Briefcase
+  gradient: string
+}[] = [
+  {
+    id: 'su-nghiep',
+    label: 'Sự nghiệp',
+    hint: 'Hồ sơ nghề, mục tiêu, khoảng cách kỹ năng, phỏng vấn',
+    icon: Briefcase,
+    gradient: 'from-sky-500 to-blue-600',
+  },
+  {
+    id: 'khoi-nghiep',
+    label: 'Khởi nghiệp',
+    hint: 'Lean Canvas, bài toán thị trường, giả thuyết, bằng chứng',
+    icon: Rocket,
+    gradient: 'from-orange-500 to-rose-600',
+  },
+]
 
 export default function CareerStartup() {
   const nav = useNavigate()
@@ -38,64 +60,74 @@ export default function CareerStartup() {
     setSearchParams(params, { replace: true })
   }
 
-  const TABS: { id: Tab; label: string; hint: string; icon: typeof Briefcase }[] = [
-    {
-      id: 'su-nghiep',
-      label: 'Sự nghiệp',
-      hint: 'Hồ sơ nghề, mục tiêu, khoảng cách kỹ năng, phỏng vấn',
-      icon: Briefcase,
-    },
-    {
-      id: 'khoi-nghiep',
-      label: 'Khởi nghiệp',
-      hint: 'Lean Canvas, bài toán thị trường, giả thuyết, bằng chứng',
-      icon: Rocket,
-    },
-  ]
+  const active = TABS.find((t) => t.id === tab) ?? TABS[0]!
 
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100 flex flex-col">
       <Layout onBack={() => nav('/')} title="Sự Nghiệp & Khởi Nghiệp" />
 
-      <div className="max-w-6xl w-full mx-auto px-4 pt-6">
-        <PageHeader
-          title="Sự Nghiệp & Khởi Nghiệp"
-          subtitle="Cùng một câu hỏi — mình sống bằng nghề gì — chỉ khác đường đi: tiến trong nghề, hay tự dựng việc của mình. Hai nửa nằm chung một chỗ để bạn cân nhắc cả hai cùng lúc."
-        />
-
+      {/* Banner tổng quan — gradient đổi theo tab đang mở, để người dùng thấy ngay đang ở
+          "nửa" nào mà không cần đọc chữ. */}
+      <div className="relative overflow-hidden border-b border-zinc-800">
         <div
-          role="tablist"
-          aria-label="Chọn nửa muốn xem"
-          className="flex flex-wrap gap-2 border-b border-zinc-800 pb-3"
-        >
-          {TABS.map((t) => {
-            const Icon = t.icon
-            const active = tab === t.id
-            return (
-              <button
-                key={t.id}
-                type="button"
-                role="tab"
-                id={`careerstartup-tab-${t.id}`}
-                aria-selected={active}
-                aria-controls={`careerstartup-panel-${t.id}`}
-                onClick={() => switchTab(t.id)}
-                className={`tap-44 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition ${
-                  active
-                    ? 'bg-accent-500 text-black shadow-sm'
-                    : 'bg-zinc-900 text-zinc-200 hover:text-white hover:bg-zinc-800 border border-zinc-800'
-                }`}
-              >
-                <Icon className="w-4 h-4" aria-hidden="true" />
-                <span>{t.label}</span>
-                <span
-                  className={`hidden sm:inline text-xs font-normal ${active ? 'text-black' : 'text-zinc-300'}`}
+          className={`absolute inset-0 bg-gradient-to-br ${active.gradient} opacity-15 transition-colors duration-500`}
+          aria-hidden="true"
+        />
+        <div className="relative max-w-6xl w-full mx-auto px-4 pt-8 pb-6">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
+            Sự Nghiệp & Khởi Nghiệp
+          </h1>
+          <p className="text-sm text-zinc-300 mt-1.5 leading-relaxed max-w-2xl">
+            Cùng một câu hỏi — mình sống bằng nghề gì — chỉ khác đường đi: tiến trong nghề, hay tự
+            dựng việc của mình. Hai nửa nằm chung một chỗ để bạn cân nhắc cả hai cùng lúc.
+          </p>
+
+          <div
+            role="tablist"
+            aria-label="Chọn nửa muốn xem"
+            className="flex flex-col sm:flex-row gap-3 mt-6"
+          >
+            {TABS.map((t) => {
+              const Icon = t.icon
+              const isActive = tab === t.id
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  role="tab"
+                  id={`careerstartup-tab-${t.id}`}
+                  aria-selected={isActive}
+                  aria-controls={`careerstartup-panel-${t.id}`}
+                  onClick={() => switchTab(t.id)}
+                  className={`tap-44 group flex-1 flex items-center gap-3 rounded-2xl px-4 py-3 text-left transition-all ${
+                    isActive
+                      ? `bg-gradient-to-br ${t.gradient} text-white shadow-lg shadow-black/30 scale-[1.01]`
+                      : 'bg-zinc-900/80 text-zinc-200 hover:bg-zinc-800 border border-zinc-800'
+                  }`}
                 >
-                  · {t.hint}
-                </span>
-              </button>
-            )
-          })}
+                  <span
+                    className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${
+                      isActive ? 'bg-white/20' : 'bg-zinc-800'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" aria-hidden="true" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-sm font-bold">{t.label}</span>
+                    <span
+                      className={`block text-xs mt-0.5 truncate ${isActive ? 'text-white/85' : 'text-zinc-400'}`}
+                    >
+                      {t.hint}
+                    </span>
+                  </span>
+                  <ArrowRight
+                    className={`w-4 h-4 ml-auto shrink-0 transition-transform ${isActive ? 'opacity-90' : 'opacity-0 group-hover:opacity-60 group-hover:translate-x-0.5'}`}
+                    aria-hidden="true"
+                  />
+                </button>
+              )
+            })}
+          </div>
         </div>
       </div>
 
