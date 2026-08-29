@@ -42,7 +42,10 @@ export async function fetchCareerProfile(): Promise<CareerProfile | null> {
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  // Server bọc dữ liệu trong { profile } (xem apps/server/src/api/domains/career.ts) — gỡ vỏ
+  // ở đây thay vì trả nguyên response, nếu không state phía trên nhận object sai hình dạng.
+  const { profile } = (await res.json()) as { profile: CareerProfile | null }
+  return profile
 }
 
 export async function saveCareerProfile(params: SaveCareerProfileParams): Promise<CareerProfile> {
@@ -56,7 +59,8 @@ export async function saveCareerProfile(params: SaveCareerProfileParams): Promis
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  const { profile } = (await res.json()) as { profile: CareerProfile }
+  return profile
 }
 
 export async function listCareerExperiences(): Promise<CareerExperience[]> {
@@ -66,7 +70,8 @@ export async function listCareerExperiences(): Promise<CareerExperience[]> {
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  const { experiences } = (await res.json()) as { experiences: CareerExperience[] }
+  return experiences
 }
 
 export async function addCareerExperience(
@@ -82,7 +87,8 @@ export async function addCareerExperience(
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  const { experience } = (await res.json()) as { experience: CareerExperience }
+  return experience
 }
 
 export async function listCareerGoals(): Promise<CareerGoal[]> {
@@ -92,7 +98,8 @@ export async function listCareerGoals(): Promise<CareerGoal[]> {
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  const { goals } = (await res.json()) as { goals: CareerGoal[] }
+  return goals
 }
 
 export async function createCareerGoal(params: CreateCareerGoalParams): Promise<CareerGoal> {
@@ -106,7 +113,8 @@ export async function createCareerGoal(params: CreateCareerGoalParams): Promise<
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  const { goal } = (await res.json()) as { goal: CareerGoal }
+  return goal
 }
 
 export async function fetchCareerSkillGap(goalId: string): Promise<CareerSkillGapAnalysis> {
@@ -118,7 +126,8 @@ export async function fetchCareerSkillGap(goalId: string): Promise<CareerSkillGa
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  const { analysis } = (await res.json()) as { analysis: CareerSkillGapAnalysis }
+  return analysis
 }
 
 // Người dùng tự đánh giá bậc thành thạo (B1–B5) cho một kỹ năng. Đây là thứ làm bảng phân tích

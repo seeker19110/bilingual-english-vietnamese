@@ -1,4 +1,11 @@
 // apps/dhcb/src/lib/careerApi.test.ts
+//
+// Mock body PHẢI khớp đúng hình dạng response THẬT của server (bọc trong { profile }/
+// { experiences }/{ goals }/{ analysis }… — xem apps/server/src/api/domains/career.ts). Trước
+// đây các test này mock response TRẦN (không bọc), nên không hề bắt được lỗi thật: server luôn
+// bọc, client luôn gỡ vỏ sai (đọc thẳng response làm dữ liệu) — gây `TypeError: g.map is not a
+// function` trên production khi trang Sự nghiệp render danh sách mục tiêu/kinh nghiệm (phát
+// hiện qua Sentry + console người dùng gửi, 2026-08-29). Sửa ở đây: mock đúng hình dạng thật.
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
   fetchCareerProfile,
@@ -23,7 +30,7 @@ describe('careerApi', () => {
     const mockProfile = { targetRole: 'Senior Engineer', yearsOfExperience: 5 }
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => mockProfile,
+      json: async () => ({ profile: mockProfile }),
     } as unknown as Response)
 
     const res = await fetchCareerProfile()
@@ -45,7 +52,7 @@ describe('careerApi', () => {
     const mockCreated = { id: 'prof-1', targetRole: 'Tech Lead', yearsOfExperience: 7 }
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => mockCreated,
+      json: async () => ({ profile: mockCreated }),
     } as unknown as Response)
 
     const res = await saveCareerProfile({
@@ -71,7 +78,7 @@ describe('careerApi', () => {
     const mockExp = [{ id: 'exp-1', company: 'Google', role: 'SWE' }]
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => mockExp,
+      json: async () => ({ experiences: mockExp }),
     } as unknown as Response)
 
     const res = await listCareerExperiences()
@@ -82,7 +89,7 @@ describe('careerApi', () => {
     const mockExp = { id: 'exp-2', company: 'OpenAI', role: 'Staff SWE' }
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => mockExp,
+      json: async () => ({ experience: mockExp }),
     } as unknown as Response)
 
     const res = await addCareerExperience({
@@ -97,7 +104,7 @@ describe('careerApi', () => {
     const mockGoals = [{ id: 'goal-1', targetTitle: 'CTO' }]
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => mockGoals,
+      json: async () => ({ goals: mockGoals }),
     } as unknown as Response)
 
     const res = await listCareerGoals()
@@ -108,7 +115,7 @@ describe('careerApi', () => {
     const mockGoal = { id: 'goal-2', targetTitle: 'Founder' }
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => mockGoal,
+      json: async () => ({ goal: mockGoal }),
     } as unknown as Response)
 
     const res = await createCareerGoal({
@@ -122,7 +129,7 @@ describe('careerApi', () => {
     const mockGap = { goalId: 'goal-1', gaps: [] }
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => mockGap,
+      json: async () => ({ analysis: mockGap }),
     } as unknown as Response)
 
     const res = await fetchCareerSkillGap('goal-1')

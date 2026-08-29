@@ -38,7 +38,10 @@ export async function listVentures(): Promise<Venture[]> {
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  // Server bọc dữ liệu trong { ventures } (xem apps/server/src/api/domains/startup.ts) — gỡ
+  // vỏ ở đây, nếu không state phía trên nhận object sai hình dạng thay vì mảng.
+  const { ventures } = (await res.json()) as { ventures: Venture[] }
+  return ventures
 }
 
 export async function createVenture(params: CreateVentureParams): Promise<Venture> {
@@ -81,7 +84,8 @@ export async function listProblems(ventureId: string): Promise<Problem[]> {
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  const { problems } = (await res.json()) as { problems: Problem[] }
+  return problems
 }
 
 export async function createProblem(params: CreateProblemParams): Promise<Problem> {
@@ -110,7 +114,8 @@ export async function listHypotheses(ventureId: string): Promise<Hypothesis[]> {
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  const { hypotheses } = (await res.json()) as { hypotheses: Hypothesis[] }
+  return hypotheses
 }
 
 export async function createHypothesis(params: CreateHypothesisParams): Promise<Hypothesis> {
@@ -157,7 +162,8 @@ export async function listEvidence(
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  const { evidence } = (await res.json()) as { evidence: ValidatedEvidence[] }
+  return evidence
 }
 
 export async function recordEvidence(params: RecordEvidenceParams): Promise<ValidatedEvidence> {
