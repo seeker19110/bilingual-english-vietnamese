@@ -83,60 +83,68 @@ test.describe('Platform V2 Specialized Domain Hubs & Companion E2E', () => {
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
-            targetRole: 'Staff AI Engineer',
-            currentTitle: 'Senior Software Engineer',
-            yearsOfExperience: 6,
-            industry: 'EdTech AI',
-            targetSalaryMin: 50000000,
-            targetSalaryMax: 80000000,
-            currency: 'VND',
+            profile: {
+              targetRole: 'Staff AI Engineer',
+              currentTitle: 'Senior Software Engineer',
+              yearsOfExperience: 6,
+              industry: 'EdTech AI',
+              targetSalaryMin: 50000000,
+              targetSalaryMax: 80000000,
+              currency: 'VND',
+            },
           }),
         })
       } else if (url.includes('resource=experiences')) {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify([
-            {
-              id: 'exp-1',
-              company: 'VNG Tech',
-              role: 'Senior Software Engineer',
-              startDate: '2022-01',
-              isCurrent: true,
-              achievements: ['Xây dựng kiến trúc hệ thống phục vụ 500k DAU'],
-            },
-          ]),
+          body: JSON.stringify({
+            experiences: [
+              {
+                id: 'exp-1',
+                company: 'VNG Tech',
+                role: 'Senior Software Engineer',
+                startDate: '2022-01',
+                isCurrent: true,
+                achievements: ['Xây dựng kiến trúc hệ thống phục vụ 500k DAU'],
+              },
+            ],
+          }),
         })
       } else if (url.includes('resource=goals')) {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify([
-            {
-              id: 'goal-1',
-              targetTitle: 'VP of Engineering',
-              targetCompanyType: 'Global Tech',
-              timeframe: '2 năm',
-              skillsRequired: ['System Design', 'English C1', 'Executive Leadership'],
-              status: 'in_progress',
-            },
-          ]),
+          body: JSON.stringify({
+            goals: [
+              {
+                id: 'goal-1',
+                targetTitle: 'VP of Engineering',
+                targetCompanyType: 'Global Tech',
+                timeframe: '2 năm',
+                skillsRequired: ['System Design', 'English C1', 'Executive Leadership'],
+                status: 'in_progress',
+              },
+            ],
+          }),
         })
       } else if (url.includes('resource=skill_gap')) {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
           body: JSON.stringify({
-            goalId: 'goal-1',
-            gaps: [
-              { skill: 'System Design', requiredLevel: 'Expert', isFulfilled: true },
-              {
-                skill: 'English C1',
-                requiredLevel: 'C1',
-                currentMastery: 'B2',
-                isFulfilled: false,
-              },
-            ],
+            analysis: {
+              goalId: 'goal-1',
+              gaps: [
+                { skill: 'System Design', requiredLevel: 'Expert', isFulfilled: true },
+                {
+                  skill: 'English C1',
+                  requiredLevel: 'C1',
+                  currentMastery: 'B2',
+                  isFulfilled: false,
+                },
+              ],
+            },
           }),
         })
       } else {
@@ -151,55 +159,63 @@ test.describe('Platform V2 Specialized Domain Hubs & Companion E2E', () => {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify([
-            {
-              id: 'proj-1',
-              name: 'Platform V2 Core',
-              description: 'Nâng cấp toàn diện kiến trúc AI Companion',
-              status: 'active',
-            },
-          ]),
+          body: JSON.stringify({
+            projects: [
+              {
+                id: 'proj-1',
+                name: 'Platform V2 Core',
+                description: 'Nâng cấp toàn diện kiến trúc AI Companion',
+                status: 'active',
+              },
+            ],
+          }),
         })
       } else if (url.includes('kind=tasks')) {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify([
-            {
-              id: 'task-1',
-              title: 'Hoàn thiện E2E Tests',
-              priority: 'urgent',
-              status: 'todo',
-            },
-          ]),
+          body: JSON.stringify({
+            tasks: [
+              {
+                id: 'task-1',
+                title: 'Hoàn thiện E2E Tests',
+                priority: 'urgent',
+                status: 'todo',
+              },
+            ],
+          }),
         })
       } else if (url.includes('kind=meetings')) {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify([
-            {
-              id: 'meet-1',
-              title: 'V2 Architecture Sprint Sync',
-              scheduledAt: new Date().toISOString(),
-              durationMinutes: 45,
-              summary: 'Rà soát 8 acceptance invariants',
-              actionItems: ['Deploy staging drill'],
-            },
-          ]),
+          body: JSON.stringify({
+            meetings: [
+              {
+                id: 'meet-1',
+                title: 'V2 Architecture Sprint Sync',
+                scheduledAt: new Date().toISOString(),
+                durationMinutes: 45,
+                summary: 'Rà soát 8 acceptance invariants',
+                actionItems: ['Deploy staging drill'],
+              },
+            ],
+          }),
         })
       } else if (url.includes('kind=documents')) {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify([
-            {
-              id: 'doc-1',
-              title: 'V2 Architecture Spec',
-              documentType: 'spec',
-              summary: 'Đặc tả 13 schemas và Life Graph',
-            },
-          ]),
+          body: JSON.stringify({
+            documents: [
+              {
+                id: 'doc-1',
+                title: 'V2 Architecture Spec',
+                documentType: 'spec',
+                summary: 'Đặc tả 13 schemas và Life Graph',
+              },
+            ],
+          }),
         })
       } else {
         await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' })
@@ -213,56 +229,64 @@ test.describe('Platform V2 Specialized Domain Hubs & Companion E2E', () => {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify([
-            {
-              id: 'ven-1',
-              name: 'AI Companion SaaS',
-              stage: 'validation',
-              description: 'Trợ lý học tập và phát triển cá nhân hóa',
-            },
-          ]),
+          body: JSON.stringify({
+            ventures: [
+              {
+                id: 'ven-1',
+                name: 'AI Companion SaaS',
+                stage: 'validation',
+                description: 'Trợ lý học tập và phát triển cá nhân hóa',
+              },
+            ],
+          }),
         })
       } else if (url.includes('kind=problems')) {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify([
-            {
-              id: 'prob-1',
-              statement: 'Người đi làm khó duy trì kỷ luật học tiếng Anh',
-              customerSegment: 'Kỹ sư công nghệ',
-              severity: 'critical',
-              evidenceCount: 3,
-            },
-          ]),
+          body: JSON.stringify({
+            problems: [
+              {
+                id: 'prob-1',
+                statement: 'Người đi làm khó duy trì kỷ luật học tiếng Anh',
+                customerSegment: 'Kỹ sư công nghệ',
+                severity: 'critical',
+                evidenceCount: 3,
+              },
+            ],
+          }),
         })
       } else if (url.includes('kind=hypotheses')) {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify([
-            {
-              id: 'hyp-1',
-              statement: 'Tích hợp Life Graph tăng tỷ lệ giữ chân lên 40%',
-              hypothesisType: 'solution',
-              status: 'supported',
-            },
-          ]),
+          body: JSON.stringify({
+            hypotheses: [
+              {
+                id: 'hyp-1',
+                statement: 'Tích hợp Life Graph tăng tỷ lệ giữ chân lên 40%',
+                hypothesisType: 'solution',
+                status: 'supported',
+              },
+            ],
+          }),
         })
       } else if (url.includes('kind=evidence')) {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify([
-            {
-              id: 'ev-1',
-              title: 'Phỏng vấn 30 người dùng Alpha',
-              evidenceType: 'interview',
-              provenance: 'Survey 2026-08',
-              findings: '90% người dùng đánh giá cao tính năng Life Graph',
-              supportsHypothesis: true,
-            },
-          ]),
+          body: JSON.stringify({
+            evidence: [
+              {
+                id: 'ev-1',
+                title: 'Phỏng vấn 30 người dùng Alpha',
+                evidenceType: 'interview',
+                provenance: 'Survey 2026-08',
+                findings: '90% người dùng đánh giá cao tính năng Life Graph',
+                supportsHypothesis: true,
+              },
+            ],
+          }),
         })
       } else {
         await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' })
@@ -276,59 +300,69 @@ test.describe('Platform V2 Specialized Domain Hubs & Companion E2E', () => {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify([
-            {
-              id: 'hab-1',
-              title: 'Luyện phát âm 15 phút mỗi sáng',
-              habitType: 'build',
-              currentStreak: 12,
-              bestStreak: 21,
-            },
-          ]),
+          body: JSON.stringify({
+            habits: [
+              {
+                id: 'hab-1',
+                title: 'Luyện phát âm 15 phút mỗi sáng',
+                habitType: 'build',
+                currentStreak: 12,
+                bestStreak: 21,
+              },
+            ],
+          }),
         })
       } else if (url.includes('kind=wellbeing')) {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify([
-            {
-              id: 'wb-1',
-              moodScore: 9,
-              energyScore: 8,
-              stressScore: 2,
-              notes: 'Tràn đầy năng lượng sau buổi học',
-              checkedAt: new Date().toISOString(),
-            },
-          ]),
+          // Handler thật (apps/server/src/api/domains/life.ts) trả khoá "checks" cho
+          // kind=wellbeing, không phải "wellbeing".
+          body: JSON.stringify({
+            checks: [
+              {
+                id: 'wb-1',
+                moodScore: 9,
+                energyScore: 8,
+                stressScore: 2,
+                notes: 'Tràn đầy năng lượng sau buổi học',
+                checkedAt: new Date().toISOString(),
+              },
+            ],
+          }),
         })
       } else if (url.includes('kind=plans')) {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify([
-            {
-              id: 'plan-1',
-              title: 'Chinh phục IELTS 7.5 trong Q4',
-              planType: 'quarterly',
-              periodStart: '2026-10-01',
-              periodEnd: '2026-12-31',
-              status: 'active',
-            },
-          ]),
+          body: JSON.stringify({
+            plans: [
+              {
+                id: 'plan-1',
+                title: 'Chinh phục IELTS 7.5 trong Q4',
+                planType: 'quarterly',
+                periodStart: '2026-10-01',
+                periodEnd: '2026-12-31',
+                status: 'active',
+              },
+            ],
+          }),
         })
       } else if (url.includes('kind=milestones')) {
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify([
-            {
-              id: 'mile-1',
-              title: 'Hoàn thành Cấp độ CEFR B2',
-              area: 'learning',
-              achievedAt: '2026-08-15',
-              description: 'Vượt qua bài thi đánh giá 4 kỹ năng',
-            },
-          ]),
+          body: JSON.stringify({
+            milestones: [
+              {
+                id: 'mile-1',
+                title: 'Hoàn thành Cấp độ CEFR B2',
+                area: 'learning',
+                achievedAt: '2026-08-15',
+                description: 'Vượt qua bài thi đánh giá 4 kỹ năng',
+              },
+            ],
+          }),
         })
       } else {
         await route.fulfill({ status: 200, contentType: 'application/json', body: '{}' })
