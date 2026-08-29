@@ -1,4 +1,9 @@
 // apps/dhcb/src/lib/startupApi.test.ts
+//
+// Mock body của các hàm GET danh sách (list*) PHẢI khớp hình dạng THẬT của server — bọc trong
+// { ventures }/{ problems }/{ hypotheses }/{ evidence } (xem
+// apps/server/src/api/domains/startup.ts). Trước đây mock trả mảng TRẦN nên không bắt được lỗi
+// thật giống hệt bên careerApi.test.ts — xem chú thích ở đó.
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
   listVentures,
@@ -26,7 +31,7 @@ describe('startupApi', () => {
     const mock = [{ id: 'v-1', name: 'AI Tutor' }]
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => mock,
+      json: async () => ({ ventures: mock }),
     } as unknown as Response)
 
     const list = await listVentures()
@@ -55,7 +60,7 @@ describe('startupApi', () => {
     const mockProblems = [{ id: 'p-1', statement: 'Slow workflow' }]
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => mockProblems,
+      json: async () => ({ problems: mockProblems }),
     } as unknown as Response)
 
     const problems = await listProblems('v-1')
@@ -76,7 +81,7 @@ describe('startupApi', () => {
 
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => [{ id: 'h-1', statement: 'Will pay $50/mo' }],
+      json: async () => ({ hypotheses: [{ id: 'h-1', statement: 'Will pay $50/mo' }] }),
     } as unknown as Response)
 
     const hypotheses = await listHypotheses('v-1')
@@ -107,7 +112,7 @@ describe('startupApi', () => {
     const mockEvidence = [{ id: 'e-1', title: '5 customer interviews' }]
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => mockEvidence,
+      json: async () => ({ evidence: mockEvidence }),
     } as unknown as Response)
 
     const evList = await listEvidence('v-1', 'h-1')
