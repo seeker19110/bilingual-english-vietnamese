@@ -1,4 +1,9 @@
 // apps/dhcb/src/lib/lifeApi.test.ts
+//
+// Mock body của các hàm GET danh sách (list*) PHẢI khớp hình dạng THẬT của server — bọc trong
+// { plans }/{ habits }/{ checks }/{ milestones } (xem apps/server/src/api/domains/life.ts; lưu
+// ý kind=wellbeing trả về khoá "checks", không phải "wellbeing"). Xem careerApi.test.ts để biết
+// lý do.
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
   listLifePlans,
@@ -26,7 +31,7 @@ describe('lifeApi', () => {
     const mockPlans = [{ id: 'plan-1', title: 'Q3 Plan' }]
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => mockPlans,
+      json: async () => ({ plans: mockPlans }),
     } as unknown as Response)
 
     const list = await listLifePlans()
@@ -58,7 +63,7 @@ describe('lifeApi', () => {
     const mockHabits = [{ id: 'h-1', title: 'Read 30 mins', currentStreak: 5 }]
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => mockHabits,
+      json: async () => ({ habits: mockHabits }),
     } as unknown as Response)
 
     const list = await listHabits()
@@ -89,7 +94,7 @@ describe('lifeApi', () => {
     const mockChecks = [{ id: 'wb-1', moodScore: 8, energyScore: 9, stressScore: 3 }]
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => mockChecks,
+      json: async () => ({ checks: mockChecks }),
     } as unknown as Response)
 
     const checks = await listWellbeingChecks()
@@ -110,7 +115,7 @@ describe('lifeApi', () => {
 
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => [{ id: 'm-1', title: 'Run a marathon', area: 'health' }],
+      json: async () => ({ milestones: [{ id: 'm-1', title: 'Run a marathon', area: 'health' }] }),
     } as unknown as Response)
 
     const milestones = await listGrowthMilestones()

@@ -38,7 +38,10 @@ export async function listWorkProjects(): Promise<WorkProject[]> {
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  // Server bọc dữ liệu trong { projects } (xem apps/server/src/api/domains/work.ts) — gỡ vỏ
+  // ở đây, nếu không state phía trên nhận object sai hình dạng thay vì mảng.
+  const { projects } = (await res.json()) as { projects: WorkProject[] }
+  return projects
 }
 
 export async function createWorkProject(params: CreateWorkProjectParams): Promise<WorkProject> {
@@ -82,7 +85,8 @@ export async function listWorkTasks(projectId?: string): Promise<WorkTask[]> {
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  const { tasks } = (await res.json()) as { tasks: WorkTask[] }
+  return tasks
 }
 
 export async function createWorkTask(params: CreateWorkTaskParams): Promise<WorkTask> {
@@ -123,7 +127,8 @@ export async function listWorkMeetings(): Promise<WorkMeeting[]> {
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  const { meetings } = (await res.json()) as { meetings: WorkMeeting[] }
+  return meetings
 }
 
 export async function recordWorkMeeting(params: RecordWorkMeetingParams): Promise<WorkMeeting> {
@@ -150,7 +155,8 @@ export async function listWorkDocuments(projectId?: string): Promise<WorkDocumen
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  const { documents } = (await res.json()) as { documents: WorkDocument[] }
+  return documents
 }
 
 export async function createWorkDocument(params: CreateWorkDocumentParams): Promise<WorkDocument> {

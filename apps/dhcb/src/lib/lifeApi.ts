@@ -60,7 +60,10 @@ export async function listLifePlans(): Promise<LifePlan[]> {
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  // Server bọc dữ liệu trong { plans } (xem apps/server/src/api/domains/life.ts) — gỡ vỏ ở
+  // đây, nếu không state phía trên nhận object sai hình dạng thay vì mảng.
+  const { plans } = (await res.json()) as { plans: LifePlan[] }
+  return plans
 }
 
 export async function createLifePlan(params: CreateLifePlanParams): Promise<LifePlan> {
@@ -101,7 +104,8 @@ export async function listHabits(): Promise<Habit[]> {
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  const { habits } = (await res.json()) as { habits: Habit[] }
+  return habits
 }
 
 export async function createHabit(params: CreateHabitParams): Promise<Habit> {
@@ -139,7 +143,8 @@ export async function listWellbeingChecks(): Promise<WellbeingCheck[]> {
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  const { checks } = (await res.json()) as { checks: WellbeingCheck[] }
+  return checks
 }
 
 export async function recordWellbeingCheck(
@@ -165,7 +170,8 @@ export async function listGrowthMilestones(): Promise<GrowthMilestone[]> {
     const errorBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }))
     throw new Error(errorBody.error || `HTTP error ${res.status}`)
   }
-  return res.json()
+  const { milestones } = (await res.json()) as { milestones: GrowthMilestone[] }
+  return milestones
 }
 
 // Bánh Xe Cuộc Đời — đọc bản đánh giá đã lưu (null nếu chưa lưu lần nào).

@@ -1,4 +1,8 @@
 // apps/dhcb/src/lib/workApi.test.ts
+//
+// Mock body của các hàm GET danh sách (list*) PHẢI khớp hình dạng THẬT của server — bọc trong
+// { projects }/{ tasks }/{ meetings }/{ documents } (xem apps/server/src/api/domains/work.ts).
+// Xem careerApi.test.ts để biết lý do.
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
   listWorkProjects,
@@ -26,7 +30,7 @@ describe('workApi', () => {
     const mock = [{ id: 'p-1', name: 'Platform V2' }]
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => mock,
+      json: async () => ({ projects: mock }),
     } as unknown as Response)
 
     const res = await listWorkProjects()
@@ -59,7 +63,7 @@ describe('workApi', () => {
     const mock = [{ id: 't-1', title: 'Code review' }]
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => mock,
+      json: async () => ({ tasks: mock }),
     } as unknown as Response)
 
     const res = await listWorkTasks('p-1')
@@ -90,7 +94,7 @@ describe('workApi', () => {
     const mockMeetings = [{ id: 'm-1', title: 'Sync' }]
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => mockMeetings,
+      json: async () => ({ meetings: mockMeetings }),
     } as unknown as Response)
 
     const meetings = await listWorkMeetings()
@@ -123,7 +127,7 @@ describe('workApi', () => {
 
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce({
       ok: true,
-      json: async () => [mockDoc],
+      json: async () => ({ documents: [mockDoc] }),
     } as unknown as Response)
 
     const docs = await listWorkDocuments('p-1')
