@@ -25,6 +25,7 @@ import PageHeader from '../../../components/PageHeader'
 import { useAuth } from '../../../context/useAuth'
 import { PROGRAMMING_LEVELS } from '@dhcb/subject-programming/curriculum'
 import { PROGRAMMING_LESSONS } from '@dhcb/subject-programming/lessons'
+import { buildSlugSegment } from '@core/slug'
 import { PROJECT_STAGES } from '@dhcb/subject-programming/projectSteps'
 
 /** Sản phẩm của học viên lớn lên thế nào qua từng chặng (khối 2 của đặc tả §6). */
@@ -279,7 +280,13 @@ export default function ProgrammingAbout() {
         {/* Khối 8 — hành động. Chưa đăng nhập thì đi qua /login trước. */}
         <section className="space-y-2.5">
           <button
-            onClick={() => nav(user ? '/lap-trinh/bai-hoc/p1-u1-l1' : '/login')}
+            onClick={() =>
+              nav(
+                user
+                  ? `/lap-trinh/bai-hoc/${buildSlugSegment('p1-u1-l1', PROGRAMMING_LESSONS.find((l) => l.id === 'p1-u1-l1')?.title ?? '')}`
+                  : '/login',
+              )
+            }
             className="tap-44 w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition shadow-md shadow-accent-500/20 active:scale-[0.98]"
           >
             <Rocket className="w-4 h-4" />

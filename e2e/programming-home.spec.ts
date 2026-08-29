@@ -41,7 +41,8 @@ test('đang học dở → thẻ đưa thẳng về ĐÚNG bài dở, không ph�
 
   await expect(page.getByText('Đang học dở')).toBeVisible()
   await page.getByRole('button', { name: 'Học tiếp', exact: true }).click()
-  await expect(page).toHaveURL(/\/lap-trinh\/bai-hoc\/p3-u10-l1$/)
+  // URL nay có thêm slug mô tả (SEO) sau id — vd p3-u10-l1--git-co-may-thoi-gian...
+  await expect(page).toHaveURL(/\/lap-trinh\/bai-hoc\/p3-u10-l1(--[a-z0-9-]+)?$/)
 })
 
 test('tiến độ và cột mốc bậc đọc từ dữ liệu thật, không phải số cứng', async ({ page }) => {

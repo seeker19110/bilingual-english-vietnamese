@@ -43,5 +43,6 @@ test('người ĐÃ đăng nhập bấm "Bắt đầu" thì vào thẳng bài đ
   await mockLogin(page, 'vi', 'dark-blue')
   await page.goto('/lap-trinh/gioi-thieu', { waitUntil: 'domcontentloaded' })
   await page.getByRole('button', { name: 'Bắt đầu bài đầu tiên' }).click()
-  await expect(page).toHaveURL(/\/lap-trinh\/bai-hoc\/p1-u1-l1$/)
+  // URL nay có thêm slug mô tả (SEO) sau id — vd p1-u1-l1--chuong-trinh-dau-tien...
+  await expect(page).toHaveURL(/\/lap-trinh\/bai-hoc\/p1-u1-l1(--[a-z0-9-]+)?$/)
 })
