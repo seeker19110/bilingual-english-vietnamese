@@ -16,6 +16,7 @@ import {
 } from '../../../lib/programmingProgress'
 import { getProgrammingLevel } from '@dhcb/subject-programming/curriculum'
 import { getLessonsByUnit } from '@dhcb/subject-programming/lessons'
+import { buildSlugSegment } from '@core/slug'
 
 export default function ProgrammingLevelPage() {
   const nav = useNavigate()
@@ -141,7 +142,9 @@ export default function ProgrammingLevelPage() {
                     {/* Ngôn ngữ hiện TRƯỚC khi bấm (PR-UX1) — học viên biết sắp viết gì. */}
                     <LangBadge language={lesson.language} />
                     <button
-                      onClick={() => nav(`/lap-trinh/bai-hoc/${lesson.id}`)}
+                      onClick={() =>
+                        nav(`/lap-trinh/bai-hoc/${buildSlugSegment(lesson.id, lesson.title)}`)
+                      }
                       className="tap-44 w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition active:scale-[0.98]"
                     >
                       <span className="flex items-center gap-2 min-w-0">

@@ -13,6 +13,7 @@ import { getDirection } from '../../../lib/storage'
 import { loadStoryIndex } from '../../../data/stories/loader'
 import { STORY_KINDS } from '../../../data/stories/index'
 import type { StoryMeta, StoryKind } from '../../../data/stories/index'
+import { buildSlugSegment } from '@core/slug'
 
 type Lang = ReturnType<typeof useLang>['T']
 
@@ -205,7 +206,11 @@ export default function Stories() {
                   key={story.id}
                   story={story}
                   isA={isA}
-                  onClick={() => nav(`/truyen-song-ngu/${story.id}`)}
+                  onClick={() =>
+                    nav(
+                      `/truyen-song-ngu/${buildSlugSegment(story.id, isA ? story.titleEn : story.titleVi)}`,
+                    )
+                  }
                 />
               ))}
             </div>

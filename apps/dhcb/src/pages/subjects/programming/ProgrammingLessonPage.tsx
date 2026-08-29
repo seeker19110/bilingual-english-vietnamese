@@ -37,6 +37,7 @@ import { runLessonCode, resetLessonRunners, laBaiDongLenh } from '../../../lib/c
 import { saveLessonProgress } from '../../../lib/programmingProgress'
 import { addLessonCardsToSrs } from '../../../lib/programmingSrs'
 import { getLesson } from '@dhcb/subject-programming/lessons'
+import { buildSlugSegment, idFromSlugSegment } from '@core/slug'
 import { getLevelIdOfLesson } from '@dhcb/subject-programming/curriculum'
 import {
   gradeTestCase,
@@ -60,7 +61,8 @@ const STEPS: readonly LessonStep[] = [
 export default function ProgrammingLessonPage() {
   const nav = useNavigate()
   const { user } = useAuth()
-  const { lessonId } = useParams<{ lessonId: string }>()
+  const { lessonId: lessonSlugParam } = useParams<{ lessonId: string }>()
+  const lessonId = lessonSlugParam ? idFromSlugSegment(lessonSlugParam) : undefined
   const lesson = lessonId ? getLesson(lessonId) : undefined
 
   const [step, setStep] = useState(0)
@@ -93,6 +95,14 @@ export default function ProgrammingLessonPage() {
   }, [user, lesson])
 
   if (!lesson) return <Navigate to="/lap-trinh" replace />
+
+  // URL cũ chỉ có id (không có phần mô tả) hoặc slug mô tả không khớp tiêu đề hiện tại
+  // (bài học đã đổi tên) → chuyển hướng về URL chuẩn để không bị Google coi là 2 trang khác
+  // nhau (nội dung trùng).
+  const canonicalSegment = buildSlugSegment(lesson.id, lesson.title)
+  if (lessonSlugParam !== canonicalSegment) {
+    return <Navigate to={`/lap-trinh/bai-hoc/${canonicalSegment}`} replace />
+  }
 
   const runExample = async () => {
     setExampleState('running')
