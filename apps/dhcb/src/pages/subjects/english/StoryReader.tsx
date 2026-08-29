@@ -13,6 +13,7 @@ import { getDirection } from '../../../lib/storage'
 import { groupLinesByParagraph, getStoryVoice } from '../../../lib/stories'
 import { loadStory } from '../../../data/stories/loader'
 import type { Story } from '../../../data/stories/index'
+import { buildSlugSegment, idFromSlugSegment } from '@core/slug'
 import {
   speak,
   stopSpeaking,
@@ -22,7 +23,8 @@ import {
 } from '../../../lib/tts'
 
 export default function StoryReader() {
-  const { id } = useParams<{ id: string }>()
+  const { id: slugParam } = useParams<{ id: string }>()
+  const id = slugParam ? idFromSlugSegment(slugParam) : undefined
   const nav = useNavigate()
   const { T } = useLang()
   const { user } = useAuth()
@@ -55,6 +57,16 @@ export default function StoryReader() {
       alive = false
     }
   }, [id])
+
+  // URL cũ chỉ có id hoặc slug mô tả không khớp tiêu đề hiện tại → chuyển hướng về URL chuẩn
+  // (tránh Google coi 2 URL cùng nội dung là 2 trang khác nhau).
+  useEffect(() => {
+    if (!story || !id) return
+    const canonicalSegment = buildSlugSegment(id, isA ? story.titleEn : story.titleVi)
+    if (slugParam !== canonicalSegment) {
+      nav(`/truyen-song-ngu/${canonicalSegment}`, { replace: true })
+    }
+  }, [story, id, isA, slugParam, nav])
 
   const paragraphs = useMemo(() => (story ? groupLinesByParagraph(story.lines) : []), [story])
   const flatLines = story?.lines ?? []

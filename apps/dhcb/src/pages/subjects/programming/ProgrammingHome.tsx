@@ -37,6 +37,7 @@ import { PROGRAMMING_LEVELS } from '@dhcb/subject-programming/curriculum'
 import { PROJECT_STAGES } from '@dhcb/subject-programming/projectSteps'
 import { PROGRAMMING_SPECIALIZATIONS } from '@dhcb/subject-programming/specializations/registry'
 import { goToSubjects } from '../../../lib/subjectsHost'
+import { buildSlugSegment } from '@core/slug'
 
 export default function ProgrammingHome() {
   const nav = useNavigate()
@@ -108,7 +109,10 @@ export default function ProgrammingHome() {
               </>
             )}
             <button
-              onClick={() => next && nav(`/lap-trinh/bai-hoc/${next.lesson.id}`)}
+              onClick={() =>
+                next &&
+                nav(`/lap-trinh/bai-hoc/${buildSlugSegment(next.lesson.id, next.lesson.title)}`)
+              }
               disabled={!next}
               className="tap-44 w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-black font-semibold text-sm transition active:scale-[0.98]"
             >

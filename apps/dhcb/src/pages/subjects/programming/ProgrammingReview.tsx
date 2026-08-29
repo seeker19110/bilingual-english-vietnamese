@@ -20,6 +20,8 @@ import {
   type ProgSrsCard,
 } from '../../../lib/programmingSrs'
 import { SRS_SESSION_CAP, type Rating } from '../../../lib/srs'
+import { getLesson } from '@dhcb/subject-programming/lessons'
+import { buildSlugSegment } from '@core/slug'
 
 /** 4 mức tự đánh giá — nhãn nói bằng lời người học, không dùng thuật ngữ FSRS. */
 const MUC: { rating: Rating; nhan: string; mau: string }[] = [
@@ -149,7 +151,11 @@ export default function ProgrammingReview() {
             )}
 
             <button
-              onClick={() => nav(`/lap-trinh/bai-hoc/${the.lessonId}`)}
+              onClick={() =>
+                nav(
+                  `/lap-trinh/bai-hoc/${buildSlugSegment(the.lessonId, getLesson(the.lessonId)?.title ?? '')}`,
+                )
+              }
               className="tap-44 inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-zinc-600 text-zinc-300 text-sm transition"
             >
               <Brain className="w-4 h-4" />
