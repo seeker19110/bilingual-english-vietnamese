@@ -44,7 +44,10 @@ test('bấm vào bài trong khoá dẫn đúng bài học (dùng lại bài p3-u
   await gioLapTiendo(page, [])
   await page.goto('/lap-trinh/khoa/git', { waitUntil: 'domcontentloaded' })
 
-  await page.getByRole('button', { name: /Học bài:/ }).first().click()
+  await page
+    .getByRole('button', { name: /Học bài:/ })
+    .first()
+    .click()
   await expect(page).toHaveURL(/\/lap-trinh\/bai-hoc\/p3-u10-l1(--[a-z0-9-]+)?$/)
 })
 
