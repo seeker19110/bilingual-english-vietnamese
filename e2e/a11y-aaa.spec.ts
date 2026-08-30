@@ -58,6 +58,7 @@ const ROUTES = [
   '/lap-trinh/huong/web', // chi tiết một hướng — trang chữ dài, nhiều tương phản
   '/lap-trinh/huong/architecture', // hướng kiến trúc — trang chi tiết dài nhất, nhiều danh sách chữ
   '/lap-trinh/huong/web/web-s2', // trang CHẶNG: mục tiêu, tự kiểm, rubric, đặc tả 6 ô
+  '/lap-trinh/khoa/git', // khoá ngắn Git & GitHub (PR 3/4 khoá Git) — cắt ngang bậc
 ] as const
 
 // Đếm số phần tử vi phạm NẰM TRONG phần nội dung/tiêu đề (bỏ phần vỏ giao diện).
