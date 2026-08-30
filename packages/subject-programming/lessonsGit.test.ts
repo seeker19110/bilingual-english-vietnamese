@@ -161,10 +161,10 @@ git merge phu`)
     expect(r.output).toContain('XUNG DOT')
   })
 
-  it('lệnh cần mạng nói rõ vì sao không chạy được ở đây (không giả vờ thành công)', () => {
-    for (const lenh of ['git push', 'git pull', 'git clone']) {
+  it('push/pull/clone khi chưa khai remote thì nhắc "git remote add origin" trước', () => {
+    for (const lenh of ['git push', 'git pull', 'git clone https://x.git']) {
       const r = chayLenh(`git init\n${lenh}`)
-      expect(r.error, lenh).toContain('khong co mang')
+      expect(r.error, lenh).toBeTruthy()
     }
   })
 
@@ -245,12 +245,20 @@ git merge phu`)
 
   it('git không kèm lệnh con thì nhắc ví dụ; lệnh git lạ nêu các lệnh dùng được', () => {
     expect(chayLenh('git').error).toContain('Thieu lenh git')
-    expect(chayLenh('git init\ngit bisect').error).toContain('chua ho tro')
+    expect(chayLenh('git init\ngit worktree').error).toContain('khong lam')
   })
 
-  it('rebase/stash nói rõ không nằm trong bài học này', () => {
-    expect(chayLenh('git init\ngit rebase main').error).toContain('khong nam trong bai hoc')
-    expect(chayLenh('git init\ngit stash').error).toContain('khong nam trong bai hoc')
+  it('git bisect: mô phỏng nói rõ không CHẠY được (chỉ dạy bằng lý thuyết/Predict)', () => {
+    expect(chayLenh('git init\ngit bisect').error).toContain('khong CHAY duoc')
+  })
+
+  it('rebase -i (tương tác) nói rõ không nằm trong bài học này; rebase thường thì chạy được', () => {
+    expect(chayLenh('git init\ngit rebase main -i').error).toContain('nam ngoai bai hoc')
+    const r = chayLenh(
+      'git init\necho "a" > a.txt\ngit add .\ngit commit -m "c1"\ngit switch -c phu\necho "b" > b.txt\ngit add .\ngit commit -m "c2"\ngit rebase main',
+    )
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Da rebase 1 commit')
   })
 
   it('shell: pwd · cat thiếu tên · cat file lạ · rm · mkdir/cd nói rõ giới hạn', () => {

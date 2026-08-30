@@ -33,6 +33,38 @@ interface Commit {
   branch: string
 }
 
+/**
+ * Kho TỪ XA giả lập (PR khoá Git) — KHÔNG có mạng, chỉ là một object khác trong cùng bộ nhớ.
+ *
+ * Vì sao phải có: hai bài quan trọng nhất của phần cộng tác (`git pull` và **giải xung đột**)
+ * đều cần một sự thật "người khác đã đẩy commit lên trước bạn". Không mô hình hoá được điều
+ * đó thì hai bài ấy chỉ còn là lý thuyết đọc chay, không chấm được.
+ */
+interface RemoteState {
+  url: string
+  /** Nhánh trên kho từ xa → id commit mới nhất. */
+  nhanh: Record<string, string | null>
+  /** Commit đang nằm trên kho từ xa (có thể chưa có ở máy học viên). */
+  commits: Commit[]
+}
+
+/** Một mục trong ngăn tạm `git stash`. */
+interface StashEntry {
+  /** 'stash@{0}' là mục MỚI NHẤT — đúng như git thật, dễ nhầm nên phải giữ đúng. */
+  message: string
+  workdir: Record<string, string>
+  staged: Record<string, string>
+}
+
+/** Trạng thái "đang gộp dở": có xung đột chưa giải quyết, chưa tạo được commit gộp. */
+interface TrangThaiGop {
+  /** Tên nhánh (hoặc nhãn 'origin/x') đang được gộp vào nhánh hiện tại. */
+  ten: string
+  idKia: string
+  /** File còn dấu xung đột, phải `git add` sau khi sửa mới commit được. */
+  xungDot: string[]
+}
+
 interface RepoState {
   /** Đã `git init` chưa — mọi lệnh git khác đều đòi hỏi điều này. */
   khoiTao: boolean
@@ -46,6 +78,14 @@ interface RepoState {
   branches: Record<string, string | null>
   nhanhHienTai: string
   demCommit: number
+  /** Kho từ xa đã `git remote add` (null = chưa khai). Bài học chỉ dùng tên 'origin'. */
+  remote: RemoteState | null
+  /** `stash@{0}` ở đầu mảng = mục mới nhất, đúng thứ tự git thật liệt kê. */
+  stash: StashEntry[]
+  /** Khác null nghĩa là đang gộp dở, còn xung đột chưa giải quyết. */
+  dangGop: TrangThaiGop | null
+  /** Tên tag → id commit — `git tag -a` gắn nhãn cố định lên một commit. */
+  tags: Record<string, string>
 }
 
 function taoRepo(): RepoState {
@@ -57,6 +97,10 @@ function taoRepo(): RepoState {
     branches: {},
     nhanhHienTai: 'main',
     demCommit: 0,
+    remote: null,
+    stash: [],
+    dangGop: null,
+    tags: {},
   }
 }
 
@@ -156,6 +200,35 @@ function gitCommit(repo: RepoState, tu: string[]): string {
       'Commit phai co loi nhan. Viet: git commit -m "noi ban vua lam gi" (loi nhan la thu ban doc lai sau 3 thang).',
     )
   }
+
+  // Đang gộp dở (từ `git pull` gây xung đột thật — xem `guiGop`): commit này KẾT THÚC cuộc
+  // gộp, không phải commit thường. Phải chặn nếu còn file nào chưa giải xung đột.
+  if (repo.dangGop) {
+    const conThieu = repo.dangGop.xungDot.filter(
+      (p) => !(p in repo.staged) || repo.staged[p]!.includes('<<<<<<<'),
+    )
+    if (conThieu.length) {
+      throw new LoiLenh(
+        `Con xung dot chua giai o: ${conThieu.join(', ')}. Sua het cac dau <<<<<<< / ======= / >>>>>>> trong file roi "git add <file>" lai truoc khi commit.`,
+      )
+    }
+    const idNay = repo.branches[repo.nhanhHienTai] ?? null
+    const kia = repo.commits.find((c) => c.id === repo.dangGop!.idKia)!
+    repo.demCommit += 1
+    const commit: Commit = {
+      id: `c${repo.demCommit}`,
+      message,
+      snapshot: { ...anhChupHienTai(repo), ...kia.snapshot, ...repo.staged },
+      parents: idNay ? [idNay, kia.id] : [kia.id],
+      branch: repo.nhanhHienTai,
+    }
+    repo.commits.push(commit)
+    repo.branches[repo.nhanhHienTai] = commit.id
+    repo.staged = {}
+    repo.dangGop = null
+    return `[${repo.nhanhHienTai} ${commit.id}] ${message}\nDa hoan tat gop (commit co hai cha: ${commit.parents.join(', ')})`
+  }
+
   const goc = anhChupHienTai(repo)
   const coThayDoi = Object.keys(repo.staged).some((p) => repo.staged[p] !== goc[p])
   if (!coThayDoi) {
@@ -290,14 +363,480 @@ function gitMerge(repo: RepoState, tu: string[]): string {
   return `Da gop nhanh ${ten} vao ${repo.nhanhHienTai} (commit gop ${commit.id})${canhBao}`
 }
 
+// ============================================================================================
+// TẦNG HOÀN TÁC — diff / restore / reset / revert / reflog (khoá "Git & GitHub thực hành" C3).
+// ============================================================================================
+
+/** So hai chuỗi nhiều dòng theo TỪNG DÒNG (đơn giản, không phải thuật toán LCS như git thật —
+ *  đủ dùng vì file trong bài học ngắn, và mục tiêu là dạy KHÁI NIỆM diff, không phải thuật toán). */
+function dongDiff(cu: string | undefined, moi: string | undefined): string[] {
+  const a = (cu ?? '').split('\n')
+  const b = (moi ?? '').split('\n')
+  const max = Math.max(a.length, b.length)
+  const ra: string[] = []
+  for (let i = 0; i < max; i++) {
+    if (a[i] === b[i]) continue
+    if (cu !== undefined && a[i] !== undefined) ra.push(`-${a[i]}`)
+    if (moi !== undefined && b[i] !== undefined) ra.push(`+${b[i]}`)
+  }
+  return ra
+}
+
+function gitDiff(repo: RepoState, tu: string[]): string {
+  doiHoiRepo(repo)
+  const staged = tu.includes('--staged') || tu.includes('--cached')
+  const goc = anhChupHienTai(repo)
+  if (staged) {
+    const doi = Object.keys(repo.staged)
+      .filter((p) => repo.staged[p] !== goc[p])
+      .sort()
+    if (!doi.length) return ''
+    return doi
+      .map((p) => `diff --git a/${p} b/${p}\n${dongDiff(goc[p], repo.staged[p]).join('\n')}`)
+      .join('\n')
+  }
+  const mocSoSanh = { ...goc, ...repo.staged }
+  const doi = Object.keys(repo.workdir)
+    .filter((p) => repo.workdir[p] !== mocSoSanh[p])
+    .sort()
+  if (!doi.length) return ''
+  return doi
+    .map((p) => `diff --git a/${p} b/${p}\n${dongDiff(mocSoSanh[p], repo.workdir[p]).join('\n')}`)
+    .join('\n')
+}
+
+function gitRestore(repo: RepoState, tu: string[]): string {
+  doiHoiRepo(repo)
+  const staged = tu.includes('--staged')
+  const files = tu.filter((t) => t !== '--staged')
+  if (!files.length) {
+    throw new LoiLenh(
+      'Thieu ten file. Vi du: "git restore ten_file.txt" (bo thay doi chua add) hoac "git restore --staged ten_file.txt" (bo khoi vung cho).',
+    )
+  }
+  const goc = anhChupHienTai(repo)
+  for (const p of files) {
+    if (staged) {
+      if (!(p in repo.staged)) throw new LoiLenh(`File "${p}" khong o trong vung cho.`)
+      delete repo.staged[p]
+      continue
+    }
+    // KHÔNG có --staged: ghi đè thư mục làm việc bằng bản đã add (nếu có) hoặc bản commit gần
+    // nhất — MẤT VĨNH VIỄN thay đổi chưa add. Bài học phải cảnh báo trước khi cho gõ lệnh này.
+    const nguon = p in repo.staged ? repo.staged[p] : goc[p]
+    if (nguon === undefined) throw new LoiLenh(`Khong co gi de khoi phuc cho "${p}".`)
+    repo.workdir[p] = nguon
+  }
+  return ''
+}
+
+function gitReset(repo: RepoState, tu: string[]): string {
+  doiHoiRepo(repo)
+  const args = [...tu]
+  let muc: 'soft' | 'mixed' | 'hard' = 'mixed'
+  for (const co of ['--soft', '--mixed', '--hard'] as const) {
+    const i = args.indexOf(co)
+    if (i !== -1) {
+      muc = co.slice(2) as 'soft' | 'mixed' | 'hard'
+      args.splice(i, 1)
+    }
+  }
+  const dich = args[0] ?? repo.branches[repo.nhanhHienTai] ?? undefined
+  if (!dich) throw new LoiLenh('Khong co commit de reset ve.')
+  const target = repo.commits.find((c) => c.id === dich)
+  if (!target) {
+    throw new LoiLenh(`Khong co commit "${dich}". Dung "git log --oneline" de xem ma commit.`)
+  }
+  const truocKhiReset = anhChupHienTai(repo)
+  repo.branches[repo.nhanhHienTai] = target.id
+  if (muc === 'soft') {
+    // Vùng chờ giữ NGUYÊN "cây" của HEAD cũ — như git thật, index không đổi khi reset --soft,
+    // nên so với HEAD mới nó hiện ra là "đã chuẩn bị để commit lại".
+    repo.staged = { ...truocKhiReset }
+  } else {
+    repo.staged = {}
+  }
+  if (muc === 'hard') repo.workdir = { ...target.snapshot }
+  const canhBao =
+    muc === 'hard'
+      ? '\nCANH BAO: --hard xoa het thay doi chua commit trong thu muc lam viec — KHONG cuu duoc thu chua tung add. Commit da tao van con trong "git reflog".'
+      : ''
+  return `Da reset (${muc}) nhanh ${repo.nhanhHienTai} ve ${target.id}${canhBao}`
+}
+
+function gitRevert(repo: RepoState, tu: string[]): string {
+  doiHoiRepo(repo)
+  const id = tu[0]
+  if (!id) throw new LoiLenh('Thieu ma commit. Vi du: git revert c2')
+  const target = repo.commits.find((c) => c.id === id)
+  if (!target) throw new LoiLenh(`Khong co commit "${id}".`)
+  const chaId = target.parents[0]
+  const truoc = chaId ? (repo.commits.find((c) => c.id === chaId)?.snapshot ?? {}) : {}
+  // Ảnh chụp mới = ảnh hiện tại, áp lại nội dung "TRƯỚC target" cho đúng những file mà target
+  // từng đổi — mô hình đơn giản (không xử lý ca revert-chồng-revert nhiều tầng).
+  const hienTai = anhChupHienTai(repo)
+  const snapshotMoi: Record<string, string> = { ...hienTai }
+  for (const p of Object.keys(target.snapshot)) {
+    if (p in truoc) snapshotMoi[p] = truoc[p]!
+    else delete snapshotMoi[p]
+  }
+  repo.demCommit += 1
+  const cha = repo.branches[repo.nhanhHienTai]
+  const commit: Commit = {
+    id: `c${repo.demCommit}`,
+    message: `Revert "${target.message}"`,
+    snapshot: snapshotMoi,
+    parents: cha ? [cha] : [],
+    branch: repo.nhanhHienTai,
+  }
+  repo.commits.push(commit)
+  repo.branches[repo.nhanhHienTai] = commit.id
+  repo.workdir = { ...snapshotMoi }
+  repo.staged = {}
+  return `[${repo.nhanhHienTai} ${commit.id}] Revert "${target.message}"\nDa tao COMMIT MOI de hoan lai — lich su khong bi xoa (khac voi reset).`
+}
+
+function gitReflog(repo: RepoState): string {
+  doiHoiRepo(repo)
+  // Đơn giản hoá: liệt kê MỌI commit từng tạo ra, không phân biệt nhánh — đúng tinh thần
+  // reflog thật ("nhật ký mọi nơi HEAD từng trỏ tới", kể cả commit đã "mất" sau reset --hard).
+  if (!repo.commits.length) return 'Chua co gi trong reflog'
+  const ds = [...repo.commits].reverse()
+  return ds.map((c, i) => `${c.id} HEAD@{${i}}: commit: ${c.message}`).join('\n')
+}
+
+// ============================================================================================
+// TẦNG KHO TỪ XA GIẢ LẬP — remote / push / fetch / pull / clone (khoá C4, KHÔNG có mạng thật).
+// ============================================================================================
+
+/** `ancestorId` có nằm trên nhánh tổ tiên của `id` không — đi ngược TẤT CẢ cha (kể cả commit gộp). */
+function laToTien(commits: Commit[], id: string | null, ancestorId: string): boolean {
+  const hangDoi: string[] = id ? [id] : []
+  const daXet = new Set<string>()
+  while (hangDoi.length) {
+    const cur = hangDoi.shift()!
+    if (cur === ancestorId) return true
+    if (daXet.has(cur)) continue
+    daXet.add(cur)
+    const c = commits.find((x) => x.id === cur)
+    if (c) hangDoi.push(...c.parents)
+  }
+  return false
+}
+
+/** Sao chép một chuỗi commit (theo cha đầu tiên) từ `nguon` sang `dich` nếu `dich` chưa có. */
+function saoChepChuoi(nguon: Commit[], id: string | null, dich: Commit[]): void {
+  let cur = id
+  while (cur) {
+    if (dich.some((c) => c.id === cur)) return // đã có — tổ tiên xa hơn coi như cũng đã có
+    const c = nguon.find((x) => x.id === cur)
+    if (!c) return
+    dich.push(c)
+    cur = c.parents[0] ?? null
+  }
+}
+
+function gitRemote(repo: RepoState, tu: string[]): string {
+  doiHoiRepo(repo)
+  if (tu[0] === '-v') {
+    if (!repo.remote) return '(chua co remote nao)'
+    return `origin  ${repo.remote.url} (fetch)\norigin  ${repo.remote.url} (push)`
+  }
+  if (tu[0] === 'add') {
+    const ten = tu[1]
+    const url = tu[2]
+    if (ten !== 'origin') {
+      throw new LoiLenh('Mo phong chi ho tro mot remote ten "origin" (dung nhu quy uoc pho bien).')
+    }
+    if (!url) {
+      throw new LoiLenh('Thieu URL. Vi du: git remote add origin https://github.com/ban/du-an.git')
+    }
+    if (repo.remote) throw new LoiLenh('remote "origin" da ton tai roi.')
+    repo.remote = { url, nhanh: {}, commits: [] }
+    return ''
+  }
+  throw new LoiLenh('Mo phong ho tro: "git remote -v" va "git remote add origin <url>".')
+}
+
+function gitPush(repo: RepoState, tu: string[]): string {
+  doiHoiRepo(repo)
+  if (!repo.remote) {
+    throw new LoiLenh('Chua co remote. Chay "git remote add origin <url>" truoc.')
+  }
+  const luc = repo.remote
+  const setUpstream = tu.includes('-u')
+  const force = tu.includes('--force') || tu.includes('--force-with-lease')
+  const args = tu.filter((t) => t !== '-u' && t !== '--force' && t !== '--force-with-lease')
+  if (args.length && args[0] !== 'origin') {
+    throw new LoiLenh('Mo phong chi co remote "origin". Vi du: git push -u origin main')
+  }
+  const nhanh = args[1] ?? repo.nhanhHienTai
+  const localId = repo.branches[nhanh] ?? null
+  if (!localId) throw new LoiLenh(`Nhanh "${nhanh}" chua co commit nao de day.`)
+  const remoteId = luc.nhanh[nhanh] ?? null
+  if (remoteId && remoteId !== localId && !laToTien(repo.commits, localId, remoteId) && !force) {
+    throw new LoiLenh(
+      `Bi tu choi: origin/${nhanh} co commit ban chua co o may. Chay "git pull" truoc, hoac "git push --force-with-lease" neu THAT SU chac chan muon ghi de (nguy hiem — co the xoa mat viec cua nguoi khac).`,
+    )
+  }
+  saoChepChuoi(repo.commits, localId, luc.commits)
+  luc.nhanh[nhanh] = localId
+  const dongDau = setUpstream
+    ? `Nhanh "${nhanh}" duoc thiet lap de theo doi "origin/${nhanh}".\n`
+    : ''
+  return `${dongDau}Da day len origin/${nhanh} (${localId})`
+}
+
+function gitFetch(repo: RepoState): string {
+  doiHoiRepo(repo)
+  if (!repo.remote) throw new LoiLenh('Chua co remote. Chay "git remote add origin <url>" truoc.')
+  const ds = Object.entries(repo.remote.nhanh)
+  if (!ds.length) return 'Da lay du lieu tu origin — hien origin chua co nhanh nao.'
+  return (
+    'Da lay du lieu moi tu origin.\n' +
+    ds.map(([b, id]) => `  origin/${b} -> ${id ?? '(chua co commit)'}`).join('\n')
+  )
+}
+
+/** Thực hiện gộp `idKia` (đã có trong `repo.commits` — sao chép từ remote trước đó) vào nhánh
+ *  hiện tại. Khác với `gitMerge` (lệnh `merge` cục bộ, giữ hành vi cũ để không phá bài đã có):
+ *  hàm này mô phỏng ĐÚNG quy trình git thật khi có xung đột — CHÈN DẤU XUNG ĐỘT vào file, KHÔNG
+ *  tự tạo commit, bắt học viên sửa rồi tự `git add` + `git commit` mới hoàn tất. */
+function guiGop(repo: RepoState, tenKia: string, idKia: string): string {
+  const idNay = repo.branches[repo.nhanhHienTai] ?? null
+  if (idKia === idNay) return `Da cap nhat, khong co gi moi tu ${tenKia}.`
+  if (idNay === null || laToTien(repo.commits, idKia, idNay)) {
+    // Nhánh hiện tại không có gì mới so với phía kia (hoặc chưa có commit nào) → tua nhanh.
+    repo.branches[repo.nhanhHienTai] = idKia
+    repo.workdir = { ...anhChupHienTai(repo) }
+    repo.staged = {}
+    return `Tua nhanh (fast-forward) tu ${tenKia}.`
+  }
+  if (laToTien(repo.commits, idNay, idKia)) {
+    return `Da cap nhat, khong co gi moi tu ${tenKia}.`
+  }
+  const kia = repo.commits.find((c) => c.id === idKia)!
+  const nay = repo.commits.find((c) => c.id === idNay)!
+  const trung = Object.keys(kia.snapshot).filter(
+    (p) => nay.snapshot[p] !== undefined && nay.snapshot[p] !== kia.snapshot[p],
+  )
+  if (!trung.length) {
+    // Không file nào trùng — gộp sạch, tạo luôn commit gộp (không cần học viên can thiệp).
+    repo.demCommit += 1
+    const commit: Commit = {
+      id: `c${repo.demCommit}`,
+      message: `Gop ${tenKia} vao ${repo.nhanhHienTai}`,
+      snapshot: { ...nay.snapshot, ...kia.snapshot },
+      parents: [idNay, idKia],
+      branch: repo.nhanhHienTai,
+    }
+    repo.commits.push(commit)
+    repo.branches[repo.nhanhHienTai] = commit.id
+    repo.workdir = { ...commit.snapshot }
+    repo.staged = {}
+    return `Da gop ${tenKia} vao ${repo.nhanhHienTai} (commit gop ${commit.id})`
+  }
+  // XUNG ĐỘT THẬT: chèn dấu vào các file cả hai bên cùng sửa, dừng lại chờ học viên xử lý.
+  for (const p of trung) {
+    repo.workdir[p] =
+      `<<<<<<< HEAD\n${nay.snapshot[p]}\n=======\n${kia.snapshot[p]}\n>>>>>>> ${tenKia}\n`
+  }
+  for (const p of Object.keys(kia.snapshot)) {
+    if (!trung.includes(p) && kia.snapshot[p] !== nay.snapshot[p])
+      repo.workdir[p] = kia.snapshot[p]!
+  }
+  repo.staged = {}
+  repo.dangGop = { ten: tenKia, idKia, xungDot: trung }
+  return (
+    `TU DONG GOP THAT BAI; sua XUNG DOT o cac file:\n` +
+    trung.map((p) => `  ca hai cung sua: ${p}`).join('\n') +
+    `\nMo file, chon lai noi dung dung (xoa het dau <<<<<<< / ======= / >>>>>>>), roi "git add <file>". Xong ca thi "git commit -m ..." de hoan tat gop.`
+  )
+}
+
+function gitPull(repo: RepoState): string {
+  doiHoiRepo(repo)
+  if (repo.dangGop) {
+    throw new LoiLenh(
+      'Dang gop dang do (con xung dot chua giai). Giai xong roi commit truoc khi pull tiep.',
+    )
+  }
+  if (!repo.remote) throw new LoiLenh('Chua co remote. Chay "git remote add origin <url>" truoc.')
+  const nhanh = repo.nhanhHienTai
+  const remoteId = repo.remote.nhanh[nhanh] ?? null
+  if (!remoteId) return `Khong co gi moi tu origin/${nhanh}.`
+  saoChepChuoi(repo.remote.commits, remoteId, repo.commits)
+  return guiGop(repo, `origin/${nhanh}`, remoteId)
+}
+
+function gitClone(repo: RepoState, tu: string[]): string {
+  if (repo.khoiTao) throw new LoiLenh('Thu muc nay da la kho git roi, khong the clone de len.')
+  const url = tu[0]
+  if (!url) throw new LoiLenh('Thieu URL. Vi du: git clone https://github.com/ban/du-an.git')
+  if (!repo.remote || repo.remote.url !== url) {
+    throw new LoiLenh(
+      '(Loi rieng cua bai hoc, khong phai git that): mo phong chi "clone" duoc kho da duoc dung san lam boi canh cua bai.',
+    )
+  }
+  repo.khoiTao = true
+  const nhanhChinh = 'main'
+  const id = repo.remote.nhanh[nhanhChinh] ?? null
+  repo.branches[nhanhChinh] = id
+  repo.nhanhHienTai = nhanhChinh
+  if (id) {
+    saoChepChuoi(repo.remote.commits, id, repo.commits)
+    repo.workdir = { ...anhChupHienTai(repo) }
+  }
+  return `Da clone tu ${url} ve thu muc hien tai.`
+}
+
+// ============================================================================================
+// TẦNG NÂNG CAO — stash / tag / cherry-pick / rebase tuyến tính (khoá C5).
+// ============================================================================================
+
+function gitStash(repo: RepoState, tu: string[]): string {
+  doiHoiRepo(repo)
+  const sub = tu[0] ?? 'push'
+  if (sub === 'push') {
+    const goc = anhChupHienTai(repo)
+    const coGiDoi =
+      Object.keys(repo.workdir).some((p) => {
+        const moc = p in repo.staged ? repo.staged[p] : goc[p]
+        return moc === undefined || repo.workdir[p] !== moc
+      }) || Object.keys(repo.staged).some((p) => repo.staged[p] !== goc[p])
+    if (!coGiDoi) throw new LoiLenh('Khong co gi de stash — thu muc lam viec dang sach.')
+    const viTriM = tu.findIndex((t) => t === '-m')
+    const msg = viTriM === -1 ? `WIP tren ${repo.nhanhHienTai}` : (tu[viTriM + 1] ?? 'WIP')
+    repo.stash.unshift({ message: msg, workdir: { ...repo.workdir }, staged: { ...repo.staged } })
+    // "Dọn bàn": đưa thư mục làm việc + vùng chờ về đúng commit gần nhất để chuyển việc khác.
+    repo.workdir = { ...goc }
+    repo.staged = {}
+    return `Da cat (stash) thay doi: ${msg}`
+  }
+  if (sub === 'list') {
+    if (!repo.stash.length) return '(khong co stash nao)'
+    return repo.stash.map((s, i) => `stash@{${i}}: ${s.message}`).join('\n')
+  }
+  if (sub === 'pop' || sub === 'apply') {
+    const entry = repo.stash[0]
+    if (!entry) throw new LoiLenh('Khong co stash nao de lay lai.')
+    repo.workdir = { ...repo.workdir, ...entry.workdir }
+    repo.staged = { ...repo.staged, ...entry.staged }
+    if (sub === 'pop') repo.stash.shift()
+    return sub === 'pop'
+      ? 'Da lay lai va XOA khoi ngan stash.'
+      : 'Da ap dung, VAN GIU trong ngan stash (dung "git stash drop" de xoa).'
+  }
+  if (sub === 'drop') {
+    if (!repo.stash.length) throw new LoiLenh('Khong co stash nao de xoa.')
+    repo.stash.shift()
+    return 'Da xoa stash@{0}.'
+  }
+  throw new LoiLenh('Mo phong ho tro: git stash [push [-m "..."]], list, pop, apply, drop.')
+}
+
+function gitTag(repo: RepoState, tu: string[]): string {
+  doiHoiRepo(repo)
+  if (!tu.length) {
+    const ds = Object.keys(repo.tags).sort()
+    return ds.length ? ds.join('\n') : '(chua co tag nao)'
+  }
+  if (tu[0] !== '-a') {
+    throw new LoiLenh('Mo phong chi ho tro: git tag -a <ten> -m "<loi nhan>" (tag co chu thich).')
+  }
+  const ten = tu[1]
+  if (!ten) throw new LoiLenh('Thieu ten tag. Vi du: git tag -a v1.0 -m "Ban phat hanh dau tien"')
+  if (ten in repo.tags) throw new LoiLenh(`Tag "${ten}" da ton tai.`)
+  const id = repo.branches[repo.nhanhHienTai]
+  if (!id) throw new LoiLenh('Chua co commit nao de gan tag.')
+  repo.tags[ten] = id
+  return `Da tao tag "${ten}" tro toi ${id}`
+}
+
+function gitCherryPick(repo: RepoState, tu: string[]): string {
+  doiHoiRepo(repo)
+  const id = tu[0]
+  if (!id) throw new LoiLenh('Thieu ma commit. Vi du: git cherry-pick c3')
+  const target = repo.commits.find((c) => c.id === id)
+  if (!target) throw new LoiLenh(`Khong co commit "${id}". Dung "git log --oneline" de xem ma.`)
+  const goc = anhChupHienTai(repo)
+  repo.demCommit += 1
+  const cha = repo.branches[repo.nhanhHienTai]
+  const commit: Commit = {
+    id: `c${repo.demCommit}`,
+    message: target.message,
+    // Đơn giản hoá: lấy nguyên trạng thái file của commit kia (không tính diff-3-phía như git
+    // thật) — đủ để dạy Ý NGHĨA "mang một commit cụ thể sang nhánh khác", tạo ra MÃ COMMIT MỚI.
+    snapshot: { ...goc, ...target.snapshot },
+    parents: cha ? [cha] : [],
+    branch: repo.nhanhHienTai,
+  }
+  repo.commits.push(commit)
+  repo.branches[repo.nhanhHienTai] = commit.id
+  repo.workdir = { ...commit.snapshot }
+  repo.staged = {}
+  return `[${repo.nhanhHienTai} ${commit.id}] ${target.message}\n(cherry-pick tu ${id} — tao commit MOI, khac ma voi ban goc)`
+}
+
+function gitRebase(repo: RepoState, tu: string[]): string {
+  doiHoiRepo(repo)
+  if (tu.includes('-i')) {
+    throw new LoiLenh('Mo phong khong lam rebase tuong tac (-i) — nam ngoai bai hoc nay.')
+  }
+  const ten = tu[0]
+  if (!ten) throw new LoiLenh('Thieu ten nhanh. Vi du: git rebase main')
+  if (!(ten in repo.branches)) throw new LoiLenh(`Khong co nhanh "${ten}".`)
+  const idDich = repo.branches[ten] ?? null
+  const idNay = repo.branches[repo.nhanhHienTai] ?? null
+  if (idNay === null) throw new LoiLenh('Nhanh hien tai chua co commit nao de rebase.')
+
+  // Chỉ chấp nhận ca TUYẾN TÍNH: đi ngược nhánh hiện tại tới khi gặp TỔ TIÊN CHUNG với nhánh
+  // đích (không nhất thiết là chính idDich — main có thể đã đi xa hơn từ tổ tiên đó, đúng ca
+  // "rebase để bắt kịp main" thường gặp). Không tìm được tổ tiên chung → không mô phỏng nổi.
+  const chuoiNay: Commit[] = []
+  let cur: string | null = idNay
+  while (cur !== null && !laToTien(repo.commits, idDich, cur)) {
+    const c = repo.commits.find((x) => x.id === cur)
+    if (!c) break
+    chuoiNay.unshift(c)
+    cur = c.parents[0] ?? null
+  }
+  if (cur === null && idDich !== null) {
+    throw new LoiLenh(
+      'Mo phong chi rebase duoc truong hop TUYEN TINH (hai nhanh co to tien chung). Rebase phuc tap hon nam ngoai bai hoc nay.',
+    )
+  }
+
+  let chaMoi: string | null = idDich
+  for (const c of chuoiNay) {
+    repo.demCommit += 1
+    const idMoi = `c${repo.demCommit}`
+    const commitMoi: Commit = {
+      id: idMoi,
+      message: c.message,
+      snapshot: c.snapshot,
+      parents: chaMoi ? [chaMoi] : [],
+      branch: repo.nhanhHienTai,
+    }
+    repo.commits.push(commitMoi)
+    chaMoi = idMoi
+  }
+  repo.branches[repo.nhanhHienTai] = chaMoi
+  repo.workdir = { ...anhChupHienTai(repo) }
+  repo.staged = {}
+  return `Da rebase ${chuoiNay.length} commit len tren "${ten}". Luu y: rebase TAO COMMIT MOI (ma commit doi) — dung push --force-with-lease neu nhanh nay da len GitHub va co nguoi khac dang dung chung.`
+}
+
 /** Lệnh git chưa mô phỏng — nói thẳng là mô hình không làm, kèm điều học viên cần biết. */
 const GIT_CHUA_MO_PHONG: Record<string, string> = {
-  push: 'Mo phong nay khong co mang nen khong chay duoc "git push". Ngoai doi that: push la day commit tu may ban len GitHub.',
-  pull: 'Mo phong nay khong co mang nen khong chay duoc "git pull". Ngoai doi that: pull la keo commit moi tu GitHub ve may ban.',
-  clone:
-    'Mo phong nay khong co mang nen khong chay duoc "git clone". Ngoai doi that: clone la tai toan bo kho tu GitHub ve may lan dau.',
-  rebase: 'Mo phong nay chi day phan loi: rebase khong nam trong bai hoc nay.',
-  stash: 'Mo phong nay chi day phan loi: stash khong nam trong bai hoc nay.',
+  worktree: 'Mo phong nay khong lam "git worktree" — nam ngoai bai hoc nay.',
+  submodule: 'Mo phong nay khong lam "git submodule" — nam ngoai bai hoc nay.',
+  lfs: 'Mo phong nay khong lam "git lfs" — nam ngoai bai hoc nay.',
+  mergetool: 'Mo phong nay khong lam "git mergetool" — sua xung dot bang cach mo file va sua tay.',
+  archive: 'Mo phong nay khong lam "git archive" — nam ngoai bai hoc nay.',
+  fsck: 'Mo phong nay khong lam "git fsck" — nam ngoai bai hoc nay.',
+  bisect:
+    'Mo phong nay khong CHAY duoc "git bisect" — bai hoc chi ke lai cach dung no (Predict), khong co ca chay that.',
 }
 
 function chayGit(repo: RepoState, tu: string[]): string {
@@ -328,8 +867,22 @@ function chayGit(repo: RepoState, tu: string[]): string {
     if (!ten) throw new LoiLenh('Thieu ten nhanh. Vi du: git switch -c tinh-nang-moi')
     return chuyenNhanh(repo, ten, taoMoi)
   }
+  if (lenh === 'diff') return gitDiff(repo, conLai)
+  if (lenh === 'restore') return gitRestore(repo, conLai)
+  if (lenh === 'reset') return gitReset(repo, conLai)
+  if (lenh === 'revert') return gitRevert(repo, conLai)
+  if (lenh === 'reflog') return gitReflog(repo)
+  if (lenh === 'remote') return gitRemote(repo, conLai)
+  if (lenh === 'push') return gitPush(repo, conLai)
+  if (lenh === 'fetch') return gitFetch(repo)
+  if (lenh === 'pull') return gitPull(repo)
+  if (lenh === 'clone') return gitClone(repo, conLai)
+  if (lenh === 'stash') return gitStash(repo, conLai)
+  if (lenh === 'tag') return gitTag(repo, conLai)
+  if (lenh === 'cherry-pick') return gitCherryPick(repo, conLai)
+  if (lenh === 'rebase') return gitRebase(repo, conLai)
   throw new LoiLenh(
-    `Mo phong chua ho tro "git ${lenh}". Cac lenh dung duoc: init, status, add, commit, log, branch, switch/checkout, merge.`,
+    `Mo phong chua ho tro "git ${lenh}". Cac lenh dung duoc: init, status, add, commit, log, branch, switch/checkout, merge, diff, restore, reset, revert, reflog, remote, push, fetch, pull, clone, stash, tag, cherry-pick, rebase.`,
   )
 }
 
@@ -366,6 +919,33 @@ function chayShell(repo: RepoState, tu: string[], dongGoc: string): string {
     const file = tachTu(phanFile ?? '')[0]
     if (!file) throw new LoiLenh('Thieu ten file sau dau ">". Vi du: echo "xin chao" > ghi_chu.txt')
     repo.workdir[file] = chuyenHuong === '>>' ? `${repo.workdir[file] ?? ''}${chu}\n` : `${chu}\n`
+    return ''
+  }
+  if (lenh === 'remote-seed') {
+    // KHÔNG phải lệnh git thật — chỉ để lesson author DỰNG BỐI CẢNH "co nguoi khac da push
+    // truoc" trong boi canh an (lenhChuanBi), phục vụ bài `pull`/xung đột. Cú pháp:
+    //   remote-seed <nhánh> "<lời nhắn>" <tên_file> "<nội dung>"
+    // Tự tạo remote (URL giả) nếu chưa có, nối tiếp lên đúng tip hiện tại của nhánh đó trên
+    // remote — mô phỏng "ai đó push thêm SAU khi bạn đã push lần đầu, hoặc trước khi bạn clone".
+    const [nhanh, msg, file, noiDung] = conLai
+    if (!nhanh || !msg || !file || noiDung === undefined) {
+      throw new LoiLenh(
+        'remote-seed can 4 tham so: nhanh, loi nhan (nhay kep), ten file, noi dung (nhay kep).',
+      )
+    }
+    if (!repo.remote)
+      repo.remote = { url: 'https://mo-phong.local/kho.git', nhanh: {}, commits: [] }
+    const chaId = repo.remote.nhanh[nhanh] ?? null
+    const cha = chaId ? repo.remote.commits.find((c) => c.id === chaId) : undefined
+    const idMoi = `r${repo.remote.commits.length + 1}`
+    repo.remote.commits.push({
+      id: idMoi,
+      message: msg,
+      snapshot: { ...(cha?.snapshot ?? {}), [file]: noiDung },
+      parents: chaId ? [chaId] : [],
+      branch: nhanh,
+    })
+    repo.remote.nhanh[nhanh] = idMoi
     return ''
   }
   if (lenh === 'mkdir' || lenh === 'cd') {
