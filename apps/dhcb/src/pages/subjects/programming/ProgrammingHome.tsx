@@ -36,6 +36,7 @@ import {
 import { PROGRAMMING_LEVELS } from '@dhcb/subject-programming/curriculum'
 import { PROJECT_STAGES } from '@dhcb/subject-programming/projectSteps'
 import { PROGRAMMING_SPECIALIZATIONS } from '@dhcb/subject-programming/specializations/registry'
+import { SHORT_COURSES } from '@dhcb/subject-programming/courses/registry'
 import { goToSubjects } from '../../../lib/subjectsHost'
 import { buildSlugSegment } from '@core/slug'
 
@@ -216,6 +217,33 @@ export default function ProgrammingHome() {
             <span>Về khoá học</span>
           </button>
         </section>
+
+        {/* ④b Khoá ngắn — cắt ngang bậc, học được ngay không cần đợi tới bậc nào. Đặt sau ba
+            nút tắt vì đây cũng là một "lối tắt", nhưng đủ quan trọng để có khối riêng thay vì
+            chỉ là nút thứ tư. */}
+        {SHORT_COURSES.length > 0 && (
+          <section className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 space-y-3 shadow-sm">
+            <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-accent-400" aria-hidden="true" />
+              <span>Khoá ngắn — học ngay, không cần đợi tới bậc</span>
+            </h2>
+            {SHORT_COURSES.map((course) => (
+              <button
+                key={course.id}
+                onClick={() => nav(`/lap-trinh/khoa/${course.id}`)}
+                className={`${nutPhu} w-full flex-col items-start !py-3 text-left`}
+              >
+                <span className="flex items-center gap-2 w-full">
+                  <Play className="w-4 h-4 text-accent-400 shrink-0" />
+                  <span className="truncate">{course.title}</span>
+                </span>
+                <span className="text-xs font-normal text-zinc-400 leading-relaxed">
+                  {course.canDo}
+                </span>
+              </button>
+            ))}
+          </section>
+        )}
 
         {/* ⑤ Lộ trình 6 bậc — cột mốc, thấy được mình đang ở đâu trên đường dài */}
         <section className="space-y-3">

@@ -104,6 +104,9 @@ const ProgrammingSpecStagePage = lazyWithRetry(
 const ProgrammingSpecializationPage = lazyWithRetry(
   () => import('./pages/subjects/programming/ProgrammingSpecializationPage'),
 )
+const ProgrammingCoursePage = lazyWithRetry(
+  () => import('./pages/subjects/programming/ProgrammingCoursePage'),
+)
 const ChatPage = lazyWithRetry(() => import('./pages/subjects/english/ChatPage'))
 
 // Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang.
@@ -452,6 +455,16 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <ProgrammingSpecializationPage />
+                          </RequireAuth>
+                        }
+                      />
+                      {/* Khoá ngắn (cắt ngang bậc, ví dụ khoá Git) — đặt TRƯỚC ':levelId'
+                          để 'khoa' không bị hiểu nhầm là mã bậc, cùng lý do như '/huong'. */}
+                      <Route
+                        path="/lap-trinh/khoa/:courseId"
+                        element={
+                          <RequireAuth>
+                            <ProgrammingCoursePage />
                           </RequireAuth>
                         }
                       />
