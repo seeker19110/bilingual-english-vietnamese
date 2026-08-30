@@ -378,6 +378,13 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
 - [x] Giọng điệu Chat/Speaking thân mật, nhẹ nhàng hơn + nút "Kết thúc & chấm điểm" cuối phiên
       (chấm kiểu IELTS Speaking: fluency/từ vựng/ngữ pháp, riêng Speaking có thêm phát âm) — kết quả
       chỉ hiện tạm trong phiên, không lưu Supabase. Xem `PROGRESS.md` (PR #170).
+- [x] **Hướng chuyên sâu "Toán học cho Lập trình" (`mathforcode`, hướng thứ 14, PR #739,
+      2026-08-30)** — hướng NỀN cắt ngang (như `algo`/`architecture`) trong môn Lập trình, đủ 4
+      chặng S1→S4: nền tảng rời rạc (bù 2, Boolean, modulo, Big-O) → tổ hợp & xác suất → đại số
+      tuyến tính ứng dụng → giải tích & tối ưu cho AI/ML (tự cài gradient descent bằng Python
+      thuần). Đồng thời thêm chương trình tương ứng vào môn Toán
+      (`STEM_CURRICULUM.mathematics`, `apps/dhcb/src/data/stemCurriculum.ts`) nên khoá học hiện
+      diện ở CẢ HAI môn. Đặc tả: `docs/specs/2026-08-30-toan-hoc-cho-lap-trinh.md`.
 
 ### Việc còn dang dở / cần quyết định
 
