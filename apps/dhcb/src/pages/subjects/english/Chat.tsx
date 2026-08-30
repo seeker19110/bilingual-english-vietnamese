@@ -20,6 +20,7 @@ import { useToast } from '@core/ToastProvider'
 import { useCloudSync } from '../../../lib/useCloudSync'
 import { useApiThrottle } from '../../../lib/useApiThrottle'
 import { useMountedRef } from '../../../lib/useMountedRef'
+import { useIsDesktopViewport } from '../../../lib/useIsDesktopViewport'
 import { useOnboarding } from '../../../lib/onboarding'
 import { callClaude, parseJson, hasNumberFields } from '../../../lib/ai'
 import { effectivePlan } from '../../../lib/promo'
@@ -211,6 +212,7 @@ function Bubble({
   dir,
   userId,
   userInput,
+  isDesktop,
 }: {
   msg: Message
   isNew?: boolean
@@ -219,15 +221,14 @@ function Bubble({
   userId: string
   // câu học viên vừa gõ NGAY TRƯỚC tin nhắn AI này — làm user_input khi ghi phản hồi
   userInput: string
+  // true ở desktop (≥1024px) — khi đó FeedbackPanel (Chat.tsx) đã hiện lời sửa/giải thích
+  // này rồi nên Bubble KHÔNG render lại (tránh trùng DOM, xem comment ở khối feedbackText).
+  isDesktop: boolean
 }) {
   // Chiều A: AI nói tiếng Anh, giải thích tiếng Việt
   // Chiều B: AI nói tiếng Việt, giải thích tiếng Anh
   const speechLang = dir === 'A' ? ('en-US' as const) : ('vi-VN' as const)
   const feedbackLang = dir === 'A' ? ('vi-VN' as const) : ('en-US' as const)
-  // Vòng phản hồi người dùng (mục ⑤ T3) — mỗi tin nhắn vote tối đa 1 lần, chỉ lưu cục bộ
-  // (không lưu Supabase trạng thái đã vote, mất khi tải lại trang là chấp nhận được).
-  // Khai báo TRƯỚC early-return bên dưới để không vi phạm rules-of-hooks.
-  const [voted, setVoted] = useState<'up' | 'down' | null>(null)
 
   if (msg.role === 'user') {
     return (
@@ -240,15 +241,6 @@ function Bubble({
   }
 
   const { speech: speechText, feedback: feedbackText } = parseAssistantReply(msg.content)
-
-  const handleVote = (vote: 'up' | 'down') => {
-    if (voted) return
-    setVoted(vote)
-    // Chỉ ghi DB khi tín hiệu ÂM (👎) — 👍 chỉ đổi UI, không gọi API (quyết định đã chốt).
-    if (vote === 'down') {
-      void reportTutorFeedback(userId, 'chat', userInput, feedbackText)
-    }
-  }
 
   return (
     <div className={`flex justify-start ${isNew ? 'animate-fade-in' : ''}`}>
@@ -263,71 +255,126 @@ function Bubble({
           )}
         </div>
 
-        {feedbackText && (
-          <div className="bg-amber-500/10 border border-amber-500/25 border-l-4 border-l-amber-400 rounded-2xl px-4 py-3 shadow-inner">
-            <div className="flex items-start gap-2">
-              <span className="text-amber-400 theme-light:text-amber-800 font-bold shrink-0 mt-0.5">
-                ✅
-              </span>
-              <KaraokeText
-                text={feedbackText}
-                lang={feedbackLang}
-                textClass="text-xs leading-relaxed text-amber-200 theme-light:text-amber-800 font-medium"
-                buttonClass="flex-1"
-                iconSize="xs"
-              />
-              {/* Vote nhận xét đúng/sai — mục ⑤ T3, xem tutorFeedback.ts.
-                  Emoji thô (không phải icon lucide) — tránh phình vendor-ui chunk
-                  chỉ vì 2 icon dùng đúng 1 chỗ, và nhất quán với ✅ ngay cạnh đây. */}
-              <div className="flex items-center gap-0.5 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => handleVote('up')}
-                  disabled={!!voted}
-                  aria-label={dir === 'A' ? 'Nhận xét đúng' : 'Feedback is correct'}
-                  className={`h-9 w-9 flex items-center justify-center rounded-full text-xs transition ${
-                    voted === null
-                      ? 'opacity-60 hover:opacity-100 hover:bg-amber-500/15'
-                      : voted === 'up'
-                        ? 'scale-110'
-                        : 'disabled:opacity-25'
-                  }`}
-                >
-                  👍
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleVote('down')}
-                  disabled={!!voted}
-                  aria-label={dir === 'A' ? 'Nhận xét sai/thiếu' : 'Feedback is wrong/incomplete'}
-                  className={`h-9 w-9 flex items-center justify-center rounded-full text-xs transition ${
-                    voted === null
-                      ? 'opacity-60 hover:opacity-100 hover:bg-amber-500/15'
-                      : voted === 'down'
-                        ? 'scale-110'
-                        : 'disabled:opacity-25'
-                  }`}
-                >
-                  👎
-                </button>
-              </div>
-            </div>
-            {voted === 'down' && (
-              <p className="text-[10px] text-zinc-500 mt-1 pl-5">
-                {dir === 'A' ? 'Đã ghi nhận, cảm ơn bạn!' : 'Recorded, thank you!'}
-              </p>
-            )}
-          </div>
+        {/* Chỉ hiện ở MOBILE/TABLET (<1024px) — desktop xem cột FeedbackPanel bên phải
+            (Chat.tsx render nó 1 lần cho cả phiên). Gate bằng JS (`isDesktop`, không phải
+            class `lg:hidden`) để phần tử KHÔNG tồn tại trong DOM ở nhánh còn lại — ẩn bằng
+            CSS vẫn để nguyên text ở CẢ HAI nơi, khiến trình đọc màn hình đọc trùng 2 lần và
+            `getByText` của Playwright báo strict-mode violation (đã dính thật ở
+            e2e/a11y.spec.ts khi thêm FeedbackPanel). */}
+        {feedbackText && !isDesktop && (
+          <FeedbackBlock
+            feedback={feedbackText}
+            lang={feedbackLang}
+            dir={dir}
+            userId={userId}
+            userInput={userInput}
+          />
         )}
       </div>
     </div>
   )
 }
 
-// FeedbackPanel — cột "Sửa lỗi & giải thích" ghim bên phải, CHỈ hiện ở desktop (`lg:`).
+// FeedbackBlock — khung "✅ nhận xét/sửa lỗi" DÙNG CHUNG giữa Bubble (mobile, gắn NGAY dưới
+// từng tin nhắn) và FeedbackPanel (desktop, gom hết vào cột phải) — tách ra để vote 👍👎 hoạt
+// động y hệt ở cả hai nơi mà không viết trùng logic.
+function FeedbackBlock({
+  feedback,
+  lang,
+  dir,
+  userId,
+  userInput,
+}: {
+  feedback: string
+  lang: 'vi-VN' | 'en-US'
+  dir: Direction
+  userId: string
+  userInput: string
+}) {
+  const [voted, setVoted] = useState<'up' | 'down' | null>(null)
+
+  const handleVote = (vote: 'up' | 'down') => {
+    if (voted) return
+    setVoted(vote)
+    // Chỉ ghi DB khi tín hiệu ÂM (👎) — 👍 chỉ đổi UI, không gọi API (quyết định đã chốt).
+    if (vote === 'down') {
+      void reportTutorFeedback(userId, 'chat', userInput, feedback)
+    }
+  }
+
+  return (
+    <div className="bg-amber-500/10 border border-amber-500/25 border-l-4 border-l-amber-400 rounded-2xl px-4 py-3 shadow-inner">
+      <div className="flex items-start gap-2">
+        <span className="text-amber-400 theme-light:text-amber-800 font-bold shrink-0 mt-0.5">
+          ✅
+        </span>
+        <KaraokeText
+          text={feedback}
+          lang={lang}
+          textClass="text-xs leading-relaxed text-amber-200 theme-light:text-amber-800 font-medium"
+          buttonClass="flex-1"
+          iconSize="xs"
+        />
+        {/* Vote nhận xét đúng/sai — mục ⑤ T3, xem tutorFeedback.ts.
+            Emoji thô (không phải icon lucide) — tránh phình vendor-ui chunk
+            chỉ vì 2 icon dùng đúng 1 chỗ, và nhất quán với ✅ ngay cạnh đây. */}
+        <div className="flex items-center gap-0.5 shrink-0">
+          <button
+            type="button"
+            onClick={() => handleVote('up')}
+            disabled={!!voted}
+            aria-label={dir === 'A' ? 'Nhận xét đúng' : 'Feedback is correct'}
+            className={`h-9 w-9 flex items-center justify-center rounded-full text-xs transition ${
+              voted === null
+                ? 'opacity-60 hover:opacity-100 hover:bg-amber-500/15'
+                : voted === 'up'
+                  ? 'scale-110'
+                  : 'disabled:opacity-25'
+            }`}
+          >
+            👍
+          </button>
+          <button
+            type="button"
+            onClick={() => handleVote('down')}
+            disabled={!!voted}
+            aria-label={dir === 'A' ? 'Nhận xét sai/thiếu' : 'Feedback is wrong/incomplete'}
+            className={`h-9 w-9 flex items-center justify-center rounded-full text-xs transition ${
+              voted === null
+                ? 'opacity-60 hover:opacity-100 hover:bg-amber-500/15'
+                : voted === 'down'
+                  ? 'scale-110'
+                  : 'disabled:opacity-25'
+            }`}
+          >
+            👎
+          </button>
+        </div>
+      </div>
+      {voted === 'down' && (
+        <p className="text-[10px] text-zinc-500 mt-1 pl-5">
+          {dir === 'A' ? 'Đã ghi nhận, cảm ơn bạn!' : 'Recorded, thank you!'}
+        </p>
+      )}
+    </div>
+  )
+}
+
+// FeedbackPanel — cột "Sửa lỗi & giải thích" ghim bên phải. Cha (Chat.tsx) chỉ render
+// component này khi `isDesktop` true — KHÔNG lọc bằng CSS `hidden lg:flex` vì Bubble cũng
+// hiện cùng nội dung này khi ở mobile; ẩn bằng CSS vẫn để cả hai bản tồn tại trong DOM cùng
+// lúc, gây trùng nội dung cho trình đọc màn hình (xem comment `isDesktop` ở Bubble).
 // Gom TẤT CẢ lời sửa/giải thích trong phiên (không chỉ câu mới nhất) để đối chiếu ngược lại
 // câu học viên đã gõ, không cần cuộn lên cột chat bên trái tìm lại tin nhắn cũ.
-function FeedbackPanel({ messages, dir }: { messages: Message[]; dir: Direction }) {
+function FeedbackPanel({
+  messages,
+  dir,
+  userId,
+}: {
+  messages: Message[]
+  dir: Direction
+  userId: string
+}) {
   const feedbackLang = dir === 'A' ? ('vi-VN' as const) : ('en-US' as const)
   const items = messages
     .map((m, i) => {
@@ -340,7 +387,7 @@ function FeedbackPanel({ messages, dir }: { messages: Message[]; dir: Direction 
     .filter((x): x is { id: string; feedback: string; userInput: string } => x !== null)
 
   return (
-    <aside className="hidden lg:flex lg:w-72 xl:w-80 shrink-0 flex-col min-h-0">
+    <aside className="flex w-72 xl:w-80 shrink-0 flex-col min-h-0">
       <div className="shrink-0 pb-2">
         <p className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
           {dir === 'A' ? 'Sửa lỗi & giải thích' : 'Corrections & explanations'}
@@ -355,27 +402,19 @@ function FeedbackPanel({ messages, dir }: { messages: Message[]; dir: Direction 
           </p>
         ) : (
           items.map((it) => (
-            <div
-              key={it.id}
-              className="bg-amber-500/10 border border-amber-500/25 border-l-4 border-l-amber-400 rounded-2xl px-3.5 py-3 shadow-inner"
-            >
+            <div key={it.id}>
               {it.userInput && (
-                <p className="text-[11px] text-zinc-500 mb-1.5 truncate" title={it.userInput}>
+                <p className="text-[11px] text-zinc-500 mb-1 truncate px-0.5" title={it.userInput}>
                   “{it.userInput}”
                 </p>
               )}
-              <div className="flex items-start gap-2">
-                <span className="text-amber-400 theme-light:text-amber-800 font-bold shrink-0">
-                  ✅
-                </span>
-                <KaraokeText
-                  text={it.feedback}
-                  lang={feedbackLang}
-                  textClass="text-xs leading-relaxed text-amber-200 theme-light:text-amber-800 font-medium"
-                  buttonClass="flex-1"
-                  iconSize="xs"
-                />
-              </div>
+              <FeedbackBlock
+                feedback={it.feedback}
+                lang={feedbackLang}
+                dir={dir}
+                userId={userId}
+                userInput={it.userInput}
+              />
             </div>
           ))
         )}
@@ -422,6 +461,9 @@ export default function Chat() {
   const dir = getDirection()
   const isA = dir === 'A'
   const onboarding = useOnboarding(user.id) // trình độ khai lúc onboarding (U-3)
+  // 1 listener DUY NHẤT cho cả trang — Bubble/FeedbackPanel nhận qua prop, không mỗi tin nhắn
+  // tự tạo matchMedia riêng.
+  const isDesktop = useIsDesktopViewport()
 
   // Từ mục tiêu từ màn "xong batch" của lộ trình (?words=a,b,c — đề xuất B, V-3).
   // Cap 20 từ để prompt không phình; đọc 1 lần khi vào trang.
@@ -744,6 +786,7 @@ export default function Chat() {
                   isNew={i >= lastIdx}
                   dir={dir}
                   userId={user.id}
+                  isDesktop={isDesktop}
                   userInput={
                     session.messages[i - 1]?.role === 'user' ? session.messages[i - 1]!.content : ''
                   }
@@ -765,7 +808,7 @@ export default function Chat() {
               <div ref={bottomRef} />
             </div>
 
-            <FeedbackPanel messages={session.messages} dir={dir} />
+            {isDesktop && <FeedbackPanel messages={session.messages} dir={dir} userId={user.id} />}
           </div>
 
           <div className="sticky bottom-0 bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800/60 px-4 py-3 pb-safe">
