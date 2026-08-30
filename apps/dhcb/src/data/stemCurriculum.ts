@@ -294,6 +294,217 @@ export const STEM_CURRICULUM: Record<string, StemGradeCurriculum[]> = {
         },
       ],
     },
+    {
+      grade: 'university',
+      gradeLabel: 'Đại học — Toán ứng dụng trong Lập trình',
+      chapters: [
+        {
+          id: 'mfc_c1',
+          title: 'Chương 1: Toán rời rạc nền tảng — biểu diễn số và logic',
+          description:
+            'Hệ nhị phân, số bù 2, dấu phẩy động IEEE 754, đại số Boolean, số học modulo và cách đọc Big-O bằng ngôn ngữ toán.',
+          keyFormulas: [
+            {
+              name: 'Giá trị số bù 2 trên n bit',
+              formula: 'V = -b_(n-1) * 2^(n-1) + Σ (b_i * 2^i), i = 0..n-2',
+              note: 'Bit cao nhất mang trọng số ÂM — đó là lý do phép trừ thành phép cộng',
+            },
+            {
+              name: 'Luật De Morgan',
+              formula: 'NOT(A AND B) = (NOT A) OR (NOT B)',
+              note: 'Dùng để rút gọn điều kiện if lồng nhau',
+            },
+            {
+              name: 'Tổng cấp số cộng trong vòng lặp lồng',
+              formula: '1 + 2 + ... + n = n(n + 1)/2 = O(n^2)',
+            },
+          ],
+          sampleProblems: [
+            {
+              id: 'mfc_p1',
+              title: 'Biểu diễn số âm bằng bù 2 và tính XOR',
+              prompt:
+                'Trên 8 bit, hãy biểu diễn -5 theo bù 2, sau đó tính -5 XOR 12 và đọc kết quả ra số thập phân có dấu.',
+              difficulty: 'basic',
+              solutionSteps: [
+                {
+                  title: 'Bước 1: Viết |−5| dưới dạng nhị phân 8 bit',
+                  detail: '5 = 00000101.',
+                },
+                {
+                  title: 'Bước 2: Đảo bit rồi cộng 1',
+                  detail: 'Đảo 00000101 được 11111010; cộng 1 được 11111011.',
+                  formula: '-5 = 11111011 (bù 2, 8 bit)',
+                },
+                {
+                  title: 'Bước 3: Viết 12 và thực hiện XOR theo từng bit',
+                  detail: '12 = 00001100. XOR: 11111011 ⊕ 00001100 = 11110111.',
+                },
+                {
+                  title: 'Bước 4: Đọc kết quả về số có dấu',
+                  detail:
+                    'Bit cao nhất bằng 1 nên là số âm. Đảo bit được 00001000, cộng 1 được 00001001 = 9.',
+                  formula: '-5 XOR 12 = 11110111 = -9',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'mfc_c2',
+          title: 'Chương 2: Tổ hợp và xác suất cho lập trình viên',
+          description:
+            'Đếm số trường hợp trước khi vét cạn, xác suất va chạm bảng băm, kỳ vọng, số giả ngẫu nhiên và thống kê mô tả khi đo hiệu năng.',
+          keyFormulas: [
+            { name: 'Tổ hợp chập k của n', formula: 'C(n, k) = n! / (k! * (n - k)!)' },
+            {
+              name: 'Xác suất có ít nhất một va chạm (bài toán sinh nhật)',
+              formula: 'P = 1 - (N! / ((N - k)! * N^k))',
+              note: 'N là số ô của bảng băm, k là số khoá đã chèn',
+            },
+            {
+              name: 'Xấp xỉ nhanh xác suất va chạm',
+              formula: 'P ≈ 1 - e^(-k(k-1) / (2N))',
+              note: 'Dùng khi k lớn, tránh tính giai thừa tràn số',
+            },
+          ],
+          sampleProblems: [
+            {
+              id: 'mfc_p2',
+              title: 'Xác suất va chạm của một bảng băm',
+              prompt:
+                'Một bảng băm có N = 365 ô và hàm băm phân bố đều. Tính xác suất có ít nhất một va chạm khi chèn k = 23 khoá khác nhau.',
+              difficulty: 'intermediate',
+              solutionSteps: [
+                {
+                  title: 'Bước 1: Tính xác suất KHÔNG có va chạm',
+                  detail:
+                    'Khoá thứ i chỉ được rơi vào ô còn trống, nên nhân dồn tỉ lệ ô còn trống.',
+                  formula: 'Q = (365/365) * (364/365) * ... * (343/365)',
+                },
+                {
+                  title: 'Bước 2: Tính giá trị Q',
+                  detail: 'Nhân 23 thừa số trên cho Q ≈ 0,4927.',
+                },
+                {
+                  title: 'Bước 3: Lấy phần bù',
+                  detail: 'Xác suất có va chạm là phần còn lại.',
+                  formula: 'P = 1 - Q ≈ 0,5073 (khoảng 50,7%)',
+                },
+                {
+                  title: 'Bước 4: Ý nghĩa với code',
+                  detail:
+                    'Chỉ 23 khoá trên 365 ô đã cho hơn 50% khả năng va chạm, nên bảng băm BẮT BUỘC phải có cơ chế xử lý va chạm, không được coi là trường hợp hiếm.',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'mfc_c3',
+          title: 'Chương 3: Đại số tuyến tính ứng dụng trong đồ hoạ và dữ liệu',
+          description:
+            'Vector và tích vô hướng, ma trận biến đổi 2D, toạ độ thuần nhất, hệ phương trình tuyến tính và ý tưởng vector riêng.',
+          keyFormulas: [
+            {
+              name: 'Ma trận xoay góc θ trong mặt phẳng',
+              formula: 'R(θ) = [[cos θ, -sin θ], [sin θ, cos θ]]',
+              note: 'Xoay ngược chiều kim đồng hồ quanh gốc toạ độ',
+            },
+            { name: 'Tích vô hướng và góc', formula: 'u · v = |u| * |v| * cos(α)' },
+            {
+              name: 'Toạ độ thuần nhất gộp tịnh tiến',
+              formula: 'T = [[1, 0, tx], [0, 1, ty], [0, 0, 1]]',
+              note: 'Nhờ chiều thứ ba, tịnh tiến trở thành phép NHÂN ma trận',
+            },
+          ],
+          sampleProblems: [
+            {
+              id: 'mfc_p3',
+              title: 'Áp ma trận xoay 2D lên toạ độ một điểm',
+              prompt:
+                'Điểm P(3; 4) được xoay 90 độ ngược chiều kim đồng hồ quanh gốc toạ độ, sau đó tịnh tiến thêm vector (2; -1). Tìm toạ độ điểm cuối.',
+              difficulty: 'intermediate',
+              solutionSteps: [
+                {
+                  title: 'Bước 1: Viết ma trận xoay với θ = 90°',
+                  detail: 'cos 90° = 0 và sin 90° = 1.',
+                  formula: 'R = [[0, -1], [1, 0]]',
+                },
+                {
+                  title: 'Bước 2: Nhân ma trận với vector toạ độ',
+                  detail: "x' = 0*3 + (-1)*4 = -4; y' = 1*3 + 0*4 = 3.",
+                  formula: "P' = (-4; 3)",
+                },
+                {
+                  title: 'Bước 3: Cộng vector tịnh tiến',
+                  detail: 'P" = (-4 + 2; 3 + (-1)).',
+                  formula: 'P" = (-2; 2)',
+                },
+                {
+                  title: 'Bước 4: Kiểm tra bất biến',
+                  detail:
+                    "Phép xoay giữ nguyên độ dài: |P| = 5 và |P'| = √((-4)^2 + 3^2) = 5. Đây là bất biến nên dùng làm test canh khi cài bằng code.",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          id: 'mfc_c4',
+          title: 'Chương 4: Giải tích và tối ưu cho AI/ML',
+          description:
+            'Đạo hàm và gradient, thuật toán gradient descent, hàm mất mát, đạo hàm riêng và ý tưởng lan truyền ngược.',
+          keyFormulas: [
+            {
+              name: 'Bước cập nhật gradient descent',
+              formula: "x_(t+1) = x_t - η * f'(x_t)",
+              note: 'η là tốc độ học; quá lớn thì phân kỳ, quá nhỏ thì hội tụ chậm',
+            },
+            {
+              name: 'Sai số bình phương trung bình',
+              formula: 'MSE = (1/n) * Σ (y_i - ŷ_i)^2',
+            },
+            {
+              name: 'Kiểm gradient bằng sai phân hữu hạn',
+              formula: "f'(x) ≈ (f(x + h) - f(x - h)) / (2h)",
+              note: 'h nhỏ (ví dụ 1e-5); dùng để bắt lỗi cài đặt đạo hàm',
+            },
+          ],
+          sampleProblems: [
+            {
+              id: 'mfc_p4',
+              title: 'Một bước gradient descent trên hàm bậc hai',
+              prompt:
+                'Cho f(x) = x^2 - 4x + 7, điểm khởi đầu x_0 = 0 và tốc độ học η = 0,1. Tính x_1, x_2 và cho biết dãy đang tiến về đâu.',
+              difficulty: 'basic',
+              solutionSteps: [
+                {
+                  title: 'Bước 1: Tính đạo hàm',
+                  detail: 'Đạo hàm của hàm bậc hai này là một hàm bậc nhất.',
+                  formula: "f'(x) = 2x - 4",
+                },
+                {
+                  title: 'Bước 2: Cập nhật lần 1',
+                  detail: "f'(0) = -4, đi ngược hướng gradient nên x tăng.",
+                  formula: 'x_1 = 0 - 0,1 * (-4) = 0,4',
+                },
+                {
+                  title: 'Bước 3: Cập nhật lần 2',
+                  detail: "f'(0,4) = 2*0,4 - 4 = -3,2.",
+                  formula: 'x_2 = 0,4 - 0,1 * (-3,2) = 0,72',
+                },
+                {
+                  title: 'Bước 4: Kết luận',
+                  detail:
+                    "Cực tiểu thật nằm ở f'(x) = 0 ⇔ x = 2. Dãy 0 → 0,4 → 0,72 đang tiến dần về 2; hàm lồi nên chỉ có một cực tiểu và thuật toán chắc chắn hội tụ với η đủ nhỏ.",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
   ],
   physics: [
     {

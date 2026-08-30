@@ -1,4 +1,4 @@
-// specializations/registry.ts — Sổ đăng ký 12 HƯỚNG CHUYÊN SÂU + hàm tra cứu.
+// specializations/registry.ts — Sổ đăng ký 14 HƯỚNG CHUYÊN SÂU + hàm tra cứu.
 //
 // Thêm hướng mới: tạo file `<id>.ts` theo khuôn (xem web.ts), rồi thêm 1 dòng import và 1 phần
 // tử vào mảng dưới đây. Test `specializations.test.ts` sẽ tự kiểm khuôn dạng — không cần sửa
@@ -17,6 +17,7 @@ import { EMBEDDED_SPECIALIZATION } from './embedded.js'
 import { DESKTOP_SPECIALIZATION } from './desktop.js'
 import { ALGO_SPECIALIZATION } from './algo.js'
 import { ARCHITECTURE_SPECIALIZATION } from './architecture.js'
+import { MATHFORCODE_SPECIALIZATION } from './mathforcode.js'
 
 export type {
   ProgrammingSpecialization,
@@ -30,8 +31,8 @@ export type {
 } from './types.js'
 
 /**
- * Thứ tự hiển thị cố ý: các hướng SẢN PHẨM đứng trước (chọn MỘT), hai hướng NỀN cắt ngang
- * (kiến trúc, thuật toán) đứng cuối vì chúng học SONG SONG chứ không phải chọn thay.
+ * Thứ tự hiển thị cố ý: các hướng SẢN PHẨM đứng trước (chọn MỘT), ba hướng NỀN cắt ngang
+ * (kiến trúc, thuật toán, toán học cho lập trình) đứng cuối vì chúng học SONG SONG chứ không phải chọn thay.
  * Giao diện dựa vào cờ `crossCutting` để tách nhóm, không dựa vào vị trí trong mảng này.
  */
 export const PROGRAMMING_SPECIALIZATIONS: ProgrammingSpecialization[] = [
@@ -46,9 +47,10 @@ export const PROGRAMMING_SPECIALIZATIONS: ProgrammingSpecialization[] = [
   GAME_SPECIALIZATION,
   EMBEDDED_SPECIALIZATION,
   DESKTOP_SPECIALIZATION,
-  // Hai hướng NỀN — cắt ngang mọi hướng trên.
+  // Ba hướng NỀN — cắt ngang mọi hướng trên.
   ARCHITECTURE_SPECIALIZATION,
   ALGO_SPECIALIZATION,
+  MATHFORCODE_SPECIALIZATION,
 ]
 
 const specMap = new Map<string, ProgrammingSpecialization>(

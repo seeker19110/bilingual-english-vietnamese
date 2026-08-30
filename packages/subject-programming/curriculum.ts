@@ -354,13 +354,13 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
     id: 'p6',
     name: 'Chuyên sâu',
     canDo:
-      'Chọn MỘT trong 13 hướng chuyên sâu (web, di động, backend, dữ liệu, AI, DevOps, bảo mật, hệ thống, game, nhúng, desktop, kiến trúc, thuật toán) và đi hết 4 chặng của hướng đó tới mức chuyên gia.',
+      'Chọn MỘT trong 14 hướng chuyên sâu (web, di động, backend, dữ liệu, AI, DevOps, bảo mật, hệ thống, game, nhúng, desktop, kiến trúc, thuật toán, toán học cho lập trình) và đi hết 4 chặng của hướng đó tới mức chuyên gia.',
     duration: 'Mở — mỗi hướng 8–18 tháng',
     languages: ['Tuỳ hướng đã chọn'],
     projectStage: 'Hướng chuyên sâu tự chọn — xem `specializations/registry.ts`',
     projectMilestone: 'Sản phẩm tốt nghiệp (capstone) của hướng đã chọn, đủ làm bằng chứng nghề.',
     // 4 unit dưới đây là các unit DẪN NHẬP mở đầu bốn hướng phổ biến nhất. Nội dung đầy đủ của
-    // cả 13 hướng nằm ở `specializations/` (mỗi hướng 4 chặng × module + 5 dự án) — đó mới là
+    // cả 14 hướng nằm ở `specializations/` (mỗi hướng 4 chặng × module + 5 dự án) — đó mới là
     // nguồn thi hành, các unit này chỉ là cửa vào trong dòng bài học tuần tự.
     units: [
       { id: 'p6-u1', title: 'Dẫn nhập hướng AI', topics: 'Python: gọi LLM API, RAG cơ bản' },

@@ -1,6 +1,6 @@
 // specializations/stageDetails.ts — Sổ đăng ký CHI TIẾT CHẶNG + hàm tra cứu.
 //
-// Đã soạn: ĐỦ BỐN CHẶNG S1→S4 của cả 13 hướng (52 chặng). S1
+// Đã soạn: ĐỦ BỐN CHẶNG S1→S4 của cả 14 hướng (56 chặng). S1
 // (docs/specs/2026-08-27-chi-tiet-chang-s1-13-huong.md), S2
 // (docs/specs/2026-08-27-chang-s2-huong-chuyen-sau.md), S3
 // (docs/specs/2026-08-27-chang-s3-13-huong.md) và S4
@@ -27,6 +27,7 @@ import { EMBEDDED_S1_DETAIL } from './details/embedded-s1.js'
 import { DESKTOP_S1_DETAIL } from './details/desktop-s1.js'
 import { ARCHITECTURE_S1_DETAIL } from './details/architecture-s1.js'
 import { ALGO_S1_DETAIL } from './details/algo-s1.js'
+import { MATHFORCODE_S1_DETAIL } from './details/mathforcode-s1.js'
 import { WEB_S2_DETAIL } from './details/web-s2.js'
 import { MOBILE_S2_DETAIL } from './details/mobile-s2.js'
 import { BACKEND_S2_DETAIL } from './details/backend-s2.js'
@@ -40,6 +41,7 @@ import { EMBEDDED_S2_DETAIL } from './details/embedded-s2.js'
 import { DESKTOP_S2_DETAIL } from './details/desktop-s2.js'
 import { ARCHITECTURE_S2_DETAIL } from './details/architecture-s2.js'
 import { ALGO_S2_DETAIL } from './details/algo-s2.js'
+import { MATHFORCODE_S2_DETAIL } from './details/mathforcode-s2.js'
 import { WEB_S3_DETAIL } from './details/web-s3.js'
 import { MOBILE_S3_DETAIL } from './details/mobile-s3.js'
 import { BACKEND_S3_DETAIL } from './details/backend-s3.js'
@@ -53,6 +55,7 @@ import { EMBEDDED_S3_DETAIL } from './details/embedded-s3.js'
 import { DESKTOP_S3_DETAIL } from './details/desktop-s3.js'
 import { ARCHITECTURE_S3_DETAIL } from './details/architecture-s3.js'
 import { ALGO_S3_DETAIL } from './details/algo-s3.js'
+import { MATHFORCODE_S3_DETAIL } from './details/mathforcode-s3.js'
 import { WEB_S4_DETAIL } from './details/web-s4.js'
 import { MOBILE_S4_DETAIL } from './details/mobile-s4.js'
 import { BACKEND_S4_DETAIL } from './details/backend-s4.js'
@@ -66,6 +69,7 @@ import { EMBEDDED_S4_DETAIL } from './details/embedded-s4.js'
 import { DESKTOP_S4_DETAIL } from './details/desktop-s4.js'
 import { ARCHITECTURE_S4_DETAIL } from './details/architecture-s4.js'
 import { ALGO_S4_DETAIL } from './details/algo-s4.js'
+import { MATHFORCODE_S4_DETAIL } from './details/mathforcode-s4.js'
 
 export type {
   SpecStageDetail,
@@ -90,6 +94,7 @@ export const SPEC_STAGE_DETAILS: SpecStageDetail[] = [
   DESKTOP_S1_DETAIL,
   ARCHITECTURE_S1_DETAIL,
   ALGO_S1_DETAIL,
+  MATHFORCODE_S1_DETAIL,
   // Chặng S2 — soạn 2026-08-27 (docs/specs/2026-08-27-chang-s2-huong-chuyen-sau.md).
   WEB_S2_DETAIL,
   MOBILE_S2_DETAIL,
@@ -104,6 +109,7 @@ export const SPEC_STAGE_DETAILS: SpecStageDetail[] = [
   DESKTOP_S2_DETAIL,
   ARCHITECTURE_S2_DETAIL,
   ALGO_S2_DETAIL,
+  MATHFORCODE_S2_DETAIL,
   // Chặng S3 — soạn 2026-08-27 (docs/specs/2026-08-27-chang-s3-13-huong.md).
   WEB_S3_DETAIL,
   MOBILE_S3_DETAIL,
@@ -118,6 +124,7 @@ export const SPEC_STAGE_DETAILS: SpecStageDetail[] = [
   DESKTOP_S3_DETAIL,
   ARCHITECTURE_S3_DETAIL,
   ALGO_S3_DETAIL,
+  MATHFORCODE_S3_DETAIL,
   // Chặng S4 — soạn 2026-08-27 (docs/specs/2026-08-27-chi-tiet-chang-s4-13-huong.md).
   WEB_S4_DETAIL,
   MOBILE_S4_DETAIL,
@@ -132,6 +139,7 @@ export const SPEC_STAGE_DETAILS: SpecStageDetail[] = [
   DESKTOP_S4_DETAIL,
   ARCHITECTURE_S4_DETAIL,
   ALGO_S4_DETAIL,
+  MATHFORCODE_S4_DETAIL,
 ]
 
 const detailMap = new Map<string, SpecStageDetail>(SPEC_STAGE_DETAILS.map((d) => [d.stageId, d]))
