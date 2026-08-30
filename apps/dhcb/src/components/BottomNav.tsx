@@ -1,4 +1,5 @@
-// BottomNav — thanh điều hướng dưới cố định, hiện ở MỌI kích thước màn hình
+// BottomNav — thanh điều hướng dưới cố định, hiện ở màn hình MOBILE/TABLET (<1024px).
+// Từ 1024px trở lên (`lg:`) bị ẩn (`lg:hidden`) — desktop dùng DesktopSidebar.tsx thay thế.
 // 5 Tab lõi: Trang chủ · Phòng Học · Agent Bạn Đồng Hành · Luyện tập · Profile
 import { Link, useLocation } from 'react-router-dom'
 import { Home, GraduationCap, Dumbbell, Sparkles, User, ChevronDown, ChevronUp } from 'lucide-react'
@@ -94,7 +95,7 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
 
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 z-40 h-[5.25rem] pb-safe bg-zinc-950/90 backdrop-blur-xl border-t border-zinc-800/80 shadow-2xl shadow-black/40"
+      className="lg:hidden fixed bottom-0 inset-x-0 z-40 h-[5.25rem] pb-safe bg-zinc-950/90 backdrop-blur-xl border-t border-zinc-800/80 shadow-2xl shadow-black/40"
       aria-label="Điều hướng chính"
     >
       {/* Viền sáng gradient đa sắc tinh tế ở đỉnh thanh điều hướng */}

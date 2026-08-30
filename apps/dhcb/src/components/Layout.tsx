@@ -1,24 +1,13 @@
 import { useState, useRef, useEffect, type ReactNode } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import {
-  ArrowLeft,
-  BookOpen,
-  Bot,
-  Layers,
-  ChevronDown,
-  Sparkles,
-  GraduationCap,
-  Calculator,
-  Briefcase,
-  Heart,
-  Dumbbell,
-} from 'lucide-react'
+import { ArrowLeft, BookOpen, Bot, Layers, ChevronDown } from 'lucide-react'
 import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
 import { getStreak } from '../lib/storage'
 import ThemeToggle from './ThemeToggle'
 import OfflineStatusBanner from './OfflineStatusBanner'
 import { navigateTo } from '../lib/subjectsHost'
+import { STUDIOS } from '../lib/studios'
 
 interface Props {
   // title/subtitle KHÔNG bắt buộc: nhiều trang nay hiển thị tiêu đề LỚN ngay dưới header
@@ -33,63 +22,6 @@ interface Props {
   onBack?: () => void
   extra?: ReactNode
 }
-
-const STUDIOS = [
-  {
-    id: 'companion',
-    title: 'Bạn Đồng Hành',
-    subtitle: 'Live Voice, 3D Avatar & Socratic AI',
-    to: '/ban-dong-hanh',
-    icon: Sparkles,
-    badge: 'Executive',
-    color: 'text-amber-400 bg-amber-500/10 border-amber-500/30 hover:border-amber-500/60',
-  },
-  {
-    id: 'english',
-    title: 'Học Tiếng Anh',
-    subtitle: 'Lộ trình CEFR A1-C2 & 4 Kỹ năng',
-    to: '/hoc-tieng-anh',
-    icon: GraduationCap,
-    badge: 'A1-C2',
-    color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/60',
-  },
-  {
-    id: 'practice',
-    title: 'Phòng Luyện Tập',
-    subtitle: 'Đa Môn · Bài Tập · Sửa Lỗi · 4 Kỹ Năng',
-    to: '/luyen-tap',
-    icon: Dumbbell,
-    badge: 'Đa Môn AI',
-    color: 'text-sky-400 bg-sky-500/10 border-sky-500/30 hover:border-sky-500/60',
-  },
-  {
-    id: 'subjects',
-    title: 'Phòng Học & STEM',
-    subtitle: 'Toán, Lý, Hóa, Sinh & Simulators',
-    to: '/mon-hoc',
-    icon: Calculator,
-    badge: 'Vision OCR',
-    color: 'text-blue-400 bg-blue-500/10 border-blue-500/30 hover:border-blue-500/60',
-  },
-  {
-    id: 'career',
-    title: 'Sự Nghiệp & Khởi Nghiệp',
-    subtitle: 'Phỏng vấn STAR · Lean Canvas',
-    to: '/su-nghiep-khoi-nghiep',
-    icon: Briefcase,
-    badge: 'Career',
-    color: 'text-purple-400 bg-purple-500/10 border-purple-500/30 hover:border-purple-500/60',
-  },
-  {
-    id: 'worklife',
-    title: 'Công Việc & Đời Sống',
-    subtitle: 'Dự án, việc cần làm · thói quen, sức khoẻ',
-    to: '/cong-viec-cuoc-song',
-    icon: Heart,
-    badge: 'Work-Life',
-    color: 'text-rose-400 bg-rose-500/10 border-rose-500/30 hover:border-rose-500/60',
-  },
-]
 
 export default function Layout({ title, subtitle, back = true, onBack, extra }: Props) {
   const nav = useNavigate()
@@ -135,7 +67,7 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
 
       <OfflineStatusBanner />
 
-      <div className="max-w-3xl mx-auto px-4 h-14 flex items-center gap-3 relative">
+      <div className="max-w-3xl lg:max-w-5xl mx-auto px-4 h-14 flex items-center gap-3 relative">
         {/* Back / Logo */}
         {back ? (
           <button

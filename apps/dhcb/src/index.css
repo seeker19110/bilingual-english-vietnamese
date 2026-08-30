@@ -43,6 +43,28 @@
      ~30 trang đều dùng chung biến NÀY (pb-[calc(...+var(--bnav-h))]) nên chỉ cần
      sửa 1 chỗ là tự áp dụng khắp nơi. */
   --bnav-h: calc(var(--bnav-only-h) + 2.75rem);
+
+  /* Bề rộng thật của DesktopSidebar.tsx — CHỈ áp dụng từ 1024px (`lg:`) trở lên, xem
+     media query bên dưới. Dưới ngưỡng đó sidebar không render (`hidden lg:flex`) nên
+     giá trị ở đây không được dùng tới (không có `lg:pl-[var(--sidebar-w)]` nào ở mobile). */
+  --sidebar-w: 16rem;
+}
+
+/* Từ 1024px (`lg:`) trở lên, BottomNav bị ẩn (xem BottomNav.tsx `lg:hidden`) và
+   DesktopSidebar.tsx thay thế — xoá khoảng chừa ở ĐÁY trang (--bnav-h/--bnav-only-h)
+   để nội dung dùng hết chiều dọc thay vì để trống một dải không ai cần tới. */
+@media (min-width: 1024px) {
+  :root {
+    --bnav-only-h: 0px;
+    --bnav-h: 0px;
+  }
+}
+
+/* Sidebar thu gọn (icon-only, xem DesktopSidebar.tsx) — đổi bề rộng qua thuộc tính
+   data trên <html> thay vì component cha truyền prop xuống, để MỌI trang tự co giãn
+   lề trái (`lg:pl-[var(--sidebar-w)]` ở App.tsx) mà không cần biết sidebar tồn tại. */
+html[data-sidebar='collapsed'] {
+  --sidebar-w: 4.5rem;
 }
 
 @layer base {

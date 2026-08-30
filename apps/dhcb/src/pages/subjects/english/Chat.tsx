@@ -324,6 +324,66 @@ function Bubble({
   )
 }
 
+// FeedbackPanel — cột "Sửa lỗi & giải thích" ghim bên phải, CHỈ hiện ở desktop (`lg:`).
+// Gom TẤT CẢ lời sửa/giải thích trong phiên (không chỉ câu mới nhất) để đối chiếu ngược lại
+// câu học viên đã gõ, không cần cuộn lên cột chat bên trái tìm lại tin nhắn cũ.
+function FeedbackPanel({ messages, dir }: { messages: Message[]; dir: Direction }) {
+  const feedbackLang = dir === 'A' ? ('vi-VN' as const) : ('en-US' as const)
+  const items = messages
+    .map((m, i) => {
+      if (m.role !== 'assistant') return null
+      const { feedback } = parseAssistantReply(m.content)
+      if (!feedback) return null
+      const userInput = messages[i - 1]?.role === 'user' ? messages[i - 1]!.content : ''
+      return { id: m.id, feedback, userInput }
+    })
+    .filter((x): x is { id: string; feedback: string; userInput: string } => x !== null)
+
+  return (
+    <aside className="hidden lg:flex lg:w-72 xl:w-80 shrink-0 flex-col min-h-0">
+      <div className="shrink-0 pb-2">
+        <p className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+          {dir === 'A' ? 'Sửa lỗi & giải thích' : 'Corrections & explanations'}
+        </p>
+      </div>
+      <div className="flex-1 min-h-0 overflow-y-auto space-y-2.5 pr-1">
+        {items.length === 0 ? (
+          <p className="text-xs text-zinc-500 italic">
+            {dir === 'A'
+              ? 'Chưa có lỗi nào cần sửa — tiếp tục trò chuyện nhé!'
+              : 'No corrections yet — keep chatting!'}
+          </p>
+        ) : (
+          items.map((it) => (
+            <div
+              key={it.id}
+              className="bg-amber-500/10 border border-amber-500/25 border-l-4 border-l-amber-400 rounded-2xl px-3.5 py-3 shadow-inner"
+            >
+              {it.userInput && (
+                <p className="text-[11px] text-zinc-500 mb-1.5 truncate" title={it.userInput}>
+                  “{it.userInput}”
+                </p>
+              )}
+              <div className="flex items-start gap-2">
+                <span className="text-amber-400 theme-light:text-amber-800 font-bold shrink-0">
+                  ✅
+                </span>
+                <KaraokeText
+                  text={it.feedback}
+                  lang={feedbackLang}
+                  textClass="text-xs leading-relaxed text-amber-200 theme-light:text-amber-800 font-medium"
+                  buttonClass="flex-1"
+                  iconSize="xs"
+                />
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </aside>
+  )
+}
+
 function TypingDots() {
   return (
     <div className="flex justify-start animate-fade-in">
@@ -671,33 +731,41 @@ export default function Chat() {
         />
       ) : (
         <>
-          <div className="flex-1 min-h-0 max-w-3xl mx-auto w-full px-4 py-4 space-y-3 overflow-y-auto">
-            {session.messages.map((m, i) => (
-              <Bubble
-                key={m.id}
-                msg={m}
-                isNew={i >= lastIdx}
-                dir={dir}
-                userId={user.id}
-                userInput={
-                  session.messages[i - 1]?.role === 'user' ? session.messages[i - 1]!.content : ''
-                }
-              />
-            ))}
-            {loading && <TypingDots />}
-            {error && (
-              <p className="text-center text-xs text-red-400 theme-light:text-red-700 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2">
-                {error}
-              </p>
-            )}
-            {limitHit && (
-              <div className="text-center text-xs text-amber-400 theme-light:text-amber-800 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
-                {isA
-                  ? 'Bạn đã dùng hết lượt hôm nay. Quay lại vào ngày mai nhé!'
-                  : "You've used all your sessions today. Come back tomorrow!"}
-              </div>
-            )}
-            <div ref={bottomRef} />
+          {/* Desktop (lg+): hội thoại bên trái + cột "Sửa lỗi & giải thích" ghim bên phải —
+              mobile giữ nguyên 1 cột như cũ (mỗi lỗi vẫn hiện ngay dưới tin nhắn, xem Bubble).
+              Cột phải chỉ THÊM VÀO, không thay thế: người dùng desktop khỏi phải cuộn lên
+              tìm lại lời sửa của câu trước khi so với câu hiện tại. */}
+          <div className="flex-1 min-h-0 flex flex-col lg:flex-row lg:gap-4 max-w-3xl lg:max-w-5xl mx-auto w-full lg:px-4 lg:pt-3 overflow-hidden">
+            <div className="flex-1 min-h-0 px-4 py-4 lg:p-0 space-y-3 overflow-y-auto">
+              {session.messages.map((m, i) => (
+                <Bubble
+                  key={m.id}
+                  msg={m}
+                  isNew={i >= lastIdx}
+                  dir={dir}
+                  userId={user.id}
+                  userInput={
+                    session.messages[i - 1]?.role === 'user' ? session.messages[i - 1]!.content : ''
+                  }
+                />
+              ))}
+              {loading && <TypingDots />}
+              {error && (
+                <p className="text-center text-xs text-red-400 theme-light:text-red-700 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2">
+                  {error}
+                </p>
+              )}
+              {limitHit && (
+                <div className="text-center text-xs text-amber-400 theme-light:text-amber-800 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
+                  {isA
+                    ? 'Bạn đã dùng hết lượt hôm nay. Quay lại vào ngày mai nhé!'
+                    : "You've used all your sessions today. Come back tomorrow!"}
+                </div>
+              )}
+              <div ref={bottomRef} />
+            </div>
+
+            <FeedbackPanel messages={session.messages} dir={dir} />
           </div>
 
           <div className="sticky bottom-0 bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800/60 px-4 py-3 pb-safe">
