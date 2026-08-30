@@ -3,8 +3,17 @@ import { describe, expect, it } from 'vitest'
 import { PROGRAMMING_LESSONS, getLesson, getLessonsByUnit } from './lessons.js'
 import { LessonSchema } from './lessonTypes.js'
 import { PROGRAMMING_LEVELS } from './curriculum.js'
+import { SHORT_COURSES } from './courses/registry.js'
 
 const ALL_UNIT_IDS = new Set(PROGRAMMING_LEVELS.flatMap((l) => l.units.map((u) => u.id)))
+
+// Bài thuộc TẦNG KHOÁ NGẮN (unitId dạng 'git-u2'…) không nằm trong curriculum.ts — đây là
+// "unit ảo", chỉ hợp lệ khi id của chính bài đó THẬT SỰ được một khoá tham chiếu (qua
+// courses/registry.ts). Tránh nới lỏng vô căn cứ: một bài unitId 'git-u9' bịa ra mà không
+// khoá nào trỏ tới vẫn phải bị chặn, đúng tinh thần cổng gốc.
+const COURSE_REFERENCED_LESSON_IDS = new Set(
+  SHORT_COURSES.flatMap((c) => c.chapters.flatMap((ch) => ch.lessonIds)),
+)
 
 describe('programming lessons', () => {
   it('mọi bài đúng khuôn LessonSchema (Zod)', () => {
@@ -16,12 +25,19 @@ describe('programming lessons', () => {
     }
   })
 
-  it('id duy nhất và unitId tồn tại thật trong curriculum', () => {
+  it('id duy nhất và unitId tồn tại thật trong curriculum (hoặc là unit ảo của khoá ngắn, có khoá tham chiếu thật)', () => {
     const seen = new Set<string>()
     for (const lesson of PROGRAMMING_LESSONS) {
       expect(seen.has(lesson.id)).toBe(false)
       seen.add(lesson.id)
-      expect(ALL_UNIT_IDS.has(lesson.unitId), `unit ${lesson.unitId} không tồn tại`).toBe(true)
+      if (lesson.unitId.startsWith('git-u')) {
+        expect(
+          COURSE_REFERENCED_LESSON_IDS.has(lesson.id),
+          `bài ${lesson.id} khai unit ảo ${lesson.unitId} nhưng KHÔNG có khoá ngắn nào tham chiếu tới nó`,
+        ).toBe(true)
+      } else {
+        expect(ALL_UNIT_IDS.has(lesson.unitId), `unit ${lesson.unitId} không tồn tại`).toBe(true)
+      }
     }
   })
 

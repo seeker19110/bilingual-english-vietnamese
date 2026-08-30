@@ -25,11 +25,12 @@ import { getSpecStageDetail } from '@dhcb/subject-programming/specializations/st
 
 const UpdateSchema = z
   .object({
-    // Ba loại khoá dùng CHUNG một bảng tiến độ:
+    // Bốn loại khoá dùng CHUNG một bảng tiến độ:
     //  · bài học xương sống          'p1-u4-l1'
     //  · bước dự án trục             'p1-s1'
     //  · module/tiêu chí hướng chuyên sâu 'web-s2-m1' / 'web-s2-r3' (chi tiết chặng S2)
-    lessonId: z.string().regex(/^(p[1-6]-(u\d+-l\d+|s\d+)|[a-z]+-s[1-4]-[mr]\d+)$/),
+    //  · bài thuộc khoá NGẮN (cắt ngang bậc, ví dụ khoá Git)  'git-u2-l1'
+    lessonId: z.string().regex(/^(p[1-6]-(u\d+-l\d+|s\d+)|[a-z]+-s[1-4]-[mr]\d+|git-u\d+-l\d+)$/),
     status: z.enum(['in_progress', 'completed']),
   })
   .strict()

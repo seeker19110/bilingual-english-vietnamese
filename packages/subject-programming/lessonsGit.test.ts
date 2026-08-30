@@ -7,8 +7,12 @@
 //
 // Ngoài chấm nội dung, cổng còn canh HAI BẤT BIẾN riêng của mạch mô phỏng:
 //  1. Engine tất định — cùng chuỗi lệnh phải cho cùng output, nếu không thì bài học vô nghĩa.
-//  2. Bài học KHÔNG được dạy lệnh mà mô phỏng không chạy được (push/pull/clone) như thể chạy
-//     được: chúng chỉ được xuất hiện trong phần lý thuyết/về nhà, không nằm trong code mẫu.
+//  2. Bài học KHÔNG được dạy lệnh mà mô phỏng KHÔNG CHẠY ĐƯỢC như thể chạy được. Danh sách này
+//     đã THU HẸP từ PR-L9: PR 1/4 khoá Git thêm kho từ xa giả lập nên push/pull/fetch/clone
+//     chạy THẬT trong bộ nhớ (không mạng thật, nhưng là lệnh hợp lệ của bài — xem gitu4.ts),
+//     và stash/tag/cherry-pick/rebase (ca tuyến tính) cũng chạy thật (xem gitu5.ts). Chỉ còn
+//     cấm đúng những lệnh gitSim.ts THẬT SỰ chặn (GIT_CHUA_MO_PHONG) — không nằm trong bài học
+//     nào của khoá, chỉ xuất hiện ở lý thuyết/về nhà nếu có nhắc tới.
 import { describe, expect, it } from 'vitest'
 import { PROGRAMMING_LESSONS } from './lessons.js'
 import { chayLenh } from './gitSim.js'
@@ -17,8 +21,10 @@ import type { ProgrammingLesson, ProgrammingTestCase } from './lessonTypes.js'
 
 const GIT_LESSONS = PROGRAMMING_LESSONS.filter((l) => l.language === 'git')
 
-/** Lệnh chỉ tồn tại ngoài đời (cần mạng/máy thật) — cấm xuất hiện trong code CHẠY của bài. */
-const LENH_NGOAI_DOI = /\bgit (push|pull|clone|rebase|stash)\b|\bpip install\b|\bpython3 -m venv\b/
+/** Lệnh mà gitSim.ts THẬT SỰ không chạy được (xem GIT_CHUA_MO_PHONG + chặn rebase -i) — cấm
+ *  xuất hiện trong code CHẠY của bài. */
+const LENH_NGOAI_DOI =
+  /\bgit (worktree|submodule|lfs|mergetool|archive|fsck|bisect)\b|\bgit rebase\b[^\n]*(-i\b|--interactive\b)|\bpip install\b|\bpython3 -m venv\b/
 
 function gradeAll(lesson: ProgrammingLesson, code: string, cases: ProgrammingTestCase[]) {
   return cases.map((c) => {
