@@ -3,7 +3,7 @@
 // Vì sao có tầng này: P1–P5 (curriculum.ts) là XƯƠNG SỐNG chung — ai học lập trình cũng cần.
 // Nhưng "trở thành chuyên gia" thì không có đường chung: người làm web app, người làm hệ
 // thống, người làm nhúng đi ba con đường khác hẳn nhau. Tầng này mở P6 "Chuyên sâu" thành
-// 13 hướng riêng biệt, mỗi hướng đi từ căn bản của hướng đó tới mức chuyên gia.
+// 14 hướng riêng biệt, mỗi hướng đi từ căn bản của hướng đó tới mức chuyên gia.
 //
 // Lưu ý đặt tên: KHÔNG dùng chữ "track" — trong môn này `PROJECT_TRACKS` (curriculum.ts) đã
 // mang nghĩa "chủ đề dự án trục T1/T2/T3". Ở đây dùng "specialization" / "hướng".
@@ -26,6 +26,7 @@ export type SpecializationId =
   | 'desktop'
   | 'algo'
   | 'architecture'
+  | 'mathforcode'
 
 /** Bậc của một chặng trong hướng — 4 bậc cố định cho MỌI hướng để so sánh được với nhau. */
 export type SpecStageTier = 's1' | 's2' | 's3' | 's4'

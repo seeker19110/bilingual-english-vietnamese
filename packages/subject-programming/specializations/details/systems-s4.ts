@@ -1,7 +1,7 @@
 // details/systems-s4.ts — Chi tiết chặng S4 hướng HỆ THỐNG ("Chuyên gia — trình biên dịch, máy
 // ảo, hệ điều hành"). Bản đồ chặng ở ../systems.ts.
 //
-// Chặng dài nhất của cả 13 hướng (16–20 tuần) vì dự án của nó là thứ duy nhất không rút ngắn
+// Chặng dài nhất của cả 14 hướng (16–20 tuần) vì dự án của nó là thứ duy nhất không rút ngắn
 // được: một ngôn ngữ chạy được, hoặc một nhân khởi động được. Lời khuyên soạn kèm: chọn MỘT
 // trong hai đường (ngôn ngữ hoặc nhân) và đi tới cùng, đừng làm dở cả hai.
 import type { SpecStageDetail } from '../stageDetailTypes.js'

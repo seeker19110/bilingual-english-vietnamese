@@ -17,10 +17,10 @@ import { PROGRAMMING_LEVEL_IDS } from './curriculum.js'
 const TIERS = ['s1', 's2', 's3', 's4']
 
 describe('hướng chuyên sâu môn Lập trình', () => {
-  it('có đủ 13 hướng, id duy nhất', () => {
+  it('có đủ 14 hướng, id duy nhất', () => {
     const ids = PROGRAMMING_SPECIALIZATIONS.map((s) => s.id)
-    expect(ids).toHaveLength(13)
-    expect(new Set(ids).size).toBe(13)
+    expect(ids).toHaveLength(14)
+    expect(new Set(ids).size).toBe(14)
   })
 
   it('tách đúng hướng sản phẩm và hướng nền cắt ngang', () => {
@@ -28,7 +28,7 @@ describe('hướng chuyên sâu môn Lập trình', () => {
       crossCuttingSpecializations()
         .map((s) => s.id)
         .sort(),
-    ).toEqual(['algo', 'architecture'])
+    ).toEqual(['algo', 'architecture', 'mathforcode'])
     expect(productSpecializations()).toHaveLength(11)
     // Không hướng nào vừa là sản phẩm vừa là nền.
     expect(productSpecializations().length + crossCuttingSpecializations().length).toBe(
@@ -159,7 +159,7 @@ describe('hướng chuyên sâu môn Lập trình', () => {
     expect(atP3).not.toContain('web')
     // Hướng kiến trúc CỐ Ý không mở sớm: chưa tự làm hỏng thứ gì thì đặc tả chỉ là chữ đẹp.
     expect(atP3).not.toContain('architecture')
-    expect(specializationsOpenAt('p5')).toHaveLength(13)
+    expect(specializationsOpenAt('p5')).toHaveLength(14)
     // Bậc lạ không được mở nhầm hướng nào.
     expect(specializationsOpenAt('khong-phai-bac')).toHaveLength(0)
   })

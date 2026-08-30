@@ -276,7 +276,7 @@ export default function ProgrammingSpecializationPage() {
             onClick={() => nav('/lap-trinh/huong')}
             className="tap-44 w-full py-3.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition"
           >
-            Xem 13 hướng chuyên sâu
+            Xem 14 hướng chuyên sâu
           </button>
         </main>
       </div>

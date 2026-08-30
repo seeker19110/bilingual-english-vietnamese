@@ -1,4 +1,4 @@
-// specStageDetails.test.ts — Test BẤT BIẾN cho chi tiết chặng (đã soạn ĐỦ S1→S4 của 13 hướng).
+// specStageDetails.test.ts — Test BẤT BIẾN cho chi tiết chặng (đã soạn ĐỦ S1→S4 của 14 hướng).
 //
 // Vì sao test khuôn dạng chứ không test từng chữ: nội dung sẽ còn được sửa, nhưng KHUÔN phải
 // giữ — thiếu một ô là người học mất đúng thứ khiến chặng đi được. Test ở đây bắt đúng những
@@ -46,7 +46,7 @@ describe('chi tiết chặng — phủ đủ và khớp bản đồ', () => {
     }
   })
 
-  it('KHÔNG chặng nào của bản đồ còn thiếu chi tiết — phủ trọn 4 chặng × 13 hướng', () => {
+  it('KHÔNG chặng nào của bản đồ còn thiếu chi tiết — phủ trọn 4 chặng × 14 hướng', () => {
     const thieu: string[] = []
     for (const spec of PROGRAMMING_SPECIALIZATIONS) {
       for (const stage of spec.stages) {
