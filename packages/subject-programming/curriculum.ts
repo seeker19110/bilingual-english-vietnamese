@@ -443,6 +443,19 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Hướng Backend S1 — vận hành: ba nhóm lỗi, log lần ra được, tắt êm',
         topics: 'Ai bị đánh thức; log có cấu trúc + mã yêu cầu, che dữ liệu nhạy cảm; tắt êm',
       },
+      // p6-u64/u65 khép nốt chặng S1 của hướng AI: p6-u1 (đã có từ trước, module gọi mô hình
+      // + RAG) chỉ phủ 2/4 module của ai-s1 (specializations/ai.ts) — thiếu "Đánh giá tự động"
+      // và "An toàn và chi phí". Đăng ký cầu nối ở `specializations/stageUnits.ts`.
+      {
+        id: 'p6-u64',
+        title: 'Hướng AI S1 — đánh giá tự động: bộ vàng, recall@k, chặn hồi quy trong CI',
+        topics: 'Bộ dữ liệu vàng, recall@k của khâu truy hồi; cổng so baseline, DAT/HONG',
+      },
+      {
+        id: 'p6-u65',
+        title: 'Hướng AI S1 — an toàn & chi phí: định tuyến model, tiêm lệnh',
+        topics: 'Chọn model theo độ khó, đếm lượt theo gói; nhận diện tiêm lệnh (prompt injection)',
+      },
     ],
   },
 ]
