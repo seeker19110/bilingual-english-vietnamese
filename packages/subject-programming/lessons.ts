@@ -95,6 +95,10 @@ import { OPENCLAW_U1_LESSONS } from './lessons/openclawu1.js'
 import { OPENCLAW_U2_LESSONS } from './lessons/openclawu2.js'
 import { OPENCLAW_U3_LESSONS } from './lessons/openclawu3.js'
 import { OPENCLAW_U4_LESSONS } from './lessons/openclawu4.js'
+import { ML_U1_LESSONS } from './lessons/mlu1.js'
+import { ML_U2_LESSONS } from './lessons/mlu2.js'
+import { ML_U3_LESSONS } from './lessons/mlu3.js'
+import { ML_U4_LESSONS } from './lessons/mlu4.js'
 
 export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...P1U1_LESSONS,
@@ -183,6 +187,10 @@ export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...OPENCLAW_U2_LESSONS,
   ...OPENCLAW_U3_LESSONS,
   ...OPENCLAW_U4_LESSONS,
+  ...ML_U1_LESSONS,
+  ...ML_U2_LESSONS,
+  ...ML_U3_LESSONS,
+  ...ML_U4_LESSONS,
 ]
 
 const lessonMap = new Map(PROGRAMMING_LESSONS.map((l) => [l.id, l]))
