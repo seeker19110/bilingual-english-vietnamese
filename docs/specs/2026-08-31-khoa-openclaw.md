@@ -2,11 +2,10 @@
 
 > Ngày 2026-08-31. Khoá ngắn thứ ba của môn Lập trình, LÀM ĐÚNG THEO TIỀN LỆ khoá Hermes
 > (`docs/specs/2026-08-31-khoa-dieu-phoi-ai-van-phong.md`, chốt PR #751; hạ tầng `hermesSim`
->
-> - C1 đã merge ở PR khoá Hermes 2/3): dạy CÀI ĐẶT — CẤU HÌNH — SỬ DỤNG — VẬN HÀNH tác tử
->   OpenClaw, chấm bằng bộ mô phỏng tất định `openclawSim` (khuôn `gitSim`/`hermesSim`),
->   làm thật để ở homework.
->   Khuôn: `docs/templates/dac-ta-tinh-nang.md`.
+> cùng chương C1 đã merge ở PR khoá Hermes 2/3): dạy CÀI ĐẶT — CẤU HÌNH — SỬ DỤNG — VẬN HÀNH
+> tác tử OpenClaw, chấm bằng bộ mô phỏng tất định `openclawSim` (khuôn `gitSim`/`hermesSim`),
+> làm thật để ở homework.
+> Khuôn: `docs/templates/dac-ta-tinh-nang.md`.
 
 ## 0. Một câu
 
