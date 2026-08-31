@@ -1121,6 +1121,44 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **[2026-08-31] ✅ THIẾT KẾ LẠI WEB CHO DESKTOP — 4 PR, ĐÃ XONG TRỌN VẸN.** Trước đó web là
+  "app mobile phóng to" ở mọi kích thước màn hình (BottomNav cố định đáy, dropdown Studio,
+  `max-w-3xl` bất kể chiều ngang). Người dùng chốt phạm vi qua `AskUserQuestion` rồi yêu cầu làm
+  tiếp từng PR — không có PR nào phải sửa lại sau khi merge.
+  1. **PR 1+2 — sidebar + Chat hai cột** (`#743`, đặc tả
+     `docs/specs/2026-08-30-thiet-ke-lai-web-desktop.md`, nhật ký `docs/changelog/0199-*.md`):
+     sidebar trái cố định `≥1024px` (thu gọn được icon-only, nhớ `localStorage`), ẩn BottomNav
+     ở ngưỡng đó, nới `max-w` header; trang Chat thêm cột "Sửa lỗi & giải thích" ghim phải, gom
+     lời sửa cả phiên kèm câu gốc.
+  2. **PR 3 — CefrLevelPage master–detail** (`#750`, đặc tả
+     `docs/specs/2026-08-31-cefr-master-detail-desktop.md`, nhật ký `docs/changelog/0201-*.md`):
+     mở 1 bài học/từ vựng/hội thoại ở desktop hiện thêm cột trái danh sách unit rút gọn (dùng
+     lại nguyên `UnitSection`), bấm mục khác đổi thẳng cột phải không rời trang. Màn thi cuối
+     cấp cố ý giữ toàn màn hình mọi kích thước.
+  3. **PR 4 — cột ngữ cảnh Dashboard + phím tắt** (`#756`, đặc tả
+     `docs/specs/2026-08-31-dashboard-context-rail-phim-tat.md`, nhật ký
+     `docs/changelog/0203-*.md`): trang Tiến độ (`/tien-do`) ở desktop dời Streak/Mục tiêu
+     tuần/QuickActions sang cột phải cố định (`sticky`); toàn site có `⌘K`/`Ctrl+K` mở Studio
+     switcher và `/` focus ô nhập đầu tiên (bỏ qua khi đang gõ sẵn trong ô nhập khác).
+
+  **Bài học kỹ thuật quan trọng nhất (rút ra ở PR 1+2, áp dụng lại cho PR 3+4):** ẩn nội dung
+  theo breakpoint bằng CSS (`lg:hidden`/`hidden lg:flex`) vẫn để nguyên phần tử đó TRONG DOM ở
+  cả hai nơi — nếu cùng nội dung xuất hiện ở cả bản mobile và bản desktop thì bị TRÙNG, không
+  chỉ là vấn đề thẩm mỹ: trình đọc màn hình đọc lặp 2 lần, và Playwright `getByText` báo
+  strict-mode violation (bắt được thật ở `e2e/a11y.spec.ts` "Chat (kết quả AI)" ×5 theme). Sửa
+  bằng gate JS (`apps/dhcb/src/lib/useIsDesktopViewport.ts`, `matchMedia`) — đảm bảo đúng MỘT
+  bản tồn tại trong DOM tại một thời điểm, không phải ẩn-nhưng-vẫn-còn. Ba PR sau tái dùng đúng
+  hook này, không lặp lại lỗi.
+
+  **Đã thử trên trình duyệt thật sau khi cả 4 PR merge (2026-08-31, dev server + Playwright thủ
+  công, có ảnh chụp màn hình):** sidebar mở rộng/thu gọn, Chat hai cột + vote 👍👎, CEFR
+  master-detail, Dashboard cột ngữ cảnh, `⌘K` mở Studio switcher, mobile 390px giữ nguyên 1 cột
+  — tất cả đúng thiết kế, 0 lỗi console thật (chỉ 401 do chưa mock API từ điển/âm thanh khi thử
+  thủ công, không phải do code đã đổi).
+
+  **Việc để ngỏ (cố ý, nêu rõ trong spec mục "KHÔNG LÀM"):** cột ngữ cảnh cho Kanban/LifeGraph,
+  command palette tìm kiếm mờ đầy đủ (hiện `⌘K` chỉ mở lại Studio switcher có sẵn).
+
 - **[2026-08-26] ✅ HAI TÍNH NĂNG GIỮ CHÂN ĐÃ LÀM XONG (đặc tả + code + test + cổng a11y).**
   Đợt research-first 2026-08-26 (`docs/changelog/0168-*.md`) rồi thi hành trọn vẹn cùng ngày
   (`0169-*.md` và `0170-*.md`):
@@ -2877,6 +2915,21 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   một lỗi thật nhờ đi tìm nhánh thiếu test (`super.f()` gọi vòng vô tận làm sập bộ chạy Kotlin),
   tức bản thân việc vá coverage có giá trị chứ không chỉ là làm đẹp con số. Vẫn còn mỏng: nửa
   điểm là đủ để một PR thêm khối mã lớn mà quên test làm CI đỏ.
+
+  **[Đo lại 2026-08-31, sau loạt "thiết kế lại web cho desktop" PR #743/#750/#756] Bundle ăn
+  bớt biên độ, coverage chưa đo lại.** `npm run build && npm run budget` trên `main` sau khi cả
+  3 PR merge:
+
+  | Ngân sách            | Số thật   | Ngưỡng | Biên độ      |
+  | -------------------- | --------- | ------ | ------------ |
+  | Initial JS (brotli)  | 126,60 kB | 140 kB | dư **~9,6%** |
+  | Initial CSS (brotli) | 16,53 kB  | 18 kB  | dư **~8,2%** |
+
+  So với lượt đo 2026-08-28 (JS dư ~10,8%, CSS dư ~9,8%), cả hai đều hẹp lại — sidebar desktop
+  thu gọn được + cột "Sửa lỗi & giải thích" ở Chat + `useIsDesktopViewport` là phần thêm mới ăn
+  vào biên độ. Vẫn còn dư, không chặn CI, nhưng CSS chỉ còn dư dưới 10% — PR sau thêm CSS diện
+  rộng (nhiều `lg:`/`xl:` mới) nên đo `npm run budget` TRƯỚC khi mở PR, đừng đợi CI báo. Chưa
+  chạy lại `npm run test:coverage` trong đợt này (đổi UI, không đổi nhánh logic mới).
 
   **Đo lại bất cứ lúc nào:** `npm run build && npm run test:coverage && npm run budget`
   (`scripts/check-budget-margin.ts`, thêm ở PR #664 — in biên độ còn lại thành số, cảnh báo khi
