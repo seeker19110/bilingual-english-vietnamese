@@ -38,6 +38,7 @@ export const UNITS: Record<string, UnitDef> = {
   kg: { factor: 1, dim: D(1) },
   tấn: { factor: 1e3, dim: D(1) },
   t: { factor: 1e3, dim: D(1) },
+  amu: { factor: 1.660539066605e-27, dim: D(1) },
 
   // ── Thời gian ──
   s: { factor: 1, dim: D(0, 0, 1) },
@@ -47,6 +48,8 @@ export const UNITS: Record<string, UnitDef> = {
   h: { factor: 3600, dim: D(0, 0, 1) },
   giờ: { factor: 3600, dim: D(0, 0, 1) },
   ngày: { factor: 86400, dim: D(0, 0, 1) },
+  'ngày^-1': { factor: 1 / 86400, dim: D(0, 0, -1) },
+  'ngày-1': { factor: 1 / 86400, dim: D(0, 0, -1) },
 
   // ── Diện tích ──
   'cm²': { factor: 1e-4, dim: D(0, 2) },
@@ -60,6 +63,8 @@ export const UNITS: Record<string, UnitDef> = {
   'cm³': { factor: 1e-6, dim: D(0, 3) },
   L: { factor: 1e-3, dim: D(0, 3) },
   l: { factor: 1e-3, dim: D(0, 3) },
+  lít: { factor: 1e-3, dim: D(0, 3) },
+  lit: { factor: 1e-3, dim: D(0, 3) },
   'm³': { factor: 1, dim: D(0, 3) },
 
   // ── Tốc độ ──
@@ -108,11 +113,21 @@ export const UNITS: Record<string, UnitDef> = {
   cal: { factor: 4.184, dim: D(1, 2, -2) },
   kcal: { factor: 4184, dim: D(1, 2, -2) },
   kWh: { factor: 3.6e6, dim: D(1, 2, -2) },
+  eV: { factor: 1.602176634e-19, dim: D(1, 2, -2) },
+  MeV: { factor: 1.602176634e-13, dim: D(1, 2, -2) },
 
   // ── Công suất ──
   W: { factor: 1, dim: D(1, 2, -3) },
   kW: { factor: 1e3, dim: D(1, 2, -3) },
   MW: { factor: 1e6, dim: D(1, 2, -3) },
+
+  // ── Nhiệt học ──
+  'J/kg': { factor: 1, dim: D(0, 2, -2) },
+  'kJ/kg': { factor: 1e3, dim: D(0, 2, -2) },
+  'J/(kg.K)': { factor: 1, dim: D(0, 2, -2, 0, -1) },
+  'J/kg.K': { factor: 1, dim: D(0, 2, -2, 0, -1) },
+  'J/(kg*K)': { factor: 1, dim: D(0, 2, -2, 0, -1) },
+  'J/kg*K': { factor: 1, dim: D(0, 2, -2, 0, -1) },
 
   // ── Điện ──
   A: { factor: 1, dim: D(0, 0, 0, 1) },
