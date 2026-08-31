@@ -53,7 +53,7 @@
 | M1/S3 | Hoá 10 Chương 1 (4 bài: Mở đầu, Thành phần nguyên tử, Nguyên tố hoá học, Cấu trúc lớp vỏ electron)                                               | M1/S2          | DONE    | `docs/changelog/0211-*.md`                                                              |
 | M1/S4 | Hoá 10 Chương 2-7 (13 bài còn lại: Bảng tuần hoàn 4, Liên kết 4, Oxi hoá-khử 1, Năng lượng 1, Tốc độ phản ứng 1, Halogen 2)                      | M1/S3          | DONE    | `docs/changelog/0211-*.md`, 17/17 bài Hoá 10 xong                                       |
 | M2/S1 | Hoá 11 (25 bài: Cân bằng hoá học 3, Nitrogen-Sulfur 6, Đại cương hữu cơ 5, Hydrocarbon 4, Dẫn xuất-Alcohol-Phenol 4, Carbonyl-Carboxylic acid 3) | M1 xong        | DONE    | `docs/changelog/0212-*.md`, 25/25 bài Hoá 11 xong                                       |
-| M2/S2 | Hoá 12 (30 bài)                                                                                                                                  | M2/S1          | BACKLOG |                                                                                         |
+| M2/S2 | Hoá 12 (30 bài)                                                                                                                                  | M2/S1          | DONE    | `docs/changelog/0213-*.md`, 30/30 bài Hoá 12 xong                                       |
 | M3    | Vật lí 10-12 (85 bài)                                                                                                                            | M2 xong        | BACKLOG |                                                                                         |
 | M4    | Sinh 10-12 (PA B, SRS)                                                                                                                           | M3 xong        | BACKLOG |                                                                                         |
 | M5    | Toán 1-12 (đợt riêng, khối lượng lớn nhất)                                                                                                       | song song được | BACKLOG |                                                                                         |
@@ -69,12 +69,10 @@
 ## 5. Current truth
 
 - Commit `main` đã reconcile: `e4ace50` (2026-08-31).
-- Goal gap hiện tại: mới xong M1/S1 (khôi phục engine chấm). Chưa có bài học nào cho 4 môn.
-- Blocker/câu hỏi mở: chưa có giáo viên duyệt nội dung kiến thức — theo quyết định người dùng,
-  vẫn tạo bài học từ bản thảo, đánh dấu rõ cần duyệt sau.
-- Next best slice: M1/S2 — dựng khung `packages/subject-chemistry` + dữ liệu nền.
-- Quyền hoặc quyết định cần thêm: không có, đã được người dùng xác nhận hướng đi (Hoá trước,
-  khôi phục engine trước, tạo từ bản thảo + đánh dấu chưa duyệt).
+- Goal gap hiện tại: Đã hoàn thành 100% môn Hoá học (72 bài học cho các lớp 10, 11, 12).
+- Blocker/câu hỏi mở: chưa có giáo viên duyệt nội dung kiến thức — theo quyết định người dùng, vẫn tạo bài học từ bản thảo, đánh dấu rõ cần duyệt sau (`reviewStatus: 'draft'`).
+- Next best slice: M3 — Vật lí 10-12 (85 bài).
+- Quyền hoặc quyết định cần thêm: không có, tiếp tục đợt tiếp theo với môn Vật lí.
 
 ## 6. Iteration log
 
@@ -82,18 +80,33 @@
 
 - State: DONE (M1/S1)
 - Slice: Khôi phục `packages/core-grading` từ git history.
-- Goal gap trước/sau: trước — engine chấm không tồn tại trong repo; sau — engine chấm hoạt động,
-  86 test pass, gắn lại vào `tsconfig.packages.json`.
+- Goal gap trước/sau: trước — engine chấm không tồn tại trong repo; sau — engine chấm hoạt động, 86 test pass, gắn lại vào `tsconfig.packages.json`.
 - Research/spec/issue/PR: dùng lại đặc tả cũ `docs/research/dac-ta-engine-cham-dung-chung.md`.
-- Thay đổi: `git checkout 4a44a62 -- packages/core-grading`; thêm reference vào
-  `tsconfig.packages.json`.
-- Validation và test count: `npx vitest run packages/core-grading` → 86/86 pass;
-  `npx tsc -b packages/core-grading` → sạch.
+- Thay đổi: `git checkout 4a44a62 -- packages/core-grading`; thêm reference vào `tsconfig.packages.json`.
+- Validation và test count: `npx vitest run packages/core-grading` → 86/86 pass; `npx tsc -b packages/core-grading` → sạch.
 - Metric/guardrail: không đổi contract nào đang chạy production.
 - Quyết định: tiếp tục theo Hoá học trước (đã chốt trong `kho-kien-thuc-hoa-gdpt2018.md`).
 - Blocker: không.
 - Next best slice: M1/S2.
 - Quyền cần thêm: không.
+
+### Iteration 2 — 2026-08-31
+
+- State: DONE (M1/S2, M1/S3, M1/S4, M2/S1)
+- Slice: Thiết lập `packages/subject-chemistry`, soạn đủ 17 bài học Hoá 10 và 25 bài học Hoá 11.
+- Goal gap trước/sau: đã phủ toàn bộ kiến thức Hoá 10 và 11 bám sát mục lục SGK thật, tất cả bài học qua kiểm chứng tự động.
+- Research/spec/issue/PR: PR #782 và PR #785.
+- Validation và test count: `npx vitest run packages/subject-chemistry` → pass 100% (6/6 tests).
+- Next best slice: M2/S2 (Hoá 12).
+
+### Iteration 3 — 2026-09-01
+
+- State: DONE (M2/S2)
+- Slice: Soạn đủ 30 bài học Hoá 12 (Chương 1-8), tích hợp vào registry, format & lint sạch sẽ.
+- Goal gap trước/sau: hoàn tất toàn bộ môn Hoá học cấp 3 (lớp 10, 11, 12).
+- Research/spec/issue/PR: PR #785 đã cập nhật thêm Hoá 12.
+- Validation và test count: `npx vitest run packages/subject-chemistry` → 6/6 tests pass (72/72 bài học).
+- Next best slice: M3 (Vật lí 10-12).
 
 ## 7. Final audit
 
