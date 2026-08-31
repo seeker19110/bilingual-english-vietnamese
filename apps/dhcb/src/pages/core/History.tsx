@@ -18,6 +18,7 @@ import {
   getDirection,
 } from '../../lib/storage'
 import { useAuth } from '../../context/useAuth'
+import { useIsDesktopViewport } from '../../lib/useIsDesktopViewport'
 import { useCloudSync } from '../../lib/useCloudSync'
 import { parseJson } from '../../lib/ai'
 import { situationLabel } from '../../prompts'
@@ -288,6 +289,10 @@ function SpeakingCard({ s }: { s: SpeakingSession }) {
   )
 }
 
+// Số mục hiển thị mỗi lần "Xem thêm" — desktop cao và rộng nên nạp nhiều hơn mobile.
+const STEP_DESKTOP = 20
+const STEP_MOBILE = 8
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 type ActiveTab = 'chat' | 'writing' | 'speaking'
@@ -305,12 +310,26 @@ export default function History() {
   useCloudSync(user?.id)
 
   const [tab, setTab] = useState<ActiveTab>('chat')
+  const step = useIsDesktopViewport() ? STEP_DESKTOP : STEP_MOBILE
+  // Số mục đang hiển thị của tab hiện tại (phân trang kiểu "Xem thêm").
+  const [visible, setVisible] = useState(step)
 
   if (!user) return null
 
   const chats = getChatSessions(user.id)
   const writings = getWritingSubs(user.id)
   const speakings = getSpeakingSessions(user.id)
+
+  // Danh sách của tab đang mở + phần đã cắt theo `visible`.
+  const currentList: Array<ChatSession | WritingSubmission | SpeakingSession> =
+    tab === 'chat' ? chats : tab === 'writing' ? writings : speakings
+  const shown = Math.min(visible, currentList.length)
+  const remaining = currentList.length - shown
+
+  function switchTab(next: ActiveTab) {
+    setTab(next)
+    setVisible(step) // đổi tab thì bắt đầu lại từ trang đầu
+  }
 
   const isEmpty =
     (tab === 'chat' && chats.length === 0) ||
@@ -329,21 +348,21 @@ export default function History() {
         <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
           <Tab
             active={tab === 'chat'}
-            onClick={() => setTab('chat')}
+            onClick={() => switchTab('chat')}
             icon={MessageCircle}
             label="Chat"
             count={chats.length}
           />
           <Tab
             active={tab === 'writing'}
-            onClick={() => setTab('writing')}
+            onClick={() => switchTab('writing')}
             icon={PenLine}
             label="Viết"
             count={writings.length}
           />
           <Tab
             active={tab === 'speaking'}
-            onClick={() => setTab('speaking')}
+            onClick={() => switchTab('speaking')}
             icon={Mic}
             label="Nói"
             count={speakings.length}
@@ -365,9 +384,21 @@ export default function History() {
           </div>
         ) : (
           <div className="space-y-3 animate-fade-in">
-            {tab === 'chat' && chats.map((s) => <ChatCard key={s.id} s={s} />)}
-            {tab === 'writing' && writings.map((s) => <WritingCard key={s.id} s={s} />)}
-            {tab === 'speaking' && speakings.map((s) => <SpeakingCard key={s.id} s={s} />)}
+            {tab === 'chat' && chats.slice(0, shown).map((s) => <ChatCard key={s.id} s={s} />)}
+            {tab === 'writing' &&
+              writings.slice(0, shown).map((s) => <WritingCard key={s.id} s={s} />)}
+            {tab === 'speaking' &&
+              speakings.slice(0, shown).map((s) => <SpeakingCard key={s.id} s={s} />)}
+
+            {/* Nút nạp thêm — chỉ hiện khi còn mục chưa hiển thị */}
+            {remaining > 0 && (
+              <button
+                onClick={() => setVisible((v) => v + step)}
+                className="tap-44 w-full py-2.5 rounded-xl text-sm font-medium border border-zinc-800 bg-zinc-900/80 text-zinc-300 hover:bg-zinc-800/60 transition"
+              >
+                Xem thêm ({remaining})
+              </button>
+            )}
           </div>
         )}
       </main>

@@ -6,6 +6,7 @@ import PageHeader from '../../components/PageHeader'
 import KaraokeText from '../../components/KaraokeText'
 import { useAuth } from '../../context/useAuth'
 import { getDirection } from '../../lib/storage'
+import { useIsDesktopViewport } from '../../lib/useIsDesktopViewport'
 import {
   getMistakes,
   getDueMistakes,
@@ -189,6 +190,9 @@ export default function MistakeBank() {
   const isA = dir === 'A'
 
   const [tab, setTab] = useState<'review' | 'all'>('review')
+  // Tab "Tất cả" có thể rất dài — phân trang kiểu "Xem thêm", desktop nạp nhiều hơn mobile.
+  const step = useIsDesktopViewport() ? 20 : 8
+  const [visible, setVisible] = useState(step)
   // "Bộ ôn" chốt 1 lần khi vào để thứ tự không nhảy khi ta markReviewed từng thẻ.
   const [deck, setDeck] = useState<Mistake[]>(() => getDueMistakes(user.id))
   const [pos, setPos] = useState(0)
@@ -307,7 +311,10 @@ export default function MistakeBank() {
                 {isA ? 'Cần ôn' : 'To review'} ({totalDue})
               </button>
               <button
-                onClick={() => setTab('all')}
+                onClick={() => {
+                  setTab('all')
+                  setVisible(step) // mở lại tab thì bắt đầu từ trang đầu
+                }}
                 className={`tap-44 flex-1 py-2 rounded-xl text-sm font-medium border transition ${
                   tab === 'all'
                     ? 'bg-accent-500/15 border-accent-500/40 text-accent-300 theme-light:text-accent-800'
@@ -376,7 +383,7 @@ export default function MistakeBank() {
             ) : (
               // Tab "Tất cả" — danh sách gọn, có nút xóa
               <div className="space-y-2 animate-fade-in">
-                {all.map((m) => (
+                {all.slice(0, visible).map((m) => (
                   <ListRow
                     key={m.id}
                     mistake={m}
@@ -384,6 +391,15 @@ export default function MistakeBank() {
                     onDelete={() => handleDeleteInList(m.id)}
                   />
                 ))}
+                {/* Nút nạp thêm — chỉ hiện khi còn lỗi chưa hiển thị */}
+                {all.length > visible && (
+                  <button
+                    onClick={() => setVisible((v) => v + step)}
+                    className="tap-44 w-full py-2.5 rounded-xl text-sm font-medium border border-zinc-800 bg-zinc-900/80 text-zinc-300 hover:bg-zinc-800/60 transition"
+                  >
+                    {isA ? 'Xem thêm' : 'Show more'} ({all.length - visible})
+                  </button>
+                )}
               </div>
             )}
           </>

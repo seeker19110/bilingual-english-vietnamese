@@ -721,7 +721,7 @@ export default function CefrLevelPage() {
                 </div>
                 <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
                   <div
-                    className={`h-full rounded-full ${accent.bar} transition-all`}
+                    className={`h-full rounded-full ${accent.bar} transition-[width]`}
                     style={{ width: `${pct(vocab.done, vocab.total)}%` }}
                   />
                 </div>
@@ -735,7 +735,7 @@ export default function CefrLevelPage() {
                 </div>
                 <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
                   <div
-                    className={`h-full rounded-full ${accent.bar} transition-all`}
+                    className={`h-full rounded-full ${accent.bar} transition-[width]`}
                     style={{ width: `${pct(grammar.done, grammar.total)}%` }}
                   />
                 </div>
