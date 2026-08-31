@@ -1166,6 +1166,11 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
     `/lap-trinh/lo-trinh/:pathId/chang/:stageId`. `agentSim` hoá ra KHÔNG cần — vòng lặp agent
     dạy và chấm được bằng code Python/JavaScript thuần. **Lộ trình "Kỹ Sư Trưởng AI" nay ĐẦY
     ĐỦ P1→P5, không còn phần "đang soạn".**
+  - **[2026-08-31] Soạn nốt quiz 18/22 chặng còn lại — ✅ ĐÃ XONG (nhật ký
+    `docs/changelog/0212-*.md`).** Đợt 3 cố ý chỉ soạn 4/22 chặng P1–P4; đợt bổ sung này soạn
+    90 câu hỏi cho 18 chặng còn lại (4 agent song song, mỗi agent bám sát `topics` thật của
+    `specializations/<hướng>.ts` trước khi viết). **Toàn bộ 26/26 chặng của lộ trình
+    `principal-ai` nay đều có quiz** (22 P1–P4 + 4 P5) — không còn chặng nào "chưa có bài kiểm".
 
 - **[2026-08-31] ✅ THIẾT KẾ LẠI WEB CHO DESKTOP — 4 PR, ĐÃ XONG TRỌN VẸN.** Trước đó web là
   "app mobile phóng to" ở mọi kích thước màn hình (BottomNav cố định đáy, dropdown Studio,

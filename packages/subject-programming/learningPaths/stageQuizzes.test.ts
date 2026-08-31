@@ -6,9 +6,28 @@ import { getLearningPath, pathStageRefs } from './registry.js'
 
 const QUIZZED_STAGES = [
   'mathforcode-s1',
+  'mathforcode-s2',
+  'mathforcode-s3',
+  'mathforcode-s4',
+  'algo-s1',
+  'algo-s2',
   'data-s1',
+  'data-s2',
+  'data-s3',
+  'backend-s1',
+  'backend-s2',
   'ai-s1',
+  'ai-s2',
+  'ai-s3',
+  'ai-s4',
   'devops-s1',
+  'devops-s2',
+  'security-s1',
+  'security-s2',
+  'architecture-s1',
+  'architecture-s2',
+  'architecture-s3',
+  'architecture-s4',
   'principal-s1',
   'principal-s2',
   'principal-s3',
@@ -56,7 +75,8 @@ describe('ngân hàng quiz sau chặng', () => {
   })
 
   it('chặng chưa soạn trả mảng rỗng — không hứa suông', () => {
-    expect(quizOfStage('ai-s2')).toEqual([])
+    // web-s2 có thật (hướng chuyên sâu web) nhưng không thuộc lộ trình principal-ai/chưa có quiz.
+    expect(quizOfStage('web-s2')).toEqual([])
     expect(quizOfStage('khong-co-chang-nay')).toEqual([])
   })
 
@@ -64,6 +84,6 @@ describe('ngân hàng quiz sau chặng', () => {
     for (const stageId of QUIZZED_STAGES) {
       expect(stageHasQuiz(stageId.toUpperCase())).toBe(true)
     }
-    expect(stageHasQuiz('ai-s2')).toBe(false)
+    expect(stageHasQuiz('web-s2')).toBe(false)
   })
 })

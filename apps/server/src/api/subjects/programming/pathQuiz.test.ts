@@ -66,9 +66,12 @@ describe('/api/programming/path-quiz', () => {
     expect(query).not.toHaveBeenCalled()
   })
 
-  it('chặng chưa có quiz → 400', async () => {
+  it('chặng không thuộc lộ trình / chưa có quiz → 400', async () => {
+    // Đợt bổ sung 2026-08-31 đã soạn quiz cho đủ 22/22 chặng P1–P4 của principal-ai — không
+    // còn chặng THẬT nào thuộc lộ trình mà chưa có quiz, nên test bằng chặng có thật (web-s1)
+    // nhưng KHÔNG thuộc principal-ai; handler trả cùng 400 cho cả hai lý do (xem pathQuiz.ts).
     const res = await handler(
-      req('POST', { pathId: 'principal-ai', stageId: 'ai-s2', answers: [] }),
+      req('POST', { pathId: 'principal-ai', stageId: 'web-s1', answers: [] }),
     )
     expect(res.status).toBe(400)
   })
