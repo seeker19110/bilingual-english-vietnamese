@@ -1,4 +1,6 @@
-// src/components/UpgradeSection.tsx — Khối "Nâng cấp Pro/VIP" trong trang Hồ sơ.
+// src/components/UpgradeSection.tsx — Khối "Nâng cấp Pro/VIP".
+// Bản đầy đủ (`variant="full"`) nằm ở trang riêng /nang-cap (pages/core/Pricing.tsx);
+// trang Hồ sơ chỉ nhúng bản rút gọn (`variant="compact"`) dẫn sang đó.
 //
 // SePay KHÔNG redirect người dùng về sau khi chuyển khoản (khác cổng trung gian như PayOS) —
 // nên luồng ở đây KHÔNG rời khỏi app: chọn gói → hiện mã QR ngay trong trang → người dùng quét
@@ -6,7 +8,8 @@
 // docs/research/dac-ta-thanh-toan-2026-07-25.md.
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Crown, Copy, Check, Loader2, Sparkles } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { ArrowRight, Crown, Copy, Check, Loader2, Sparkles } from 'lucide-react'
 import {
   createCheckout,
   fetchPaymentStatus,
@@ -164,9 +167,16 @@ function formatVnd(n: number): string {
 export default function UpgradeSection({
   isA,
   currentPlan,
+  variant = 'full',
 }: {
   isA: boolean
   currentPlan: string
+  /**
+   * 'full' — bảng so sánh đầy đủ + luồng thanh toán (trang riêng `/nang-cap`).
+   * 'compact' — chỉ một khối gọn dẫn sang trang đó (dùng trong trang Hồ sơ, nơi bề rộng
+   * `max-w-3xl` không đủ để so sánh 4 gói cạnh nhau — audit UI/UX 2026-08-31 mục B9).
+   */
+  variant?: 'full' | 'compact'
 }) {
   const toast = useToast()
   const [prices, setPrices] = useState<PlanPrices | null>(null)
@@ -215,6 +225,36 @@ export default function UpgradeSection({
 
   // Đã là VIP → không cần chào mua nữa (Pro thấp hơn VIP, không có gì để chào thêm).
   if (currentPlan === 'vip') return null
+
+  // Bản rút gọn: giữ nguyên `id="upgrade-section"` để chỗ khác cuộn tới vẫn đúng
+  // (VoicePicker cuộn tới id này khi người dùng bấm giọng ngoài quyền gói).
+  if (variant === 'compact') {
+    return (
+      <section
+        id="upgrade-section"
+        className="bg-zinc-900/80 border border-amber-500/30 rounded-2xl p-4 animate-fade-in scroll-mt-4"
+      >
+        <div className="flex items-center gap-2 mb-1.5">
+          <Crown className="w-4 h-4 text-amber-400" />
+          <h2 className="text-sm font-semibold text-white">
+            {isA ? 'Nâng cấp Pro/VIP' : 'Upgrade to Pro/VIP'}
+          </h2>
+        </div>
+        <p className="text-xs text-zinc-300 mb-3">
+          {isA
+            ? 'So sánh đầy đủ Free · Plus · Pro · VIP và chọn chu kỳ 10 ngày / tháng / năm ở trang bảng giá.'
+            : 'Compare Free · Plus · Pro · VIP and pick a 10-day / monthly / yearly cycle on the pricing page.'}
+        </p>
+        <Link
+          to="/nang-cap"
+          className="tap-44 flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-900 font-semibold text-sm transition"
+        >
+          {isA ? 'Xem bảng giá đầy đủ' : 'View full pricing'}
+          <ArrowRight className="w-4 h-4" aria-hidden />
+        </Link>
+      </section>
+    )
+  }
 
   async function handleCreateCheckout() {
     setCreating(true)
@@ -362,7 +402,8 @@ export default function UpgradeSection({
         </div>
       ) : (
         <div>
-          <div className="grid grid-cols-1 gap-2 mb-4 sm:grid-cols-2">
+          {/* Desktop rộng → 4 gói xếp cạnh nhau để SO SÁNH được (audit 2026-08-31 mục B9). */}
+          <div className="grid grid-cols-1 gap-2 mb-4 sm:grid-cols-2 lg:grid-cols-4">
             {(['free', 'plus', 'pro', 'vip'] as const).map((p) => (
               <PlanFeatureCard key={p} planKey={p} isA={isA} isCurrent={currentPlan === p} />
             ))}

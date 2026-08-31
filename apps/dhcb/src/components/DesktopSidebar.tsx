@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   BookOpen,
+  Crown,
   Home,
   PanelLeftClose,
   PanelLeftOpen,
@@ -29,6 +30,7 @@ import {
   ENGLISH_PATHS,
   LEARNING_PATHS,
   PRACTICE_PATHS,
+  PRICING_PATHS,
   PROFILE_PATHS,
   PROGRESS_PATHS,
   WORKLIFE_PATHS,
@@ -84,6 +86,14 @@ const STUDIO_NAV: Item[] = [
 
 const CORE_BOTTOM: Item[] = [
   { to: '/tien-do', label: 'Tiến độ', icon: TrendingUp, paths: PROGRESS_PATHS },
+  // Bảng giá tách khỏi trang Hồ sơ (audit 2026-08-31 mục B9) nên cần lối vào riêng.
+  {
+    to: '/nang-cap',
+    label: 'Nâng cấp',
+    icon: Crown,
+    color: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
+    paths: PRICING_PATHS,
+  },
   { to: '/trang-ca-nhan', label: 'Hồ sơ', icon: User, paths: PROFILE_PATHS },
 ]
 

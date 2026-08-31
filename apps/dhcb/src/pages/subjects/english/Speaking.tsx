@@ -24,6 +24,7 @@ import { useToast } from '@core/ToastProvider'
 import { useCloudSync } from '../../../lib/useCloudSync'
 import { useApiThrottle } from '../../../lib/useApiThrottle'
 import { useMountedRef } from '../../../lib/useMountedRef'
+import { useIsDesktopViewport } from '../../../lib/useIsDesktopViewport'
 import { useVisualViewportHeight } from '../../../lib/useVisualViewportHeight'
 import { useOnboarding } from '../../../lib/onboarding'
 import { callClaude, parseJson, hasNumberFields } from '../../../lib/ai'
@@ -294,24 +295,20 @@ function HighlightText({
   )
 }
 
-// ── Speak Bubble ───────────────────────────────────────────────────────
-function SpeakBubble({
+// SpeakFeedbackBlock — khung "✅ sửa lỗi & giải thích" DÙNG CHUNG giữa SpeakBubble (mobile,
+// gắn ngay dưới từng lượt nói của AI) và SpeakFeedbackPanel (desktop, gom vào cột phải).
+// Tách ra để vote 👍👎 và karaoke chạy y hệt ở cả hai nơi mà không viết trùng logic.
+function SpeakFeedbackBlock({
   msg,
-  onPlay,
-  isNew,
   wordSync,
   dir,
   userId,
   userInput,
 }: {
   msg: Message
-  onPlay?: () => void
-  isNew?: boolean
   wordSync: SpkWordSync | null
   dir: Direction
-  // uid học viên — dùng để ghi vòng phản hồi (mục ⑤ T3) khi bấm 👎
   userId: string
-  // câu học viên vừa nói NGAY TRƯỚC tin nhắn AI này — làm user_input khi ghi phản hồi
   userInput: string
 }) {
   // Vòng phản hồi người dùng (mục ⑤ T3) — mỗi tin nhắn vote tối đa 1 lần, chỉ lưu cục bộ
@@ -327,6 +324,155 @@ function SpeakBubble({
     }
   }
 
+  const feedbackActive = wordSync?.msgId === msg.id && wordSync.field === 'feedback'
+
+  return (
+    <div className="bg-amber-500/10 border border-amber-500/25 border-l-4 border-l-amber-400 rounded-2xl px-4 py-3 text-xs leading-relaxed shadow-inner">
+      <div className="flex items-start gap-2">
+        <span className="text-amber-400 theme-light:text-amber-800 font-bold shrink-0 mt-0.5">
+          ✅
+        </span>
+        <HighlightText
+          text={msg.feedbackVi ?? ''}
+          active={feedbackActive}
+          wordIdx={wordSync?.wordIdx ?? null}
+          className="text-amber-200 theme-light:text-amber-800 font-medium flex-1"
+          highlightClass="bg-amber-500/25 text-amber-100 theme-light:text-amber-900"
+        />
+        {/* Vote nhận xét đúng/sai — mục ⑤ T3, xem tutorFeedback.ts.
+            Emoji thô (không phải icon lucide) — tránh phình vendor-ui chunk
+            chỉ vì 2 icon dùng đúng 1 chỗ, và nhất quán với ✅ ngay cạnh đây. */}
+        <div className="flex items-center gap-0.5 shrink-0">
+          <button
+            type="button"
+            onClick={() => handleVote('up')}
+            disabled={!!voted}
+            aria-label={dir === 'A' ? 'Nhận xét đúng' : 'Feedback is correct'}
+            className={`h-9 w-9 flex items-center justify-center rounded-full text-xs transition ${
+              voted === null
+                ? 'opacity-60 hover:opacity-100 hover:bg-amber-500/15'
+                : voted === 'up'
+                  ? 'scale-110'
+                  : 'disabled:opacity-25'
+            }`}
+          >
+            👍
+          </button>
+          <button
+            type="button"
+            onClick={() => handleVote('down')}
+            disabled={!!voted}
+            aria-label={dir === 'A' ? 'Nhận xét sai/thiếu' : 'Feedback is wrong/incomplete'}
+            className={`h-11 w-11 flex items-center justify-center rounded-full text-xs transition ${
+              voted === null
+                ? 'opacity-60 hover:opacity-100'
+                : voted === 'down'
+                  ? ''
+                  : 'disabled:opacity-25'
+            }`}
+          >
+            👎
+          </button>
+        </div>
+      </div>
+      {voted === 'down' && (
+        <p className="text-[11px] text-zinc-500 mt-1 pl-5">
+          {dir === 'A' ? 'Đã ghi nhận, cảm ơn bạn!' : 'Recorded, thank you!'}
+        </p>
+      )}
+      {msg.correctedEn && (
+        <p className="text-accent-400 theme-light:text-accent-800 mt-1.5 pl-4">
+          → {msg.correctedEn}
+        </p>
+      )}
+    </div>
+  )
+}
+
+// SpeakFeedbackPanel — cột "Sửa lỗi & giải thích" bên phải ở DESKTOP. Cha chỉ render khi
+// `isDesktop` true, và SpeakBubble khi đó KHÔNG render bản inline nữa — không lọc bằng CSS
+// `hidden lg:flex` vì ẩn bằng CSS vẫn để cả hai bản tồn tại trong DOM, gây trùng nội dung cho
+// trình đọc màn hình và strict-mode violation của Playwright (xem Chat.tsx cùng lý do).
+function SpeakFeedbackPanel({
+  messages,
+  wordSync,
+  dir,
+  userId,
+}: {
+  messages: Message[]
+  wordSync: SpkWordSync | null
+  dir: Direction
+  userId: string
+}) {
+  const items = messages
+    .map((m, i) => {
+      if (m.role !== 'assistant' || !m.feedbackVi) return null
+      const userInput = messages[i - 1]?.role === 'user' ? messages[i - 1]!.content : ''
+      return { msg: m, userInput }
+    })
+    .filter((x): x is { msg: Message; userInput: string } => x !== null)
+
+  return (
+    <aside className="flex w-72 xl:w-80 shrink-0 flex-col min-h-0">
+      <div className="shrink-0 pb-2">
+        <p className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+          {dir === 'A' ? 'Sửa lỗi & giải thích' : 'Corrections & explanations'}
+        </p>
+      </div>
+      <div className="flex-1 min-h-0 overflow-y-auto space-y-2.5 pr-1">
+        {items.length === 0 ? (
+          <p className="text-xs text-zinc-500 italic">
+            {dir === 'A'
+              ? 'Chưa có lỗi nào cần sửa — cứ nói tiếp nhé!'
+              : 'No corrections yet — keep speaking!'}
+          </p>
+        ) : (
+          items.map((it) => (
+            <div key={it.msg.id}>
+              {it.userInput && (
+                <p className="text-[11px] text-zinc-500 mb-1 truncate px-0.5" title={it.userInput}>
+                  “{it.userInput}”
+                </p>
+              )}
+              <SpeakFeedbackBlock
+                msg={it.msg}
+                wordSync={wordSync}
+                dir={dir}
+                userId={userId}
+                userInput={it.userInput}
+              />
+            </div>
+          ))
+        )}
+      </div>
+    </aside>
+  )
+}
+
+// ── Speak Bubble ───────────────────────────────────────────────────────
+function SpeakBubble({
+  msg,
+  onPlay,
+  isNew,
+  wordSync,
+  dir,
+  userId,
+  userInput,
+  isDesktop,
+}: {
+  msg: Message
+  onPlay?: () => void
+  isNew?: boolean
+  wordSync: SpkWordSync | null
+  dir: Direction
+  // uid học viên — dùng để ghi vòng phản hồi (mục ⑤ T3) khi bấm 👎
+  userId: string
+  // câu học viên vừa nói NGAY TRƯỚC tin nhắn AI này — làm user_input khi ghi phản hồi
+  userInput: string
+  // true ở desktop (≥1024px) — khi đó cột SpeakFeedbackPanel đã hiện lời sửa/giải thích này
+  // rồi nên bong bóng KHÔNG render lại (tránh trùng DOM).
+  isDesktop: boolean
+}) {
   if (msg.role === 'user') {
     return (
       <div className={`flex justify-end ${isNew ? 'animate-fade-in' : ''}`}>
@@ -337,7 +483,6 @@ function SpeakBubble({
     )
   }
   const speechActive = wordSync?.msgId === msg.id && wordSync.field === 'speech'
-  const feedbackActive = wordSync?.msgId === msg.id && wordSync.field === 'feedback'
   return (
     <div className={`flex justify-start ${isNew ? 'animate-fade-in' : ''}`}>
       <div className="max-w-[88%] sm:max-w-[78%] space-y-2.5">
@@ -361,66 +506,16 @@ function SpeakBubble({
             className="flex-1 min-w-0 font-medium"
           />
         </div>
-        {msg.feedbackVi && (
-          <div className="bg-amber-500/10 border border-amber-500/25 border-l-4 border-l-amber-400 rounded-2xl px-4 py-3 text-xs leading-relaxed shadow-inner">
-            <div className="flex items-start gap-2">
-              <span className="text-amber-400 theme-light:text-amber-800 font-bold shrink-0 mt-0.5">
-                ✅
-              </span>
-              <HighlightText
-                text={msg.feedbackVi}
-                active={feedbackActive}
-                wordIdx={wordSync?.wordIdx ?? null}
-                className="text-amber-200 theme-light:text-amber-800 font-medium flex-1"
-                highlightClass="bg-amber-500/25 text-amber-100 theme-light:text-amber-900"
-              />
-              {/* Vote nhận xét đúng/sai — mục ⑤ T3, xem tutorFeedback.ts.
-                  Emoji thô (không phải icon lucide) — tránh phình vendor-ui chunk
-                  chỉ vì 2 icon dùng đúng 1 chỗ, và nhất quán với ✅ ngay cạnh đây. */}
-              <div className="flex items-center gap-0.5 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => handleVote('up')}
-                  disabled={!!voted}
-                  aria-label={dir === 'A' ? 'Nhận xét đúng' : 'Feedback is correct'}
-                  className={`h-9 w-9 flex items-center justify-center rounded-full text-xs transition ${
-                    voted === null
-                      ? 'opacity-60 hover:opacity-100 hover:bg-amber-500/15'
-                      : voted === 'up'
-                        ? 'scale-110'
-                        : 'disabled:opacity-25'
-                  }`}
-                >
-                  👍
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleVote('down')}
-                  disabled={!!voted}
-                  aria-label={dir === 'A' ? 'Nhận xét sai/thiếu' : 'Feedback is wrong/incomplete'}
-                  className={`h-11 w-11 flex items-center justify-center rounded-full text-xs transition ${
-                    voted === null
-                      ? 'opacity-60 hover:opacity-100'
-                      : voted === 'down'
-                        ? ''
-                        : 'disabled:opacity-25'
-                  }`}
-                >
-                  👎
-                </button>
-              </div>
-            </div>
-            {voted === 'down' && (
-              <p className="text-[11px] text-zinc-500 mt-1 pl-5">
-                {dir === 'A' ? 'Đã ghi nhận, cảm ơn bạn!' : 'Recorded, thank you!'}
-              </p>
-            )}
-            {msg.correctedEn && (
-              <p className="text-accent-400 theme-light:text-accent-800 mt-1.5 pl-4">
-                → {msg.correctedEn}
-              </p>
-            )}
-          </div>
+        {/* Chỉ hiện ở MOBILE/TABLET (<1024px) — desktop xem cột SpeakFeedbackPanel bên phải.
+            Gate bằng JS (`isDesktop`), không phải class `lg:hidden` — xem comment ở prop. */}
+        {msg.feedbackVi && !isDesktop && (
+          <SpeakFeedbackBlock
+            msg={msg}
+            wordSync={wordSync}
+            dir={dir}
+            userId={userId}
+            userInput={userInput}
+          />
         )}
       </div>
     </div>
@@ -465,6 +560,8 @@ export default function Speaking() {
   const onboarding = useOnboarding(user.id) // trình độ khai lúc onboarding (U-3)
   const dir: Direction = getDirection()
   const isA = dir === 'A'
+  // 1 listener DUY NHẤT cho cả trang — SpeakBubble/SpeakFeedbackPanel nhận qua prop.
+  const isDesktop = useIsDesktopViewport()
 
   // Từ mục tiêu từ màn "xong batch" của lộ trình (?words=a,b,c — đề xuất B, V-3).
   // Cap 20 từ để prompt không phình; đọc 1 lần khi vào trang.
@@ -997,66 +1094,83 @@ export default function Speaking() {
         />
       ) : (
         <>
-          <div className="flex-1 min-h-0 max-w-3xl mx-auto w-full px-4 py-4 space-y-3 overflow-y-auto">
-            {session.messages.map((m, i) => (
-              <SpeakBubble
-                key={m.id}
-                msg={m}
-                isNew={i >= lastIdx}
-                onPlay={m.role === 'assistant' ? () => playMsg(m) : undefined}
+          {/* Desktop (lg+): hội thoại nói + nút mic bên trái, cột "Sửa lỗi & giải thích" ghim
+              bên phải (cuộn riêng) — mobile giữ nguyên 1 cột dọc như cũ (lời sửa vẫn nằm ngay
+              dưới từng lượt nói của AI, xem SpeakBubble). Cùng khuôn với Chat.tsx. */}
+          <div className="flex-1 min-h-0 flex flex-col lg:flex-row lg:gap-4 max-w-3xl lg:max-w-5xl mx-auto w-full lg:px-4 lg:pt-3 overflow-hidden">
+            <div className="flex-1 min-h-0 px-4 py-4 lg:p-0 space-y-3 overflow-y-auto">
+              {session.messages.map((m, i) => (
+                <SpeakBubble
+                  key={m.id}
+                  msg={m}
+                  isNew={i >= lastIdx}
+                  onPlay={m.role === 'assistant' ? () => playMsg(m) : undefined}
+                  wordSync={speaking ? wordSync : null}
+                  dir={dir}
+                  userId={user.id}
+                  isDesktop={isDesktop}
+                  userInput={
+                    session.messages[i - 1]?.role === 'user' ? session.messages[i - 1]!.content : ''
+                  }
+                />
+              ))}
+              {loading && <TypingDots />}
+              {transcript && (
+                <div className="flex justify-end animate-fade-in">
+                  <div className="max-w-[78%] bg-sky-600/20 border border-sky-500/25 text-sky-300 theme-light:text-sky-800 rounded-2xl rounded-br-sm px-4 py-2.5 text-sm italic break-words">
+                    {transcript}…
+                  </div>
+                </div>
+              )}
+              {pendingConfirm && (
+                <div className="flex flex-col items-end gap-2 animate-fade-in">
+                  <div className="max-w-[78%] bg-sky-600/20 border border-sky-500/25 text-sky-300 theme-light:text-sky-800 rounded-2xl rounded-br-sm px-4 py-2.5 text-sm break-words">
+                    {pendingConfirm}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-zinc-400">
+                      {isA
+                        ? `Tự gửi sau ${pendingCountdown}s...`
+                        : `Sending in ${pendingCountdown}s...`}
+                    </span>
+                    <button
+                      onClick={cancelPendingConfirm}
+                      className="tap-44 text-xs font-medium text-red-400 border border-red-500/30 hover:bg-red-500/10 rounded-full px-3 py-1.5 transition"
+                    >
+                      {isA ? 'Ghi lại' : 'Re-record'}
+                    </button>
+                  </div>
+                </div>
+              )}
+              {error && (
+                <p className="text-center text-xs text-red-400 theme-light:text-red-700 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2">
+                  {error}
+                </p>
+              )}
+              {limitHit && (
+                <div className="text-center text-xs text-amber-400 theme-light:text-amber-800 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
+                  {isA
+                    ? 'Bạn đã dùng hết lượt hôm nay. Quay lại vào ngày mai.'
+                    : "You've used all sessions today. Come back tomorrow."}
+                </div>
+              )}
+              <div ref={bottomRef} />
+            </div>
+
+            {isDesktop && (
+              <SpeakFeedbackPanel
+                messages={session.messages}
                 wordSync={speaking ? wordSync : null}
                 dir={dir}
                 userId={user.id}
-                userInput={
-                  session.messages[i - 1]?.role === 'user' ? session.messages[i - 1]!.content : ''
-                }
               />
-            ))}
-            {loading && <TypingDots />}
-            {transcript && (
-              <div className="flex justify-end animate-fade-in">
-                <div className="max-w-[78%] bg-sky-600/20 border border-sky-500/25 text-sky-300 theme-light:text-sky-800 rounded-2xl rounded-br-sm px-4 py-2.5 text-sm italic break-words">
-                  {transcript}…
-                </div>
-              </div>
             )}
-            {pendingConfirm && (
-              <div className="flex flex-col items-end gap-2 animate-fade-in">
-                <div className="max-w-[78%] bg-sky-600/20 border border-sky-500/25 text-sky-300 theme-light:text-sky-800 rounded-2xl rounded-br-sm px-4 py-2.5 text-sm break-words">
-                  {pendingConfirm}
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-zinc-400">
-                    {isA
-                      ? `Tự gửi sau ${pendingCountdown}s...`
-                      : `Sending in ${pendingCountdown}s...`}
-                  </span>
-                  <button
-                    onClick={cancelPendingConfirm}
-                    className="tap-44 text-xs font-medium text-red-400 border border-red-500/30 hover:bg-red-500/10 rounded-full px-3 py-1.5 transition"
-                  >
-                    {isA ? 'Ghi lại' : 'Re-record'}
-                  </button>
-                </div>
-              </div>
-            )}
-            {error && (
-              <p className="text-center text-xs text-red-400 theme-light:text-red-700 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2">
-                {error}
-              </p>
-            )}
-            {limitHit && (
-              <div className="text-center text-xs text-amber-400 theme-light:text-amber-800 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
-                {isA
-                  ? 'Bạn đã dùng hết lượt hôm nay. Quay lại vào ngày mai.'
-                  : "You've used all sessions today. Come back tomorrow."}
-              </div>
-            )}
-            <div ref={bottomRef} />
           </div>
 
           <div className="sticky bottom-0 bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800/60 px-4 py-4 pb-safe">
-            <div className="max-w-3xl mx-auto">
+            {/* Cùng bề rộng với khung hội thoại phía trên (max-w-3xl lg:max-w-5xl) — nếu để
+                hẹp hơn thì thanh mic bị lệch sang trái ở desktop. */}
+            <div className="max-w-3xl lg:max-w-5xl mx-auto">
               {userTurns >= MIN_TURNS_TO_GRADE && (
                 <div className="flex justify-center mb-3">
                   <button
