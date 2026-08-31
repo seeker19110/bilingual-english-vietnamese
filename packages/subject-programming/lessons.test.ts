@@ -30,7 +30,11 @@ describe('programming lessons', () => {
     for (const lesson of PROGRAMMING_LESSONS) {
       expect(seen.has(lesson.id)).toBe(false)
       seen.add(lesson.id)
-      if (lesson.unitId.startsWith('git-u') || lesson.unitId.startsWith('hermes-u')) {
+      if (
+        lesson.unitId.startsWith('git-u') ||
+        lesson.unitId.startsWith('hermes-u') ||
+        lesson.unitId.startsWith('vibe-u')
+      ) {
         expect(
           COURSE_REFERENCED_LESSON_IDS.has(lesson.id),
           `bài ${lesson.id} khai unit ảo ${lesson.unitId} nhưng KHÔNG có khoá ngắn nào tham chiếu tới nó`,

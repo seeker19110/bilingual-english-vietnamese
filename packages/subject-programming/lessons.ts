@@ -87,6 +87,10 @@ import { HERMES_U1_LESSONS } from './lessons/hermesu1.js'
 import { HERMES_U2_LESSONS } from './lessons/hermesu2.js'
 import { HERMES_U3_LESSONS } from './lessons/hermesu3.js'
 import { HERMES_U4_LESSONS } from './lessons/hermesu4.js'
+import { VIBE_U1_LESSONS } from './lessons/vibeu1.js'
+import { VIBE_U2_LESSONS } from './lessons/vibeu2.js'
+import { VIBE_U3_LESSONS } from './lessons/vibeu3.js'
+import { VIBE_U4_LESSONS } from './lessons/vibeu4.js'
 
 export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...P1U1_LESSONS,
@@ -167,6 +171,10 @@ export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...HERMES_U2_LESSONS,
   ...HERMES_U3_LESSONS,
   ...HERMES_U4_LESSONS,
+  ...VIBE_U1_LESSONS,
+  ...VIBE_U2_LESSONS,
+  ...VIBE_U3_LESSONS,
+  ...VIBE_U4_LESSONS,
 ]
 
 const lessonMap = new Map(PROGRAMMING_LESSONS.map((l) => [l.id, l]))

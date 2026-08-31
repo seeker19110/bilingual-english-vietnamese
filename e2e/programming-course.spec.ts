@@ -95,3 +95,38 @@ test('trang môn Lập trình có lối vào khoá Hermes', async ({ page }) => 
   await page.getByRole('button', { name: /Hermes Agent — trợ lý AI cho người đi làm/ }).click()
   await expect(page).toHaveURL('/lap-trinh/khoa-hoc/hermes')
 })
+
+// ── Khoá Vibe Code (docs/specs/2026-08-31-khoa-vibe-code.md) ── Cùng bất biến với khoá
+// Git/Hermes: vào thẳng khi chưa học bậc nào vẫn học được bài đầu ngay.
+
+test('chưa học bậc nào vẫn vào thẳng khoá Vibe Code học được ngay', async ({ page }) => {
+  await mockLogin(page, 'vi', 'dark-blue')
+  await gioLapTiendo(page, [])
+  await page.goto('/lap-trinh/khoa-hoc/vibe', { waitUntil: 'domcontentloaded' })
+
+  await expect(
+    page.getByRole('heading', { name: 'Vibe Code — từ số 0 đến chuyên gia' }),
+  ).toBeVisible()
+  await expect(page.getByRole('button', { name: /Học bài:/ }).first()).toBeVisible()
+})
+
+test('bấm vào bài trong khoá Vibe Code dẫn đúng bài đầu chương C1', async ({ page }) => {
+  await mockLogin(page, 'vi', 'dark-blue')
+  await gioLapTiendo(page, [])
+  await page.goto('/lap-trinh/khoa-hoc/vibe', { waitUntil: 'domcontentloaded' })
+
+  await page
+    .getByRole('button', { name: /Học bài:/ })
+    .first()
+    .click()
+  await expect(page).toHaveURL(/\/lap-trinh\/bai-hoc\/vibe-u1-l1(--[a-z0-9-]+)?$/)
+})
+
+test('trang môn Lập trình có lối vào khoá Vibe Code', async ({ page }) => {
+  await mockLogin(page, 'vi', 'dark-blue')
+  await gioLapTiendo(page, [])
+  await page.goto('/lap-trinh', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: /Vibe Code — từ số 0 đến chuyên gia/ }).click()
+  await expect(page).toHaveURL('/lap-trinh/khoa-hoc/vibe')
+})

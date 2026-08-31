@@ -12,6 +12,7 @@ import { runHtml } from './htmlRunner'
 import { runGit } from './gitRunner'
 import { runBash } from './bashRunner'
 import { runHermes } from './hermesRunner'
+import { runVibe } from './vibeRunner'
 import { runSwift } from './swiftRunner'
 import { runKotlin } from './kotlinRunner'
 import { runDom, resetDomWorker } from './domRunner'
@@ -25,7 +26,7 @@ export type LessonLanguage = ProgrammingLesson['language']
 /** Bài mà học viên gõ LỆNH chứ không phải code (Git ở P3-U10/U11, dòng lệnh ở chương trình M).
  *  Khai ở đây để giao diện không phải liệt kê tay từng ngôn ngữ ở mỗi chỗ cần đổi chữ. */
 export function laBaiDongLenh(language: LessonLanguage): boolean {
-  return language === 'git' || language === 'bash' || language === 'hermes'
+  return language === 'git' || language === 'bash' || language === 'hermes' || language === 'vibe'
 }
 
 export interface LessonRunOptions {
@@ -94,6 +95,13 @@ export function runLessonCode(
     // duyệt…). Bộ mô phỏng khác (hermesSim), khái niệm giao diện không đổi.
     const { stdinLines } = options
     return runHermes(code, { ...(stdinLines ? { lenhChuanBi: stdinLines } : {}) })
+  }
+  if (language === 'vibe') {
+    // Bài tác tử AI viết code (khoá ngắn Vibe Code): cùng đường đi với bài Git/bash/hermes —
+    // "code" là danh sách lệnh học viên gõ, `stdinLines` mang lệnh dựng bối cảnh (dự án đã
+    // có bản nháp chờ xem…). Bộ mô phỏng khác (vibeSim), khái niệm giao diện không đổi.
+    const { stdinLines } = options
+    return runVibe(code, { ...(stdinLines ? { lenhChuanBi: stdinLines } : {}) })
   }
   if (language === 'swift') {
     // Bài Swift chạy trên trình thông dịch tập con (swiftSim) — không Worker, không mạng, và
