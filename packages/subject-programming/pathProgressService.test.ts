@@ -8,6 +8,16 @@ import {
 } from './pathProgressService.js'
 import { quizOfStage } from './learningPaths/stageQuizzes.js'
 
+// Đợt bổ sung 2026-08-31 đã soạn quiz cho ĐỦ 22/22 chặng P1–P4 của principal-ai — không còn
+// chặng THẬT nào "thuộc lộ trình nhưng chưa có quiz" để test hai nhánh dưới đây bằng dữ liệu
+// thật. Giả lập quizOfStage rỗng cho MỘT chặng thật (đã có quiz) chỉ trong đúng 2 ca test đó,
+// để vẫn canh được nhánh code "chưa có bài kiểm" không bị âm thầm gãy khi có ai xoá quiz.
+vi.mock('./learningPaths/stageQuizzes.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./learningPaths/stageQuizzes.js')>()
+  return { ...actual, quizOfStage: vi.fn(actual.quizOfStage) }
+})
+const mockedQuizOfStage = vi.mocked(quizOfStage)
+
 function fakePool(rowsByCall: unknown[][] = []) {
   const calls: { sql: string; params: unknown[] }[] = []
   let i = 0
@@ -96,8 +106,8 @@ describe('setPathStageProgress', () => {
 
   it('chặng CHƯA có quiz: status completed vẫn ghi được qua đường này như trước đợt 3', async () => {
     const { pool, calls } = fakePool()
-    // ai-s2 chưa có quiz — test tự xác nhận giả định này để không vỡ lặng lẽ khi soạn thêm.
-    expect(quizOfStage('ai-s2')).toEqual([])
+    // ai-s2 nay ĐÃ có quiz thật — giả lập rỗng chỉ trong ca này để canh nhánh code.
+    mockedQuizOfStage.mockReturnValueOnce([])
     const result = await setPathStageProgress(pool, 'u1', 'principal-ai', 'ai-s2', 'completed')
     expect(result).toEqual({ ok: true })
     expect(calls[0]?.params).toEqual(['u1', 'principal-ai', 'ai-s2', 'completed'])
@@ -123,6 +133,8 @@ describe('submitStageQuiz', () => {
 
   it('chặng chưa có quiz → từ chối, KHÔNG chạm DB', async () => {
     const { pool, query } = fakePool()
+    // ai-s2 nay ĐÃ có quiz thật — giả lập rỗng chỉ trong ca này để canh nhánh code.
+    mockedQuizOfStage.mockReturnValueOnce([])
     expect(await submitStageQuiz(pool, 'u1', 'principal-ai', 'ai-s2', [])).toEqual({
       ok: false,
       error: 'Chặng "ai-s2" chưa có bài kiểm',

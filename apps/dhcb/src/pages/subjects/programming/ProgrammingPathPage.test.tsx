@@ -72,15 +72,14 @@ describe('ProgrammingPathPage — trang lộ trình mục tiêu', () => {
 })
 
 describe('ProgrammingPathPage — đợt 3: quiz + hồ sơ bằng chứng (đã đăng nhập)', () => {
-  it('chặng CÓ quiz hiện khối "Bài kiểm sau chặng"; chặng CHƯA có quiz nói rõ "chưa có bài kiểm"', () => {
+  it('mọi chặng của principal-ai nay ĐỀU có quiz (đợt bổ sung 2026-08-31) → luôn hiện "Bài kiểm sau chặng"', () => {
     authMock.user = { id: 'u1' }
     const html = render('principal-ai')
     const path = getLearningPath('principal-ai')!
     const refs = pathStageRefs(path)
-    expect(refs.some((r) => stageHasQuiz(r.stageId))).toBe(true)
-    expect(refs.some((r) => !stageHasQuiz(r.stageId))).toBe(true)
+    expect(refs.every((r) => stageHasQuiz(r.stageId))).toBe(true)
     expect(html).toContain('Bài kiểm sau chặng')
-    expect(html).toContain('Chặng này chưa có bài kiểm')
+    expect(html).not.toContain('Chặng này chưa có bài kiểm')
   })
 
   it('hiện mục "Hồ sơ bằng chứng" khi đã đăng nhập', () => {
