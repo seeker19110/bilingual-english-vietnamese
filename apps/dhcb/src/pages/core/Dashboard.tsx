@@ -120,6 +120,7 @@ function StatCard({
   color: string
 }) {
   return (
+    // GIỮ transition-all: hover đổi cả màu viền LẪN box-shadow (không gói nào phủ cả hai).
     <div className="bg-zinc-900/80 border border-zinc-800/80 hover:border-zinc-700/80 rounded-2xl sm:rounded-3xl p-4 flex flex-col justify-between gap-2 transition-all duration-200 hover:shadow-md">
       <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${color}`}>
         {icon}
@@ -165,7 +166,7 @@ function GoalRing({ done, goal }: { done: number; goal: number }) {
           stroke="currentColor"
           strokeDasharray={c}
           strokeDashoffset={c * (1 - pct)}
-          className="text-accent-400 transition-all duration-500"
+          className="text-accent-400 transition-[stroke-dashoffset] duration-500"
         />
       </svg>
       <span className="absolute inset-0 flex items-center justify-center text-sm font-extrabold text-white">
@@ -196,7 +197,7 @@ function Bar({ pct, color }: { pct: number; color: string }) {
   return (
     <div className="h-2 rounded-full bg-zinc-800/90 overflow-hidden">
       <div
-        className={`h-full rounded-full ${color} transition-all duration-500 shadow-sm`}
+        className={`h-full rounded-full ${color} transition-[width] duration-500 shadow-sm`}
         style={{ width: `${Math.min(100, pct)}%` }}
       />
     </div>
@@ -345,7 +346,7 @@ export default function Dashboard() {
           <div key={d.date} className="flex-1 flex flex-col items-center gap-1.5">
             <div className="w-full flex-1 flex items-end">
               <div
-                className={`w-full rounded-lg transition-all duration-300 ${
+                className={`w-full rounded-lg transition-[height] duration-300 ${
                   d.active
                     ? 'bg-gradient-to-t from-orange-500 to-amber-400 shadow-sm shadow-orange-500/20'
                     : 'bg-zinc-800/80'
@@ -404,31 +405,36 @@ export default function Dashboard() {
           </span>
         </div>
 
-        {/* Nhãn thứ */}
-        <div className="grid grid-cols-7 gap-1.5 mb-1.5">
-          {WDOW.map((w, i) => (
-            <span key={i} className="text-[11px] text-zinc-400 text-center">
-              {w}
-            </span>
-          ))}
-        </div>
+        {/* Bọc lưới lịch: trên desktop giới hạn bề rộng để ô ngày không phình to
+            (grid 7 cột + aspect-square nên ô to theo bề ngang khối), tránh đẩy các
+            số liệu chính xuống dưới màn hình. */}
+        <div className="lg:max-w-sm">
+          {/* Nhãn thứ */}
+          <div className="grid grid-cols-7 gap-1.5 mb-1.5">
+            {WDOW.map((w, i) => (
+              <span key={i} className="text-[11px] text-zinc-400 text-center">
+                {w}
+              </span>
+            ))}
+          </div>
 
-        {/* Lưới ngày — ô đầu lệch cột theo thứ trong tuần */}
-        <div className="grid grid-cols-7 gap-1.5">
-          {stats.calendar.days.map((d, idx) => (
-            /* Ô lịch phải đọc được bằng bàn phím/trình đọc màn hình: `title` chỉ hiện khi
+          {/* Lưới ngày — ô đầu lệch cột theo thứ trong tuần */}
+          <div className="grid grid-cols-7 gap-1.5">
+            {stats.calendar.days.map((d, idx) => (
+              /* Ô lịch phải đọc được bằng bàn phím/trình đọc màn hình: `title` chỉ hiện khi
                rê chuột nên trên mobile và với người dùng bàn phím là mất hẳn thông tin.
                Giữ `title` cho desktop, thêm tabIndex + aria-label cho phần còn lại. */
-            <div
-              key={d.date}
-              tabIndex={0}
-              role="img"
-              aria-label={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
-              style={idx === 0 ? { gridColumnStart: stats.calendar.firstColumn + 1 } : undefined}
-              className={`aspect-square rounded-[4px] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 ${heatColor(d.count)} ${d.date === stats.calendar.days[stats.calendar.days.length - 1]?.date ? 'ring-1 ring-accent-400/70' : ''}`}
-              title={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
-            />
-          ))}
+              <div
+                key={d.date}
+                tabIndex={0}
+                role="img"
+                aria-label={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
+                style={idx === 0 ? { gridColumnStart: stats.calendar.firstColumn + 1 } : undefined}
+                className={`aspect-square rounded-[4px] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 ${heatColor(d.count)} ${d.date === stats.calendar.days[stats.calendar.days.length - 1]?.date ? 'ring-1 ring-accent-400/70' : ''}`}
+                title={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Chú thích đậm nhạt */}
@@ -471,9 +477,7 @@ export default function Dashboard() {
                   ở màn hẹp — phần trong ngoặc mới là thứ giải thích lượt tính từ đâu. */}
               <span className="text-sm text-zinc-300 flex items-start gap-1.5 min-w-0">
                 <MessageCircle className="w-4 h-4 text-accent-400 shrink-0 mt-0.5" />
-                <span>
-                  {vi ? 'Lượt AI tuần này (chat + nói + viết...)' : 'AI credits this week'}
-                </span>
+                <span>{vi ? 'Lượt AI tuần này (chat · nói · viết)' : 'AI credits this week'}</span>
               </span>
               <span className="text-sm font-semibold text-accent-300 theme-light:text-accent-800 shrink-0 ml-2">
                 {weeklyCredit?.freeWeeklyCredit ?? '…'}/{weeklyCredit?.freeWeeklyCap ?? 35}
@@ -704,7 +708,7 @@ export default function Dashboard() {
                     <span className="text-[11px] text-zinc-400">{p.overall}</span>
                     <div className="w-full flex-1 flex items-end">
                       <div
-                        className={`w-full rounded-md ${bandBar(p.overall)} transition-all`}
+                        className={`w-full rounded-md ${bandBar(p.overall)} transition-[height]`}
                         style={{ height: `${(p.overall / 9) * 100}%` }}
                       />
                     </div>

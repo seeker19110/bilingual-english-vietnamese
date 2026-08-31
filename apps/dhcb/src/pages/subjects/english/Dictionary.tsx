@@ -29,8 +29,12 @@ import { useAuth } from '../../../context/useAuth'
 import { useOnboarding } from '../../../lib/onboarding'
 import { POS_LABEL, POS_COLOR, POS_LIST, LEVEL_COLOR } from '../../../lib/pos'
 import { getLearnedWords } from '../../../lib/vocab'
+import { useIsDesktopViewport } from '../../../lib/useIsDesktopViewport'
 
-const PAGE_SIZE = 3
+// Số kết quả mỗi trang: desktop rộng nên hiện nhiều hơn hẳn (3 kết quả/trang là quá thưa,
+// người dùng phải bấm sang trang liên tục); mobile giữ ít để không phải cuộn dài.
+const PAGE_SIZE_DESKTOP = 12
+const PAGE_SIZE_MOBILE = 5
 type Tab = StudyTab | 'search' | 'pos'
 // Từ tab học (StudyPanel) tách riêng để biết khi nào cần render <StudyPanel>.
 const STUDY_TABS: StudyTab[] = ['today', 'srs', 'hard', 'quiz']
@@ -90,6 +94,9 @@ export default function Dictionary() {
   const [query, setQuery] = useState('')
   const deferredQuery = useDeferredValue(query)
   const [page, setPage] = useState(0)
+  // Mật độ kết quả theo khổ màn hình (xem PAGE_SIZE_* ở đầu file).
+  const isDesktop = useIsDesktopViewport()
+  const pageSize = isDesktop ? PAGE_SIZE_DESKTOP : PAGE_SIZE_MOBILE
   const [learnedKey, setLearnedKey] = useState(0)
   const [jumpPos, setJumpPos] = useState<string | null>(null)
   const [posFilter, setPosFilter] = useState<string | null>(null)
@@ -211,8 +218,11 @@ export default function Dictionary() {
     return allMatchesBase.filter((e) => e.pos === posFilter)
   }, [allMatchesBase, posFilter])
 
-  const totalPages = Math.max(1, Math.ceil(allMatches.length / PAGE_SIZE))
-  const results = allMatches.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
+  const totalPages = Math.max(1, Math.ceil(allMatches.length / pageSize))
+  // Khi đổi khổ màn hình (xoay máy / thu cửa sổ) số trang giảm — kẹp lại để không rơi
+  // vào trang trống.
+  const safePage = Math.min(page, totalPages - 1)
+  const results = allMatches.slice(safePage * pageSize, (safePage + 1) * pageSize)
 
   // Vuốt trái/phải từ cạnh màn hình để chuyển trang
   function handleSwipe(startX: number, deltaX: number, deltaY: number) {
@@ -220,8 +230,8 @@ export default function Dictionary() {
     const w = window.innerWidth
     const fromLeft = startX < 40
     const fromRight = startX > w - 40
-    if (deltaX > 50 && fromLeft && page > 0) setPage((p) => p - 1)
-    if (deltaX < -50 && fromRight && page < totalPages - 1) setPage((p) => p + 1)
+    if (deltaX > 50 && fromLeft && safePage > 0) setPage(safePage - 1)
+    if (deltaX < -50 && fromRight && safePage < totalPages - 1) setPage(safePage + 1)
   }
 
   if (!user) return null
@@ -417,8 +427,8 @@ export default function Dictionary() {
                     {totalPages > 1 && (
                       <div className="flex items-stretch gap-2 mb-3 text-xs">
                         <button
-                          onClick={() => setPage((p) => p - 1)}
-                          disabled={page === 0}
+                          onClick={() => setPage(safePage - 1)}
+                          disabled={safePage === 0}
                           aria-label={isA ? 'Trang trước' : 'Previous page'}
                           className="w-[30%] flex items-center justify-center gap-1 glass rounded-xl py-2.5 text-zinc-400 hover:text-white disabled:opacity-25 transition active:bg-zinc-700/50"
                         >
@@ -429,11 +439,11 @@ export default function Dictionary() {
                           className="flex-1 flex items-center justify-center text-zinc-400"
                           aria-live="polite"
                         >
-                          {page + 1} / {totalPages} ({allMatches.length} {isA ? 'từ' : 'words'})
+                          {safePage + 1} / {totalPages} ({allMatches.length} {isA ? 'từ' : 'words'})
                         </div>
                         <button
-                          onClick={() => setPage((p) => p + 1)}
-                          disabled={page === totalPages - 1}
+                          onClick={() => setPage(safePage + 1)}
+                          disabled={safePage === totalPages - 1}
                           aria-label={isA ? 'Trang sau' : 'Next page'}
                           className="w-[30%] flex items-center justify-center gap-1 glass rounded-xl py-2.5 text-zinc-400 hover:text-white disabled:opacity-25 transition active:bg-zinc-700/50"
                         >

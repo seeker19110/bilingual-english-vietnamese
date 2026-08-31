@@ -22,6 +22,7 @@ import { useCloudSync } from '../../../lib/useCloudSync'
 import { useApiThrottle } from '../../../lib/useApiThrottle'
 import { useMountedRef } from '../../../lib/useMountedRef'
 import { useIsDesktopViewport } from '../../../lib/useIsDesktopViewport'
+import { useVisualViewportHeight } from '../../../lib/useVisualViewportHeight'
 import { useOnboarding } from '../../../lib/onboarding'
 import { callClaude, parseJson, hasNumberFields } from '../../../lib/ai'
 import { effectivePlan } from '../../../lib/promo'
@@ -136,6 +137,7 @@ function SetupScreen({
                   levelTouched.current = true
                   setLevel(l.value)
                 }}
+                // GIỮ transition-all: đổi cả màu nền/viền LẪN transform (active:scale).
                 className={`py-2.5 rounded-2xl text-xs font-semibold border transition-all duration-200 active:scale-95 ${
                   level === l.value
                     ? 'bg-gradient-to-r from-accent-600 to-accent-500 border-transparent text-white shadow-md shadow-accent-500/25 ring-1 ring-accent-400/40'
@@ -159,6 +161,7 @@ function SetupScreen({
           </div>
         )}
 
+        {/* GIỮ transition-all: gradient nền đổi khi hover + transform khi active. */}
         <button
           onClick={() => onStart(situation, level)}
           disabled={loading}
@@ -506,6 +509,14 @@ export default function Chat() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [session?.messages.length, loading])
 
+  // Bàn phím ảo iOS KHÔNG làm `100dvh` co lại → ô nhập bị che. Đo vùng nhìn thấy thật.
+  const { height: viewportHeight, keyboardOpen } = useVisualViewportHeight()
+
+  // Khi bàn phím vừa mở/đóng, khung vừa đổi chiều cao → kéo tin nhắn cuối vào tầm nhìn.
+  useEffect(() => {
+    if (keyboardOpen) bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [keyboardOpen])
+
   async function startSession(situation: string, level: Level) {
     const usage = getUsage(user.id)
     const limit = getLimits()[effectivePlan(user.plan)]
@@ -730,7 +741,12 @@ export default function Chat() {
   const prevSessions = getChatSessions(user.id).slice(0, 3)
 
   return (
-    <div className="h-[calc(100dvh-var(--bnav-h))] bg-zinc-950 flex flex-col">
+    // Bàn phím ảo mở → ép chiều cao bằng vùng nhìn thấy thật (thanh điều hướng đáy
+    // đã bị bàn phím che nên không trừ `--bnav-h` nữa); còn lại giữ nguyên `100dvh`.
+    <div
+      className={`${keyboardOpen ? '' : 'h-[calc(100dvh-var(--bnav-h))]'} bg-zinc-950 flex flex-col`}
+      style={keyboardOpen ? { height: `${viewportHeight}px` } : undefined}
+    >
       <Layout
         subtitle={
           session
@@ -878,7 +894,9 @@ export default function Chat() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onFocus={() => {
-                  // Bàn phím ảo mobile mở → cuộn tin nhắn cuối lên để input không bị che.
+                  // GIỮ vá tạm này: `visualViewport.resize` chỉ bắn SAU khi bàn phím
+                  // trượt lên xong (~300ms trên iOS), nên lần mở đầu tiên vẫn cần cuộn
+                  // chủ động; hook useVisualViewportHeight lo phần co khung sau đó.
                   setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 300)
                 }}
                 onKeyDown={(e) => {
