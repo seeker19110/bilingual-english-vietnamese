@@ -246,7 +246,7 @@ export default function AdminPaymentsPanel() {
                   </td>
                   <td className="p-3">
                     <span
-                      className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold uppercase mr-1.5 ${
+                      className={`inline-block px-1.5 py-0.5 rounded text-[11px] font-bold uppercase mr-1.5 ${
                         p.plan === 'vip'
                           ? 'bg-amber-500/20 text-amber-300'
                           : 'bg-indigo-500/20 text-indigo-300'

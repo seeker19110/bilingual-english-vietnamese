@@ -411,7 +411,7 @@ export default function Career({ embedded = false }: { embedded?: boolean } = {}
                         >
                           <div className="flex items-start justify-between">
                             <h4 className="font-semibold text-zinc-100 text-sm">{g.targetTitle}</h4>
-                            <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700 uppercase">
+                            <span className="text-[11px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700 uppercase">
                               {g.status}
                             </span>
                           </div>
@@ -429,7 +429,7 @@ export default function Career({ embedded = false }: { embedded?: boolean } = {}
                             {g.skillsRequired.map((skill, idx) => (
                               <span
                                 key={idx}
-                                className="text-[10px] px-2 py-0.5 rounded bg-zinc-800/80 text-zinc-300 border border-zinc-700/50"
+                                className="text-[11px] px-2 py-0.5 rounded bg-zinc-800/80 text-zinc-300 border border-zinc-700/50"
                               >
                                 {skill}
                               </span>
@@ -579,7 +579,7 @@ export default function Career({ embedded = false }: { embedded?: boolean } = {}
                           <div className="flex items-start justify-between">
                             <h4 className="font-semibold text-zinc-100 text-sm">{exp.role}</h4>
                             {exp.isCurrent && (
-                              <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950/80 theme-light:bg-emerald-50 text-emerald-400 theme-light:text-emerald-800 border border-emerald-800/40">
+                              <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-950/80 theme-light:bg-emerald-50 text-emerald-400 theme-light:text-emerald-800 border border-emerald-800/40">
                                 Hiện tại
                               </span>
                             )}

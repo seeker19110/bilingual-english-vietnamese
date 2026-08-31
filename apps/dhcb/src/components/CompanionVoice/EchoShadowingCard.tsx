@@ -75,7 +75,7 @@ export default function EchoShadowingCard() {
               <h3 className="text-base font-bold text-white tracking-wide">
                 Real-Time Echo Shadowing Engine
               </h3>
-              <span className="text-[10px] px-2 py-0.5 font-bold uppercase rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30">
+              <span className="text-[11px] px-2 py-0.5 font-bold uppercase rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30">
                 Sub-second Reflex
               </span>
             </div>
@@ -125,7 +125,7 @@ export default function EchoShadowingCard() {
           <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
             <div className="flex items-center justify-between text-xs text-slate-400">
               <span className="font-semibold text-slate-300">{currentPassage.title}</span>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">
+              <span className="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">
                 BPM {currentPassage.bpmPacing} • {currentPassage.speakerAccent.toUpperCase()}
               </span>
             </div>
@@ -159,7 +159,7 @@ export default function EchoShadowingCard() {
             )}
 
             {isRecording && (
-              <div className="absolute bottom-2 right-3 text-[10px] text-emerald-400 font-bold flex items-center gap-1">
+              <div className="absolute bottom-2 right-3 text-[11px] text-emerald-400 font-bold flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
                 Đang đo lường phản xạ giọng nói...
               </div>
@@ -211,19 +211,19 @@ export default function EchoShadowingCard() {
 
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
-                  <div className="text-[10px] text-slate-400">Độ trễ bắt nhịp</div>
+                  <div className="text-[11px] text-slate-400">Độ trễ bắt nhịp</div>
                   <div className="text-xs font-bold text-sky-300">
                     {sessionResult.averageDriftLatencyMs} ms
                   </div>
                 </div>
                 <div className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
-                  <div className="text-[10px] text-slate-400">Đồng bộ nhịp điệu</div>
+                  <div className="text-[11px] text-slate-400">Đồng bộ nhịp điệu</div>
                   <div className="text-xs font-bold text-emerald-300">
                     {sessionResult.rhythmSyncScore}%
                   </div>
                 </div>
                 <div className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
-                  <div className="text-[10px] text-slate-400">Độ trôi chảy</div>
+                  <div className="text-[11px] text-slate-400">Độ trôi chảy</div>
                   <div className="text-xs font-bold text-indigo-300">
                     {sessionResult.fluencyScore}%
                   </div>

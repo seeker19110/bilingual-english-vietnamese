@@ -454,7 +454,7 @@ export default function StudioDialogue({
                       </div>
                     )}
 
-                    <div className="text-[10px] text-zinc-400 text-right mt-2 opacity-80">
+                    <div className="text-[11px] text-zinc-400 text-right mt-2 opacity-80">
                       {msg.timestamp}
                     </div>
                   </div>

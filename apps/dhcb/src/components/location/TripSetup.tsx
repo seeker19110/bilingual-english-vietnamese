@@ -63,7 +63,7 @@ export default function TripSetup({ sessions, onOpen, onCreate, onJoin, busy = f
                 <button
                   type="button"
                   onClick={() => onOpen(session.sessionId)}
-                  className="tap-44 flex w-full items-center gap-3 rounded-xl border border-zinc-700 bg-zinc-900/60 px-3 py-2 text-left"
+                  className="tap-44 flex w-full items-center gap-3 rounded-xl border border-zinc-700 bg-zinc-900/60 hover:bg-zinc-800/70 hover:border-zinc-600 transition-colors px-3 py-2 text-left"
                 >
                   <span className="min-w-0 flex-1">
                     <span className="block truncate font-semibold text-zinc-100">
@@ -129,7 +129,7 @@ export default function TripSetup({ sessions, onOpen, onCreate, onJoin, busy = f
           <button
             type="submit"
             disabled={busy || name.trim().length === 0}
-            className="tap-44 w-full rounded-xl bg-accent-500 px-5 font-bold text-[#09090b] disabled:opacity-50"
+            className="tap-44 w-full rounded-xl bg-accent-500 hover:bg-accent-400 transition-colors px-5 font-bold text-[#09090b] disabled:opacity-50"
           >
             Tạo chuyến
           </button>
@@ -164,7 +164,7 @@ export default function TripSetup({ sessions, onOpen, onCreate, onJoin, busy = f
           <button
             type="submit"
             disabled={busy || code.trim().length === 0}
-            className="tap-44 shrink-0 rounded-xl border border-zinc-700 px-4 font-semibold text-zinc-100 disabled:opacity-50"
+            className="tap-44 shrink-0 rounded-xl border border-zinc-700 hover:bg-zinc-800/60 hover:border-zinc-600 transition-colors px-4 font-semibold text-zinc-100 disabled:opacity-50"
           >
             Vào
           </button>

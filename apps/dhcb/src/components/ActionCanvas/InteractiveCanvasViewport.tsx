@@ -239,14 +239,14 @@ export default function InteractiveCanvasViewport({
               <div className="flex items-center justify-between gap-1 mb-1.5">
                 <span
                   className={
-                    'rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider ' +
+                    'rounded px-1.5 py-0.5 text-[11px] font-bold uppercase tracking-wider ' +
                     theme.text +
                     ' bg-zinc-950/60 border border-zinc-800'
                   }
                 >
                   {node.domain}
                 </span>
-                <div className="flex items-center gap-1 text-[10px] text-zinc-400">
+                <div className="flex items-center gap-1 text-[11px] text-zinc-400">
                   {node.assignedTo === 'companion_ai' ? (
                     <span className="flex items-center gap-0.5 text-cyan-300 font-medium">
                       <Bot className="w-3 h-3" /> AI
@@ -274,11 +274,11 @@ export default function InteractiveCanvasViewport({
                 {node.title}
               </h4>
               {node.content && (
-                <p className="text-[10px] text-zinc-300/80 line-clamp-2 mb-2 leading-relaxed">
+                <p className="text-[11px] text-zinc-300/80 line-clamp-2 mb-2 leading-relaxed">
                   {node.content}
                 </p>
               )}
-              <div className="flex items-center justify-between text-[9px] text-zinc-400 pt-1 border-t border-zinc-800/60">
+              <div className="flex items-center justify-between text-[11px] text-zinc-400 pt-1 border-t border-zinc-800/60">
                 <span className="flex items-center gap-1">
                   {node.status === 'completed' ? (
                     <CheckCircle2 className="w-3 h-3 text-emerald-400" />

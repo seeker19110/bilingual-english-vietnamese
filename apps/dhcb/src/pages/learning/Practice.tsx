@@ -1212,7 +1212,7 @@ export default function Practice() {
             <div>
               <div className="flex items-center gap-2 mb-0.5">
                 <h3 className="font-bold text-white text-base">Sổ Tay Sửa Lỗi Đa Môn AI</h3>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 theme-light:text-rose-800 font-bold border border-rose-500/30">
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 theme-light:text-rose-800 font-bold border border-rose-500/30">
                   Smart Mistake Bank
                 </span>
               </div>
@@ -1265,7 +1265,7 @@ export default function Practice() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1 mb-0.5">
                     <h3 className="font-bold text-white text-sm">Toán Học</h3>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-300 theme-light:text-blue-800 font-semibold border border-blue-500/20">
+                    <span className="text-[11px] px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-300 theme-light:text-blue-800 font-semibold border border-blue-500/20">
                       LaTeX OCR
                     </span>
                   </div>
@@ -1292,7 +1292,7 @@ export default function Practice() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1 mb-0.5">
                     <h3 className="font-bold text-white text-sm">Vật Lý</h3>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-cyan-500/15 text-cyan-300 theme-light:text-cyan-800 font-semibold border border-cyan-500/20">
+                    <span className="text-[11px] px-1.5 py-0.2 rounded bg-cyan-500/15 text-cyan-300 theme-light:text-cyan-800 font-semibold border border-cyan-500/20">
                       Simulators
                     </span>
                   </div>
@@ -1319,7 +1319,7 @@ export default function Practice() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1 mb-0.5">
                     <h3 className="font-bold text-white text-sm">Hóa Học</h3>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-300 theme-light:text-amber-800 font-semibold border border-amber-500/20">
+                    <span className="text-[11px] px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-300 theme-light:text-amber-800 font-semibold border border-amber-500/20">
                       PTHH Step
                     </span>
                   </div>
@@ -1346,7 +1346,7 @@ export default function Practice() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1 mb-0.5">
                     <h3 className="font-bold text-white text-sm">Sinh Học</h3>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-300 theme-light:text-emerald-800 font-semibold border border-emerald-500/20">
+                    <span className="text-[11px] px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-300 theme-light:text-emerald-800 font-semibold border border-emerald-500/20">
                       Di Truyền
                     </span>
                   </div>
@@ -1373,7 +1373,7 @@ export default function Practice() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1 mb-0.5">
                     <h3 className="font-bold text-white text-sm">Tiếng Anh CEFR</h3>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-purple-500/15 text-purple-300 theme-light:text-purple-800 font-semibold border border-purple-500/20">
+                    <span className="text-[11px] px-1.5 py-0.2 rounded bg-purple-500/15 text-purple-300 theme-light:text-purple-800 font-semibold border border-purple-500/20">
                       A1 - C2
                     </span>
                   </div>
@@ -1400,7 +1400,7 @@ export default function Practice() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1 mb-0.5">
                     <h3 className="font-bold text-white text-sm">10 Simulators STEM</h3>
-                    <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-500/15 text-teal-300 theme-light:text-teal-800 font-semibold border border-teal-500/20">
+                    <span className="text-[11px] px-1.5 py-0.2 rounded bg-teal-500/15 text-teal-300 theme-light:text-teal-800 font-semibold border border-teal-500/20">
                       Phòng Thí Nghiệm
                     </span>
                   </div>
@@ -1438,7 +1438,7 @@ export default function Practice() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-1 mb-0.5">
                   <h3 className="font-bold text-white text-sm">Luyện Nói & Chấm Âm IPA</h3>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-sky-500/15 text-sky-300 theme-light:text-sky-800 font-semibold border border-sky-500/20">
+                  <span className="text-[11px] px-1.5 py-0.2 rounded bg-sky-500/15 text-sky-300 theme-light:text-sky-800 font-semibold border border-sky-500/20">
                     Live STT
                   </span>
                 </div>
@@ -1459,7 +1459,7 @@ export default function Practice() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-1 mb-0.5">
                   <h3 className="font-bold text-white text-sm">Luyện Viết & Chấm IELTS</h3>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-violet-500/15 text-violet-300 theme-light:text-violet-800 font-semibold border border-violet-500/20">
+                  <span className="text-[11px] px-1.5 py-0.2 rounded bg-violet-500/15 text-violet-300 theme-light:text-violet-800 font-semibold border border-violet-500/20">
                     Band 9.0
                   </span>
                 </div>
@@ -1480,7 +1480,7 @@ export default function Practice() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-1 mb-0.5">
                   <h3 className="font-bold text-white text-sm">Chat Đàm Thoại AI</h3>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-accent-500/15 text-accent-300 theme-light:text-accent-800 font-semibold border border-accent-500/20">
+                  <span className="text-[11px] px-1.5 py-0.2 rounded bg-accent-500/15 text-accent-300 theme-light:text-accent-800 font-semibold border border-accent-500/20">
                     Socratic
                   </span>
                 </div>
@@ -1501,7 +1501,7 @@ export default function Practice() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-1 mb-0.5">
                   <h3 className="font-bold text-white text-sm">Thư Viện Luyện Nghe</h3>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-rose-500/15 text-rose-300 theme-light:text-rose-800 font-semibold border border-rose-500/20">
+                  <span className="text-[11px] px-1.5 py-0.2 rounded bg-rose-500/15 text-rose-300 theme-light:text-rose-800 font-semibold border border-rose-500/20">
                     Chirp3 HD
                   </span>
                 </div>
@@ -1694,7 +1694,7 @@ export default function Practice() {
                 <AlertCircle className="w-4 h-4" />
               </div>
               <p className="text-xs font-bold text-white truncate">Sổ Tay Lỗi Sai</p>
-              <p className="text-[10px] text-zinc-400 truncate">Ôn lại điểm sai đa môn</p>
+              <p className="text-[11px] text-zinc-400 truncate">Ôn lại điểm sai đa môn</p>
             </button>
 
             {/* Từ điển 12k từ */}
@@ -1706,7 +1706,7 @@ export default function Practice() {
                 <BookOpen className="w-4 h-4" />
               </div>
               <p className="text-xs font-bold text-white truncate">Từ Điển 12k+ IPA</p>
-              <p className="text-[10px] text-zinc-400 truncate">Tra cứu & Nghe phát âm</p>
+              <p className="text-[11px] text-zinc-400 truncate">Tra cứu & Nghe phát âm</p>
             </button>
 
             {/* Truyện song ngữ */}
@@ -1718,7 +1718,7 @@ export default function Practice() {
                 <BookMarked className="w-4 h-4" />
               </div>
               <p className="text-xs font-bold text-white truncate">Truyện Karaoke Text</p>
-              <p className="text-[10px] text-zinc-400 truncate">Vừa nghe vừa sáng chữ</p>
+              <p className="text-[11px] text-zinc-400 truncate">Vừa nghe vừa sáng chữ</p>
             </button>
 
             {/* Mẫu câu thông dụng */}
@@ -1730,7 +1730,7 @@ export default function Practice() {
                 <MessageCircle className="w-4 h-4" />
               </div>
               <p className="text-xs font-bold text-white truncate">Mẫu Câu Giao Tiếp</p>
-              <p className="text-[10px] text-zinc-400 truncate">Câu thông dụng hằng ngày</p>
+              <p className="text-[11px] text-zinc-400 truncate">Câu thông dụng hằng ngày</p>
             </button>
 
             {/* Bài học mẫu */}
@@ -1742,7 +1742,7 @@ export default function Practice() {
                 <Award className="w-4 h-4" />
               </div>
               <p className="text-xs font-bold text-white truncate">100+ Hội Thoại Mẫu</p>
-              <p className="text-[10px] text-zinc-400 truncate">Tình huống theo chủ đề</p>
+              <p className="text-[11px] text-zinc-400 truncate">Tình huống theo chủ đề</p>
             </button>
 
             {/* Video Thử Thách */}
@@ -1754,7 +1754,7 @@ export default function Practice() {
                 <Video className="w-4 h-4" />
               </div>
               <p className="text-xs font-bold text-white truncate">Thử Thách 1 Phút</p>
-              <p className="text-[10px] text-zinc-400 truncate">Video nói tiếng Anh tuần</p>
+              <p className="text-[11px] text-zinc-400 truncate">Video nói tiếng Anh tuần</p>
             </button>
           </div>
         </section>

@@ -138,7 +138,7 @@ export default function WordFormsBlock({ forms, base, word, isA, onPick }: Props
                 irregular ? 'border-amber-500/30 bg-amber-500/5' : 'border-zinc-800 bg-zinc-900/60'
               }`}
             >
-              <span className="text-[10px] text-zinc-400">{isA ? label.vi : label.en}</span>
+              <span className="text-[11px] text-zinc-400">{isA ? label.vi : label.en}</span>
               {onPick ? (
                 <button
                   type="button"
@@ -148,7 +148,7 @@ export default function WordFormsBlock({ forms, base, word, isA, onPick }: Props
                 >
                   {val}
                   {unchanged && (
-                    <span className="text-[10px] text-zinc-500 ml-0.5">
+                    <span className="text-[11px] text-zinc-500 ml-0.5">
                       {isA ? '(không đổi)' : '(same)'}
                     </span>
                   )}
@@ -157,7 +157,7 @@ export default function WordFormsBlock({ forms, base, word, isA, onPick }: Props
                 <span className="text-xs font-medium text-zinc-100">
                   {val}
                   {unchanged && (
-                    <span className="text-[10px] text-zinc-500 ml-0.5">
+                    <span className="text-[11px] text-zinc-500 ml-0.5">
                       {isA ? '(không đổi)' : '(same)'}
                     </span>
                   )}

@@ -305,7 +305,7 @@ function Navbar({ stats }: { stats: HubStats | null }) {
           <div className="flex flex-col">
             <span className="font-bold text-base sm:text-lg tracking-tight text-white flex items-center gap-1.5">
               Đồng hành cùng bạn
-              <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-accent-500/10 text-accent-300 theme-light:text-accent-800 border border-accent-500/25">
+              <span className="text-[11px] uppercase font-semibold px-1.5 py-0.5 rounded bg-accent-500/10 text-accent-300 theme-light:text-accent-800 border border-accent-500/25">
                 Nền tảng
               </span>
             </span>
@@ -484,7 +484,7 @@ function ActivitySection({ stats }: { stats: HubStats | null }) {
               {isAdmin ? 'Thống kê hoạt động nền tảng' : 'Nền tảng hiện có gì'}
             </h2>
             {isAdmin && (
-              <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-200 border border-amber-500/30 font-semibold">
+              <span className="inline-flex items-center gap-1 text-[11px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-200 border border-amber-500/30 font-semibold">
                 <Shield className="w-2.5 h-2.5" />
                 Admin
               </span>
@@ -768,7 +768,7 @@ function SubjectsSection() {
             <span>{s.name}</span>
             {s.status === 'live' ? (
               <span
-                className={`text-[10px] px-1.5 py-0.5 rounded font-semibold ${
+                className={`text-[11px] px-1.5 py-0.5 rounded font-semibold ${
                   active === s.id
                     ? 'bg-zinc-950/15 text-zinc-950'
                     : 'bg-accent-500/15 text-accent-200 theme-light:text-accent-800 border border-accent-500/25'
@@ -778,7 +778,7 @@ function SubjectsSection() {
               </span>
             ) : (
               <span
-                className={`text-[10px] px-1.5 py-0.5 rounded ${
+                className={`text-[11px] px-1.5 py-0.5 rounded ${
                   active === s.id
                     ? 'bg-zinc-950/15 text-zinc-950'
                     : 'bg-zinc-800 text-zinc-200 border border-zinc-700'

@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { Calendar, FileText, ExternalLink, Check, AlertCircle, X } from 'lucide-react'
 import { executeIntegrationSync } from '../lib/integrationsApi'
+import { useDialogBehavior } from './useDialogBehavior'
 
 interface IntegrationsModalProps {
   isOpen: boolean
@@ -24,6 +25,9 @@ export default function IntegrationsModal({ isOpen, onClose, itemData }: Integra
     text: string
     url?: string
   } | null>(null)
+
+  // 6 hành vi a11y bắt buộc của hộp thoại (Escape, bẫy tiêu điểm, khoá cuộn nền…).
+  const { dialogProps, titleId, backdropProps } = useDialogBehavior(onClose, isOpen)
 
   if (!isOpen) return null
 
@@ -92,16 +96,26 @@ export default function IntegrationsModal({ isOpen, onClose, itemData }: Integra
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-      <div className="relative w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-2xl">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
+      {...backdropProps}
+    >
+      <div
+        {...dialogProps}
+        className="relative w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-2xl max-h-[90dvh] overflow-y-auto focus:outline-none"
+      >
         <button
+          type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors"
+          aria-label="Đóng"
+          className="tap-44 absolute top-2 right-2 w-11 h-11 flex items-center justify-center rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <h3 className="text-lg font-semibold text-zinc-100 mb-1">Tích hợp Ứng dụng Ngoài</h3>
+        <h3 id={titleId} className="text-lg font-semibold text-zinc-100 mb-1 pr-10">
+          Tích hợp Ứng dụng Ngoài
+        </h3>
         <p className="text-xs text-zinc-400 mb-5">
           Đồng bộ nhanh "{itemData.title}" sang các công cụ quản lý cá nhân yêu thích.
         </p>

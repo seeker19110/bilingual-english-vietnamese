@@ -97,7 +97,9 @@ export default function CodeEditor({ value, onChange, ariaLabel }: Props) {
   return (
     <div
       ref={hostRef}
-      // Nền tối cố định (không theo theme) — khớp editorTheme ở trên.
+      // Nền tối cố định (không theo theme) — khớp editorTheme ở trên. KHÔNG đổi sang
+      // `bg-zinc-950`: token zinc bị đảo thành màu SÁNG ở các theme nền sáng, trong khi
+      // chữ của CodeMirror giữ bảng màu tối → mất tương phản.
       className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] overflow-hidden"
     />
   )

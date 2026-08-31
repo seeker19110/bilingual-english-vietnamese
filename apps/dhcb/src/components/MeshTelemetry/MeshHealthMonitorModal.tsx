@@ -61,7 +61,7 @@ export default function MeshHealthMonitorModal({
           <div>
             <h3 className="text-sm font-bold text-zinc-100 flex items-center gap-2">
               Giám Sát Mạng Lưới WebSocket Mesh
-              <span className="rounded px-1.5 py-0.2 text-[9px] font-bold uppercase bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-800 border border-emerald-500/40">
+              <span className="rounded px-1.5 py-0.2 text-[11px] font-bold uppercase bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-800 border border-emerald-500/40">
                 {meshStatus.overallQuality}% Quality
               </span>
             </h3>
@@ -71,7 +71,7 @@ export default function MeshHealthMonitorModal({
 
         <div className="grid grid-cols-2 gap-2.5">
           <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800">
-            <span className="text-[10px] text-zinc-400 block mb-1">Độ Trễ Mạng (P50/P95)</span>
+            <span className="text-[11px] text-zinc-400 block mb-1">Độ Trễ Mạng (P50/P95)</span>
             <div className="flex items-baseline gap-1">
               <span className="text-lg font-bold text-emerald-400 theme-light:text-emerald-800 font-mono">
                 {telemetry.currentLatencyMs}
@@ -81,7 +81,7 @@ export default function MeshHealthMonitorModal({
           </div>
 
           <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800">
-            <span className="text-[10px] text-zinc-400 block mb-1">Số Node Relay Hoạt Động</span>
+            <span className="text-[11px] text-zinc-400 block mb-1">Số Node Relay Hoạt Động</span>
             <div className="flex items-baseline gap-1">
               <span className="text-lg font-bold text-cyan-400 theme-light:text-cyan-800 font-mono">
                 {meshStatus.activeNodes}
@@ -91,7 +91,7 @@ export default function MeshHealthMonitorModal({
           </div>
 
           <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800">
-            <span className="text-[10px] text-zinc-400 block mb-1">Tổng Tokens Phiên</span>
+            <span className="text-[11px] text-zinc-400 block mb-1">Tổng Tokens Phiên</span>
             <div className="flex items-baseline gap-1">
               <span className="text-lg font-bold text-zinc-100 font-mono">
                 {telemetry.totalTokens}
@@ -101,7 +101,7 @@ export default function MeshHealthMonitorModal({
           </div>
 
           <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800">
-            <span className="text-[10px] text-zinc-400 block mb-1">Chi Phí Tích Lũy</span>
+            <span className="text-[11px] text-zinc-400 block mb-1">Chi Phí Tích Lũy</span>
             <div className="flex items-baseline gap-1">
               <span className="text-lg font-bold text-emerald-400 theme-light:text-emerald-800 font-mono">
                 {telemetry.totalTokens} tokens
@@ -116,7 +116,7 @@ export default function MeshHealthMonitorModal({
               <ShieldCheck className="w-4 h-4 text-cyan-400 theme-light:text-cyan-800" />
               <span>Budget Quota Guard (Circuit Breaker)</span>
             </div>
-            <span className="text-[10px] text-zinc-400 font-mono">Hạn mức phiên: theo gói</span>
+            <span className="text-[11px] text-zinc-400 font-mono">Hạn mức phiên: theo gói</span>
           </div>
 
           <p className="text-[11px] text-zinc-400">

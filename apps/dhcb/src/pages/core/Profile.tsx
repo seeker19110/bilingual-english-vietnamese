@@ -1,5 +1,5 @@
 // apps/dhcb/src/pages/Profile.tsx — Trung tâm Không gian Cá nhân & Đồng Hành (Personal Command Center)
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   TrendingUp,
@@ -24,6 +24,8 @@ import {
 } from 'lucide-react'
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
+import LoadError from '../../components/LoadError'
+import { Skeleton } from '../../components/Skeleton'
 import ReferralSection from '../../components/ReferralSection'
 import CompanionLinkSection from '../../components/CompanionLinkSection'
 import QuestsPanel from '../../components/QuestsPanel'
@@ -64,6 +66,10 @@ export default function Profile() {
 
   const [earned, setEarned] = useState<Set<string>>(() => getEarnedAchievements(user?.id ?? ''))
   const [rewards, setRewards] = useState<AchievementRewardStatus[] | null>(null)
+  // Trạng thái TẢI phần thưởng huy hiệu — trước đây chỉ `void ...then(setRewards)` nên
+  // lỗi mạng/API im lặng: khối thưởng biến mất, người dùng tưởng mình không có gì.
+  const [rewardsLoading, setRewardsLoading] = useState(true)
+  const [rewardsError, setRewardsError] = useState(false)
   const [claimingId, setClaimingId] = useState<string | null>(null)
   const [questsOpen, setQuestsOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
@@ -87,10 +93,24 @@ export default function Profile() {
   }, [user, isA, toast])
 
   // Thưởng huy hiệu
+  const loadRewards = useCallback(() => {
+    setRewardsLoading(true)
+    setRewardsError(false)
+    // fetchAchievementRewards đã nuốt lỗi và trả null — coi null là LỖI TẢI để còn
+    // hiện nút "Thử lại" (danh sách rỗng hợp lệ vẫn là mảng []).
+    void fetchAchievementRewards()
+      .then((items) => {
+        if (items) setRewards(items)
+        else setRewardsError(true)
+      })
+      .catch(() => setRewardsError(true))
+      .finally(() => setRewardsLoading(false))
+  }, [])
+
   useEffect(() => {
     if (!user) return
-    void fetchAchievementRewards().then(setRewards)
-  }, [user])
+    void Promise.resolve().then(loadRewards)
+  }, [user, loadRewards])
 
   async function handleClaimReward(id: string) {
     setClaimingId(id)
@@ -103,7 +123,7 @@ export default function Profile() {
           ? `Tuyệt vời! Tặng thêm ${result.rewardDays} ngày gói ${planLabel} 🎁`
           : `Nice! +${result.rewardDays} day of ${planLabel} 🎁`,
       )
-      void fetchAchievementRewards().then(setRewards)
+      loadRewards()
     } else {
       toast.error(isA ? 'Chưa nhận được, thử lại sau nhé' : 'Could not claim right now')
     }
@@ -469,7 +489,7 @@ export default function Profile() {
                   >
                     {a.icon}
                   </span>
-                  <span className="text-[10px] text-zinc-400 text-center leading-tight line-clamp-2">
+                  <span className="text-[11px] text-zinc-400 text-center leading-tight line-clamp-2">
                     {name}
                   </span>
                 </div>
@@ -477,7 +497,23 @@ export default function Profile() {
             })}
           </div>
 
-          {rewards &&
+          {rewardsLoading && <Skeleton className="mt-3 h-16 rounded-2xl" />}
+
+          {!rewardsLoading && rewardsError && (
+            <div className="mt-3">
+              <LoadError
+                message={
+                  isA
+                    ? 'Không tải được phần thưởng huy hiệu.'
+                    : 'Could not load achievement rewards.'
+                }
+                onRetry={loadRewards}
+              />
+            </div>
+          )}
+
+          {!rewardsLoading &&
+            rewards &&
             rewards.some(
               (r) => r.earned && !r.claimed && r.reward.enabled && r.reward.rewardDays > 0,
             ) && (

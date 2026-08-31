@@ -5,6 +5,7 @@ import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import KaraokeText from '../../../components/KaraokeText'
 import EvaluationResultView from '../../../components/EvaluationResultView'
+import LoadError from '../../../components/LoadError'
 import {
   saveChatSession,
   getChatSessions,
@@ -324,7 +325,7 @@ function FeedbackBlock({
             onClick={() => handleVote('up')}
             disabled={!!voted}
             aria-label={dir === 'A' ? 'Nhận xét đúng' : 'Feedback is correct'}
-            className={`h-9 w-9 flex items-center justify-center rounded-full text-xs transition ${
+            className={`tap-44 h-9 w-9 flex items-center justify-center rounded-full text-xs transition ${
               voted === null
                 ? 'opacity-60 hover:opacity-100 hover:bg-amber-500/15'
                 : voted === 'up'
@@ -339,7 +340,7 @@ function FeedbackBlock({
             onClick={() => handleVote('down')}
             disabled={!!voted}
             aria-label={dir === 'A' ? 'Nhận xét sai/thiếu' : 'Feedback is wrong/incomplete'}
-            className={`h-9 w-9 flex items-center justify-center rounded-full text-xs transition ${
+            className={`tap-44 h-9 w-9 flex items-center justify-center rounded-full text-xs transition ${
               voted === null
                 ? 'opacity-60 hover:opacity-100 hover:bg-amber-500/15'
                 : voted === 'down'
@@ -352,7 +353,7 @@ function FeedbackBlock({
         </div>
       </div>
       {voted === 'down' && (
-        <p className="text-[10px] text-zinc-500 mt-1 pl-5">
+        <p className="text-[11px] text-zinc-500 mt-1 pl-5">
           {dir === 'A' ? 'Đã ghi nhận, cảm ơn bạn!' : 'Recorded, thank you!'}
         </p>
       )}
@@ -567,10 +568,18 @@ export default function Chat() {
 
   // overrideText: dùng cho nút "AI phản hồi" (gợi ý tiếp) — không lấy từ ô nhập, và không
   // ghi vào Sổ lỗi cá nhân vì đây là câu nhắc hệ thống, không phải học viên tự viết.
-  async function sendMessage(overrideText?: string) {
+  async function sendMessage(
+    overrideText?: string,
+    opts?: { isRetry?: boolean; base?: ChatSession },
+  ) {
     const text = overrideText ?? input.trim()
-    const isSuggestionRequest = overrideText !== undefined
-    if (!text || !session || loading) return
+    // Gửi lại sau lỗi mạng vẫn là câu của HỌC VIÊN → vẫn phải vào Sổ lỗi cá nhân;
+    // chỉ câu nhắc hệ thống ("AI phản hồi") mới bị loại.
+    const isSuggestionRequest = overrideText !== undefined && !opts?.isRetry
+    // `base`: phiên đã được cắt bỏ tin nhắn lỗi (nút "Thử lại"). Không đọc từ state vì
+    // setSession chưa kịp áp dụng trong cùng một lượt render.
+    const current = opts?.base ?? session
+    if (!text || !current || loading) return
     if (isThrottled) {
       toast.error(
         isA ? `Chờ ${throttleCountdown}s để tiếp tục...` : `Wait ${throttleCountdown}s...`,
@@ -586,7 +595,7 @@ export default function Chat() {
       return
     }
     const userMsg: Message = newMessage('user', text)
-    const updated = { ...session, messages: [...session.messages, userMsg] }
+    const updated = { ...current, messages: [...current.messages, userMsg] }
     setSession(updated)
     saveChatSession(updated)
     setInput('')
@@ -597,10 +606,10 @@ export default function Chat() {
       .slice(-MAX_AI_HISTORY)
       .map((m) => ({ role: m.role, content: m.content }))
     const sys = chatSystemPrompt(
-      situationLabel(session.situation, dir),
-      session.level,
+      situationLabel(current.situation, dir),
+      current.level,
       dir,
-      session.targetWords,
+      current.targetWords,
       onboarding?.ageGroup,
     )
     try {
@@ -650,6 +659,21 @@ export default function Chat() {
         ? 'Hãy chủ động gợi ý một câu hỏi hoặc chủ đề tiếp theo để mình tiếp tục hội thoại, dựa trên nội dung bạn vừa trả lời.'
         : 'Please suggest a follow-up question or topic to continue our conversation, based on what you just said.',
     )
+  }
+
+  // Thử lại sau lỗi (mạng/AI 500). Câu người dùng đã nằm trong phiên nên phải GỠ nó ra
+  // trước khi gửi lại, nếu không bong bóng sẽ bị nhân đôi.
+  function retryLastSend() {
+    if (!session || loading || isThrottled) return
+    const msgs = session.messages
+    const idx = msgs.map((m) => m.role).lastIndexOf('user')
+    if (idx === -1) return
+    const lastText = msgs[idx]!.content
+    const trimmed = { ...session, messages: msgs.slice(0, idx) }
+    setSession(trimmed)
+    saveChatSession(trimmed)
+    setError('')
+    void sendMessage(lastText, { isRetry: true, base: trimmed })
   }
 
   // Kết thúc & chấm điểm cả phiên — gọi AI 1 lần thêm với prompt chấm điểm, tính
@@ -793,10 +817,10 @@ export default function Chat() {
                 />
               ))}
               {loading && <TypingDots />}
-              {error && (
-                <p className="text-center text-xs text-red-400 theme-light:text-red-700 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2">
-                  {error}
-                </p>
+              {/* Lỗi gọi AI: hiện bảng lỗi kèm nút "Thử lại" thay vì một dòng chữ chết —
+                  câu vừa gõ được gửi lại chứ không bắt học viên gõ tay. */}
+              {error && !limitHit && (
+                <LoadError message={error} onRetry={retryLastSend} retrying={loading} />
               )}
               {limitHit && (
                 <div className="text-center text-xs text-amber-400 theme-light:text-amber-800 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-3">
@@ -812,14 +836,16 @@ export default function Chat() {
           </div>
 
           <div className="sticky bottom-0 bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800/60 px-4 py-3 pb-safe">
-            <div className="max-w-3xl mx-auto flex items-center gap-2">
+            {/* Cùng bề rộng với cột hội thoại phía trên (max-w-3xl lg:max-w-5xl) — trước
+                đây thanh nhập bị hẹp hơn nên lệch hẳn sang trái ở desktop. */}
+            <div className="max-w-3xl lg:max-w-5xl mx-auto flex items-center gap-2">
               <button
                 onClick={() => {
                   setSession(null)
                   setError('')
                   setLimitHit(false)
                 }}
-                className="p-2.5 text-zinc-400 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition shrink-0 hover:bg-zinc-800/50"
+                className="tap-44 flex items-center justify-center p-2.5 text-zinc-400 hover:text-zinc-300 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition shrink-0 hover:bg-zinc-800/50"
                 title={isA ? 'Hội thoại mới' : 'New session'}
                 aria-label={isA ? 'Hội thoại mới' : 'New session'}
               >
@@ -830,7 +856,7 @@ export default function Chat() {
                 <button
                   onClick={endAndGrade}
                   disabled={loading || evaluating || limitHit || isThrottled}
-                  className="p-2.5 text-zinc-400 hover:text-violet-400 border border-zinc-800/80 hover:border-violet-500/50 rounded-xl transition shrink-0 hover:bg-zinc-800/50 disabled:opacity-50"
+                  className="tap-44 flex items-center justify-center p-2.5 text-zinc-400 hover:text-violet-400 border border-zinc-800/80 hover:border-violet-500/50 rounded-xl transition shrink-0 hover:bg-zinc-800/50 disabled:opacity-50"
                   title={isA ? 'Kết thúc & chấm điểm' : 'End & grade conversation'}
                   aria-label={isA ? 'Kết thúc & chấm điểm' : 'End & grade conversation'}
                 >
@@ -845,6 +871,9 @@ export default function Chat() {
               <input
                 id="message-input"
                 name="message"
+                // Đánh dấu ô nhập CHÍNH của trang — Layout dùng để đưa con trỏ về đây
+                // khi bấm phím tắt "/".
+                data-primary-input
                 ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -868,7 +897,7 @@ export default function Chat() {
               <button
                 onClick={() => sendMessage()}
                 disabled={!input.trim() || loading || limitHit || isThrottled}
-                className="p-2.5 bg-gradient-to-br from-accent-600 to-accent-500 hover:from-accent-500 hover:to-teal-400 disabled:opacity-40 text-white rounded-xl transition shrink-0 shadow-md shadow-accent-500/20 active:scale-95 relative"
+                className="tap-44 flex items-center justify-center p-2.5 bg-gradient-to-br from-accent-600 to-accent-500 hover:from-accent-500 hover:to-teal-400 disabled:opacity-40 text-white rounded-xl transition shrink-0 shadow-md shadow-accent-500/20 active:scale-95 relative"
                 aria-label={isA ? 'Gửi tin nhắn' : 'Send message'}
               >
                 <Send className="w-4 h-4" />
@@ -882,7 +911,7 @@ export default function Chat() {
               <button
                 onClick={requestAiFollowUp}
                 disabled={loading || limitHit || isThrottled}
-                className="p-2.5 text-zinc-400 hover:text-amber-400 border border-zinc-800/80 hover:border-amber-500/50 rounded-xl transition shrink-0 hover:bg-zinc-800/50 disabled:opacity-40"
+                className="tap-44 flex items-center justify-center p-2.5 text-zinc-400 hover:text-amber-400 border border-zinc-800/80 hover:border-amber-500/50 rounded-xl transition shrink-0 hover:bg-zinc-800/50 disabled:opacity-40"
                 title={isA ? 'AI phản hồi (gợi ý tiếp)' : 'AI follow-up suggestion'}
                 aria-label={isA ? 'AI phản hồi (gợi ý tiếp)' : 'AI follow-up suggestion'}
               >

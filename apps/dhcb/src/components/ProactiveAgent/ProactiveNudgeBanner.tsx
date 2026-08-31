@@ -80,7 +80,7 @@ export default function ProactiveNudgeBanner({
             <h4 className="text-xs sm:text-sm font-bold tracking-wide uppercase text-white">
               {nudge.title}
             </h4>
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white/10 uppercase">
+            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-white/10 uppercase">
               {nudge.priority}
             </span>
           </div>

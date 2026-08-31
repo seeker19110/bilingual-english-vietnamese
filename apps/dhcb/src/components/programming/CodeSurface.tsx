@@ -14,11 +14,19 @@ interface Props {
 }
 
 export default function CodeSurface({ code, wrap = false, className = '' }: Props) {
+  // Vùng cuộn ngang phải bấm Tab tới được và cuộn bằng bàn phím (WCAG 2.1.1 Keyboard) —
+  // chỉ khi thật sự có thanh cuộn (chế độ `wrap` xuống dòng thì không).
+  const scrollable = !wrap
   return (
     <pre
-      className={`rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-4 text-sm font-mono text-zinc-100 ${
+      // Chữ sáng CỐ ĐỊNH: nền #0a0a0a không đổi theo theme, mà token `zinc-100` lại bị
+      // đảo thành màu TỐI ở các theme nền sáng → chữ tối trên nền tối, không đọc được.
+      className={`rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-4 text-sm font-mono text-[#e4e4e7] ${
         wrap ? 'whitespace-pre-wrap' : 'overflow-x-auto whitespace-pre'
       } ${className}`}
+      {...(scrollable
+        ? { tabIndex: 0, role: 'region', 'aria-label': 'Đoạn code — cuộn ngang để xem hết' }
+        : {})}
     >
       {code}
     </pre>

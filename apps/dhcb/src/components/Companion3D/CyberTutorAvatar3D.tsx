@@ -302,7 +302,7 @@ export default function CyberTutorAvatar3D({
             {isListening ? 'Listening...' : isSpeaking ? 'Speaking...' : 'Ready / 3D Cyber Tutor'}
           </span>
         </div>
-        <div className="flex items-center gap-2 text-[10px] text-zinc-400">
+        <div className="flex items-center gap-2 text-[11px] text-zinc-400">
           <span className="rounded bg-cyan-950/80 px-1.5 py-0.5 border border-cyan-800/40 text-cyan-300 theme-light:text-cyan-800 font-mono">
             {fps} FPS
           </span>

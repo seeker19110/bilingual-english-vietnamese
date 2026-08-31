@@ -25,6 +25,7 @@ export default function ChatPage() {
     isPeerTyping,
     currentUserId,
     selectRoom,
+    reloadChat,
     startChatWithPeer,
     sendMessage,
     sendTyping,
@@ -84,6 +85,7 @@ export default function ChatPage() {
               onTyping={sendTyping}
               onDeleteMessage={handleDeleteMessage}
               onBack={() => selectRoom(null)}
+              onRetry={reloadChat}
             />
           </div>
         </div>

@@ -410,7 +410,7 @@ function SpeakBubble({
               </div>
             </div>
             {voted === 'down' && (
-              <p className="text-[10px] text-zinc-500 mt-1 pl-5">
+              <p className="text-[11px] text-zinc-500 mt-1 pl-5">
                 {dir === 'A' ? 'Đã ghi nhận, cảm ơn bạn!' : 'Recorded, thank you!'}
               </p>
             )}

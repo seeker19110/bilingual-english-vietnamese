@@ -1,79 +1,22 @@
 // BottomNav — thanh điều hướng dưới cố định, hiện ở màn hình MOBILE/TABLET (<1024px).
 // Từ 1024px trở lên (`lg:`) bị ẩn (`lg:hidden`) — desktop dùng DesktopSidebar.tsx thay thế.
-// 5 Tab lõi: Trang chủ · Phòng Học · Agent Bạn Đồng Hành · Luyện tập · Profile
+// 5 Tab lõi: Trang chủ · Phòng Học · Đồng Hành (Agent) · Luyện tập · Profile
 import { Link, useLocation } from 'react-router-dom'
 import { Home, GraduationCap, Dumbbell, Sparkles, User, ChevronDown, ChevronUp } from 'lucide-react'
 import { useAuth } from '../context/useAuth'
 import { useLang } from '../context/useLang'
 import type { useOneHandedDrag } from '../lib/useOneHandedDrag'
 import SubjectsLink from './SubjectsLink'
+// Bảng tiền tố đường dẫn dùng CHUNG với DesktopSidebar — xem lib/navPaths.ts
+import {
+  LEARNING_PATHS,
+  PRACTICE_PATHS,
+  COMPANION_PATHS,
+  PROFILE_PATHS,
+  matchesNav,
+} from '../lib/navPaths'
 
 const HIDDEN_PATHS = ['/login', '/onboarding']
-
-const LEARNING_PATHS = [
-  '/phong-hoc',
-  '/hoc-mon-hoc',
-  '/subjects',
-  '/mon-hoc',
-  '/hoc-tieng-anh',
-  '/tieng-anh',
-  '/english',
-  '/lo-trinh-hoc',
-  '/hoc-ung-dung',
-  '/applied-knowledge',
-  '/ung-dung-thuc-te',
-  '/mo-phong',
-]
-const PRACTICE_PATHS = [
-  '/phong-luyen-tap',
-  '/luyen-tap',
-  '/tro-truyen',
-  '/luyen-noi',
-  '/luyen-viet',
-  '/luyen-nghe',
-  '/tu-dien',
-  '/truyen-song-ngu',
-  '/cau-thong-dung',
-  '/bai-hoc',
-  '/so-tay-loi-sai',
-  '/thu-thach',
-]
-const COMPANION_PATHS = [
-  '/agent-ban-dong-hanh',
-  '/ban-dong-hanh',
-  '/dong-hanh',
-  '/companion',
-  '/workspace',
-  '/action-canvas',
-]
-const PROFILE_PATHS = [
-  '/trang-ca-nhan',
-  '/profile',
-  '/cai-dat',
-  '/tien-do',
-  '/lich-su-hoc',
-  '/su-nghiep-cua-toi',
-  '/hoc-su-nghiep',
-  '/su-nghiep',
-  '/su-nghiep-khoi-nghiep',
-  '/career',
-  '/cong-viec-cua-toi',
-  '/hoc-cong-viec',
-  '/cong-viec',
-  '/cong-viec-cuoc-song',
-  '/work',
-  '/toi-khoi-nghiep',
-  '/hoc-khoi-nghiep',
-  '/khoi-nghiep',
-  '/startup',
-  '/cuoc-song-cua-toi',
-  '/hoc-cuoc-song',
-  '/cuoc-song',
-  '/life',
-  '/life-graph',
-  '/ban-be',
-  '/tin-nhan',
-]
 
 interface Props {
   triggerHandlers?: ReturnType<typeof useOneHandedDrag>['triggerHandlers']
@@ -88,14 +31,14 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
   if (!user || HIDDEN_PATHS.includes(location.pathname)) return null
 
   const isHome = location.pathname === '/'
-  const isLearning = LEARNING_PATHS.some((p) => location.pathname.startsWith(p))
-  const isCompanion = COMPANION_PATHS.some((p) => location.pathname.startsWith(p))
-  const isPractice = PRACTICE_PATHS.some((p) => location.pathname.startsWith(p))
-  const isProfile = PROFILE_PATHS.some((p) => location.pathname.startsWith(p))
+  const isLearning = matchesNav(location.pathname, LEARNING_PATHS)
+  const isCompanion = matchesNav(location.pathname, COMPANION_PATHS)
+  const isPractice = matchesNav(location.pathname, PRACTICE_PATHS)
+  const isProfile = matchesNav(location.pathname, PROFILE_PATHS)
 
   return (
     <nav
-      className="lg:hidden fixed bottom-0 inset-x-0 z-40 h-[5.25rem] pb-safe bg-zinc-950/90 backdrop-blur-xl border-t border-zinc-800/80 shadow-2xl shadow-black/40"
+      className="lg:hidden fixed bottom-0 inset-x-0 z-40 min-h-[5.25rem] pb-safe bg-zinc-950/90 backdrop-blur-xl border-t border-zinc-800/80 shadow-2xl shadow-black/40"
       aria-label="Điều hướng chính"
     >
       {/* Viền sáng gradient đa sắc tinh tế ở đỉnh thanh điều hướng */}
@@ -120,7 +63,9 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
         </div>
       )}
 
-      <div className="max-w-3xl mx-auto h-full grid grid-cols-5 px-1 items-center">
+      {/* `min-h` chứ không `h-full`: hộp <nav> nay chỉ có CHIỀU CAO TỐI THIỂU (min-h) nên
+          `h-full` sẽ tính về auto — dùng thẳng min-h cùng giá trị cho chắc chắn. */}
+      <div className="max-w-3xl mx-auto min-h-[5.25rem] grid grid-cols-5 px-1 items-center">
         {/* Tab 1: Trang chủ */}
         <Link
           to="/"
@@ -186,13 +131,16 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-zinc-950 animate-pulse" />
           </div>
           <span
-            className={`truncate max-w-[5.25rem] tracking-tight mt-0.5 text-[10px] sm:text-[11px] font-bold ${
+            className={`truncate max-w-[5.25rem] tracking-tight mt-0.5 text-[11px] font-bold ${
               isCompanion
                 ? 'text-accent-300 theme-light:text-accent-800'
                 : 'text-zinc-300 group-hover:text-white'
             }`}
           >
-            Agent Bạn Đồng Hành
+            {/* Nhãn RÚT GỌN: "Agent Bạn Đồng Hành" bị cắt cụt ("Agent Bạn Đồn…") trên máy
+                390px vì ô tab chỉ rộng 1/5 màn hình — xem audit 2026-08-31 mục A6. Tên đầy
+                đủ vẫn còn ở thuộc tính `title` cho người dùng chuột. */}
+            Đồng Hành
           </span>
         </Link>
 

@@ -81,7 +81,7 @@ export default function NeuralMicroCurriculumCard() {
           <div>
             <h3 className="text-xs font-bold text-zinc-100 flex items-center gap-1.5">
               Lộ Trình Vi Mô Thần Kinh (Neural Micro-Curriculum)
-              <span className="rounded px-1.5 py-0.2 text-[9px] font-semibold uppercase bg-sky-500/30 text-sky-300">
+              <span className="rounded px-1.5 py-0.2 text-[11px] font-semibold uppercase bg-sky-500/30 text-sky-300">
                 V4.3 Dynamic
               </span>
             </h3>
@@ -93,7 +93,7 @@ export default function NeuralMicroCurriculumCard() {
 
         <div className="flex items-center gap-2">
           <div className="text-right">
-            <span className="text-[10px] text-zinc-400 block">Mastery</span>
+            <span className="text-[11px] text-zinc-400 block">Mastery</span>
             <span className="text-xs font-bold text-sky-400 font-mono">{state.masteryScore}%</span>
           </div>
         </div>

@@ -378,7 +378,8 @@ export default function HubLogin() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Mật khẩu (tối thiểu 6 ký tự)"
-                  className={`${inputCls} pr-11`}
+                  /* pr-12: chừa chỗ cho nút hiện/ẩn mật khẩu nay rộng 44px (tap-44). */
+                  className={`${inputCls} pr-12`}
                   required
                   minLength={6}
                 />
@@ -386,7 +387,8 @@ export default function HubLogin() {
                   type="button"
                   onClick={() => setShowPw((p) => !p)}
                   aria-label={showPw ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center text-zinc-400 hover:text-zinc-300 transition"
+                  /* tap-44 thay cho h-8 w-8 (32px) — dưới sàn vùng chạm 44px. */
+                  className="tap-44 absolute right-1 top-1/2 -translate-y-1/2 flex items-center justify-center text-zinc-400 hover:text-zinc-300 transition"
                 >
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>

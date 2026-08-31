@@ -372,7 +372,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                         <div className="flex items-start justify-between">
                           <h4 className="font-bold text-zinc-100 text-base">{habit.title}</h4>
                           <span
-                            className={`text-[10px] px-2 py-0.5 rounded font-semibold uppercase ${
+                            className={`text-[11px] px-2 py-0.5 rounded font-semibold uppercase ${
                               habit.habitType === 'build'
                                 ? 'bg-emerald-950/80 theme-light:bg-emerald-50 text-emerald-400 theme-light:text-emerald-800 border border-emerald-800/40'
                                 : 'bg-amber-950/80 theme-light:bg-amber-50 text-amber-400 theme-light:text-amber-800 border border-amber-800/40'
@@ -515,7 +515,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                       <div>
                         <div className="flex items-start justify-between">
                           <h4 className="font-bold text-zinc-100 text-base">{p.title}</h4>
-                          <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700 uppercase">
+                          <span className="text-[11px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700 uppercase">
                             {p.planType}
                           </span>
                         </div>
@@ -576,7 +576,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
                       <div>
                         <div className="flex items-start justify-between">
                           <h4 className="font-semibold text-zinc-100 text-sm">{m.title}</h4>
-                          <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-yellow-400 theme-light:text-yellow-800 border border-zinc-700 uppercase">
+                          <span className="text-[11px] px-2 py-0.5 rounded bg-zinc-800 text-yellow-400 theme-light:text-yellow-800 border border-zinc-700 uppercase">
                             {m.area}
                           </span>
                         </div>

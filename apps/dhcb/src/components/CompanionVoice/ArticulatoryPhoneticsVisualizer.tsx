@@ -99,7 +99,7 @@ export default function ArticulatoryPhoneticsVisualizer() {
               <h3 className="text-base font-bold text-white tracking-wide">
                 3D Articulatory Phonetics & Pitch Alignment
               </h3>
-              <span className="text-[10px] px-2 py-0.5 font-bold uppercase rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30">
+              <span className="text-[11px] px-2 py-0.5 font-bold uppercase rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30">
                 L1 Special Care
               </span>
             </div>
@@ -201,7 +201,7 @@ export default function ArticulatoryPhoneticsVisualizer() {
               />
             </svg>
 
-            <div className="mt-2 text-[10px] text-center text-slate-400 max-w-xs">
+            <div className="mt-2 text-[11px] text-center text-slate-400 max-w-xs">
               {guide.airflowDescription}
             </div>
           </div>
@@ -223,7 +223,7 @@ export default function ArticulatoryPhoneticsVisualizer() {
               <ul className="space-y-1.5">
                 {guide.stepByStepAnatomyTips.map((tip, idx) => (
                   <li key={idx} className="text-xs text-slate-300 flex items-start gap-2">
-                    <span className="w-4 h-4 rounded-full bg-teal-500/20 text-teal-300 text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                    <span className="w-4 h-4 rounded-full bg-teal-500/20 text-teal-300 text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">
                       {idx + 1}
                     </span>
                     <span>{tip}</span>
@@ -263,7 +263,7 @@ export default function ArticulatoryPhoneticsVisualizer() {
                       strokeWidth="2.5"
                     />
                   </svg>
-                  <div className="absolute bottom-1 right-2 text-[9px] text-slate-500">
+                  <div className="absolute bottom-1 right-2 text-[11px] text-slate-500">
                     <span className="text-slate-400">--- Bản xứ</span> |{' '}
                     <span className="text-teal-400">― Của bạn</span>
                   </div>
