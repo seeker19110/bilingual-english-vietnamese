@@ -124,7 +124,8 @@ console.log(docAnToan({ ten: "Cu" }), docAnToan({ ten: "Cu", hoTen: "Moi" }), do
         },
         {
           stdinLines: [],
-          expected: 'ten=Lan\nten=Lan;hoTen=Lan\nhoTen=Lan\ngiai doan khong hop le\nCu Moi (khong ro)',
+          expected:
+            'ten=Lan\nten=Lan;hoTen=Lan\nhoTen=Lan\ngiai doan khong hop le\nCu Moi (khong ro)',
           match: 'contains',
           hidden: true,
           label: 'Ca ẩn: đủ năm dòng đúng thứ tự bốn giai đoạn ghi + một dòng đọc',
