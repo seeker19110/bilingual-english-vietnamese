@@ -79,6 +79,8 @@ import { P6U24_LESSONS } from './lessons/p6u24.js'
 import { P6U61_LESSONS } from './lessons/p6u61.js'
 import { P6U62_LESSONS } from './lessons/p6u62.js'
 import { P6U63_LESSONS } from './lessons/p6u63.js'
+import { P6U64_LESSONS } from './lessons/p6u64.js'
+import { P6U65_LESSONS } from './lessons/p6u65.js'
 // Đợt 4 lộ trình "Kỹ Sư Trưởng AI" — 4 chặng riêng principal-s1…s4, giai đoạn P5 "Tầm
 // trưởng". Đặc tả: docs/specs/2026-08-31-dot-4-p5-tam-truong.md.
 import { P6_U94_LESSONS } from './lessons/p6u94.js'
@@ -181,6 +183,8 @@ export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...P6U61_LESSONS,
   ...P6U62_LESSONS,
   ...P6U63_LESSONS,
+  ...P6U64_LESSONS,
+  ...P6U65_LESSONS,
   ...P6_U94_LESSONS,
   ...P6_U95_LESSONS,
   ...P6_U96_LESSONS,
