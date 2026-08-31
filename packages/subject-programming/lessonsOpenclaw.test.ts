@@ -37,9 +37,9 @@ function gradeAll(code: string, cases: ProgrammingTestCase[]) {
 }
 
 describe('bài học OpenClaw — cổng nội dung', () => {
-  it('có đúng 6 bài chương C1, id không trùng', () => {
-    expect(OPENCLAW_LESSONS.length).toBe(6)
-    expect(new Set(OPENCLAW_LESSONS.map((l) => l.id)).size).toBe(6)
+  it('có đúng 20 bài (6 C1 + 5 C2 + 5 C3 + 4 C4), id không trùng', () => {
+    expect(OPENCLAW_LESSONS.length).toBe(20)
+    expect(new Set(OPENCLAW_LESSONS.map((l) => l.id)).size).toBe(20)
   })
 
   for (const lesson of OPENCLAW_LESSONS) {

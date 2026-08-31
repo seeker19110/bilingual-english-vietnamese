@@ -88,6 +88,9 @@ import { HERMES_U2_LESSONS } from './lessons/hermesu2.js'
 import { HERMES_U3_LESSONS } from './lessons/hermesu3.js'
 import { HERMES_U4_LESSONS } from './lessons/hermesu4.js'
 import { OPENCLAW_U1_LESSONS } from './lessons/openclawu1.js'
+import { OPENCLAW_U2_LESSONS } from './lessons/openclawu2.js'
+import { OPENCLAW_U3_LESSONS } from './lessons/openclawu3.js'
+import { OPENCLAW_U4_LESSONS } from './lessons/openclawu4.js'
 
 export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...P1U1_LESSONS,
@@ -169,6 +172,9 @@ export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...HERMES_U3_LESSONS,
   ...HERMES_U4_LESSONS,
   ...OPENCLAW_U1_LESSONS,
+  ...OPENCLAW_U2_LESSONS,
+  ...OPENCLAW_U3_LESSONS,
+  ...OPENCLAW_U4_LESSONS,
 ]
 
 const lessonMap = new Map(PROGRAMMING_LESSONS.map((l) => [l.id, l]))
