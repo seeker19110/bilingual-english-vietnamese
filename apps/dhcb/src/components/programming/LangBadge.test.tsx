@@ -19,6 +19,7 @@ const SIMULATED = [
   'git',
   'bash',
   'hermes',
+  'openclaw',
   'swift',
   'kotlin',
 ]

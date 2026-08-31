@@ -230,7 +230,7 @@ export default function ProgrammingHome() {
             {SHORT_COURSES.map((course) => (
               <button
                 key={course.id}
-                onClick={() => nav(`/lap-trinh/khoa/${course.id}`)}
+                onClick={() => nav(`/lap-trinh/khoa-hoc/${course.id}`)}
                 className={`${nutPhu} w-full flex-col items-start !py-3 text-left`}
               >
                 <span className="flex items-center gap-2 w-full">
