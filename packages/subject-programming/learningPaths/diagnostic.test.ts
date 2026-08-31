@@ -27,13 +27,14 @@ describe('suggestEntry — chẩn đoán chọn điểm vào', () => {
     expect(r1).toEqual(r2)
   })
 
-  it('trả lời đúng hết → miễn P1–P4, lùi entry về chặng CUỐI của P4 (P5 đang soạn)', () => {
+  it('trả lời đúng hết → miễn P1–P4, entry là chặng ĐẦU của P5 (chẩn đoán chỉ phủ P1–P4, chưa hỏi P5 nên chưa miễn P5)', () => {
     const result = suggestEntry(PATH, answerAll(true))
-    const p4 = PATH.phases.find((p) => p.id === 'principal-ai-p4')!
-    expect(result.entryStageId).toBe(p4.stages.at(-1)!.stageId)
-    // Mọi chặng P1–P4 đều nằm trong danh sách miễn.
+    const p5 = PATH.phases.find((p) => p.id === 'principal-ai-p5')!
+    expect(result.entryStageId).toBe(p5.stages[0]!.stageId)
+    // Mọi chặng P1–P4 đều nằm trong danh sách miễn; P5 KHÔNG được miễn.
     const p1to4Stages = PATH.phases.slice(0, 4).flatMap((p) => p.stages.map((s) => s.stageId))
     expect(result.skippedStageIds.sort()).toEqual(p1to4Stages.sort())
+    for (const s of p5.stages) expect(result.skippedStageIds).not.toContain(s.stageId)
   })
 
   it('trả lời sai hết → entry là chặng ĐẦU của P1, không miễn gì', () => {

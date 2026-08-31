@@ -1,10 +1,19 @@
 // Bất biến của ngân hàng QUIZ SAU CHẶNG — chặn lỗi dữ liệu khi soạn thêm chặng mới.
 import { describe, expect, it } from 'vitest'
 import { quizOfStage, stageHasQuiz } from './stageQuizzes.js'
-import { getSpecStage } from '../specializations/registry.js'
+import { resolveStage } from './pathStages.js'
 import { getLearningPath, pathStageRefs } from './registry.js'
 
-const QUIZZED_STAGES = ['mathforcode-s1', 'data-s1', 'ai-s1', 'devops-s1']
+const QUIZZED_STAGES = [
+  'mathforcode-s1',
+  'data-s1',
+  'ai-s1',
+  'devops-s1',
+  'principal-s1',
+  'principal-s2',
+  'principal-s3',
+  'principal-s4',
+]
 
 describe('ngân hàng quiz sau chặng', () => {
   it('mọi chặng có quiz: đúng 5 câu, mỗi câu đúng 4 lựa chọn, answerIndex hợp lệ', () => {
@@ -32,9 +41,9 @@ describe('ngân hàng quiz sau chặng', () => {
     }
   })
 
-  it('stageId của quiz tra được qua getSpecStage — chỉ gắn vào chặng có thật', () => {
+  it('stageId của quiz tra được (hướng chuyên sâu hoặc chặng riêng của lộ trình) — chỉ gắn vào chặng có thật', () => {
     for (const stageId of QUIZZED_STAGES) {
-      expect(getSpecStage(stageId), `${stageId} không có thật`).toBeDefined()
+      expect(resolveStage(stageId), `${stageId} không có thật`).toBeDefined()
     }
   })
 

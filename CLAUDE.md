@@ -385,6 +385,20 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
       thuần). Đồng thời thêm chương trình tương ứng vào môn Toán
       (`STEM_CURRICULUM.mathematics`, `apps/dhcb/src/data/stemCurriculum.ts`) nên khoá học hiện
       diện ở CẢ HAI môn. Đặc tả: `docs/specs/2026-08-30-toan-hoc-cho-lap-trinh.md`.
+- [x] **Lộ trình mục tiêu "Kỹ Sư Trưởng AI" (`principal-ai`, tầng LỘ TRÌNH MỤC TIÊU mới của môn
+      Lập trình, 4 đợt PR #766/#769/#771/2026-08-31, HOÀN TẤT TRỌN VẸN)** — tầng thứ 4 (bên
+      cạnh xương sống P1–P6, `specializations/` 14 hướng, `courses/` khoá ngắn): manifest ghép
+      CHẶNG của nhiều hướng có sẵn theo thứ tự phụ thuộc, đích là năng lực người ra quyết định
+      hệ AI (`packages/subject-programming/learningPaths/`). 5 giai đoạn P1→P5: P1 Nền toán &
+      thuật toán → P2 Dữ liệu & backend → P3 Trục AI chính → P4 Vận hành & tin cậy (đều lắp từ
+      chặng hướng chuyên sâu sẵn có) → **P5 "Tầm trưởng"** (nội dung MỚI, đợt 4: 4 chặng RIÊNG
+      `principal-s1…s4` — vận hành AI/đặc tả+eval, hệ tác tử & MCP, quyết định kiến trúc bằng
+      ADR, dẫn dắt & trách nhiệm — không phải hướng chuyên sâu thứ 15). Chẩn đoán chọn điểm vào
+      tất định chấm client (đợt 2); vòng lặp học có bằng chứng: quiz chấm server ≥ 4/5 mới qua
+      chặng + kho artifact cá nhân + Companion kiểm hiểu tuỳ chọn qua `/api/agent` (đợt 3).
+      Trang `/lap-trinh/lo-trinh/principal-ai` (+ `/chan-doan`, `/chang/:stageId`). Đặc tả:
+      `docs/specs/2026-08-31-khoa-hoc-ky-su-truong-ai.md` +
+      `docs/specs/2026-08-31-dot-4-p5-tam-truong.md` (đặc tả con đợt 4).
 
 ### Việc còn dang dở / cần quyết định
 

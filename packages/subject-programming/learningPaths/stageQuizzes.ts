@@ -282,6 +282,277 @@ const STAGE_QUIZZES: Record<string, StageQuizQuestion[]> = {
         'Health check là tín hiệu sống còn — load balancer/orchestrator dựa vào đó để quyết định có định tuyến traffic tới instance hay không.',
     },
   ],
+  // 4 chặng RIÊNG của giai đoạn P5 "Tầm trưởng" — soạn đợt 4. Đặc tả:
+  // docs/specs/2026-08-31-dot-4-p5-tam-truong.md.
+  'principal-s1': [
+    {
+      id: 'principal-s1-q1',
+      prompt: 'Đặc tả giao việc cho AI vì sao PHẢI có mục "KHÔNG làm"?',
+      choices: [
+        'Để đặc tả dài hơn, trông chuyên nghiệp hơn',
+        'Để chặn phạm vi phình ra — không có mục này, AI/người thi hành dễ tự ý làm thêm việc ngoài ý định',
+        'Vì công cụ soạn thảo bắt buộc phải có mục này',
+        'Để dễ tính tiền công theo số dòng',
+      ],
+      answerIndex: 1,
+      explain:
+        'Mục "KHÔNG làm" là ranh giới tường minh — thiếu nó thì bên thi hành (AI hay người) không biết dừng ở đâu, dễ mở rộng phạm vi ngoài ý định ban đầu.',
+    },
+    {
+      id: 'principal-s1-q2',
+      prompt: 'Tiêu chí chấp nhận nào dưới đây ĐO ĐƯỢC (không mơ hồ)?',
+      choices: [
+        'Hệ thống phải chạy nhanh',
+        'API phản hồi dưới 200ms ở 95% request',
+        'Giao diện phải đẹp và thân thiện',
+        'Code phải sạch sẽ, dễ đọc',
+      ],
+      answerIndex: 1,
+      explain:
+        'Câu này có SỐ (200ms) và cách đo (phân vị 95%) — kiểm chứng được đúng/sai. Ba câu còn lại là cảm tính, không đo được.',
+    },
+    {
+      id: 'principal-s1-q3',
+      prompt: 'Recall trong đánh giá mô hình đo điều gì?',
+      choices: [
+        'Trong số các ca AI đoán là dương, bao nhiêu % đoán đúng',
+        'Trong số các ca THẬT là dương, bao nhiêu % được AI bắt được',
+        'Tốc độ mô hình chạy nhanh hay chậm',
+        'Chi phí token trung bình mỗi lượt gọi',
+      ],
+      answerIndex: 1,
+      explain:
+        'Recall = TP/(TP+FN): trong số ca THẬT SỰ dương, mô hình bắt được bao nhiêu — bỏ sót (FN) làm giảm recall. Câu đầu mô tả precision.',
+    },
+    {
+      id: 'principal-s1-q4',
+      prompt: 'Cache prompt giúp ích gì cho ngân sách chi phí AI?',
+      choices: [
+        'Làm mô hình thông minh hơn',
+        'Gọi lại đúng prompt/ngữ cảnh đã gửi trước đó không bị tính tiền đầy đủ như lần đầu — giảm chi phí lặp',
+        'Tăng recall của mô hình',
+        'Thay thế hoàn toàn việc cần eval',
+      ],
+      answerIndex: 1,
+      explain:
+        'Cache prompt tận dụng phần ngữ cảnh lặp lại (system prompt, tài liệu nền) để giảm chi phí tính theo token ở các lượt gọi sau — không liên quan tới chất lượng mô hình.',
+    },
+    {
+      id: 'principal-s1-q5',
+      prompt: 'Vì sao "đếm/giới hạn lượt gọi AI" nên nằm trong đặc tả ngay từ đầu?',
+      choices: [
+        'Vì luật bắt buộc phải viết đủ số trang',
+        'Chi phí là ràng buộc THIẾT KẾ — không kiểm soát từ đầu thì tính năng có thể đốt tiền ngoài dự tính khi nhiều người dùng cùng lúc',
+        'Vì AI chỉ chạy được khi có giới hạn lượt',
+        'Để giao diện hiện đúng số lượt còn lại, không liên quan chi phí',
+      ],
+      answerIndex: 1,
+      explain:
+        'Không đặt ngân sách/giới hạn lượt từ đầu thì chi phí AI có thể vượt kiểm soát rất nhanh khi lưu lượng tăng — đây là ràng buộc kỹ thuật, không phải việc để tính sau.',
+    },
+  ],
+  'principal-s2': [
+    {
+      id: 'principal-s2-q1',
+      prompt: 'Vòng lặp agent tối giản gồm những bước nào, đúng thứ tự?',
+      choices: [
+        'Nghĩ → gọi tool → đọc kết quả → lặp (tới khi đủ điều kiện dừng)',
+        'Gọi tool → nghĩ → dừng ngay',
+        'Chỉ gọi tool một lần rồi kết thúc, không có bước "nghĩ"',
+        'Đọc kết quả trước, sau đó mới quyết định có cần tool hay không, không bao giờ lặp',
+      ],
+      answerIndex: 0,
+      explain:
+        'Agent là vòng lặp: quyết định hành động (nghĩ) → thực thi (gọi tool) → quan sát kết quả → lặp lại cho tới khi đạt điều kiện dừng.',
+    },
+    {
+      id: 'principal-s2-q2',
+      prompt: 'Vì sao vòng lặp agent bắt buộc phải có điều kiện dừng (số bước tối đa)?',
+      choices: [
+        'Để code ngắn hơn',
+        'Chống lặp vô hạn — agent có thể kẹt gọi tool lặp lại mãi nếu không có ngưỡng chặn',
+        'Vì tool luôn trả lỗi ở bước cuối',
+        'Không cần thiết, agent tự biết khi nào nên dừng',
+      ],
+      answerIndex: 1,
+      explain:
+        'Không có ngưỡng dừng cứng thì một lỗi logic hay tool phản hồi mập mờ có thể khiến agent lặp mãi, tốn chi phí và tài nguyên vô hạn.',
+    },
+    {
+      id: 'principal-s2-q3',
+      prompt: 'Vì sao mọi tham số truyền vào tool PHẢI được validate trước khi chạy?',
+      choices: [
+        'Vì AI luôn tạo tham số đúng, validate chỉ là thủ tục',
+        'Vì tham số do model sinh ra có thể sai kiểu/thiếu/độc hại — không kiểm là tin mù vào đầu ra của model',
+        'Để code chạy chậm hơn, an toàn cảm tính',
+        'Chỉ cần validate khi gọi tool xoá dữ liệu',
+      ],
+      answerIndex: 1,
+      explain:
+        'Đầu ra của model không phải dữ liệu đáng tin tuyệt đối — tham số có thể sai kiểu, thiếu trường, hoặc bị chèn nội dung độc hại; validate là lớp phòng thủ bắt buộc.',
+    },
+    {
+      id: 'principal-s2-q4',
+      prompt: 'MCP (Model Context Protocol) chuẩn hoá điều gì?',
+      choices: [
+        'Cách vẽ giao diện chat cho agent',
+        'Hợp đồng "liệt kê tool có sẵn + gọi tool theo tên" giữa model và công cụ, dùng chung được nhiều nơi',
+        'Cách tính tiền theo token',
+        'Thuật toán huấn luyện mô hình ngôn ngữ',
+      ],
+      answerIndex: 1,
+      explain:
+        'MCP là một giao thức/hợp đồng chuẩn cho việc mô tả và gọi công cụ (tool) — giúp nhiều model/nhiều client dùng chung một bộ tool mà không phải viết tích hợp riêng cho từng bên.',
+    },
+    {
+      id: 'principal-s2-q5',
+      prompt:
+        'Vì sao "allowlist" tool an toàn hơn cho agent tự do gọi bất kỳ hàm nào nó "nghĩ ra"?',
+      choices: [
+        'Allowlist chạy nhanh hơn về mặt kỹ thuật',
+        'Allowlist giới hạn agent chỉ được chạy các hành động đã được RÀ SOÁT trước — chặn hành vi ngoài ý định',
+        'Allowlist làm agent thông minh hơn',
+        'Không có khác biệt, chỉ là gu code',
+      ],
+      answerIndex: 1,
+      explain:
+        'Agent tự do gọi hàm bất kỳ mở ra rủi ro thực thi hành động chưa được kiểm soát; allowlist là ranh giới an toàn — chỉ hành động đã duyệt mới chạy được.',
+    },
+  ],
+  'principal-s3': [
+    {
+      id: 'principal-s3-q1',
+      prompt: 'ADR (Architecture Decision Record) ghi lại điều gì?',
+      choices: [
+        'Toàn bộ code nguồn của hệ thống',
+        'Một quyết định kiến trúc: bối cảnh, các lựa chọn đã cân, quyết định chọn, đánh đổi, hệ quả',
+        'Lịch sử commit của repo',
+        'Danh sách lỗi đã sửa trong tuần',
+      ],
+      answerIndex: 1,
+      explain:
+        'ADR là bản ghi NGẮN cho một quyết định kiến trúc — giúp người sau (kể cả chính bạn 6 tháng sau) hiểu vì sao quyết định đó được chọn, không phải nhật ký code.',
+    },
+    {
+      id: 'principal-s3-q2',
+      prompt: '"Chọn X vì X tốt" có phải một lý do ADR chấp nhận được không?',
+      choices: [
+        'Có, ngắn gọn là đủ',
+        'Không — ADR tốt phải nêu các LỰA CHỌN đã cân và ĐÁNH ĐỔI cụ thể, không phải khẳng định suông',
+        'Có, miễn là quyết định đúng',
+        'Không liên quan tới ADR',
+      ],
+      answerIndex: 1,
+      explain:
+        '"X tốt" không giải thích được điều gì — ADR có giá trị vì nó phơi bày lựa chọn đã bị loại và LÝ DO đánh đổi, để người đọc hiểu và có thể xem lại khi hoàn cảnh đổi.',
+    },
+    {
+      id: 'principal-s3-q3',
+      prompt: 'Khi nào nên nghiêng về build (tự vận hành) thay vì buy (thuê API)?',
+      choices: [
+        'Luôn luôn nên buy vì rẻ hơn',
+        'Khi lượng dùng đủ lớn để vượt điểm hoà vốn — chi phí cố định tự vận hành rẻ hơn tổng chi phí thuê theo lượt về lâu dài',
+        'Chỉ khi công ty thích tự làm mọi thứ',
+        'Build luôn tốt hơn vì kiểm soát được code',
+      ],
+      answerIndex: 1,
+      explain:
+        'Quyết định build vs buy dựa trên điểm hoà vốn: dưới điểm đó thuê rẻ hơn, vượt điểm đó tự vận hành rẻ hơn — quyết định theo SỐ, không theo cảm tính.',
+    },
+    {
+      id: 'principal-s3-q4',
+      prompt: 'RAG thường phù hợp hơn fine-tune khi nào?',
+      choices: [
+        'Khi dữ liệu gần như không bao giờ đổi',
+        'Khi dữ liệu thay đổi thường xuyên — cập nhật RAG (đổi nguồn tra cứu) rẻ và nhanh hơn huấn luyện lại mô hình',
+        'Khi cần văn phong đầu ra rất đặc thù, cố định',
+        'RAG và fine-tune luôn thay thế được cho nhau, chọn cái nào cũng như nhau',
+      ],
+      answerIndex: 1,
+      explain:
+        'RAG tra cứu dữ liệu tại thời điểm hỏi nên cập nhật gần như tức thì; fine-tune "đóng băng" tri thức vào trọng số mô hình, hợp khi dữ liệu ổn định và cần định dạng/văn phong đặc thù.',
+    },
+    {
+      id: 'principal-s3-q5',
+      prompt: 'Một phương án model bị coi là "áp đảo" (dominated) khi nào?',
+      choices: [
+        'Khi nó đắt nhất trong danh sách',
+        'Khi tồn tại phương án khác vừa RẺ HƠN HOẶC BẰNG vừa TỐT HƠN HOẶC BẰNG, và chặt hơn ở ít nhất một tiêu chí',
+        'Khi nó là model mới nhất trên thị trường',
+        'Khi không ai từng dùng thử nó',
+      ],
+      answerIndex: 1,
+      explain:
+        'Phương án bị áp đảo là phương án mà bạn không có lý do gì để chọn — luôn có phương án khác tốt hơn hoặc bằng ở MỌI tiêu chí, nên loại nó khỏi cân nhắc.',
+    },
+  ],
+  'principal-s4': [
+    {
+      id: 'principal-s4-q1',
+      prompt: 'Checklist review code AI sinh nên kiểm những gì?',
+      choices: [
+        'Chỉ cần kiểm code có chạy được hay không',
+        'Đúng yêu cầu, ca biên, có bịa API không, bảo mật, có test hay không',
+        'Chỉ cần kiểm tốc độ viết code có nhanh không',
+        'Chỉ cần đếm số dòng code AI sinh ra',
+      ],
+      answerIndex: 1,
+      explain:
+        'Code AI sinh có rủi ro riêng (bịa hàm/API không tồn tại, bỏ sót ca biên) ngoài các rủi ro thường gặp — checklist 5 điểm bao trọn cả hai loại.',
+    },
+    {
+      id: 'principal-s4-q2',
+      prompt: 'Khi đọc diff, phát hiện nào nên được xử lý ƯU TIÊN cao nhất?',
+      choices: [
+        'Lỗi phong cách đặt tên biến',
+        'Lỗ hổng bảo mật',
+        'Hiệu năng chưa tối ưu',
+        'Thiếu comment giải thích',
+      ],
+      answerIndex: 1,
+      explain:
+        'Thứ tự ưu tiên rủi ro: bảo mật > đúng đắn > hiệu năng > phong cách — lỗ hổng bảo mật có thể gây hậu quả nghiêm trọng nhất nếu bỏ lọt.',
+    },
+    {
+      id: 'principal-s4-q3',
+      prompt: 'Post-mortem "không đổ lỗi" (blameless) tập trung vào điều gì?',
+      choices: [
+        'Xác định CHÍNH XÁC ai đã gây ra lỗi để nhắc nhở',
+        'Hệ thống và quy trình đã cho phép lỗi đó xảy ra như thế nào, và hành động sửa để không lặp lại',
+        'Ghi lại thời gian downtime để tính KPI cá nhân',
+        'Không cần viết gì, chỉ cần sửa lỗi rồi thôi',
+      ],
+      answerIndex: 1,
+      explain:
+        'Đổ lỗi cá nhân khiến người ta giấu lỗi lần sau; post-mortem blameless nhìn vào QUY TRÌNH/HỆ THỐNG đã hở chỗ nào, để sửa cho mọi người, không phải để trừng phạt một người.',
+    },
+    {
+      id: 'principal-s4-q4',
+      prompt: '5 whys dùng để làm gì trong post-mortem?',
+      choices: [
+        'Hỏi 5 người khác nhau về sự cố',
+        'Đào liên tiếp "vì sao" từ triệu chứng bề mặt xuống NGUYÊN NHÂN GỐC, thay vì dừng ở lỗi hiện tượng',
+        'Viết đúng 5 dòng báo cáo',
+        'Kiểm tra 5 phần của hệ thống theo thứ tự cố định',
+      ],
+      answerIndex: 1,
+      explain:
+        '5 whys là kỹ thuật hỏi lặp "vì sao" để đi từ triệu chứng (server sập) xuống nguyên nhân gốc thật sự (thiếu giám sát ngưỡng bộ nhớ) — dừng sớm dễ chỉ vá triệu chứng.',
+    },
+    {
+      id: 'principal-s4-q5',
+      prompt: 'Vì sao sự cố AI thường "hỏng âm thầm" hơn sự cố phần mềm thường?',
+      choices: [
+        'Vì AI không bao giờ có lỗi',
+        'Vì AI trả lời SAI nhưng vẫn trông như một câu trả lời bình thường — không có crash/exception rõ ràng để báo động',
+        'Vì AI luôn crash ngay khi có lỗi, dễ phát hiện hơn phần mềm thường',
+        'Vì không ai dùng AI trong production',
+      ],
+      answerIndex: 1,
+      explain:
+        'Phần mềm lỗi thường crash hoặc trả mã lỗi rõ ràng; AI có thể trả lời sai một cách TỰ TIN và trơn tru — cần ngưỡng cảnh báo theo tỉ lệ lỗi/chất lượng thay vì chờ crash.',
+    },
+  ],
 }
 
 /** Quiz của một chặng; mảng RỖNG nghĩa là chặng CHƯA có bài kiểm — qua không cần quiz. */

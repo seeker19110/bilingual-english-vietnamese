@@ -112,6 +112,9 @@ const ProgrammingCoursePage = lazyWithRetry(
 const ProgrammingPathPage = lazyWithRetry(
   () => import('./pages/subjects/programming/ProgrammingPathPage'),
 )
+const ProgrammingPathStagePage = lazyWithRetry(
+  () => import('./pages/subjects/programming/ProgrammingPathStagePage'),
+)
 const ProgrammingPathDiagnostic = lazyWithRetry(
   () => import('./pages/subjects/programming/ProgrammingPathDiagnostic'),
 )
@@ -514,6 +517,16 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <ProgrammingPathDiagnostic />
+                          </RequireAuth>
+                        }
+                      />
+                      {/* Chặng riêng của lộ trình (đợt 4, P5 "Tầm trưởng") — dài hơn
+                          ':pathId' nên đặt trước, cùng luật '/huong/:specId/:stageId'. */}
+                      <Route
+                        path="/lap-trinh/lo-trinh/:pathId/chang/:stageId"
+                        element={
+                          <RequireAuth>
+                            <ProgrammingPathStagePage />
                           </RequireAuth>
                         }
                       />

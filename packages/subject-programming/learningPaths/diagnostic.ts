@@ -109,9 +109,10 @@ export const PRINCIPAL_AI_DIAGNOSTIC: DiagnosticQuestion[] = [
  * đây là công cụ chọn việc, thà học lại một chặng đã biết còn hơn bỏ sót một chặng còn hổng).
  *
  * Đi từ giai đoạn đầu: giai đoạn vững VÀ có chặng thật thì miễn toàn bộ chặng của nó; giai đoạn
- * đầu tiên KHÔNG vững (hoặc đang soạn, `stages` rỗng) mà có chặng thật thì là điểm vào. Nếu đi
- * hết mà không tìm được điểm vào (mọi giai đoạn có chặng đều vững) thì lùi về chặng CUỐI của
- * giai đoạn có chặng gần nhất — ví dụ P5 đang soạn thì lùi về chặng cuối P4.
+ * đầu tiên KHÔNG vững mà có chặng thật thì là điểm vào — "không vững" bao gồm cả trường hợp
+ * chẩn đoán chưa có câu hỏi nào phủ giai đoạn đó (bảo thủ: chưa hỏi thì chưa miễn) lẫn giai đoạn
+ * đang soạn (`stages` rỗng, bỏ qua không tính). Nếu đi hết mà không tìm được điểm vào (mọi giai
+ * đoạn có chặng đều vững) thì lùi về chặng CUỐI của giai đoạn có chặng gần nhất.
  */
 export function suggestEntry(
   path: LearningPath,

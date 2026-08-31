@@ -44,6 +44,7 @@ import {
 import { stageHasQuiz } from '@dhcb/subject-programming/learningPaths/stageQuizzes'
 import { getSpecStage } from '@dhcb/subject-programming/specializations/registry'
 import { unitsOfStage } from '@dhcb/subject-programming/specializations/stageUnits'
+import { getPathStage } from '@dhcb/subject-programming/learningPaths/pathStages'
 import PathStageQuiz from '../../../components/PathStageQuiz'
 import PathArtifactVault from '../../../components/PathArtifactVault'
 
@@ -144,13 +145,24 @@ export default function ProgrammingPathPage() {
             ) : (
               <ol className="space-y-2">
                 {phase.stages.map((ref) => {
-                  const stage = getSpecStage(ref.stageId)
+                  // Chặng có thể sống ở hai tầng: hướng chuyên sâu (nguồn chính) HOẶC chặng
+                  // RIÊNG của lộ trình (P5 "Tầm trưởng", principal-s1…s4) — thử tầng hướng
+                  // trước, đúng thứ tự ưu tiên của resolveStage().
+                  const specStage = getSpecStage(ref.stageId)
+                  const pathOwnStage = specStage ? undefined : getPathStage(ref.stageId)
+                  const stage = specStage ?? pathOwnStage
                   const xong =
                     isStageCompleted(progress, ref.stageId) ||
                     isPathStageDone(pathProgress, ref.stageId)
                   const mien = !xong && isPathStageSkipped(pathProgress, ref.stageId)
                   const coBai = unitsOfStage(ref.stageId).length > 0
                   const [specId] = ref.stageId.split('-')
+                  const duongVaoHoc = pathOwnStage
+                    ? `/lap-trinh/lo-trinh/${path.id}/chang/${ref.stageId}`
+                    : `/lap-trinh/huong/${specId}/${ref.stageId}`
+                  const duongXemBanDo = pathOwnStage
+                    ? `/lap-trinh/lo-trinh/${path.id}/chang/${ref.stageId}`
+                    : `/lap-trinh/huong/${specId}`
                   return (
                     <li
                       key={ref.stageId}
@@ -179,7 +191,7 @@ export default function ProgrammingPathPage() {
                       <p className="text-xs text-zinc-300 leading-relaxed">{ref.why}</p>
                       {coBai ? (
                         <button
-                          onClick={() => nav(`/lap-trinh/huong/${specId}/${ref.stageId}`)}
+                          onClick={() => nav(duongVaoHoc)}
                           className="tap-44 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-xs transition active:scale-[0.98]"
                         >
                           <Play className="w-3.5 h-3.5" aria-hidden="true" />
@@ -187,7 +199,7 @@ export default function ProgrammingPathPage() {
                         </button>
                       ) : (
                         <button
-                          onClick={() => nav(`/lap-trinh/huong/${specId}`)}
+                          onClick={() => nav(duongXemBanDo)}
                           className="tap-44 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-accent-500/60 text-zinc-200 font-semibold text-xs transition active:scale-[0.98]"
                         >
                           <Map className="w-3.5 h-3.5 text-accent-400" aria-hidden="true" />

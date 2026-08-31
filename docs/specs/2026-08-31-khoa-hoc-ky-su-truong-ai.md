@@ -19,7 +19,7 @@ kỹ sư trưởng AI (nắm nhiều trục kỹ thuật + vận hành AI hiệu
 | 1   | Hạ tầng `learningPaths` + manifest `principal-ai`        | thuần dữ liệu + UI đọc, 0 AI, 0 migration | —                                    |
 | 2   | Chẩn đoán chọn điểm vào + tiến độ lộ trình               | logic + 1 migration                       | Đợt 1                                |
 | 3   | Vòng lặp học có bằng chứng (quiz + artifact + Companion) | logic + AI + 1 migration                  | Đợt 1–2                              |
-| 4   | Giai đoạn 5 "Tầm trưởng" — nội dung mới                  | soạn nội dung (unit + bài học thật)       | Đợt 1 (dùng được ngay không cần 2–3) |
+| 4   | ✅ Giai đoạn 5 "Tầm trưởng" — nội dung mới               | soạn nội dung (unit + bài học thật)       | Đợt 1 (dùng được ngay không cần 2–3) |
 
 **Vì sao là tầng MỚI chứ không nhét vào tầng có sẵn:** ba tầng hiện có đều không khớp —
 `curriculum.ts` (xương sống P1–P6) là đường chung một chiều; `specializations/` là MỘT hướng
@@ -373,10 +373,11 @@ Giữ nguyên toàn bộ bất biến đợt 1–3; thêm: `SPEC_STAGE_UNITS` ch
 
 ## Rủi ro chung & điểm cần người dùng quyết khi duyệt
 
-1. **P5 rỗng lúc ra mắt (sau đợt 1–3):** chấp nhận hiện "đang soạn" hay giữ cả lộ trình ẩn
-   tới khi đợt 4 xong? **Đề xuất: hiện luôn từ đợt 1** — người học bắt đầu từ P1, vài tháng
-   mới chạm P5, kịp soạn.
-2. **`agentSim` (đợt 4)** là hạng mục đắt — đề xuất tách PR riêng, có thể lùi sau.
+1. ~~**P5 rỗng lúc ra mắt (sau đợt 1–3)**~~ — **ĐÃ XONG (đợt 4, 2026-08-31):** hiện luôn từ
+   đợt 1 như đề xuất; P5 nay đã có 4 chặng thật, không còn "đang soạn".
+2. ~~**`agentSim` (đợt 4)** là hạng mục đắt~~ — **không cần đến**: chặng `principal-s2` (Hệ
+   tác tử & MCP) dạy bằng cách tự cài vòng lặp agent thuần Python/JavaScript, chấm được bằng
+   test-case có sẵn, không cần mô phỏng tương tác riêng.
 3. **Chi phí AI đợt 3** dùng chung lượt `chat` Free/Pro hiện hành — không thêm chi phí mới,
    nhưng người học Free dùng nhiều sẽ hết lượt sớm hơn; chấp nhận?
 4. Mỗi đợt tạo PR theo đủ quy ước 4 bước (tiêu đề `feat(programming): ...`, auto-merge,

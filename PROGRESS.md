@@ -1142,25 +1142,31 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
      **Việc để ngỏ (cố ý, ghi trong đặc tả):** câu hỏi mở về cách xử lý nội dung khi hai công cụ
      đổi phiên bản nhanh — chưa chốt, không chặn hai khoá đã dùng được ngay hôm nay.
 
-- **[2026-08-31] 🚧 KHOÁ HỌC "KỸ SƯ TRƯỞNG AI" — lộ trình mục tiêu môn Lập trình, 4 đợt.**
-  Đặc tả `docs/specs/2026-08-31-khoa-hoc-ky-su-truong-ai.md`, người dùng đã duyệt thi hành
-  ("theo phương án tốt nhất": P5 hiện ngay từ đợt 1 ở trạng thái "đang soạn", `agentSim` đợt 4
-  tách PR riêng, Companion đợt 3 dùng chung lượt `chat`).
-  - **Đợt 1/4 — ✅ ĐÃ XONG (`#766`, nhật ký `docs/changelog/0207-*.md`):** tầng
+- **[2026-08-31] ✅ KHOÁ HỌC "KỸ SƯ TRƯỞNG AI" — lộ trình mục tiêu môn Lập trình, ĐÃ XONG TRỌN
+  VẸN CẢ 4 ĐỢT.** Đặc tả `docs/specs/2026-08-31-khoa-hoc-ky-su-truong-ai.md` +
+  `docs/specs/2026-08-31-dot-4-p5-tam-truong.md` (đặc tả con đợt 4), người dùng đã duyệt thi
+  hành ("theo phương án tốt nhất": P5 hiện ngay từ đợt 1 ở trạng thái "đang soạn" tới khi đợt 4
+  xong; Companion đợt 3 dùng chung lượt `chat`).
+  - **Đợt 1/4 — ✅ (`#766`, nhật ký `docs/changelog/0207-*.md`):** tầng
     `packages/subject-programming/learningPaths/` (khuôn giống `specializations/`) + manifest
     `principal-ai` (5 giai đoạn, 22 chặng lắp từ 8 hướng có sẵn) + trang
     `/lap-trinh/lo-trinh/:pathId`. Thuần dữ liệu + UI đọc, không migration, không AI.
-  - **Đợt 2/4 — ✅ ĐÃ XONG (`#769`, nhật ký `docs/changelog/0209-*.md`):** chẩn đoán chọn
+  - **Đợt 2/4 — ✅ (`#769`, nhật ký `docs/changelog/0209-*.md`):** chẩn đoán chọn
     điểm vào (`suggestEntry`, hàm thuần tất định, không AI) + tiến độ riêng của lộ trình
     (`programming.path_progress`, migration `0073`, trạng thái chỉ tốt lên).
-  - **Đợt 3/4 — ✅ ĐÃ XONG (nhật ký `docs/changelog/0210-*.md`):** quiz sau chặng (chấm ở
-    server, đạt ≥ 4/5 mới ghi `completed`; đã soạn 4/22 chặng, còn lại "chưa có bài kiểm" có
-    ghi chú) + kho artifact cá nhân (`programming.path_artifacts`, migration `0074`, không
-    chấm bằng AI) + Companion kiểm hiểu tuỳ chọn (`pathCheckPrompt.ts`, dùng chung lượt `chat`,
-    không lưu lại nội dung hội thoại).
-  - **Đợt 4/4 — chưa làm:** nội dung P5 "Tầm trưởng" (vận hành AI, agent/MCP, ADR, dẫn dắt) —
-    đặc tả con riêng từng chặng trước khi soạn. Cũng còn nợ: soạn quiz cho 18/22 chặng còn
-    lại của P1–P4 (đợt 3 chỉ làm 4 chặng đầu mỗi giai đoạn).
+  - **Đợt 3/4 — ✅ (nhật ký `docs/changelog/0210-*.md`):** quiz sau chặng (chấm ở
+    server, đạt ≥ 4/5 mới ghi `completed`; đã soạn 4/22 chặng của P1–P4, còn lại "chưa có bài
+    kiểm" có ghi chú) + kho artifact cá nhân (`programming.path_artifacts`, migration `0074`,
+    không chấm bằng AI) + Companion kiểm hiểu tuỳ chọn (`pathCheckPrompt.ts`, dùng chung lượt
+    `chat`, không lưu lại nội dung hội thoại).
+  - **Đợt 4/4 — ✅ ĐÃ XONG (nhật ký `docs/changelog/0211-*.md`):** nội dung P5 "Tầm trưởng" —
+    4 chặng RIÊNG của lộ trình `principal-s1…s4` (KHÔNG phải hướng chuyên sâu thứ 15; khai qua
+    `learningPaths/pathStages.ts`, tra bằng `resolveStage()`), 16 bài học 8 bước thật
+    (`p6-u94…p6-u101`) + 20 câu quiz mới, trang chặng riêng
+    `/lap-trinh/lo-trinh/:pathId/chang/:stageId`. `agentSim` hoá ra KHÔNG cần — vòng lặp agent
+    dạy và chấm được bằng code Python/JavaScript thuần. **Lộ trình "Kỹ Sư Trưởng AI" nay ĐẦY
+    ĐỦ P1→P5, không còn phần "đang soạn".** Còn nợ (không chặn, ghi lại để làm sau nếu cần):
+    quiz cho 18/22 chặng còn lại của P1–P4 (đợt 3 chỉ làm 4 chặng đầu mỗi giai đoạn).
 
 - **[2026-08-31] ✅ THIẾT KẾ LẠI WEB CHO DESKTOP — 4 PR, ĐÃ XONG TRỌN VẸN.** Trước đó web là
   "app mobile phóng to" ở mọi kích thước màn hình (BottomNav cố định đáy, dropdown Studio,
