@@ -66,6 +66,32 @@ export const UNITS: Record<string, UnitDef> = {
   'm/s': { factor: 1, dim: D(0, 1, -1) },
   'km/h': { factor: 1 / 3.6, dim: D(0, 1, -1) },
 
+  // ── Gia tốc ──
+  'm/s²': { factor: 1, dim: D(0, 1, -2) },
+  'm/s^2': { factor: 1, dim: D(0, 1, -2) },
+  'm/s2': { factor: 1, dim: D(0, 1, -2) },
+
+  // ── Độ cứng ──
+  'N/m': { factor: 1, dim: D(1, 0, -2) },
+
+  // ── Động lượng ──
+  'kg.m/s': { factor: 1, dim: D(1, 1, -1) },
+  'kg*m/s': { factor: 1, dim: D(1, 1, -1) },
+  'kg m/s': { factor: 1, dim: D(1, 1, -1) },
+  'N.s': { factor: 1, dim: D(1, 1, -1) },
+  'N*s': { factor: 1, dim: D(1, 1, -1) },
+  Ns: { factor: 1, dim: D(1, 1, -1) },
+
+  // ── Khối lượng riêng ──
+  'kg/m³': { factor: 1, dim: D(1, -3) },
+  'kg/m3': { factor: 1, dim: D(1, -3) },
+  'g/cm³': { factor: 1000, dim: D(1, -3) },
+  'g/cm3': { factor: 1000, dim: D(1, -3) },
+
+  // ── Tần số ──
+  Hz: { factor: 1, dim: D(0, 0, -1) },
+  'rad/s': { factor: 1, dim: D(0, 0, -1) },
+
   // ── Lực ──
   N: { factor: 1, dim: D(1, 1, -2) },
   kN: { factor: 1e3, dim: D(1, 1, -2) },
