@@ -82,8 +82,16 @@ Git cố ý dạy `echo "xxx go nham xxx"`, bài đặc tả nói "giả định
 - `npx vitest run packages/subject-programming/lessonsHermes.test.ts lessonsVibe.test.ts lessonsOpenclaw.test.ts lessons.test.ts`
   → xanh: mọi ví dụ mẫu mới chạy sạch trên bộ mô phỏng, mọi `sampleSolution` vẫn đạt 100% test-case.
 
-## 5. Đề xuất tiếp theo (chưa làm trong đợt này)
+## 5. Cổng CI (bổ sung 2026-08-31, người dùng chốt sau khi đọc báo cáo)
 
-Gắn `npm run audit:lessons -- --ci` vào job `unit` của CI để lớp lỗi ở mục 1 không quay lại. Chưa
-làm vì người dùng chốt phạm vi đợt này là "báo cáo + sửa lỗi tìm được"; bật cổng là quyết định
-riêng vì nó chặn merge.
+`npm run audit:lessons -- --ci` nay là **bước chặn CI**, đặt trong job `audit` của
+`.github/workflows/ci.yml` (job đó nằm trong `needs` của required status check `quality`, nên
+lỗi nội dung = PR không vào được `main`).
+
+Vì sao đặt ở `audit` chứ không phải `unit`: theo luật CI của dự án (CLAUDE.md mục 11.1 luật 1)
+bước mới phải gắn vào **job con hợp lý nhất**, không nối thêm vào job đã dài. `audit` là job
+ngắn nhất (~40 giây), còn lượt rà này chỉ mất ~5 giây và không có I/O — nó không đụng tới đường
+tới hạn, trong khi `unit` là một trong hai job dài nhất.
+
+Đã kiểm chứng cổng **thật sự đỏ**, không phải xanh suông: cố ý làm ví dụ mẫu của `hermes-u1-l2`
+trùng lại lời giải → script thoát mã 1 và gọi đúng tên bài; khôi phục → thoát mã 0.

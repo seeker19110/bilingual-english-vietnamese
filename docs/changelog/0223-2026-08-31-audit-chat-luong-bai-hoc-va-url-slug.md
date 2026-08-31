@@ -42,8 +42,9 @@ là cách chắc chắn để một trang nào đó quên phần tiêu đề r�
 
 1. **Không sửa 4 bài "lời giải một lệnh".** Bài dạy đọc bảng trạng thái chỉ có đúng một lệnh để
    gõ; thêm thao tác cho khác ví dụ mẫu là bịa việc. Script hạ mức xuống cảnh báo kèm lý do.
-2. **Chưa gắn `audit:lessons` vào CI.** Phạm vi người dùng chốt cho đợt này là "báo cáo + sửa lỗi
-   tìm được"; bật cổng chặn merge là quyết định riêng — đã ghi thành đề xuất ở cuối báo cáo.
+2. **`audit:lessons` ĐÃ thành cổng chặn CI** (người dùng chốt ngay sau khi đọc báo cáo, làm ở
+   đợt 0224). Đặt trong job `audit` — job ngắn nhất — chứ không phải `unit`, theo luật CI mục
+   11.1: bước mới gắn vào job con hợp lý nhất, không nối vào job đã dài.
 
 ## Bằng chứng kiểm chứng
 
