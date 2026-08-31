@@ -31,7 +31,7 @@ describe('cầu nối chặng chuyên sâu → unit bài học', () => {
   })
 
   it('chặng chưa soạn bài trả về mảng rỗng, không đoán bừa', () => {
-    expect(unitsOfStage('web-s3')).toEqual([])
+    expect(unitsOfStage('architecture-s2')).toEqual([])
     expect(unitsOfStage('khong-co-huong-nay-s1')).toEqual([])
   })
 
