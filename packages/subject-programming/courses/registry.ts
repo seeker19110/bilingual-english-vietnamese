@@ -4,8 +4,9 @@
 // 1 phần tử vào mảng dưới đây.
 import type { ShortCourse, ShortCourseId } from './types.js'
 import { GIT_COURSE } from './git.js'
+import { HERMES_COURSE } from './hermes.js'
 
-export const SHORT_COURSES: ShortCourse[] = [GIT_COURSE]
+export const SHORT_COURSES: ShortCourse[] = [GIT_COURSE, HERMES_COURSE]
 
 const courseMap = new Map(SHORT_COURSES.map((c) => [c.id, c]))
 

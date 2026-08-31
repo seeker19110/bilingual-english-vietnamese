@@ -60,3 +60,38 @@ test('trang môn Lập trình có lối vào khoá ngắn', async ({ page }) => 
   await page.getByRole('button', { name: /Git & GitHub thực hành/ }).click()
   await expect(page).toHaveURL('/lap-trinh/khoa/git')
 })
+
+// ── Khoá Hermes (PR khoá Hermes — docs/specs/2026-08-31-khoa-dieu-phoi-ai-van-phong.md) ──
+// Cùng bất biến với khoá Git: vào thẳng khi chưa học bậc nào vẫn học được bài đầu ngay.
+
+test('chưa học bậc nào vẫn vào thẳng khoá Hermes học được ngay', async ({ page }) => {
+  await mockLogin(page, 'vi', 'dark-blue')
+  await gioLapTiendo(page, [])
+  await page.goto('/lap-trinh/khoa/hermes', { waitUntil: 'domcontentloaded' })
+
+  await expect(
+    page.getByRole('heading', { name: 'Hermes Agent — trợ lý AI cho người đi làm' }),
+  ).toBeVisible()
+  await expect(page.getByRole('button', { name: /Học bài:/ }).first()).toBeVisible()
+})
+
+test('bấm vào bài trong khoá Hermes dẫn đúng bài đầu chương C1', async ({ page }) => {
+  await mockLogin(page, 'vi', 'dark-blue')
+  await gioLapTiendo(page, [])
+  await page.goto('/lap-trinh/khoa/hermes', { waitUntil: 'domcontentloaded' })
+
+  await page
+    .getByRole('button', { name: /Học bài:/ })
+    .first()
+    .click()
+  await expect(page).toHaveURL(/\/lap-trinh\/bai-hoc\/hermes-u1-l1(--[a-z0-9-]+)?$/)
+})
+
+test('trang môn Lập trình có lối vào khoá Hermes', async ({ page }) => {
+  await mockLogin(page, 'vi', 'dark-blue')
+  await gioLapTiendo(page, [])
+  await page.goto('/lap-trinh', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: /Hermes Agent — trợ lý AI cho người đi làm/ }).click()
+  await expect(page).toHaveURL('/lap-trinh/khoa/hermes')
+})
