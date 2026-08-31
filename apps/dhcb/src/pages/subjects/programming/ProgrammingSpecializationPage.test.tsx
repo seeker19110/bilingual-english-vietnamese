@@ -28,7 +28,9 @@ const NHAN_VAO_HOC = 'Vào học chặng này'
 describe('ProgrammingSpecializationPage — lối vào bài học', () => {
   // Số chặng đã soạn của hướng `web` còn tăng theo từng đợt nội dung, nên đếm TỪ DỮ LIỆU
   // chứ không ghi cứng — ghi cứng thì mỗi đợt soạn bài mới là cổng này đỏ oan một lần.
-  const CHANG_WEB_DA_CO_BAI = ['web-s1', 'web-s4'].filter((id) => unitsOfStage(id).length > 0)
+  const CHANG_WEB_DA_CO_BAI = ['web-s1', 'web-s2', 'web-s3', 'web-s4'].filter(
+    (id) => unitsOfStage(id).length > 0,
+  )
 
   it('hướng đã soạn bài: hiện lối vào ĐÚNG bằng số chặng đã có bài, kèm tên unit thật', () => {
     const html = render('web')
