@@ -56,11 +56,6 @@ export const SPEC_STAGE_UNITS: Record<string, string[]> = {
   // m2+m4 (render + kiến trúc — cả hai là quyết định CẤU TRÚC lớn), p6-u116 gộp m3+m5
   // (kiểm thử + bảo mật — cả hai là gác CHẤT LƯỢNG/AN TOÀN trước khi release)).
   'web-s3': ['p6-u114', 'p6-u115', 'p6-u116'],
-  // Hướng Kiến trúc, chặng S2 — soạn 2026-08-31 (3 unit, 4 module: p6-u117 = m1 (mô hình hoá
-  // miền), p6-u118 = m2 (hợp đồng kiểm được), p6-u119 gộp m3+m4 (tiến hoá không phá + dữ liệu
-  // là phần khó đổi nhất — cả hai cùng trả lời "đổi hợp đồng đã có người dùng thế nào cho an
-  // toàn"). Đúng tiền lệ web-s1/backend-s2 gộp module khi hợp lý.
-  'architecture-s2': ['p6-u117', 'p6-u118', 'p6-u119'],
 }
 
 /** Unit của một chặng; mảng RỖNG nghĩa là chặng chưa có bài (giao diện phải nói rõ điều đó). */

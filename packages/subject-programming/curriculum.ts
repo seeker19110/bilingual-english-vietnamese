@@ -588,25 +588,9 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Hướng Web S3 — kiểm thử & bảo mật: kim tự tháp test, XSS/CSRF/rate limit',
         topics: 'Tỉ lệ unit/integration/E2E khoẻ mạnh; phân loại lỗ hổng; giới hạn tốc độ gọi',
       },
-      // p6-u117…u119: chặng S2 "Hợp đồng & mô hình miền" của hướng Kiến trúc
-      // (architecture-s2, specializations/architecture.ts, 4 module — u119 gộp m3+m4).
-      {
-        id: 'p6-u117',
-        title: 'Hướng Kiến trúc S2 — mô hình hoá miền: ngôn ngữ chung, ngữ cảnh giới hạn',
-        topics: 'Cùng chữ "đơn hàng" hai nghĩa ở kho và kế toán; thực thể vs giá trị; bất biến',
-      },
-      {
-        id: 'p6-u118',
-        title: 'Hướng Kiến trúc S2 — hợp đồng kiểm được: schema lúc chạy, union phân biệt',
-        topics: 'Kiểu bốc hơi lúc chạy nên phải kiểm ở biên; trạng thái sai bất khả biểu diễn',
-      },
-      {
-        id: 'p6-u119',
-        title: 'Hướng Kiến trúc S2 — tiến hoá & dữ liệu: mở rộng rồi thu hẹp, tiền/thời gian/mã',
-        topics: 'Bốn bước đổi schema không downtime; nguồn sự thật duy nhất; ba chỗ sai đắt nhất',
-      },
       // p6-u120…u122: chặng S2 "Kỹ sư dữ liệu — đường ống" của hướng Dữ liệu (data-s2,
-      // specializations/data.ts, 4 module). Dải u117…u119 đã thuộc architecture-s2.
+      // specializations/data.ts, 4 module). Dải u117…u119 thuộc architecture-s2 (PR #783,
+      // soạn song song trong cùng phiên — đăng ký riêng ở PR đó để tránh trùng).
       {
         id: 'p6-u120',
         title: 'Hướng Dữ liệu S2 — ETL/ELT: nạp gia tăng theo mốc nước, ghi idempotent',
