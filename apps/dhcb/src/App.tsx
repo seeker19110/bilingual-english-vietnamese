@@ -8,6 +8,7 @@ import { useAuth } from './context/useAuth'
 import { CardListSkeleton } from './components/Skeleton'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import BottomNav from './components/BottomNav'
+import DesktopSidebar from './components/DesktopSidebar'
 import PromoEndingBanner from './components/PromoEndingBanner'
 import PlanExpiryBanner from './components/PlanExpiryBanner'
 import { lazyWithRetry } from './lib/lazyWithRetry'
@@ -245,10 +246,19 @@ export default function App() {
           <ToastProvider>
             <BrowserRouter>
               <CanonicalUpdater />
+              {/* Chỉ hiện từ 1024px (`lg:`) — xem components/DesktopSidebar.tsx.
+                  Ở ngoài ErrorBoundary/div kéo 1 tay vì tự định vị `fixed`, giống BottomNav. */}
+              <DesktopSidebar />
               <ErrorBoundary>
                 {/* Bọc toàn bộ nội dung định tuyến để hỗ trợ kéo 1 tay (không bọc
-                    BottomNav — giữ cố định để luôn bấm được dù đang kéo xuống) */}
-                <div style={oneHandedDrag.contentStyle}>
+                    BottomNav — giữ cố định để luôn bấm được dù đang kéo xuống).
+                    `lg:pl-[var(--sidebar-w)]` chừa lề trái cho DesktopSidebar — biến CSS
+                    đổi theo trạng thái thu gọn/mở rộng nên không cần biết sidebar rộng
+                    bao nhiêu ở đây (xem index.css). */}
+                <div
+                  className="lg:pl-[var(--sidebar-w)] transition-[padding] duration-200"
+                  style={oneHandedDrag.contentStyle}
+                >
                   <Suspense fallback={<PageLoading />}>
                     <Routes>
                       <Route path="/login" element={<Login />} />
