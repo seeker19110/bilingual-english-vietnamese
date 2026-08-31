@@ -443,6 +443,51 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Hướng Backend S1 — vận hành: ba nhóm lỗi, log lần ra được, tắt êm',
         topics: 'Ai bị đánh thức; log có cấu trúc + mã yêu cầu, che dữ liệu nhạy cảm; tắt êm',
       },
+      // u94…u101 là 4 CHẶNG RIÊNG CỦA LỘ TRÌNH "Kỹ Sư Trưởng AI" (principal-s1…s4, giai đoạn
+      // P5 "Tầm trưởng") — không phải hướng chuyên sâu thứ 15, xem
+      // `packages/subject-programming/learningPaths/pathStages.ts`. Đặc tả:
+      // `docs/specs/2026-08-31-dot-4-p5-tam-truong.md`. Dải để dành cho S2/S3 của 11 hướng
+      // (từng ghi `u94 trở đi` ở đặc tả `dai-ma-unit-s1-cac-huong-con-lai.md`) dời xuống u102+.
+      {
+        id: 'p6-u94',
+        title: 'Tầm trưởng S1 — đặc tả giao việc cho AI',
+        topics: '6 ô bắt buộc của đặc tả; tiêu chí chấp nhận đo được vs mơ hồ',
+      },
+      {
+        id: 'p6-u95',
+        title: 'Tầm trưởng S1 — eval & ngân sách chi phí',
+        topics: 'Recall/precision trên bộ ca vàng; ước lượng token, cache prompt, điểm hoà vốn',
+      },
+      {
+        id: 'p6-u96',
+        title: 'Tầm trưởng S2 — vòng lặp agent tối giản',
+        topics: 'Bảng tool + dispatch theo tên; vòng lặp nhiều bước có điều kiện dừng, log',
+      },
+      {
+        id: 'p6-u97',
+        title: 'Tầm trưởng S2 — tool-use an toàn & MCP',
+        topics: 'Validate tham số, allowlist; MCP là hợp đồng liệt kê/gọi tool chuẩn hoá',
+      },
+      {
+        id: 'p6-u98',
+        title: 'Tầm trưởng S3 — ADR & build vs buy',
+        topics: 'Khuôn 5 phần của ADR; điểm hoà vốn tự vận hành vs thuê API',
+      },
+      {
+        id: 'p6-u99',
+        title: 'Tầm trưởng S3 — RAG vs fine-tune, chọn model theo chi phí',
+        topics: 'Chọn theo tần suất đổi dữ liệu; loại phương án bị áp đảo, đường biên hiệu quả',
+      },
+      {
+        id: 'p6-u100',
+        title: 'Tầm trưởng S4 — review công việc AI',
+        topics: 'Checklist 5 điểm; đọc diff theo thứ tự rủi ro',
+      },
+      {
+        id: 'p6-u101',
+        title: 'Tầm trưởng S4 — post-mortem & trách nhiệm vận hành',
+        topics: '5 whys không đổ lỗi; sự cố AI hỏng âm thầm, ngưỡng cảnh báo',
+      },
     ],
   },
 ]

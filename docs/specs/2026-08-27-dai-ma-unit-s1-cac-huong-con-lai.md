@@ -23,7 +23,9 @@ Thiếu sót này chỉ lộ ra khi bắt tay soạn bài đầu tiên cho `back
 ## 2. Quyết định
 
 **S1 của 11 hướng còn lại dùng `p6-u61…p6-u93`** (11 hướng × 3 unit = 33 mã), theo thứ tự
-thi hành dưới đây. **Dải để dành cho S2/S3 dời xuống `p6-u94` trở đi.**
+thi hành dưới đây. **Dải để dành cho S2/S3 dời xuống `p6-u102` trở đi** (đã dời thêm một lần nữa: `p6-u94…p6-u101`
+dùng cho 4 chặng RIÊNG của lộ trình "Kỹ Sư Trưởng AI" P5 "Tầm trưởng", không phải S2/S3 của
+hướng nào — xem `docs/specs/2026-08-31-dot-4-p5-tam-truong.md`).
 
 | #   | Hướng      | Mã chặng      | Unit                           | Trạng thái |
 | --- | ---------- | ------------- | ------------------------------ | ---------- |
@@ -43,7 +45,9 @@ thi hành dưới đây. **Dải để dành cho S2/S3 dời xuống `p6-u94` tr
 
 - **Không mã nào đã phát hành bị đổi.** Mã unit là khoá tiến độ trong Postgres
   (`programming.lesson_progress`), nên đổi mã cũ là mất tiến độ của người học. Dải `u61+` mới
-  chỉ ĐƯỢC ĐỂ DÀNH chứ chưa unit nào dùng, nên dời nó xuống `u94` không ảnh hưởng ai.
+  chỉ ĐƯỢC ĐỂ DÀNH chứ chưa unit nào dùng nên dời được tự do; đã dời hai lần: trước xuống `u94`,
+  rồi `u94…u101` bị chiếm bởi 4 chặng P5 của lộ trình mục tiêu (đợt 4), nên dải để dành nay ở
+  `u102` trở đi.
 - **Đặt S1 ngay sau S4 thay vì cuối bảng.** Phương án khác là nhét S1 xuống sau S2/S3
   (`u139+`). Bỏ vì S1 là chặng sẽ được soạn TRƯỚC S2/S3 trong thực tế — người học vào hướng
   mới cần chặng nhập môn trước — nên để nó gần là hợp với thứ tự làm việc thật.
@@ -73,6 +77,7 @@ thi hành dưới đây. **Dải để dành cho S2/S3 dời xuống `p6-u94` tr
 
 ## 5. Việc để ngỏ
 
-- Dải `p6-u94` trở đi để dành cho S2/S3; đặc tả S4 (mục "Bảng cấp mã unit") cần sửa dòng nói
-  `u61 trở đi` — đã sửa trong PR này.
+- Dải `p6-u102` trở đi để dành cho S2/S3 (cập nhật 2026-08-31: `u94…u101` đã dùng cho P5 của
+  lộ trình "Kỹ Sư Trưởng AI", xem `docs/specs/2026-08-31-dot-4-p5-tam-truong.md`); đặc tả S4
+  (mục "Bảng cấp mã unit") cần sửa dòng nói `u61 trở đi` — đã sửa trong PR này.
 - 10 hướng còn lại của bảng mục 2 chưa soạn bài nào.

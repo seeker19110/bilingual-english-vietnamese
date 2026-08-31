@@ -2,16 +2,16 @@
 // trang trắng, nên mọi mã trong bảng phải TỒN TẠI THẬT ở cả hai đầu.
 import { describe, expect, it } from 'vitest'
 import { SPEC_STAGE_UNITS, unitsOfStage, specHasLessons } from './stageUnits.js'
-import { getSpecStage } from './registry.js'
+import { resolveStage } from '../learningPaths/pathStages.js'
 import { PROGRAMMING_LEVELS } from '../curriculum.js'
 import { getLessonsByUnit } from '../lessons.js'
 
 const UNIT_IDS = new Set(PROGRAMMING_LEVELS.flatMap((l) => l.units.map((u) => u.id)))
 
 describe('cầu nối chặng chuyên sâu → unit bài học', () => {
-  it('mọi chặng khai trong bảng đều là chặng CÓ THẬT', () => {
+  it('mọi chặng khai trong bảng đều là chặng CÓ THẬT (hướng chuyên sâu HOẶC chặng riêng của lộ trình)', () => {
     for (const stageId of Object.keys(SPEC_STAGE_UNITS)) {
-      expect(getSpecStage(stageId), `chặng ${stageId} không có trong bản đồ hướng`).toBeDefined()
+      expect(resolveStage(stageId), `chặng ${stageId} không có trong bản đồ hướng`).toBeDefined()
     }
   })
 

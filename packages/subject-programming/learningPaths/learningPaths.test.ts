@@ -12,7 +12,7 @@ import {
   countPathStages,
   isPhaseDrafting,
 } from './registry.js'
-import { getSpecStage } from '../specializations/registry.js'
+import { resolveStage } from './pathStages.js'
 import { PROGRAMMING_LEVEL_IDS } from '../curriculum.js'
 
 describe('lộ trình mục tiêu môn Lập trình', () => {
@@ -22,10 +22,10 @@ describe('lộ trình mục tiêu môn Lập trình', () => {
     expect(new Set(ids).size).toBe(ids.length)
   })
 
-  it('MỌI stageId trong manifest tra ra được qua getSpecStage — chỉ tham chiếu, không bịa', () => {
+  it('MỌI stageId trong manifest tra ra được (hướng chuyên sâu hoặc chặng riêng của lộ trình) — chỉ tham chiếu, không bịa', () => {
     for (const path of LEARNING_PATHS) {
       for (const ref of pathStageRefs(path)) {
-        expect(getSpecStage(ref.stageId), `${path.id}: chặng lạ ${ref.stageId}`).toBeDefined()
+        expect(resolveStage(ref.stageId), `${path.id}: chặng lạ ${ref.stageId}`).toBeDefined()
       }
     }
   })
@@ -122,15 +122,19 @@ describe('lộ trình mục tiêu môn Lập trình', () => {
     }
   })
 
-  it('lộ trình principal-ai: P1–P4 đã lắp chặng thật, P5 đang soạn (theo đặc tả đợt 1)', () => {
+  it('lộ trình principal-ai: cả 5 giai đoạn đã lắp chặng thật (P5 xong ở đợt 4)', () => {
     const path = getLearningPath('principal-ai')!
     expect(path.phases).toHaveLength(5)
-    for (const phase of path.phases.slice(0, 4)) {
+    for (const phase of path.phases) {
       expect(phase.stages.length, `${phase.id} phải có chặng`).toBeGreaterThanOrEqual(4)
     }
-    expect(isPhaseDrafting(path.phases[4]!)).toBe(true)
+    expect(isPhaseDrafting(path.phases[4]!)).toBe(false)
     // Trục AI trọn vẹn S1→S4 phải nằm trong lộ trình — đây là trục chuyên môn lõi.
     const ids = pathStageRefs(path).map((r) => r.stageId)
     for (const s of ['ai-s1', 'ai-s2', 'ai-s3', 'ai-s4']) expect(ids).toContain(s)
+    // Giai đoạn P5 "Tầm trưởng" là 4 chặng RIÊNG của lộ trình (đợt 4).
+    for (const s of ['principal-s1', 'principal-s2', 'principal-s3', 'principal-s4']) {
+      expect(ids).toContain(s)
+    }
   })
 })

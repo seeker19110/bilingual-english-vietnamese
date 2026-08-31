@@ -21,6 +21,13 @@ export const SPEC_STAGE_UNITS: Record<string, string[]> = {
   // Hướng Backend, chặng S1 — soạn 2026-08-27 (3 unit). Dải `p6-u61…p6-u93` dành cho S1 của
   // 11 hướng còn lại; đặc tả: `docs/specs/2026-08-27-dai-ma-unit-s1-cac-huong-con-lai.md`.
   'backend-s1': ['p6-u61', 'p6-u62', 'p6-u63'],
+  // 4 chặng RIÊNG của lộ trình "Kỹ Sư Trưởng AI", giai đoạn P5 "Tầm trưởng" — soạn 2026-08-31
+  // (đợt 4). Không phải hướng chuyên sâu — xem `learningPaths/pathStages.ts`. Đặc tả:
+  // `docs/specs/2026-08-31-dot-4-p5-tam-truong.md`.
+  'principal-s1': ['p6-u94', 'p6-u95'],
+  'principal-s2': ['p6-u96', 'p6-u97'],
+  'principal-s3': ['p6-u98', 'p6-u99'],
+  'principal-s4': ['p6-u100', 'p6-u101'],
 }
 
 /** Unit của một chặng; mảng RỖNG nghĩa là chặng chưa có bài (giao diện phải nói rõ điều đó). */

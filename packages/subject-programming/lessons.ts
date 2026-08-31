@@ -79,6 +79,16 @@ import { P6U24_LESSONS } from './lessons/p6u24.js'
 import { P6U61_LESSONS } from './lessons/p6u61.js'
 import { P6U62_LESSONS } from './lessons/p6u62.js'
 import { P6U63_LESSONS } from './lessons/p6u63.js'
+// Đợt 4 lộ trình "Kỹ Sư Trưởng AI" — 4 chặng riêng principal-s1…s4, giai đoạn P5 "Tầm
+// trưởng". Đặc tả: docs/specs/2026-08-31-dot-4-p5-tam-truong.md.
+import { P6_U94_LESSONS } from './lessons/p6u94.js'
+import { P6_U95_LESSONS } from './lessons/p6u95.js'
+import { P6_U96_LESSONS } from './lessons/p6u96.js'
+import { P6_U97_LESSONS } from './lessons/p6u97.js'
+import { P6_U98_LESSONS } from './lessons/p6u98.js'
+import { P6_U99_LESSONS } from './lessons/p6u99.js'
+import { P6_U100_LESSONS } from './lessons/p6u100.js'
+import { P6_U101_LESSONS } from './lessons/p6u101.js'
 import { GIT_U2_LESSONS } from './lessons/gitu2.js'
 import { GIT_U3_LESSONS } from './lessons/gitu3.js'
 import { GIT_U4_LESSONS } from './lessons/gitu4.js'
@@ -171,6 +181,14 @@ export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...P6U61_LESSONS,
   ...P6U62_LESSONS,
   ...P6U63_LESSONS,
+  ...P6_U94_LESSONS,
+  ...P6_U95_LESSONS,
+  ...P6_U96_LESSONS,
+  ...P6_U97_LESSONS,
+  ...P6_U98_LESSONS,
+  ...P6_U99_LESSONS,
+  ...P6_U100_LESSONS,
+  ...P6_U101_LESSONS,
   ...GIT_U2_LESSONS,
   ...GIT_U3_LESSONS,
   ...GIT_U4_LESSONS,

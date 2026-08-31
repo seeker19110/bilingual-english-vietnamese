@@ -178,8 +178,29 @@ export const PRINCIPAL_AI_PATH: LearningPath = {
       name: 'Tầm trưởng — vận hành AI & dẫn dắt',
       canDo:
         'Vận hành AI hiệu quả ở quy mô đội: viết đặc tả giao việc cho AI, thiết kế eval, quản chi phí, quyết định kiến trúc bằng ADR, review và dẫn dắt người khác.',
-      // ĐANG SOẠN (đợt 4 của đặc tả) — rỗng là trạng thái hợp lệ, UI phải nói rõ "đang soạn".
-      stages: [],
+      // Đợt 4 (đặc tả con: docs/specs/2026-08-31-dot-4-p5-tam-truong.md) — 4 chặng RIÊNG của
+      // lộ trình (KHÔNG phải hướng chuyên sâu thứ 15), xem `learningPaths/pathStages.ts`.
+      stages: [
+        {
+          stageId: 'principal-s1',
+          why: 'Vận hành AI bắt đầu từ đặc tả rõ và cách đo chất lượng — không có hai thứ này thì AI làm gì cũng khó biết đúng hay sai.',
+        },
+        {
+          stageId: 'principal-s2',
+          why: 'Hệ tác tử & MCP là cách AI hôm nay thật sự VẬN HÀNH ngoài đời — hiểu cơ chế bên trong để không bị nó làm hộp đen lần hai.',
+          requires: ['principal-s1'],
+        },
+        {
+          stageId: 'principal-s3',
+          why: 'Có đặc tả và hiểu cơ chế rồi thì tới lượt RA QUYẾT ĐỊNH kiến trúc — bằng số, ghi lại bằng ADR để người sau hiểu vì sao.',
+          requires: ['principal-s2'],
+        },
+        {
+          stageId: 'principal-s4',
+          why: 'Đỉnh của tầm trưởng là DẪN DẮT: review việc AI làm và người khác làm, chịu trách nhiệm khi hệ AI hỏng.',
+          requires: ['principal-s3'],
+        },
+      ],
       artifact: {
         name: 'Capstone: hệ AI có người dùng thật',
         brief:
