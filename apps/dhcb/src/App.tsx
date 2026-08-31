@@ -29,6 +29,7 @@ const Home = lazyWithRetry(() => import('./pages/core/Home'))
 const History = lazyWithRetry(() => import('./pages/core/History'))
 const Dashboard = lazyWithRetry(() => import('./pages/core/Dashboard'))
 const Profile = lazyWithRetry(() => import('./pages/core/Profile'))
+const Pricing = lazyWithRetry(() => import('./pages/core/Pricing'))
 const Onboarding = lazyWithRetry(() => import('./pages/core/Onboarding'))
 const Intake = lazyWithRetry(() => import('./pages/core/Intake'))
 const MistakeBank = lazyWithRetry(() => import('./pages/core/MistakeBank'))
@@ -283,6 +284,16 @@ export default function App() {
                         element={
                           <RequireAuth>
                             <Profile />
+                          </RequireAuth>
+                        }
+                      />
+                      {/* Bảng giá / nâng cấp gói — tách khỏi trang Hồ sơ để so sánh 4 gói
+                          cạnh nhau trên desktop (audit UI/UX 2026-08-31 mục B9). */}
+                      <Route
+                        path="/nang-cap"
+                        element={
+                          <RequireAuth>
+                            <Pricing />
                           </RequireAuth>
                         }
                       />

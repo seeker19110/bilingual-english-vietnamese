@@ -16,6 +16,7 @@ import type { WritingSubmission, Direction } from '../../../types'
 import { effectivePlan } from '../../../lib/promo'
 import { getLimits } from '../../../lib/appSettings'
 import { useEdgeAi } from '../../../lib/edgeAi/useEdgeAi.js'
+import { useIsDesktopViewport } from '../../../lib/useIsDesktopViewport'
 import EdgeAiIndicator from '../../../components/EdgeAi/EdgeAiIndicator'
 
 // Đề bài mẫu — Chiều A: đề IELTS tiếng Anh | Chiều B: đề viết tiếng Việt
@@ -70,7 +71,10 @@ function ScoreBar({ label, score }: { label: string; score: number }) {
   )
 }
 
-function ResultView({
+// ResultPanel — RUỘT của phần kết quả chấm (không kèm khung trang).
+// Tách riêng để dùng lại ở CẢ HAI bố cục: mobile (trang riêng, `ResultView`) và
+// desktop (cột phải cạnh khung soạn bài).
+function ResultPanel({
   feedback,
   onReset,
   dir,
@@ -90,117 +94,134 @@ function ResultView({
         : 'from-rose-500 via-red-400 to-orange-400'
 
   return (
-    <div className="min-h-dvh bg-zinc-950">
-      <Layout title={isA ? 'Kết quả chấm bài IELTS' : 'Writing Results'} />
-      <main className="max-w-2xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-4.5 animate-fade-up">
-        <div className="bg-gradient-to-b from-zinc-900/90 via-zinc-900/80 to-zinc-950/90 border border-zinc-800/80 rounded-3xl p-7 text-center shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-violet-500/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 flex items-center justify-center mx-auto mb-4 shadow-xl shadow-violet-500/30 p-3.5">
-            <Trophy className="w-8 h-8 text-white drop-shadow-md" />
-          </div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1">
-            {isA ? 'Điểm ước lượng IELTS Overall' : 'Estimated IELTS Band'}
-          </p>
-          <div
-            className={`text-7xl sm:text-8xl font-black bg-gradient-to-b ${scoreGradient} bg-clip-text text-transparent leading-none py-2 tracking-tight drop-shadow-sm`}
-          >
-            {overall}
-          </div>
-          <p className="text-sm font-medium text-zinc-300 mt-3 max-w-sm mx-auto leading-relaxed">
-            {feedback.encouragement}
-          </p>
+    <div className="space-y-4.5 animate-fade-up">
+      <div className="bg-gradient-to-b from-zinc-900/90 via-zinc-900/80 to-zinc-950/90 border border-zinc-800/80 rounded-3xl p-7 text-center shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-violet-500/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 flex items-center justify-center mx-auto mb-4 shadow-xl shadow-violet-500/30 p-3.5">
+          <Trophy className="w-8 h-8 text-white drop-shadow-md" />
         </div>
-
-        <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-6 space-y-4 shadow-sm animate-fade-in delay-100 backdrop-blur-md">
-          <p className="text-sm font-bold text-zinc-100 mb-4 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-violet-500" />
-            {isA ? 'Chi tiết 4 tiêu chí chấm điểm' : 'Score breakdown'}
-          </p>
-          <ScoreBar label="Task Response" score={feedback.scores.task_response} />
-          <ScoreBar label="Coherence & Cohesion" score={feedback.scores.coherence} />
-          <ScoreBar label="Lexical Resource" score={feedback.scores.lexical} />
-          <ScoreBar label="Grammatical Range" score={feedback.scores.grammar} />
-        </div>
-
-        {feedback.errors.length > 0 && (
-          <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-6 space-y-3.5 shadow-sm animate-fade-in delay-150">
-            <p className="text-sm font-bold text-zinc-100 mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-rose-500" />
-              {isA ? 'Lỗi cần sửa' : 'Errors to fix'}
-              <span className="ml-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/25">
-                {feedback.errors.length}
-              </span>
-            </p>
-            <div className="space-y-3">
-              {feedback.errors.map((err, i) => (
-                <div
-                  key={i}
-                  className="border border-zinc-800/90 rounded-2xl overflow-hidden shadow-inner bg-zinc-950/60"
-                >
-                  <div className="px-3.5 py-2.5 bg-red-500/10 border-b border-zinc-800/80">
-                    <p className="text-xs text-red-300 theme-light:text-red-700 font-medium line-through">
-                      {err.original}
-                    </p>
-                  </div>
-                  <div className="px-3.5 py-2.5 bg-emerald-500/10 border-b border-zinc-800/80">
-                    <p className="text-xs text-emerald-300 theme-light:text-emerald-800 font-semibold">
-                      → {err.corrected}
-                    </p>
-                  </div>
-                  <div className="px-3.5 py-2.5">
-                    <p className="text-xs text-zinc-400">{err.explanation}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-6 shadow-sm animate-fade-in delay-200">
-          <p className="text-sm font-bold text-zinc-100 mb-3.5 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-500" />
-            {isA ? 'Gợi ý nâng band' : 'Suggestions to improve'}
-          </p>
-          <ul className="space-y-2.5">
-            {feedback.suggestions.map((s, i) => (
-              <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-zinc-300">
-                <span className="text-amber-400 shrink-0 font-bold mt-0.5">✦</span>
-                <span className="leading-relaxed">{s}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-6 shadow-sm animate-fade-in delay-250">
-          <button
-            onClick={() => setShowSample((p) => !p)}
-            className="flex items-center justify-between w-full"
-            aria-expanded={showSample}
-            aria-label={isA ? 'Hiện/ẩn đoạn văn mẫu' : 'Toggle sample paragraph'}
-          >
-            <p className="text-sm font-bold text-zinc-100 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-sky-500" />
-              {isA ? 'Đoạn văn mẫu tham khảo' : 'Sample paragraph'}
-            </p>
-            <ChevronDown
-              className={`w-4 h-4 text-zinc-400 transition-transform duration-200 ${showSample ? 'rotate-180' : ''}`}
-            />
-          </button>
-          {showSample && (
-            <p className="mt-3.5 text-xs sm:text-sm text-zinc-200 leading-relaxed bg-zinc-950/80 rounded-2xl p-4.5 border border-zinc-800/80 shadow-inner">
-              {feedback.sample}
-            </p>
-          )}
-        </div>
-
-        <button
-          onClick={onReset}
-          aria-label={isA ? 'Bài viết mới' : 'New essay'}
-          className="w-full flex items-center justify-center gap-2 border border-zinc-800 hover:border-zinc-700 bg-zinc-900/80 text-zinc-300 hover:text-white rounded-2xl py-3.5 text-sm font-semibold transition-all duration-200 hover:bg-zinc-850 active:scale-[0.98] shadow-sm"
+        <p className="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1">
+          {isA ? 'Điểm ước lượng IELTS Overall' : 'Estimated IELTS Band'}
+        </p>
+        <div
+          className={`text-7xl sm:text-8xl font-black bg-gradient-to-b ${scoreGradient} bg-clip-text text-transparent leading-none py-2 tracking-tight drop-shadow-sm`}
         >
-          <RotateCcw className="w-4 h-4" />
-          {isA ? 'Viết bài luận mới' : 'New essay'}
+          {overall}
+        </div>
+        <p className="text-sm font-medium text-zinc-300 mt-3 max-w-sm mx-auto leading-relaxed">
+          {feedback.encouragement}
+        </p>
+      </div>
+
+      <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-6 space-y-4 shadow-sm animate-fade-in delay-100 backdrop-blur-md">
+        <p className="text-sm font-bold text-zinc-100 mb-4 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-violet-500" />
+          {isA ? 'Chi tiết 4 tiêu chí chấm điểm' : 'Score breakdown'}
+        </p>
+        <ScoreBar label="Task Response" score={feedback.scores.task_response} />
+        <ScoreBar label="Coherence & Cohesion" score={feedback.scores.coherence} />
+        <ScoreBar label="Lexical Resource" score={feedback.scores.lexical} />
+        <ScoreBar label="Grammatical Range" score={feedback.scores.grammar} />
+      </div>
+
+      {feedback.errors.length > 0 && (
+        <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-6 space-y-3.5 shadow-sm animate-fade-in delay-150">
+          <p className="text-sm font-bold text-zinc-100 mb-4 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-rose-500" />
+            {isA ? 'Lỗi cần sửa' : 'Errors to fix'}
+            <span className="ml-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/25">
+              {feedback.errors.length}
+            </span>
+          </p>
+          <div className="space-y-3">
+            {feedback.errors.map((err, i) => (
+              <div
+                key={i}
+                className="border border-zinc-800/90 rounded-2xl overflow-hidden shadow-inner bg-zinc-950/60"
+              >
+                <div className="px-3.5 py-2.5 bg-red-500/10 border-b border-zinc-800/80">
+                  <p className="text-xs text-red-300 theme-light:text-red-700 font-medium line-through">
+                    {err.original}
+                  </p>
+                </div>
+                <div className="px-3.5 py-2.5 bg-emerald-500/10 border-b border-zinc-800/80">
+                  <p className="text-xs text-emerald-300 theme-light:text-emerald-800 font-semibold">
+                    → {err.corrected}
+                  </p>
+                </div>
+                <div className="px-3.5 py-2.5">
+                  <p className="text-xs text-zinc-400">{err.explanation}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-6 shadow-sm animate-fade-in delay-200">
+        <p className="text-sm font-bold text-zinc-100 mb-3.5 flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-amber-500" />
+          {isA ? 'Gợi ý nâng band' : 'Suggestions to improve'}
+        </p>
+        <ul className="space-y-2.5 max-w-prose">
+          {feedback.suggestions.map((s, i) => (
+            <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-zinc-300">
+              <span className="text-amber-400 shrink-0 font-bold mt-0.5">✦</span>
+              <span className="leading-relaxed">{s}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-6 shadow-sm animate-fade-in delay-250">
+        <button
+          onClick={() => setShowSample((p) => !p)}
+          className="flex items-center justify-between w-full"
+          aria-expanded={showSample}
+          aria-label={isA ? 'Hiện/ẩn đoạn văn mẫu' : 'Toggle sample paragraph'}
+        >
+          <p className="text-sm font-bold text-zinc-100 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-sky-500" />
+            {isA ? 'Đoạn văn mẫu tham khảo' : 'Sample paragraph'}
+          </p>
+          <ChevronDown
+            className={`w-4 h-4 text-zinc-400 transition-transform duration-200 ${showSample ? 'rotate-180' : ''}`}
+          />
         </button>
+        {showSample && (
+          <p className="mt-3.5 max-w-prose text-xs sm:text-sm text-zinc-200 leading-relaxed bg-zinc-950/80 rounded-2xl p-4.5 border border-zinc-800/80 shadow-inner">
+            {feedback.sample}
+          </p>
+        )}
+      </div>
+
+      <button
+        onClick={onReset}
+        aria-label={isA ? 'Bài viết mới' : 'New essay'}
+        className="w-full flex items-center justify-center gap-2 border border-zinc-800 hover:border-zinc-700 bg-zinc-900/80 text-zinc-300 hover:text-white rounded-2xl py-3.5 text-sm font-semibold transition-all duration-200 hover:bg-zinc-850 active:scale-[0.98] shadow-sm"
+      >
+        <RotateCcw className="w-4 h-4" />
+        {isA ? 'Viết bài luận mới' : 'New essay'}
+      </button>
+    </div>
+  )
+}
+
+// ResultView — bố cục MOBILE: kết quả chấm chiếm trọn một trang riêng (giữ nguyên như cũ).
+function ResultView({
+  feedback,
+  onReset,
+  dir,
+}: {
+  feedback: FeedbackData
+  onReset: () => void
+  dir: Direction
+}) {
+  return (
+    <div className="min-h-dvh bg-zinc-950">
+      <Layout title={dir === 'A' ? 'Kết quả chấm bài IELTS' : 'Writing Results'} />
+      <main className="max-w-2xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
+        <ResultPanel feedback={feedback} onReset={onReset} dir={dir} />
       </main>
     </div>
   )
@@ -213,6 +234,7 @@ export default function Writing() {
   const onboarding = useOnboarding(user.id) // nhóm tuổi khai lúc onboarding (GĐ 3, PROGRESS.md)
   const dir: Direction = getDirection()
   const isA = dir === 'A'
+  const isDesktop = useIsDesktopViewport() // ≥1024px — bố cục 2 cột "soạn | nhận xét"
   const samplePrompts = isA ? SAMPLE_PROMPTS_A : SAMPLE_PROMPTS_B
 
   const [essayPrompt, setEssayPrompt] = useState('')
@@ -345,17 +367,187 @@ export default function Writing() {
   }
 
   const feedback = result?.feedback ? parseJson<FeedbackData>(result.feedback) : null
-  if (result && feedback) {
-    return (
-      <ResultView
-        feedback={feedback}
-        onReset={() => {
-          setResult(null)
-          setEssay('')
-          setEssayPrompt('')
-        }}
-        dir={dir}
+  const reset = () => {
+    setResult(null)
+    setEssay('')
+    setEssayPrompt('')
+  }
+
+  // MOBILE: kết quả chấm thay hẳn màn soạn bài (thứ tự dọc cũ, không đổi hành vi).
+  if (result && feedback && !isDesktop) {
+    return <ResultView feedback={feedback} onReset={reset} dir={dir} />
+  }
+
+  // Khung soạn bài — dùng chung cho cả hai bố cục.
+  const composer = (
+    <>
+      {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
+      <PageHeader
+        title={isA ? 'Luyện viết & chấm điểm' : 'Writing Practice & Grading'}
+        subtitle={
+          isA
+            ? 'AI chấm theo tiêu chí IELTS Writing Task 2'
+            : 'AI grades by IELTS Writing Task 2 criteria'
+        }
       />
+
+      <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-5 sm:p-6 space-y-3 shadow-sm backdrop-blur-md">
+        <label htmlFor="essay-prompt-select" className="text-xs font-bold text-zinc-300 block">
+          {isA ? '1. Chọn hoặc nhập đề bài IELTS' : '1. Choose or enter prompt'}
+        </label>
+        <div className="relative">
+          <select
+            id="essay-prompt-select"
+            name="prompt"
+            value={essayPrompt}
+            onChange={(e) => e.target.value && setEssayPrompt(e.target.value)}
+            className="w-full bg-zinc-950/90 border border-zinc-800 rounded-2xl px-4 py-3.5 text-sm text-zinc-300 appearance-none outline-none focus:border-violet-500/70 transition shadow-inner"
+          >
+            <option value="">
+              {isA ? '— Chọn đề mẫu có sẵn —' : '— Choose a sample prompt —'}
+            </option>
+            {samplePrompts.map((p, i) => (
+              <option key={i} value={p}>
+                {p.slice(0, 65)}…
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="absolute right-3.5 top-4 w-4 h-4 text-zinc-400 pointer-events-none" />
+        </div>
+        <textarea
+          id="prompt-input"
+          name="essayPrompt"
+          value={essayPrompt}
+          onChange={(e) => setEssayPrompt(e.target.value)}
+          placeholder={
+            isA
+              ? 'Hoặc dán đề bài IELTS tự chọn vào đây...'
+              : 'Or paste a custom writing prompt here...'
+          }
+          rows={3}
+          className="w-full bg-zinc-950/90 border border-zinc-800 rounded-2xl px-4 py-3.5 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-violet-500/70 transition resize-none shadow-inner"
+        />
+      </div>
+
+      <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-5 sm:p-6 space-y-3 shadow-sm backdrop-blur-md">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-bold text-zinc-300">
+              {isA ? '2. Bài viết của bạn' : '2. Your essay'}
+            </label>
+            <EdgeAiIndicator />
+          </div>
+          <span
+            className={`text-xs font-bold px-2.5 py-0.5 rounded-full bg-zinc-950/80 border border-zinc-800 ${wordColor}`}
+          >
+            {wordCount} {isA ? 'từ' : 'words'} {wordHint}
+          </span>
+        </div>
+        <textarea
+          id="essay-input"
+          name="essay"
+          value={essay}
+          onChange={(e) => setEssay(e.target.value)}
+          placeholder={
+            isA
+              ? 'Viết bài vào đây... (IELTS Task 2 nên từ 250–350 từ để đạt điểm tối ưu)'
+              : 'Write your essay here... (aim for 150–250 words)'
+          }
+          className="w-full bg-zinc-950/90 border border-zinc-800 rounded-2xl px-4.5 py-4 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-violet-500/70 transition resize-none min-h-[180px] max-h-[45dvh] sm:max-h-[55vh] shadow-inner leading-relaxed"
+        />
+
+        {/* Instant Edge Grammar Suggestions */}
+        {grammarIssues.length > 0 && (
+          <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl p-4 space-y-2 animate-fade-in text-xs shadow-inner">
+            <div className="font-bold text-amber-300 flex items-center gap-1.5">
+              <span>⚡ Phát hiện nhanh lỗi ngữ pháp ({grammarIssues.length}):</span>
+            </div>
+            <div className="space-y-1.5">
+              {grammarIssues.slice(0, 3).map((issue, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between text-zinc-300 bg-zinc-950/40 p-2 rounded-xl border border-amber-500/15"
+                >
+                  <span className="line-through text-rose-400 mr-2">{issue.original}</span>
+                  <span className="font-semibold text-emerald-400">→ {issue.suggestion}</span>
+                  <span className="text-[11px] text-zinc-400 ml-auto pl-2 truncate max-w-[200px]">
+                    {issue.reason}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/25 rounded-2xl px-4.5 py-3 text-sm text-red-400 theme-light:text-red-700 shadow-sm">
+          {error}
+        </div>
+      )}
+
+      <button
+        onClick={submit}
+        disabled={loading || !essay.trim() || !essayPrompt.trim() || isThrottled}
+        aria-label={isA ? 'Chấm bài ngay' : 'Grade my essay'}
+        className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-40 text-white font-bold py-3.5 rounded-2xl text-sm transition-all duration-200 active:scale-[0.98] shadow-xl shadow-violet-500/25 relative"
+      >
+        {isThrottled && throttleCountdown > 0 ? (
+          <>
+            <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            {isA ? `Chờ ${throttleCountdown}s...` : `Wait ${throttleCountdown}s...`}
+          </>
+        ) : loading ? (
+          <>
+            <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            {isA ? 'Đang chấm bài & phân tích 4 tiêu chí...' : 'Grading...'}
+          </>
+        ) : (
+          <>
+            <PenLine className="w-4 h-4" />
+            <Send className="w-4 h-4" />
+            {isA ? 'Chấm bài ngay' : 'Grade my essay'}
+          </>
+        )}
+      </button>
+
+      <p className="text-center text-xs text-zinc-400">
+        {isA
+          ? 'AI chấm theo tiêu chí IELTS — Task Response · Coherence · Lexical · Grammar'
+          : 'AI grades Vietnamese writing — Task Response · Coherence · Lexical · Grammar'}
+      </p>
+    </>
+  )
+
+  // DESKTOP: 2 cột — trái soạn bài (rộng hơn), phải kết quả chấm dính (sticky) cuộn độc lập.
+  if (isDesktop) {
+    return (
+      <div className="min-h-dvh bg-zinc-950">
+        <Layout />
+        <div className="max-w-6xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] flex gap-5 items-start">
+          <main className="flex-1 min-w-0 max-w-3xl space-y-4 animate-fade-up">{composer}</main>
+          <aside className="w-80 xl:w-96 shrink-0 sticky top-20 max-h-[calc(100dvh-6rem)] overflow-y-auto pr-1">
+            {result && feedback ? (
+              <ResultPanel feedback={feedback} onReset={reset} dir={dir} />
+            ) : (
+              // Trạng thái rỗng có ý nghĩa — tránh để cột phải trống trơn khi chưa chấm.
+              <div className="bg-zinc-900/60 border border-dashed border-zinc-800 rounded-3xl p-6 text-center space-y-2">
+                <div className="w-11 h-11 rounded-2xl bg-violet-500/10 flex items-center justify-center mx-auto">
+                  <Trophy className="w-5 h-5 text-violet-300" />
+                </div>
+                <p className="text-sm font-bold text-zinc-100">
+                  {isA ? 'Kết quả chấm sẽ hiện ở đây' : 'Your results will appear here'}
+                </p>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  {isA
+                    ? 'Chọn đề bài, viết bài rồi bấm “Chấm bài ngay” — điểm 4 tiêu chí, lỗi cần sửa và gợi ý nâng band sẽ hiện ở cột này.'
+                    : 'Pick a prompt, write your essay, then press “Grade my essay” — scores, corrections and suggestions will show up in this column.'}
+                </p>
+              </div>
+            )}
+          </aside>
+        </div>
+      </div>
     )
   }
 
@@ -363,141 +555,7 @@ export default function Writing() {
     <div className="min-h-dvh bg-zinc-950">
       <Layout />
       <main className="max-w-2xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-4 animate-fade-up">
-        {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
-        <PageHeader
-          title={isA ? 'Luyện viết & chấm điểm' : 'Writing Practice & Grading'}
-          subtitle={
-            isA
-              ? 'AI chấm theo tiêu chí IELTS Writing Task 2'
-              : 'AI grades by IELTS Writing Task 2 criteria'
-          }
-        />
-
-        <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-5 sm:p-6 space-y-3 shadow-sm backdrop-blur-md">
-          <label htmlFor="essay-prompt-select" className="text-xs font-bold text-zinc-300 block">
-            {isA ? '1. Chọn hoặc nhập đề bài IELTS' : '1. Choose or enter prompt'}
-          </label>
-          <div className="relative">
-            <select
-              id="essay-prompt-select"
-              name="prompt"
-              value={essayPrompt}
-              onChange={(e) => e.target.value && setEssayPrompt(e.target.value)}
-              className="w-full bg-zinc-950/90 border border-zinc-800 rounded-2xl px-4 py-3.5 text-sm text-zinc-300 appearance-none outline-none focus:border-violet-500/70 transition shadow-inner"
-            >
-              <option value="">
-                {isA ? '— Chọn đề mẫu có sẵn —' : '— Choose a sample prompt —'}
-              </option>
-              {samplePrompts.map((p, i) => (
-                <option key={i} value={p}>
-                  {p.slice(0, 65)}…
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-3.5 top-4 w-4 h-4 text-zinc-400 pointer-events-none" />
-          </div>
-          <textarea
-            id="prompt-input"
-            name="essayPrompt"
-            value={essayPrompt}
-            onChange={(e) => setEssayPrompt(e.target.value)}
-            placeholder={
-              isA
-                ? 'Hoặc dán đề bài IELTS tự chọn vào đây...'
-                : 'Or paste a custom writing prompt here...'
-            }
-            rows={3}
-            className="w-full bg-zinc-950/90 border border-zinc-800 rounded-2xl px-4 py-3.5 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-violet-500/70 transition resize-none shadow-inner"
-          />
-        </div>
-
-        <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-5 sm:p-6 space-y-3 shadow-sm backdrop-blur-md">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <label className="text-xs font-bold text-zinc-300">
-                {isA ? '2. Bài viết của bạn' : '2. Your essay'}
-              </label>
-              <EdgeAiIndicator />
-            </div>
-            <span
-              className={`text-xs font-bold px-2.5 py-0.5 rounded-full bg-zinc-950/80 border border-zinc-800 ${wordColor}`}
-            >
-              {wordCount} {isA ? 'từ' : 'words'} {wordHint}
-            </span>
-          </div>
-          <textarea
-            id="essay-input"
-            name="essay"
-            value={essay}
-            onChange={(e) => setEssay(e.target.value)}
-            placeholder={
-              isA
-                ? 'Viết bài vào đây... (IELTS Task 2 nên từ 250–350 từ để đạt điểm tối ưu)'
-                : 'Write your essay here... (aim for 150–250 words)'
-            }
-            className="w-full bg-zinc-950/90 border border-zinc-800 rounded-2xl px-4.5 py-4 text-sm text-white placeholder:text-zinc-500 outline-none focus:border-violet-500/70 transition resize-none min-h-[180px] max-h-[45dvh] sm:max-h-[55vh] shadow-inner leading-relaxed"
-          />
-
-          {/* Instant Edge Grammar Suggestions */}
-          {grammarIssues.length > 0 && (
-            <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl p-4 space-y-2 animate-fade-in text-xs shadow-inner">
-              <div className="font-bold text-amber-300 flex items-center gap-1.5">
-                <span>⚡ Phát hiện nhanh lỗi ngữ pháp ({grammarIssues.length}):</span>
-              </div>
-              <div className="space-y-1.5">
-                {grammarIssues.slice(0, 3).map((issue, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between text-zinc-300 bg-zinc-950/40 p-2 rounded-xl border border-amber-500/15"
-                  >
-                    <span className="line-through text-rose-400 mr-2">{issue.original}</span>
-                    <span className="font-semibold text-emerald-400">→ {issue.suggestion}</span>
-                    <span className="text-[11px] text-zinc-400 ml-auto pl-2 truncate max-w-[200px]">
-                      {issue.reason}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {error && (
-          <div className="bg-red-500/10 border border-red-500/25 rounded-2xl px-4.5 py-3 text-sm text-red-400 theme-light:text-red-700 shadow-sm">
-            {error}
-          </div>
-        )}
-
-        <button
-          onClick={submit}
-          disabled={loading || !essay.trim() || !essayPrompt.trim() || isThrottled}
-          aria-label={isA ? 'Chấm bài ngay' : 'Grade my essay'}
-          className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-40 text-white font-bold py-3.5 rounded-2xl text-sm transition-all duration-200 active:scale-[0.98] shadow-xl shadow-violet-500/25 relative"
-        >
-          {isThrottled && throttleCountdown > 0 ? (
-            <>
-              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              {isA ? `Chờ ${throttleCountdown}s...` : `Wait ${throttleCountdown}s...`}
-            </>
-          ) : loading ? (
-            <>
-              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              {isA ? 'Đang chấm bài & phân tích 4 tiêu chí...' : 'Grading...'}
-            </>
-          ) : (
-            <>
-              <PenLine className="w-4 h-4" />
-              <Send className="w-4 h-4" />
-              {isA ? 'Chấm bài ngay' : 'Grade my essay'}
-            </>
-          )}
-        </button>
-
-        <p className="text-center text-xs text-zinc-400">
-          {isA
-            ? 'AI chấm theo tiêu chí IELTS — Task Response · Coherence · Lexical · Grammar'
-            : 'AI grades Vietnamese writing — Task Response · Coherence · Lexical · Grammar'}
-        </p>
+        {composer}
       </main>
     </div>
   )

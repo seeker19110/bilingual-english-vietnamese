@@ -47,6 +47,9 @@ export const COMPANION_PATHS = [
   '/action-canvas',
 ]
 
+/** Trang bảng giá — tách riêng để sidebar có mục "Nâng cấp" không bị "Hồ sơ" nuốt mất. */
+export const PRICING_PATHS = ['/nang-cap']
+
 export const PROFILE_PATHS = [
   '/trang-ca-nhan',
   '/profile',

@@ -437,8 +437,10 @@ export default function Profile() {
         {/* Băng khuyến mãi % */}
         <PricePromoBanner isA={isA} />
 
-        {/* Nâng cấp Pro/VIP qua SePay */}
-        <UpgradeSection isA={isA} currentPlan={user.plan} />
+        {/* Nâng cấp Pro/VIP — bản RÚT GỌN dẫn sang /nang-cap; bảng so sánh đầy đủ + luồng
+            thanh toán SePay nay ở trang riêng (audit UI/UX 2026-08-31 mục B9). Gói đang dùng
+            của người dùng vẫn hiện ở khối thông tin tài khoản phía trên. */}
+        <UpgradeSection isA={isA} currentPlan={user.plan} variant="compact" />
 
         {/* Xác thực email */}
         {user.emailVerified === false && (
