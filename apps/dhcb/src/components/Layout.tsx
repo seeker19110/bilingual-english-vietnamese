@@ -252,7 +252,10 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
         {/* Streak — TOÀN CỤC */}
         {streak > 0 &&
           (title || subtitle ? (
-            <div className="flex items-center gap-1.5 bg-gradient-to-r from-orange-500/15 to-amber-500/10 border border-orange-500/30 rounded-full px-3 py-1 shadow-sm shadow-orange-500/10 shrink-0">
+            // Header có cả title/subtitle LẪN nút "Đồng Hành AI" ở màn hẹp (390px) thì 3 phần tử
+            // này tràn ngang (đo được 54px) — ẩn streak badge trên di động, chỉ hiện lại từ `sm`
+            // trở lên khi đã đủ chỗ. Không mất thông tin: streak vẫn thấy ở /progress.
+            <div className="hidden sm:flex items-center gap-1.5 bg-gradient-to-r from-orange-500/15 to-amber-500/10 border border-orange-500/30 rounded-full px-3 py-1 shadow-sm shadow-orange-500/10 shrink-0">
               <span className="text-base leading-none animate-pulse">🔥</span>
               <span className="text-sm font-bold text-orange-400 leading-none">{streak}</span>
               <span className="text-[11px] font-medium text-orange-400 theme-light:text-orange-800 leading-none">
