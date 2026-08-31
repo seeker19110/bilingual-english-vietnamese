@@ -112,6 +112,9 @@ const ProgrammingCoursePage = lazyWithRetry(
 const ProgrammingPathPage = lazyWithRetry(
   () => import('./pages/subjects/programming/ProgrammingPathPage'),
 )
+const ProgrammingPathDiagnostic = lazyWithRetry(
+  () => import('./pages/subjects/programming/ProgrammingPathDiagnostic'),
+)
 const ChatPage = lazyWithRetry(() => import('./pages/subjects/english/ChatPage'))
 
 // Màn hình chờ — dùng khi kiểm tra session và khi lazy-load trang.
@@ -503,7 +506,17 @@ export default function App() {
                       {/* URL cũ trước 2026-08-31 — chuyển hướng giữ mã khoá. */}
                       <Route path="/lap-trinh/khoa/:courseId" element={<CourseRedirect />} />
                       {/* Lộ trình mục tiêu (ví dụ Kỹ Sư Trưởng AI) — đặt TRƯỚC ':levelId'
-                          để 'lo-trinh' không bị hiểu nhầm là mã bậc, cùng lý do như '/huong'. */}
+                          để 'lo-trinh' không bị hiểu nhầm là mã bậc, cùng lý do như '/huong'.
+                          Chẩn đoán đặt TRƯỚC ':pathId' (đoạn dài hơn khớp trước), cùng lý do
+                          '/huong/:specId/:stageId' đặt trước '/huong/:specId'. */}
+                      <Route
+                        path="/lap-trinh/lo-trinh/:pathId/chan-doan"
+                        element={
+                          <RequireAuth>
+                            <ProgrammingPathDiagnostic />
+                          </RequireAuth>
+                        }
+                      />
                       <Route
                         path="/lap-trinh/lo-trinh/:pathId"
                         element={

@@ -30,6 +30,7 @@ const CUSTOM_PATH: Record<string, string> = {
   progress: 'programming/progress',
   project: 'programming/project',
   specialization: 'programming/specialization',
+  pathProgress: 'programming/path-progress',
   'ts-check': 'programming/ts-check',
 }
 
