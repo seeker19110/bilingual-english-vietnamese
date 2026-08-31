@@ -1142,6 +1142,21 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
      **Việc để ngỏ (cố ý, ghi trong đặc tả):** câu hỏi mở về cách xử lý nội dung khi hai công cụ
      đổi phiên bản nhanh — chưa chốt, không chặn hai khoá đã dùng được ngay hôm nay.
 
+- **[2026-08-31] 🚧 KHOÁ HỌC "KỸ SƯ TRƯỞNG AI" — lộ trình mục tiêu môn Lập trình, 4 đợt.**
+  Đặc tả `docs/specs/2026-08-31-khoa-hoc-ky-su-truong-ai.md`, người dùng đã duyệt thi hành
+  ("theo phương án tốt nhất": P5 hiện ngay từ đợt 1 ở trạng thái "đang soạn", `agentSim` đợt 4
+  tách PR riêng, Companion đợt 3 dùng chung lượt `chat`).
+  - **Đợt 1/4 — ✅ ĐÃ XONG (`#766`, nhật ký `docs/changelog/0207-*.md`):** tầng
+    `packages/subject-programming/learningPaths/` (khuôn giống `specializations/`) + manifest
+    `principal-ai` (5 giai đoạn, 22 chặng lắp từ 8 hướng có sẵn) + trang
+    `/lap-trinh/lo-trinh/:pathId`. Thuần dữ liệu + UI đọc, không migration, không AI.
+  - **Đợt 2/4 — chưa làm:** chẩn đoán chọn điểm vào (chấm bằng Sim, không AI) + tiến độ riêng
+    của lộ trình (`programming.path_progress`, 1 migration).
+  - **Đợt 3/4 — chưa làm:** quiz sau chặng + kho artifact cá nhân + Companion kiểm hiểu
+    (dùng chung lượt `chat`, 1 migration `path_artifacts`).
+  - **Đợt 4/4 — chưa làm:** nội dung P5 "Tầm trưởng" (vận hành AI, agent/MCP, ADR, dẫn dắt) —
+    đặc tả con riêng từng chặng trước khi soạn.
+
 - **[2026-08-31] ✅ THIẾT KẾ LẠI WEB CHO DESKTOP — 4 PR, ĐÃ XONG TRỌN VẸN.** Trước đó web là
   "app mobile phóng to" ở mọi kích thước màn hình (BottomNav cố định đáy, dropdown Studio,
   `max-w-3xl` bất kể chiều ngang). Người dùng chốt phạm vi qua `AskUserQuestion` rồi yêu cầu làm
