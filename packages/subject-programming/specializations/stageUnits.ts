@@ -40,6 +40,11 @@ export const SPEC_STAGE_UNITS: Record<string, string[]> = {
   // liệu — cả hai cùng trả lời "đường ống sai thì làm sao BIẾT và làm sao SỬA"). Đúng tiền lệ
   // backend-s2/s3/s4 gộp m3+m4 thành unit cuối chặng.
   'data-s2': ['p6-u120', 'p6-u121', 'p6-u122'],
+  // Hướng Dữ liệu, chặng S3 — soạn 2026-08-31 (3 unit, 4 module: p6-u126 = m1 (dữ liệu lớn
+  // hơn RAM), p6-u127 = m2 (luồng thời gian thực), p6-u128 gộp m3+m4 (thực nghiệm + chi phí
+  // & quản trị — cả hai cùng trả lời "con số này đáng bao nhiêu"). Đúng tiền lệ
+  // backend-s2/s3/s4 gộp m3+m4 thành unit cuối chặng.
+  'data-s3': ['p6-u126', 'p6-u127', 'p6-u128'],
   // Hướng Backend, chặng S2 — soạn 2026-08-31 (3 unit, 4 module: p6-u102 = m1, p6-u103 = m2,
   // p6-u104 gộp m3+m4 — đúng tiền lệ web-s1 gộp module khi hợp lý).
   'backend-s2': ['p6-u102', 'p6-u103', 'p6-u104'],

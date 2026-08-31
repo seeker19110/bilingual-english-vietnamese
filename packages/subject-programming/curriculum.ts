@@ -643,6 +643,23 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
           'Hướng Kiến trúc S3 — nghiệm thu & sổ quyết định: test canh gác, review theo tầng, ADR',
         topics: 'Bất biến bị phá là CI đỏ; bốn tầng review; ADR ghi cả phương án bị loại',
       },
+      // p6-u126…u128: chặng S3 "Quy mô và thời gian thực" của hướng Dữ liệu (data-s3,
+      // specializations/data.ts, 4 module — u128 gộp m3+m4).
+      {
+        id: 'p6-u126',
+        title: 'Hướng Dữ liệu S3 — lớn hơn RAM: xử lý theo khối và sắp xếp ngoài',
+        topics: 'Đỉnh bộ nhớ hằng số, phép tổng hợp cộng dồn được; tạo run rồi trộn nhiều đường',
+      },
+      {
+        id: 'p6-u127',
+        title: 'Hướng Dữ liệu S3 — luồng gần thời gian thực: cửa sổ, mốc nước, sự kiện tới muộn',
+        topics: 'Thời gian sự kiện vs thời gian xử lý; watermark chốt cửa sổ; khử trùng theo id',
+      },
+      {
+        id: 'p6-u128',
+        title: 'Hướng Dữ liệu S3 — chi phí & thực nghiệm: quét ít đi, đo cho đáng tin',
+        topics: 'Cắt tỉa phân vùng, định dạng cột, vòng đời dữ liệu; cỡ mẫu và bẫy dừng sớm',
+      },
       // p6-u66..u68: chặng S1 của hướng Dữ liệu (data-s1, specializations/data.ts, 4 module).
       // p3-u8/p3-u9 đã dạy SELECT/JOIN/GROUP BY/HAVING cơ bản — u66 đi XA HƠN (hàm cửa sổ, CTE)
       // để không dạy trùng. Đăng ký cầu nối ở `specializations/stageUnits.ts`.
