@@ -501,6 +501,27 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Tầm trưởng S4 — post-mortem & trách nhiệm vận hành',
         topics: '5 whys không đổ lỗi; sự cố AI hỏng âm thầm, ngưỡng cảnh báo',
       },
+      // p6-u66..u68: chặng S1 của hướng Dữ liệu (data-s1, specializations/data.ts, 4 module).
+      // p3-u8/p3-u9 đã dạy SELECT/JOIN/GROUP BY/HAVING cơ bản — u66 đi XA HƠN (hàm cửa sổ, CTE)
+      // để không dạy trùng. Đăng ký cầu nối ở `specializations/stageUnits.ts`.
+      {
+        id: 'p6-u66',
+        title: 'Hướng Dữ liệu S1 — hàm cửa sổ & CTE: xếp hạng và luỹ kế không mất dòng',
+        topics:
+          'RANK/DENSE_RANK OVER PARTITION BY; CTE (WITH) chia truy vấn dài, SUM() OVER luỹ kế',
+      },
+      {
+        id: 'p6-u67',
+        title: 'Hướng Dữ liệu S1 — làm sạch dữ liệu: thiếu/trùng/sai kiểu, chuẩn hoá ngày giờ',
+        topics:
+          'Phát hiện thiếu/trùng/ngoại lệ; chuẩn hoá định dạng ngày; ghi lại giả định làm sạch',
+      },
+      {
+        id: 'p6-u68',
+        title: 'Hướng Dữ liệu S1 — thống kê đủ dùng & trực quan hoá trung thực',
+        topics:
+          'Trung bình vs trung vị, tương quan không phải nhân quả; chọn biểu đồ không đánh lừa mắt',
+      },
     ],
   },
 ]
