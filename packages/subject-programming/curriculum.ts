@@ -605,6 +605,23 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Hướng Kiến trúc S2 — tiến hoá & dữ liệu: mở rộng rồi thu hẹp, tiền/thời gian/mã',
         topics: 'Bốn bước đổi schema không downtime; nguồn sự thật duy nhất; ba chỗ sai đắt nhất',
       },
+      // p6-u120…u122: chặng S2 "Kỹ sư dữ liệu — đường ống" của hướng Dữ liệu (data-s2,
+      // specializations/data.ts, 4 module).
+      {
+        id: 'p6-u120',
+        title: 'Hướng Dữ liệu S2 — ETL/ELT: nạp gia tăng theo mốc nước, ghi idempotent',
+        topics: 'Mốc nước + chồng lấn chống mất bản ghi tới muộn; upsert/ghi lại phân vùng',
+      },
+      {
+        id: 'p6-u121',
+        title: 'Hướng Dữ liệu S2 — mô hình hoá kho: star schema và chiều biến đổi chậm',
+        topics: 'Bảng sự kiện vs bảng chiều, hạt và khoá thay thế; SCD type 1 vs type 2',
+      },
+      {
+        id: 'p6-u122',
+        title: 'Hướng Dữ liệu S2 — điều phối & chất lượng: DAG, chạy lại một phần, kiểm chặn',
+        topics: 'Sắp xếp tô-pô + phạm vi chạy lại xuôi dòng; 4 nhóm kiểm, khớp tổng, lineage',
+      },
       // p6-u66..u68: chặng S1 của hướng Dữ liệu (data-s1, specializations/data.ts, 4 module).
       // p3-u8/p3-u9 đã dạy SELECT/JOIN/GROUP BY/HAVING cơ bản — u66 đi XA HƠN (hàm cửa sổ, CTE)
       // để không dạy trùng. Đăng ký cầu nối ở `specializations/stageUnits.ts`.
