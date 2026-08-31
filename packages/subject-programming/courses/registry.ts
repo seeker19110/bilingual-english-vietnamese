@@ -5,9 +5,15 @@
 import type { ShortCourse, ShortCourseId } from './types.js'
 import { GIT_COURSE } from './git.js'
 import { HERMES_COURSE } from './hermes.js'
+import { VIBE_COURSE } from './vibe.js'
 import { OPENCLAW_COURSE } from './openclaw.js'
 
-export const SHORT_COURSES: ShortCourse[] = [GIT_COURSE, HERMES_COURSE, OPENCLAW_COURSE]
+export const SHORT_COURSES: ShortCourse[] = [
+  GIT_COURSE,
+  HERMES_COURSE,
+  VIBE_COURSE,
+  OPENCLAW_COURSE,
+]
 
 const courseMap = new Map(SHORT_COURSES.map((c) => [c.id, c]))
 

@@ -38,7 +38,7 @@ const BodySchema = z
     kind: z.enum(['review', 'socratic_hint', 'explain_error']),
     // 'git-u2-l1'/'hermes-u1-l1'…: bài thuộc tầng KHOÁ NGẮN (cắt ngang bậc P1–P6) — xem
     // lessonTypes.ts.
-    lessonId: z.string().regex(/^(p[1-6]-u\d+-l\d+|(git|hermes|openclaw)-u\d+-l\d+)$/),
+    lessonId: z.string().regex(/^(p[1-6]-u\d+-l\d+|(git|hermes|vibe|openclaw)-u\d+-l\d+)$/),
     // Code rỗng thì không có gì để góp ý — chặn ở đây để không tiêu lượt vô ích.
     code: z.string().min(1).max(MAX_CODE_CHARS),
     hintLevel: z.number().int().min(1).max(MAX_HINT_LEVEL).optional(),

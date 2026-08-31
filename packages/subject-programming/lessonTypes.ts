@@ -41,6 +41,9 @@ export const LESSON_LANGUAGES = [
   'bash',
   // Mô phỏng Hermes Agent (hermesSim.ts) — khoá ngắn "Hermes Agent" (PR 2/4 khoá Hermes).
   'hermes',
+  // Mô phỏng tác tử AI viết code (vibeSim.ts) — khoá ngắn "Vibe Code" (đặc tả
+  // docs/specs/2026-08-31-khoa-vibe-code.md).
+  'vibe',
   // Mô phỏng OpenClaw (openclawSim.ts) — khoá ngắn "OpenClaw" (PR 2/3 khoá OpenClaw).
   'openclaw',
   'swift',
@@ -56,13 +59,13 @@ export const LessonSchema = z
      * không đánh số theo `p[1-6]`. Xem docs/specs/2026-08-30-khoa-hoc-thuc-hanh-github.md và
      * docs/specs/2026-08-31-khoa-dieu-phoi-ai-van-phong.md.
      */
-    id: z.string().regex(/^(p[1-6]-u\d+-l\d+|(git|hermes|openclaw)-u\d+-l\d+)$/),
+    id: z.string().regex(/^(p[1-6]-u\d+-l\d+|(git|hermes|vibe|openclaw)-u\d+-l\d+)$/),
     /**
      * Unit chứa bài — phải tồn tại trong curriculum.ts (test kiểm chéo), TRỪ nhánh `git-u\d+`/`hermes-u\d+`
      * vốn là "unit ảo" của tầng khoá ngắn, được công nhận qua SHORT_COURSES thay vì curriculum
      * (xem lessons.test.ts).
      */
-    unitId: z.string().regex(/^(p[1-6]-u\d+|(git|hermes|openclaw)-u\d+)$/),
+    unitId: z.string().regex(/^(p[1-6]-u\d+|(git|hermes|vibe|openclaw)-u\d+)$/),
     /** Ngôn ngữ của bài (PR-L7b1) — quyết định bộ chạy ở trình duyệt VÀ cổng CI nào chấm
      *  bài. KHÔNG có giá trị mặc định ngầm: người soạn phải ghi rõ, vì chọn sai ngôn ngữ
      *  nghĩa là bài không được cổng nào chấm. */

@@ -32,6 +32,9 @@ const LANGS: Record<Lang, { label: string; dot: string; simulated?: true }> = {
   // Hermes Agent (khoá ngắn Hermes): lệnh là lệnh thật của Hermes, nhưng phản hồi "AI" là
   // văn bản đóng hộp tất định của hermesSim — không phải AI thật, huy hiệu phải tự khai.
   hermes: { label: 'Hermes Agent', dot: 'bg-cyan-400', simulated: true },
+  // Tác tử AI viết code (khoá ngắn Vibe Code): quy trình là quy trình thật, nhưng "code AI
+  // sinh ra" là tóm tắt diff đóng hộp tất định của vibeSim — huy hiệu phải tự khai.
+  vibe: { label: 'Tác tử AI code', dot: 'bg-fuchsia-400', simulated: true },
   // OpenClaw (khoá ngắn OpenClaw): lệnh là lệnh thật của OpenClaw, nhưng phản hồi "AI" là
   // văn bản đóng hộp tất định của openclawSim — không phải AI thật, huy hiệu phải tự khai.
   openclaw: { label: 'OpenClaw', dot: 'bg-teal-400', simulated: true },

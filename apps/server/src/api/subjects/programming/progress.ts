@@ -32,7 +32,9 @@ const UpdateSchema = z
     //  · bài thuộc khoá NGẮN (cắt ngang bậc: khoá Git, khoá Hermes)  'git-u2-l1' / 'hermes-u1-l1'
     lessonId: z
       .string()
-      .regex(/^(p[1-6]-(u\d+-l\d+|s\d+)|[a-z]+-s[1-4]-[mr]\d+|(git|hermes|openclaw)-u\d+-l\d+)$/),
+      .regex(
+        /^(p[1-6]-(u\d+-l\d+|s\d+)|[a-z]+-s[1-4]-[mr]\d+|(git|hermes|vibe|openclaw)-u\d+-l\d+)$/,
+      ),
     status: z.enum(['in_progress', 'completed']),
   })
   .strict()
