@@ -43,6 +43,7 @@ import {
   Headphones,
 } from 'lucide-react'
 import Layout from '../../../components/Layout'
+import { useIsDesktopViewport } from '../../../lib/useIsDesktopViewport'
 import PageHeader from '../../../components/PageHeader'
 import { GrammarDetail, VocabFlash, DialogueView } from '../../../components/CefrLessonViews'
 import {
@@ -104,6 +105,10 @@ export default function CefrLevelPage() {
   const [searchParams] = useSearchParams()
   const { user } = useAuth()
   const isA = getDirection() === 'A'
+  // Master–detail ở desktop (≥1024px): khi mở 1 màn con, hiện thêm cột trái là danh sách
+  // unit rút gọn (xem `masterList`/`shell`) — bấm mục khác đổi luôn cột phải, không cần
+  // rời trang rồi mở lại. Dưới ngưỡng này giữ nguyên hành vi cũ (màn con chiếm toàn màn hình).
+  const isDesktop = useIsDesktopViewport()
 
   const [levels, setLevels] = useState<CefrLevel[]>([])
   const [circleById, setCircleById] = useState<Record<string, Circle>>({})
@@ -309,6 +314,17 @@ export default function CefrLevelPage() {
   const accent: AccentClasses = level ? ACCENT[level.accent] : ACCENT.emerald
   const locked = level ? (lockedMap.get(level.id) ?? false) : false
 
+  // Đánh số bài ngữ pháp liên tục trong cả cấp (Bài 1, Bài 2, …) — cần TRƯỚC các early-return
+  // màn con bên dưới vì `masterList` (cột trái desktop, xem `shell`) dùng lại số này.
+  const unitLessonStarts: number[] = []
+  let lessonStartAcc = 0
+  if (level) {
+    for (const u of level.units) {
+      unitLessonStarts.push(lessonStartAcc)
+      lessonStartAcc += u.grammar.length
+    }
+  }
+
   // Mở 1 hội thoại + ghi "đã xem" (ownerId = id unit hoặc id vòng từ vựng).
   function openDialogue(ownerId: string, d: Dialogue) {
     if (uid) markDialogueViewed(uid, ownerId, d.titleEn)
@@ -316,13 +332,57 @@ export default function CefrLevelPage() {
     setDialogue(d)
   }
 
+  // Cột trái "master" ở desktop (≥1024px) khi đang xem 1 màn con (từ vựng/ngữ pháp/hội
+  // thoại) — danh sách unit rút gọn, bấm mục khác đổi luôn màn phải mà KHÔNG rời trang
+  // (giống bấm trong danh sách chính, chỉ khác là gọn hơn để nhường chỗ cho nội dung).
+  // KHÔNG hiện khi thi cuối cấp (màn thi cố tình toàn màn hình) hay khi cấp bị khóa.
+  const masterList =
+    level && !locked ? (
+      <div className="space-y-3">
+        {level.units.map((unit, ui) => (
+          <UnitSection
+            key={unit.id}
+            unit={unit}
+            index={ui}
+            isA={isA}
+            accent={accent}
+            circleById={circleById}
+            learned={learned}
+            doneGrammar={doneGrammar}
+            viewedDialogues={viewedDialogues}
+            lessonStartIndex={unitLessonStarts[ui] ?? 0}
+            onOpenLesson={setLesson}
+            onOpenCircle={setCircle}
+            onOpenDialogue={openDialogue}
+          />
+        ))}
+      </div>
+    ) : null
+
   // ── Khung trang chung ──────────────────────────────────────────────────
   // headerBack: đích của nút back trên THANH HEADER trên cùng (khác nút "Quay lại"/"Back" bên
   // trong từng màn con). Luôn lùi ĐÚNG 1 BƯỚC theo cấu trúc cấp — bất kể vào bằng cách nào
   // (bấm tuần tự Lộ trình → Cấp → mục con, hay "tắt" thẳng từ nút Home) — KHÔNG về Trang chủ
   // như Layout mặc định: từ màn con (hội thoại/từ vựng/ngữ pháp/thi) → về trang cấp; từ trang
   // cấp (không mở màn con nào) → về danh sách cấp /lo-trinh-hoc.
-  function shell(children: React.ReactNode, headerBack?: () => void) {
+  //
+  // `master`: cột trái desktop (xem `masterList` ở trên) — CHỈ hiện khi có + `isDesktop` true.
+  // Gate bằng JS (`useIsDesktopViewport`), không phải class Tailwind: bài học ở đợt thiết kế
+  // desktop trước (changelog 0199) là ẩn-bằng-CSS vẫn để nội dung trùng trong DOM.
+  function shell(children: React.ReactNode, headerBack?: () => void, master?: React.ReactNode) {
+    if (master && isDesktop) {
+      return (
+        <div className="min-h-dvh bg-zinc-950">
+          <Layout back onBack={headerBack ?? (() => nav('/lo-trinh-hoc'))} />
+          <div className="max-w-6xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] flex gap-5 items-start">
+            <aside className="w-72 xl:w-80 shrink-0 max-h-[calc(100dvh-6rem)] overflow-y-auto pr-1">
+              {master}
+            </aside>
+            <main className="flex-1 min-w-0">{children}</main>
+          </div>
+        </div>
+      )
+    }
     return (
       <div className="min-h-dvh bg-zinc-950">
         <Layout back onBack={headerBack ?? (() => nav('/lo-trinh-hoc'))} />
@@ -353,6 +413,7 @@ export default function CefrLevelPage() {
         onBack={() => setDialogue(null)}
       />,
       () => setDialogue(null),
+      masterList,
     )
   }
   if (circle) {
@@ -367,6 +428,7 @@ export default function CefrLevelPage() {
         onOpenDialogue={(d) => openDialogue(circle.id, d)}
       />,
       () => setCircle(null),
+      masterList,
     )
   }
   if (lesson) {
@@ -380,6 +442,7 @@ export default function CefrLevelPage() {
         onDoneChange={bump}
       />,
       () => setLesson(null),
+      masterList,
     )
   }
   if (examing) {
@@ -445,15 +508,6 @@ export default function CefrLevelPage() {
   const levelIdx = levels.findIndex((l) => l.id === level.id)
   const nextLevel = levels[levelIdx + 1]
   const prevLevel = levelIdx > 0 ? levels[levelIdx - 1] : undefined
-
-  // Đánh số bài ngữ pháp liên tục trong cả cấp (Bài 1, Bài 2, …) — offset cộng dồn
-  // tính TRƯỚC theo từng unit, thay biến đếm gán dần trong JSX (React Compiler cấm).
-  const unitLessonStarts: number[] = []
-  let lessonStartAcc = 0
-  for (const u of level.units) {
-    unitLessonStarts.push(lessonStartAcc)
-    lessonStartAcc += u.grammar.length
-  }
 
   // Cấp còn khóa → chỉ hiện màn khóa (không có thanh tab / tab học).
   const activeTab: StudyTab = locked ? 'lessons' : tab
