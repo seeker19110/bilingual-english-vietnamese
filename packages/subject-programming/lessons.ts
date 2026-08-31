@@ -84,6 +84,9 @@ import { GIT_U3_LESSONS } from './lessons/gitu3.js'
 import { GIT_U4_LESSONS } from './lessons/gitu4.js'
 import { GIT_U5_LESSONS } from './lessons/gitu5.js'
 import { HERMES_U1_LESSONS } from './lessons/hermesu1.js'
+import { HERMES_U2_LESSONS } from './lessons/hermesu2.js'
+import { HERMES_U3_LESSONS } from './lessons/hermesu3.js'
+import { HERMES_U4_LESSONS } from './lessons/hermesu4.js'
 import { OPENCLAW_U1_LESSONS } from './lessons/openclawu1.js'
 
 export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
@@ -162,6 +165,9 @@ export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...GIT_U4_LESSONS,
   ...GIT_U5_LESSONS,
   ...HERMES_U1_LESSONS,
+  ...HERMES_U2_LESSONS,
+  ...HERMES_U3_LESSONS,
+  ...HERMES_U4_LESSONS,
   ...OPENCLAW_U1_LESSONS,
 ]
 
