@@ -1165,8 +1165,7 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
     (`p6-u94…p6-u101`) + 20 câu quiz mới, trang chặng riêng
     `/lap-trinh/lo-trinh/:pathId/chang/:stageId`. `agentSim` hoá ra KHÔNG cần — vòng lặp agent
     dạy và chấm được bằng code Python/JavaScript thuần. **Lộ trình "Kỹ Sư Trưởng AI" nay ĐẦY
-    ĐỦ P1→P5, không còn phần "đang soạn".** Còn nợ (không chặn, ghi lại để làm sau nếu cần):
-    quiz cho 18/22 chặng còn lại của P1–P4 (đợt 3 chỉ làm 4 chặng đầu mỗi giai đoạn).
+    ĐỦ P1→P5, không còn phần "đang soạn".**
 
 - **[2026-08-31] ✅ THIẾT KẾ LẠI WEB CHO DESKTOP — 4 PR, ĐÃ XONG TRỌN VẸN.** Trước đó web là
   "app mobile phóng to" ở mọi kích thước màn hình (BottomNav cố định đáy, dropdown Studio,
