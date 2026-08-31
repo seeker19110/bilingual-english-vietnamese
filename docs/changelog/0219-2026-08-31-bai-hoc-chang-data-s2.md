@@ -1,7 +1,7 @@
 # 0219 — Bài học 8 bước thật cho chặng data-s2 (hướng Dữ liệu) (1 PR)
 
 - **Ngày:** 2026-08-31
-- **PR:** #
+- **PR:** #784
 - **Đặc tả nguồn:** `packages/subject-programming/specializations/data.ts` (chặng `data-s2`,
   4 module) + khuôn 8 bước ở `packages/subject-programming/lessonTypes.ts`.
 
