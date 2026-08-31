@@ -47,6 +47,10 @@ export const SPEC_STAGE_UNITS: Record<string, string[]> = {
   // Hướng Web, chặng S2 — soạn 2026-08-31 (3 unit, 5 module: p6-u111 = m1, p6-u112 gộp
   // m2+m3 (CSDL quan hệ + Xác thực & phiên), p6-u113 gộp m4+m5 (tải dữ liệu client + deploy)).
   'web-s2': ['p6-u111', 'p6-u112', 'p6-u113'],
+  // Hướng Web, chặng S3 — soạn 2026-08-31 (3 unit, 5 module: p6-u114 = m1, p6-u115 gộp
+  // m2+m4 (render + kiến trúc — cả hai là quyết định CẤU TRÚC lớn), p6-u116 gộp m3+m5
+  // (kiểm thử + bảo mật — cả hai là gác CHẤT LƯỢNG/AN TOÀN trước khi release)).
+  'web-s3': ['p6-u114', 'p6-u115', 'p6-u116'],
 }
 
 /** Unit của một chặng; mảng RỖNG nghĩa là chặng chưa có bài (giao diện phải nói rõ điều đó). */

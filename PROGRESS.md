@@ -1302,8 +1302,16 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
     module — chọn mã trạng thái HTTP + phân trang + Idempotency-Key; toàn vẹn tham chiếu khoá
     ngoại (góc khác `backend-s2`) + so mật khẩu đã băm + chọn session-cookie/JWT; huỷ phản hồi cũ
     khi gõ tìm kiếm (race condition) + kiểm biến môi trường/thứ tự migration; nhật ký
-    `docs/changelog/0215-2026-08-31-bai-hoc-chang-s2-huong-web.md`). Mã unit TIẾP THEO còn trống
-    bắt đầu từ `p6-u114`.
+    `docs/changelog/0215-2026-08-31-bai-hoc-chang-s2-huong-web.md`).
+    **[2026-08-31] Chặng `web-s3` cũng ĐÃ có bài 8 bước** (6 bài, `p6-u114…u116`, phủ đủ 5/5
+    module — phân loại LCP/INP/CLS theo ngưỡng CLAUDE.md + ngân sách bundle chặn CI; chọn chiến
+    lược render SSG/SSR/CSR + kiểm luật phụ thuộc module; tỉ lệ kim tự tháp test khoẻ mạnh +
+    phân loại lỗ hổng XSS/CSRF/SSRF + rate limit. **Sự cố CI ở PR #780 (web-s2) do một test
+    app-level `ProgrammingSpecializationPage.test.tsx` hardcode số chặng web đã có bài — đã sửa
+    kèm bài học: `npm test` toàn monorepo mới bắt được lớp lỗi này, `stageUnits.test.ts` xanh
+    không đủ.** Nhật ký `docs/changelog/0216-2026-08-31-bai-hoc-chang-s3-huong-web.md`.
+    **Hướng Web nay có bài 8 bước ĐỦ CẢ 4 CHẶNG S1→S4.** Mã unit TIẾP THEO còn trống bắt đầu từ
+    `p6-u117`.
     Bốn hướng `game`, `embedded`, `desktop` và phần lớn `systems` KHÔNG có bộ
     chạy trong trình duyệt — cần quyết định riêng về làn trước khi soạn. **Cố ý KHÔNG làm bài học 8 bước cho cả 13 hướng** — 9/13
     hướng không có bộ chạy trong trình duyệt, ép khuôn sẽ đẻ nội dung giả. Chưa nối tiến độ chặng

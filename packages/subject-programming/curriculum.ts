@@ -571,6 +571,23 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Hướng Web S2 — tải dữ liệu & deploy: race condition, biến môi trường',
         topics: 'Huỷ phản hồi cũ khi gõ tìm kiếm; kiểm biến môi trường & thứ tự migration',
       },
+      // p6-u114…u116: chặng S3 "Nâng cao — hiệu năng, kiến trúc, chất lượng" của hướng Web
+      // (web-s3, specializations/web.ts, 5 module).
+      {
+        id: 'p6-u114',
+        title: 'Hướng Web S3 — hiệu năng đo bằng số: Core Web Vitals, ngân sách bundle',
+        topics: 'Phân loại LCP/INP/CLS theo ba ngưỡng chuẩn; chặn CI khi bundle vượt ngân sách',
+      },
+      {
+        id: 'p6-u115',
+        title: 'Hướng Web S3 — kiến trúc & render: SSR/SSG/CSR, ranh giới module',
+        topics: 'Chọn chiến lược render theo loại trang; kiểm vi phạm luật phụ thuộc module',
+      },
+      {
+        id: 'p6-u116',
+        title: 'Hướng Web S3 — kiểm thử & bảo mật: kim tự tháp test, XSS/CSRF/rate limit',
+        topics: 'Tỉ lệ unit/integration/E2E khoẻ mạnh; phân loại lỗ hổng; giới hạn tốc độ gọi',
+      },
       // p6-u66..u68: chặng S1 của hướng Dữ liệu (data-s1, specializations/data.ts, 4 module).
       // p3-u8/p3-u9 đã dạy SELECT/JOIN/GROUP BY/HAVING cơ bản — u66 đi XA HƠN (hàm cửa sổ, CTE)
       // để không dạy trùng. Đăng ký cầu nối ở `specializations/stageUnits.ts`.
