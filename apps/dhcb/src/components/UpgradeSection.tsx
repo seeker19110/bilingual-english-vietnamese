@@ -5,7 +5,7 @@
 // chuyển khoản → component tự POLL /api/payment-status cho tới khi thấy 'paid'. Xem đặc tả:
 // docs/research/dac-ta-thanh-toan-2026-07-25.md.
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Crown, Copy, Check, Loader2, Sparkles } from 'lucide-react'
 import {
   createCheckout,
@@ -17,6 +17,8 @@ import {
   type CheckoutResult,
 } from '../lib/payment'
 import { useToast } from '@core/ToastProvider'
+import { Skeleton } from './Skeleton'
+import LoadError from './LoadError'
 import { getPlanMarketing } from '../lib/planMarketing'
 
 const CYCLE_LABEL: Record<PayableCycle, { vi: string; en: string }> = {
@@ -168,6 +170,10 @@ export default function UpgradeSection({
 }) {
   const toast = useToast()
   const [prices, setPrices] = useState<PlanPrices | null>(null)
+  // Giá gói: trước đây lỗi API chỉ để lại dấu "…" vĩnh viễn ở ô giá — không ai biết là
+  // hỏng hay đang tải. Nay tách rõ hai trạng thái tải / lỗi (có nút thử lại).
+  const [pricesLoading, setPricesLoading] = useState(true)
+  const [pricesError, setPricesError] = useState(false)
   const [plan, setPlan] = useState<PayablePlan>('pro')
   const [cycle, setCycle] = useState<PayableCycle>('month')
   // Số năm mua liền một lần — CHỈ có ý nghĩa khi cycle === 'year' (giảm giá luỹ tiến theo số
@@ -181,9 +187,22 @@ export default function UpgradeSection({
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  useEffect(() => {
-    fetchPlanPrices().then(setPrices)
+  const loadPrices = useCallback(() => {
+    setPricesLoading(true)
+    setPricesError(false)
+    // fetchPlanPrices nuốt lỗi và trả null → coi null là lỗi tải.
+    void fetchPlanPrices()
+      .then((p) => {
+        if (p) setPrices(p)
+        else setPricesError(true)
+      })
+      .catch(() => setPricesError(true))
+      .finally(() => setPricesLoading(false))
   }, [])
+
+  useEffect(() => {
+    void Promise.resolve().then(loadPrices)
+  }, [loadPrices])
 
   // Dừng poll/đếm ngược khi rời trang — tránh gọi API vô ích sau khi component unmount.
   useEffect(
@@ -364,7 +383,24 @@ export default function UpgradeSection({
               </button>
             ))}
           </div>
-          <div className="flex gap-2 mb-4">
+          {pricesLoading && (
+            <div className="flex gap-2 mb-4" aria-busy="true" aria-label="Đang tải bảng giá">
+              <Skeleton className="h-12 flex-1 rounded-xl" />
+              <Skeleton className="h-12 flex-1 rounded-xl" />
+              <Skeleton className="h-12 flex-1 rounded-xl" />
+            </div>
+          )}
+
+          {!pricesLoading && pricesError && (
+            <div className="mb-4">
+              <LoadError
+                message={isA ? 'Không tải được giá — thử lại.' : 'Could not load prices — retry.'}
+                onRetry={loadPrices}
+              />
+            </div>
+          )}
+
+          <div className={`flex gap-2 mb-4 ${pricesLoading ? 'hidden' : ''}`}>
             {(['10day', 'month', 'year'] as const).map((c) => {
               const entry = prices?.[plan][c]
               // Chu kỳ 'year' đang chọn nhiều năm (>1): hiện TỔNG tiền của đúng số năm đó
@@ -398,7 +434,7 @@ export default function UpgradeSection({
                       <span>{formatVnd(totalVnd)}</span>
                     </div>
                   ) : (
-                    <div>{totalVnd != null ? formatVnd(totalVnd) : '…'}</div>
+                    <div>{totalVnd != null ? formatVnd(totalVnd) : pricesError ? '—' : '…'}</div>
                   )}
                 </button>
               )

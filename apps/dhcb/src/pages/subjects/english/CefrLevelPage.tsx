@@ -599,7 +599,9 @@ export default function CefrLevelPage() {
               className={`relative flex flex-col items-center justify-center gap-0.5 py-2 px-1 rounded-xl text-xs font-medium transition ${activeTab === key ? active : inactive}`}
             >
               <Icon className="w-4 h-4" />
-              <span>{isA ? labelA : labelB}</span>
+              {/* whitespace-nowrap: "Kiểm tra" bị bẻ 2 dòng trong pill ở màn hẹp,
+                  làm các tab cao thấp so le. */}
+              <span className="whitespace-nowrap">{isA ? labelA : labelB}</span>
               {badge != null && badge > 0 && (
                 <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[11px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
                   {badge > 99 ? '99+' : badge}

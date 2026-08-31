@@ -21,6 +21,7 @@ import { useParams } from 'react-router-dom'
 import { AlertTriangle, Flag, Navigation, ShieldCheck } from 'lucide-react'
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
+import { Skeleton } from '../../components/Skeleton'
 import LiveMap from '../../components/location/LiveMap'
 import MemberList from '../../components/location/MemberList'
 import GroupSpread, { type Pair } from '../../components/location/GroupSpread'
@@ -332,7 +333,11 @@ export default function LiveLocation() {
         />
 
         {loading ? (
-          <p className="text-zinc-200">Đang tải…</p>
+          /* Skeleton thay chữ "Đang tải…" — khớp khung thẻ sắp hiện. */
+          <div className="space-y-3" aria-busy="true" aria-label="Đang tải chuyến đi chung">
+            <Skeleton className="h-24 rounded-2xl" />
+            <Skeleton className="h-32 rounded-2xl" />
+          </div>
         ) : !state ? (
           <TripSetup
             sessions={sessions}

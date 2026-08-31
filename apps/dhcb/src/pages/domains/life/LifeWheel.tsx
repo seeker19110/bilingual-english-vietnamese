@@ -157,8 +157,15 @@ export default function LifeWheel() {
         {/* Khối biểu đồ Radar & Điểm trung bình */}
         <section className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-6 shadow-2xl flex flex-col md:flex-row items-center justify-around gap-6">
           {/* SVG Radar Chart */}
-          <div className="relative w-[320px] h-[320px] shrink-0">
-            <svg width={size} height={size} className="overflow-visible">
+          {/* Co lại theo bề rộng màn hình: ở máy 320px, khung cứng 320px + padding của
+              thẻ làm tràn ngang cả trang. viewBox giữ nguyên tỉ lệ vẽ. */}
+          <div className="relative w-[min(320px,100%)] aspect-square shrink-0">
+            <svg
+              viewBox={`0 0 ${size} ${size}`}
+              width="100%"
+              height="100%"
+              className="overflow-visible"
+            >
               {/* Các vòng tròn đồng tâm 2, 4, 6, 8, 10 */}
               {[2, 4, 6, 8, 10].map((level) => {
                 const r = (radius * level) / 10

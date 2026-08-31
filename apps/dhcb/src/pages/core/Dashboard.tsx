@@ -416,10 +416,16 @@ export default function Dashboard() {
         {/* Lưới ngày — ô đầu lệch cột theo thứ trong tuần */}
         <div className="grid grid-cols-7 gap-1.5">
           {stats.calendar.days.map((d, idx) => (
+            /* Ô lịch phải đọc được bằng bàn phím/trình đọc màn hình: `title` chỉ hiện khi
+               rê chuột nên trên mobile và với người dùng bàn phím là mất hẳn thông tin.
+               Giữ `title` cho desktop, thêm tabIndex + aria-label cho phần còn lại. */
             <div
               key={d.date}
+              tabIndex={0}
+              role="img"
+              aria-label={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
               style={idx === 0 ? { gridColumnStart: stats.calendar.firstColumn + 1 } : undefined}
-              className={`aspect-square rounded-[4px] ${heatColor(d.count)} ${d.date === stats.calendar.days[stats.calendar.days.length - 1]?.date ? 'ring-1 ring-accent-400/70' : ''}`}
+              className={`aspect-square rounded-[4px] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 ${heatColor(d.count)} ${d.date === stats.calendar.days[stats.calendar.days.length - 1]?.date ? 'ring-1 ring-accent-400/70' : ''}`}
               title={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
             />
           ))}
@@ -460,12 +466,16 @@ export default function Dashboard() {
               api/usage-summary.ts); Pro/VIP: giữ nguyên hiển thị theo từng tính năng/ngày. */}
         {effectivePlan(user.plan) === 'free' ? (
           <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-zinc-300 flex items-center gap-1.5">
-                <MessageCircle className="w-4 h-4 text-accent-400" />
-                {vi ? 'Lượt AI tuần này (chat + nói + viết...)' : 'AI credits this week'}
+            <div className="flex items-start justify-between mb-2">
+              {/* Nhãn dài: cho xuống dòng (min-w-0 + items-start) thay vì bị cắt cụt
+                  ở màn hẹp — phần trong ngoặc mới là thứ giải thích lượt tính từ đâu. */}
+              <span className="text-sm text-zinc-300 flex items-start gap-1.5 min-w-0">
+                <MessageCircle className="w-4 h-4 text-accent-400 shrink-0 mt-0.5" />
+                <span>
+                  {vi ? 'Lượt AI tuần này (chat + nói + viết...)' : 'AI credits this week'}
+                </span>
               </span>
-              <span className="text-sm font-semibold text-accent-300 theme-light:text-accent-800">
+              <span className="text-sm font-semibold text-accent-300 theme-light:text-accent-800 shrink-0 ml-2">
                 {weeklyCredit?.freeWeeklyCredit ?? '…'}/{weeklyCredit?.freeWeeklyCap ?? 35}
               </span>
             </div>
@@ -777,7 +787,7 @@ export default function Dashboard() {
             />
             {restSections}
           </main>
-          <aside className="w-72 xl:w-80 shrink-0 space-y-6 sticky top-20">
+          <aside className="w-72 xl:w-80 shrink-0 space-y-6 sticky top-20 max-h-[calc(100dvh-6rem)] overflow-y-auto">
             {streakSection}
             {weeklyGoalSection}
             <QuickActions />
