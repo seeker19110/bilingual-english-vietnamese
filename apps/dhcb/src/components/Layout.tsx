@@ -54,6 +54,37 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
     }
   }, [switcherOpen])
 
+  // Phím tắt toàn cục (PR 4, thiết kế lại web cho desktop) — Layout render ở MỌI trang nên
+  // đây là chỗ gắn 1 lần duy nhất, không phải lặp lại ở từng trang.
+  //   ⌘K / Ctrl+K — mở/đóng Studio switcher (quy ước "command palette" của nhiều app desktop).
+  //   /            — focus ô nhập TRÊN TRANG (input/textarea đầu tiên còn hiện, không disabled),
+  //                  bỏ qua khi đang gõ sẵn trong 1 ô nhập khác (để không chặn gõ dấu "/" thật).
+  useEffect(() => {
+    function isTypingTarget(t: EventTarget | null): boolean {
+      if (!(t instanceof HTMLElement)) return false
+      const tag = t.tagName
+      return tag === 'INPUT' || tag === 'TEXTAREA' || t.isContentEditable
+    }
+    function handleGlobalShortcut(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setSwitcherOpen((v) => !v)
+        return
+      }
+      if (e.key === '/' && !isTypingTarget(e.target)) {
+        const el = document.querySelector<HTMLElement>(
+          'input:not([type="hidden"]):not([disabled]), textarea:not([disabled])',
+        )
+        if (el) {
+          e.preventDefault()
+          el.focus()
+        }
+      }
+    }
+    window.addEventListener('keydown', handleGlobalShortcut)
+    return () => window.removeEventListener('keydown', handleGlobalShortcut)
+  }, [])
+
   return (
     <header className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-xl border-b border-zinc-800/80 relative pt-safe shadow-sm">
       {/* Tấm nền ĐẶC phủ toàn bộ khoảng phía TRÊN header cho Reachability */}
@@ -100,8 +131,9 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
           <button
             onClick={() => setSwitcherOpen(!switcherOpen)}
             aria-expanded={switcherOpen}
-            aria-label="Chuyển đổi Studio & Không gian học tập"
-            title="Chuyển đổi Studio & Không gian học tập"
+            aria-keyshortcuts="Meta+K Control+K"
+            aria-label="Chuyển đổi Studio & Không gian học tập (⌘K)"
+            title="Chuyển đổi Studio & Không gian học tập (⌘K)"
             className="tap-44 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800/90 text-xs font-semibold text-zinc-200 transition active:scale-95 group"
           >
             <Layers className="w-3.5 h-3.5 text-accent-400 group-hover:rotate-12 transition-transform" />
