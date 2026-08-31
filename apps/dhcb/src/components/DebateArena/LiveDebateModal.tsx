@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useDialogBehavior } from '../useDialogBehavior'
 import type { DebateSessionState, DebateTurn } from '@dhcb/core-contracts/debateArena'
 import {
   createDebateSessionApi,
@@ -16,6 +17,8 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
   const [inputTurn, setInputTurn] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const chatEndRef = useRef<HTMLDivElement>(null)
+  // 6 hành vi a11y bắt buộc của hộp thoại.
+  const { dialogProps, titleId, backdropProps } = useDialogBehavior(onClose)
 
   useEffect(() => {
     async function init() {
@@ -82,13 +85,16 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
   }
 
   return (
+    // role/aria-modal trước đây nằm nhầm ở LỚP NỀN (phủ kín màn hình); nay chuyển vào
+    // đúng khung hộp thoại, kèm Escape + bẫy tiêu điểm + khoá cuộn nền.
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-md animate-fade-in"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="debate-modal-title"
+      {...backdropProps}
     >
-      <div className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-3xl border border-indigo-500/30 bg-zinc-950 text-white shadow-2xl overflow-hidden">
+      <div
+        {...dialogProps}
+        className="relative w-full max-w-4xl max-h-[92dvh] flex flex-col rounded-3xl border border-indigo-500/30 bg-zinc-950 text-white shadow-2xl overflow-hidden focus:outline-none"
+      >
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-white/10 bg-gradient-to-r from-indigo-950/40 via-purple-950/20 to-zinc-950 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -96,7 +102,7 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
               ⚔️
             </div>
             <div>
-              <h2 id="debate-modal-title" className="text-base sm:text-lg font-bold text-white">
+              <h2 id={titleId} className="text-base sm:text-lg font-bold text-white">
                 Đấu Trường Tranh Biện AI
               </h2>
               <p className="text-xs text-indigo-300">
@@ -107,7 +113,7 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
+            className="tap-44 shrink-0 w-11 h-11 flex items-center justify-center rounded-xl hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
             aria-label="Đóng"
           >
             ✕

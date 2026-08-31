@@ -1,5 +1,6 @@
 // apps/dhcb/src/components/PvPArena/PvPArenaLobbyModal.tsx — Sảnh Chờ & Bảng Xếp Hạng Đấu Trường PvP.
 import { useState, useEffect } from 'react'
+import { useDialogBehavior } from '../useDialogBehavior'
 import { X, Trophy, Flame, Swords, ChevronRight } from 'lucide-react'
 import { useToast } from '@core/ToastProvider'
 import type {
@@ -27,6 +28,9 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
   const [activeMatch, setActiveMatch] = useState<PvPMatchState | null>(null)
   const [tab, setTab] = useState<'modes' | 'leaderboard'>('modes')
   const toast = useToast()
+  // 6 hành vi a11y bắt buộc. Khi sân đấu (PvPBattlefieldModal) mở đè lên, sảnh nhả
+  // bẫy tiêu điểm + khoá cuộn để hộp thoại con nắm quyền — tránh hai bẫy chồng nhau.
+  const { dialogProps, titleId, backdropProps } = useDialogBehavior(onClose, !activeMatch)
 
   useEffect(() => {
     fetchPvPProfile()
@@ -90,8 +94,14 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-xl animate-fade-in overflow-y-auto">
-        <div className="relative w-full max-w-2xl rounded-3xl border border-amber-500/30 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 shadow-2xl p-4 sm:p-6 overflow-hidden">
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-xl animate-fade-in overflow-y-auto"
+        {...backdropProps}
+      >
+        <div
+          {...dialogProps}
+          className="relative w-full max-w-2xl rounded-3xl border border-amber-500/30 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 shadow-2xl p-4 sm:p-6 max-h-[90dvh] overflow-y-auto focus:outline-none"
+        >
           {/* Header */}
           <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
             <div className="flex items-center gap-2.5">
@@ -99,7 +109,7 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
                 ⚔️
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-black text-white">
+                <h3 id={titleId} className="text-base sm:text-lg font-black text-white">
                   Đấu Trường 1v1 PvP Arena
                 </h3>
                 <p className="text-[11px] text-zinc-400">
@@ -112,7 +122,7 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
               type="button"
               onClick={onClose}
               aria-label="Đóng sảnh đấu"
-              className="tap-44 p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
+              className="tap-44 shrink-0 w-11 h-11 flex items-center justify-center rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
             >
               <X className="w-5 h-5" />
             </button>

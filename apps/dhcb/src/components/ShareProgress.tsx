@@ -3,6 +3,7 @@ import { X, Share2, Copy, Check, QrCode } from 'lucide-react'
 import QRCode from 'qrcode'
 import { getStreak } from '../lib/storage'
 import { getLearnedCount } from '../lib/vocab'
+import { useDialogBehavior } from './useDialogBehavior'
 
 interface Props {
   userId: string
@@ -17,6 +18,8 @@ export default function ShareProgress({ userId, isA, onClose }: Props) {
   const [copied, setCopied] = useState(false)
   const [showQr, setShowQr] = useState(false)
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null)
+  // 6 hành vi a11y bắt buộc của hộp thoại.
+  const { dialogProps, titleId, backdropProps } = useDialogBehavior(onClose)
 
   const shareLink = window.location.origin
 
@@ -65,21 +68,22 @@ export default function ShareProgress({ userId, isA, onClose }: Props) {
   return (
     <div
       className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 px-4"
-      onClick={onClose}
+      {...backdropProps}
     >
       <div
-        className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
+        {...dialogProps}
+        className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-2xl max-h-[90dvh] overflow-y-auto focus:outline-none"
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-white">
+          <h2 id={titleId} className="text-lg font-bold text-white">
             {isA ? 'Chia sẻ tiến độ' : 'Share Progress'}
           </h2>
           <button
+            type="button"
             onClick={onClose}
             aria-label={isA ? 'Đóng' : 'Close'}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-zinc-800 hover:bg-zinc-700 transition"
+            className="tap-44 shrink-0 w-11 h-11 flex items-center justify-center rounded-lg bg-zinc-800 hover:bg-zinc-700 transition"
           >
             <X className="w-4 h-4 text-zinc-400" />
           </button>

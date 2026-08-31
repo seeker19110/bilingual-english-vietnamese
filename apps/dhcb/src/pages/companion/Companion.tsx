@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, Suspense } from 'react'
+import { useCallback, useState, useRef, useEffect, Suspense } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Layers, X } from 'lucide-react'
 import Layout from '../../components/Layout'
@@ -27,6 +27,7 @@ import type {
   CompanionVoiceState,
 } from '../../components/CompanionStudios/studioTypes'
 import { DOMAIN_OPTIONS, STUDIO_TABS_CONFIG } from '../../components/CompanionStudios/studioTypes'
+import { useDialogBehavior } from '../../components/useDialogBehavior'
 
 // Nạp lười (Lazy-loading) từng Studio để giảm mạnh Initial Bundle Size
 const StudioDialogue = lazyWithRetry(
@@ -61,6 +62,9 @@ export default function Companion() {
   const [selectedDomain, setSelectedDomain] = useState('all')
   const [loading, setLoading] = useState(false)
   const [activeContext, setActiveContext] = useState<ContextPackage | null>(null)
+  // Hộp thoại "Minh Bạch Ngữ Cảnh" nội tuyến — bổ sung 6 hành vi a11y bắt buộc.
+  const closeContext = useCallback(() => setActiveContext(null), [])
+  const contextDialog = useDialogBehavior(closeContext, activeContext !== null)
   const [actionLoadingMap, setActionLoadingMap] = useState<Record<string, boolean>>({})
   const [viewMode, setViewMode] = useState<'chat' | 'voice'>('chat')
   const [embodimentMode, setEmbodimentMode] = useState<EmbodimentMode>('3d_cyber_avatar')
@@ -449,16 +453,26 @@ export default function Companion() {
 
       {/* Context Transparency Inspector Modal */}
       {activeContext && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-lg w-full p-5 shadow-2xl flex flex-col max-h-[85vh] animate-scale-in">
+        <div
+          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+          {...contextDialog.backdropProps}
+        >
+          <div
+            {...contextDialog.dialogProps}
+            className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-lg w-full p-5 shadow-2xl flex flex-col max-h-[85dvh] animate-scale-in focus:outline-none"
+          >
             <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
               <div className="flex items-center gap-2">
                 <Layers className="w-5 h-5 text-accent-400 theme-light:text-accent-800" />
-                <h3 className="font-semibold text-white text-base">Minh Bạch Ngữ Cảnh</h3>
+                <h3 id={contextDialog.titleId} className="font-semibold text-white text-base">
+                  Minh Bạch Ngữ Cảnh
+                </h3>
               </div>
               <button
-                onClick={() => setActiveContext(null)}
-                className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
+                type="button"
+                onClick={closeContext}
+                aria-label="Đóng"
+                className="tap-44 shrink-0 w-11 h-11 -mr-2 -mt-2 flex items-center justify-center rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
               >
                 <X className="w-5 h-5" />
               </button>
