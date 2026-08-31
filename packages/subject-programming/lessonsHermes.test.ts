@@ -37,9 +37,9 @@ function gradeAll(code: string, cases: ProgrammingTestCase[]) {
 }
 
 describe('bài học Hermes — cổng nội dung', () => {
-  it('có đúng 7 bài chương C1, id không trùng', () => {
-    expect(HERMES_LESSONS.length).toBe(7)
-    expect(new Set(HERMES_LESSONS.map((l) => l.id)).size).toBe(7)
+  it('có đúng 22 bài (4 chương), id không trùng', () => {
+    expect(HERMES_LESSONS.length).toBe(22)
+    expect(new Set(HERMES_LESSONS.map((l) => l.id)).size).toBe(22)
   })
 
   for (const lesson of HERMES_LESSONS) {
