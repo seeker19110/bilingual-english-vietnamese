@@ -8,6 +8,12 @@ import { HOA10_C4_LESSONS } from './lessons/hoa10c4.js'
 import { HOA10_C5_LESSONS } from './lessons/hoa10c5.js'
 import { HOA10_C6_LESSONS } from './lessons/hoa10c6.js'
 import { HOA10_C7_LESSONS } from './lessons/hoa10c7.js'
+import { HOA11_C1_LESSONS } from './lessons/hoa11c1.js'
+import { HOA11_C2_LESSONS } from './lessons/hoa11c2.js'
+import { HOA11_C3_LESSONS } from './lessons/hoa11c3.js'
+import { HOA11_C4_LESSONS } from './lessons/hoa11c4.js'
+import { HOA11_C5_LESSONS } from './lessons/hoa11c5.js'
+import { HOA11_C6_LESSONS } from './lessons/hoa11c6.js'
 
 export const CHEM_LESSONS: ChemLesson[] = [
   ...HOA10_C1_LESSONS,
@@ -17,6 +23,12 @@ export const CHEM_LESSONS: ChemLesson[] = [
   ...HOA10_C5_LESSONS,
   ...HOA10_C6_LESSONS,
   ...HOA10_C7_LESSONS,
+  ...HOA11_C1_LESSONS,
+  ...HOA11_C2_LESSONS,
+  ...HOA11_C3_LESSONS,
+  ...HOA11_C4_LESSONS,
+  ...HOA11_C5_LESSONS,
+  ...HOA11_C6_LESSONS,
 ]
 
 const lessonMap = new Map<string, ChemLesson>(CHEM_LESSONS.map((l) => [l.id, l]))
