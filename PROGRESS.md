@@ -1290,8 +1290,14 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
     **[2026-08-31] Chặng `backend-s3` cũng ĐÃ có bài 8 bước** (6 bài, `p6-u105…u107`, phủ đủ
     4/4 module — sharding & timeout-là-KHÔNG-BIẾT, outbox & saga, circuit breaker & error
     budget; nối lại khái niệm idempotent đã dạy ở `backend-s2`; nhật ký
-    `docs/changelog/0213-2026-08-31-bai-hoc-chang-s3-huong-backend.md`). Mã unit TIẾP THEO còn
-    trống bắt đầu từ `p6-u108`.
+    `docs/changelog/0213-2026-08-31-bai-hoc-chang-s3-huong-backend.md`).
+    **[2026-08-31] Chặng `backend-s4` (chặng CUỐI của hướng Backend) cũng ĐÃ có bài 8 bước**
+    (6 bài, `p6-u108…u110`, phủ đủ 4/4 module — ước lượng dung lượng QPS/dung lượng lưu, độ trễ
+    đa vùng địa lý (RTT ánh sáng trong sợi quang); chọn kho lưu trữ chuyên biệt, LSM tree vs
+    B-tree; phân quyền đặc quyền tối thiểu, phân loại mức độ sự cố + leo thang; nối lại nhất
+    quán cuối cùng đã dạy ở `backend-s3`; nhật ký
+    `docs/changelog/0214-2026-08-31-bai-hoc-chang-s4-huong-backend.md`). **Hướng Backend nay đã
+    có bài 8 bước ĐỦ CẢ 4 CHẶNG S1→S4.** Mã unit TIẾP THEO còn trống bắt đầu từ `p6-u111`.
     Bốn hướng `game`, `embedded`, `desktop` và phần lớn `systems` KHÔNG có bộ
     chạy trong trình duyệt — cần quyết định riêng về làn trước khi soạn. **Cố ý KHÔNG làm bài học 8 bước cho cả 13 hướng** — 9/13
     hướng không có bộ chạy trong trình duyệt, ép khuôn sẽ đẻ nội dung giả. Chưa nối tiến độ chặng

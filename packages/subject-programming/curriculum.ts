@@ -537,6 +537,23 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Hướng Backend S3 — chịu lỗi & quan sát: circuit breaker, error budget',
         topics: 'Circuit breaker 3 trạng thái chặn dồn tải; SLO và ngân sách lỗi còn lại',
       },
+      // p6-u108…u110: chặng S4 "Chuyên gia — quy mô lớn và trách nhiệm vận hành" của hướng
+      // Backend (backend-s4, specializations/backend.ts, 4 module).
+      {
+        id: 'p6-u108',
+        title: 'Hướng Backend S4 — thiết kế quy mô: ước lượng dung lượng, độ trễ đa vùng',
+        topics: 'QPS trung bình/đỉnh, dung lượng lưu trữ; RTT theo tốc độ ánh sáng trong sợi quang',
+      },
+      {
+        id: 'p6-u109',
+        title: 'Hướng Backend S4 — lưu trữ chuyên biệt: chọn kho dữ liệu, LSM vs B-tree',
+        topics: 'Chọn loại kho theo mẫu truy vấn; đánh đổi ghi nhanh (LSM) vs đọc nhanh (B-tree)',
+      },
+      {
+        id: 'p6-u110',
+        title: 'Hướng Backend S4 — bảo mật & vận hành: đặc quyền tối thiểu, phân loại sự cố',
+        topics: 'Phân quyền deny-by-default; phân loại mức độ sự cố + quy trình leo thang',
+      },
       // p6-u66..u68: chặng S1 của hướng Dữ liệu (data-s1, specializations/data.ts, 4 module).
       // p3-u8/p3-u9 đã dạy SELECT/JOIN/GROUP BY/HAVING cơ bản — u66 đi XA HƠN (hàm cửa sổ, CTE)
       // để không dạy trùng. Đăng ký cầu nối ở `specializations/stageUnits.ts`.
