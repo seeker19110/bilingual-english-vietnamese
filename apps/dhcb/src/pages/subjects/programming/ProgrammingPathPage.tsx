@@ -9,7 +9,18 @@
 //    trình là việc của đợt 2).
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Map, Clock, Lock, CheckCircle2, Play, Hammer, Award, Target } from 'lucide-react'
+import {
+  Map,
+  Clock,
+  Lock,
+  CheckCircle2,
+  Play,
+  Hammer,
+  Award,
+  Target,
+  Sparkles,
+  Compass,
+} from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { useAuth } from '../../../context/useAuth'
@@ -19,6 +30,12 @@ import {
   EMPTY_SPEC_PROGRESS,
   type SpecProgressSnapshot,
 } from '../../../lib/programmingSpecProgress'
+import {
+  fetchPathProgress,
+  isPathStageDone,
+  isPathStageSkipped,
+  type PathStageProgress,
+} from '../../../lib/programmingPathProgress'
 import {
   getLearningPath,
   pathStageRefs,
@@ -32,13 +49,15 @@ export default function ProgrammingPathPage() {
   const { pathId } = useParams()
   const { user } = useAuth()
   const [progress, setProgress] = useState<SpecProgressSnapshot>(EMPTY_SPEC_PROGRESS)
-
-  useEffect(() => {
-    if (!user) return
-    void fetchSpecProgress(user.id).then(setProgress)
-  }, [user])
+  const [pathProgress, setPathProgress] = useState<PathStageProgress[]>([])
 
   const path = getLearningPath(pathId ?? '')
+
+  useEffect(() => {
+    if (!user || !path) return
+    void fetchSpecProgress(user.id).then(setProgress)
+    void fetchPathProgress(user.id, path.id).then(setPathProgress)
+  }, [user, path])
 
   if (!path) {
     return (
@@ -81,6 +100,15 @@ export default function ProgrammingPathPage() {
               {doneCount}/{allRefs.length} chặng xong
             </span>
           </div>
+          {user && (
+            <button
+              onClick={() => nav(`/lap-trinh/lo-trinh/${path.id}/chan-doan`)}
+              className="tap-44 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 hover:border-accent-500/60 text-zinc-200 font-semibold text-xs transition active:scale-[0.98]"
+            >
+              <Compass className="w-3.5 h-3.5 text-accent-400" aria-hidden="true" />
+              <span>Chưa biết bắt đầu từ đâu? Làm chẩn đoán chọn điểm vào</span>
+            </button>
+          )}
         </section>
 
         {/* Các giai đoạn */}
@@ -109,7 +137,10 @@ export default function ProgrammingPathPage() {
               <ol className="space-y-2">
                 {phase.stages.map((ref) => {
                   const stage = getSpecStage(ref.stageId)
-                  const xong = isStageCompleted(progress, ref.stageId)
+                  const xong =
+                    isStageCompleted(progress, ref.stageId) ||
+                    isPathStageDone(pathProgress, ref.stageId)
+                  const mien = !xong && isPathStageSkipped(pathProgress, ref.stageId)
                   const coBai = unitsOfStage(ref.stageId).length > 0
                   const [specId] = ref.stageId.split('-')
                   return (
@@ -124,6 +155,12 @@ export default function ProgrammingPathPage() {
                             <CheckCircle2
                               className="inline-block w-4 h-4 text-emerald-400 ml-1.5 align-text-bottom"
                               aria-label="Đã xong"
+                            />
+                          )}
+                          {mien && (
+                            <Sparkles
+                              className="inline-block w-4 h-4 text-accent-400 ml-1.5 align-text-bottom"
+                              aria-label="Được đề xuất miễn từ chẩn đoán"
                             />
                           )}
                         </p>
