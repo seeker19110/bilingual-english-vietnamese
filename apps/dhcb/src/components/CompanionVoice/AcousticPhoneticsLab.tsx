@@ -50,7 +50,7 @@ export default function AcousticPhoneticsLab() {
           <div>
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-zinc-100">Acoustic Phonetics &amp; GOP Lab</h3>
-              <span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-[10px] font-medium text-indigo-300">
+              <span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-[11px] font-medium text-indigo-300">
                 Phoneme Engine V4
               </span>
             </div>

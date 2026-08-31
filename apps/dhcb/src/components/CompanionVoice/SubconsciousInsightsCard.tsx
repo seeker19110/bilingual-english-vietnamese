@@ -70,7 +70,7 @@ export const SubconsciousInsightsCard: React.FC = () => {
           <div>
             <h4 className="font-bold text-white text-sm flex items-center gap-1.5">
               <span>Nhận Thức Ngầm & Dự Đoán Đón Đầu</span>
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-purple-500/20 text-purple-300 border border-purple-500/30">
+              <span className="px-1.5 py-0.5 rounded text-[11px] font-mono bg-purple-500/20 text-purple-300 border border-purple-500/30">
                 V3 Autonomous
               </span>
             </h4>
@@ -95,7 +95,7 @@ export const SubconsciousInsightsCard: React.FC = () => {
       <div className="bg-purple-950/60 border border-purple-800/50 rounded-xl p-3 text-purple-200 leading-relaxed font-medium flex items-start gap-2.5">
         <Sparkles className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
         <div>
-          <span className="text-[10px] uppercase font-bold tracking-wider text-purple-400 block mb-0.5">
+          <span className="text-[11px] uppercase font-bold tracking-wider text-purple-400 block mb-0.5">
             Tâm thế khuyến nghị ngày mới
           </span>
           <p className="text-xs text-purple-100">{preComputedStrategy.recommendedMindset}</p>
@@ -155,33 +155,33 @@ export const SubconsciousInsightsCard: React.FC = () => {
             <div className="grid grid-cols-3 gap-2 text-center">
               <div className="bg-zinc-950 p-2 rounded-lg border border-zinc-800">
                 <div className="font-bold text-white text-xs">{graphChanges.nodesCreated}</div>
-                <div className="text-[10px] text-zinc-400">Nút tri thức</div>
+                <div className="text-[11px] text-zinc-400">Nút tri thức</div>
               </div>
               <div className="bg-zinc-950 p-2 rounded-lg border border-zinc-800">
                 <div className="font-bold text-purple-400 text-xs">{graphChanges.edgesRewired}</div>
-                <div className="text-[10px] text-zinc-400">Liên kết mới</div>
+                <div className="text-[11px] text-zinc-400">Liên kết mới</div>
               </div>
               <div className="bg-zinc-950 p-2 rounded-lg border border-zinc-800">
                 <div className="font-bold text-sky-400 text-xs">
                   {graphChanges.redundantItemsPruned}
                 </div>
-                <div className="text-[10px] text-zinc-400">Đã lọc nhiễu</div>
+                <div className="text-[11px] text-zinc-400">Đã lọc nhiễu</div>
               </div>
             </div>
 
             {hypothesesEvaluated.length > 0 && (
               <div className="space-y-1.5 pt-1">
-                <div className="text-[10px] uppercase font-bold text-purple-300">
+                <div className="text-[11px] uppercase font-bold text-purple-300">
                   Giả thuyết AI tự động kiểm chứng:
                 </div>
                 {hypothesesEvaluated.map((h, idx) => (
                   <div
                     key={idx}
-                    className="p-2 rounded-lg bg-zinc-950/70 border border-purple-900/40 text-[10px] space-y-1"
+                    className="p-2 rounded-lg bg-zinc-950/70 border border-purple-900/40 text-[11px] space-y-1"
                   >
                     <div className="text-zinc-200 font-medium">💡 {h.hypothesis}</div>
                     {h.actionProposed && (
-                      <div className="text-purple-300 text-[10px]">↳ {h.actionProposed}</div>
+                      <div className="text-purple-300 text-[11px]">↳ {h.actionProposed}</div>
                     )}
                   </div>
                 ))}

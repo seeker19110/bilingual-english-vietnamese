@@ -77,8 +77,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={api}>
       {children}
 
-      {/* Khu vực hiển thị toast — cố định trên cùng, an toàn cho notch */}
-      <div className="fixed top-0 inset-x-0 z-[100] flex flex-col items-center gap-2 px-4 pt-3 pt-safe pointer-events-none">
+      {/* Khu vực hiển thị toast — nằm NGAY DƯỚI header (header cao h-14 = 3.5rem, xem
+          Layout.tsx). Trước đây `top-0` nên toast phủ lên header và che nút Back suốt 4
+          giây trên mobile (audit 2026-08-31 mục B2). `pt-safe` giữ nguyên cho trang KHÔNG
+          có header — phần safe-area chỉ cộng thêm, không làm toast tụt quá xa. */}
+      <div className="fixed top-14 inset-x-0 z-[100] flex flex-col items-center gap-2 px-4 pt-3 pt-safe pointer-events-none">
         {toasts.map(({ id, kind, message }) => {
           const { cls, Icon } = STYLES[kind]
           return (
@@ -93,7 +96,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               <button
                 onClick={() => remove(id)}
                 aria-label="Đóng thông báo"
-                className="shrink-0 opacity-60 hover:opacity-100 transition"
+                /* `tap-44` + flex căn giữa: icon chỉ 14px nên không ép kích thước tối thiểu
+                   thì vùng chạm ~14×14px, xa sàn 44px (CLAUDE.md mục 4.7). `-my-2` để nút to
+                   hơn không làm cao thêm cả hộp toast. */
+                className="tap-44 -my-2 shrink-0 flex items-center justify-center opacity-60 hover:opacity-100 transition"
               >
                 <X className="w-3.5 h-3.5" aria-hidden="true" />
               </button>

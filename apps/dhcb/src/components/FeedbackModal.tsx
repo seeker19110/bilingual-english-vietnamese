@@ -6,6 +6,7 @@ import { useLang } from '../context/useLang'
 import { useToast } from '@core/ToastProvider'
 import { submitFeedback } from '../lib/feedbackApi'
 import { CATEGORY_METADATA, type UserFeedbackCategory } from '@dhcb/core-contracts/feedback'
+import { useDialogBehavior } from './useDialogBehavior'
 
 interface Props {
   isOpen: boolean
@@ -48,6 +49,10 @@ export default function FeedbackModal({ isOpen, onClose, initialCategory = 'feat
       setCategory(initialCategory)
     }
   }
+
+  // Trước đây chỉ có role/aria-modal; hook bổ sung Escape, bẫy tiêu điểm, trả tiêu
+  // điểm khi đóng và khoá cuộn nền.
+  const { dialogProps, titleId, backdropProps } = useDialogBehavior(onClose, isOpen)
 
   if (!isOpen) return null
 
@@ -97,11 +102,13 @@ export default function FeedbackModal({ isOpen, onClose, initialCategory = 'feat
 
   return (
     <div
-      role="dialog"
-      aria-modal="true"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+      {...backdropProps}
     >
-      <div className="relative w-full max-w-lg bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-2xl overflow-hidden animate-scale-up">
+      <div
+        {...dialogProps}
+        className="relative w-full max-w-lg bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-2xl max-h-[90dvh] overflow-y-auto animate-scale-up focus:outline-none"
+      >
         {/* Nút đóng */}
         <button
           onClick={onClose}
@@ -118,7 +125,7 @@ export default function FeedbackModal({ isOpen, onClose, initialCategory = 'feat
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">
+              <h3 id={titleId} className="text-lg font-bold text-white">
                 {isA ? 'Đã Tiếp Nhận Ý Kiến Của Bạn!' : 'Feedback Received!'}
               </h3>
               <p className="text-sm text-zinc-400 mt-1 max-w-sm mx-auto">
@@ -143,7 +150,7 @@ export default function FeedbackModal({ isOpen, onClose, initialCategory = 'feat
                 <MessageSquareHeart className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-white">
+                <h3 id={titleId} className="text-base font-bold text-white">
                   {isA ? 'Góp Ý & Báo Lỗi' : 'Feedback & Suggestions'}
                 </h3>
                 <p className="text-xs text-zinc-400">

@@ -115,15 +115,15 @@ export const CrossDomainSynergyCard: React.FC = () => {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 font-bold text-white">
-                <span className="capitalize px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 text-[10px]">
+                <span className="capitalize px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 text-[11px]">
                   {item.sourceDomain}
                 </span>
                 <ArrowRight className="w-3 h-3 text-zinc-400" />
-                <span className="capitalize px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[10px]">
+                <span className="capitalize px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[11px]">
                   {item.targetDomain}
                 </span>
               </div>
-              <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full uppercase">
+              <span className="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full uppercase">
                 {item.impact} impact
               </span>
             </div>

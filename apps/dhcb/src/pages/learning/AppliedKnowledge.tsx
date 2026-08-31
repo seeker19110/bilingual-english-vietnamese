@@ -268,7 +268,7 @@ export default function AppliedKnowledge() {
               >
                 <div className="flex items-center justify-between">
                   <TrendingUp className="w-5 h-5 text-blue-400 theme-light:text-blue-800" />
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 theme-light:text-blue-800 font-mono">
+                  <span className="text-[11px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 theme-light:text-blue-800 font-mono">
                     Toán
                   </span>
                 </div>
@@ -285,7 +285,7 @@ export default function AppliedKnowledge() {
               >
                 <div className="flex items-center justify-between">
                   <Calculator className="w-5 h-5 text-emerald-400 theme-light:text-emerald-800" />
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-800 font-mono">
+                  <span className="text-[11px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-800 font-mono">
                     Tài chính
                   </span>
                 </div>
@@ -302,7 +302,7 @@ export default function AppliedKnowledge() {
               >
                 <div className="flex items-center justify-between">
                   <Building2 className="w-5 h-5 text-amber-400 theme-light:text-amber-800" />
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 theme-light:text-amber-800 font-mono">
+                  <span className="text-[11px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 theme-light:text-amber-800 font-mono">
                     Vay vốn
                   </span>
                 </div>
@@ -319,7 +319,7 @@ export default function AppliedKnowledge() {
               >
                 <div className="flex items-center justify-between">
                   <Zap className="w-5 h-5 text-yellow-400 theme-light:text-yellow-800" />
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-300 theme-light:text-yellow-800 font-mono">
+                  <span className="text-[11px] px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-300 theme-light:text-yellow-800 font-mono">
                     Vật lý
                   </span>
                 </div>
@@ -336,7 +336,7 @@ export default function AppliedKnowledge() {
               >
                 <div className="flex items-center justify-between">
                   <Radio className="w-5 h-5 text-cyan-400 theme-light:text-cyan-800" />
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 theme-light:text-cyan-800 font-mono">
+                  <span className="text-[11px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 theme-light:text-cyan-800 font-mono">
                     Vũ trụ
                   </span>
                 </div>
@@ -353,7 +353,7 @@ export default function AppliedKnowledge() {
               >
                 <div className="flex items-center justify-between">
                   <Car className="w-5 h-5 text-red-400 theme-light:text-red-800" />
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 theme-light:text-red-800 font-mono">
+                  <span className="text-[11px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 theme-light:text-red-800 font-mono">
                     An toàn
                   </span>
                 </div>
@@ -370,7 +370,7 @@ export default function AppliedKnowledge() {
               >
                 <div className="flex items-center justify-between">
                   <FlaskConical className="w-5 h-5 text-purple-400 theme-light:text-purple-800" />
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 theme-light:text-purple-800 font-mono">
+                  <span className="text-[11px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 theme-light:text-purple-800 font-mono">
                     Hóa học
                   </span>
                 </div>
@@ -387,7 +387,7 @@ export default function AppliedKnowledge() {
               >
                 <div className="flex items-center justify-between">
                   <Activity className="w-5 h-5 text-indigo-400 theme-light:text-indigo-800" />
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 theme-light:text-indigo-800 font-mono">
+                  <span className="text-[11px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 theme-light:text-indigo-800 font-mono">
                     Axit-Bazơ
                   </span>
                 </div>
@@ -404,7 +404,7 @@ export default function AppliedKnowledge() {
               >
                 <div className="flex items-center justify-between">
                   <HeartPulse className="w-5 h-5 text-rose-400 theme-light:text-rose-800" />
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 theme-light:text-rose-800 font-mono">
+                  <span className="text-[11px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 theme-light:text-rose-800 font-mono">
                     Dinh dưỡng
                   </span>
                 </div>
@@ -421,7 +421,7 @@ export default function AppliedKnowledge() {
               >
                 <div className="flex items-center justify-between">
                   <Dna className="w-5 h-5 text-teal-400 theme-light:text-teal-800" />
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 theme-light:text-teal-800 font-mono">
+                  <span className="text-[11px] px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 theme-light:text-teal-800 font-mono">
                     Di truyền
                   </span>
                 </div>
@@ -1333,7 +1333,7 @@ export default function AppliedKnowledge() {
                           <div className="text-xs font-medium text-zinc-300">{item.name}</div>
                           <div className="flex items-center gap-1.5">
                             <span
-                              className={`text-[10px] px-1.5 py-0.5 rounded font-mono font-bold ${
+                              className={`text-[11px] px-1.5 py-0.5 rounded font-mono font-bold ${
                                 item.ph < 4
                                   ? 'bg-red-500/20 text-red-400 theme-light:text-red-800'
                                   : item.ph < 7
@@ -1347,7 +1347,7 @@ export default function AppliedKnowledge() {
                             </span>
                             <button
                               onClick={() => setSelectedPh1(item.ph)}
-                              className={`px-2 py-0.5 rounded text-[10px] font-bold border transition ${
+                              className={`px-2 py-0.5 rounded text-[11px] font-bold border transition ${
                                 selectedPh1 === item.ph
                                   ? 'bg-indigo-600 text-[#fff] border-indigo-400'
                                   : 'bg-zinc-800 text-zinc-400 border-zinc-700'
@@ -1357,7 +1357,7 @@ export default function AppliedKnowledge() {
                             </button>
                             <button
                               onClick={() => setSelectedPh2(item.ph)}
-                              className={`px-2 py-0.5 rounded text-[10px] font-bold border transition ${
+                              className={`px-2 py-0.5 rounded text-[11px] font-bold border transition ${
                                 selectedPh2 === item.ph
                                   ? 'bg-purple-600 text-[#fff] border-purple-400'
                                   : 'bg-zinc-800 text-zinc-400 border-zinc-700'
@@ -1523,7 +1523,7 @@ export default function AppliedKnowledge() {
 
                     <div className="grid grid-cols-3 gap-2 pt-2 border-t border-zinc-800 text-center">
                       <div className="p-2 rounded-lg bg-blue-950/40 theme-light:bg-blue-50 border border-blue-500/30">
-                        <div className="text-[10px] text-blue-300 theme-light:text-blue-800">
+                        <div className="text-[11px] text-blue-300 theme-light:text-blue-800">
                           Đạm (Protein)
                         </div>
                         <div className="text-sm font-bold text-blue-400 theme-light:text-blue-800">
@@ -1531,7 +1531,7 @@ export default function AppliedKnowledge() {
                         </div>
                       </div>
                       <div className="p-2 rounded-lg bg-amber-950/40 theme-light:bg-amber-50 border border-amber-500/30">
-                        <div className="text-[10px] text-amber-300 theme-light:text-amber-800">
+                        <div className="text-[11px] text-amber-300 theme-light:text-amber-800">
                           Đường bột (Carb)
                         </div>
                         <div className="text-sm font-bold text-amber-400 theme-light:text-amber-800">
@@ -1539,7 +1539,7 @@ export default function AppliedKnowledge() {
                         </div>
                       </div>
                       <div className="p-2 rounded-lg bg-rose-950/40 theme-light:bg-rose-50 border border-rose-500/30">
-                        <div className="text-[10px] text-rose-300 theme-light:text-rose-800">
+                        <div className="text-[11px] text-rose-300 theme-light:text-rose-800">
                           Chất béo (Fat)
                         </div>
                         <div className="text-sm font-bold text-rose-400 theme-light:text-rose-800">

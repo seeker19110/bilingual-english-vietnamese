@@ -206,6 +206,14 @@ function SubjectRedirect() {
   return <Navigate to={`/mon-hoc/${subjectId ?? ''}`} replace />
 }
 
+// Chuyển hướng URL cũ của trang khoá ngắn (/lap-trinh/khoa/…) về URL chính thức
+// (/lap-trinh/khoa-hoc/…, đổi 2026-08-31 theo yêu cầu người dùng), GIỮ NGUYÊN mã khoá —
+// link đã chia sẻ/bookmark không chết.
+function CourseRedirect() {
+  const { courseId } = useParams()
+  return <Navigate to={`/lap-trinh/khoa-hoc/${courseId ?? ''}`} replace />
+}
+
 export default function App() {
   usePrefetchPages()
   // Host trụ Học tập đổi HÌNH DẠNG bảng route (xem chú thích ở route "/"). Đọc một lần lúc
@@ -478,6 +486,8 @@ export default function App() {
                           </RequireAuth>
                         }
                       />
+                      {/* URL cũ trước 2026-08-31 — chuyển hướng giữ mã khoá. */}
+                      <Route path="/lap-trinh/khoa/:courseId" element={<CourseRedirect />} />
                       <Route
                         path="/lap-trinh/:levelId"
                         element={

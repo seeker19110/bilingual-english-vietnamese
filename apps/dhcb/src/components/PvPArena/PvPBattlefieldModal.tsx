@@ -1,5 +1,6 @@
 // apps/dhcb/src/components/PvPArena/PvPBattlefieldModal.tsx — Sân Đấu Đối Kháng 1v1 PvP Trực Tiếp 60 FPS.
 import { useState, useEffect, useRef } from 'react'
+import { useDialogBehavior } from '../useDialogBehavior'
 import { X, Zap, Flame, Timer, Sparkles, CheckCircle2, XCircle } from 'lucide-react'
 import { useToast } from '@core/ToastProvider'
 import type { PvPMatchState, PvPRoundAction } from '@dhcb/core-contracts/pvpArena'
@@ -16,6 +17,8 @@ export default function PvPBattlefieldModal({
   onClose,
   onMatchComplete,
 }: PvPBattlefieldModalProps) {
+  // 6 hành vi a11y bắt buộc của hộp thoại (Escape, bẫy tiêu điểm, khoá cuộn nền…).
+  const { dialogProps, titleId, backdropProps } = useDialogBehavior(onClose)
   const [match, setMatch] = useState<PvPMatchState>(initialMatch)
   const [currentRound, setCurrentRound] = useState(0)
   const [timeLeft, setTimeLeft] = useState(initialMatch.questions[0]?.timeLimitSec || 5)
@@ -120,8 +123,18 @@ export default function PvPBattlefieldModal({
   const p2Score = match.scores.player2Score
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-xl animate-fade-in overflow-y-auto">
-      <div className="relative w-full max-w-2xl rounded-3xl border border-amber-500/30 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 shadow-2xl p-4 sm:p-6 overflow-hidden">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-xl animate-fade-in overflow-y-auto"
+      {...backdropProps}
+    >
+      {/*
+        Bỏ `overflow-hidden` (nó CẮT phần cuối trận đấu trên màn hình thấp): thay bằng
+        trần chiều cao theo dvh + cho chính khung cuộn được.
+      */}
+      <div
+        {...dialogProps}
+        className="relative w-full max-w-2xl rounded-3xl border border-amber-500/30 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 shadow-2xl p-4 sm:p-6 max-h-[90dvh] overflow-y-auto focus:outline-none"
+      >
         {/* Header: Thanh điểm và Avatar đối đầu */}
         <div className="flex items-center justify-between pb-4 border-b border-zinc-800/80">
           <div className="flex items-center gap-2">
@@ -129,7 +142,10 @@ export default function PvPBattlefieldModal({
               ⚔️
             </span>
             <div>
-              <div className="text-xs font-bold text-amber-400 uppercase tracking-wider">
+              <div
+                id={titleId}
+                className="text-xs font-bold text-amber-400 uppercase tracking-wider"
+              >
                 Đấu Trường 1v1 PvP
               </div>
               <div className="text-[11px] text-zinc-400">
@@ -142,7 +158,7 @@ export default function PvPBattlefieldModal({
             type="button"
             onClick={onClose}
             aria-label="Đóng sân đấu"
-            className="tap-44 p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition"
+            className="tap-44 shrink-0 w-11 h-11 flex items-center justify-center rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -159,7 +175,7 @@ export default function PvPBattlefieldModal({
               <div className="text-xs font-bold text-indigo-300 truncate">{match.player1.name}</div>
               <div className="text-lg sm:text-xl font-black text-white flex items-center gap-1.5">
                 <span>{p1Score}</span>
-                <span className="text-[10px] font-semibold text-indigo-400">pts</span>
+                <span className="text-[11px] font-semibold text-indigo-400">pts</span>
               </div>
             </div>
           </div>
@@ -175,7 +191,7 @@ export default function PvPBattlefieldModal({
               <div className="text-xs font-bold text-purple-300 truncate">{match.player2.name}</div>
               <div className="text-lg sm:text-xl font-black text-white flex items-center justify-end gap-1.5">
                 <span>{p2Score}</span>
-                <span className="text-[10px] font-semibold text-purple-400">pts</span>
+                <span className="text-[11px] font-semibold text-purple-400">pts</span>
               </div>
             </div>
             <div className="w-11 h-11 rounded-2xl bg-purple-500/20 text-2xl flex items-center justify-center border border-purple-400/40 shrink-0">

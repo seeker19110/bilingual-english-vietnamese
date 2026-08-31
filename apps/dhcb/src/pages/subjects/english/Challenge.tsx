@@ -213,7 +213,7 @@ function WeekBoard({ cells, isA }: { cells: WeekCell[]; isA: boolean }) {
               {done ? <Check className="w-3.5 h-3.5" /> : Number(c.date.slice(8))}
             </span>
             <span
-              className={`text-[10px] ${c.isToday ? 'text-accent-400 theme-light:text-accent-800 font-bold' : 'text-zinc-400'}`}
+              className={`text-[11px] ${c.isToday ? 'text-accent-400 theme-light:text-accent-800 font-bold' : 'text-zinc-400'}`}
             >
               {labels[i]}
             </span>

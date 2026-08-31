@@ -31,12 +31,12 @@ export default function CollocationGraphExplorer({
           </div>
           <div>
             <h4 className="text-xs font-bold text-zinc-100">{title}</h4>
-            <p className="text-[10px] text-zinc-400">
+            <p className="text-[11px] text-zinc-400">
               Học theo cụm từ tự nhiên giúp loại bỏ thói quen dịch từng từ ngữ.
             </p>
           </div>
         </div>
-        <span className="rounded px-2 py-0.5 text-[9px] font-bold uppercase bg-sky-500/20 text-sky-300 border border-sky-500/40">
+        <span className="rounded px-2 py-0.5 text-[11px] font-bold uppercase bg-sky-500/20 text-sky-300 border border-sky-500/40">
           {collocations.length} Collocations
         </span>
       </div>
@@ -60,7 +60,7 @@ export default function CollocationGraphExplorer({
               <span>{col.phraseEn}</span>
               <span
                 className={
-                  'text-[9px] font-mono px-1 rounded ' +
+                  'text-[11px] font-mono px-1 rounded ' +
                   (isSelected
                     ? 'bg-zinc-950/30 text-zinc-950 font-bold'
                     : 'bg-zinc-800 text-zinc-400')
@@ -90,7 +90,7 @@ export default function CollocationGraphExplorer({
                 <span className="text-[11px] font-mono text-zinc-400">{activeCol.ipa}</span>
               )}
             </div>
-            <div className="flex items-center gap-1 text-[10px] text-zinc-400">
+            <div className="flex items-center gap-1 text-[11px] text-zinc-400">
               <Layers className="w-3 h-3 text-sky-400" />
               <span className="capitalize">{activeCol.type.replace('_', ' ')}</span>
             </div>

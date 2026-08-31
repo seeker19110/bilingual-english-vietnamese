@@ -44,7 +44,7 @@ function ConfirmButton({
       <button
         type="button"
         onClick={() => setAsking(true)}
-        className="tap-44 flex w-full items-center gap-2 rounded-xl border border-rose-400/40 px-4 text-rose-200 theme-light:text-rose-800"
+        className="tap-44 flex w-full items-center gap-2 rounded-xl border border-rose-400/40 hover:bg-rose-500/10 transition-colors px-4 text-rose-200 theme-light:text-rose-800"
       >
         {icon}
         {label}
@@ -59,7 +59,7 @@ function ConfirmButton({
         <button
           type="button"
           onClick={() => setAsking(false)}
-          className="tap-44 flex-1 rounded-lg border border-zinc-700 px-3 font-semibold text-zinc-100"
+          className="tap-44 flex-1 rounded-lg border border-zinc-700 hover:bg-zinc-800/60 hover:border-zinc-600 transition-colors px-3 font-semibold text-zinc-100"
         >
           Không
         </button>
@@ -69,7 +69,7 @@ function ConfirmButton({
             setAsking(false)
             onConfirm()
           }}
-          className="tap-44 flex-1 rounded-lg bg-rose-500 px-3 font-bold text-[#09090b]"
+          className="tap-44 flex-1 rounded-lg bg-rose-500 hover:bg-rose-400 transition-colors px-3 font-bold text-[#09090b]"
         >
           {confirmLabel}
         </button>
@@ -103,7 +103,7 @@ export default function TripActions({
           <button
             type="button"
             onClick={onTogglePrecision}
-            className="tap-44 rounded-xl border border-zinc-700 px-4 font-semibold text-zinc-100"
+            className="tap-44 rounded-xl border border-zinc-700 hover:bg-zinc-800/60 hover:border-zinc-600 transition-colors px-4 font-semibold text-zinc-100"
           >
             {precisionMode === 'approx' ? 'Chuyển sang chính xác' : 'Chỉ hiện gần đúng (~500m)'}
           </button>
@@ -114,7 +114,7 @@ export default function TripActions({
                 type="button"
                 onClick={onSetMeetPoint}
                 disabled={!canSetMeetPoint}
-                className="tap-44 flex items-center gap-2 rounded-xl border border-zinc-700 px-4 font-semibold text-zinc-100 disabled:opacity-50"
+                className="tap-44 flex items-center gap-2 rounded-xl border border-zinc-700 hover:bg-zinc-800/60 hover:border-zinc-600 transition-colors px-4 font-semibold text-zinc-100 disabled:opacity-50"
               >
                 <Flag className="h-4 w-4" aria-hidden="true" />
                 {hasMeetPoint ? 'Dời điểm hẹn về đây' : 'Đặt điểm hẹn tại đây'}
@@ -123,7 +123,7 @@ export default function TripActions({
                 <button
                   type="button"
                   onClick={onClearMeetPoint}
-                  className="tap-44 rounded-xl border border-zinc-700 px-4 font-semibold text-zinc-100"
+                  className="tap-44 rounded-xl border border-zinc-700 hover:bg-zinc-800/60 hover:border-zinc-600 transition-colors px-4 font-semibold text-zinc-100"
                 >
                   Bỏ điểm hẹn
                 </button>
@@ -131,7 +131,7 @@ export default function TripActions({
               <button
                 type="button"
                 onClick={onExtend}
-                className="tap-44 flex items-center gap-2 rounded-xl border border-zinc-700 px-4 font-semibold text-zinc-100"
+                className="tap-44 flex items-center gap-2 rounded-xl border border-zinc-700 hover:bg-zinc-800/60 hover:border-zinc-600 transition-colors px-4 font-semibold text-zinc-100"
               >
                 <Timer className="h-4 w-4" aria-hidden="true" />
                 Gia hạn thêm 1 giờ

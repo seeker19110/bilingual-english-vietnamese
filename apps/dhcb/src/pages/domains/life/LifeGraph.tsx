@@ -55,6 +55,7 @@ import type {
 import type { PersonalFact, Sensitivity } from '@dhcb/core-contracts/personalFact'
 import type { MemoryRecord, MemoryNamespace } from '@dhcb/core-contracts/personalMemory'
 import type { AutomationGrant, ActionReceipt } from '@dhcb/core-contracts/automation'
+import { useDialogBehavior } from '../../../components/useDialogBehavior'
 
 const NODE_ICONS: Record<LifeGraphNodeType, React.ReactNode> = {
   Person: <User className="w-4 h-4 text-blue-400 theme-light:text-blue-800" />,
@@ -89,6 +90,9 @@ export default function LifeGraph() {
   const [edges, setEdges] = useState<LifeGraphEdge[]>([])
   const [nodeFilter, setNodeFilter] = useState<string>('all')
   const [showAddNodeModal, setShowAddNodeModal] = useState(false)
+  // 4 hộp thoại nội tuyến của trang này — mỗi cái một bộ 6 hành vi a11y bắt buộc.
+  const closeAddNode = useCallback(() => setShowAddNodeModal(false), [])
+  const addNodeDialog = useDialogBehavior(closeAddNode, showAddNodeModal)
   const [newNodeType, setNewNodeType] = useState<LifeGraphNodeType>('Goal')
   const [newNodeLabel, setNewNodeLabel] = useState('')
   const [syncingGraph, setSyncingGraph] = useState(false)
@@ -96,6 +100,8 @@ export default function LifeGraph() {
   // Facts state
   const [facts, setFacts] = useState<PersonalFact[]>([])
   const [showAddFactModal, setShowAddFactModal] = useState(false)
+  const closeAddFact = useCallback(() => setShowAddFactModal(false), [])
+  const addFactDialog = useDialogBehavior(closeAddFact, showAddFactModal)
   const [newFactCategory, setNewFactCategory] = useState<string>('preference')
   const [newFactKey, setNewFactKey] = useState('')
   const [newFactValue, setNewFactValue] = useState('')
@@ -105,6 +111,8 @@ export default function LifeGraph() {
   const [memories, setMemories] = useState<MemoryRecord[]>([])
   const [memoryNamespaceFilter, setMemoryNamespaceFilter] = useState<string>('all')
   const [showAddMemoryModal, setShowAddMemoryModal] = useState(false)
+  const closeAddMemory = useCallback(() => setShowAddMemoryModal(false), [])
+  const addMemoryDialog = useDialogBehavior(closeAddMemory, showAddMemoryModal)
   const [newMemNamespace, setNewMemNamespace] = useState<MemoryNamespace>('semantic')
   const [newMemContent, setNewMemContent] = useState('')
 
@@ -114,6 +122,8 @@ export default function LifeGraph() {
 
   // Privacy & export modal
   const [showEraseModal, setShowEraseModal] = useState(false)
+  const closeErase = useCallback(() => setShowEraseModal(false), [])
+  const eraseDialog = useDialogBehavior(closeErase, showEraseModal)
   const [erasing, setErasing] = useState(false)
   const [exporting, setExporting] = useState(false)
 
@@ -374,7 +384,7 @@ export default function LifeGraph() {
                 onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition shrink-0 ${
                   isSelected
-                    ? 'bg-accent-500 text-black shadow-md shadow-accent-500/20'
+                    ? 'bg-accent-500 text-[#09090b] shadow-md shadow-accent-500/20'
                     : 'bg-zinc-900/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 border border-zinc-800'
                 }`}
               >
@@ -420,7 +430,7 @@ export default function LifeGraph() {
                 </button>
                 <button
                   onClick={() => setShowAddNodeModal(true)}
-                  className="px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-black transition flex items-center gap-1.5 shadow-sm"
+                  className="px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-[#09090b] transition flex items-center gap-1.5 shadow-sm"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Thêm Node
@@ -462,7 +472,7 @@ export default function LifeGraph() {
                           </div>
                         </div>
                         {node.archivedAt && (
-                          <span className="text-[10px] text-zinc-500 uppercase font-mono">
+                          <span className="text-[11px] text-zinc-500 uppercase font-mono">
                             Archived
                           </span>
                         )}
@@ -517,7 +527,7 @@ export default function LifeGraph() {
               </div>
               <button
                 onClick={() => setShowAddFactModal(true)}
-                className="px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-black transition flex items-center gap-1.5 shadow-sm"
+                className="px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-[#09090b] transition flex items-center gap-1.5 shadow-sm"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Khai báo Sự thật
@@ -542,7 +552,7 @@ export default function LifeGraph() {
                           {fact.namespace}
                         </span>
                         <code className="text-zinc-200 text-xs font-semibold">{fact.key}</code>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-950 text-zinc-400 border border-zinc-800">
+                        <span className="text-[11px] px-1.5 py-0.5 rounded bg-zinc-950 text-zinc-400 border border-zinc-800">
                           {fact.sensitivity}
                         </span>
                       </div>
@@ -596,7 +606,7 @@ export default function LifeGraph() {
 
               <button
                 onClick={() => setShowAddMemoryModal(true)}
-                className="px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-black transition flex items-center gap-1.5 shadow-sm"
+                className="px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-[#09090b] transition flex items-center gap-1.5 shadow-sm"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Tạo Ký ức
@@ -619,7 +629,7 @@ export default function LifeGraph() {
                         <span className="px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-300 theme-light:text-purple-800 text-xs font-medium">
                           {mem.namespace}
                         </span>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-950 text-zinc-400 border border-zinc-800">
+                        <span className="text-[11px] px-1.5 py-0.5 rounded bg-zinc-950 text-zinc-400 border border-zinc-800">
                           {mem.sensitivity}
                         </span>
                       </div>
@@ -752,7 +762,7 @@ export default function LifeGraph() {
                     >
                       <div>
                         <div className="font-medium text-zinc-200">{rec.action}</div>
-                        <div className="text-[10px] text-zinc-500 font-mono mt-0.5 truncate">
+                        <div className="text-[11px] text-zinc-500 font-mono mt-0.5 truncate">
                           Idempotency: {rec.idempotencyKey}
                         </div>
                       </div>
@@ -766,7 +776,7 @@ export default function LifeGraph() {
                         >
                           {rec.status}
                         </span>
-                        <div className="text-[10px] text-zinc-500 mt-0.5">
+                        <div className="text-[11px] text-zinc-500 mt-0.5">
                           {new Date(rec.createdAt).toLocaleTimeString('vi-VN')}
                         </div>
                       </div>
@@ -781,67 +791,78 @@ export default function LifeGraph() {
 
       {/* ── Add Node Modal ──────────────────────────────────────────────────── */}
       {showAddNodeModal && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <form
-            onSubmit={handleAddNode}
-            className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4 animate-scale-in"
+        <div
+          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+          {...addNodeDialog.backdropProps}
+        >
+          <div
+            {...addNodeDialog.dialogProps}
+            className="max-w-md w-full max-h-[90dvh] overflow-y-auto focus:outline-none"
           >
-            <div className="flex items-center justify-between pb-2 border-b border-zinc-800">
-              <h3 className="font-semibold text-white text-sm">Thêm Node Mới vào Life Graph</h3>
-              <button
-                type="button"
-                onClick={() => setShowAddNodeModal(false)}
-                className="p-1 text-zinc-400 hover:text-white"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+            <form
+              onSubmit={handleAddNode}
+              className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 shadow-2xl space-y-4 animate-scale-in"
+            >
+              <div className="flex items-center justify-between pb-2 border-b border-zinc-800">
+                <h3 id={addNodeDialog.titleId} className="font-semibold text-white text-sm">
+                  Thêm Node Mới vào Life Graph
+                </h3>
+                <button
+                  type="button"
+                  onClick={closeAddNode}
+                  aria-label="Đóng"
+                  className="tap-44 shrink-0 w-11 h-11 -mr-2 -mt-2 flex items-center justify-center rounded-lg text-zinc-400 hover:text-white"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
 
-            <div>
-              <label className="text-xs text-zinc-400 block mb-1">Loại Node</label>
-              <select
-                value={newNodeType}
-                onChange={(e) => setNewNodeType(e.target.value as LifeGraphNodeType)}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 outline-none"
-              >
-                <option value="Goal">Goal (Mục tiêu)</option>
-                <option value="Skill">Skill (Kỹ năng)</option>
-                <option value="Project">Project (Dự án)</option>
-                <option value="Decision">Decision (Quyết định)</option>
-                <option value="Constraint">Constraint (Rào cản)</option>
-                <option value="Event">Event (Sự kiện)</option>
-                <option value="Commitment">Commitment (Cam kết)</option>
-              </select>
-            </div>
+              <div>
+                <label className="text-xs text-zinc-400 block mb-1">Loại Node</label>
+                <select
+                  value={newNodeType}
+                  onChange={(e) => setNewNodeType(e.target.value as LifeGraphNodeType)}
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 outline-none"
+                >
+                  <option value="Goal">Goal (Mục tiêu)</option>
+                  <option value="Skill">Skill (Kỹ năng)</option>
+                  <option value="Project">Project (Dự án)</option>
+                  <option value="Decision">Decision (Quyết định)</option>
+                  <option value="Constraint">Constraint (Rào cản)</option>
+                  <option value="Event">Event (Sự kiện)</option>
+                  <option value="Commitment">Commitment (Cam kết)</option>
+                </select>
+              </div>
 
-            <div>
-              <label className="text-xs text-zinc-400 block mb-1">Tên / Nhãn Node</label>
-              <input
-                type="text"
-                value={newNodeLabel}
-                onChange={(e) => setNewNodeLabel(e.target.value)}
-                placeholder="vd: Học IELTS 7.0, Kỹ năng SQL..."
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 outline-none"
-                required
-              />
-            </div>
+              <div>
+                <label className="text-xs text-zinc-400 block mb-1">Tên / Nhãn Node</label>
+                <input
+                  type="text"
+                  value={newNodeLabel}
+                  onChange={(e) => setNewNodeLabel(e.target.value)}
+                  placeholder="vd: Học IELTS 7.0, Kỹ năng SQL..."
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 outline-none"
+                  required
+                />
+              </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2">
-              <button
-                type="button"
-                onClick={() => setShowAddNodeModal(false)}
-                className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium"
-              >
-                Hủy
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-black text-xs font-medium shadow-sm"
-              >
-                Thêm Node
-              </button>
-            </div>
-          </form>
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddNodeModal(false)}
+                  className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-[#09090b] text-xs font-medium shadow-sm"
+                >
+                  Thêm Node
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
@@ -851,13 +872,21 @@ export default function LifeGraph() {
           onSubmit={handleAddFact}
           className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
         >
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4 animate-scale-in">
+          {/* Lớp nền ở đây là chính thẻ <form>, nên không gắn "bấm nền để đóng" —
+              tránh mất dữ liệu đang gõ; Escape vẫn đóng được. */}
+          <div
+            {...addFactDialog.dialogProps}
+            className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4 animate-scale-in max-h-[90dvh] overflow-y-auto focus:outline-none"
+          >
             <div className="flex items-center justify-between pb-2 border-b border-zinc-800">
-              <h3 className="font-semibold text-white text-sm">Khai Báo Sự Thật Cá Nhân</h3>
+              <h3 id={addFactDialog.titleId} className="font-semibold text-white text-sm">
+                Khai Báo Sự Thật Cá Nhân
+              </h3>
               <button
                 type="button"
-                onClick={() => setShowAddFactModal(false)}
-                className="p-1 text-zinc-400 hover:text-white"
+                onClick={closeAddFact}
+                aria-label="Đóng"
+                className="tap-44 shrink-0 w-11 h-11 -mr-2 -mt-2 flex items-center justify-center rounded-lg text-zinc-400 hover:text-white"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -925,7 +954,7 @@ export default function LifeGraph() {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-black text-xs font-medium shadow-sm"
+                className="px-4 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-[#09090b] text-xs font-medium shadow-sm"
               >
                 Lưu Sự Thật
               </button>
@@ -940,13 +969,20 @@ export default function LifeGraph() {
           onSubmit={handleAddMemory}
           className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
         >
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4 animate-scale-in">
+          {/* Lớp nền ở đây là chính thẻ <form>, nên không gắn "bấm nền để đóng". */}
+          <div
+            {...addMemoryDialog.dialogProps}
+            className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4 animate-scale-in max-h-[90dvh] overflow-y-auto focus:outline-none"
+          >
             <div className="flex items-center justify-between pb-2 border-b border-zinc-800">
-              <h3 className="font-semibold text-white text-sm">Thêm Ký Ức Mới</h3>
+              <h3 id={addMemoryDialog.titleId} className="font-semibold text-white text-sm">
+                Thêm Ký Ức Mới
+              </h3>
               <button
                 type="button"
-                onClick={() => setShowAddMemoryModal(false)}
-                className="p-1 text-zinc-400 hover:text-white"
+                onClick={closeAddMemory}
+                aria-label="Đóng"
+                className="tap-44 shrink-0 w-11 h-11 -mr-2 -mt-2 flex items-center justify-center rounded-lg text-zinc-400 hover:text-white"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -989,7 +1025,7 @@ export default function LifeGraph() {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-black text-xs font-medium shadow-sm"
+                className="px-4 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 text-[#09090b] text-xs font-medium shadow-sm"
               >
                 Lưu Ký Ức
               </button>
@@ -1000,11 +1036,19 @@ export default function LifeGraph() {
 
       {/* ── Erase Modal ─────────────────────────────────────────────────────── */}
       {showEraseModal && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-zinc-900 border border-rose-500/40 rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4 animate-scale-in">
+        <div
+          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+          {...eraseDialog.backdropProps}
+        >
+          <div
+            {...eraseDialog.dialogProps}
+            className="bg-zinc-900 border border-rose-500/40 rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4 animate-scale-in max-h-[90dvh] overflow-y-auto focus:outline-none"
+          >
             <div className="flex items-center gap-2 text-rose-400 theme-light:text-rose-800">
               <AlertTriangle className="w-5 h-5" />
-              <h3 className="font-semibold text-white text-base">Xác Nhận Xóa Sạch Dữ Liệu</h3>
+              <h3 id={eraseDialog.titleId} className="font-semibold text-white text-base">
+                Xác Nhận Xóa Sạch Dữ Liệu
+              </h3>
             </div>
 
             <p className="text-xs text-zinc-300 leading-relaxed">
@@ -1015,9 +1059,10 @@ export default function LifeGraph() {
 
             <div className="flex items-center justify-end gap-2 pt-2">
               <button
-                onClick={() => setShowEraseModal(false)}
+                type="button"
+                onClick={closeErase}
                 disabled={erasing}
-                className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium"
+                className="tap-44 px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-medium"
               >
                 Hủy
               </button>

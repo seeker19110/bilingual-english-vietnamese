@@ -235,7 +235,7 @@ export default function Subjects() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] px-2 py-0.5 rounded bg-accent-500/20 text-accent-300 theme-light:text-accent-800 font-bold">
+                <span className="text-[11px] px-2 py-0.5 rounded bg-accent-500/20 text-accent-300 theme-light:text-accent-800 font-bold">
                   MỚI: REAL-LIFE LAB
                 </span>
                 <span className="text-xs text-zinc-400">10 Simulators Tương Tác</span>
@@ -312,7 +312,7 @@ export default function Subjects() {
                           {sub.standardLevels.map((lvl) => (
                             <span
                               key={lvl}
-                              className="px-1.5 py-0.5 rounded bg-zinc-950 text-zinc-300 border border-zinc-800 text-[10px] uppercase font-mono"
+                              className="px-1.5 py-0.5 rounded bg-zinc-950 text-zinc-300 border border-zinc-800 text-[11px] uppercase font-mono"
                             >
                               {lvl.replace('grade_', 'Lớp ')}
                             </span>

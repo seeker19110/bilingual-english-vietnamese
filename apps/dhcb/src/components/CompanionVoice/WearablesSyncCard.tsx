@@ -72,7 +72,7 @@ export default function WearablesSyncCard() {
               <h3 className="text-base font-bold text-white tracking-wide">
                 Wearables & Circadian Bio-Adaptive MCP
               </h3>
-              <span className="text-[10px] px-2 py-0.5 font-bold uppercase rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              <span className="text-[11px] px-2 py-0.5 font-bold uppercase rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                 Bio-Sync Active
               </span>
             </div>
@@ -127,7 +127,7 @@ export default function WearablesSyncCard() {
                 <span>Biến thiên HRV</span>
               </div>
               <div className="text-base font-bold text-white">{bio.hrvMs} ms</div>
-              <div className="text-[10px] text-emerald-400 font-medium">Phục hồi tốt</div>
+              <div className="text-[11px] text-emerald-400 font-medium">Phục hồi tốt</div>
             </div>
 
             <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
@@ -136,7 +136,7 @@ export default function WearablesSyncCard() {
                 <span>Chất lượng Giấc ngủ</span>
               </div>
               <div className="text-base font-bold text-white">{bio.sleepQualityScore}/100</div>
-              <div className="text-[10px] text-indigo-300 font-medium">
+              <div className="text-[11px] text-indigo-300 font-medium">
                 {bio.deepSleepMinutes} phút ngủ sâu
               </div>
             </div>
@@ -147,13 +147,13 @@ export default function WearablesSyncCard() {
                 <span>Nhịp tim Nghỉ ngơi</span>
               </div>
               <div className="text-base font-bold text-white">{bio.restingHeartRateBpm} bpm</div>
-              <div className="text-[10px] text-slate-400">Bình ổn</div>
+              <div className="text-[11px] text-slate-400">Bình ổn</div>
             </div>
 
             <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/40 space-y-1">
               <div className="text-[11px] font-bold text-emerald-300">Readiness Score</div>
               <div className="text-xl font-black text-emerald-400">{bio.readinessScore}%</div>
-              <div className="text-[10px] text-emerald-300 font-semibold uppercase">
+              <div className="text-[11px] text-emerald-300 font-semibold uppercase">
                 {window.currentCognitiveBand.replace(/_/g, ' ')}
               </div>
             </div>

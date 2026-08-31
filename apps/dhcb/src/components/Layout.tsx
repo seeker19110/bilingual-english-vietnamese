@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, type ReactNode } from 'react'
+import { useState, useRef, useEffect, useCallback, type ReactNode } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, BookOpen, Bot, Layers, ChevronDown } from 'lucide-react'
 import { useLang } from '../context/useLang'
@@ -30,29 +30,58 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
   const { T } = useLang()
   const [switcherOpen, setSwitcherOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  // Nút mở menu — giữ tham chiếu để TRẢ FOCUS về đây khi đóng (WAI-ARIA APG: menu button).
+  const switcherBtnRef = useRef<HTMLButtonElement>(null)
+  // Danh sách các mục trong menu, theo đúng thứ tự hiển thị — dùng cho ↑/↓ và focus mục đầu.
+  const menuItemsRef = useRef<(HTMLButtonElement | null)[]>([])
 
   // Streak tự lấy ở ĐÂY (không nhận qua prop nữa) — áp dụng TOÀN CỤC, hiện trên MỌI
   // trang có Layout, không cần từng trang tự truyền vào (trước đây dễ quên).
   const streak = user ? getStreak(user.id) : 0
 
+  // Đóng menu VÀ trả focus về nút kích hoạt (bắt buộc theo WAI-ARIA APG — nếu không,
+  // người dùng bàn phím bị "rơi" về đầu tài liệu và phải Tab mò lại từ đầu).
+  const closeSwitcher = useCallback((returnFocus: boolean) => {
+    setSwitcherOpen(false)
+    if (returnFocus) switcherBtnRef.current?.focus()
+  }, [])
+
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        // Bấm ra ngoài: KHÔNG kéo focus về nút (người dùng đang thao tác chỗ khác).
         setSwitcherOpen(false)
       }
     }
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') setSwitcherOpen(false)
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        closeSwitcher(true)
+        return
+      }
+      // ↑/↓ chạy vòng trong danh sách mục; Home/End nhảy đầu/cuối.
+      if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) return
+      const items = menuItemsRef.current.filter((el): el is HTMLButtonElement => el !== null)
+      if (items.length === 0) return
+      e.preventDefault()
+      const current = items.findIndex((el) => el === document.activeElement)
+      let next = 0
+      if (e.key === 'End') next = items.length - 1
+      else if (e.key === 'ArrowUp') next = (current <= 0 ? items.length : current) - 1
+      else if (e.key === 'ArrowDown') next = (current + 1) % items.length
+      items[next]?.focus()
     }
     if (switcherOpen) {
       document.addEventListener('mousedown', handleClickOutside)
       document.addEventListener('keydown', handleKeyDown)
+      // Mở xong đưa focus vào mục ĐẦU TIÊN (⌘K mới thực sự dùng được bằng bàn phím).
+      menuItemsRef.current[0]?.focus()
     }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [switcherOpen])
+  }, [switcherOpen, closeSwitcher])
 
   // Phím tắt toàn cục (PR 4, thiết kế lại web cho desktop) — Layout render ở MỌI trang nên
   // đây là chỗ gắn 1 lần duy nhất, không phải lặp lại ở từng trang.
@@ -72,9 +101,16 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
         return
       }
       if (e.key === '/' && !isTypingTarget(e.target)) {
-        const el = document.querySelector<HTMLElement>(
-          'input:not([type="hidden"]):not([disabled]), textarea:not([disabled])',
-        )
+        // Ưu tiên Ô NHẬP CHÍNH của trang (trang tự đánh dấu bằng `data-primary-input`).
+        // Không có thì mới lấy ô nhập đầu tiên trong DOM như cũ — trước đây chỉ có nhánh
+        // sau nên "/" hay nhảy vào ô tìm kiếm phụ ở header thay vì ô chính (audit B20).
+        const el =
+          document.querySelector<HTMLElement>(
+            '[data-primary-input]:not([disabled]):not([hidden])',
+          ) ??
+          document.querySelector<HTMLElement>(
+            'input:not([type="hidden"]):not([disabled]), textarea:not([disabled])',
+          )
         if (el) {
           e.preventDefault()
           el.focus()
@@ -87,10 +123,13 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
 
   return (
     <header className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-xl border-b border-zinc-800/80 relative pt-safe shadow-sm">
-      {/* Tấm nền ĐẶC phủ toàn bộ khoảng phía TRÊN header cho Reachability */}
+      {/* Tấm nền ĐẶC phủ toàn bộ khoảng phía TRÊN header cho Reachability (cử chỉ kéo màn
+          hình xuống — thuần MOBILE). `lg:hidden` vì desktop không có cử chỉ này, mà header
+          `z-50` lại nằm trên sidebar `z-40` nên tấm nền còn có thể phủ lên sidebar.
+          `100dvh` thay `h-screen`: trên iOS `100vh` tính cả thanh URL nên bị hụt/thừa. */}
       <div
         aria-hidden
-        className="absolute inset-x-0 bottom-full h-screen bg-zinc-950 pointer-events-none"
+        className="lg:hidden absolute inset-x-0 bottom-full h-[100dvh] bg-zinc-950 pointer-events-none"
       />
 
       {/* Gradient accent line trên cùng */}
@@ -129,8 +168,10 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
         {/* Global Studio Switcher Button */}
         <div className="relative" ref={menuRef}>
           <button
+            ref={switcherBtnRef}
             onClick={() => setSwitcherOpen(!switcherOpen)}
             aria-expanded={switcherOpen}
+            aria-haspopup="menu"
             aria-keyshortcuts="Meta+K Control+K"
             aria-label="Chuyển đổi Studio & Không gian học tập (⌘K)"
             title="Chuyển đổi Studio & Không gian học tập (⌘K)"
@@ -150,19 +191,26 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
                 <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
                   Không Gian Nền Tảng
                 </span>
-                <span className="text-[10px] text-accent-400 font-semibold bg-accent-500/10 px-1.5 py-0.5 rounded">
+                <span className="text-[11px] text-accent-400 font-semibold bg-accent-500/10 px-1.5 py-0.5 rounded">
                   5 Miền Studio
                 </span>
               </div>
-              <div className="space-y-1">
-                {STUDIOS.map((st) => {
+              {/* role="menu" + các mục role="menuitem": khai báo đúng ngữ nghĩa để trình đọc
+                  màn hình đọc "menu 6 mục" thay vì một đống nút rời rạc. */}
+              <div className="space-y-1" role="menu" aria-label="Không Gian Nền Tảng">
+                {STUDIOS.map((st, i) => {
                   const Icon = st.icon
                   const isActive = location.pathname.startsWith(st.to)
                   return (
                     <button
                       key={st.id}
+                      ref={(el) => {
+                        menuItemsRef.current[i] = el
+                      }}
+                      role="menuitem"
                       onClick={() => {
-                        setSwitcherOpen(false)
+                        // Điều hướng đi nơi khác nên KHÔNG trả focus về nút mở menu.
+                        closeSwitcher(false)
                         navigateTo(nav, st.to)
                       }}
                       className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-left transition-all ${
@@ -179,7 +227,7 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between gap-1">
                           <span className="text-xs font-bold text-white truncate">{st.title}</span>
-                          <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
+                          <span className="text-[11px] font-semibold px-1 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
                             {st.badge}
                           </span>
                         </div>

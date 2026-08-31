@@ -105,7 +105,7 @@ export const OutcomeCalibrationCard: React.FC = () => {
       {/* Metrics Row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
         <div className="bg-zinc-950/80 p-3 rounded-xl border border-zinc-800/80">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-zinc-400">
+          <span className="text-[11px] uppercase font-bold tracking-wider text-zinc-400">
             Điểm Hiệu Chuẩn
           </span>
           <div className="text-xl font-extrabold text-purple-400 mt-0.5">
@@ -115,7 +115,7 @@ export const OutcomeCalibrationCard: React.FC = () => {
         </div>
 
         <div className="bg-zinc-950/80 p-3 rounded-xl border border-zinc-800/80">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-zinc-400">
+          <span className="text-[11px] uppercase font-bold tracking-wider text-zinc-400">
             Tỷ Lệ Đạt Kỳ Vọng
           </span>
           <div className="text-xl font-extrabold text-emerald-400 mt-0.5">
@@ -124,14 +124,14 @@ export const OutcomeCalibrationCard: React.FC = () => {
         </div>
 
         <div className="bg-zinc-950/80 p-3 rounded-xl border border-zinc-800/80">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-zinc-400">
+          <span className="text-[11px] uppercase font-bold tracking-wider text-zinc-400">
             Đã Đưa Ra
           </span>
           <div className="text-xl font-extrabold text-sky-400 mt-0.5">{data.decidedCount}</div>
         </div>
 
         <div className="bg-zinc-950/80 p-3 rounded-xl border border-zinc-800/80">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-zinc-400">
+          <span className="text-[11px] uppercase font-bold tracking-wider text-zinc-400">
             Chờ Đánh Giá
           </span>
           <div

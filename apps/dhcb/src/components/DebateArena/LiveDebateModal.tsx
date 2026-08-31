@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useDialogBehavior } from '../useDialogBehavior'
 import type { DebateSessionState, DebateTurn } from '@dhcb/core-contracts/debateArena'
 import {
   createDebateSessionApi,
@@ -16,6 +17,8 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
   const [inputTurn, setInputTurn] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const chatEndRef = useRef<HTMLDivElement>(null)
+  // 6 hành vi a11y bắt buộc của hộp thoại.
+  const { dialogProps, titleId, backdropProps } = useDialogBehavior(onClose)
 
   useEffect(() => {
     async function init() {
@@ -82,13 +85,16 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
   }
 
   return (
+    // role/aria-modal trước đây nằm nhầm ở LỚP NỀN (phủ kín màn hình); nay chuyển vào
+    // đúng khung hộp thoại, kèm Escape + bẫy tiêu điểm + khoá cuộn nền.
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-md animate-fade-in"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="debate-modal-title"
+      {...backdropProps}
     >
-      <div className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-3xl border border-indigo-500/30 bg-zinc-950 text-white shadow-2xl overflow-hidden">
+      <div
+        {...dialogProps}
+        className="relative w-full max-w-4xl max-h-[92dvh] flex flex-col rounded-3xl border border-indigo-500/30 bg-zinc-950 text-white shadow-2xl overflow-hidden focus:outline-none"
+      >
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-white/10 bg-gradient-to-r from-indigo-950/40 via-purple-950/20 to-zinc-950 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -96,7 +102,7 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
               ⚔️
             </div>
             <div>
-              <h2 id="debate-modal-title" className="text-base sm:text-lg font-bold text-white">
+              <h2 id={titleId} className="text-base sm:text-lg font-bold text-white">
                 Đấu Trường Tranh Biện AI
               </h2>
               <p className="text-xs text-indigo-300">
@@ -107,7 +113,7 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
+            className="tap-44 shrink-0 w-11 h-11 flex items-center justify-center rounded-xl hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
             aria-label="Đóng"
           >
             ✕
@@ -134,7 +140,7 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <h4 className="text-xs font-bold text-white truncate">{p.name}</h4>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-semibold uppercase">
+                        <span className="text-[11px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-semibold uppercase">
                           {p.role}
                         </span>
                       </div>
@@ -173,17 +179,17 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
                         {/* Nói THẬT khi lượt này là câu mẫu chứ không phải AI vừa nghĩ ra
                             (thiếu key AI / provider lỗi) — xem debateArenaService.ts. */}
                         {turn.isFallback && (
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-200 theme-light:text-amber-900 border border-amber-500/30 font-semibold">
+                          <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-200 theme-light:text-amber-900 border border-amber-500/30 font-semibold">
                             Câu mẫu — chưa gọi được AI
                           </span>
                         )}
                         {turn.detectedFallacy !== 'none' && (
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold">
+                          <span className="text-[11px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold">
                             ⚠️ Ngụy biện: {turn.detectedFallacy}
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 text-[10px] text-zinc-400">
+                      <div className="flex items-center gap-2 text-[11px] text-zinc-400">
                         <span>Logic: {turn.logicScore}/100</span>
                         <span>•</span>
                         <span>Thuyết phục: {turn.persuasionScore}/100</span>
@@ -202,11 +208,11 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
 
                     {turn.advancedVocabulary.length > 0 && (
                       <div className="mt-2 flex items-center gap-1.5 flex-wrap">
-                        <span className="text-[10px] text-zinc-400">Từ vựng C1/C2:</span>
+                        <span className="text-[11px] text-zinc-400">Từ vựng C1/C2:</span>
                         {turn.advancedVocabulary.map((v) => (
                           <span
                             key={v}
-                            className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold"
+                            className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold"
                           >
                             {v}
                           </span>
@@ -230,25 +236,25 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3 text-center">
                     <div className="p-2 rounded-xl bg-white/5 border border-white/5">
-                      <div className="text-[10px] text-zinc-400">Cấu trúc Toulmin</div>
+                      <div className="text-[11px] text-zinc-400">Cấu trúc Toulmin</div>
                       <div className="text-xs font-bold text-white">
                         {session.finalRubric.toulminStructureScore}%
                       </div>
                     </div>
                     <div className="p-2 rounded-xl bg-white/5 border border-white/5">
-                      <div className="text-[10px] text-zinc-400">Tránh ngụy biện</div>
+                      <div className="text-[11px] text-zinc-400">Tránh ngụy biện</div>
                       <div className="text-xs font-bold text-white">
                         {session.finalRubric.fallacyAvoidanceScore}%
                       </div>
                     </div>
                     <div className="p-2 rounded-xl bg-white/5 border border-white/5">
-                      <div className="text-[10px] text-zinc-400">Từ vựng học thuật</div>
+                      <div className="text-[11px] text-zinc-400">Từ vựng học thuật</div>
                       <div className="text-xs font-bold text-white">
                         {session.finalRubric.lexicalResourceScore}%
                       </div>
                     </div>
                     <div className="p-2 rounded-xl bg-white/5 border border-white/5">
-                      <div className="text-[10px] text-zinc-400">Sức phản biện</div>
+                      <div className="text-[11px] text-zinc-400">Sức phản biện</div>
                       <div className="text-xs font-bold text-white">
                         {session.finalRubric.rebuttalEffectivenessScore}%
                       </div>

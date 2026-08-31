@@ -35,6 +35,9 @@ const LANGS: Record<Lang, { label: string; dot: string; simulated?: true }> = {
   // Tác tử AI viết code (khoá ngắn Vibe Code): quy trình là quy trình thật, nhưng "code AI
   // sinh ra" là tóm tắt diff đóng hộp tất định của vibeSim — huy hiệu phải tự khai.
   vibe: { label: 'Tác tử AI code', dot: 'bg-fuchsia-400', simulated: true },
+  // OpenClaw (khoá ngắn OpenClaw): lệnh là lệnh thật của OpenClaw, nhưng phản hồi "AI" là
+  // văn bản đóng hộp tất định của openclawSim — không phải AI thật, huy hiệu phải tự khai.
+  openclaw: { label: 'OpenClaw', dot: 'bg-teal-400', simulated: true },
   // Swift (chương trình M, tầng 2): cú pháp Swift THẬT, chạy trên trình thông dịch tập con của
   // DHCB. Là tập con nên phải khai "mô phỏng" — học viên cần biết swiftc thật khắt khe hơn.
   swift: { label: 'Swift', dot: 'bg-orange-500', simulated: true },

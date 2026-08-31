@@ -20,6 +20,7 @@ const SIMULATED = [
   'bash',
   'hermes',
   'vibe',
+  'openclaw',
   'swift',
   'kotlin',
 ]

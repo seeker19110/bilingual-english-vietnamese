@@ -91,6 +91,7 @@ import { VIBE_U1_LESSONS } from './lessons/vibeu1.js'
 import { VIBE_U2_LESSONS } from './lessons/vibeu2.js'
 import { VIBE_U3_LESSONS } from './lessons/vibeu3.js'
 import { VIBE_U4_LESSONS } from './lessons/vibeu4.js'
+import { OPENCLAW_U1_LESSONS } from './lessons/openclawu1.js'
 
 export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...P1U1_LESSONS,
@@ -175,6 +176,7 @@ export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...VIBE_U2_LESSONS,
   ...VIBE_U3_LESSONS,
   ...VIBE_U4_LESSONS,
+  ...OPENCLAW_U1_LESSONS,
 ]
 
 const lessonMap = new Map(PROGRAMMING_LESSONS.map((l) => [l.id, l]))

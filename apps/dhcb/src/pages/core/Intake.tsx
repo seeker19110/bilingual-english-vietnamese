@@ -122,7 +122,7 @@ export default function Intake() {
             <button
               type="button"
               onClick={() => void pick(result.primary.id)}
-              className="tap-44 mt-2 w-full rounded-xl bg-accent-500 px-4 text-[#09090b] text-sm font-semibold flex items-center justify-center gap-2"
+              className="tap-44 mt-2 w-full rounded-xl bg-accent-500 hover:bg-accent-400 transition-colors px-4 text-[#09090b] text-sm font-semibold flex items-center justify-center gap-2"
             >
               <Check className="w-4 h-4" />
               Được, mình bắt đầu
@@ -137,7 +137,7 @@ export default function Intake() {
                   key={alt.id}
                   type="button"
                   onClick={() => void pick(alt.id)}
-                  className="tap-44 w-full text-left rounded-xl border border-zinc-800 bg-zinc-900/60 px-4 py-3 text-sm text-zinc-200"
+                  className="tap-44 w-full text-left rounded-xl border border-zinc-800 bg-zinc-900/60 hover:bg-zinc-800/70 hover:border-zinc-700 transition-colors px-4 py-3 text-sm text-zinc-200"
                 >
                   {alt.title}
                 </button>
@@ -148,7 +148,7 @@ export default function Intake() {
           <button
             type="button"
             onClick={() => void pick('')}
-            className="tap-44 w-full text-xs text-zinc-400 underline underline-offset-2"
+            className="tap-44 w-full text-xs text-zinc-400 hover:text-zinc-200 transition-colors underline underline-offset-2"
           >
             Để sau cũng được
           </button>
@@ -189,7 +189,7 @@ export default function Intake() {
                     setAgeGroup(o.value)
                     next()
                   }}
-                  className="tap-44 rounded-xl border border-zinc-700 bg-zinc-900/60 px-3 py-3 text-sm text-zinc-100"
+                  className="tap-44 rounded-xl border border-zinc-700 bg-zinc-900/60 hover:bg-zinc-800/70 hover:border-zinc-600 transition-colors px-3 py-3 text-sm text-zinc-100"
                 >
                   <span className="font-semibold">{o.label}</span>{' '}
                   <span className="text-zinc-400">{o.hint}</span>
@@ -213,7 +213,7 @@ export default function Intake() {
                     setAnswers((a) => ({ ...a, focus: o.value }))
                     next()
                   }}
-                  className="tap-44 w-full text-left rounded-xl border border-zinc-700 bg-zinc-900/60 px-4 py-3 text-sm text-zinc-100"
+                  className="tap-44 w-full text-left rounded-xl border border-zinc-700 bg-zinc-900/60 hover:bg-zinc-800/70 hover:border-zinc-600 transition-colors px-4 py-3 text-sm text-zinc-100"
                 >
                   {o.label}
                 </button>
@@ -269,7 +269,7 @@ export default function Intake() {
                     setAnswers((a) => ({ ...a, lastLearned: o.value }))
                     void finish()
                   }}
-                  className="tap-44 w-full text-left rounded-xl border border-zinc-700 bg-zinc-900/60 px-4 py-3 text-sm text-zinc-100 disabled:opacity-60"
+                  className="tap-44 w-full text-left rounded-xl border border-zinc-700 bg-zinc-900/60 hover:bg-zinc-800/70 hover:border-zinc-600 transition-colors px-4 py-3 text-sm text-zinc-100 disabled:opacity-60"
                 >
                   {o.label}
                 </button>
@@ -279,7 +279,7 @@ export default function Intake() {
               type="button"
               disabled={saving}
               onClick={() => void finish()}
-              className="tap-44 w-full text-xs text-zinc-400 underline underline-offset-2"
+              className="tap-44 w-full text-xs text-zinc-400 hover:text-zinc-200 transition-colors underline underline-offset-2"
             >
               Bỏ qua câu này
             </button>
@@ -308,7 +308,7 @@ function NextRow({ onNext, onSkip }: { onNext: () => void; onSkip: () => void })
       <button
         type="button"
         onClick={onNext}
-        className="tap-44 flex-1 rounded-xl bg-accent-500 px-4 text-[#09090b] text-sm font-semibold flex items-center justify-center gap-2"
+        className="tap-44 flex-1 rounded-xl bg-accent-500 hover:bg-accent-400 transition-colors px-4 text-[#09090b] text-sm font-semibold flex items-center justify-center gap-2"
       >
         Tiếp
         <ArrowRight className="w-4 h-4" />
@@ -316,7 +316,7 @@ function NextRow({ onNext, onSkip }: { onNext: () => void; onSkip: () => void })
       <button
         type="button"
         onClick={onSkip}
-        className="tap-44 px-3 text-xs text-zinc-400 underline underline-offset-2"
+        className="tap-44 px-3 text-xs text-zinc-400 hover:text-zinc-200 transition-colors underline underline-offset-2"
       >
         Bỏ qua
       </button>

@@ -326,6 +326,15 @@ export function useChat(options?: UseChatOptions) {
     [activeRoomId],
   )
 
+  // Thử lại sau lỗi tải: xoá cờ lỗi rồi nạp lại danh sách phòng + tin nhắn của phòng
+  // đang mở. Dùng cho nút "Thử lại" của LoadError trong ChatWindow/ChatList.
+  const reloadChat = useCallback(() => {
+    setChatError(null)
+    setLoadingRooms(true)
+    void refreshRooms()
+    if (activeRoomId) void loadMessagesForRoom(activeRoomId)
+  }, [activeRoomId, loadMessagesForRoom, refreshRooms])
+
   const selectRoom = useCallback((roomId: string | null) => {
     setActiveRoomId(roomId)
     setChatError(null)
@@ -365,6 +374,7 @@ export function useChat(options?: UseChatOptions) {
     isPeerTyping,
     currentUserId,
     selectRoom,
+    reloadChat,
     startChatWithPeer,
     sendMessage,
     sendTyping,

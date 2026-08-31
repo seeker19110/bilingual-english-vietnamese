@@ -37,7 +37,7 @@ export default function AgentOrchestratorCard() {
                 <h3 className="text-sm font-bold text-zinc-100 tracking-tight">
                   Studio Điều Phối Agent Tự Trị
                 </h3>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 uppercase tracking-wider">
+                <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 uppercase tracking-wider">
                   V5.5 Flagship
                 </span>
               </div>
@@ -65,7 +65,7 @@ export default function AgentOrchestratorCard() {
                 <span className="text-xs font-bold text-zinc-200">
                   {latestSession.sessionTitle}
                 </span>
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                   {roleLabelMap[latestSession.primaryRole] || latestSession.primaryRole}
                 </span>
               </div>

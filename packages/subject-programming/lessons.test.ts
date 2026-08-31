@@ -33,7 +33,8 @@ describe('programming lessons', () => {
       if (
         lesson.unitId.startsWith('git-u') ||
         lesson.unitId.startsWith('hermes-u') ||
-        lesson.unitId.startsWith('vibe-u')
+        lesson.unitId.startsWith('vibe-u') ||
+        lesson.unitId.startsWith('openclaw-u')
       ) {
         expect(
           COURSE_REFERENCED_LESSON_IDS.has(lesson.id),
