@@ -29,8 +29,10 @@ const UpdateSchema = z
     //  · bài học xương sống          'p1-u4-l1'
     //  · bước dự án trục             'p1-s1'
     //  · module/tiêu chí hướng chuyên sâu 'web-s2-m1' / 'web-s2-r3' (chi tiết chặng S2)
-    //  · bài thuộc khoá NGẮN (cắt ngang bậc, ví dụ khoá Git)  'git-u2-l1'
-    lessonId: z.string().regex(/^(p[1-6]-(u\d+-l\d+|s\d+)|[a-z]+-s[1-4]-[mr]\d+|git-u\d+-l\d+)$/),
+    //  · bài thuộc khoá NGẮN (cắt ngang bậc: khoá Git, khoá Hermes)  'git-u2-l1' / 'hermes-u1-l1'
+    lessonId: z
+      .string()
+      .regex(/^(p[1-6]-(u\d+-l\d+|s\d+)|[a-z]+-s[1-4]-[mr]\d+|(git|hermes)-u\d+-l\d+)$/),
     status: z.enum(['in_progress', 'completed']),
   })
   .strict()

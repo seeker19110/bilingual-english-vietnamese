@@ -39,6 +39,8 @@ export const LESSON_LANGUAGES = [
   'fetch',
   'git',
   'bash',
+  // Mô phỏng Hermes Agent (hermesSim.ts) — khoá ngắn "Hermes Agent" (PR 2/4 khoá Hermes).
+  'hermes',
   'swift',
   'kotlin',
 ] as const
@@ -47,17 +49,18 @@ export const LessonSchema = z
   .object({
     /**
      * id ổn định `<unit>-l<số>` (vd 'p1-u4-l1') — khoá tiến độ trong Postgres.
-     * Nhánh `git-u\d+-l\d+` (vd 'git-u2-l1') dành riêng cho bài thuộc TẦNG KHOÁ NGẮN
-     * (packages/subject-programming/courses/) — khoá cắt ngang bậc P1–P6 nên không đánh số
-     * theo `p[1-6]`. Xem docs/specs/2026-08-30-khoa-hoc-thuc-hanh-github.md.
+     * Nhánh `git-u\d+-l\d+` (vd 'git-u2-l1') và `hermes-u\d+-l\d+` dành riêng cho bài thuộc
+     * TẦNG KHOÁ NGẮN (packages/subject-programming/courses/) — khoá cắt ngang bậc P1–P6 nên
+     * không đánh số theo `p[1-6]`. Xem docs/specs/2026-08-30-khoa-hoc-thuc-hanh-github.md và
+     * docs/specs/2026-08-31-khoa-dieu-phoi-ai-van-phong.md.
      */
-    id: z.string().regex(/^(p[1-6]-u\d+-l\d+|git-u\d+-l\d+)$/),
+    id: z.string().regex(/^(p[1-6]-u\d+-l\d+|(git|hermes)-u\d+-l\d+)$/),
     /**
-     * Unit chứa bài — phải tồn tại trong curriculum.ts (test kiểm chéo), TRỪ nhánh `git-u\d+`
+     * Unit chứa bài — phải tồn tại trong curriculum.ts (test kiểm chéo), TRỪ nhánh `git-u\d+`/`hermes-u\d+`
      * vốn là "unit ảo" của tầng khoá ngắn, được công nhận qua SHORT_COURSES thay vì curriculum
      * (xem lessons.test.ts).
      */
-    unitId: z.string().regex(/^(p[1-6]-u\d+|git-u\d+)$/),
+    unitId: z.string().regex(/^(p[1-6]-u\d+|(git|hermes)-u\d+)$/),
     /** Ngôn ngữ của bài (PR-L7b1) — quyết định bộ chạy ở trình duyệt VÀ cổng CI nào chấm
      *  bài. KHÔNG có giá trị mặc định ngầm: người soạn phải ghi rõ, vì chọn sai ngôn ngữ
      *  nghĩa là bài không được cổng nào chấm. */
