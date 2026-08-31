@@ -1282,6 +1282,12 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
     `p6-u64…u66` từng ghi ở đây ĐÃ ĐỔI vì `p6-u64`/`p6-u65` bị `ai-s1` lấy trước); **46/52 chặng
     còn lại chưa có** (tầng khác với chi tiết chặng, `stageUnits.ts`). Mã unit TIẾP THEO còn
     trống bắt đầu từ `p6-u69` (dải `p6-u94…u101` đã bị lộ trình "Kỹ Sư Trưởng AI" lấy riêng).
+    **[2026-08-31] Chặng `backend-s2` (KHÔNG tính vào 52 chặng S1 ở trên — đây là chặng S2 đầu
+    tiên có bài) cũng ĐÃ có bài 8 bước** (6 bài, `p6-u102…u104`, phủ đủ 4/4 module — dùng lại
+    dải mã unit tiếp theo còn trống vì `p6-u94…u101` đã bị lộ trình "Kỹ Sư Trưởng AI" chiếm
+    trước, khác dải `p6-u94` mà kế hoạch cũ dự kiến cho S2/S3; nhật ký
+    `docs/changelog/0212-2026-08-31-bai-hoc-chang-s2-huong-backend.md`). Mã unit TIẾP THEO còn
+    trống bắt đầu từ `p6-u105`.
     Bốn hướng `game`, `embedded`, `desktop` và phần lớn `systems` KHÔNG có bộ
     chạy trong trình duyệt — cần quyết định riêng về làn trước khi soạn. **Cố ý KHÔNG làm bài học 8 bước cho cả 13 hướng** — 9/13
     hướng không có bộ chạy trong trình duyệt, ép khuôn sẽ đẻ nội dung giả. Chưa nối tiến độ chặng

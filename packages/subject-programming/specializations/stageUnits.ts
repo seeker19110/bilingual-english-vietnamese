@@ -35,6 +35,9 @@ export const SPEC_STAGE_UNITS: Record<string, string[]> = {
   // Hướng Dữ liệu, chặng S1 — soạn 2026-08-31 (3 unit, 4 module: p6-u66 = m1, p6-u67 = m2,
   // p6-u68 gộp m3+m4 — đúng tiền lệ web-s1 gộp module khi hợp lý).
   'data-s1': ['p6-u66', 'p6-u67', 'p6-u68'],
+  // Hướng Backend, chặng S2 — soạn 2026-08-31 (3 unit, 4 module: p6-u102 = m1, p6-u103 = m2,
+  // p6-u104 gộp m3+m4 — đúng tiền lệ web-s1 gộp module khi hợp lý).
+  'backend-s2': ['p6-u102', 'p6-u103', 'p6-u104'],
 }
 
 /** Unit của một chặng; mảng RỖNG nghĩa là chặng chưa có bài (giao diện phải nói rõ điều đó). */
