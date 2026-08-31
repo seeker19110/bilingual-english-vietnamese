@@ -418,7 +418,7 @@ nhan v1`,
     id: 'vibe-u1-l6',
     unitId: 'vibe-u1',
     language: 'vibe',
-    title: 'Hỏi cho hiểu — giaithich',
+    title: 'Hỏi cho hiểu — giaithich khi diff còn mù mờ',
     hook: '"Không cần biết code" là lời hứa của vibe coding — nhưng "không cần hiểu hệ thống của mình" thì chưa ai dám hứa. May là bạn có một gia sư ngồi sẵn trong terminal: chính con AI vừa viết ra đoạn code đó.',
     theory:
       'Lệnh giaithich <id> bắt agent giải thích bản nháp/tính năng BẰNG LỜI THƯỜNG: phần này làm gì, chạy theo đường nào, đổi chỗ nào thì ảnh hưởng gì.\n\nVì sao kỹ năng này ăn tiền? Ba tình huống bạn sẽ gặp thật:\n1. Diff có dòng + bạn không hiểu → hỏi trước khi nhận, đừng nhận trong mù mờ.\n2. Sáu tháng sau mở lại dự án, quên sạch → giaithich từng phần là cách đọc lại nhanh nhất.\n3. Sắp đụng vùng nhạy cảm (chương C4 sẽ học) → luật ở đó là PHẢI hiểu mới được đụng, và giaithich là công cụ để hiểu.\n\nHỏi xong một câu đừng dừng — hỏi tiếp như học trò giỏi: "vì sao chọn cách này mà không phải cách kia?", "nếu ngày mai cần thêm X thì phần nào phải đổi?". Agent trả lời được hết, và mỗi câu trả lời là một viên gạch hiểu-hệ-thống của bạn.\n\nMẹo dùng cả đời: sau MỖI tính năng nhận vào, bỏ 60 giây gõ giaithich và đọc. Người vibe code lâu năm khác người mới ở đúng chỗ này — dự án của họ không có vùng tối.',
