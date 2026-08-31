@@ -41,8 +41,11 @@ import {
   pathStageRefs,
   isPhaseDrafting,
 } from '@dhcb/subject-programming/learningPaths/registry'
+import { stageHasQuiz } from '@dhcb/subject-programming/learningPaths/stageQuizzes'
 import { getSpecStage } from '@dhcb/subject-programming/specializations/registry'
 import { unitsOfStage } from '@dhcb/subject-programming/specializations/stageUnits'
+import PathStageQuiz from '../../../components/PathStageQuiz'
+import PathArtifactVault from '../../../components/PathArtifactVault'
 
 export default function ProgrammingPathPage() {
   const nav = useNavigate()
@@ -52,6 +55,11 @@ export default function ProgrammingPathPage() {
   const [pathProgress, setPathProgress] = useState<PathStageProgress[]>([])
 
   const path = getLearningPath(pathId ?? '')
+
+  const reloadPathProgress = () => {
+    if (!user || !path) return
+    void fetchPathProgress(user.id, path.id).then(setPathProgress)
+  }
 
   useEffect(() => {
     if (!user || !path) return
@@ -186,6 +194,18 @@ export default function ProgrammingPathPage() {
                           <span>Xem bản đồ chặng (bài đang soạn)</span>
                         </button>
                       )}
+                      {user &&
+                        (stageHasQuiz(ref.stageId) ? (
+                          <PathStageQuiz
+                            pathId={path.id}
+                            stageId={ref.stageId}
+                            stageName={stage?.name ?? ref.stageId}
+                            topics={stage?.modules.flatMap((m) => m.topics) ?? []}
+                            onPassed={reloadPathProgress}
+                          />
+                        ) : (
+                          <p className="text-[11px] text-zinc-500">Chặng này chưa có bài kiểm.</p>
+                        ))}
                     </li>
                   )
                 })}
@@ -201,6 +221,15 @@ export default function ProgrammingPathPage() {
             </p>
           </section>
         ))}
+
+        {user && (
+          <PathArtifactVault
+            pathId={path.id}
+            phases={path.phases
+              .filter((p) => !isPhaseDrafting(p))
+              .map((p) => ({ id: p.id, name: p.name }))}
+          />
+        )}
 
         {/* Đích đến — hành vi quan sát được, không phải danh xưng */}
         <section className="rounded-3xl border border-emerald-500/40 bg-emerald-500/10 p-5 space-y-2">

@@ -27,6 +27,8 @@ import mistakesHandler from './api/subjects/english/mistakes.js'
 import programmingProgressHandler from './api/subjects/programming/progress.js'
 import programmingSpecializationHandler from './api/subjects/programming/specialization.js'
 import programmingPathProgressHandler from './api/subjects/programming/pathProgress.js'
+import programmingPathQuizHandler from './api/subjects/programming/pathQuiz.js'
+import programmingPathArtifactHandler from './api/subjects/programming/pathArtifact.js'
 import programmingProjectHandler from './api/subjects/programming/project.js'
 import programmingFeedbackHandler from './api/subjects/programming/feedback.js'
 import programmingTsCheckHandler from './api/subjects/programming/ts-check.js'
@@ -222,6 +224,8 @@ export function registerApiRoutes(app: express.Express): void {
   app.all('/api/programming/progress', wrapEdge(programmingProgressHandler))
   app.all('/api/programming/specialization', wrapEdge(programmingSpecializationHandler))
   app.all('/api/programming/path-progress', wrapEdge(programmingPathProgressHandler))
+  app.all('/api/programming/path-quiz', wrapEdge(programmingPathQuizHandler))
+  app.all('/api/programming/path-artifact', wrapEdge(programmingPathArtifactHandler))
   app.all('/api/programming/project', wrapEdge(programmingProjectHandler))
   app.all('/api/programming/feedback', wrapEdge(programmingFeedbackHandler))
   app.all('/api/programming/ts-check', wrapEdge(programmingTsCheckHandler))
