@@ -29,6 +29,9 @@ const LANGS: Record<Lang, { label: string; dot: string; simulated?: true }> = {
   // Dòng lệnh (chương trình M, tầng 1): hệ thống file trong bộ nhớ, dựng lại mỗi lượt chạy —
   // không phải bash thật, nên huy hiệu phải tự khai đúng như bài Git.
   bash: { label: 'Dòng lệnh (bash)', dot: 'bg-emerald-400', simulated: true },
+  // Hermes Agent (khoá ngắn Hermes): lệnh là lệnh thật của Hermes, nhưng phản hồi "AI" là
+  // văn bản đóng hộp tất định của hermesSim — không phải AI thật, huy hiệu phải tự khai.
+  hermes: { label: 'Hermes Agent', dot: 'bg-cyan-400', simulated: true },
   // Swift (chương trình M, tầng 2): cú pháp Swift THẬT, chạy trên trình thông dịch tập con của
   // DHCB. Là tập con nên phải khai "mô phỏng" — học viên cần biết swiftc thật khắt khe hơn.
   swift: { label: 'Swift', dot: 'bg-orange-500', simulated: true },

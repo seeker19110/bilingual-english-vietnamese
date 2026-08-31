@@ -13,7 +13,7 @@
 // Dữ liệu là hằng biên dịch, không I/O, không phụ thuộc thời gian.
 
 /** Mã khoá ngắn — ổn định, dùng làm URL `/lap-trinh/khoa/<id>`. */
-export type ShortCourseId = 'git'
+export type ShortCourseId = 'git' | 'hermes'
 
 /** Một chương trong khoá — nhóm các bài theo chủ đề, không phải một bài riêng. */
 export interface CourseChapter {

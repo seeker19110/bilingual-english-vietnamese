@@ -11,6 +11,7 @@ import { runSql, resetSqlWorker } from './sqlRunner'
 import { runHtml } from './htmlRunner'
 import { runGit } from './gitRunner'
 import { runBash } from './bashRunner'
+import { runHermes } from './hermesRunner'
 import { runSwift } from './swiftRunner'
 import { runKotlin } from './kotlinRunner'
 import { runDom, resetDomWorker } from './domRunner'
@@ -24,7 +25,7 @@ export type LessonLanguage = ProgrammingLesson['language']
 /** Bài mà học viên gõ LỆNH chứ không phải code (Git ở P3-U10/U11, dòng lệnh ở chương trình M).
  *  Khai ở đây để giao diện không phải liệt kê tay từng ngôn ngữ ở mỗi chỗ cần đổi chữ. */
 export function laBaiDongLenh(language: LessonLanguage): boolean {
-  return language === 'git' || language === 'bash'
+  return language === 'git' || language === 'bash' || language === 'hermes'
 }
 
 export interface LessonRunOptions {
@@ -86,6 +87,13 @@ export function runLessonCode(
     // bài). Bộ mô phỏng khác (bashSim), khái niệm giao diện thì không đổi.
     const { stdinLines } = options
     return runBash(code, { ...(stdinLines ? { lenhChuanBi: stdinLines } : {}) })
+  }
+  if (language === 'hermes') {
+    // Bài Hermes Agent (khoá ngắn Hermes): cùng đường đi với bài Git/bash — "code" là danh
+    // sách lệnh học viên gõ, `stdinLines` mang lệnh dựng bối cảnh (agent đã có việc chờ
+    // duyệt…). Bộ mô phỏng khác (hermesSim), khái niệm giao diện không đổi.
+    const { stdinLines } = options
+    return runHermes(code, { ...(stdinLines ? { lenhChuanBi: stdinLines } : {}) })
   }
   if (language === 'swift') {
     // Bài Swift chạy trên trình thông dịch tập con (swiftSim) — không Worker, không mạng, và
