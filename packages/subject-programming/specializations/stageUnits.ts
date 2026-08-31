@@ -35,6 +35,11 @@ export const SPEC_STAGE_UNITS: Record<string, string[]> = {
   // Hướng Dữ liệu, chặng S1 — soạn 2026-08-31 (3 unit, 4 module: p6-u66 = m1, p6-u67 = m2,
   // p6-u68 gộp m3+m4 — đúng tiền lệ web-s1 gộp module khi hợp lý).
   'data-s1': ['p6-u66', 'p6-u67', 'p6-u68'],
+  // Hướng Dữ liệu, chặng S2 — soạn 2026-08-31 (3 unit, 4 module: p6-u120 = m1 (ETL/ELT),
+  // p6-u121 = m2 (mô hình hoá kho dữ liệu), p6-u122 gộp m3+m4 (điều phối + chất lượng dữ
+  // liệu — cả hai cùng trả lời "đường ống sai thì làm sao BIẾT và làm sao SỬA"). Đúng tiền lệ
+  // backend-s2/s3/s4 gộp m3+m4 thành unit cuối chặng.
+  'data-s2': ['p6-u120', 'p6-u121', 'p6-u122'],
   // Hướng Backend, chặng S2 — soạn 2026-08-31 (3 unit, 4 module: p6-u102 = m1, p6-u103 = m2,
   // p6-u104 gộp m3+m4 — đúng tiền lệ web-s1 gộp module khi hợp lý).
   'backend-s2': ['p6-u102', 'p6-u103', 'p6-u104'],
@@ -51,6 +56,11 @@ export const SPEC_STAGE_UNITS: Record<string, string[]> = {
   // m2+m4 (render + kiến trúc — cả hai là quyết định CẤU TRÚC lớn), p6-u116 gộp m3+m5
   // (kiểm thử + bảo mật — cả hai là gác CHẤT LƯỢNG/AN TOÀN trước khi release)).
   'web-s3': ['p6-u114', 'p6-u115', 'p6-u116'],
+  // Hướng Kiến trúc, chặng S2 — soạn 2026-08-31 (3 unit, 4 module: p6-u117 = m1 (mô hình hoá
+  // miền), p6-u118 = m2 (hợp đồng kiểm được), p6-u119 gộp m3+m4 (tiến hoá không phá + dữ liệu
+  // là phần khó đổi nhất — cả hai cùng trả lời "đổi hợp đồng đã có người dùng thế nào cho an
+  // toàn"). Đúng tiền lệ web-s1/backend-s2 gộp module khi hợp lý.
+  'architecture-s2': ['p6-u117', 'p6-u118', 'p6-u119'],
 }
 
 /** Unit của một chặng; mảng RỖNG nghĩa là chặng chưa có bài (giao diện phải nói rõ điều đó). */
