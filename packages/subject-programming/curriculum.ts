@@ -501,6 +501,25 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Tầm trưởng S4 — post-mortem & trách nhiệm vận hành',
         topics: '5 whys không đổ lỗi; sự cố AI hỏng âm thầm, ngưỡng cảnh báo',
       },
+      // p6-u102…u104: chặng S2 của hướng Backend (backend-s2, specializations/backend.ts,
+      // 4 module). Dải p6-u94…u101 đã bị lộ trình "Kỹ Sư Trưởng AI" lấy trước cùng ngày, nên
+      // S2 của backend dùng dải TIẾP THEO còn trống (p6-u102 trở đi) thay vì p6-u94 như kế
+      // hoạch cũ đã ghi trong dac-ta-dai-ma-unit-s1-cac-huong-con-lai.md.
+      {
+        id: 'p6-u102',
+        title: 'Hướng Backend S2 — CSDL quan hệ chuyên sâu: lost update & composite index',
+        topics: 'Khoá lạc quan (version) chống lost update; quy tắc tiền tố của composite index',
+      },
+      {
+        id: 'p6-u103',
+        title: 'Hướng Backend S2 — cache: cache-aside, TTL, cache stampede',
+        topics: 'Đọc/ghi cache-aside, làm mất hiệu lực đúng lúc; chặn stampede bằng khoá/jitter',
+      },
+      {
+        id: 'p6-u104',
+        title: 'Hướng Backend S2 — hàng đợi idempotent & race condition',
+        topics: 'At-least-once buộc idempotent, dead letter queue; race condition tái hiện được',
+      },
       // p6-u66..u68: chặng S1 của hướng Dữ liệu (data-s1, specializations/data.ts, 4 module).
       // p3-u8/p3-u9 đã dạy SELECT/JOIN/GROUP BY/HAVING cơ bản — u66 đi XA HƠN (hàm cửa sổ, CTE)
       // để không dạy trùng. Đăng ký cầu nối ở `specializations/stageUnits.ts`.
