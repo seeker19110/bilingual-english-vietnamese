@@ -622,6 +622,27 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Hướng Dữ liệu S2 — điều phối & chất lượng: DAG, chạy lại một phần, kiểm chặn',
         topics: 'Sắp xếp tô-pô + phạm vi chạy lại xuôi dòng; 4 nhóm kiểm, khớp tổng, lineage',
       },
+      // p6-u123…u125: chặng S3 "Đặc tả thi hành được & nghiệm thu code mình không tự gõ" của
+      // hướng Kiến trúc (architecture-s3, specializations/architecture.ts, 4 module —
+      // u125 gộp m3+m4).
+      {
+        id: 'p6-u123',
+        title: 'Hướng Kiến trúc S3 — đặc tả kín: sáu ô bắt buộc, tiêu chí chấp nhận đo được',
+        topics:
+          'Đọc xong không phải hỏi lại câu nào; viết tiêu chí trước mô tả giải pháp; chia lát',
+      },
+      {
+        id: 'p6-u124',
+        title: 'Hướng Kiến trúc S3 — giao việc cho AI/người mới: brief tự chứa, chống ảo giác',
+        topics:
+          'Bên thi hành không thấy ngữ cảnh trước; chọn độ tự quyết; đòi dẫn nguồn, cấm phình',
+      },
+      {
+        id: 'p6-u125',
+        title:
+          'Hướng Kiến trúc S3 — nghiệm thu & sổ quyết định: test canh gác, review theo tầng, ADR',
+        topics: 'Bất biến bị phá là CI đỏ; bốn tầng review; ADR ghi cả phương án bị loại',
+      },
       // p6-u66..u68: chặng S1 của hướng Dữ liệu (data-s1, specializations/data.ts, 4 module).
       // p3-u8/p3-u9 đã dạy SELECT/JOIN/GROUP BY/HAVING cơ bản — u66 đi XA HƠN (hàm cửa sổ, CTE)
       // để không dạy trùng. Đăng ký cầu nối ở `specializations/stageUnits.ts`.

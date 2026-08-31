@@ -61,6 +61,11 @@ export const SPEC_STAGE_UNITS: Record<string, string[]> = {
   // là phần khó đổi nhất — cả hai cùng trả lời "đổi hợp đồng đã có người dùng thế nào cho an
   // toàn"). Đúng tiền lệ web-s1/backend-s2 gộp module khi hợp lý.
   'architecture-s2': ['p6-u117', 'p6-u118', 'p6-u119'],
+  // Hướng Kiến trúc, chặng S3 — soạn 2026-08-31 (3 unit, 4 module: p6-u123 = m1 (đặc tả
+  // kín), p6-u124 = m2 (giao việc cho AI/người mới), p6-u125 gộp m3+m4 (nghiệm thu + sổ
+  // quyết định ADR — cả hai cùng trả lời "giữ đúng kết quả code mình không tự gõ", một ở
+  // lượt này, một qua các lượt sau). Đúng tiền lệ web-s1/backend-s3 gộp module khi hợp lý.
+  'architecture-s3': ['p6-u123', 'p6-u124', 'p6-u125'],
 }
 
 /** Unit của một chặng; mảng RỖNG nghĩa là chặng chưa có bài (giao diện phải nói rõ điều đó). */
