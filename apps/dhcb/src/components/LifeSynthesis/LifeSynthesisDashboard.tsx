@@ -55,7 +55,7 @@ export default function LifeSynthesisDashboard() {
                 <h3 className="text-sm font-bold text-zinc-100 tracking-tight">
                   Tổng Hợp Đa Miền & Dự Báo Mục Tiêu
                 </h3>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-accent-500/15 text-accent-300 border border-accent-500/30 uppercase tracking-wider">
+                <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-accent-500/15 text-accent-300 border border-accent-500/30 uppercase tracking-wider">
                   V5.4 Flagship
                 </span>
               </div>
@@ -165,7 +165,7 @@ export default function LifeSynthesisDashboard() {
                     {domainLabelMap[dom.domain] || dom.domain}
                   </span>
                   <span
-                    className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full border ${
+                    className={`text-[11px] font-bold px-1.5 py-0.5 rounded-full border ${
                       domainIconColorMap[dom.domain] || 'text-zinc-400'
                     }`}
                   >
@@ -180,7 +180,7 @@ export default function LifeSynthesisDashboard() {
                 </div>
                 <div className="flex items-baseline gap-1">
                   <span className="text-sm font-black text-zinc-100">{dom.score}</span>
-                  <span className="text-[10px] text-zinc-400">/ 100</span>
+                  <span className="text-[11px] text-zinc-400">/ 100</span>
                 </div>
               </div>
             ))}
@@ -197,7 +197,7 @@ export default function LifeSynthesisDashboard() {
               <div className="text-xs">
                 <div className="font-bold text-zinc-100 flex items-center gap-2">
                   <span>{topGoal.title}</span>
-                  <span className="text-[10px] px-2 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+                  <span className="text-[11px] px-2 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
                     {topGoal.successProbabilityPercent}% Xác suất đạt
                   </span>
                 </div>

@@ -128,7 +128,7 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-bold text-white">{profile.name}</span>
-                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                    <span className="text-[11px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
                       Rank {profile.rankTier}
                     </span>
                   </div>
@@ -194,7 +194,7 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
                     <div>
                       <div className="flex items-center gap-2">
                         <h4 className="text-sm font-bold text-white">{m.title}</h4>
-                        <span className="text-[10px] font-semibold text-zinc-400 px-2 py-0.5 rounded-full bg-zinc-800 border border-zinc-700">
+                        <span className="text-[11px] font-semibold text-zinc-400 px-2 py-0.5 rounded-full bg-zinc-800 border border-zinc-700">
                           {m.time}
                         </span>
                       </div>
@@ -259,7 +259,7 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
 
                   <div className="text-right">
                     <div className="text-sm font-black text-amber-400">{entry.eloRating} Elo</div>
-                    <div className="text-[10px] font-semibold text-zinc-400 uppercase">
+                    <div className="text-[11px] font-semibold text-zinc-400 uppercase">
                       {entry.rankTier}
                     </div>
                   </div>

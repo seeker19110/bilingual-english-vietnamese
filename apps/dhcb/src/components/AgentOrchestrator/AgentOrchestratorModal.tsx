@@ -173,7 +173,7 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
                   <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
                   <span>Trần ngân sách: tối đa 50.000 tokens</span>
                 </div>
-                <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                <span className="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
                   Lá chắn bảo vệ
                 </span>
               </div>
@@ -216,17 +216,17 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
                     >
                       <div className="flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2">
-                          <span className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold text-[10px] flex items-center justify-center">
+                          <span className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold text-[11px] flex items-center justify-center">
                             {step.stepIndex}
                           </span>
-                          <span className="font-bold text-zinc-200 uppercase text-[10px] tracking-wider bg-zinc-800 px-2 py-0.5 rounded">
+                          <span className="font-bold text-zinc-200 uppercase text-[11px] tracking-wider bg-zinc-800 px-2 py-0.5 rounded">
                             {step.phase}
                           </span>
                           <span className="font-medium text-zinc-300">
                             {step.actionDescription}
                           </span>
                         </div>
-                        <span className="text-[10px] text-zinc-500">{step.tokensUsed} tok</span>
+                        <span className="text-[11px] text-zinc-500">{step.tokensUsed} tok</span>
                       </div>
 
                       {step.outputArtifact && (

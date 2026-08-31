@@ -619,7 +619,7 @@ export default function Dashboard() {
                     <span className={`font-semibold ${c.text} flex items-center gap-1.5`}>
                       {vi ? l.titleVi : l.titleEn}
                       {exam?.passed && (
-                        <span className="flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 theme-light:text-amber-800">
+                        <span className="flex items-center gap-0.5 text-[11px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 theme-light:text-amber-800">
                           <GraduationCap className="w-2.5 h-2.5" />
                           {exam.bestPct}%
                         </span>

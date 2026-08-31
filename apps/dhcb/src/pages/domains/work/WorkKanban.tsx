@@ -199,7 +199,7 @@ export default function WorkKanban() {
                             {task.title}
                           </p>
                           <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold border shrink-0 ${priority.cls}`}
+                            className={`px-2 py-0.5 rounded-full text-[11px] font-bold border shrink-0 ${priority.cls}`}
                           >
                             {priority.label}
                           </span>

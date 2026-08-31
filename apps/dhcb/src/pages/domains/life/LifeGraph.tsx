@@ -462,7 +462,7 @@ export default function LifeGraph() {
                           </div>
                         </div>
                         {node.archivedAt && (
-                          <span className="text-[10px] text-zinc-500 uppercase font-mono">
+                          <span className="text-[11px] text-zinc-500 uppercase font-mono">
                             Archived
                           </span>
                         )}
@@ -542,7 +542,7 @@ export default function LifeGraph() {
                           {fact.namespace}
                         </span>
                         <code className="text-zinc-200 text-xs font-semibold">{fact.key}</code>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-950 text-zinc-400 border border-zinc-800">
+                        <span className="text-[11px] px-1.5 py-0.5 rounded bg-zinc-950 text-zinc-400 border border-zinc-800">
                           {fact.sensitivity}
                         </span>
                       </div>
@@ -619,7 +619,7 @@ export default function LifeGraph() {
                         <span className="px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-300 theme-light:text-purple-800 text-xs font-medium">
                           {mem.namespace}
                         </span>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-950 text-zinc-400 border border-zinc-800">
+                        <span className="text-[11px] px-1.5 py-0.5 rounded bg-zinc-950 text-zinc-400 border border-zinc-800">
                           {mem.sensitivity}
                         </span>
                       </div>
@@ -752,7 +752,7 @@ export default function LifeGraph() {
                     >
                       <div>
                         <div className="font-medium text-zinc-200">{rec.action}</div>
-                        <div className="text-[10px] text-zinc-500 font-mono mt-0.5 truncate">
+                        <div className="text-[11px] text-zinc-500 font-mono mt-0.5 truncate">
                           Idempotency: {rec.idempotencyKey}
                         </div>
                       </div>
@@ -766,7 +766,7 @@ export default function LifeGraph() {
                         >
                           {rec.status}
                         </span>
-                        <div className="text-[10px] text-zinc-500 mt-0.5">
+                        <div className="text-[11px] text-zinc-500 mt-0.5">
                           {new Date(rec.createdAt).toLocaleTimeString('vi-VN')}
                         </div>
                       </div>

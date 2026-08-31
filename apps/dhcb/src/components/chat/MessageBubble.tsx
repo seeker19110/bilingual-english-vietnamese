@@ -74,13 +74,13 @@ export default function MessageBubble({ message, isMine, onDelete }: MessageBubb
           <p className="whitespace-pre-wrap leading-relaxed select-text">{message.content}</p>
 
           <div
-            className={`flex items-center gap-1.5 justify-end mt-1 text-[10px] ${
+            className={`flex items-center gap-1.5 justify-end mt-1 text-[11px] ${
               isMine ? 'text-accent-100/80' : 'text-zinc-400'
             }`}
           >
             {isFiltered && (
               <span
-                className="inline-flex items-center gap-0.5 text-amber-300 text-[10px]"
+                className="inline-flex items-center gap-0.5 text-amber-300 text-[11px]"
                 title="Một số từ ngữ đã được lọc theo tiêu chuẩn cộng đồng"
               >
                 <ShieldAlert size={11} />

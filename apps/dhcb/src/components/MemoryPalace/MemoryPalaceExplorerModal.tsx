@@ -152,7 +152,7 @@ export default function MemoryPalaceExplorerModal({ onClose }: MemoryPalaceExplo
               }`}
             >
               <span>{room.name}</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-black/20">
+              <span className="text-[11px] px-1.5 py-0.2 rounded-full bg-black/20">
                 {room.loci.length} Loci
               </span>
             </button>
@@ -279,7 +279,7 @@ export default function MemoryPalaceExplorerModal({ onClose }: MemoryPalaceExplo
                             {locus.keyConcept}
                           </div>
                         </div>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800 font-semibold">
+                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-zinc-800 font-semibold">
                           {locus.retentionStrength}%
                         </span>
                       </button>
@@ -363,7 +363,7 @@ export default function MemoryPalaceExplorerModal({ onClose }: MemoryPalaceExplo
                       <span>Độ tương đồng: {recallResult.similarityScore}%</span>
                     </div>
                     <p className="text-[11px] leading-relaxed">{recallResult.feedback}</p>
-                    <div className="text-[10px] text-zinc-400 pt-1">
+                    <div className="text-[11px] text-zinc-400 pt-1">
                       Độ bền thần kinh mới: <strong>{recallResult.strengthenedRetention}%</strong>
                     </div>
                   </div>

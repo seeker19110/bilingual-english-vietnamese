@@ -159,7 +159,7 @@ export default function PvPBattlefieldModal({
               <div className="text-xs font-bold text-indigo-300 truncate">{match.player1.name}</div>
               <div className="text-lg sm:text-xl font-black text-white flex items-center gap-1.5">
                 <span>{p1Score}</span>
-                <span className="text-[10px] font-semibold text-indigo-400">pts</span>
+                <span className="text-[11px] font-semibold text-indigo-400">pts</span>
               </div>
             </div>
           </div>
@@ -175,7 +175,7 @@ export default function PvPBattlefieldModal({
               <div className="text-xs font-bold text-purple-300 truncate">{match.player2.name}</div>
               <div className="text-lg sm:text-xl font-black text-white flex items-center justify-end gap-1.5">
                 <span>{p2Score}</span>
-                <span className="text-[10px] font-semibold text-purple-400">pts</span>
+                <span className="text-[11px] font-semibold text-purple-400">pts</span>
               </div>
             </div>
             <div className="w-11 h-11 rounded-2xl bg-purple-500/20 text-2xl flex items-center justify-center border border-purple-400/40 shrink-0">

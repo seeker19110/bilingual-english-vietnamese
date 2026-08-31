@@ -162,7 +162,7 @@ export default function StemScratchpadModal({ onClose }: StemScratchpadModalProp
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-bold text-teal-300 uppercase tracking-wide">Đề bài</h4>
               {problem?.isSolved && (
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
                   ✓ ĐÃ GIẢI XONG
                 </span>
               )}
@@ -198,7 +198,7 @@ export default function StemScratchpadModal({ onClose }: StemScratchpadModalProp
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs font-bold text-zinc-300">Bước {step.stepNumber}:</span>
                     <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
                         step.validation?.isValid
                           ? 'bg-emerald-500/20 text-emerald-300'
                           : 'bg-rose-500/20 text-rose-300'

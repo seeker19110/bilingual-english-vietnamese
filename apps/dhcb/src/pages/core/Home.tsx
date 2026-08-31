@@ -240,7 +240,7 @@ export default function Home() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <h3 className="font-bold text-white text-base">Môn Tiếng Anh</h3>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-800 font-bold border border-emerald-500/30">
+                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-800 font-bold border border-emerald-500/30">
                       CEFR A1–C2
                     </span>
                   </div>
@@ -291,7 +291,7 @@ export default function Home() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <h3 className="font-bold text-white text-base">Khoa Học & STEM</h3>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 theme-light:text-blue-800 font-bold border border-blue-500/30">
+                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 theme-light:text-blue-800 font-bold border border-blue-500/30">
                       Vision OCR
                     </span>
                   </div>
@@ -338,10 +338,10 @@ export default function Home() {
                     <h3 className="font-bold text-white text-base">
                       Sự Nghiệp, Khởi Nghiệp &amp; Đời Sống
                     </h3>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 theme-light:text-purple-800 font-bold border border-purple-500/30">
+                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 theme-light:text-purple-800 font-bold border border-purple-500/30">
                       Career Hub
                     </span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 theme-light:text-orange-800 font-bold border border-orange-500/30">
+                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 theme-light:text-orange-800 font-bold border border-orange-500/30">
                       Life OS
                     </span>
                   </div>

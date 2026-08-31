@@ -186,7 +186,7 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
             <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-zinc-950 animate-pulse" />
           </div>
           <span
-            className={`truncate max-w-[5.25rem] tracking-tight mt-0.5 text-[10px] sm:text-[11px] font-bold ${
+            className={`truncate max-w-[5.25rem] tracking-tight mt-0.5 text-[11px] font-bold ${
               isCompanion
                 ? 'text-accent-300 theme-light:text-accent-800'
                 : 'text-zinc-300 group-hover:text-white'

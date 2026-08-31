@@ -436,7 +436,7 @@ export default function Startup({ embedded = false }: { embedded?: boolean } = {
                         <div className="flex items-start justify-between">
                           <h4 className="text-sm font-semibold text-zinc-100">{p.statement}</h4>
                           <span
-                            className={`text-[10px] px-2 py-0.5 rounded font-medium uppercase border ${
+                            className={`text-[11px] px-2 py-0.5 rounded font-medium uppercase border ${
                               p.severity === 'critical'
                                 ? 'bg-red-950/80 theme-light:bg-red-50 text-red-400 theme-light:text-red-800 border-red-800/40'
                                 : p.severity === 'major'
@@ -487,7 +487,7 @@ export default function Startup({ embedded = false }: { embedded?: boolean } = {
                       >
                         <div className="flex items-start justify-between">
                           <h4 className="text-sm font-semibold text-zinc-100">{h.statement}</h4>
-                          <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700 uppercase">
+                          <span className="text-[11px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700 uppercase">
                             {h.hypothesisType}
                           </span>
                         </div>
@@ -571,7 +571,7 @@ export default function Startup({ embedded = false }: { embedded?: boolean } = {
                       <div className="flex items-start justify-between">
                         <h4 className="font-bold text-zinc-100 text-sm">{ev.title}</h4>
                         <span
-                          className={`text-[10px] px-2 py-0.5 rounded font-medium border ${
+                          className={`text-[11px] px-2 py-0.5 rounded font-medium border ${
                             ev.supportsHypothesis
                               ? 'bg-emerald-950/80 theme-light:bg-emerald-50 text-emerald-400 theme-light:text-emerald-800 border-emerald-800/40'
                               : 'bg-red-950/80 theme-light:bg-red-50 text-red-400 theme-light:text-red-800 border-red-800/40'

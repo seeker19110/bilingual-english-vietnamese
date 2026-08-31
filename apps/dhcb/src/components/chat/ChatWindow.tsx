@@ -175,7 +175,7 @@ export default function ChatWindow({
             <div key={group.date} className="w-full">
               {/* Header ngày */}
               <div className="flex items-center justify-center my-3">
-                <span className="text-[10px] font-semibold text-zinc-400 bg-zinc-800/80 border border-white/5 px-2.5 py-0.5 rounded-full shadow-xs">
+                <span className="text-[11px] font-semibold text-zinc-400 bg-zinc-800/80 border border-white/5 px-2.5 py-0.5 rounded-full shadow-xs">
                   {group.date}
                 </span>
               </div>

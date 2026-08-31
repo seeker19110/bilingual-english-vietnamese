@@ -195,7 +195,7 @@ export default function HomeAiBriefingCard({
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-accent-400 bg-accent-500/15 px-1.5 py-0.5 rounded border border-accent-500/20">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-accent-400 bg-accent-500/15 px-1.5 py-0.5 rounded border border-accent-500/20">
                     {continueLevelId || 'CEFR'}
                   </span>
                   <span className="text-xs text-zinc-400 font-medium">Học tiếp ngay</span>

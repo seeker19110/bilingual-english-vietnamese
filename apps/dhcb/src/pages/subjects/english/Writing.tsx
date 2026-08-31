@@ -452,7 +452,7 @@ export default function Writing() {
                   >
                     <span className="line-through text-rose-400 mr-2">{issue.original}</span>
                     <span className="font-semibold text-emerald-400">→ {issue.suggestion}</span>
-                    <span className="text-[10px] text-zinc-400 ml-auto pl-2 truncate max-w-[200px]">
+                    <span className="text-[11px] text-zinc-400 ml-auto pl-2 truncate max-w-[200px]">
                       {issue.reason}
                     </span>
                   </div>

@@ -119,14 +119,14 @@ export const AmbientScreenCopilot: React.FC = () => {
             <span className="font-bold text-white text-xs block">
               Trợ Lý Nhìn Màn Hình (Ambient Screen Copilot)
             </span>
-            <span className="text-[10px] text-zinc-400">
+            <span className="text-[11px] text-zinc-400">
               {stream ? 'Đang quan sát ngữ cảnh làm việc trực tiếp' : 'Hỗ trợ không cần copy-paste'}
             </span>
           </div>
         </div>
 
         <span
-          className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+          className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border ${
             stream
               ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
               : 'bg-zinc-800 text-zinc-400 border-zinc-700'
@@ -216,7 +216,7 @@ export const AmbientScreenCopilot: React.FC = () => {
             <div className="space-y-3 p-3.5 rounded-xl bg-zinc-900/90 border border-zinc-800 text-xs">
               <div className="flex items-start justify-between gap-2 border-b border-zinc-800/80 pb-2.5">
                 <div>
-                  <div className="text-[10px] uppercase font-bold text-sky-400 tracking-wider">
+                  <div className="text-[11px] uppercase font-bold text-sky-400 tracking-wider">
                     Ứng dụng: <span className="text-zinc-200">{insight.detectedApp}</span> · Lĩnh
                     vực: <span className="text-zinc-200 capitalize">{insight.relevantDomain}</span>
                   </div>
@@ -243,7 +243,7 @@ export const AmbientScreenCopilot: React.FC = () => {
                           <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                           {tip.title}
                         </span>
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 uppercase font-mono">
+                        <span className="text-[11px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 uppercase font-mono">
                           {tip.type}
                         </span>
                       </div>
@@ -260,7 +260,7 @@ export const AmbientScreenCopilot: React.FC = () => {
                   {insight.extractedKeywords.map((kw, idx) => (
                     <span
                       key={idx}
-                      className="px-2 py-0.5 rounded-md bg-zinc-800 text-zinc-300 text-[10px]"
+                      className="px-2 py-0.5 rounded-md bg-zinc-800 text-zinc-300 text-[11px]"
                     >
                       {kw}
                     </span>

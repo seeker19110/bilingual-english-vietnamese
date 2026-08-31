@@ -150,7 +150,7 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
                 <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
                   Không Gian Nền Tảng
                 </span>
-                <span className="text-[10px] text-accent-400 font-semibold bg-accent-500/10 px-1.5 py-0.5 rounded">
+                <span className="text-[11px] text-accent-400 font-semibold bg-accent-500/10 px-1.5 py-0.5 rounded">
                   5 Miền Studio
                 </span>
               </div>
@@ -179,7 +179,7 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between gap-1">
                           <span className="text-xs font-bold text-white truncate">{st.title}</span>
-                          <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
+                          <span className="text-[11px] font-semibold px-1 py-0.2 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
                             {st.badge}
                           </span>
                         </div>

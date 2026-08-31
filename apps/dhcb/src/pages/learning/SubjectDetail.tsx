@@ -596,7 +596,7 @@ export default function SubjectDetail() {
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <span
-                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase mr-2 border ${
+                        className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase mr-2 border ${
                           prob.difficulty === 'basic'
                             ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
                             : prob.difficulty === 'intermediate'

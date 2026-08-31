@@ -238,7 +238,7 @@ export default function ChatList({
                     </p>
 
                     {room.unreadCount > 0 && (
-                      <span className="ml-2 flex-shrink-0 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-blue-600 text-white text-[10px] font-bold">
+                      <span className="ml-2 flex-shrink-0 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-blue-600 text-white text-[11px] font-bold">
                         {room.unreadCount > 99 ? '99+' : room.unreadCount}
                       </span>
                     )}

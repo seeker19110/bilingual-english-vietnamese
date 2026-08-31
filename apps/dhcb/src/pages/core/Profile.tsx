@@ -469,7 +469,7 @@ export default function Profile() {
                   >
                     {a.icon}
                   </span>
-                  <span className="text-[10px] text-zinc-400 text-center leading-tight line-clamp-2">
+                  <span className="text-[11px] text-zinc-400 text-center leading-tight line-clamp-2">
                     {name}
                   </span>
                 </div>
