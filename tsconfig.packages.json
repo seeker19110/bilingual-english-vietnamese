@@ -32,6 +32,9 @@
       "path": "./packages/core-examplan"
     },
     {
+      "path": "./packages/core-grading"
+    },
+    {
       "path": "./packages/core-http"
     },
     {
@@ -45,6 +48,9 @@
     },
     {
       "path": "./packages/core-personal"
+    },
+    {
+      "path": "./packages/subject-chemistry"
     },
     {
       "path": "./packages/subject-english"
