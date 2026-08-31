@@ -21,6 +21,7 @@ import {
   Trophy,
   PartyPopper,
   Compass,
+  Map,
 } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
@@ -37,6 +38,7 @@ import { PROGRAMMING_LEVELS } from '@dhcb/subject-programming/curriculum'
 import { PROJECT_STAGES } from '@dhcb/subject-programming/projectSteps'
 import { PROGRAMMING_SPECIALIZATIONS } from '@dhcb/subject-programming/specializations/registry'
 import { SHORT_COURSES } from '@dhcb/subject-programming/courses/registry'
+import { LEARNING_PATHS } from '@dhcb/subject-programming/learningPaths/registry'
 import { goToSubjects } from '../../../lib/subjectsHost'
 import { buildSlugSegment } from '@core/slug'
 
@@ -239,6 +241,37 @@ export default function ProgrammingHome() {
                 </span>
                 <span className="text-xs font-normal text-zinc-400 leading-relaxed">
                   {course.canDo}
+                </span>
+              </button>
+            ))}
+          </section>
+        )}
+
+        {/* ④c Lộ trình mục tiêu — khác hướng chuyên sâu (một trục), lộ trình ghép chặng của
+            NHIỀU hướng thành một con đường tới một đích nghề (ví dụ Kỹ Sư Trưởng AI). Khối
+            riêng để người có mục tiêu rõ tìm thấy ngay, không phải tự lắp từ 14 hướng. */}
+        {LEARNING_PATHS.length > 0 && (
+          <section className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 space-y-3 shadow-sm">
+            <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <Map className="w-5 h-5 text-accent-400" aria-hidden="true" />
+              <span>Lộ trình mục tiêu — một đích nghề, một con đường</span>
+            </h2>
+            <p className="text-sm text-zinc-300 leading-relaxed">
+              Ghép sẵn các chặng của nhiều hướng chuyên sâu thành một con đường có thứ tự, đi từ nền
+              tảng tới đích nghề — mỗi giai đoạn kết bằng một sản phẩm giữ lại được.
+            </p>
+            {LEARNING_PATHS.map((path) => (
+              <button
+                key={path.id}
+                onClick={() => nav(`/lap-trinh/lo-trinh/${path.id}`)}
+                className={`${nutPhu} w-full flex-col items-start !py-3 text-left`}
+              >
+                <span className="flex items-center gap-2 w-full">
+                  <Map className="w-4 h-4 text-accent-400 shrink-0" aria-hidden="true" />
+                  <span className="truncate">{path.title}</span>
+                </span>
+                <span className="text-xs font-normal text-zinc-400 leading-relaxed">
+                  {path.tagline}
                 </span>
               </button>
             ))}
