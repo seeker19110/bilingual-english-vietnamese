@@ -1,41 +1,53 @@
-# 0201 — Đặc tả khoá "Điều phối AI thực hành" (PR 1/4 khoá AI)
+# 0201 — Đặc tả khoá "Hermes Agent — trợ lý AI cho người đi làm" (PR 1/4 khoá Hermes)
 
-Người dùng yêu cầu (2026-08-31, kèm ảnh tham chiếu "Hermes Agent Course"): nghiên cứu kỹ và tạo
-khoá học về dùng/điều phối tác tử AI, trước tiên tập trung vào **nhân viên văn phòng** và
-**người điều phối dev**. Đây là PR 1 trong kế hoạch 4 PR — chốt thiết kế trước khi viết code,
-đúng playbook đã chạy thật của khoá Git (#740–#744).
+Người dùng yêu cầu (2026-08-31, kèm 2 ảnh đề cương "Hermes Agent Course"): tạo khoá học theo
+ĐÚNG đề cương đó — dạy dùng/điều phối tác tử Hermes Agent, tập trung vào **nhân viên văn
+phòng** và **người điều phối dev**. Đây là PR 1 trong kế hoạch 4 PR — chốt thiết kế trước khi
+viết code, đúng playbook đã chạy thật của khoá Git (#740–#744).
+
+Bản nháp đầu của đặc tả lược bỏ các bài công cụ cụ thể (Docker, Telegram, LiteLLM…) — người
+dùng làm rõ ngay trong phiên: **giữ đúng danh sách bài của đề cương tham chiếu**, chỉ xoay góc
+nhìn sang hai đối tượng trên. Đặc tả đã viết lại theo làm rõ này trước khi merge.
 
 ## Đã làm
 
-- Viết đặc tả đầy đủ `docs/specs/2026-08-31-khoa-dieu-phoi-ai-van-phong.md` theo khuôn
+- Viết đặc tả `docs/specs/2026-08-31-khoa-dieu-phoi-ai-van-phong.md` theo khuôn
   `docs/templates/dac-ta-tinh-nang.md`:
-  - **Nghiên cứu đầu vào**: phân loại 4 phần của khoá tham chiếu Hermes thành "kỹ năng bền —
-    GIỮ" (session, skill, goal/steer, kanban, multi-agent, giao việc/nghiệm thu) và "thao tác
-    theo sản phẩm — BỎ" (Docker, Telegram, LiteLLM, llama.cpp, Open WebUI…), kèm lý do từng nhóm.
-  - **Khoá `ai`** — khoá ngắn thứ hai (`/lap-trinh/khoa/ai`), 5 chương / 16 bài mới,
-    `prerequisites: []`, nhắm người KHÔNG biết code: C1 làm quen tác tử · C2 giao việc cho rõ
-    (khuôn 3 phần) · C3 việc văn phòng hằng ngày · C4 mục tiêu dài & nhiều việc song song ·
-    C5 điều phối dev (đặc tả 6 ô rút gọn + nghiệm thu bằng bằng chứng).
-  - **`agentSim`** — bộ mô phỏng tác tử hư cấu `tro`, tất định tuyệt đối, chấm bằng TRẠNG THÁI
-    (bảng việc/phiên/kỹ năng); 3 luật sư phạm nạp thẳng vào sim (thiếu khuôn → hỏi lại; chỉ
-    NGƯỜI duyệt được việc; chặn secrets/hành động khó hoàn tác). KHÔNG gọi AI thật khi chấm.
-  - Điểm chạm, tiêu chí chấp nhận, bất biến + test canh, kế hoạch 4 PR, 2 câu hỏi mở cho
-    người dùng (tên tác tử `tro`; có làm khoá "Tự host AI" sau không).
+  - **Nghiên cứu Hermes Agent thật** (tra cứu 2026-08-31): tác tử mã nguồn mở của Nous
+    Research; cài script/Docker; `hermes gateway` nối Telegram; lệnh `/new` `/resume` `/model`
+    `/skills` `/goal` `/steer` `/learn` `/permission`; model chính + curator model trong
+    `~/.hermes/config.yaml`; nối LiteLLM/llama.cpp/Open WebUI; profile tách biệt; hệ sinh thái
+    Memos · Linear · Firecrawl · Honcho · Herdr · Paperclip.
+  - **Khoá `hermes`** (`/lap-trinh/khoa/hermes`) — 4 chương / 22 bài bám đúng đề cương 2 ảnh:
+    C1 Cơ bản (7 bài, từ Docker tới session/skill) · C2 Công cụ nâng cao (5 bài: goal/steer,
+    learn, LiteLLM, llama.cpp, Open WebUI) · C3 Tech stack ứng dụng (5 bài: Memos, Linear,
+    Bookmark, Understand-anything, Design & Frontend) · C4 Multi-agent (5 bài: Kanban, Herdr,
+    Firecrawl, Honcho, Paperclip). Mỗi bài đặt trong bối cảnh văn phòng/điều phối dev,
+    `prerequisites: []`.
+  - **`hermesSim`** — mô phỏng CLI Hermes thật, tất định tuyệt đối (đúng cách `gitSim` mô
+    phỏng git thật), chấm bằng TRẠNG THÁI; luật soạn bài công cụ thật: mô phỏng chấm được ở
+    bước ①–⑥, LÀM THẬT để ở homework kèm checklist, không chấm; KHÔNG gọi AI/mạng/Docker thật.
+  - Điểm chạm, tiêu chí chấp nhận, bất biến + test canh, kế hoạch 4 PR, 2 câu hỏi mở (phiên
+    bản Hermes đổi nhanh; phương án dự phòng cho bài Herdr/Paperclip nếu thiếu nguồn).
 
 ## KHÔNG làm ở PR này
 
-- Không code — `agentSim`, ngôn ngữ `'agent'`, khoá `ai`, 16 bài là PR 2–4 theo bảng chia trong
+- Không code — `hermesSim`, ngôn ngữ `'hermes'`, khoá + 22 bài là PR 2–4 theo bảng chia trong
   đặc tả. Không đụng khoá `git`, `curriculum.ts`, regex id.
+- Không nhúng/chép nội dung khoá tham chiếu — chỉ dùng đề cương chủ đề; lời giảng, ví dụ, bài
+  tập sẽ tự soạn trong bối cảnh Việt Nam.
 
 ## Bằng chứng kiểm chứng
 
-- Chỉ thêm 2 file docs (đặc tả + changelog này) — không chạm code/route/dữ liệu; các cổng
-  build/test không bị ảnh hưởng, Prettier đã chạy trên 2 file mới.
+- Chỉ thêm 2 file docs (đặc tả + changelog này) — không chạm code/route/dữ liệu; Prettier đã
+  chạy và check sạch trên cả 2 file.
 - Hiện trạng nêu trong đặc tả đối chiếu trực tiếp mã nguồn ngày 2026-08-31: tầng `courses/`
   và trang khoá data-driven đã có (`ProgrammingHome.tsx` lặp `SHORT_COURSES`), regex `lessonId`
-  ở đúng 3 chỗ (`lessonTypes.ts`, `progress.ts`, `feedback.ts`), chưa có ngôn ngữ `'agent'`.
+  ở đúng 3 chỗ (`lessonTypes.ts`, `progress.ts`, `feedback.ts`), chưa có ngôn ngữ `'hermes'`.
+- Thông tin Hermes Agent đối chiếu tài liệu chính thức/cộng đồng (hermes-ai.net, GitHub
+  NousResearch/hermes-agent, mudrii/hermes-agent-docs) — ghi trong mục 1.1 của đặc tả.
 
 ## Việc tiếp theo (PR 2/4)
 
-`agentSim.ts` + `agentSim.test.ts` + ngôn ngữ `'agent'` + `agentRunner` + nới regex id — hạ
-tầng chấm bài, làm sau khi người dùng duyệt đặc tả (2 câu hỏi mở không chặn PR 2).
+`hermesSim.ts` + `hermesSim.test.ts` + ngôn ngữ `'hermes'` + `hermesRunner` + nới regex id —
+hạ tầng chấm bài, làm sau khi người dùng duyệt đặc tả (2 câu hỏi mở không chặn PR 2).

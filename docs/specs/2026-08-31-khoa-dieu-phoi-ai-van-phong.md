@@ -1,208 +1,232 @@
-# Đặc tả: KHOÁ RIÊNG "Điều phối AI thực hành" (môn Lập trình — khoá ngắn thứ hai)
+# Đặc tả: KHOÁ RIÊNG "Hermes Agent — trợ lý AI cho người đi làm" (khoá ngắn thứ hai)
 
-> Ngày 2026-08-31 · Khuôn: `docs/templates/dac-ta-tinh-nang.md`
-> Nền: `docs/specs/2026-08-30-khoa-hoc-thuc-hanh-github.md` (khoá Git — tiền lệ tầng khoá ngắn,
-> đã chạy thật đủ 4 PR #740–#744) · `packages/subject-programming/gitSim.ts` + `bashSim.ts`
-> (khuôn "máy ảo tí hon tất định") · yêu cầu người dùng 2026-08-31 kèm ảnh tham chiếu
-> "Hermes Agent Course".
+> Ngày 2026-08-31, VIẾT LẠI cùng ngày theo làm rõ của người dùng: khoá phải **bám đúng đề cương
+> Hermes Agent Course trong 2 ảnh tham chiếu** (giữ các bài về công cụ thật: Docker, Telegram,
+> LiteLLM, llama.cpp, Open WebUI, Memos, Linear, Firecrawl, Honcho, Herdr, Paperclip…), chỉ xoay
+> góc nhìn sang **nhân viên văn phòng** và **người điều phối dev** — KHÔNG lược bỏ công cụ như
+> bản nháp đầu.
+> Khuôn: `docs/templates/dac-ta-tinh-nang.md` · Nền: `docs/specs/2026-08-30-khoa-hoc-thuc-hanh-github.md`
+> (khoá Git — tiền lệ tầng khoá ngắn, đủ 4 PR #740–#744) · `gitSim.ts`/`bashSim.ts` (khuôn "máy
+> ảo tí hon tất định").
 
 ## 0. Một câu
 
-Khoá học ĐỘC LẬP **"Điều phối AI thực hành"** (`/lap-trinh/khoa/ai`, 16 bài / 5 chương) dạy
-**nhân viên văn phòng chưa từng code** và **người bắt đầu điều phối dev** cách GIAO VIỆC — THEO
-DÕI — NGHIỆM THU công việc với tác tử AI, chấm bài bằng bộ mô phỏng tác tử tất định `agentSim`
-(khuôn `gitSim`), không gọi AI thật khi chấm.
+Khoá học ĐỘC LẬP **"Hermes Agent — trợ lý AI cho người đi làm"** (`/lap-trinh/khoa/hermes`,
+22 bài / 4 chương đúng đề cương khoá tham chiếu) dạy nhân viên văn phòng và người điều phối dev
+cài đặt — cấu hình — giao việc — điều phối tác tử AI Hermes, chấm bài bằng bộ mô phỏng tất định
+`hermesSim` (đúng cách `gitSim` mô phỏng git THẬT), không gọi AI thật khi chấm.
 
-## 1. Nghiên cứu đầu vào (vì sao khoá trông như thế này)
+## 1. Nghiên cứu đầu vào
 
-### 1.1. Tham chiếu: Hermes Agent Course (ảnh người dùng gửi)
+### 1.1. Hermes Agent là gì (tra cứu thật 2026-08-31, không đoán)
 
-Khoá tham chiếu có 4 phần: **I Cơ bản** (cài đặt Docker, cấu hình model, dashboard, kết nối
-Telegram, cấu hình profile agent, quản lý session, sử dụng skill) · **II Công cụ nâng cao**
-(slash goal/steer — agent bền bỉ theo mục tiêu, slash learn — agent học thành kỹ năng, LiteLLM,
-llama.cpp, Open WebUI) · **III Tech stack ứng dụng** (Memos ghi chú, Linear — người và agent làm
-việc cùng nhau, bookmark, understand-anything, design/frontend) · **IV Multi-agent** (Kanban
-board, Herdr bảng điều khiển multi-agent, Firecrawl, Honcho memory, Paperclip "công ty 0 người").
+**Hermes Agent** — tác tử AI mã nguồn mở của Nous Research ("the agent that grows with you",
+~165k sao GitHub). Điều đã xác minh từ tài liệu chính thức + docs cộng đồng:
 
-**Phân loại khi mang về DHCB** — tách "kỹ năng bền" khỏi "thao tác theo sản phẩm":
+- **Cài & chạy**: script cài một dòng hoặc **Docker**; chạy `hermes` (CLI) hoặc
+  `hermes gateway` (chế độ nhắn tin). Có **dashboard** quản lý.
+- **Kênh nhắn tin**: Telegram (BotFather → `hermes gateway setup` → `hermes gateway start`),
+  Discord, Slack, WhatsApp… — một gateway nhiều nền tảng.
+- **Lệnh lõi**: `/new` · `/resume <session>` · `/model` · `/personality` · `/skills` ·
+  `/permission` · `/stop` · `/usage`; các lệnh mục tiêu `/goal`, lái `/steer`, học thành kỹ năng
+  `/learn` (tên đúng như 2 ảnh đề cương).
+- **Model**: model chính + **curator model** (model phụ rẻ hơn lo nén ngữ cảnh) trong
+  `~/.hermes/config.yaml`; nối được **LiteLLM**, **llama.cpp** (API kiểu OpenAI), **Open WebUI**,
+  35+ provider.
+- **Profile**: `hermes profile create <tên>` — nhiều "con" Hermes tách biệt config/bộ nhớ/phiên.
+- **Hệ sinh thái** (phần III–IV của khoá tham chiếu, là công cụ NGOÀI ghép với Hermes):
+  **Memos** (ghi chú tự host) · **Linear** (quản việc người+agent) · **Firecrawl** (trích xuất
+  web) · **Honcho** (bộ nhớ/mô hình hoá người dùng) · **Herdr** (bảng điều khiển multi-agent) ·
+  **Paperclip** (điều phối nhiều agent kiểu "công ty 0 người": sơ đồ tổ chức, ngân sách, việc
+  nguyên tử) · Kanban board.
 
-| Nhóm trong Hermes Course                                               | Về DHCB thành                                                             | Vì sao                                                                                                           |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Session, skill, goal/steer, kanban, multi-agent, người+agent làm chung | **GIỮ — thành xương sống khoá** (C1, C4, C5)                              | Là khái niệm nền của MỌI tác tử (Claude Code, Hermes, Codex…), không chết theo sản phẩm                          |
-| Giao việc, theo dõi, nghiệm thu (ngầm trong Linear/Kanban)             | **GIỮ và NÂNG thành trọng tâm** (C2, C3, C5)                              | Đây mới là kỹ năng "nhân viên văn phòng + điều phối dev" cần — khoá tham chiếu coi là phụ, ta coi là chính       |
-| Docker, Telegram, LiteLLM, llama.cpp, Open WebUI, Firecrawl, Honcho    | **BỎ khỏi phạm vi khoá này**                                              | Thao tác cài đặt theo MỘT sản phẩm cụ thể, lỗi thời nhanh, không mô phỏng tất định được, sai đối tượng văn phòng |
-| Memos/bookmark/understand-anything                                     | **BỎ** (nhắc 1 câu ở bài "việc lặp lại thành kỹ năng" như ví dụ ứng dụng) | Là ứng dụng của kỹ năng giao việc, không phải kỹ năng riêng                                                      |
+### 1.2. Đề cương tham chiếu (2 ảnh người dùng gửi) — GIỮ NGUYÊN KHUNG
 
-### 1.2. Đối tượng (người dùng chốt: "trước tiên tập trung vào nhân viên văn phòng và điều phối dev")
+Ảnh 1: phần **I Cơ bản** (Dashboard bằng Docker · Cấu hình AI model, curator model · Làm quen
+Dashboard & Hermes CLI · Kết nối Telegram · Cấu hình profile agent · Quản lý session · Sử dụng
+skill) và phần **II Công cụ nâng cao** (5 bài: /goal & /steer · /learn · LiteLLM · llama.cpp ·
+Open WebUI). Ảnh 2: phần **III Tech stack ứng dụng** (5 bài: Memos · Linear · Bookmark bằng
+Hermes · Understand-anything · Design & Frontend skill làm landing page) và phần **IV
+Multi-agent và hệ sinh thái** (5 bài: Kanban board · Herdr · Firecrawl · Honcho · Paperclip).
 
-- **Nhân viên văn phòng chưa từng code**: cần dùng tác tử AI cho email, tài liệu, bảng tính,
-  tổng hợp thông tin — và cần nhất là thói quen **kiểm chứng** (không tin mù kết quả AI).
-- **Người bắt đầu điều phối dev** (PM/chủ dự án nhỏ/người tự học đang thuê-dùng AI dev): cần
-  viết **đặc tả giao việc** ra hồn, nghiệm thu bằng **bằng chứng đo được**, điều phối nhiều
-  việc/nhiều tác tử song song không dẫm chân nhau.
-- `prerequisites: []` — vào thẳng, không cần học bậc P nào, không cần biết code. Đây là khoá
-  ngắn ĐẦU TIÊN của môn nhắm người KHÔNG học lập trình — cửa ngõ kéo người mới vào nền tảng.
+**Quyết định (làm rõ của người dùng 2026-08-31): giữ đúng danh sách bài này**, mỗi bài dạy qua
+lăng kính hai đối tượng — ví dụ bài Linear dạy "giao việc cho agent như giao cho một dev trong
+team", bài Paperclip dạy "điều phối một đội dev-AI có ngân sách", bài Memos/Bookmark dạy quy
+trình văn phòng (ghi chú họp, kho tư liệu phòng ban).
 
-### 1.3. Hiện trạng hạ tầng (đo thật 2026-08-31, không đoán)
+### 1.3. Đối tượng
 
-| Thứ                                    | Số thật hôm nay                                                                                   |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Tầng khoá ngắn `courses/`              | ĐÃ CÓ (PR #740): `types.ts` · `registry.ts` · khoá `git` đủ 5 chương                              |
-| Trang khoá `/lap-trinh/khoa/:courseId` | ĐÃ CÓ (PR #742), **data-driven**: đăng ký khoá vào `SHORT_COURSES` là tự hiện ở `ProgrammingHome` |
-| Khuôn bài 8 bước + SRS                 | ĐÃ CÓ (`lessonTypes.ts`) — bắt buộc mọi bài có ví dụ CHẠY ĐƯỢC + bài Make CHẤM ĐƯỢC               |
-| Bộ chạy cho tác tử AI                  | **CHƯA CÓ** — `LESSON_LANGUAGES` chưa có `'agent'`, phải viết `agentSim.ts` mới                   |
-| Regex `lessonId`                       | `^(p[1-6]-u\d+-l\d+\|git-u\d+-l\d+)$` ở 3 chỗ — phải nới thêm nhánh `ai-u\d+-l\d+`                |
-| Bài dùng lại được                      | **0 bài** — khác khoá Git (dùng lại 2 bài `p3-u10`), khoá này 16/16 bài đều mới                   |
+- **Nhân viên văn phòng chưa từng code**: tự dựng được một Hermes chạy trong Telegram làm trợ
+  lý việc hằng ngày (email, ghi chú, tổng hợp, bookmark), có thói quen KIỂM CHỨNG kết quả.
+- **Người bắt đầu điều phối dev**: dùng Hermes + Linear/Kanban/Herdr/Paperclip để giao việc,
+  theo dõi và nghiệm thu công việc dev (người hoặc agent) bằng bằng chứng đo được.
+- `prerequisites: []` — vào thẳng, không cần biết code; bài nào cần gõ lệnh đều gõ trong
+  terminal giả lập của bài học.
+
+### 1.4. Hiện trạng hạ tầng (đo thật từ mã nguồn 2026-08-31)
+
+| Thứ                                    | Số thật hôm nay                                                                          |
+| -------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Tầng khoá ngắn `courses/`              | ĐÃ CÓ (PR #740): khoá `git` đủ 5 chương; đăng ký khoá mới = 1 file + 1 dòng registry     |
+| Trang khoá `/lap-trinh/khoa/:courseId` | ĐÃ CÓ (PR #742), **data-driven** — khoá mới tự hiện ở `ProgrammingHome`                  |
+| Khuôn bài 8 bước + SRS                 | ĐÃ CÓ (`lessonTypes.ts`) — mọi bài phải có ví dụ CHẠY ĐƯỢC + bài Make CHẤM ĐƯỢC tất định |
+| Bộ chạy cho tác tử                     | **CHƯA CÓ** — phải thêm ngôn ngữ `'hermes'` + `hermesSim.ts` (khuôn `gitSim`)            |
+| Regex `lessonId`                       | `^(p[1-6]-u\d+-l\d+\|git-u\d+-l\d+)$` ở 3 chỗ — nới thêm nhánh `hermes-u\d+-l\d+`        |
+| Bài dùng lại được                      | 0 — 22/22 bài mới (khác khoá Git dùng lại 2 bài cũ)                                      |
 
 ## ② Phạm vi
 
 **LÀM:**
 
-- **Bộ mô phỏng `agentSim.ts`** — "máy ảo tí hon" thuần TypeScript, tất định tuyệt đối, đúng
-  khuôn `gitSim`/`bashSim` (xem ③). Học viên gõ lệnh CLI của một tác tử HƯ CẤU tên `tro` (trợ
-  lý) — cố ý KHÔNG nhại tên sản phẩm thật nào, và in dòng tự khai `[GIA LAP]` mỗi lượt chạy.
-- **Ngôn ngữ bài học mới `'agent'`** trong `LESSON_LANGUAGES` + runner phía trình duyệt
-  (`agentRunner.ts`, khuôn `gitRunner.ts` — không cần worker) + nhãn ở `LangBadge`.
-- **Khoá `ai` 5 chương / 16 bài mới** (id `ai-uN-lM`, unit ảo `ai-uN` — đúng cơ chế `git-uN`):
+- **Bộ mô phỏng `hermesSim.ts`** — mô phỏng CLI Hermes THẬT (đúng cách `gitSim` mô phỏng git
+  thật): máy ảo tí hon thuần TypeScript, tất định tuyệt đối, in dòng tự khai `[GIA LAP]` mỗi
+  lượt. Bộ lệnh đóng (xem ③). Phản hồi "AI" là văn bản đóng hộp tất định.
+- **Ngôn ngữ bài học mới `'hermes'`** trong `LESSON_LANGUAGES` + `hermesRunner.ts` (khuôn
+  `gitRunner.ts`, không worker) + nhãn `LangBadge` (nhóm "mô phỏng").
+- **Khoá `hermes` 4 chương / 22 bài** (id `hermes-uN-lM`, unit ảo `hermes-uN`), đề cương bám
+  2 ảnh:
 
-  | Chương                       | Bài | Nội dung                                                                                                                                                                           |
-  | ---------------------------- | --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-  | C1 Làm quen tác tử AI        | 3   | tác tử ≠ chatbot (có công cụ, tự hành động) + giao việc đầu tiên `tro giao` · phiên làm việc — mỗi việc một phiên `tro phien` · đọc & KIỂM CHỨNG kết quả, duyệt/từ chối            |
-  | C2 Giao việc cho rõ          | 3   | khuôn giao việc 3 phần (Mục tiêu · Phạm vi/KHÔNG làm · Nghiệm thu) — thiếu phần là tác tử hỏi lại · chia việc lớn thành chuỗi việc nhỏ · lái giữa chừng `tro sua` (steer)          |
-  | C3 Việc văn phòng hằng ngày  | 4   | email & văn bản theo khuôn · tổng hợp báo cáo — luật "số liệu phải kèm nguồn" · bảng tính & số liệu — tự kiểm phép tính · việc lặp lại thành KỸ NĂNG `tro kynang` (learn/skill)    |
-  | C4 Mục tiêu dài & nhiều việc | 3   | mục tiêu bền bỉ `tro muctieu` (goal) khác việc lẻ · bảng việc song song `tro bang` (kanban) · an toàn: secrets không dán vào việc, hành động khó hoàn tác tác tử phải HỎI          |
-  | C5 Điều phối dev bằng AI     | 3   | viết đặc tả giao việc dev (khuôn 6 ô rút gọn của DHCB) · nghiệm thu bằng BẰNG CHỨNG — không nhận "chắc là xong" · điều phối nhiều tác tử song song, tránh dẫm chân, review rồi gộp |
+  | Chương                         | Bài | Danh sách bài (tiêu đề theo đề cương tham chiếu, góc nhìn văn phòng/điều phối dev)                                                                                                                                                                                                                                                                                            |
+  | ------------------------------ | --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | C1 Cơ bản                      | 7   | Dashboard bằng Docker (dựng Hermes chạy được) · Cấu hình AI model, curator model & tuỳ chọn cơ bản · Làm quen Dashboard & Hermes CLI · Kết nối Telegram (trợ lý trong túi mọi nhân viên) · Cấu hình profile agent (mỗi vai một profile: thư ký · trợ lý dự án) · Quản lý session (mỗi việc một phiên, /new /resume) · Sử dụng skill (kho kỹ năng có sẵn)                      |
+  | C2 Công cụ nâng cao            | 5   | /goal & /steer — agent bền bỉ theo mục tiêu, người lái giữa chừng · /learn — biến việc lặp của phòng thành kỹ năng · LiteLLM — một proxy quản mọi model (kiểm soát chi phí cho cả phòng) · llama.cpp — self-host model (dữ liệu không rời công ty) · Open WebUI — giao diện web chat cho người không dùng terminal                                                            |
+  | C3 Tech stack ứng dụng         | 5   | Memos — ghi chú & sắp xếp thông tin (biên bản họp, quy trình phòng) · Linear — người và agent làm việc cùng nhau (giao việc dev cho agent như cho teammate) · Bookmark mọi thứ bằng Hermes (kho tư liệu phòng ban) · Understand-anything — hiểu mọi tài liệu/codebase (đọc hợp đồng, đọc repo trước khi giao việc) · Design & Frontend skill — làm landing page không cần dev |
+  | C4 Multi-agent và hệ sinh thái | 5   | Kanban board — bảng việc cho đội người+agent · Herdr — bảng điều khiển multi-agent (điều phối nhiều dev-AI song song) · Firecrawl — tìm kiếm & trích xuất thông tin (nghiên cứu thị trường/đối thủ) · Honcho — bộ nhớ dài hạn cho agent (agent nhớ ngữ cảnh phòng ban) · Paperclip — "công ty 0 người" (sơ đồ tổ chức agent, ngân sách, nghiệm thu việc nguyên tử)            |
 
-- Cổng chấm: `agentSim.test.ts` + `lessonsAgent.test.ts` (mọi `sampleSolution` đạt 100%
-  test-case qua chính `agentSim`).
-- Nới regex id ở 3 chỗ: `lessonTypes.ts` · `api/subjects/programming/progress.ts` ·
-  `api/subjects/programming/feedback.ts` (đều đã có tiền lệ nhánh `git-u`).
+- **Luật soạn bài cho chủ đề công cụ thật** (điểm mấu chốt sau làm rõ): bước ①–⑤ dạy khái niệm
+  - lệnh qua `hermesSim` (Predict/Parsons trên transcript lệnh thật); bài Make chấm phần MÔ
+    PHỎNG ĐƯỢC tất định (chuỗi lệnh đúng, trạng thái phiên/profile/goal/bảng việc đúng); bước ⑦
+    homework là LÀM THẬT trên máy học viên (cài Docker thật, tạo bot BotFather thật…) — không
+    chấm, có checklist tự kiểm. Bài học NÓI THẲNG chỗ nào là giả lập (luật tự khai của
+    `bashSim`/`gitSim`).
+- Cổng chấm: `hermesSim.test.ts` + `lessonsHermes.test.ts` (mọi `sampleSolution` đạt 100%
+  test-case). Nới regex id ở 3 chỗ (`lessonTypes.ts` · `progress.ts` · `feedback.ts`).
 
 **KHÔNG LÀM (quan trọng ngang mục trên):**
 
-- **KHÔNG gọi AI thật trong bài học/chấm bài.** Toàn bộ "tác tử" là mô phỏng tất định — vì cổng
-  chấm phải cho cùng output với cùng input (bài học của khoá Git), và vì gọi AI thật mỗi lượt
-  Make là đốt tiền API vô hạn. Phản hồi AI thật chỉ ở kênh feedback sẵn có (`/api/agent-feedback`).
-- **KHÔNG dạy cài đặt sản phẩm cụ thể** (Docker, Telegram, LiteLLM, llama.cpp, Open WebUI…) —
-  xem bảng 1.1. Nếu sau này cần, đó là KHOÁ KHÁC ("Tự host AI"), không nhét vào đây.
-- **KHÔNG đụng** `curriculum.ts`, khoá `git`, hai tầng còn lại của môn.
-- **KHÔNG** làm hạ tầng tác tử thật (webhook, hàng đợi…) — đây là KHOÁ HỌC, không phải tính năng
-  Companion của nền tảng.
-- **KHÔNG** dùng tên/logo Hermes hay sản phẩm thật nào trong nội dung bài.
+- **KHÔNG gọi AI thật, mạng thật, Docker thật trong bài học/chấm bài** — mô phỏng tất định
+  100% (cổng chấm phải cho cùng output với cùng input; không đốt tiền API). Làm thật để ở
+  homework, không chấm.
+- **KHÔNG nhúng/redistribute nội dung khoá Hermes tham chiếu** — chỉ dùng ĐỀ CƯƠNG chủ đề (danh
+  sách năng lực cần dạy, theo yêu cầu người dùng); toàn bộ lời giảng, ví dụ, bài tập tự soạn,
+  ví dụ đặt trong bối cảnh văn phòng Việt Nam.
+- **KHÔNG đụng** khoá `git`, `curriculum.ts`, hai tầng còn lại của môn.
+- **KHÔNG** mô phỏng sâu từng công cụ hệ sinh thái (Memos/Linear/Firecrawl/Honcho/Herdr/
+  Paperclip là sản phẩm ngoài): bài C3–C4 mô phỏng ở mức LỆNH/LUỒNG VIỆC (giao việc, trạng
+  thái, nghiệm thu) qua `hermesSim`, không dựng lại UI/API thật của từng sản phẩm.
+- **KHÔNG** làm tính năng Companion/hạ tầng tác tử thật của nền tảng — đây là KHOÁ HỌC.
 
-## ③ Hợp đồng dữ liệu — `agentSim`
+## ③ Hợp đồng dữ liệu — `hermesSim`
 
-Cùng hình dạng kết quả với `gitSim`/`bashSim`; chấm bài Make bằng **TRẠNG THÁI** (bảng việc,
-phiên, kỹ năng) chứ không so chuỗi output thô.
+Cùng hình dạng với `gitSim`/`bashSim`; chấm bài Make bằng **TRẠNG THÁI**, không so chuỗi thô.
 
 ```ts
-/** Dòng tự khai in đầu MỌI lượt chạy (luật tự khai — khuôn bashSim). */
-export const DONG_TU_KHAI_AGENT =
-  '[GIA LAP] Tac tu "tro" cua DHCB — mo phong de hoc, khong phai AI that.'
+export const DONG_TU_KHAI_HERMES =
+  '[GIA LAP] Mo phong Hermes Agent cua DHCB de hoc — khong phai AI that, khong goi mang.'
 
-export interface AgentRunResult {
+export interface HermesRunResult {
   output: string
   error?: string
-  /** Trạng thái cuối để chấm: việc (id, trạng thái, nhãn), phiên hiện tại, kỹ năng đã lưu. */
+  /** Trạng thái cuối để chấm. */
   state: {
+    phien: string[] // các session đã tạo, phần tử đầu là phiên hiện tại
+    profile: string[] // profile đã tạo
+    modelChinh: string | null
+    modelCurator: string | null
+    gateway: 'chua-cau-hinh' | 'da-cau-hinh' | 'dang-chay' // luồng Telegram
+    goal: string | null
+    kyNang: string[] // skill đã bật/học qua /learn
     viec: Array<{
       id: string
       ten: string
       trangThai: 'cho' | 'dang-lam' | 'cho-duyet' | 'xong' | 'tu-choi'
-    }>
-    phienHienTai: string
-    kyNang: string[]
-    mucTieu: string | null
+    }> // bảng việc C3–C4
   }
 }
 ```
 
-**Bộ lệnh mô phỏng (đóng, tất định):** `tro giao "<việc>"` · `tro trangthai` · `tro ketqua <id>`
-· `tro duyet <id>` · `tro tuchoi <id> "<lý do>"` · `tro sua <id> "<chỉ dẫn>"` · `tro phien
-[moi <tên>|<tên>]` · `tro kynang [luu <tên>|<tên>]` · `tro muctieu "<mục tiêu>"` · `tro bang`.
-Kết quả việc là VĂN BẢN ĐÓNG HỘP chọn tất định theo nội dung lệnh giao (bảng tra trong sim, có
-thể seed thêm qua `lenhChuanBi` như `gitSim`) — không sinh ngẫu nhiên.
+**Bộ lệnh mô phỏng (đóng, tất định — chọn theo lệnh Hermes THẬT đã xác minh ở 1.1):**
+`hermes` · `hermes gateway setup|start` · `hermes model <tên>` (+ curator) · `hermes profile
+create <tên>` · `/new` · `/resume <phiên>` · `/model` · `/skills` · `/goal "<mục tiêu>"` ·
+`/steer "<chỉ dẫn>"` · `/learn <tên>` · `/permission` · `/stop`; và nhóm lệnh luồng việc cho
+C3–C4: `giao "<việc>"` · `trangthai` · `duyet <id>` · `tuchoi <id> "<lý do>"` (mô phỏng
+Linear/Kanban/Paperclip ở mức luồng việc). Danh sách chốt cứng ở PR 2 trong `hermesSim.ts`;
+lệnh ngoài danh sách → "mô phỏng không làm việc này" + chỉ chỗ đọc thêm (luật `gitSim`).
 
-**Luật sư phạm nạp vào sim (điểm ăn tiền của khoá):**
+**Luật sư phạm nạp vào sim:**
 
-- `tro giao` với yêu cầu THIẾU khuôn 3 phần (từ C2 trở đi, khi bài bật cờ khuôn) → tác tử
-  KHÔNG làm mà **hỏi lại đúng phần thiếu** — dạy phản xạ viết yêu cầu đủ ý bằng chính trải nghiệm.
-- Việc ở trạng thái `cho-duyet` không bao giờ tự nhảy sang `xong` — chỉ `tro duyet` của học viên
-  chuyển được. Dạy: **nghiệm thu là việc của NGƯỜI**, không phải của AI.
-- Lệnh chạm dữ liệu nhạy cảm/khó hoàn tác trong kịch bản (vd "xoá toàn bộ…") → tác tử dừng và
-  hỏi xác nhận. Yêu cầu chứa chuỗi dạng mật khẩu/API key trong kịch bản C4 → tác tử từ chối kèm
-  giải thích.
+- Việc `cho-duyet` không bao giờ tự thành `xong` — chỉ `duyet` của học viên chuyển được
+  (nghiệm thu là việc của NGƯỜI).
+- Kịch bản chứa chuỗi dạng secret/API key dán vào việc → agent từ chối kèm giải thích; hành
+  động khó hoàn tác → agent dừng hỏi xác nhận (`/permission`).
+- `/goal` khi đã có goal đang chạy → hỏi thay thế hay giữ — dạy phân biệt goal dài với việc lẻ.
 
-**Ca lỗi (một phần hợp đồng):**
-
-| Tình huống                        | Hành vi mong đợi                                                         |
-| --------------------------------- | ------------------------------------------------------------------------ |
-| Lệnh ngoài bộ lệnh đóng           | Lỗi tiếng Việt gợi lệnh gần đúng, KHÔNG stack trace                      |
-| `tro duyet` id không tồn tại      | Lỗi nêu rõ id + gợi `tro trangthai`                                      |
-| `tro duyet` việc chưa `cho-duyet` | Từ chối, nói rõ trạng thái hiện tại                                      |
-| Khoá trỏ id bài không tồn tại     | CI đỏ ở `courses.test.ts` (cổng đã có sẵn, quét MỌI khoá trong registry) |
+**Ca lỗi (một phần hợp đồng):** lệnh sai → lỗi tiếng Việt gợi lệnh gần đúng, KHÔNG stack
+trace · `/resume` phiên không tồn tại → nêu tên + gợi `/new` · `duyet` id không tồn tại/chưa
+`cho-duyet` → nói rõ trạng thái · khoá trỏ id bài không tồn tại → CI đỏ ở `courses.test.ts`.
 
 ## ④ Điểm chạm
 
-| Việc | Đường dẫn                                                         | Ghi chú                                         |
-| ---- | ----------------------------------------------------------------- | ----------------------------------------------- |
-| Thêm | `packages/subject-programming/agentSim.ts` + `agentSim.test.ts`   | Máy ảo mới — rủi ro cao nhất, PR riêng          |
-| Sửa  | `packages/subject-programming/lessonTypes.ts`                     | +`'agent'` vào `LESSON_LANGUAGES`, nới regex id |
-| Thêm | `packages/subject-programming/courses/ai.ts`                      | Khoá `ai` (nới `ShortCourseId`)                 |
-| Sửa  | `packages/subject-programming/courses/registry.ts`                | +1 import, +1 phần tử                           |
-| Thêm | `lessons/aiu1.ts … aiu5.ts` + `lessonsAgent.test.ts`              | 16 bài mới                                      |
-| Sửa  | `packages/subject-programming/lessons.ts`                         | +5 import                                       |
-| Sửa  | `apps/server/src/api/subjects/programming/{progress,feedback}.ts` | nới regex `lessonId` (tiền lệ `git-u`)          |
-| Thêm | `apps/dhcb/src/lib/agentRunner.ts`                                | khuôn `gitRunner.ts`, không worker              |
-| Sửa  | `apps/dhcb/src/lib/codeRunner.ts` + `LangBadge`                   | nối ngôn ngữ `'agent'` (nhãn "mô phỏng")        |
+| Việc | Đường dẫn                                                         | Ghi chú                                       |
+| ---- | ----------------------------------------------------------------- | --------------------------------------------- |
+| Thêm | `packages/subject-programming/hermesSim.ts` + `hermesSim.test.ts` | Máy ảo mới — rủi ro cao nhất, PR riêng        |
+| Sửa  | `packages/subject-programming/lessonTypes.ts`                     | +`'hermes'` vào `LESSON_LANGUAGES`, nới regex |
+| Thêm | `packages/subject-programming/courses/hermes.ts`                  | Khoá (nới `ShortCourseId`)                    |
+| Sửa  | `packages/subject-programming/courses/registry.ts`                | +1 import, +1 phần tử                         |
+| Thêm | `lessons/hermesu1.ts … hermesu4.ts` + `lessonsHermes.test.ts`     | 22 bài mới                                    |
+| Sửa  | `packages/subject-programming/lessons.ts`                         | +4 import                                     |
+| Sửa  | `apps/server/src/api/subjects/programming/{progress,feedback}.ts` | nới regex `lessonId` (tiền lệ `git-u`)        |
+| Thêm | `apps/dhcb/src/lib/hermesRunner.ts`                               | khuôn `gitRunner.ts`, không worker            |
+| Sửa  | `apps/dhcb/src/lib/codeRunner.ts` + `LangBadge`                   | nối ngôn ngữ `'hermes'` (nhãn "mô phỏng")     |
 
-Không cần route/trang mới (đã data-driven), không cần migration (`lesson_id` là `text`).
+Không cần route/trang mới (data-driven), không cần migration (`lesson_id` là `text`).
 `lessonTypes.ts` và `codeRunner.ts` là điểm nóng — chạy `npm run codemap -- impact` trước khi
-sửa và dán kết quả vào PR.
+sửa, dán kết quả vào PR.
 
 ## ⑤ Tiêu chí chấp nhận
 
-- [ ] `agentSim` tất định: cùng chuỗi lệnh 2 lượt → output byte-identical; không `Date.now()`,
+- [ ] `hermesSim` tất định: cùng chuỗi lệnh 2 lượt → output byte-identical; không `Date.now()`,
       không random (test canh).
-- [ ] `agentSim.test.ts` phủ từng lệnh + đủ ca lỗi bảng ③ + 3 luật sư phạm.
-- [ ] Mọi `sampleSolution` của 16 bài đạt 100% test-case qua `agentSim` (`lessonsAgent.test.ts`).
-- [ ] `courses.test.ts`: mọi `lessonIds` của khoá `ai` tra ra bài thật; khoá `git` **không đổi
-      một byte** (test không hồi quy đã có tự phủ vì quét cả registry).
-- [ ] Vào thẳng `/lap-trinh/khoa/ai` khi chưa học gì vẫn học được bài đầu (E2E, khuôn ca khoá git).
-- [ ] Bài Make chấm bằng `state`, không so output thô.
+- [ ] `hermesSim.test.ts` phủ từng lệnh + đủ ca lỗi ③ + 3 luật sư phạm.
+- [ ] Mọi `sampleSolution` của 22 bài đạt 100% test-case (`lessonsHermes.test.ts`).
+- [ ] `courses.test.ts`: mọi `lessonIds` khoá `hermes` tra ra bài thật; khoá `git` không đổi.
+- [ ] Vào thẳng `/lap-trinh/khoa/hermes` khi chưa học gì vẫn học được bài đầu (E2E).
+- [ ] Bài Make chấm bằng `state`, không so output thô; mỗi bài công cụ thật có homework
+      "làm thật + checklist tự kiểm".
 - [ ] Coverage branches ≥ 90 (biên hiện dư 0,56 điểm) · Initial JS < 140 kB (runner nạp lười).
 - [ ] `npm run eval:code-feedback` không phát sinh ca vi phạm mới.
 
 **Lệnh chứng minh:** `npm run typecheck && npm run lint && npm test && npm run build` ·
-`npm run budget` · `npm run test:e2e -- --grep "khoa/ai"`.
+`npm run budget` · `npm run test:e2e -- --grep "khoa/hermes"`.
 
 ## ⑥ Bất biến không được phá
 
 | Bất biến                                                 | Test canh                              |
 | -------------------------------------------------------- | -------------------------------------- |
 | Khoá `git` + xương sống P1–P6 không đổi                  | `courses.test.ts` (không hồi quy)      |
-| `agentSim` tất định tuyệt đối, không I/O/mạng            | `agentSim.test.ts` (chạy 2 lượt)       |
-| Mỗi lượt chạy in dòng tự khai `[GIA LAP]`                | `agentSim.test.ts`                     |
+| `hermesSim` tất định tuyệt đối, không I/O/mạng           | `hermesSim.test.ts` (chạy 2 lượt)      |
+| Mỗi lượt chạy in dòng tự khai `[GIA LAP]`                | `hermesSim.test.ts`                    |
 | Nội dung bài MỘT nguồn — khoá tham chiếu id, không nhúng | `courses.test.ts`                      |
-| Không nhại tên sản phẩm thật trong nội dung bài          | rà tay khi review nội dung (C1–C5)     |
+| Nội dung tự soạn, không chép từ khoá tham chiếu          | rà tay khi review nội dung C1–C4       |
 | Khoá tiến độ đã ghi Postgres không đổi nghĩa             | regex `progress.ts` chỉ NỚI, không đổi |
 
 ## Quy ước phải theo
 
 Comment tiếng Việt · import xuyên gói `@dhcb/...` không đuôi `.js`, nội bộ gói tương đối có
-`.js` · conventional commits scope chữ thường (`feat(programming): ...`) · mỗi bài đủ 8 bước +
-2–4 thẻ SRS · terminal giả lập xuất **không dấu** (đúng `gitSim`/`bashSim`) · a11y AAA nội
-dung / AA còn lại, màu từ token `--a-*`.
+`.js` · conventional commits scope chữ thường · mỗi bài đủ 8 bước + 2–4 thẻ SRS · terminal giả
+lập xuất **không dấu** · a11y AAA nội dung / AA còn lại, màu từ token `--a-*`.
 
 ## Nghiệm thu — chia 4 PR (PR 1 là chính tài liệu này)
 
-| PR  | Nội dung                                                          | Vì sao tách                                                            |
-| --- | ----------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| 1   | Đặc tả này                                                        | Chốt thiết kế + phạm vi trước khi viết code, người dùng duyệt được sớm |
-| 2   | `agentSim.ts` + test + ngôn ngữ `'agent'` + runner + nới regex id | Hạ tầng, rủi ro cao nhất; review độc lập với nội dung                  |
-| 3   | Khoá `ai` + chương C1–C2 (6 bài) + E2E vào thẳng                  | Lát cắt dọc đầu tiên chạy được thật trên trang khoá                    |
-| 4   | Chương C3–C5 (10 bài)                                             | Khối nội dung lớn nhất, đi cuối                                        |
+| PR  | Nội dung                                                            | Vì sao tách                                                   |
+| --- | ------------------------------------------------------------------- | ------------------------------------------------------------- |
+| 1   | Đặc tả này                                                          | Chốt thiết kế + phạm vi, người dùng duyệt được sớm            |
+| 2   | `hermesSim.ts` + test + ngôn ngữ `'hermes'` + runner + nới regex id | Hạ tầng, rủi ro cao nhất; review độc lập với nội dung         |
+| 3   | Khoá `hermes` + chương C1 (7 bài) + E2E vào thẳng                   | Lát cắt dọc đầu tiên chạy được thật trên trang khoá           |
+| 4   | Chương C2–C4 (15 bài)                                               | Khối nội dung lớn nhất, đi cuối (có thể tách 4a/4b nếu phình) |
 
-**Câu hỏi mở cho người dùng (không chặn PR 2):** ① tên tác tử hư cấu `tro` ổn chưa hay muốn tên
-khác (đổi rẻ nhất là trước PR 3)? ② phần "Tự host AI / công cụ cụ thể" (nửa II–IV của khoá tham
-chiếu) có muốn thành khoá ngắn thứ ba sau khi khoá này xong không?
+**Câu hỏi mở cho người dùng (không chặn PR 2):** ① phiên bản Hermes đổi nhanh (v0.2→v0.6 trong
+vài tháng) — chấp nhận rủi ro nội dung phải cập nhật theo, hay muốn thêm dòng "soạn theo
+v0.6.x" vào từng bài? ② bài Paperclip/Herdr là công cụ trẻ, tài liệu mỏng — nếu lúc soạn PR 4
+không đủ nguồn kiểm chứng thì đề xuất thay bằng bài "điều phối nhiều profile Hermes" (cùng năng
+lực, công cụ chín hơn), quyết lúc đó được không?
