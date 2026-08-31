@@ -622,6 +622,63 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Hướng Dữ liệu S2 — điều phối & chất lượng: DAG, chạy lại một phần, kiểm chặn',
         topics: 'Sắp xếp tô-pô + phạm vi chạy lại xuôi dòng; 4 nhóm kiểm, khớp tổng, lineage',
       },
+      // p6-u123…u125: chặng S3 "Đặc tả thi hành được & nghiệm thu code mình không tự gõ" của
+      // hướng Kiến trúc (architecture-s3, specializations/architecture.ts, 4 module —
+      // u125 gộp m3+m4).
+      {
+        id: 'p6-u123',
+        title: 'Hướng Kiến trúc S3 — đặc tả kín: sáu ô bắt buộc, tiêu chí chấp nhận đo được',
+        topics:
+          'Đọc xong không phải hỏi lại câu nào; viết tiêu chí trước mô tả giải pháp; chia lát',
+      },
+      {
+        id: 'p6-u124',
+        title: 'Hướng Kiến trúc S3 — giao việc cho AI/người mới: brief tự chứa, chống ảo giác',
+        topics:
+          'Bên thi hành không thấy ngữ cảnh trước; chọn độ tự quyết; đòi dẫn nguồn, cấm phình',
+      },
+      {
+        id: 'p6-u125',
+        title:
+          'Hướng Kiến trúc S3 — nghiệm thu & sổ quyết định: test canh gác, review theo tầng, ADR',
+        topics: 'Bất biến bị phá là CI đỏ; bốn tầng review; ADR ghi cả phương án bị loại',
+      },
+      // p6-u126…u128: chặng S3 "Quy mô và thời gian thực" của hướng Dữ liệu (data-s3,
+      // specializations/data.ts, 4 module — u128 gộp m3+m4).
+      {
+        id: 'p6-u126',
+        title: 'Hướng Dữ liệu S3 — lớn hơn RAM: xử lý theo khối và sắp xếp ngoài',
+        topics: 'Đỉnh bộ nhớ hằng số, phép tổng hợp cộng dồn được; tạo run rồi trộn nhiều đường',
+      },
+      {
+        id: 'p6-u127',
+        title: 'Hướng Dữ liệu S3 — luồng gần thời gian thực: cửa sổ, mốc nước, sự kiện tới muộn',
+        topics: 'Thời gian sự kiện vs thời gian xử lý; watermark chốt cửa sổ; khử trùng theo id',
+      },
+      {
+        id: 'p6-u128',
+        title: 'Hướng Dữ liệu S3 — chi phí & thực nghiệm: quét ít đi, đo cho đáng tin',
+        topics: 'Cắt tỉa phân vùng, định dạng cột, vòng đời dữ liệu; cỡ mẫu và bẫy dừng sớm',
+      },
+      // p6-u131…u133: chặng S1 "App đầu tiên trên máy thật" của hướng DI ĐỘNG (mobile-s1,
+      // specializations/mobile.ts, 4 module — u133 gộp m3+m4). Đây là chặng ĐẦU TIÊN của hướng
+      // Di động có bài học thật. Dải u129/u130 bỏ trống có chủ đích: các đợt soạn bài chạy song
+      // song nhau nên số unit được cấp cách quãng để không đụng nhau.
+      {
+        id: 'p6-u131',
+        title: 'Hướng Di động S1 — vòng đời app: hệ điều hành giết app lúc nào cũng được',
+        topics: 'Bốn trạng thái foreground/background/bị giết; hien→nen là cơ hội ghi cuối cùng',
+      },
+      {
+        id: 'p6-u132',
+        title: 'Hướng Di động S1 — giao diện khai báo: UI là hàm của state, danh sách phải ảo hoá',
+        topics: 'Bốn trạng thái màn hình theo thứ tự ưu tiên; cửa sổ ảo hoá và kẹp biên hai đầu',
+      },
+      {
+        id: 'p6-u133',
+        title: 'Hướng Di động S1 — điều hướng & lưu trữ: ngăn xếp màn, deep link, migration',
+        topics: 'push/pop/replace/popToRoot, deep link dựng lại cả ngăn xếp; migration từng bậc',
+      },
       // p6-u66..u68: chặng S1 của hướng Dữ liệu (data-s1, specializations/data.ts, 4 module).
       // p3-u8/p3-u9 đã dạy SELECT/JOIN/GROUP BY/HAVING cơ bản — u66 đi XA HƠN (hàm cửa sổ, CTE)
       // để không dạy trùng. Đăng ký cầu nối ở `specializations/stageUnits.ts`.

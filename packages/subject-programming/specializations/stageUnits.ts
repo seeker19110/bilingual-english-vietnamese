@@ -40,6 +40,11 @@ export const SPEC_STAGE_UNITS: Record<string, string[]> = {
   // liệu — cả hai cùng trả lời "đường ống sai thì làm sao BIẾT và làm sao SỬA"). Đúng tiền lệ
   // backend-s2/s3/s4 gộp m3+m4 thành unit cuối chặng.
   'data-s2': ['p6-u120', 'p6-u121', 'p6-u122'],
+  // Hướng Dữ liệu, chặng S3 — soạn 2026-08-31 (3 unit, 4 module: p6-u126 = m1 (dữ liệu lớn
+  // hơn RAM), p6-u127 = m2 (luồng thời gian thực), p6-u128 gộp m3+m4 (thực nghiệm + chi phí
+  // & quản trị — cả hai cùng trả lời "con số này đáng bao nhiêu"). Đúng tiền lệ
+  // backend-s2/s3/s4 gộp m3+m4 thành unit cuối chặng.
+  'data-s3': ['p6-u126', 'p6-u127', 'p6-u128'],
   // Hướng Backend, chặng S2 — soạn 2026-08-31 (3 unit, 4 module: p6-u102 = m1, p6-u103 = m2,
   // p6-u104 gộp m3+m4 — đúng tiền lệ web-s1 gộp module khi hợp lý).
   'backend-s2': ['p6-u102', 'p6-u103', 'p6-u104'],
@@ -61,6 +66,20 @@ export const SPEC_STAGE_UNITS: Record<string, string[]> = {
   // là phần khó đổi nhất — cả hai cùng trả lời "đổi hợp đồng đã có người dùng thế nào cho an
   // toàn"). Đúng tiền lệ web-s1/backend-s2 gộp module khi hợp lý.
   'architecture-s2': ['p6-u117', 'p6-u118', 'p6-u119'],
+  // Hướng Kiến trúc, chặng S3 — soạn 2026-08-31 (3 unit, 4 module: p6-u123 = m1 (đặc tả
+  // kín), p6-u124 = m2 (giao việc cho AI/người mới), p6-u125 gộp m3+m4 (nghiệm thu + sổ
+  // quyết định ADR — cả hai cùng trả lời "giữ đúng kết quả code mình không tự gõ", một ở
+  // lượt này, một qua các lượt sau). Đúng tiền lệ web-s1/backend-s3 gộp module khi hợp lý.
+  'architecture-s3': ['p6-u123', 'p6-u124', 'p6-u125'],
+  // Hướng DI ĐỘNG, chặng S1 — soạn 2026-08-31 (3 unit, 4 module). Đây là chặng ĐẦU TIÊN của
+  // hướng Di động có bài học thật, nên không có tiền lệ `mobile-*` nào để theo; cách gộp lấy
+  // theo tiền lệ chung của các hướng khác: p6-u131 = m1 (chọn nền tảng & vòng đời app),
+  // p6-u132 = m2 (giao diện khai báo), p6-u133 gộp m3+m4 (điều hướng & trạng thái + lưu trữ
+  // cục bộ — cả hai cùng trả lời "cái gì phải sống sót, và sống sót ở đâu": m3 lo trong một
+  // phiên, m4 lo qua các phiên). Bài dùng làn `typescript` vì `kotlin`/`swift` chưa có bài nào
+  // nên chưa cổng CI nào chứng minh bộ mô phỏng chấm đúng — nguyên lý dạy là nguyên lý chung
+  // cho cả Android lẫn iOS. Đặc tả: `docs/specs/2026-08-31-bai-hoc-chang-s1-huong-di-dong.md`.
+  'mobile-s1': ['p6-u131', 'p6-u132', 'p6-u133'],
 }
 
 /** Unit của một chặng; mảng RỖNG nghĩa là chặng chưa có bài (giao diện phải nói rõ điều đó). */
