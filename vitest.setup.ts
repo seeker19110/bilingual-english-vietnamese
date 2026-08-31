@@ -8,6 +8,33 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { vi } from 'vitest'
 
+// Khắc phục cảnh báo và lỗi crash của localStorage trên Node 22+ / 26+
+try {
+  globalThis.localStorage?.clear()
+} catch {
+  delete (globalThis as Record<string, unknown>).localStorage
+}
+
+if (typeof globalThis.localStorage === 'undefined') {
+  const store = new Map<string, string>()
+  vi.stubGlobal('localStorage', {
+    getItem: (key: string) => store.get(key) ?? null,
+    setItem: (key: string, value: string) => {
+      store.set(key, value)
+    },
+    removeItem: (key: string) => {
+      store.delete(key)
+    },
+    clear: () => {
+      store.clear()
+    },
+    key: (index: number) => Array.from(store.keys())[index] ?? null,
+    get length() {
+      return store.size
+    },
+  })
+}
+
 const PUBLIC_DIR = join(dirname(fileURLToPath(import.meta.url)), 'apps', 'dhcb', 'public')
 
 vi.stubGlobal('fetch', async (input: RequestInfo | URL): Promise<Response> => {

@@ -57,6 +57,9 @@
     },
     {
       "path": "./packages/subject-programming"
+    },
+    {
+      "path": "./packages/subject-physics"
     }
   ]
 }

@@ -38,6 +38,7 @@ export const UNITS: Record<string, UnitDef> = {
   kg: { factor: 1, dim: D(1) },
   tấn: { factor: 1e3, dim: D(1) },
   t: { factor: 1e3, dim: D(1) },
+  amu: { factor: 1.660539066605e-27, dim: D(1) },
 
   // ── Thời gian ──
   s: { factor: 1, dim: D(0, 0, 1) },
@@ -47,6 +48,8 @@ export const UNITS: Record<string, UnitDef> = {
   h: { factor: 3600, dim: D(0, 0, 1) },
   giờ: { factor: 3600, dim: D(0, 0, 1) },
   ngày: { factor: 86400, dim: D(0, 0, 1) },
+  'ngày^-1': { factor: 1 / 86400, dim: D(0, 0, -1) },
+  'ngày-1': { factor: 1 / 86400, dim: D(0, 0, -1) },
 
   // ── Diện tích ──
   'cm²': { factor: 1e-4, dim: D(0, 2) },
@@ -60,11 +63,39 @@ export const UNITS: Record<string, UnitDef> = {
   'cm³': { factor: 1e-6, dim: D(0, 3) },
   L: { factor: 1e-3, dim: D(0, 3) },
   l: { factor: 1e-3, dim: D(0, 3) },
+  lít: { factor: 1e-3, dim: D(0, 3) },
+  lit: { factor: 1e-3, dim: D(0, 3) },
   'm³': { factor: 1, dim: D(0, 3) },
 
   // ── Tốc độ ──
   'm/s': { factor: 1, dim: D(0, 1, -1) },
   'km/h': { factor: 1 / 3.6, dim: D(0, 1, -1) },
+
+  // ── Gia tốc ──
+  'm/s²': { factor: 1, dim: D(0, 1, -2) },
+  'm/s^2': { factor: 1, dim: D(0, 1, -2) },
+  'm/s2': { factor: 1, dim: D(0, 1, -2) },
+
+  // ── Độ cứng ──
+  'N/m': { factor: 1, dim: D(1, 0, -2) },
+
+  // ── Động lượng ──
+  'kg.m/s': { factor: 1, dim: D(1, 1, -1) },
+  'kg*m/s': { factor: 1, dim: D(1, 1, -1) },
+  'kg m/s': { factor: 1, dim: D(1, 1, -1) },
+  'N.s': { factor: 1, dim: D(1, 1, -1) },
+  'N*s': { factor: 1, dim: D(1, 1, -1) },
+  Ns: { factor: 1, dim: D(1, 1, -1) },
+
+  // ── Khối lượng riêng ──
+  'kg/m³': { factor: 1, dim: D(1, -3) },
+  'kg/m3': { factor: 1, dim: D(1, -3) },
+  'g/cm³': { factor: 1000, dim: D(1, -3) },
+  'g/cm3': { factor: 1000, dim: D(1, -3) },
+
+  // ── Tần số ──
+  Hz: { factor: 1, dim: D(0, 0, -1) },
+  'rad/s': { factor: 1, dim: D(0, 0, -1) },
 
   // ── Lực ──
   N: { factor: 1, dim: D(1, 1, -2) },
@@ -82,17 +113,29 @@ export const UNITS: Record<string, UnitDef> = {
   cal: { factor: 4.184, dim: D(1, 2, -2) },
   kcal: { factor: 4184, dim: D(1, 2, -2) },
   kWh: { factor: 3.6e6, dim: D(1, 2, -2) },
+  eV: { factor: 1.602176634e-19, dim: D(1, 2, -2) },
+  MeV: { factor: 1.602176634e-13, dim: D(1, 2, -2) },
 
   // ── Công suất ──
   W: { factor: 1, dim: D(1, 2, -3) },
   kW: { factor: 1e3, dim: D(1, 2, -3) },
   MW: { factor: 1e6, dim: D(1, 2, -3) },
 
+  // ── Nhiệt học ──
+  'J/kg': { factor: 1, dim: D(0, 2, -2) },
+  'kJ/kg': { factor: 1e3, dim: D(0, 2, -2) },
+  'J/(kg.K)': { factor: 1, dim: D(0, 2, -2, 0, -1) },
+  'J/kg.K': { factor: 1, dim: D(0, 2, -2, 0, -1) },
+  'J/(kg*K)': { factor: 1, dim: D(0, 2, -2, 0, -1) },
+  'J/kg*K': { factor: 1, dim: D(0, 2, -2, 0, -1) },
+
   // ── Điện ──
   A: { factor: 1, dim: D(0, 0, 0, 1) },
   mA: { factor: 1e-3, dim: D(0, 0, 0, 1) },
   V: { factor: 1, dim: D(1, 2, -3, -1) },
   mV: { factor: 1e-3, dim: D(1, 2, -3, -1) },
+  'V/m': { factor: 1, dim: D(1, 1, -3, -1) },
+  'N/C': { factor: 1, dim: D(1, 1, -3, -1) },
   Ω: { factor: 1, dim: D(1, 2, -3, -2) },
   kΩ: { factor: 1e3, dim: D(1, 2, -3, -2) },
   ohm: { factor: 1, dim: D(1, 2, -3, -2) },
