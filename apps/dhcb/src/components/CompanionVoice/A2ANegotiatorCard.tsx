@@ -104,13 +104,13 @@ export const A2ANegotiatorCard: React.FC = () => {
             <span className="font-bold text-white text-xs block">
               Mạng Lưới Agent-to-Agent (A2A Mesh)
             </span>
-            <span className="text-[10px] text-zinc-400">
+            <span className="text-[11px] text-zinc-400">
               Đàm phán lịch học & khớp nối bạn đồng hành tự động
             </span>
           </div>
         </div>
 
-        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+        <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
           {matches.length} bạn học phù hợp
         </span>
       </button>
@@ -142,7 +142,7 @@ export const A2ANegotiatorCard: React.FC = () => {
                             <Handshake className="w-3.5 h-3.5" />
                             <span>{neg.agreedTerms.skillTopic || 'Phiên học nhóm tiếng Anh'}</span>
                           </div>
-                          <div className="text-[10px] text-zinc-400 flex items-center gap-2">
+                          <div className="text-[11px] text-zinc-400 flex items-center gap-2">
                             <span>Thời lượng: {neg.agreedTerms.studyDurationMinutes || 30}p</span>
                             <span>•</span>
                             <span className="flex items-center gap-1 text-sky-400">
@@ -152,7 +152,7 @@ export const A2ANegotiatorCard: React.FC = () => {
                           </div>
                         </div>
 
-                        <span className="text-[9px] px-2 py-1 rounded bg-zinc-900 font-mono text-zinc-400 border border-zinc-800">
+                        <span className="text-[11px] px-2 py-1 rounded bg-zinc-900 font-mono text-zinc-400 border border-zinc-800">
                           {neg.auditReceiptHash.slice(0, 10)}…
                         </span>
                       </div>
@@ -178,7 +178,7 @@ export const A2ANegotiatorCard: React.FC = () => {
                         <div>
                           <div className="font-bold text-white text-xs flex items-center gap-1.5">
                             <span>{peer.peerDisplayName}</span>
-                            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                            <span className="px-1.5 py-0.5 rounded text-[11px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                               {Math.round(peer.compatibilityScore * 100)}% Tương thích
                             </span>
                           </div>
@@ -201,7 +201,7 @@ export const A2ANegotiatorCard: React.FC = () => {
                         </button>
                       </div>
 
-                      <div className="text-[10px] text-zinc-400 bg-zinc-950 p-2 rounded-lg border border-zinc-800 flex items-center gap-1.5">
+                      <div className="text-[11px] text-zinc-400 bg-zinc-950 p-2 rounded-lg border border-zinc-800 flex items-center gap-1.5">
                         <Calendar className="w-3 h-3 text-zinc-500 shrink-0" />
                         <span>Mục tiêu đề xuất: {peer.recommendedGoal}</span>
                       </div>
@@ -210,7 +210,7 @@ export const A2ANegotiatorCard: React.FC = () => {
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-zinc-800/80 text-[10px] text-zinc-500 flex items-center gap-1.5">
+              <div className="pt-2 border-t border-zinc-800/80 text-[11px] text-zinc-500 flex items-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <span>
                   Giao thức A2A bảo vệ tuyệt đối lịch trình cá nhân bằng mật mã Zero-Knowledge.

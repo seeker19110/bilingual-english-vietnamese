@@ -87,7 +87,7 @@ export const NeuroAffectiveCard: React.FC = () => {
             <span className="font-bold text-white text-xs block">
               Thấu Cảm Sinh Học & Điều Tiết Thần Kinh
             </span>
-            <span className="text-[10px] text-zinc-400">
+            <span className="text-[11px] text-zinc-400">
               {isPeakFlow
                 ? 'Đang ở trạng thái tập trung sâu (Flow State)'
                 : isBurnout
@@ -98,7 +98,7 @@ export const NeuroAffectiveCard: React.FC = () => {
         </div>
 
         <span
-          className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+          className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border ${
             isPeakFlow
               ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
               : isBurnout
@@ -157,7 +157,7 @@ export const NeuroAffectiveCard: React.FC = () => {
           <div className="bg-zinc-900/90 border border-zinc-800 rounded-xl p-3 text-zinc-300 leading-relaxed font-medium flex items-start gap-2.5">
             <Sliders className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
             <div>
-              <span className="text-[10px] uppercase font-bold tracking-wider text-teal-400 block mb-0.5">
+              <span className="text-[11px] uppercase font-bold tracking-wider text-teal-400 block mb-0.5">
                 Khuyến nghị điều tiết
               </span>
               <p className="text-xs text-zinc-200">{state.recommendedAction}</p>

@@ -1,10 +1,12 @@
 import { useRef, useEffect } from 'react'
-import { ArrowLeft, MessageSquare, ShieldCheck, AlertCircle } from 'lucide-react'
+import { ArrowLeft, MessageSquare, ShieldCheck } from 'lucide-react'
 import type { RoomSummary, ChatMessage } from '../../lib/chatApi'
 import MessageBubble from './MessageBubble'
 import MessageInput from './MessageInput'
 import PresenceDot from './PresenceDot'
 import { getAvatarColor } from '../../lib/chatFormatters'
+import { CardListSkeleton } from '../Skeleton'
+import LoadError from '../LoadError'
 
 export interface ChatWindowProps {
   room: RoomSummary | null
@@ -18,6 +20,8 @@ export interface ChatWindowProps {
   onTyping: () => void
   onDeleteMessage: (msgId: string) => void
   onBack?: () => void
+  /** Tải lại danh sách phòng + tin nhắn sau lỗi. */
+  onRetry?: () => void
 }
 
 function formatDateHeader(isoString: string): string {
@@ -61,6 +65,7 @@ export default function ChatWindow({
   onTyping,
   onDeleteMessage,
   onBack,
+  onRetry,
 }: ChatWindowProps) {
   const bottomRef = useRef<HTMLDivElement | null>(null)
 
@@ -72,7 +77,7 @@ export default function ChatWindow({
   if (!room) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-6 text-center bg-zinc-950/60">
-        <div className="w-16 h-16 rounded-full bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-400 mb-4 shadow-sm">
+        <div className="w-16 h-16 rounded-full bg-blue-600/10 theme-light:bg-blue-100 border border-blue-500/20 flex items-center justify-center text-blue-400 theme-light:text-blue-800 mb-4 shadow-sm">
           <MessageSquare size={32} />
         </div>
         <h3 className="text-base font-bold text-white mb-1">Chọn một cuộc trò chuyện</h3>
@@ -138,25 +143,22 @@ export default function ChatWindow({
             className="inline-flex items-center gap-1 text-[11px] text-zinc-400 bg-white/5 border border-white/10 px-2.5 py-1 rounded-full"
             title="Đã bật bộ lọc ngôn từ văn minh tự động"
           >
-            <ShieldCheck size={13} className="text-emerald-400" />
+            <ShieldCheck size={13} className="text-emerald-400 theme-light:text-emerald-800" />
             <span className="hidden sm:inline">Bảo vệ nội dung</span>
           </span>
         </div>
       </header>
 
-      {/* Thông báo lỗi nếu có */}
+      {/* Lỗi tải/kết nối: bảng lỗi có nút Thử lại thay vì dải chữ đỏ không hành động được. */}
       {chatError && (
-        <div className="bg-red-500/10 border-b border-red-500/20 px-4 py-2 flex items-center gap-2 text-xs text-red-300">
-          <AlertCircle size={14} className="flex-shrink-0 text-red-400" />
-          <span>{chatError}</span>
+        <div className="px-4 pt-3">
+          <LoadError message={chatError} {...(onRetry ? { onRetry } : {})} />
         </div>
       )}
 
       {/* Danh sách tin nhắn cuộn */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 custom-scrollbar flex flex-col justify-start">
-        {loadingMessages && (
-          <div className="py-6 text-center text-xs text-zinc-400">Đang tải lịch sử tin nhắn…</div>
-        )}
+      <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col justify-start">
+        {loadingMessages && <CardListSkeleton rows={4} />}
 
         {!loadingMessages && messages.length === 0 && (
           <div className="my-auto py-8 text-center text-zinc-400 max-w-xs mx-auto">
@@ -175,7 +177,7 @@ export default function ChatWindow({
             <div key={group.date} className="w-full">
               {/* Header ngày */}
               <div className="flex items-center justify-center my-3">
-                <span className="text-[10px] font-semibold text-zinc-400 bg-zinc-800/80 border border-white/5 px-2.5 py-0.5 rounded-full shadow-xs">
+                <span className="text-[11px] font-semibold text-zinc-400 bg-zinc-800/80 border border-white/5 px-2.5 py-0.5 rounded-full shadow-xs">
                   {group.date}
                 </span>
               </div>

@@ -120,7 +120,7 @@ export default function WorkplaceHarvesterCard() {
               <h3 className="text-base font-bold text-white tracking-wide">
                 Workplace Error Harvester & Auto-SRS
               </h3>
-              <span className="text-[10px] px-2 py-0.5 font-bold uppercase rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              <span className="text-[11px] px-2 py-0.5 font-bold uppercase rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
                 Workplace AI
               </span>
             </div>
@@ -186,14 +186,14 @@ export default function WorkplaceHarvesterCard() {
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-slate-700 text-slate-300">
+                  <span className="text-[11px] font-bold uppercase px-2 py-0.5 rounded bg-slate-700 text-slate-300">
                     {m.sourceType}
                   </span>
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300">
+                  <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300">
                     CEFR {m.cefrLevel}
                   </span>
                   <span
-                    className={`text-[10px] font-semibold ${
+                    className={`text-[11px] font-semibold ${
                       m.urgency === 'critical'
                         ? 'text-red-400'
                         : m.urgency === 'moderate'
@@ -265,7 +265,7 @@ export default function WorkplaceHarvesterCard() {
                       Thẻ Ôn Tập Spaced Repetition
                     </span>
                   </div>
-                  <span className="text-[10px] text-slate-400">
+                  <span className="text-[11px] text-slate-400">
                     Lặp lại sau {c.repetitionIntervalDays} ngày
                   </span>
                 </div>

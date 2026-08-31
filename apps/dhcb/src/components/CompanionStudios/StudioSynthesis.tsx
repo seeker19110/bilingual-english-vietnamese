@@ -22,7 +22,7 @@ export default function StudioSynthesis({ navigate }: StudioSynthesisProps) {
           <div>
             <h4 className="text-sm font-bold text-zinc-100 flex items-center gap-2">
               Không Gian Làm Việc Trực Quan (Action Canvas)
-              <span className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase bg-cyan-500/30 text-cyan-300 theme-light:text-cyan-800 border border-cyan-500/40">
+              <span className="rounded-full px-2 py-0.5 text-[11px] font-bold uppercase bg-cyan-500/30 text-cyan-300 theme-light:text-cyan-800 border border-cyan-500/40">
                 V4.2 Hub
               </span>
             </h4>

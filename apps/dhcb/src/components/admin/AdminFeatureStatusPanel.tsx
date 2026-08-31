@@ -180,7 +180,7 @@ export default function AdminFeatureStatusPanel() {
                       <span className="font-semibold text-zinc-200 text-xs truncate">
                         {r.label}
                       </span>
-                      <span className="text-[10px] text-zinc-500 shrink-0">
+                      <span className="text-[11px] text-zinc-500 shrink-0">
                         {r.usesApi ? '(dùng API)' : '(không dùng API)'}
                       </span>
                     </div>
@@ -207,7 +207,7 @@ export default function AdminFeatureStatusPanel() {
               {history.map((h) => (
                 <li key={h.id} className="flex items-center gap-2 text-zinc-500">
                   <span
-                    className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${OVERALL_CLASS[h.overall_status]}`}
+                    className={`px-1.5 py-0.5 rounded text-[11px] font-bold border ${OVERALL_CLASS[h.overall_status]}`}
                   >
                     {h.overall_status}
                   </span>

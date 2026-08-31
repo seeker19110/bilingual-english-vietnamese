@@ -240,7 +240,7 @@ export default function Home() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <h3 className="font-bold text-white text-base">Môn Tiếng Anh</h3>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-800 font-bold border border-emerald-500/30">
+                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-800 font-bold border border-emerald-500/30">
                       CEFR A1–C2
                     </span>
                   </div>
@@ -255,19 +255,19 @@ export default function Home() {
               <div className="grid grid-cols-3 gap-1.5 pt-1 border-t border-zinc-800/80">
                 <button
                   onClick={() => nav('/lo-trinh-hoc')}
-                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-emerald-300 transition text-center truncate"
+                  className="tap-44-y py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-emerald-300 transition text-center truncate"
                 >
                   Lộ trình CEFR
                 </button>
                 <button
                   onClick={() => nav('/luyen-noi')}
-                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-emerald-300 transition text-center truncate"
+                  className="tap-44-y py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-emerald-300 transition text-center truncate"
                 >
                   Luyện Nói IPA
                 </button>
                 <button
                   onClick={() => nav('/tu-dien')}
-                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-emerald-300 transition text-center truncate"
+                  className="tap-44-y py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-emerald-300 transition text-center truncate"
                 >
                   Từ Điển 12k+
                 </button>
@@ -291,7 +291,7 @@ export default function Home() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
                     <h3 className="font-bold text-white text-base">Khoa Học & STEM</h3>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 theme-light:text-blue-800 font-bold border border-blue-500/30">
+                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 theme-light:text-blue-800 font-bold border border-blue-500/30">
                       Vision OCR
                     </span>
                   </div>
@@ -306,13 +306,13 @@ export default function Home() {
               <div className="grid grid-cols-2 gap-1.5 pt-1 border-t border-zinc-800/80">
                 <button
                   onClick={() => goToSubjects(nav)}
-                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-blue-300 transition text-center truncate"
+                  className="tap-44-y py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-blue-300 transition text-center truncate"
                 >
                   4 Môn Toán Lý Hóa Sinh
                 </button>
                 <button
                   onClick={() => nav('/ung-dung-thuc-te')}
-                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-cyan-300 transition text-center truncate"
+                  className="tap-44-y py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-cyan-300 transition text-center truncate"
                 >
                   10 Simulators Thí Nghiệm
                 </button>
@@ -338,10 +338,10 @@ export default function Home() {
                     <h3 className="font-bold text-white text-base">
                       Sự Nghiệp, Khởi Nghiệp &amp; Đời Sống
                     </h3>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 theme-light:text-purple-800 font-bold border border-purple-500/30">
+                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 theme-light:text-purple-800 font-bold border border-purple-500/30">
                       Career Hub
                     </span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 theme-light:text-orange-800 font-bold border border-orange-500/30">
+                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-orange-500/20 text-orange-300 theme-light:text-orange-800 font-bold border border-orange-500/30">
                       Life OS
                     </span>
                   </div>
@@ -356,25 +356,25 @@ export default function Home() {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1 border-t border-zinc-800/80">
                 <button
                   onClick={() => nav('/career/interview')}
-                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-purple-300 transition text-center truncate"
+                  className="tap-44-y py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-purple-300 transition text-center truncate"
                 >
                   Phỏng Vấn STAR
                 </button>
                 <button
                   onClick={() => nav('/cong-viec-cuoc-song?muc=cong-viec')}
-                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-purple-300 transition text-center truncate"
+                  className="tap-44-y py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-purple-300 transition text-center truncate"
                 >
                   Công Việc Của Tôi
                 </button>
                 <button
                   onClick={() => nav('/startup/canvas')}
-                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-orange-300 transition text-center truncate"
+                  className="tap-44-y py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-orange-300 transition text-center truncate"
                 >
                   Lean Canvas
                 </button>
                 <button
                   onClick={() => nav('/cong-viec-cuoc-song?muc=doi-song')}
-                  className="py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-pink-300 transition text-center truncate"
+                  className="tap-44-y py-1.5 px-2 rounded-xl bg-zinc-950/60 hover:bg-zinc-800 text-[11px] font-medium text-zinc-300 hover:text-pink-300 transition text-center truncate"
                 >
                   Bánh Xe Cuộc Đời
                 </button>

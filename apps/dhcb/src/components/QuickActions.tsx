@@ -6,7 +6,7 @@
 // liên tiếp (streak). Khi bật, ta HỎI bạn muốn học lúc mấy giờ → server gửi nhắc đúng
 // giờ đó cho những ngày bạn chưa học (xem api/push.ts + bộ hẹn giờ trong server.ts).
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Share2, Route, Bell, BellOff, X, Clock } from 'lucide-react'
 import ShareProgress from './ShareProgress'
@@ -19,6 +19,7 @@ import {
 import { getAccessToken } from '@core/authHeader'
 import { useAuth } from '../context/useAuth'
 import { getDirection } from '../lib/storage'
+import { useDialogBehavior } from './useDialogBehavior'
 
 // Lưu giờ nhắc (giờ địa phương 0–23) để hiển thị lại lần sau
 const remindKey = (uid: string) => `et_remind_hour_${uid}`
@@ -47,6 +48,11 @@ export default function QuickActions() {
   const [pushLoading, setPushL] = useState(false)
   const [showTime, setShowTime] = useState(false)
   const [remindHour, setRemindHour] = useState(() => loadRemindHour(userId))
+
+  // Hộp chọn giờ là một hộp thoại thật → phải đủ 6 hành vi a11y (Escape, bẫy tiêu
+  // điểm, trả tiêu điểm về nút "Nhắc học", khoá cuộn nền).
+  const closeTime = useCallback(() => setShowTime(false), [])
+  const timeDialog = useDialogBehavior(closeTime, showTime)
 
   // Bấm nút Nhắc học: đang TẮT → mở hộp chọn giờ; đang BẬT → tắt nhắc.
   function onNotifClick() {
@@ -163,23 +169,24 @@ export default function QuickActions() {
       {showTime && (
         <div
           className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
-          onClick={() => setShowTime(false)}
+          {...timeDialog.backdropProps}
         >
           <div
-            className="w-full max-w-xs bg-zinc-900 border border-zinc-700/60 rounded-2xl p-5 animate-fade-in"
-            onClick={(e) => e.stopPropagation()}
+            {...timeDialog.dialogProps}
+            className="w-full max-w-xs bg-zinc-900 border border-zinc-700/60 rounded-2xl p-5 animate-fade-in max-h-[90dvh] overflow-y-auto focus:outline-none"
           >
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-amber-400" />
-                <h3 className="text-sm font-semibold text-white">
+                <h3 id={timeDialog.titleId} className="text-sm font-semibold text-white">
                   {isA ? 'Bạn muốn học lúc mấy giờ?' : 'When do you want to study?'}
                 </h3>
               </div>
               <button
-                onClick={() => setShowTime(false)}
+                type="button"
+                onClick={closeTime}
                 aria-label={isA ? 'Đóng' : 'Close'}
-                className="text-zinc-400 hover:text-white p-1 -mr-1"
+                className="tap-44 shrink-0 w-11 h-11 -mr-3 -mt-3 flex items-center justify-center rounded-full text-zinc-400 hover:text-white"
               >
                 <X className="w-4 h-4" />
               </button>

@@ -28,6 +28,31 @@
     background-color: rgba(var(--a-500) / 0.3);
     color: rgb(var(--a-300));
   }
+
+  /* iOS Safari tự zoom khi focus vào ô nhập có font < 16px — app hub (landing + đăng
+     nhập) trước đây thiếu hẳn luật này nên màn đăng nhập bị giật zoom trên iPhone.
+     Giữ Y HỆT bản ở apps/dhcb/src/index.css, kể cả `!important`: rule nằm ở
+     `@layer base` còn `text-sm` nằm ở `@layer utilities` — layer sau luôn thắng bất kể
+     specificity, không có `!important` thì luật coi như không tồn tại. Chỉ áp trong
+     media query cảm ứng nên desktop không đổi. */
+  @media (hover: none) and (pointer: coarse) {
+    input,
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Vùng chạm tối thiểu 44×44px (CLAUDE.md mục 4.7) — bản sao của utility cùng tên trong
+     apps/dhcb/src/index.css, để component dùng chung ở packages/core-ui (vd ToastProvider)
+     hành xử giống nhau ở cả hai app. KHÔNG đặt `display` ở đây: nhiều nơi đã tự khai
+     flex/grid, ghi đè sẽ vỡ layout. */
+  .tap-44 {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
 
 /* Custom scrollbar for modern feel */

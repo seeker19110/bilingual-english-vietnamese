@@ -313,7 +313,9 @@ export default function HomeUniversalAiBar() {
       </form>
 
       {/* Quick Prompt Starter Chips */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pt-2.5 pb-1 scrollbar-none">
+      {/* Mask mờ dần ở mép phải = dấu hiệu "còn cuộn được nữa". Dùng mask thay vì lớp
+          gradient màu để không phải đoán màu nền theo từng theme. */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pt-2.5 pb-1 scrollbar-none [mask-image:linear-gradient(to_right,black_calc(100%-2rem),transparent)]">
         <span className="text-[11px] text-zinc-500 font-semibold uppercase tracking-wider pl-1 shrink-0">
           Gợi ý nhanh:
         </span>

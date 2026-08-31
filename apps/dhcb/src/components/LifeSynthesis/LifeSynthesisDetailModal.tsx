@@ -131,7 +131,7 @@ export default function LifeSynthesisDetailModal({ report, onClose, onRefresh }:
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold text-zinc-100">{goal.title}</span>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-accent-500/15 text-accent-300 font-semibold border border-accent-500/25">
+                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-accent-500/15 text-accent-300 font-semibold border border-accent-500/25">
                           {domainLabelMap[goal.domain]}
                         </span>
                       </div>
@@ -145,7 +145,7 @@ export default function LifeSynthesisDetailModal({ report, onClose, onRefresh }:
                       <span className="text-base font-black text-emerald-400">
                         {goal.successProbabilityPercent}%
                       </span>
-                      <span className="block text-[9px] text-zinc-500 uppercase font-semibold">
+                      <span className="block text-[11px] text-zinc-500 uppercase font-semibold">
                         Xác suất đạt
                       </span>
                     </div>
@@ -153,7 +153,7 @@ export default function LifeSynthesisDetailModal({ report, onClose, onRefresh }:
 
                   {/* Critical Path Steps */}
                   <div className="p-2.5 rounded-xl bg-zinc-950/80 border border-zinc-800/80 space-y-1.5">
-                    <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
+                    <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider block">
                       Các bước đường găng (Critical Path):
                     </span>
                     {goal.criticalPathSteps.map((step, sIdx) => (
@@ -184,7 +184,7 @@ export default function LifeSynthesisDetailModal({ report, onClose, onRefresh }:
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-zinc-200">{rec.title}</span>
                     <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                      className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${
                         rec.priority === 'critical'
                           ? 'bg-rose-500/15 text-rose-300 border-rose-500/30'
                           : rec.priority === 'high'

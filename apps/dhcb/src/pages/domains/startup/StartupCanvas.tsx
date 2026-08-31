@@ -1,5 +1,5 @@
 // apps/dhcb/src/pages/StartupCanvas.tsx — Interactive 9-Box Lean Canvas (Startup Sub-page)
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Rocket,
@@ -21,6 +21,7 @@ import PageHeader from '../../../components/PageHeader'
 import { useToast } from '@core/ToastProvider'
 import { listVentures } from '../../../lib/startupApi'
 import type { Venture } from '@dhcb/core-contracts/startup'
+import { useDialogBehavior } from '../../../components/useDialogBehavior'
 
 interface CanvasState {
   problem: string[]
@@ -80,6 +81,9 @@ export default function StartupCanvas() {
   const [selectedVentureId, setSelectedVentureId] = useState<string>('default')
   const [canvas, setCanvas] = useState<CanvasState>(DEFAULT_CANVAS)
   const [editingBox, setEditingBox] = useState<keyof CanvasState | null>(null)
+  // Hộp thoại "Thêm mục vào ô Canvas" nội tuyến — bổ sung 6 hành vi a11y bắt buộc.
+  const closeEditingBox = useCallback(() => setEditingBox(null), [])
+  const boxDialog = useDialogBehavior(closeEditingBox, editingBox !== null)
   const [newPointInput, setNewPointInput] = useState('')
 
   useEffect(() => {
@@ -467,9 +471,17 @@ export default function StartupCanvas() {
 
         {/* Modal / Inline Thêm mục vào ô */}
         {editingBox && (
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 max-w-md w-full space-y-4">
-              <h3 className="text-sm font-bold text-white uppercase">Thêm mục mới vào ô Canvas</h3>
+          <div
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
+            {...boxDialog.backdropProps}
+          >
+            <div
+              {...boxDialog.dialogProps}
+              className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 max-w-md w-full space-y-4 max-h-[90dvh] overflow-y-auto focus:outline-none"
+            >
+              <h3 id={boxDialog.titleId} className="text-sm font-bold text-white uppercase">
+                Thêm mục mới vào ô Canvas
+              </h3>
               <input
                 type="text"
                 value={newPointInput}
@@ -480,17 +492,19 @@ export default function StartupCanvas() {
               />
               <div className="flex justify-end gap-2">
                 <button
-                  onClick={() => setEditingBox(null)}
-                  className="px-4 py-2 text-xs text-zinc-400 hover:text-white"
+                  type="button"
+                  onClick={closeEditingBox}
+                  className="tap-44 px-4 py-2 text-xs text-zinc-400 hover:text-white"
                 >
                   Đóng
                 </button>
                 <button
+                  type="button"
                   onClick={() => {
                     handleAddPoint(editingBox)
                     setEditingBox(null)
                   }}
-                  className="px-4 py-2 bg-purple-500 text-white font-bold rounded-xl text-xs"
+                  className="tap-44 px-4 py-2 bg-purple-500 text-white font-bold rounded-xl text-xs"
                 >
                   Thêm vào Canvas
                 </button>

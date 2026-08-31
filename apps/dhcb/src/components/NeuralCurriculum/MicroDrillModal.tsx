@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
+import { useDialogBehavior } from '../useDialogBehavior'
 import { MicroDrillQuestion } from '@dhcb/core-contracts/neuralCurriculum'
 import { Zap, CheckCircle2, XCircle, X, ArrowRight, Trophy } from 'lucide-react'
 
@@ -20,6 +21,21 @@ export default function MicroDrillModal({
   const [isAnswered, setIsAnswered] = useState(false)
   const [score, setScore] = useState(0)
   const [finished, setFinished] = useState(false)
+
+  // Đóng = trả bài luyện về trạng thái đầu rồi mới gọi onClose (giữ nguyên hành vi cũ
+  // của nút X). Khai báo TRƯỚC early-return để hook hộp thoại dùng được — nhờ vậy phím
+  // Escape và bấm ra nền cũng reset y hệt bấm X.
+  const handleReset = useCallback(() => {
+    setCurrentIndex(0)
+    setSelectedOption(null)
+    setIsAnswered(false)
+    setScore(0)
+    setFinished(false)
+    onClose()
+  }, [onClose])
+
+  // 6 hành vi a11y bắt buộc của hộp thoại (Escape, bẫy tiêu điểm, khoá cuộn nền…).
+  const { dialogProps, titleId, backdropProps } = useDialogBehavior(handleReset, isOpen)
 
   if (!isOpen || drills.length === 0) return null
   const currentDrill = drills[currentIndex] || drills[0]
@@ -46,22 +62,20 @@ export default function MicroDrillModal({
     }
   }
 
-  const handleReset = () => {
-    setCurrentIndex(0)
-    setSelectedOption(null)
-    setIsAnswered(false)
-    setScore(0)
-    setFinished(false)
-    onClose()
-  }
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-in">
-      <div className="relative w-full max-w-lg rounded-2xl border border-sky-500/40 bg-zinc-900 p-6 shadow-2xl">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-in"
+      {...backdropProps}
+    >
+      <div
+        {...dialogProps}
+        className="relative w-full max-w-lg rounded-2xl border border-sky-500/40 bg-zinc-900 p-6 shadow-2xl max-h-[90dvh] overflow-y-auto focus:outline-none"
+      >
         <button
           type="button"
           onClick={handleReset}
-          className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-100"
+          aria-label="Đóng"
+          className="tap-44 absolute top-2 right-2 w-11 h-11 flex items-center justify-center rounded-full text-zinc-400 hover:text-zinc-100"
         >
           <X className="w-5 h-5" />
         </button>
@@ -74,8 +88,10 @@ export default function MicroDrillModal({
                   <Zap className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-zinc-100">Micro-Drill 2 Phút</h3>
-                  <p className="text-[10px] text-zinc-400">
+                  <h3 id={titleId} className="text-sm font-bold text-zinc-100">
+                    Micro-Drill 2 Phút
+                  </h3>
+                  <p className="text-[11px] text-zinc-400">
                     Câu {currentIndex + 1} / {drills.length}
                   </p>
                 </div>
@@ -151,7 +167,9 @@ export default function MicroDrillModal({
               <Trophy className="w-8 h-8" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-zinc-100">Hoàn Tất Bài Luyện Vi Mô!</h3>
+              <h3 id={titleId} className="text-base font-bold text-zinc-100">
+                Hoàn Tất Bài Luyện Vi Mô!
+              </h3>
               <p className="text-xs text-zinc-400 mt-1">
                 Bạn đã trả lời đúng {score} / {drills.length} câu. Điểm Mastery đã được cập nhật!
               </p>

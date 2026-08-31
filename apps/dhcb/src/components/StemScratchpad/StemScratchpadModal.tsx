@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useDialogBehavior } from '../useDialogBehavior'
 import type {
   StemProblemState,
   ScratchpadStep,
@@ -15,6 +16,8 @@ interface StemScratchpadModalProps {
 }
 
 export default function StemScratchpadModal({ onClose }: StemScratchpadModalProps) {
+  // 6 hành vi a11y bắt buộc của hộp thoại.
+  const { dialogProps, titleId, backdropProps } = useDialogBehavior(onClose)
   const [problem, setProblem] = useState<StemProblemState | null>(null)
   const [subject, setSubject] = useState<StemSubjectType>('math')
   const [latexInput, setLatexInput] = useState('')
@@ -101,13 +104,16 @@ export default function StemScratchpadModal({ onClose }: StemScratchpadModalProp
   }
 
   return (
+    // role/aria-modal trước đây nằm nhầm ở LỚP NỀN (phủ kín màn hình); nay chuyển vào
+    // đúng khung hộp thoại, kèm Escape + bẫy tiêu điểm + khoá cuộn nền.
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-md animate-fade-in"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="stem-scratchpad-title"
+      {...backdropProps}
     >
-      <div className="relative w-full max-w-3xl max-h-[90vh] flex flex-col rounded-3xl border border-teal-500/30 bg-zinc-950 text-white shadow-2xl overflow-hidden">
+      <div
+        {...dialogProps}
+        className="relative w-full max-w-3xl max-h-[90dvh] flex flex-col rounded-3xl border border-teal-500/30 bg-zinc-950 text-white shadow-2xl overflow-hidden focus:outline-none"
+      >
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-white/10 bg-gradient-to-r from-teal-950/40 via-emerald-950/20 to-zinc-950 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -115,7 +121,7 @@ export default function StemScratchpadModal({ onClose }: StemScratchpadModalProp
               📐
             </div>
             <div>
-              <h2 id="stem-scratchpad-title" className="text-base sm:text-lg font-bold text-white">
+              <h2 id={titleId} className="text-base sm:text-lg font-bold text-white">
                 STEM Interactive Scratchpad
               </h2>
               <p className="text-xs text-teal-300">
@@ -126,7 +132,7 @@ export default function StemScratchpadModal({ onClose }: StemScratchpadModalProp
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
+            className="tap-44 shrink-0 w-11 h-11 flex items-center justify-center rounded-xl hover:bg-white/10 text-zinc-400 hover:text-white transition-colors"
             aria-label="Đóng"
           >
             ✕
@@ -162,7 +168,7 @@ export default function StemScratchpadModal({ onClose }: StemScratchpadModalProp
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-bold text-teal-300 uppercase tracking-wide">Đề bài</h4>
               {problem?.isSolved && (
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
                   ✓ ĐÃ GIẢI XONG
                 </span>
               )}
@@ -198,7 +204,7 @@ export default function StemScratchpadModal({ onClose }: StemScratchpadModalProp
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs font-bold text-zinc-300">Bước {step.stepNumber}:</span>
                     <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
                         step.validation?.isValid
                           ? 'bg-emerald-500/20 text-emerald-300'
                           : 'bg-rose-500/20 text-rose-300'

@@ -68,7 +68,7 @@ export const EdgeAiIndicator: React.FC<EdgeAiIndicatorProps> = ({ className = ''
                 {capability.adapterName && (
                   <div className="flex items-center justify-between">
                     <span className="text-zinc-400">GPU Adapter:</span>
-                    <span className="font-mono text-zinc-200 text-[10px] truncate max-w-[200px]">
+                    <span className="font-mono text-zinc-200 text-[11px] truncate max-w-[200px]">
                       {capability.adapterName}
                     </span>
                   </div>

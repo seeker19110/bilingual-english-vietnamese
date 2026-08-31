@@ -56,7 +56,7 @@ export default function WeeklyGoalCelebration({
                 {d?.active ? '✓' : ''}
               </span>
               <span
-                className={`text-[10px] ${isToday ? 'text-accent-400 font-bold' : 'text-zinc-500'}`}
+                className={`text-[11px] ${isToday ? 'text-accent-400 font-bold' : 'text-zinc-500'}`}
               >
                 {label}
               </span>

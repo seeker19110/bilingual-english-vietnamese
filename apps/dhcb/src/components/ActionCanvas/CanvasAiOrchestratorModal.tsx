@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useDialogBehavior } from '../useDialogBehavior'
 import { Sparkles, X, Loader2, ArrowRight } from 'lucide-react'
 
 interface CanvasAiOrchestratorModalProps {
@@ -21,6 +22,8 @@ export default function CanvasAiOrchestratorModal({
 }: CanvasAiOrchestratorModalProps) {
   const [prompt, setPrompt] = useState('')
   const [loading, setLoading] = useState(false)
+  // 6 hành vi a11y bắt buộc của hộp thoại (Escape, bẫy tiêu điểm, khoá cuộn nền…).
+  const { dialogProps, titleId, backdropProps } = useDialogBehavior(onClose, isOpen)
 
   if (!isOpen) return null
 
@@ -37,12 +40,19 @@ export default function CanvasAiOrchestratorModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
-      <div className="relative w-full max-w-lg rounded-2xl border border-cyan-500/30 bg-zinc-900 p-6 shadow-2xl">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in"
+      {...backdropProps}
+    >
+      <div
+        {...dialogProps}
+        className="relative w-full max-w-lg rounded-2xl border border-cyan-500/30 bg-zinc-900 p-6 shadow-2xl max-h-[90dvh] overflow-y-auto focus:outline-none"
+      >
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-100"
+          aria-label="Đóng"
+          className="tap-44 absolute top-2 right-2 w-11 h-11 flex items-center justify-center rounded-full text-zinc-400 hover:text-zinc-100"
         >
           <X className="w-5 h-5" />
         </button>
@@ -52,7 +62,7 @@ export default function CanvasAiOrchestratorModal({
             <Sparkles className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-zinc-100">
+            <h3 id={titleId} className="text-base font-bold text-zinc-100">
               AI Phân Rã & Tạo Không Gian Hành Động
             </h3>
             <p className="text-xs text-zinc-400">

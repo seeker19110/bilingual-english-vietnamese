@@ -46,7 +46,10 @@ export default function OfflineSyncIndicator() {
   if (isOnline && pendingCount === 0 && !justSynced) return null
 
   return (
-    <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-md animate-fade-in pointer-events-auto">
+    // `bottom-20` (80px) THẤP HƠN BottomNav thật (5.25rem + safe-area ≈ 84px trở lên) nên
+    // dải thông báo đè lên thanh điều hướng. Dùng biến `--bnav-h` (index.css) — biến này
+    // tự về 0px từ 1024px trở lên, nên desktop chỉ còn 1rem cách mép dưới.
+    <div className="fixed bottom-[calc(1rem+var(--bnav-h))] left-1/2 -translate-x-1/2 z-50 w-11/12 max-w-md animate-fade-in pointer-events-auto">
       <div
         className={`flex items-center justify-between px-4 py-2.5 rounded-xl shadow-lg border text-sm font-medium transition-all ${
           !isOnline

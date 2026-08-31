@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useDialogBehavior } from '../useDialogBehavior'
 import { X, Bot, Play, RefreshCw, CheckCircle2, AlertCircle, ShieldCheck } from 'lucide-react'
 import type {
   AutonomousAgentRole,
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Props) {
+  // 6 hành vi a11y bắt buộc của hộp thoại (Escape, bẫy tiêu điểm, khoá cuộn nền…).
+  const { dialogProps, titleId, backdropProps } = useDialogBehavior(onClose)
   const [role, setRole] = useState<AutonomousAgentRole>('code_architect')
   const [title, setTitle] = useState('')
   const [goal, setGoal] = useState('')
@@ -78,8 +81,14 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="bg-zinc-950 border border-zinc-800 rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+      {...backdropProps}
+    >
+      <div
+        {...dialogProps}
+        className="bg-zinc-950 border border-zinc-800 rounded-3xl max-w-2xl w-full max-h-[90dvh] flex flex-col shadow-2xl overflow-hidden focus:outline-none"
+      >
         {/* Header */}
         <div className="p-5 border-b border-zinc-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -87,7 +96,9 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
               <Bot className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-zinc-100">Studio Điều Phối Agent Tự Trị</h2>
+              <h2 id={titleId} className="text-base font-bold text-zinc-100">
+                Studio Điều Phối Agent Tự Trị
+              </h2>
               <p className="text-xs text-zinc-400">
                 Ủy quyền nhiệm vụ đa bước với chu trình Tự lập kế hoạch $\rightarrow$ Thực thi
                 $\rightarrow$ Bàn giao
@@ -99,7 +110,7 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
             type="button"
             onClick={onClose}
             aria-label="Đóng"
-            className="p-2 rounded-xl text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 transition"
+            className="tap-44 shrink-0 w-11 h-11 flex items-center justify-center rounded-xl text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -173,7 +184,7 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
                   <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
                   <span>Trần ngân sách: tối đa 50.000 tokens</span>
                 </div>
-                <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                <span className="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
                   Lá chắn bảo vệ
                 </span>
               </div>
@@ -216,17 +227,17 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
                     >
                       <div className="flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2">
-                          <span className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold text-[10px] flex items-center justify-center">
+                          <span className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold text-[11px] flex items-center justify-center">
                             {step.stepIndex}
                           </span>
-                          <span className="font-bold text-zinc-200 uppercase text-[10px] tracking-wider bg-zinc-800 px-2 py-0.5 rounded">
+                          <span className="font-bold text-zinc-200 uppercase text-[11px] tracking-wider bg-zinc-800 px-2 py-0.5 rounded">
                             {step.phase}
                           </span>
                           <span className="font-medium text-zinc-300">
                             {step.actionDescription}
                           </span>
                         </div>
-                        <span className="text-[10px] text-zinc-500">{step.tokensUsed} tok</span>
+                        <span className="text-[11px] text-zinc-500">{step.tokensUsed} tok</span>
                       </div>
 
                       {step.outputArtifact && (

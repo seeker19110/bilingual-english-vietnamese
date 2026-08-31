@@ -217,7 +217,7 @@ export default function EmailVerifySection({
             type="button"
             onClick={handleChangeEmail}
             disabled={changing}
-            className="tap-44 w-full flex items-center justify-center gap-2 rounded-xl bg-amber-500/20 border border-amber-500/40 px-4 py-2.5 text-sm font-semibold text-amber-100 theme-light:text-amber-900 disabled:opacity-60"
+            className="tap-44 w-full flex items-center justify-center gap-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 transition-colors border border-amber-500/40 px-4 py-2.5 text-sm font-semibold text-amber-100 theme-light:text-amber-900 disabled:opacity-60"
           >
             {changing && <Loader2 className="w-4 h-4 animate-spin" />}
             {isA ? 'Đổi email & gửi mã mới' : 'Change email & send new code'}
@@ -250,7 +250,7 @@ export default function EmailVerifySection({
           type="button"
           onClick={handleVerify}
           disabled={verifying || code.length !== 6}
-          className="tap-44 shrink-0 flex items-center justify-center gap-2 rounded-xl bg-accent-500 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+          className="tap-44 shrink-0 flex items-center justify-center gap-2 rounded-xl bg-accent-500 hover:bg-accent-400 transition-colors px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
         >
           {verifying && <Loader2 className="w-4 h-4 animate-spin" />}
           {isA ? 'Xác thực' : 'Verify'}
@@ -261,7 +261,7 @@ export default function EmailVerifySection({
         type="button"
         onClick={handleSend}
         disabled={sending}
-        className="tap-44 mt-2 text-xs text-amber-300 theme-light:text-amber-800 underline underline-offset-2 disabled:opacity-60"
+        className="tap-44 mt-2 text-xs text-amber-300 theme-light:text-amber-800 hover:text-amber-200 transition-colors underline underline-offset-2 disabled:opacity-60"
       >
         {sending
           ? isA

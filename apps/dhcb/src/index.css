@@ -30,9 +30,10 @@
   }
 }
 
-/* Chiều cao THẬT của riêng BottomNav (components/BottomNav.tsx: h-[5.25rem] nội
-   dung) — hiện ở MỌI kích thước màn hình (kể cả web/desktop). Đổi h-[5.25rem] ở
-   BottomNav.tsx thì đổi 5.25rem ở đây. CHỈ dùng để định vị dải trigger Reachability
+/* Chiều cao THẬT của riêng BottomNav (components/BottomNav.tsx: min-h-[5.25rem] nội
+   dung) — BottomNav CHỈ hiện dưới 1024px (`lg:hidden`), từ 1024px trở lên hai biến
+   này bị đặt về 0px ở media query bên dưới. Đổi min-h-[5.25rem] ở BottomNav.tsx thì
+   đổi 5.25rem ở đây. CHỈ dùng để định vị dải trigger Reachability
    (App.tsx: bottom: calc(var(--bnav-only-h) - 0.75rem)) — các trang KHÔNG dùng
    biến này cho padding-bottom, dùng --bnav-h ở dưới (đã cộng thêm phần trigger). */
 :root {
@@ -89,12 +90,17 @@ html[data-sidebar='collapsed'] {
   }
 
   /* iOS Safari tự zoom khi focus vào ô nhập có font < 16px.
-     Ép font ≥ 16px trên màn hình cảm ứng để không bị giật zoom. */
+     Ép font ≥ 16px trên màn hình cảm ứng để không bị giật zoom.
+     VÌ SAO PHẢI `!important`: rule này nằm trong `@layer base`, còn `text-sm`/`text-xs`
+     nằm ở `@layer utilities` — layer sau LUÔN thắng layer trước bất kể specificity, nên
+     nếu không có `!important` thì luật 16px coi như không tồn tại ở mọi ô nhập có class
+     cỡ chữ (đo được ~90 ô, xem audit 2026-08-31 mục A1). `!important` nằm gọn trong
+     media query cảm ứng nên KHÔNG ảnh hưởng desktop (chuột vẫn thấy `text-sm` như cũ). */
   @media (hover: none) and (pointer: coarse) {
     input,
     textarea,
     select {
-      font-size: 16px;
+      font-size: 16px !important;
     }
   }
 

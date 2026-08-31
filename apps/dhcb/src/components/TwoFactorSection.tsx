@@ -156,7 +156,7 @@ export default function TwoFactorSection({ isA }: { isA: boolean }) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="tap-44 w-full flex items-center justify-between gap-3 text-left"
+        className="tap-44 w-full flex items-center justify-between gap-3 text-left rounded-xl hover:bg-zinc-800/40 transition-colors"
       >
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-accent-500/15 flex items-center justify-center shrink-0">
@@ -203,6 +203,8 @@ export default function TwoFactorSection({ isA }: { isA: boolean }) {
                   : '1. Open your authenticator app (Google Authenticator, Authy…) and scan this:'}
               </p>
               {qrDataUrl && (
+                /* Nền TRẮNG THẬT (#fff) là bắt buộc để camera quét được QR — token
+                   --c-white bị đảo thành màu tối ở theme nền sáng nên KHÔNG dùng được. */
                 <img
                   src={qrDataUrl}
                   width={200}
@@ -242,7 +244,7 @@ export default function TwoFactorSection({ isA }: { isA: boolean }) {
                   type="button"
                   onClick={() => void handleConfirm()}
                   disabled={busy}
-                  className="tap-44 px-4 rounded-xl bg-accent-500 text-[#09090b] text-sm font-semibold disabled:opacity-60 flex items-center gap-2"
+                  className="tap-44 px-4 rounded-xl bg-accent-500 hover:bg-accent-400 transition-colors text-[#09090b] text-sm font-semibold disabled:opacity-60 flex items-center gap-2"
                 >
                   {busy && <Loader2 className="w-4 h-4 animate-spin" />}
                   {isA ? 'Xác nhận' : 'Confirm'}
@@ -251,7 +253,7 @@ export default function TwoFactorSection({ isA }: { isA: boolean }) {
               <button
                 type="button"
                 onClick={() => setStep('idle')}
-                className="tap-44 text-xs text-zinc-400 underline underline-offset-2"
+                className="tap-44 text-xs text-zinc-400 hover:text-zinc-200 transition-colors underline underline-offset-2"
               >
                 {isA ? 'Huỷ' : 'Cancel'}
               </button>
@@ -274,7 +276,7 @@ export default function TwoFactorSection({ isA }: { isA: boolean }) {
               </p>
               <ul className="grid grid-cols-2 gap-1.5 font-mono text-xs text-amber-100 theme-light:text-amber-900">
                 {recoveryCodes.map((c) => (
-                  <li key={c} className="bg-[#00000026] rounded px-2 py-1 select-all">
+                  <li key={c} className="bg-black/15 rounded px-2 py-1 select-all">
                     {c}
                   </li>
                 ))}
@@ -283,7 +285,7 @@ export default function TwoFactorSection({ isA }: { isA: boolean }) {
                 <button
                   type="button"
                   onClick={() => void copyCodes()}
-                  className="tap-44 px-3 rounded-xl border border-amber-500/40 text-xs text-amber-100 theme-light:text-amber-900 flex items-center gap-2"
+                  className="tap-44 px-3 rounded-xl border border-amber-500/40 hover:bg-amber-500/15 transition-colors text-xs text-amber-100 theme-light:text-amber-900 flex items-center gap-2"
                 >
                   {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   {copied ? (isA ? 'Đã chép' : 'Copied') : isA ? 'Sao chép' : 'Copy'}
@@ -294,7 +296,7 @@ export default function TwoFactorSection({ isA }: { isA: boolean }) {
                     setRecoveryCodes([])
                     setStep('idle')
                   }}
-                  className="tap-44 px-3 rounded-xl bg-amber-500 text-[#09090b] text-xs font-semibold"
+                  className="tap-44 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 transition-colors text-[#09090b] text-xs font-semibold"
                 >
                   {isA ? 'Tôi đã lưu xong' : 'I saved them'}
                 </button>
@@ -308,7 +310,7 @@ export default function TwoFactorSection({ isA }: { isA: boolean }) {
               type="button"
               onClick={() => void handleStart()}
               disabled={busy}
-              className="tap-44 w-full px-4 rounded-xl bg-accent-500 text-[#09090b] text-sm font-semibold disabled:opacity-60 flex items-center justify-center gap-2"
+              className="tap-44 w-full px-4 rounded-xl bg-accent-500 hover:bg-accent-400 transition-colors text-[#09090b] text-sm font-semibold disabled:opacity-60 flex items-center justify-center gap-2"
             >
               {busy && <Loader2 className="w-4 h-4 animate-spin" />}
               {isA ? 'Bật xác thực hai bước' : 'Turn on two-factor'}
@@ -346,7 +348,7 @@ export default function TwoFactorSection({ isA }: { isA: boolean }) {
                 type="button"
                 onClick={() => void handleRegenerate()}
                 disabled={busy}
-                className="tap-44 w-full px-4 rounded-xl border border-zinc-700 text-sm text-zinc-200 disabled:opacity-60 flex items-center justify-center gap-2"
+                className="tap-44 w-full px-4 rounded-xl border border-zinc-700 hover:bg-zinc-800/60 hover:border-zinc-600 transition-colors text-sm text-zinc-200 disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {busy && <Loader2 className="w-4 h-4 animate-spin" />}
                 {isA ? 'Tạo bộ mã khôi phục mới' : 'Generate new recovery codes'}
@@ -356,7 +358,7 @@ export default function TwoFactorSection({ isA }: { isA: boolean }) {
                 <button
                   type="button"
                   onClick={() => setShowDisable(true)}
-                  className="tap-44 w-full text-xs text-zinc-400 underline underline-offset-2"
+                  className="tap-44 w-full text-xs text-zinc-400 hover:text-zinc-200 transition-colors underline underline-offset-2"
                 >
                   {isA ? 'Tắt xác thực hai bước' : 'Turn off two-factor'}
                 </button>
@@ -394,7 +396,7 @@ export default function TwoFactorSection({ isA }: { isA: boolean }) {
                     <button
                       type="button"
                       onClick={() => setShowDisable(false)}
-                      className="tap-44 px-3 rounded-xl border border-zinc-700 text-sm text-zinc-200"
+                      className="tap-44 px-3 rounded-xl border border-zinc-700 hover:bg-zinc-800/60 hover:border-zinc-600 transition-colors text-sm text-zinc-200"
                     >
                       {isA ? 'Huỷ' : 'Cancel'}
                     </button>

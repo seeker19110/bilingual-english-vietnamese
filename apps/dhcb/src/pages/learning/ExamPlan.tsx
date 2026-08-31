@@ -11,9 +11,10 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CalendarClock, Target, BookOpen, RotateCcw, Sparkles, Loader2 } from 'lucide-react'
+import { CalendarClock, Target, BookOpen, RotateCcw, Sparkles } from 'lucide-react'
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
+import { Skeleton } from '../../components/Skeleton'
 import { useAuth } from '../../context/useAuth'
 import { setExamRetention } from '../../lib/srs'
 import type { ExamPlan as ExamPlanRecord } from '@dhcb/core-contracts/examPlan'
@@ -270,8 +271,11 @@ export default function ExamPlanPage() {
         />
 
         {loading ? (
-          <div className="flex justify-center py-10">
-            <Loader2 className="w-6 h-6 animate-spin text-zinc-400" aria-label="Đang tải" />
+          /* Skeleton thay vòng xoay: giữ đúng khung nội dung sắp hiện, đỡ giật layout. */
+          <div className="space-y-5 py-4" aria-busy="true" aria-label="Đang tải kế hoạch ôn thi">
+            <Skeleton className="h-32 rounded-2xl" />
+            <Skeleton className="h-24 rounded-2xl" />
+            <Skeleton className="h-24 rounded-2xl" />
           </div>
         ) : !record || !plan ? (
           <CreateForm uid={uid} onCreated={() => void reload()} />

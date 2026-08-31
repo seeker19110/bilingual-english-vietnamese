@@ -296,7 +296,7 @@ export default function Dictionary() {
                 >
                   <Icon className="w-4 h-4 shrink-0" /> <span className="truncate">{label}</span>
                   {badge != null && badge > 0 && (
-                    <span className="absolute -top-1.5 -right-1 bg-rose-500 text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
+                    <span className="absolute -top-1.5 -right-1 bg-rose-500 text-white text-[11px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
                       {badge > 99 ? '99+' : badge}
                     </span>
                   )}

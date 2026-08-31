@@ -984,7 +984,7 @@ function LessonView({
             {/* Nút quay lại danh sách */}
             <button
               onClick={onBack}
-              className="shrink-0 text-xs text-zinc-400 hover:text-white transition flex items-center gap-1"
+              className="tap-44-y shrink-0 text-xs text-zinc-400 hover:text-white transition flex items-center gap-1"
             >
               ← {isA ? 'Danh sách' : 'Back'}
             </button>
@@ -996,7 +996,7 @@ function LessonView({
               {isIdle && (
                 <button
                   onClick={() => void startPlayAll()}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-xs font-medium transition"
+                  className="tap-44-y flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-xs font-medium transition"
                 >
                   <Play className="w-3 h-3 fill-current" />
                   {isA ? 'Phát tất cả' : 'Play all'}
@@ -1005,7 +1005,7 @@ function LessonView({
               {playing && !paused && (
                 <button
                   onClick={handlePause}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-medium transition"
+                  className="tap-44-y flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-medium transition"
                 >
                   <Pause className="w-3 h-3 fill-current" />
                   {isA ? 'Dừng' : 'Pause'}
@@ -1014,7 +1014,7 @@ function LessonView({
               {paused && (
                 <button
                   onClick={handleResume}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-xs font-medium transition"
+                  className="tap-44-y flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-xs font-medium transition"
                 >
                   <Play className="w-3 h-3 fill-current" />
                   {isA ? 'Tiếp' : 'Resume'}
@@ -1023,7 +1023,7 @@ function LessonView({
               {!isIdle && !rolePlay && (
                 <button
                   onClick={handleStop}
-                  className="w-6 h-6 flex items-center justify-center rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition"
+                  className="tap-44 w-6 h-6 flex items-center justify-center rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition"
                 >
                   <Square className="w-3 h-3 fill-current" />
                 </button>
@@ -1045,7 +1045,7 @@ function LessonView({
                 type="button"
                 onClick={() => stepSpeed(-1)}
                 aria-label={isA ? 'Tốc độ chậm hơn' : 'Slower'}
-                className="text-zinc-500 hover:text-zinc-200 transition"
+                className="tap-44 flex items-center justify-center text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/60 rounded-lg transition"
               >
                 <ChevronUp className="w-3.5 h-3.5" />
               </button>
@@ -1056,7 +1056,7 @@ function LessonView({
                 type="button"
                 onClick={() => stepSpeed(1)}
                 aria-label={isA ? 'Tốc độ nhanh hơn' : 'Faster'}
-                className="text-zinc-500 hover:text-zinc-200 transition"
+                className="tap-44 flex items-center justify-center text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/60 rounded-lg transition"
               >
                 <ChevronDown className="w-3.5 h-3.5" />
               </button>

@@ -130,7 +130,7 @@ export default function ScenarioHolodeckCard() {
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-base font-bold text-white tracking-wide">Scenario Holodeck V3</h3>
-              <span className="text-[10px] px-2 py-0.5 font-bold uppercase rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+              <span className="text-[11px] px-2 py-0.5 font-bold uppercase rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                 Multi-Agent VR
               </span>
             </div>
@@ -194,7 +194,7 @@ export default function ScenarioHolodeckCard() {
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">
+                    <span className="text-[11px] font-semibold uppercase px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">
                       {sc.difficulty}
                     </span>
                     <span className="text-[11px] text-slate-400 flex items-center gap-1">
@@ -226,7 +226,7 @@ export default function ScenarioHolodeckCard() {
                     />
                     <div>
                       <div className="text-xs font-bold text-white">{p.name}</div>
-                      <div className="text-[10px] text-slate-400">{p.speakingStyle}</div>
+                      <div className="text-[11px] text-slate-400">{p.speakingStyle}</div>
                     </div>
                   </div>
                 ))}
@@ -278,7 +278,7 @@ export default function ScenarioHolodeckCard() {
 
               return (
                 <div key={idx} className={`flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
-                  <div className="text-[10px] text-slate-400 mb-1 flex items-center gap-1.5">
+                  <div className="text-[11px] text-slate-400 mb-1 flex items-center gap-1.5">
                     {!isUser && speakerPersona && (
                       <span className="font-bold text-indigo-400">{speakerPersona.name}</span>
                     )}
@@ -318,7 +318,7 @@ export default function ScenarioHolodeckCard() {
                         </div>
                       )}
                       {turn.instantFeedback.suggestedNuance && (
-                        <div className="text-[10px] text-indigo-300 italic pt-0.5 border-t border-slate-800">
+                        <div className="text-[11px] text-indigo-300 italic pt-0.5 border-t border-slate-800">
                           💡 Gợi ý tinh chỉnh: {turn.instantFeedback.suggestedNuance}
                         </div>
                       )}
@@ -346,25 +346,25 @@ export default function ScenarioHolodeckCard() {
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-center">
                 <div className="p-2 rounded bg-slate-900/60 border border-slate-800">
-                  <div className="text-[10px] text-slate-400">Fluency</div>
+                  <div className="text-[11px] text-slate-400">Fluency</div>
                   <div className="text-xs font-bold text-indigo-300">
                     {activeSession.finalRubric.fluencyAndCoherence}
                   </div>
                 </div>
                 <div className="p-2 rounded bg-slate-900/60 border border-slate-800">
-                  <div className="text-[10px] text-slate-400">Lexical</div>
+                  <div className="text-[11px] text-slate-400">Lexical</div>
                   <div className="text-xs font-bold text-indigo-300">
                     {activeSession.finalRubric.lexicalResource}
                   </div>
                 </div>
                 <div className="p-2 rounded bg-slate-900/60 border border-slate-800">
-                  <div className="text-[10px] text-slate-400">Grammar</div>
+                  <div className="text-[11px] text-slate-400">Grammar</div>
                   <div className="text-xs font-bold text-indigo-300">
                     {activeSession.finalRubric.grammaticalRange}
                   </div>
                 </div>
                 <div className="p-2 rounded bg-slate-900/60 border border-slate-800">
-                  <div className="text-[10px] text-slate-400">Persuasion</div>
+                  <div className="text-[11px] text-slate-400">Persuasion</div>
                   <div className="text-xs font-bold text-indigo-300">
                     {activeSession.finalRubric.strategicPersuasion}
                   </div>
