@@ -1,7 +1,7 @@
 # 0218 — Bài học 8 bước thật cho chặng architecture-s2
 
 - **Ngày:** 2026-08-31
-- **PR:** #(điền sau khi tạo)
+- **PR:** #783
 - **Nguồn nội dung:** `packages/subject-programming/specializations/architecture.ts` (chặng
   `architecture-s2` "Hợp đồng & mô hình miền", 4 module) +
   `docs/research/dac-ta-huong-chuyen-sau-mon-lap-trinh-2026-08-27.md`
