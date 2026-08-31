@@ -1297,7 +1297,13 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
     B-tree; phân quyền đặc quyền tối thiểu, phân loại mức độ sự cố + leo thang; nối lại nhất
     quán cuối cùng đã dạy ở `backend-s3`; nhật ký
     `docs/changelog/0214-2026-08-31-bai-hoc-chang-s4-huong-backend.md`). **Hướng Backend nay đã
-    có bài 8 bước ĐỦ CẢ 4 CHẶNG S1→S4.** Mã unit TIẾP THEO còn trống bắt đầu từ `p6-u111`.
+    có bài 8 bước ĐỦ CẢ 4 CHẶNG S1→S4.**
+    **[2026-08-31] Chặng `web-s2` cũng ĐÃ có bài 8 bước** (6 bài, `p6-u111…u113`, phủ đủ 5/5
+    module — chọn mã trạng thái HTTP + phân trang + Idempotency-Key; toàn vẹn tham chiếu khoá
+    ngoại (góc khác `backend-s2`) + so mật khẩu đã băm + chọn session-cookie/JWT; huỷ phản hồi cũ
+    khi gõ tìm kiếm (race condition) + kiểm biến môi trường/thứ tự migration; nhật ký
+    `docs/changelog/0215-2026-08-31-bai-hoc-chang-s2-huong-web.md`). Mã unit TIẾP THEO còn trống
+    bắt đầu từ `p6-u114`.
     Bốn hướng `game`, `embedded`, `desktop` và phần lớn `systems` KHÔNG có bộ
     chạy trong trình duyệt — cần quyết định riêng về làn trước khi soạn. **Cố ý KHÔNG làm bài học 8 bước cho cả 13 hướng** — 9/13
     hướng không có bộ chạy trong trình duyệt, ép khuôn sẽ đẻ nội dung giả. Chưa nối tiến độ chặng

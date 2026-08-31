@@ -554,6 +554,23 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Hướng Backend S4 — bảo mật & vận hành: đặc quyền tối thiểu, phân loại sự cố',
         topics: 'Phân quyền deny-by-default; phân loại mức độ sự cố + quy trình leo thang',
       },
+      // p6-u111…u113: chặng S2 "Full-stack — có backend của mình" của hướng Web
+      // (web-s2, specializations/web.ts, 5 module).
+      {
+        id: 'p6-u111',
+        title: 'Hướng Web S2 — API HTTP tử tế: mã trạng thái, phân trang, idempotency',
+        topics: 'Chọn đúng mã trạng thái theo hành động/kết quả; phân trang; Idempotency-Key',
+      },
+      {
+        id: 'p6-u112',
+        title: 'Hướng Web S2 — CSDL & xác thực: toàn vẹn tham chiếu, session vs JWT',
+        topics: 'Kiểm khoá ngoại trước khi ghi; so khớp mật khẩu đã băm; chọn session hay JWT',
+      },
+      {
+        id: 'p6-u113',
+        title: 'Hướng Web S2 — tải dữ liệu & deploy: race condition, biến môi trường',
+        topics: 'Huỷ phản hồi cũ khi gõ tìm kiếm; kiểm biến môi trường & thứ tự migration',
+      },
       // p6-u66..u68: chặng S1 của hướng Dữ liệu (data-s1, specializations/data.ts, 4 module).
       // p3-u8/p3-u9 đã dạy SELECT/JOIN/GROUP BY/HAVING cơ bản — u66 đi XA HƠN (hàm cửa sổ, CTE)
       // để không dạy trùng. Đăng ký cầu nối ở `specializations/stageUnits.ts`.
