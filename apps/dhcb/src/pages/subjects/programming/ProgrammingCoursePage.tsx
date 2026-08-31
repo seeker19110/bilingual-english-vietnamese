@@ -1,4 +1,5 @@
-// ProgrammingCoursePage — trang một KHOÁ NGẮN (`/lap-trinh/khoa/:courseId`, PR 3/4 khoá Git).
+// ProgrammingCoursePage — trang một KHOÁ NGẮN (`/lap-trinh/khoa-hoc/:courseId`, PR 3/4 khoá Git;
+// đổi tiền tố từ '/khoa/' sang '/khoa-hoc/' — xem changelog đổi route).
 //
 // Khác trang bậc (ProgrammingLevelPage): khoá KHÔNG có unit riêng, chỉ có CHƯƠNG, mỗi chương
 // liệt kê bài trực tiếp qua `chapter.lessonIds` (tham chiếu — có thể là bài thuộc xương sống

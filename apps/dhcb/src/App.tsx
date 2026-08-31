@@ -469,9 +469,9 @@ export default function App() {
                         }
                       />
                       {/* Khoá ngắn (cắt ngang bậc, ví dụ khoá Git) — đặt TRƯỚC ':levelId'
-                          để 'khoa' không bị hiểu nhầm là mã bậc, cùng lý do như '/huong'. */}
+                          để 'khoa-hoc' không bị hiểu nhầm là mã bậc, cùng lý do như '/huong'. */}
                       <Route
-                        path="/lap-trinh/khoa/:courseId"
+                        path="/lap-trinh/khoa-hoc/:courseId"
                         element={
                           <RequireAuth>
                             <ProgrammingCoursePage />
