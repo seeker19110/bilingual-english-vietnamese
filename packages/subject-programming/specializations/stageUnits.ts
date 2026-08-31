@@ -71,6 +71,15 @@ export const SPEC_STAGE_UNITS: Record<string, string[]> = {
   // quyết định ADR — cả hai cùng trả lời "giữ đúng kết quả code mình không tự gõ", một ở
   // lượt này, một qua các lượt sau). Đúng tiền lệ web-s1/backend-s3 gộp module khi hợp lý.
   'architecture-s3': ['p6-u123', 'p6-u124', 'p6-u125'],
+  // Hướng DI ĐỘNG, chặng S1 — soạn 2026-08-31 (3 unit, 4 module). Đây là chặng ĐẦU TIÊN của
+  // hướng Di động có bài học thật, nên không có tiền lệ `mobile-*` nào để theo; cách gộp lấy
+  // theo tiền lệ chung của các hướng khác: p6-u131 = m1 (chọn nền tảng & vòng đời app),
+  // p6-u132 = m2 (giao diện khai báo), p6-u133 gộp m3+m4 (điều hướng & trạng thái + lưu trữ
+  // cục bộ — cả hai cùng trả lời "cái gì phải sống sót, và sống sót ở đâu": m3 lo trong một
+  // phiên, m4 lo qua các phiên). Bài dùng làn `typescript` vì `kotlin`/`swift` chưa có bài nào
+  // nên chưa cổng CI nào chứng minh bộ mô phỏng chấm đúng — nguyên lý dạy là nguyên lý chung
+  // cho cả Android lẫn iOS. Đặc tả: `docs/specs/2026-08-31-bai-hoc-chang-s1-huong-di-dong.md`.
+  'mobile-s1': ['p6-u131', 'p6-u132', 'p6-u133'],
 }
 
 /** Unit của một chặng; mảng RỖNG nghĩa là chặng chưa có bài (giao diện phải nói rõ điều đó). */

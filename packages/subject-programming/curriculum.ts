@@ -660,6 +660,25 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Hướng Dữ liệu S3 — chi phí & thực nghiệm: quét ít đi, đo cho đáng tin',
         topics: 'Cắt tỉa phân vùng, định dạng cột, vòng đời dữ liệu; cỡ mẫu và bẫy dừng sớm',
       },
+      // p6-u131…u133: chặng S1 "App đầu tiên trên máy thật" của hướng DI ĐỘNG (mobile-s1,
+      // specializations/mobile.ts, 4 module — u133 gộp m3+m4). Đây là chặng ĐẦU TIÊN của hướng
+      // Di động có bài học thật. Dải u129/u130 bỏ trống có chủ đích: các đợt soạn bài chạy song
+      // song nhau nên số unit được cấp cách quãng để không đụng nhau.
+      {
+        id: 'p6-u131',
+        title: 'Hướng Di động S1 — vòng đời app: hệ điều hành giết app lúc nào cũng được',
+        topics: 'Bốn trạng thái foreground/background/bị giết; hien→nen là cơ hội ghi cuối cùng',
+      },
+      {
+        id: 'p6-u132',
+        title: 'Hướng Di động S1 — giao diện khai báo: UI là hàm của state, danh sách phải ảo hoá',
+        topics: 'Bốn trạng thái màn hình theo thứ tự ưu tiên; cửa sổ ảo hoá và kẹp biên hai đầu',
+      },
+      {
+        id: 'p6-u133',
+        title: 'Hướng Di động S1 — điều hướng & lưu trữ: ngăn xếp màn, deep link, migration',
+        topics: 'push/pop/replace/popToRoot, deep link dựng lại cả ngăn xếp; migration từng bậc',
+      },
       // p6-u66..u68: chặng S1 của hướng Dữ liệu (data-s1, specializations/data.ts, 4 module).
       // p3-u8/p3-u9 đã dạy SELECT/JOIN/GROUP BY/HAVING cơ bản — u66 đi XA HƠN (hàm cửa sổ, CTE)
       // để không dạy trùng. Đăng ký cầu nối ở `specializations/stageUnits.ts`.
