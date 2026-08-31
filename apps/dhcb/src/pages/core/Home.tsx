@@ -232,7 +232,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             {/* KHÔNG GIAN 1: MÔN TIẾNG ANH (Chuyên biệt ngôn ngữ) */}
-            <div className="p-4 rounded-3xl bg-zinc-900/90 border border-emerald-500/30 hover:border-emerald-500/60 transition-all duration-200 shadow-md group flex flex-col justify-between space-y-3.5">
+            <div className="p-4 rounded-3xl bg-zinc-900/90 border border-emerald-500/30 hover:border-emerald-500/60 transition-colors duration-200 shadow-md group flex flex-col justify-between space-y-3.5">
               <div className="flex items-start gap-3.5">
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/20 group-hover:scale-105 transition-transform">
                   <GraduationCap className="w-6 h-6 text-zinc-950 font-black" />
@@ -283,7 +283,7 @@ export default function Home() {
             </div>
 
             {/* KHÔNG GIAN 2: KHOA HỌC & STEM (Toán, Lý, Hóa, Sinh) */}
-            <div className="p-4 rounded-3xl bg-zinc-900/90 border border-blue-500/30 hover:border-blue-500/60 transition-all duration-200 shadow-md group flex flex-col justify-between space-y-3.5">
+            <div className="p-4 rounded-3xl bg-zinc-900/90 border border-blue-500/30 hover:border-blue-500/60 transition-colors duration-200 shadow-md group flex flex-col justify-between space-y-3.5">
               <div className="flex items-start gap-3.5">
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
                   <Calculator className="w-6 h-6 text-white" />
@@ -328,7 +328,7 @@ export default function Home() {
             </div>
 
             {/* KHÔNG GIAN 3: SỰ NGHIỆP, KHỞI NGHIỆP & ĐỜI SỐNG (gộp 2 thẻ cũ làm 1) */}
-            <div className="sm:col-span-2 p-4 rounded-3xl bg-zinc-900/90 border border-purple-500/30 hover:border-purple-500/60 transition-all duration-200 shadow-md group flex flex-col justify-between space-y-3.5">
+            <div className="sm:col-span-2 p-4 rounded-3xl bg-zinc-900/90 border border-purple-500/30 hover:border-purple-500/60 transition-colors duration-200 shadow-md group flex flex-col justify-between space-y-3.5">
               <div className="flex items-start gap-3.5">
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 flex items-center justify-center shrink-0 shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform">
                   <Briefcase className="w-6 h-6 text-white" />
@@ -418,6 +418,7 @@ export default function Home() {
 
         {/* ── TIẾN ĐỘ & LỊCH SỬ HỌC ── */}
         <div className="grid grid-cols-2 gap-3 pt-1">
+          {/* GIỮ transition-all: đổi cả màu viền/nền (hover) LẪN transform (active:scale). */}
           <button
             onClick={() => nav('/tien-do')}
             aria-label="Xem bảng tiến độ"
@@ -431,6 +432,7 @@ export default function Home() {
             </span>
           </button>
 
+          {/* GIỮ transition-all: đổi cả màu viền/nền (hover) LẪN transform (active:scale). */}
           <button
             onClick={() => nav('/lich-su-hoc')}
             aria-label="Xem lịch sử học"

@@ -213,7 +213,7 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
                         closeSwitcher(false)
                         navigateTo(nav, st.to)
                       }}
-                      className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-left transition-all ${
+                      className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-left transition-colors ${
                         isActive
                           ? 'bg-zinc-800 border border-accent-500/40 text-white'
                           : 'hover:bg-zinc-800/70 text-zinc-300'
@@ -273,6 +273,7 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
         {extra}
 
         {/* Nút truy cập nhanh Bạn Đồng Hành AI toàn cục */}
+        {/* GIỮ transition-all: hover đổi màu nền/viền, active đổi transform (scale). */}
         <button
           onClick={() => nav('/ban-dong-hanh')}
           aria-label="Mở Bạn Đồng Hành AI"

@@ -352,7 +352,7 @@ export default function LifeGraph() {
             <button
               onClick={handleExportData}
               disabled={exporting}
-              className="px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs text-zinc-200 font-medium transition flex items-center gap-1.5 shadow-sm"
+              className="tap-44 px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs text-zinc-200 font-medium transition flex items-center gap-1.5 shadow-sm"
               title="Xuất toàn bộ dữ liệu 13 schemas dưới dạng file JSON (GDPR Portability)"
             >
               {exporting ? (
@@ -364,7 +364,7 @@ export default function LifeGraph() {
             </button>
             <button
               onClick={() => setShowEraseModal(true)}
-              className="px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-xs text-rose-400 theme-light:text-rose-800 font-medium transition flex items-center gap-1.5"
+              className="tap-44 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-xs text-rose-400 theme-light:text-rose-800 font-medium transition flex items-center gap-1.5"
               title="Xóa vĩnh viễn toàn bộ dữ liệu trên toàn bộ 13 schemas"
             >
               <Trash2 className="w-3.5 h-3.5" />
@@ -406,7 +406,7 @@ export default function LifeGraph() {
                   <button
                     key={t}
                     onClick={() => setNodeFilter(t)}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-medium transition shrink-0 ${
+                    className={`tap-44-y px-2.5 py-1 rounded-lg text-xs font-medium transition shrink-0 ${
                       nodeFilter === t
                         ? 'bg-zinc-800 text-accent-300 theme-light:text-accent-800 border border-accent-500/30'
                         : 'text-zinc-400 hover:text-zinc-200'
@@ -421,7 +421,7 @@ export default function LifeGraph() {
                 <button
                   onClick={handleSyncCrossDomain}
                   disabled={syncingGraph}
-                  className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-200 transition flex items-center gap-1.5"
+                  className="tap-44 px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-medium text-zinc-200 transition flex items-center gap-1.5"
                 >
                   <RefreshCw
                     className={`w-3.5 h-3.5 text-accent-400 theme-light:text-accent-800 ${syncingGraph ? 'animate-spin' : ''}`}
@@ -430,7 +430,7 @@ export default function LifeGraph() {
                 </button>
                 <button
                   onClick={() => setShowAddNodeModal(true)}
-                  className="px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-[#09090b] transition flex items-center gap-1.5 shadow-sm"
+                  className="tap-44 px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-[#09090b] transition flex items-center gap-1.5 shadow-sm"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Thêm Node
@@ -527,7 +527,7 @@ export default function LifeGraph() {
               </div>
               <button
                 onClick={() => setShowAddFactModal(true)}
-                className="px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-[#09090b] transition flex items-center gap-1.5 shadow-sm"
+                className="tap-44 px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-[#09090b] transition flex items-center gap-1.5 shadow-sm"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Khai báo Sự thật
@@ -593,7 +593,7 @@ export default function LifeGraph() {
                   <button
                     key={ns}
                     onClick={() => setMemoryNamespaceFilter(ns)}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-medium transition shrink-0 ${
+                    className={`tap-44-y px-2.5 py-1 rounded-lg text-xs font-medium transition shrink-0 ${
                       memoryNamespaceFilter === ns
                         ? 'bg-zinc-800 text-accent-300 theme-light:text-accent-800 border border-accent-500/30'
                         : 'text-zinc-400 hover:text-zinc-200'
@@ -606,7 +606,7 @@ export default function LifeGraph() {
 
               <button
                 onClick={() => setShowAddMemoryModal(true)}
-                className="px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-[#09090b] transition flex items-center gap-1.5 shadow-sm"
+                className="tap-44 px-3 py-1.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-xs font-medium text-[#09090b] transition flex items-center gap-1.5 shadow-sm"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Tạo Ký ức
@@ -715,7 +715,7 @@ export default function LifeGraph() {
                           {isActive && (
                             <button
                               onClick={() => handleToggleGrant(grant, 'pause')}
-                              className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs text-amber-300 theme-light:text-amber-800 font-medium transition"
+                              className="tap-44 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs text-amber-300 theme-light:text-amber-800 font-medium transition"
                             >
                               Tạm dừng
                             </button>
@@ -723,14 +723,14 @@ export default function LifeGraph() {
                           {isPaused && (
                             <button
                               onClick={() => handleToggleGrant(grant, 'resume')}
-                              className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-xs text-[#fff] font-medium transition"
+                              className="tap-44 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-xs text-[#fff] font-medium transition"
                             >
                               Tiếp tục
                             </button>
                           )}
                           <button
                             onClick={() => handleToggleGrant(grant, 'revoke')}
-                            className="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-rose-950/40 theme-light:bg-rose-50 text-xs text-rose-400 theme-light:text-rose-800 font-medium transition"
+                            className="tap-44 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-rose-950/40 theme-light:bg-rose-50 text-xs text-rose-400 theme-light:text-rose-800 font-medium transition"
                           >
                             Thu hồi
                           </button>

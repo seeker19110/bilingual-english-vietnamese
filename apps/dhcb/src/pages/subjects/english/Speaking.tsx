@@ -24,6 +24,7 @@ import { useToast } from '@core/ToastProvider'
 import { useCloudSync } from '../../../lib/useCloudSync'
 import { useApiThrottle } from '../../../lib/useApiThrottle'
 import { useMountedRef } from '../../../lib/useMountedRef'
+import { useVisualViewportHeight } from '../../../lib/useVisualViewportHeight'
 import { useOnboarding } from '../../../lib/onboarding'
 import { callClaude, parseJson, hasNumberFields } from '../../../lib/ai'
 import {
@@ -525,6 +526,13 @@ export default function Speaking() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [session?.messages.length, loading])
 
+  // Bàn phím ảo iOS KHÔNG làm `100dvh` co lại → thanh điều khiển ghi âm bị che.
+  const { height: viewportHeight, keyboardOpen } = useVisualViewportHeight()
+
+  useEffect(() => {
+    if (keyboardOpen) bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [keyboardOpen])
+
   useEffect(
     () => () => {
       stopSpeaking()
@@ -941,7 +949,11 @@ export default function Speaking() {
   const userTurns = session?.messages.filter((m) => m.role === 'user').length ?? 0
 
   return (
-    <div className="h-[calc(100dvh-var(--bnav-h))] bg-zinc-950 flex flex-col">
+    // Bàn phím ảo mở → dùng chiều cao vùng nhìn thấy thật thay cho `100dvh`.
+    <div
+      className={`${keyboardOpen ? '' : 'h-[calc(100dvh-var(--bnav-h))]'} bg-zinc-950 flex flex-col`}
+      style={keyboardOpen ? { height: `${viewportHeight}px` } : undefined}
+    >
       <Layout
         subtitle={
           session

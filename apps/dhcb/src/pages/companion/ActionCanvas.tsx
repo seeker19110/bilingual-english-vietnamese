@@ -206,7 +206,7 @@ export default function ActionCanvas() {
             <button
               type="button"
               onClick={() => setAiModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-blue-500 text-zinc-950 hover:opacity-90 shadow-md shadow-cyan-500/20 transition"
+              className="tap-44 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-blue-500 text-zinc-950 hover:opacity-90 shadow-md shadow-cyan-500/20 transition"
             >
               <Sparkles className="w-3.5 h-3.5" />
               AI Phân Rã Mục Tiêu
@@ -214,7 +214,7 @@ export default function ActionCanvas() {
             <button
               type="button"
               onClick={handleAddNode}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition"
+              className="tap-44 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition"
             >
               <Plus className="w-3.5 h-3.5" />
               Thêm Thẻ
@@ -222,7 +222,7 @@ export default function ActionCanvas() {
             <button
               type="button"
               onClick={handleAutoLayout}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition"
+              className="tap-44 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition"
             >
               <LayoutGrid className="w-3.5 h-3.5 text-cyan-400 theme-light:text-cyan-800" />
               Tự Động Bố Cục
@@ -263,7 +263,7 @@ export default function ActionCanvas() {
             <button
               type="button"
               onClick={handleExport}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-emerald-950/60 theme-light:bg-emerald-50 hover:bg-emerald-900/60 text-emerald-300 theme-light:text-emerald-800 border border-emerald-700/40 transition"
+              className="tap-44 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-emerald-950/60 theme-light:bg-emerald-50 hover:bg-emerald-900/60 text-emerald-300 theme-light:text-emerald-800 border border-emerald-700/40 transition"
             >
               <Download className="w-3.5 h-3.5" />
               Xuất Markdown
@@ -273,7 +273,7 @@ export default function ActionCanvas() {
               type="button"
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-500 text-black hover:bg-cyan-400 transition"
+              className="tap-44 flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-500 text-black hover:bg-cyan-400 transition"
             >
               {saving ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
