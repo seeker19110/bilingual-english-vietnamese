@@ -95,3 +95,42 @@ test('trang môn Lập trình có lối vào khoá Hermes', async ({ page }) => 
   await page.getByRole('button', { name: /Hermes Agent — trợ lý AI cho người đi làm/ }).click()
   await expect(page).toHaveURL('/lap-trinh/khoa-hoc/hermes')
 })
+
+// ── Khoá OpenClaw (PR 2/3 khoá OpenClaw — docs/specs/2026-08-31-khoa-openclaw.md) ──
+// Cùng bất biến với khoá Git/Hermes: vào thẳng khi chưa học bậc nào vẫn học được bài đầu ngay.
+
+test('chưa học bậc nào vẫn vào thẳng khoá OpenClaw học được ngay', async ({ page }) => {
+  await mockLogin(page, 'vi', 'dark-blue')
+  await gioLapTiendo(page, [])
+  await page.goto('/lap-trinh/khoa-hoc/openclaw', { waitUntil: 'domcontentloaded' })
+
+  await expect(
+    page.getByRole('heading', { name: 'OpenClaw — dựng trợ lý AI của riêng bạn' }),
+  ).toBeVisible()
+  await expect(page.getByRole('button', { name: /Học bài:/ }).first()).toBeVisible()
+})
+
+test('bấm vào bài trong khoá OpenClaw dẫn đúng bài đầu chương C1', async ({ page }) => {
+  await mockLogin(page, 'vi', 'dark-blue')
+  await gioLapTiendo(page, [])
+  await page.goto('/lap-trinh/khoa-hoc/openclaw', { waitUntil: 'domcontentloaded' })
+
+  await page
+    .getByRole('button', { name: /Học bài:/ })
+    .first()
+    .click()
+  await expect(page).toHaveURL(/\/lap-trinh\/bai-hoc\/openclaw-u1-l1(--[a-z0-9-]+)?$/)
+})
+
+test('URL cũ /lap-trinh/khoa/:id chuyển hướng sang /lap-trinh/khoa-hoc/:id, giữ mã khoá', async ({
+  page,
+}) => {
+  await mockLogin(page, 'vi', 'dark-blue')
+  await gioLapTiendo(page, [])
+  await page.goto('/lap-trinh/khoa/openclaw', { waitUntil: 'domcontentloaded' })
+
+  await expect(page).toHaveURL('/lap-trinh/khoa-hoc/openclaw')
+  await expect(
+    page.getByRole('heading', { name: 'OpenClaw — dựng trợ lý AI của riêng bạn' }),
+  ).toBeVisible()
+})

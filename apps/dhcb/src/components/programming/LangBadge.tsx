@@ -32,6 +32,9 @@ const LANGS: Record<Lang, { label: string; dot: string; simulated?: true }> = {
   // Hermes Agent (khoá ngắn Hermes): lệnh là lệnh thật của Hermes, nhưng phản hồi "AI" là
   // văn bản đóng hộp tất định của hermesSim — không phải AI thật, huy hiệu phải tự khai.
   hermes: { label: 'Hermes Agent', dot: 'bg-cyan-400', simulated: true },
+  // OpenClaw (khoá ngắn OpenClaw): lệnh là lệnh thật của OpenClaw, nhưng phản hồi "AI" là
+  // văn bản đóng hộp tất định của openclawSim — không phải AI thật, huy hiệu phải tự khai.
+  openclaw: { label: 'OpenClaw', dot: 'bg-teal-400', simulated: true },
   // Swift (chương trình M, tầng 2): cú pháp Swift THẬT, chạy trên trình thông dịch tập con của
   // DHCB. Là tập con nên phải khai "mô phỏng" — học viên cần biết swiftc thật khắt khe hơn.
   swift: { label: 'Swift', dot: 'bg-orange-500', simulated: true },
