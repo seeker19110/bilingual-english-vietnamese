@@ -1121,6 +1121,27 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **[2026-08-31] ✅ HAI KHOÁ NGẮN "TÁC TỬ AI" — HERMES + OPENCLAW, ĐÃ XONG TRỌN VẸN.** Tầng
+  khoá ngắn (`packages/subject-programming/courses/`, cắt ngang bậc P1–P6, đúng khuôn khoá Git)
+  có thêm hai khoá mới, mỗi khoá dạy qua bộ mô phỏng CLI tất định riêng (khuôn `gitSim`) —
+  KHÔNG gọi AI/mạng/Docker thật khi chấm bài, dòng tự khai `[GIA LAP]` mỗi lượt chạy.
+  1. **"Hermes Agent — trợ lý AI cho người đi làm"** (`/lap-trinh/khoa-hoc/hermes`, 22 bài / 4
+     chương) — 3 PR: đặc tả (`#751`, `docs/specs/2026-08-31-khoa-dieu-phoi-ai-van-phong.md`) →
+     hạ tầng `hermesSim.ts` + chương C1 (`#752`, `docs/changelog/0202-*.md`) → chương C2–C4
+     (`docs/changelog/0203-2026-08-31-hermes-c2-c4.md`). Dạy cài đặt/cấu hình/giao việc/điều
+     phối tác tử Hermes — góc nhìn nhân viên văn phòng + người điều phối dev.
+  2. **"OpenClaw — dựng trợ lý AI của riêng bạn"** (`/lap-trinh/khoa-hoc/openclaw`, 20 bài / 4
+     chương) — 3 PR: đặc tả (`#753`, `docs/specs/2026-08-31-khoa-openclaw.md`) → hạ tầng
+     `openclawSim.ts` + chương C1 (`#759`, `docs/changelog/0204-*.md`) → chương C2–C4 (`#761`,
+     `docs/changelog/0205-*.md`). Dạy tự cài đặt/vận hành trợ lý AI TỰ HOST — trọng tâm sư phạm
+     riêng là AN TOÀN từ bài nối kênh đầu tiên (kênh mới luôn mặc định chặn người lạ, lệnh chạm
+     máy thật luôn cần NGƯỜI duyệt).
+     **Cùng nhịp đổi route:** trang khoá ngắn dời tiền tố từ `/lap-trinh/khoa/` sang
+     `/lap-trinh/khoa-hoc/` (`#755`, `docs/changelog/0204-2026-08-31-doi-route-khoa-hoc.md`) —
+     URL cũ vẫn hoạt động qua redirect giữ nguyên mã khoá.
+     **Việc để ngỏ (cố ý, ghi trong đặc tả):** câu hỏi mở về cách xử lý nội dung khi hai công cụ
+     đổi phiên bản nhanh — chưa chốt, không chặn hai khoá đã dùng được ngay hôm nay.
+
 - **[2026-08-31] ✅ THIẾT KẾ LẠI WEB CHO DESKTOP — 4 PR, ĐÃ XONG TRỌN VẸN.** Trước đó web là
   "app mobile phóng to" ở mọi kích thước màn hình (BottomNav cố định đáy, dropdown Studio,
   `max-w-3xl` bất kể chiều ngang). Người dùng chốt phạm vi qua `AskUserQuestion` rồi yêu cầu làm
