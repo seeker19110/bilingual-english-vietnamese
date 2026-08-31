@@ -31,9 +31,7 @@ merge). Hai việc độc lập, gộp chung 1 PR vì đều nhỏ và cùng ph�
 ## Bằng chứng kiểm chứng
 
 ```
-Build ✅ | Type ✅ | Lint ✅ (0 cảnh báo)
+Build ✅ | Type ✅ | Lint ✅ (0 cảnh báo) | Test ✅ (8007/8007)
 Budget: JS 126.60/140kB (90.4%) | CSS 16.53/18kB (91.8%)
+E2E full suite (24 spec, 651 test) ✅
 ```
-
-(Điền tiếp: unit test + E2E full suite — xem mục Nghiệm thu ở
-`docs/specs/2026-08-31-dashboard-context-rail-phim-tat.md`.)
