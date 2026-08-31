@@ -12,7 +12,7 @@
 //
 // Mã hướng lạ thì nói KHÔNG BIẾT và mời quay lại danh sách — tuyệt đối không đoán bừa một hướng.
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import {
   CheckCircle2,
   Circle,
@@ -52,6 +52,8 @@ import {
   type SpecStage,
 } from '@dhcb/subject-programming/specializations/registry'
 import { unitsOfStage } from '@dhcb/subject-programming/specializations/stageUnits'
+import { buildSlugSegment, idFromSlugSegment } from '@core/slug'
+import { duongDanChangHuong, duongDanHuong } from '../../../lib/programmingRoutes'
 import { getProgrammingLevel } from '@dhcb/subject-programming/curriculum'
 
 const TIER_LABEL: Record<string, string> = {
@@ -238,9 +240,11 @@ function StageBlock({
 
 export default function ProgrammingSpecializationPage() {
   const nav = useNavigate()
-  const { specId } = useParams<{ specId: string }>()
+  // URL là `<mã hướng>--<tên hướng đã slug hoá>` — mã đứng đầu nên link cũ (chỉ mã) vẫn tra
+  // ra đúng hướng rồi được chuyển hướng về URL chuẩn.
+  const { specId: specSlugParam } = useParams<{ specId: string }>()
   const { user } = useAuth()
-  const spec = getSpecialization(specId ?? '')
+  const spec = getSpecialization(idFromSlugSegment(specSlugParam ?? ''))
   const [progress, setProgress] = useState<SpecProgressSnapshot>(EMPTY_SPEC_PROGRESS)
   const [dangLuu, setDangLuu] = useState(false)
 
@@ -281,6 +285,12 @@ export default function ProgrammingSpecializationPage() {
         </main>
       </div>
     )
+  }
+
+  // Link cũ (chỉ mã) hoặc tên hướng đã đổi → về URL chuẩn, tránh hai URL cùng nội dung.
+  const canonicalSpec = buildSlugSegment(spec.id, spec.name)
+  if (specSlugParam !== canonicalSpec) {
+    return <Navigate to={duongDanHuong(spec)} replace />
   }
 
   return (
@@ -436,7 +446,7 @@ export default function ProgrammingSpecializationPage() {
                 key={stage.id}
                 stage={stage}
                 xong={isStageCompleted(progress, stage.id)}
-                onOpen={() => nav(`/lap-trinh/huong/${spec.id}/${stage.id}`)}
+                onOpen={() => nav(duongDanChangHuong(spec, stage))}
                 dangLuu={dangLuu}
                 onToggle={
                   user ? () => void luu(() => setStageStatus(user.id, stage.id, 'completed')) : null

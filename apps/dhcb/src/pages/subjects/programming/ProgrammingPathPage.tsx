@@ -8,7 +8,7 @@
 //  · Trạng thái "đã xong" đọc từ tiến độ hướng sẵn có (đợt 1 CHỈ ĐỌC — tiến độ riêng của lộ
 //    trình là việc của đợt 2).
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import {
   Map,
   Clock,
@@ -45,17 +45,26 @@ import { stageHasQuiz } from '@dhcb/subject-programming/learningPaths/stageQuizz
 import { getSpecStage } from '@dhcb/subject-programming/specializations/registry'
 import { unitsOfStage } from '@dhcb/subject-programming/specializations/stageUnits'
 import { getPathStage } from '@dhcb/subject-programming/learningPaths/pathStages'
+import { idFromSlugSegment } from '@core/slug'
+import {
+  duongDanChanDoan,
+  duongDanChangLoTrinh,
+  duongDanChangTheoId,
+  duongDanHuongTheoChangId,
+  duongDanLoTrinh,
+} from '../../../lib/programmingRoutes'
 import PathStageQuiz from '../../../components/PathStageQuiz'
 import PathArtifactVault from '../../../components/PathArtifactVault'
 
 export default function ProgrammingPathPage() {
   const nav = useNavigate()
-  const { pathId } = useParams()
+  // URL là `<mã lộ trình>--<tiêu đề đã slug hoá>`; mã đứng đầu nên link cũ vẫn tra ra đúng.
+  const { pathId: pathSlugParam } = useParams()
   const { user } = useAuth()
   const [progress, setProgress] = useState<SpecProgressSnapshot>(EMPTY_SPEC_PROGRESS)
   const [pathProgress, setPathProgress] = useState<PathStageProgress[]>([])
 
-  const path = getLearningPath(pathId ?? '')
+  const path = getLearningPath(idFromSlugSegment(pathSlugParam ?? ''))
 
   const reloadPathProgress = () => {
     if (!user || !path) return
@@ -85,6 +94,12 @@ export default function ProgrammingPathPage() {
   const allRefs = pathStageRefs(path)
   const doneCount = allRefs.filter((r) => isStageCompleted(progress, r.stageId)).length
 
+  // Link cũ (chỉ mã) hoặc tiêu đề lộ trình đã đổi → về URL chuẩn.
+  const canonicalPath = duongDanLoTrinh(path)
+  if (`/lap-trinh/lo-trinh/${pathSlugParam ?? ''}` !== canonicalPath) {
+    return <Navigate to={canonicalPath} replace />
+  }
+
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => nav('/lap-trinh')} />
@@ -111,7 +126,7 @@ export default function ProgrammingPathPage() {
           </div>
           {user && (
             <button
-              onClick={() => nav(`/lap-trinh/lo-trinh/${path.id}/chan-doan`)}
+              onClick={() => nav(duongDanChanDoan(path))}
               className="tap-44 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-zinc-950 border border-zinc-800 hover:border-accent-500/60 text-zinc-200 font-semibold text-xs transition active:scale-[0.98]"
             >
               <Compass className="w-3.5 h-3.5 text-accent-400" aria-hidden="true" />
@@ -156,13 +171,12 @@ export default function ProgrammingPathPage() {
                     isPathStageDone(pathProgress, ref.stageId)
                   const mien = !xong && isPathStageSkipped(pathProgress, ref.stageId)
                   const coBai = unitsOfStage(ref.stageId).length > 0
-                  const [specId] = ref.stageId.split('-')
                   const duongVaoHoc = pathOwnStage
-                    ? `/lap-trinh/lo-trinh/${path.id}/chang/${ref.stageId}`
-                    : `/lap-trinh/huong/${specId}/${ref.stageId}`
+                    ? duongDanChangLoTrinh(path, pathOwnStage)
+                    : (duongDanChangTheoId(ref.stageId) ?? '/lap-trinh/huong')
                   const duongXemBanDo = pathOwnStage
-                    ? `/lap-trinh/lo-trinh/${path.id}/chang/${ref.stageId}`
-                    : `/lap-trinh/huong/${specId}`
+                    ? duongDanChangLoTrinh(path, pathOwnStage)
+                    : (duongDanHuongTheoChangId(ref.stageId) ?? '/lap-trinh/huong')
                   return (
                     <li
                       key={ref.stageId}

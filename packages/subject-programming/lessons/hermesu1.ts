@@ -90,8 +90,8 @@ export const HERMES_U1_LESSONS: ProgrammingLesson[] = [
     theory:
       'Hermes nói chuyện được với hơn 35 nhà cung cấp model (Nous, OpenRouter, Anthropic, OpenAI…). Cấu hình nằm trong file ~/.hermes/config.yaml, nhưng đổi nhanh thì dùng lệnh:\n\n    hermes model <tên>            — đặt MODEL CHÍNH (bộ não làm việc)\n    hermes model curator <tên>    — đặt CURATOR MODEL\n    /model                        — xem lại cả hai\n\nCURATOR MODEL là gì? Khi trò chuyện dài, agent phải NÉN bớt ngữ cảnh cũ để không tràn bộ nhớ. Việc nén này đơn giản, không cần model đắt — nên Hermes giao cho một model phụ rẻ hơn. Giống văn phòng thuê chuyên gia làm việc chính và một bạn part-time dọn hồ sơ: đừng trả lương chuyên gia cho việc dọn hồ sơ.\n\nQuy tắc chọn cho phòng ban:\n- Việc chính (soạn văn bản, phân tích): model mạnh vừa đủ, không phải mạnh nhất.\n- Curator: rẻ nhất còn dùng được.\n- Dữ liệu nhạy cảm: xem bài llama.cpp (chương C2) — self-host để dữ liệu không rời công ty.',
     workedExample: {
-      code: `hermes model hermes-4-405b
-hermes model curator tieu-hao-thap
+      code: `hermes model hermes-4-70b
+hermes model curator hermes-4-mini
 /model`,
       stdinLines: [],
     },
@@ -311,8 +311,8 @@ hermes`,
     theory:
       'PROFILE là một "con" Hermes độc lập: cấu hình riêng, bộ nhớ riêng, phiên riêng, khoá API riêng. Tạo bằng:\n\n    hermes profile create <tên>    — tạo và chuyển sang profile mới\n    hermes profile                 — xem danh sách, dấu * là profile đang dùng\n\nKhi nào nên tách profile? Quy tắc: tách theo RANH GIỚI DỮ LIỆU, không phải theo loại việc.\n- "thu-ky" (lịch, email nội bộ) tách khỏi "tro-ly-khach-hang" (dữ liệu khách) — vì hai vùng dữ liệu không được lẫn nhau.\n- Người điều phối dev: profile "dieu-phoi-du-an-X" riêng cho từng dự án — agent dự án này không mang nhầm ngữ cảnh dự án kia vào đặc tả.\n\nPhân biệt với PHIÊN (bài sau): phiên là các cuộc trò chuyện TRONG một profile — cùng bộ nhớ, khác mạch chuyện. Profile là tách cả bộ nhớ. Tách nhầm tầng là dùng khổ: cần tách dữ liệu mà chỉ mở phiên mới thì bộ nhớ vẫn chung.',
     workedExample: {
-      code: `hermes profile create thu-ky
-hermes profile create tro-ly-du-an
+      code: `hermes profile create ke-toan
+hermes profile create cham-soc-khach
 hermes profile`,
       stdinLines: [],
     },
@@ -467,7 +467,7 @@ hermes profile`,
       'SKILL (kỹ năng) là một quy trình làm việc được đóng gói có tên: cách soạn email chuẩn của công ty, khuôn tổng hợp biên bản họp… Agent gặp việc khớp kỹ năng là làm theo đúng quy trình đó, không cần dặn lại.\n\n    /skills          — xem kho kỹ năng đang có\n    /learn <tên>     — đóng gói CÁCH LÀM VỪA RỒI thành kỹ năng mới (học từ chính việc vừa làm cùng bạn)\n\nHermes mới dựng đã có sẵn kỹ năng dùng ngay (trong mô phỏng: tom-tat-tai-lieu, soan-email). Cộng đồng chia sẻ hàng trăm kỹ năng qua kho agentskills.io — cài về là dùng, như cài tiện ích trình duyệt.\n\nGóc điều phối: kỹ năng chính là QUY TRÌNH PHÒNG BAN dạng chạy được. Quy trình nằm trong file Word thì mỗi người làm một kiểu; đóng thành skill thì agent làm đồng nhất trăm lần như một — và người mới vào phòng dùng được ngay ngày đầu. Bài /learn chuyên sâu nằm ở chương C2; hôm nay dùng kho có sẵn và học thử một kỹ năng đầu tiên.',
     workedExample: {
       code: `/skills
-/learn bao-cao-tuan
+/learn tom-tat-email
 /skills`,
       stdinLines: [],
     },

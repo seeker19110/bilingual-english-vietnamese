@@ -202,8 +202,8 @@ duyet v1
     theory:
       'LiteLLM là PROXY — trạm trung chuyển đứng giữa mọi người dùng và mọi nhà cung cấp model. Thay vì mỗi người cầm khoá API thật, tất cả trỏ vào LiteLLM, và LiteLLM mới cầm khoá thật đi gọi Anthropic/OpenAI/Nous…\n\nVì sao một phòng nên có nó:\n1. MỘT hoá đơn — thấy ai dùng bao nhiêu, model nào tốn nhất.\n2. Đặt TRẦN chi tiêu theo người/nhóm — hết ngân sách là van tự khoá, không có bất ngờ cuối tháng.\n3. Khoá API thật chỉ nằm MỘT chỗ (trên máy chủ proxy) — nhân viên không ai cầm, không ai lỡ làm lộ.\n4. Đổi nhà cung cấp không ai phải cấu hình lại — đổi ở proxy là xong.\n\nVới Hermes, nối vào LiteLLM chỉ là trỏ model qua proxy — tên model mang tiền tố litellm/: \n\n    hermes model litellm/hermes-4\n    hermes model curator litellm/hermes-4-mini\n\nTừ đó mọi cuộc gọi của agent đi qua trạm, được đếm và được giới hạn. Dựng trạm LiteLLM thật là việc của homework.',
     workedExample: {
-      code: `hermes model litellm/hermes-4
-hermes model curator litellm/hermes-4-mini
+      code: `hermes model litellm/hermes-4-70b
+hermes model curator litellm/curator-mini
 /model`,
       stdinLines: [],
     },
@@ -376,7 +376,7 @@ duyet v1
     theory:
       'Open WebUI là giao diện web chat mã nguồn mở, tự host trong công ty. Nó là LỚP MẶT TIỀN: đằng sau trỏ vào bất kỳ backend nào nói giọng OpenAI-compatible — trạm LiteLLM của phòng (bài l3) hay llama.cpp nội bộ (bài l4) đều cắm được.\n\nGhép ba mảnh lại thành hạ tầng AI hoàn chỉnh của một phòng:\n- llama.cpp / nhà cung cấp ngoài — nơi model CHẠY;\n- LiteLLM — trạm ĐẾM và GIỚI HẠN mọi cuộc gọi;\n- Open WebUI — cửa cho NGƯỜI KHÔNG DÙNG TERMINAL; Hermes CLI/Telegram — cửa cho người dùng lệnh và cho tác tử tự hành động.\n\nPhân vai rõ: Open WebUI để HỎI-ĐÁP (tra cứu, soạn thảo, brainstorm); Hermes để GIAO VIỆC (agent tự hành động nhiều bước, có bảng việc, có nghiệm thu). Chọn nhầm cửa không hỏng gì, nhưng phí: đem việc nhiều bước vào cửa hỏi-đáp thì bạn phải tự tay làm từng bước.\n\nViệc của người điều phối trước khi mở cửa cho cả phòng: kiểm hạ tầng phía sau — model đã trỏ qua trạm đếm chưa, gateway chạy chưa — rồi mới đưa link Open WebUI cho mọi người.',
     workedExample: {
-      code: `hermes model litellm/hermes-4
+      code: `hermes model litellm/hermes-4-70b
 hermes gateway setup
 hermes gateway start
 hermes`,

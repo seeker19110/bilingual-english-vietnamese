@@ -55,10 +55,10 @@ const ROUTES = [
   '/lap-trinh/on-tap', // ôn thẻ SRS môn Lập trình (PR-L10) — màn rỗng khi chưa có thẻ
   '/lap-trinh/gioi-thieu', // mô tả khoá học & mục tiêu (PR-UX3) — trang gần như toàn chữ đọc
   '/lap-trinh/huong', // danh sách 13 hướng chuyên sâu (PR-L-SPEC)
-  '/lap-trinh/huong/web', // chi tiết một hướng — trang chữ dài, nhiều tương phản
-  '/lap-trinh/huong/architecture', // hướng kiến trúc — trang chi tiết dài nhất, nhiều danh sách chữ
-  '/lap-trinh/huong/web/web-s2', // trang CHẶNG: mục tiêu, tự kiểm, rubric, đặc tả 6 ô
-  '/lap-trinh/khoa-hoc/git', // khoá ngắn Git & GitHub (PR 3/4 khoá Git) — cắt ngang bậc
+  '/lap-trinh/huong/web--lap-trinh-web', // chi tiết một hướng — trang chữ dài, nhiều tương phản
+  '/lap-trinh/huong/architecture--kien-truc-he-thong-dac-ta-cho-ai-thi-hanh', // hướng kiến trúc — trang chi tiết dài nhất, nhiều danh sách chữ
+  '/lap-trinh/huong/web--lap-trinh-web/web-s2--full-stack-co-backend-cua-minh', // trang CHẶNG: mục tiêu, tự kiểm, rubric, đặc tả 6 ô
+  '/lap-trinh/khoa-hoc/git--git-github-thuc-hanh', // khoá ngắn Git & GitHub (PR 3/4 khoá Git) — cắt ngang bậc
 ] as const
 
 // Đếm số phần tử vi phạm NẰM TRONG phần nội dung/tiêu đề (bỏ phần vỏ giao diện).

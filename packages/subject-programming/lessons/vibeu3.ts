@@ -87,11 +87,11 @@ trienkhai`,
     theory:
       'Đây là bài TỔNG HỢP — không khái niệm mới, chỉ ghép đúng thứ tự sáu bước đã học rời rạc từ chương 1–2 thành MỘT VÒNG ĐỜI hoàn chỉnh của một tính năng, từ ý tưởng tới người dùng thật:\n\n    mota "<mô tả đủ ba vế>"\n    xemdiff <id>\n    nhan <id>\n    kiemtra\n    luu "<tên mốc>"\n    trienkhai\n\nSáu bước này là "nhịp thở" của vibe code có kỷ luật. Người mới thường bỏ bớt bước (thường là xemdiff hoặc kiemtra) khi vội — bài học ở đây: KHÔNG có bước nào là thừa, mỗi bước chặn một loại lỗi cụ thể mà các bước khác không chặn được (mô tả mơ hồ ↔ hỏi lại; code chưa đọc ↔ xemdiff; ca biên ↔ kiemtra; không có đường lui ↔ luu; chưa kiểm chứng ra người dùng thật ↔ trienkhai).\n\nTốc độ không đến từ BỎ bước — nó đến từ MÔ TẢ tốt ngay từ đầu (chương C1), khiến vòng "sua" ở giữa ngắn lại hoặc biến mất hẳn.',
     workedExample: {
-      code: `mota "them so dem so lan da chia tien trong thang, ra tong so lan cuoi thang, bao 0 lan khi khong co lan nao"
+      code: `mota "them o ghi chu cho moi lan chia tien, ra ghi chu kem so tien, bao rong khi chua ghi gi"
 xemdiff v1
 nhan v1
 kiemtra
-luu "them bo dem so lan chia tien"
+luu "them ghi chu cho lan chia tien"
 trienkhai`,
       stdinLines: [],
     },
@@ -261,10 +261,10 @@ trienkhai`,
     theory:
       'Nguyên tắc: MỖI MÔ TẢ MỘT VIỆC KIỂM ĐƯỢC. "Làm cả app quản lý chi tiêu" là một MỤC TIÊU, không phải một mô tả — nó phải được cắt thành nhiều tính năng nhỏ, mỗi cái tự đứng được, tự kiểm được, tự nhận được riêng: "thêm khoản thu/chi", rồi "thêm bảng tổng theo tháng", rồi "thêm biểu đồ", v.v.\n\nVì sao cắt nhỏ tốt hơn giao một câu to:\n1. Diff của một việc nhỏ ĐỌC ĐƯỢC trong một phút; diff của "cả app" thì không ai đọc hết, và không đọc hết nghĩa là quay về mức ngây thơ.\n2. kiemtra chỉ ra chính xác tính năng NÀO hỏng — việc to gộp chung thì một lỗi nhỏ làm mù luôn cả khối.\n3. Mỗi việc nhỏ nhận xong LƯU được một mốc — nếu việc sau sai, chỉ mất việc sau, không mất cả khối.\n\nCách cắt: nghĩ theo "người dùng làm được gì SAU MỘT LẦN NHẬN" — nếu câu trả lời gồm hai việc trở lên ("thêm và xoá và sửa"), tách thành nhiều mô tả. Chương C4 sẽ học cách viết ĐẶC TẢ cho việc lớn TRƯỚC khi cắt — bài này là bước cắt thực hành.',
     workedExample: {
-      code: `mota "them khoan thu chi: nhap so tien va loai (thu/chi), bao loi khi so tien bang 0"
+      code: `mota "them danh sach mon an: nhap ten mon va gia, bao loi khi ten mon de trong"
 xemdiff v1
 nhan v1
-mota "them bang tong ket theo thang: cong tat ca khoan thu chi trong thang, bao 0 dong khi thang khong co khoan nao"
+mota "them tong tien ca ban: cong gia moi mon da chon, bao 0 dong khi khong co mon nao duoc chon"
 xemdiff v2
 nhan v2
 kiemtra`,

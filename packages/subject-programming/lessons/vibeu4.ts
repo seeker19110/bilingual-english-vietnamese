@@ -83,8 +83,8 @@ xemdiff v1`,
     theory:
       'TIÊU CHÍ CHẤP NHẬN là danh sách các điều kiện CỤ THỂ, ĐO ĐƯỢC để biết một tính năng đã "xong": không phải "chạy được" (mơ hồ) mà "nhập số 0 người thì báo lỗi rõ ràng, không crash" (đo được — thử là biết đúng/sai ngay).\n\nThứ tự đúng: viết tiêu chí chấp nhận TRƯỚC → dùng kehoach đối chiếu xem kế hoạch của AI có phủ hết tiêu chí không → rồi mới mota giao thật. Viết tiêu chí SAU khi đã nhận code là tự lừa mình: não người có xu hướng hạ chuẩn để khớp với thứ đã có sẵn ("thôi vậy cũng được").\n\nMẹo viết tiêu chí nhanh: biến mỗi VẾ trong mô tả ba-vế (bài "Mô tả như đặc tả") thành MỘT dòng kiểm được — vào/ra thành "nhập X thì ra Y đúng", ca đặc biệt thành "gặp Z thì phải K". Đây chính là cách bài Make của khoá này được chấm — mỗi testCase LÀ một tiêu chí chấp nhận viết dưới dạng kiểm tự động.',
     workedExample: {
-      code: `kehoach "them may tinh giam gia: nhap gia goc va % giam, ra gia sau giam, bao loi khi % giam lon hon 100"
-mota "them may tinh giam gia: nhap gia goc va % giam, ra gia sau giam, bao loi khi % giam lon hon 100"`,
+      code: `kehoach "them may tinh tien boa: nhap tien mon an va % boa, ra tong phai tra, bao loi khi % boa am"
+mota "them may tinh tien boa: nhap tien mon an va % boa, ra tong phai tra, bao loi khi % boa am"`,
       stdinLines: [],
     },
     predict: {
