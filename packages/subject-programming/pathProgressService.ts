@@ -10,6 +10,7 @@
 //  · Ghi hai lần cùng một thứ KHÔNG tạo hai dòng (upsert theo khoá chính).
 import type { Pool } from 'pg'
 import { getLearningPath, pathStageRefs } from './learningPaths/registry.js'
+import { quizOfStage } from './learningPaths/stageQuizzes.js'
 
 export type PathStageStatus = 'skipped' | 'in_progress' | 'completed'
 
@@ -38,6 +39,32 @@ interface Row {
 
 function normalizeId(id: string): string {
   return id.trim().toLowerCase()
+}
+
+/** Upsert THÔ, "chỉ tốt lên" — dùng chung bởi setPathStageProgress và submitStageQuiz (sau khi
+ * mỗi hàm gọi đã tự xác thực pathId/stageId/quyền ghi 'completed'). KHÔNG export: gọi trực
+ * tiếp bỏ qua guard quiz, chỉ dùng nội bộ file này. */
+async function upsertStageStatus(
+  pool: Pool,
+  userId: string,
+  pathId: string,
+  stageId: string,
+  status: PathStageStatus,
+): Promise<void> {
+  await pool.query(
+    `insert into programming.path_progress (user_id, path_id, stage_id, status, updated_at)
+     values ($1, $2, $3, $4, now())
+     on conflict (user_id, path_id, stage_id) do update
+       set status = case
+             when array_position(array['skipped','in_progress','completed'],
+                                  programming.path_progress.status)
+                  >= array_position(array['skipped','in_progress','completed'], excluded.status)
+             then programming.path_progress.status
+             else excluded.status
+           end,
+           updated_at = now()`,
+    [userId, pathId, stageId, status],
+  )
 }
 
 /** Đọc toàn bộ tiến độ lộ trình của MỘT người dùng cho MỘT lộ trình. */
@@ -82,22 +109,70 @@ export async function setPathStageProgress(
   if (!belongs) {
     return { ok: false, error: `Chặng "${rawStageId}" không thuộc lộ trình "${rawPathId}"` }
   }
+  // Chặng đã có quiz (đợt 3): 'completed' CHỈ được ghi qua submitStageQuiz sau khi đạt ≥ 4/5 —
+  // không tin client tự gửi status='completed' để bỏ qua bài kiểm.
+  if (status === 'completed' && quizOfStage(stageId).length > 0) {
+    return {
+      ok: false,
+      error: `Chặng "${rawStageId}" cần làm bài kiểm đạt yêu cầu mới đánh dấu hoàn thành`,
+    }
+  }
 
-  await pool.query(
-    `insert into programming.path_progress (user_id, path_id, stage_id, status, updated_at)
-     values ($1, $2, $3, $4, now())
-     on conflict (user_id, path_id, stage_id) do update
-       set status = case
-             when array_position(array['skipped','in_progress','completed'],
-                                  programming.path_progress.status)
-                  >= array_position(array['skipped','in_progress','completed'], excluded.status)
-             then programming.path_progress.status
-             else excluded.status
-           end,
-           updated_at = now()`,
-    [userId, pathId, stageId, status],
-  )
+  await upsertStageStatus(pool, userId, pathId, stageId, status)
   return { ok: true }
+}
+
+export interface StageQuizAnswer {
+  questionId: string
+  choiceIndex: number
+}
+
+export interface StageQuizSubmitResult {
+  ok: true
+  correct: number
+  total: number
+  passed: boolean
+}
+
+const PASS_RATIO = 0.8 // 4/5
+
+/**
+ * Chấm quiz một chặng và, nếu đạt ≥ 80% (4/5), đánh dấu chặng đó 'completed' trên lộ trình.
+ * Chấm hoàn toàn ở SERVER bằng đúng ngân hàng câu hỏi dùng cho UI — client không tự tính điểm
+ * để giả mạo kết quả. Không đạt: KHÔNG ghi gì, học viên làm lại không giới hạn.
+ */
+export async function submitStageQuiz(
+  pool: Pool,
+  userId: string,
+  rawPathId: string,
+  rawStageId: string,
+  answers: StageQuizAnswer[],
+): Promise<StageQuizSubmitResult | PathProgressError> {
+  const pathId = normalizeId(rawPathId)
+  const stageId = normalizeId(rawStageId)
+
+  const path = getLearningPath(pathId)
+  if (!path) return { ok: false, error: `Lộ trình "${rawPathId}" không tồn tại` }
+  const belongs = pathStageRefs(path).some((r) => r.stageId === stageId)
+  if (!belongs) {
+    return { ok: false, error: `Chặng "${rawStageId}" không thuộc lộ trình "${rawPathId}"` }
+  }
+  const questions = quizOfStage(stageId)
+  if (questions.length === 0) {
+    return { ok: false, error: `Chặng "${rawStageId}" chưa có bài kiểm` }
+  }
+
+  let correct = 0
+  for (const q of questions) {
+    const a = answers.find((x) => x.questionId === q.id)
+    if (a && a.choiceIndex === q.answerIndex) correct++
+  }
+  const passed = correct / questions.length >= PASS_RATIO
+
+  if (passed) {
+    await upsertStageStatus(pool, userId, pathId, stageId, 'completed')
+  }
+  return { ok: true, correct, total: questions.length, passed }
 }
 
 /** Ghi hàng loạt (dùng cho kết quả chẩn đoán: nhiều chặng 'skipped' + một chặng 'in_progress'). */

@@ -8,10 +8,23 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import { getLearningPath, pathStageRefs } from '@dhcb/subject-programming/learningPaths/registry'
 import { unitsOfStage } from '@dhcb/subject-programming/specializations/stageUnits'
+import { stageHasQuiz } from '@dhcb/subject-programming/learningPaths/stageQuizzes'
 import ProgrammingPathPage from './ProgrammingPathPage'
 
 vi.mock('../../../components/Layout', () => ({ default: () => null }))
-vi.mock('../../../context/useAuth', () => ({ useAuth: () => ({ user: null }) }))
+const authMock = vi.hoisted(() => ({ user: null as { id: string } | null }))
+vi.mock('../../../context/useAuth', () => ({ useAuth: () => ({ user: authMock.user }) }))
+vi.mock('../../../lib/programmingSpecProgress', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../../lib/programmingSpecProgress')>()
+  return { ...actual, fetchSpecProgress: async () => actual.EMPTY_SPEC_PROGRESS }
+})
+vi.mock('../../../lib/programmingPathProgress', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../../lib/programmingPathProgress')>()
+  return { ...actual, fetchPathProgress: async () => [] }
+})
+vi.mock('../../../lib/programmingPathArtifacts', () => ({
+  fetchPathArtifacts: async () => [],
+}))
 
 function render(pathId: string) {
   return renderToStaticMarkup(
@@ -55,5 +68,30 @@ describe('ProgrammingPathPage — trang lộ trình mục tiêu', () => {
     const html = render('khong-co-lo-trinh-nay')
     expect(html).toContain('Không có lộ trình này')
     expect(html).not.toContain(NHAN_VAO_HOC)
+  })
+})
+
+describe('ProgrammingPathPage — đợt 3: quiz + hồ sơ bằng chứng (đã đăng nhập)', () => {
+  it('chặng CÓ quiz hiện khối "Bài kiểm sau chặng"; chặng CHƯA có quiz nói rõ "chưa có bài kiểm"', () => {
+    authMock.user = { id: 'u1' }
+    const html = render('principal-ai')
+    const path = getLearningPath('principal-ai')!
+    const refs = pathStageRefs(path)
+    expect(refs.some((r) => stageHasQuiz(r.stageId))).toBe(true)
+    expect(refs.some((r) => !stageHasQuiz(r.stageId))).toBe(true)
+    expect(html).toContain('Bài kiểm sau chặng')
+    expect(html).toContain('Chặng này chưa có bài kiểm')
+  })
+
+  it('hiện mục "Hồ sơ bằng chứng" khi đã đăng nhập', () => {
+    authMock.user = { id: 'u1' }
+    expect(render('principal-ai')).toContain('Hồ sơ bằng chứng')
+  })
+
+  it('chưa đăng nhập: KHÔNG hiện quiz lẫn hồ sơ bằng chứng (giữ đúng hành vi đợt 1/2)', () => {
+    authMock.user = null
+    const html = render('principal-ai')
+    expect(html).not.toContain('Bài kiểm sau chặng')
+    expect(html).not.toContain('Hồ sơ bằng chứng')
   })
 })

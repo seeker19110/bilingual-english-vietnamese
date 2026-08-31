@@ -1150,12 +1150,17 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
     `packages/subject-programming/learningPaths/` (khuôn giống `specializations/`) + manifest
     `principal-ai` (5 giai đoạn, 22 chặng lắp từ 8 hướng có sẵn) + trang
     `/lap-trinh/lo-trinh/:pathId`. Thuần dữ liệu + UI đọc, không migration, không AI.
-  - **Đợt 2/4 — chưa làm:** chẩn đoán chọn điểm vào (chấm bằng Sim, không AI) + tiến độ riêng
-    của lộ trình (`programming.path_progress`, 1 migration).
-  - **Đợt 3/4 — chưa làm:** quiz sau chặng + kho artifact cá nhân + Companion kiểm hiểu
-    (dùng chung lượt `chat`, 1 migration `path_artifacts`).
+  - **Đợt 2/4 — ✅ ĐÃ XONG (`#769`, nhật ký `docs/changelog/0209-*.md`):** chẩn đoán chọn
+    điểm vào (`suggestEntry`, hàm thuần tất định, không AI) + tiến độ riêng của lộ trình
+    (`programming.path_progress`, migration `0073`, trạng thái chỉ tốt lên).
+  - **Đợt 3/4 — ✅ ĐÃ XONG (nhật ký `docs/changelog/0210-*.md`):** quiz sau chặng (chấm ở
+    server, đạt ≥ 4/5 mới ghi `completed`; đã soạn 4/22 chặng, còn lại "chưa có bài kiểm" có
+    ghi chú) + kho artifact cá nhân (`programming.path_artifacts`, migration `0074`, không
+    chấm bằng AI) + Companion kiểm hiểu tuỳ chọn (`pathCheckPrompt.ts`, dùng chung lượt `chat`,
+    không lưu lại nội dung hội thoại).
   - **Đợt 4/4 — chưa làm:** nội dung P5 "Tầm trưởng" (vận hành AI, agent/MCP, ADR, dẫn dắt) —
-    đặc tả con riêng từng chặng trước khi soạn.
+    đặc tả con riêng từng chặng trước khi soạn. Cũng còn nợ: soạn quiz cho 18/22 chặng còn
+    lại của P1–P4 (đợt 3 chỉ làm 4 chặng đầu mỗi giai đoạn).
 
 - **[2026-08-31] ✅ THIẾT KẾ LẠI WEB CHO DESKTOP — 4 PR, ĐÃ XONG TRỌN VẸN.** Trước đó web là
   "app mobile phóng to" ở mọi kích thước màn hình (BottomNav cố định đáy, dropdown Studio,
