@@ -123,6 +123,15 @@ jobs:
       - name: Chu trình import (codemap cycles = 0)
         run: npm run codemap -- cycles | grep -q "Không có chu trình import"
 
+      # Gate NỘI DUNG HỌC (thêm 2026-08-31): rà cả kho bài học/khoá/hướng/lộ trình cùng
+      # lúc — bài mồ côi, khoá trỏ bài không tồn tại, hai bài cùng URL, bước ⑥ chép lại
+      # bước ③. Cổng Zod + cổng chạy code mẫu chỉ nhìn TỪNG BÀI cô lập nên không thấy
+      # lớp lỗi này. Đặt ở job `audit` vì nó nhẹ (~5 giây, hằng biên dịch, không I/O) và
+      # job này là job ngắn nhất — không kéo dài đường tới hạn. Xem
+      # docs/research/audit-chat-luong-bai-hoc-2026-08-31.md.
+      - name: Chất lượng nội dung bài học (audit:lessons)
+        run: npm run audit:lessons -- --ci
+
   # ── Job TỔNG HỢP: đây là required status check `quality` ───────────────────
   quality:
     name: quality
