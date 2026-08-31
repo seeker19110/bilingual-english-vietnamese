@@ -23,6 +23,17 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../context/useAuth'
 import { STUDIOS, NAV_HIDDEN_PATHS } from '../lib/studios'
+import {
+  CAREER_PATHS,
+  COMPANION_PATHS,
+  ENGLISH_PATHS,
+  LEARNING_PATHS,
+  PRACTICE_PATHS,
+  PROFILE_PATHS,
+  PROGRESS_PATHS,
+  WORKLIFE_PATHS,
+  resolveActiveNav,
+} from '../lib/navPaths'
 
 const STORAGE_KEY = 'ui_sidebar_collapsed'
 
@@ -32,13 +43,54 @@ interface Item {
   icon: LucideIcon
   /** Lớp màu riêng của studio; mục lõi (Trang chủ/Tiến độ/Hồ sơ) để trống. */
   color?: string
+  /** Các tiền tố đường dẫn làm mục này sáng. Không truyền = so khớp chính `to`. */
+  paths?: readonly string[]
+  /** Chỉ sáng khi đường dẫn TRÙNG KHÍT (dùng cho Trang chủ `/`). */
+  exact?: boolean
 }
 
-const CORE_TOP: Item[] = [{ to: '/', label: 'Trang chủ', icon: Home }]
-const CORE_BOTTOM: Item[] = [
-  { to: '/tien-do', label: 'Tiến độ', icon: TrendingUp },
-  { to: '/trang-ca-nhan', label: 'Hồ sơ', icon: User },
+/** Tra nhanh studio theo id — sidebar sắp xếp lại thứ tự nên không duyệt tuần tự được. */
+function studio(id: string): (typeof STUDIOS)[number] {
+  const st = STUDIOS.find((s) => s.id === id)
+  if (!st) throw new Error(`Không tìm thấy studio "${id}" trong lib/studios.ts`)
+  return st
+}
+
+function studioItem(id: string, paths: readonly string[], label?: string): Item {
+  const st = studio(id)
+  return { to: st.to, label: label ?? st.title, icon: st.icon, color: st.color, paths }
+}
+
+// NHÓM 1 — 4 điểm đến TƯƠNG ỨNG 4 tab đầu của BottomNav mobile (tab thứ 5 "Profile" nằm ở
+// CORE_BOTTOM). Trước đây desktop chỉ có Trang chủ + Tiến độ + Hồ sơ + danh sách studio, tức
+// NGHÈO HƠN mobile ở đúng những nơi người dùng ở lâu nhất (Phòng Học, Luyện tập, Bạn Đồng
+// Hành). Ba mục studio đó được NHẤC LÊN đây chứ không nhân bản — nhóm "Không Gian Nền Tảng"
+// bên dưới chỉ render phần studio CÒN LẠI, nên không mục nào xuất hiện hai lần.
+const HOME_ITEM: Item = { to: '/', label: 'Trang chủ', icon: Home, exact: true }
+const MAIN_NAV: Item[] = [
+  HOME_ITEM,
+  studioItem('subjects', LEARNING_PATHS, 'Phòng Học'),
+  studioItem('companion', COMPANION_PATHS, 'Bạn Đồng Hành'),
+  studioItem('practice', PRACTICE_PATHS, 'Luyện tập'),
 ]
+
+// NHÓM 2 — các studio CÒN LẠI (3 studio kia đã lên MAIN_NAV), kèm bảng path riêng để
+// active-state không chồng lấn nhau.
+const STUDIO_NAV: Item[] = [
+  studioItem('english', ENGLISH_PATHS),
+  studioItem('career', CAREER_PATHS),
+  studioItem('worklife', WORKLIFE_PATHS),
+]
+
+const CORE_BOTTOM: Item[] = [
+  { to: '/tien-do', label: 'Tiến độ', icon: TrendingUp, paths: PROGRESS_PATHS },
+  { to: '/trang-ca-nhan', label: 'Hồ sơ', icon: User, paths: PROFILE_PATHS },
+]
+
+// Thứ tự XÉT active (khác thứ tự HIỂN THỊ): cụ thể nhất trước, bao quát nhất sau — xem
+// `resolveActiveNav`. `ENGLISH_PATHS` ⊂ `LEARNING_PATHS` nên "Học Tiếng Anh" phải đứng trước
+// "Phòng Học"; `PROFILE_PATHS` chứa cả path sự nghiệp/đời sống nên "Hồ sơ" đứng cuối cùng.
+const ACTIVE_ORDER: Item[] = [HOME_ITEM, ...STUDIO_NAV, ...MAIN_NAV.slice(1), ...CORE_BOTTOM]
 
 function readCollapsed(): boolean {
   try {
@@ -79,10 +131,14 @@ export default function DesktopSidebar() {
     })
   }
 
+  // Tính MỘT LẦN cho cả sidebar: mục nào đang hoạt động. Trước đây mỗi mục tự
+  // `startsWith(item.to)` nên các trang luyện tập (/tro-truyen, /luyen-noi, /luyen-viet,
+  // /tu-dien, /bai-hoc…) không làm sáng mục nào cả — xem lib/navPaths.ts.
+  const activeTo = resolveActiveNav(location.pathname, ACTIVE_ORDER)
+
   function renderItem(item: Item) {
     const Icon = item.icon
-    const active =
-      item.to === '/' ? location.pathname === '/' : location.pathname.startsWith(item.to)
+    const active = item.to === activeTo
     return (
       <li key={item.to}>
         <Link
@@ -146,7 +202,7 @@ export default function DesktopSidebar() {
       </div>
 
       <nav className="flex-1 overflow-y-auto px-2 py-3">
-        <ul className="space-y-1">{CORE_TOP.map(renderItem)}</ul>
+        <ul className="space-y-1">{MAIN_NAV.map(renderItem)}</ul>
 
         {!collapsed && (
           <p className="px-3 pt-4 pb-1.5 text-[11px] font-bold uppercase tracking-wider text-zinc-400">
@@ -154,9 +210,7 @@ export default function DesktopSidebar() {
           </p>
         )}
         <ul className={`space-y-1 ${collapsed ? 'mt-3 pt-3 border-t border-zinc-800/80' : ''}`}>
-          {STUDIOS.map((st) =>
-            renderItem({ to: st.to, label: st.title, icon: st.icon, color: st.color }),
-          )}
+          {STUDIO_NAV.map(renderItem)}
         </ul>
 
         <ul className="space-y-1 mt-3 pt-3 border-t border-zinc-800/80">
