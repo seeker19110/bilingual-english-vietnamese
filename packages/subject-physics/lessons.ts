@@ -7,6 +7,10 @@ import { LY10_C4_LESSONS } from './lessons/ly10c4.js'
 import { LY10_C5_LESSONS } from './lessons/ly10c5.js'
 import { LY10_C6_LESSONS } from './lessons/ly10c6.js'
 import { LY10_C7_LESSONS } from './lessons/ly10c7.js'
+import { LY11_C1_LESSONS } from './lessons/ly11c1.js'
+import { LY11_C2_LESSONS } from './lessons/ly11c2.js'
+import { LY11_C3_LESSONS } from './lessons/ly11c3.js'
+import { LY11_C4_LESSONS } from './lessons/ly11c4.js'
 
 export const PHYSICS_LESSONS: PhysicsLesson[] = [
   ...LY10_C1_LESSONS,
@@ -16,6 +20,10 @@ export const PHYSICS_LESSONS: PhysicsLesson[] = [
   ...LY10_C5_LESSONS,
   ...LY10_C6_LESSONS,
   ...LY10_C7_LESSONS,
+  ...LY11_C1_LESSONS,
+  ...LY11_C2_LESSONS,
+  ...LY11_C3_LESSONS,
+  ...LY11_C4_LESSONS,
 ]
 
 const lessonMap = new Map<string, PhysicsLesson>(PHYSICS_LESSONS.map((l) => [l.id, l]))

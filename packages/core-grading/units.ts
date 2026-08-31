@@ -119,6 +119,8 @@ export const UNITS: Record<string, UnitDef> = {
   mA: { factor: 1e-3, dim: D(0, 0, 0, 1) },
   V: { factor: 1, dim: D(1, 2, -3, -1) },
   mV: { factor: 1e-3, dim: D(1, 2, -3, -1) },
+  'V/m': { factor: 1, dim: D(1, 1, -3, -1) },
+  'N/C': { factor: 1, dim: D(1, 1, -3, -1) },
   Ω: { factor: 1, dim: D(1, 2, -3, -2) },
   kΩ: { factor: 1e3, dim: D(1, 2, -3, -2) },
   ohm: { factor: 1, dim: D(1, 2, -3, -2) },

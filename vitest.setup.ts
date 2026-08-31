@@ -12,7 +12,7 @@ import { vi } from 'vitest'
 try {
   globalThis.localStorage?.clear()
 } catch {
-  delete (globalThis as any).localStorage
+  delete (globalThis as Record<string, unknown>).localStorage
 }
 
 if (typeof globalThis.localStorage === 'undefined') {
