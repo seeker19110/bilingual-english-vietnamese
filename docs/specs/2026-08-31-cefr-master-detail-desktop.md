@@ -88,7 +88,10 @@ npm run test:e2e
 
 ## Nghiệm thu
 
-- Lệnh đã chạy + kết quả thật: (điền sau khi E2E + unit test full suite chạy xong)
+- Lệnh đã chạy + kết quả thật: `npm run typecheck` ✅ · `npm run lint` ✅ (0 cảnh báo) ·
+  `npm test` ✅ (7897/7897) · `npm run build` ✅ · `npm run budget` ✅ (JS 90.3%/140kB, CSS
+  91.6%/18kB) · `npm run test:e2e` ✅ (648/648, toàn bộ 24 spec — không có test flaky nào ở
+  lượt này, kể cả 3 test `programming-lesson.spec.ts` từng flaky ở PR trước).
 - Tiêu chí ④ đạt hết.
 - Không phá bất biến ⑤ nào.
 - Không mở rộng ngoài phạm vi ①.

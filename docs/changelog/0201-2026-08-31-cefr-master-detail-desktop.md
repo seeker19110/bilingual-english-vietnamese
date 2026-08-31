@@ -31,9 +31,7 @@ học xong một mục phải bấm "Back" về danh sách rồi mới chọn đ
 ## Bằng chứng kiểm chứng
 
 ```
-Build ✅ | Type ✅ | Lint ✅ (0 cảnh báo)
+Build ✅ | Type ✅ | Lint ✅ (0 cảnh báo) | Test ✅ (7897/7897)
 Budget: JS 126.48/140kB (90.3%) | CSS 16.49/18kB (91.6%)
+E2E full suite (24 spec, 648 test) ✅
 ```
-
-(Điền tiếp: unit test + E2E full suite sau khi chạy xong — xem mục Nghiệm thu ở spec liên quan
-`docs/specs/2026-08-31-cefr-master-detail-desktop.md`.)
