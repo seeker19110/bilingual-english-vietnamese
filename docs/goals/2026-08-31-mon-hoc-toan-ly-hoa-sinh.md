@@ -1,0 +1,100 @@
+# Goal: Nội dung bài học Toán/Lý/Hoá/Sinh (GĐ3, bắt đầu bằng Hoá học)
+
+| Thuộc tính        | Giá trị                                                                          |
+| ----------------- | -------------------------------------------------------------------------------- |
+| Goal ID           | GOAL-2026-002                                                                    |
+| Owner             | seeker19110 (chuyên môn/nội dung); AI thực thi từng slice, tuân `AGENTS.md`      |
+| Trạng thái        | ACTIVE                                                                           |
+| Bắt đầu           | 2026-08-31                                                                       |
+| Target review     | chưa đặt — dự án nhiều tháng, review theo từng slice PR                          |
+| Quyền được cấp    | Research, branch, PR. Chưa có quyền merge/deploy/duyệt chuyên môn thay giáo viên |
+| Budget/guardrails | 1 slice nhỏ nhất/PR; không migration DB sớm; không AI trong luồng chấm           |
+
+## 1. Outcome và Definition of Goal Complete
+
+- Outcome: 4 môn Toán, Vật lí, Hoá học, Sinh học có bài học hoàn chỉnh, có cấu trúc dữ liệu +
+  engine chấm dùng chung (đã khôi phục `packages/core-grading`), bám đúng thứ tự chương/bài SGK
+  "Kết nối tri thức" (đối chiếu bằng ảnh scan trong `tai-lieu-sgk/`, không commit).
+- Người dùng: học sinh cấp 2-3 muốn học/ôn 4 môn này trên app, khớp đúng bài đang học trên lớp.
+- Metric baseline → target: 0 bài học hiện có (2 package `subject-*` chỉ có English +
+  Programming) → mục tiêu dài hạn: đủ bài cho khung chương trình đã đối chiếu SGK ở
+  `docs/research/kho-kien-thuc-*-gdpt2018.md`.
+- Cửa sổ đo: theo từng slice PR, không có deadline cứng.
+- Guardrails: **nội dung kiến thức trong `docs/research/kho-kien-thuc-*.md` CHƯA DUYỆT CHUYÊN
+  MÔN** — mọi bài học sinh ra từ các file này phải gắn cờ "cần giáo viên duyệt" (ghi ở
+  PROGRESS.md, không chặn code nhưng không được coi là final). AI không chấm đúng/sai — mọi bài
+  chấm được phải qua `packages/core-grading` (thuần, tất định, không gọi AI).
+- Completion approver: seeker19110 (quyết định phạm vi mỗi đợt + duyệt chuyên môn cuối).
+
+## 2. Scope và non-goals
+
+### In scope
+
+- Khôi phục `packages/core-grading` (DONE — xem Iteration 1).
+- `packages/subject-chemistry`: dữ liệu nền (bảng tuần hoàn, bảng tính tan) + bài học 10-12 theo
+  khuôn 8 bước tương tự `subject-programming/lessonTypes.ts`, thích nghi cho Hoá (câu hỏi chấm
+  bằng `AnswerSpec` của core-grading: `chemFormula`, `chemEquation`, `numeric`...).
+- Sau khi Hoá xong: Vật lí (engine đơn vị/dung sai), rồi Sinh (SRS, PA B).
+- Toán làm ở đợt riêng (đã có SGK đầy đủ 1-12, khối lượng lớn hơn nhiều).
+
+### Không làm
+
+- Không migrate DB / đổi API công khai trong các slice ban đầu.
+- Không tự ý duyệt chuyên môn thay giáo viên — chỉ đánh dấu rõ trạng thái nháp.
+- Không dùng AI để chấm đúng/sai bài có đáp án xác định (đúng nguyên tắc `core-grading`).
+- Không viết bài "Thực hành" (không có đáp số chấm được) trong đợt MVP.
+
+## 3. Milestones và slices
+
+| ID    | Outcome/AC                                                                                                                  | Dependency     | State   | Evidence                                                                                |
+| ----- | --------------------------------------------------------------------------------------------------------------------------- | -------------- | ------- | --------------------------------------------------------------------------------------- |
+| M1/S1 | Khôi phục `packages/core-grading`, 86 test pass, typecheck sạch                                                             | —              | DONE    | `git checkout 4a44a62 -- packages/core-grading`, `npx vitest run packages/core-grading` |
+| M1/S2 | `packages/subject-chemistry` khung + dữ liệu nền (bảng tuần hoàn, bảng tính tan, parser)                                    | M1/S1          | DONE    | 92 test pass toàn package                                                               |
+| M1/S3 | Hoá 10 Chương 1 (4 bài: Mở đầu, Thành phần nguyên tử, Nguyên tố hoá học, Cấu trúc lớp vỏ electron)                          | M1/S2          | DONE    | `docs/changelog/0211-*.md`                                                              |
+| M1/S4 | Hoá 10 Chương 2-7 (13 bài còn lại: Bảng tuần hoàn 4, Liên kết 4, Oxi hoá-khử 1, Năng lượng 1, Tốc độ phản ứng 1, Halogen 2) | M1/S3          | DONE    | `docs/changelog/0211-*.md`, 17/17 bài Hoá 10 xong                                       |
+| M2/S1 | Hoá 11 (25 bài)                                                                                                             | M1 xong        | BACKLOG |                                                                                         |
+| M2/S2 | Hoá 12 (30 bài)                                                                                                             | M2/S1          | BACKLOG |                                                                                         |
+| M3    | Vật lí 10-12 (85 bài)                                                                                                       | M2 xong        | BACKLOG |                                                                                         |
+| M4    | Sinh 10-12 (PA B, SRS)                                                                                                      | M3 xong        | BACKLOG |                                                                                         |
+| M5    | Toán 1-12 (đợt riêng, khối lượng lớn nhất)                                                                                  | song song được | BACKLOG |                                                                                         |
+
+## 4. Risk register
+
+| Risk                                                              | Trigger/guardrail                           | Mitigation/rollback                                          | Owner       | State    |
+| ----------------------------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------ | ----------- | -------- |
+| Nội dung kiến thức sai (kho kiến thức chưa duyệt chuyên môn)      | Bất kỳ bài nào sinh từ `kho-kien-thuc-*.md` | Đánh dấu nháp, không public mặc định tới khi giáo viên duyệt | seeker19110 | OPEN     |
+| Khối lượng bài học rất lớn (Toán ~500+ bài, Lý/Hoá/Sinh ~250 bài) | Không xong trong 1 phiên                    | Chia nhỏ theo chương, mỗi PR 1 chương                        | AI          | OPEN     |
+| `core-grading` khôi phục có thể lệch API với code hiện tại        | Build/typecheck lỗi sau khi khôi phục       | Đã chạy `tsc -b` + `vitest run` xác nhận sạch                | AI          | RESOLVED |
+
+## 5. Current truth
+
+- Commit `main` đã reconcile: `e4ace50` (2026-08-31).
+- Goal gap hiện tại: mới xong M1/S1 (khôi phục engine chấm). Chưa có bài học nào cho 4 môn.
+- Blocker/câu hỏi mở: chưa có giáo viên duyệt nội dung kiến thức — theo quyết định người dùng,
+  vẫn tạo bài học từ bản thảo, đánh dấu rõ cần duyệt sau.
+- Next best slice: M1/S2 — dựng khung `packages/subject-chemistry` + dữ liệu nền.
+- Quyền hoặc quyết định cần thêm: không có, đã được người dùng xác nhận hướng đi (Hoá trước,
+  khôi phục engine trước, tạo từ bản thảo + đánh dấu chưa duyệt).
+
+## 6. Iteration log
+
+### Iteration 1 — 2026-08-31
+
+- State: DONE (M1/S1)
+- Slice: Khôi phục `packages/core-grading` từ git history.
+- Goal gap trước/sau: trước — engine chấm không tồn tại trong repo; sau — engine chấm hoạt động,
+  86 test pass, gắn lại vào `tsconfig.packages.json`.
+- Research/spec/issue/PR: dùng lại đặc tả cũ `docs/research/dac-ta-engine-cham-dung-chung.md`.
+- Thay đổi: `git checkout 4a44a62 -- packages/core-grading`; thêm reference vào
+  `tsconfig.packages.json`.
+- Validation và test count: `npx vitest run packages/core-grading` → 86/86 pass;
+  `npx tsc -b packages/core-grading` → sạch.
+- Metric/guardrail: không đổi contract nào đang chạy production.
+- Quyết định: tiếp tục theo Hoá học trước (đã chốt trong `kho-kien-thuc-hoa-gdpt2018.md`).
+- Blocker: không.
+- Next best slice: M1/S2.
+- Quyền cần thêm: không.
+
+## 7. Final audit
+
+Chưa tới — goal đang ACTIVE, còn nhiều milestone mở.
