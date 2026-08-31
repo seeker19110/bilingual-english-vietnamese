@@ -520,6 +520,23 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Hướng Backend S2 — hàng đợi idempotent & race condition',
         topics: 'At-least-once buộc idempotent, dead letter queue; race condition tái hiện được',
       },
+      // p6-u105…u107: chặng S3 "Hệ phân tán" của hướng Backend (backend-s3,
+      // specializations/backend.ts, 4 module).
+      {
+        id: 'p6-u105',
+        title: 'Hướng Backend S3 — nền tảng: sharding & gọi mạng khác gọi hàm',
+        topics: 'Sharding modulo xáo trộn khi thêm máy; timeout là KHÔNG BIẾT, không phải lỗi',
+      },
+      {
+        id: 'p6-u106',
+        title: 'Hướng Backend S3 — giao tiếp giữa dịch vụ: outbox & saga',
+        topics: 'Outbox pattern chống mất sự kiện; saga bù trừ cho giao dịch nhiều dịch vụ',
+      },
+      {
+        id: 'p6-u107',
+        title: 'Hướng Backend S3 — chịu lỗi & quan sát: circuit breaker, error budget',
+        topics: 'Circuit breaker 3 trạng thái chặn dồn tải; SLO và ngân sách lỗi còn lại',
+      },
       // p6-u66..u68: chặng S1 của hướng Dữ liệu (data-s1, specializations/data.ts, 4 module).
       // p3-u8/p3-u9 đã dạy SELECT/JOIN/GROUP BY/HAVING cơ bản — u66 đi XA HƠN (hàm cửa sổ, CTE)
       // để không dạy trùng. Đăng ký cầu nối ở `specializations/stageUnits.ts`.
