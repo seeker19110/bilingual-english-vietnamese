@@ -19,13 +19,15 @@ import {
 } from '../../../lib/programmingProgress'
 import { getShortCourse } from '@dhcb/subject-programming/courses/registry'
 import { getLesson } from '@dhcb/subject-programming/lessons'
-import { buildSlugSegment } from '@core/slug'
+import { buildSlugSegment, idFromSlugSegment } from '@core/slug'
 
 export default function ProgrammingCoursePage() {
   const nav = useNavigate()
   const { user } = useAuth()
-  const { courseId } = useParams<{ courseId: string }>()
-  const course = courseId ? getShortCourse(courseId) : undefined
+  // URL là `<mã khoá>--<tiêu đề đã slug hoá>`; mã khoá đứng đầu nên link cũ (chỉ mã) vẫn tra
+  // ra đúng khoá, rồi được chuyển hướng về URL chuẩn ngay bên dưới.
+  const { courseId: courseSlugParam } = useParams<{ courseId: string }>()
+  const course = courseSlugParam ? getShortCourse(idFromSlugSegment(courseSlugParam)) : undefined
   const [progress, setProgress] = useState<ProgrammingLessonProgress[]>([])
 
   useEffect(() => {
@@ -35,6 +37,13 @@ export default function ProgrammingCoursePage() {
 
   // Mã khoá lạ → về trang tổng quan môn, không render trang rỗng.
   if (!course) return <Navigate to="/lap-trinh" replace />
+
+  // URL chỉ có mã (link cũ) hoặc phần mô tả không khớp tiêu đề hiện tại → chuyển hướng về URL
+  // chuẩn, để Google không coi là hai trang nội dung trùng nhau (cùng luật trang bài học).
+  const canonicalCourse = buildSlugSegment(course.id, course.title)
+  if (courseSlugParam !== canonicalCourse) {
+    return <Navigate to={`/lap-trinh/khoa-hoc/${canonicalCourse}`} replace />
+  }
 
   const allLessons = course.chapters.flatMap((ch) =>
     ch.lessonIds.map((id) => getLesson(id)).filter((l) => l !== undefined),

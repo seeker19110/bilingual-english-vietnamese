@@ -58,7 +58,7 @@ test('trang môn Lập trình có lối vào khoá ngắn', async ({ page }) => 
 
   await expect(page.getByText('Khoá ngắn', { exact: false })).toBeVisible()
   await page.getByRole('button', { name: /Git & GitHub thực hành/ }).click()
-  await expect(page).toHaveURL('/lap-trinh/khoa-hoc/git')
+  await expect(page).toHaveURL(/\/lap-trinh\/khoa-hoc\/git(--[a-z0-9-]+)?$/)
 })
 
 // ── Khoá Hermes (PR khoá Hermes — docs/specs/2026-08-31-khoa-dieu-phoi-ai-van-phong.md) ──
@@ -93,7 +93,7 @@ test('trang môn Lập trình có lối vào khoá Hermes', async ({ page }) => 
   await page.goto('/lap-trinh', { waitUntil: 'domcontentloaded' })
 
   await page.getByRole('button', { name: /Hermes Agent — trợ lý AI cho người đi làm/ }).click()
-  await expect(page).toHaveURL('/lap-trinh/khoa-hoc/hermes')
+  await expect(page).toHaveURL(/\/lap-trinh\/khoa-hoc\/hermes(--[a-z0-9-]+)?$/)
 })
 
 // ── Khoá Vibe Code (docs/specs/2026-08-31-khoa-vibe-code.md) ── Cùng bất biến với khoá
@@ -128,7 +128,7 @@ test('trang môn Lập trình có lối vào khoá Vibe Code', async ({ page }) 
   await page.goto('/lap-trinh', { waitUntil: 'domcontentloaded' })
 
   await page.getByRole('button', { name: /Vibe Code — từ số 0 đến chuyên gia/ }).click()
-  await expect(page).toHaveURL('/lap-trinh/khoa-hoc/vibe')
+  await expect(page).toHaveURL(/\/lap-trinh\/khoa-hoc\/vibe(--[a-z0-9-]+)?$/)
 })
 
 // ── Khoá OpenClaw (PR 2/3 khoá OpenClaw — docs/specs/2026-08-31-khoa-openclaw.md) ──
@@ -164,7 +164,7 @@ test('URL cũ /lap-trinh/khoa/:id chuyển hướng sang /lap-trinh/khoa-hoc/:id
   await gioLapTiendo(page, [])
   await page.goto('/lap-trinh/khoa/openclaw', { waitUntil: 'domcontentloaded' })
 
-  await expect(page).toHaveURL('/lap-trinh/khoa-hoc/openclaw')
+  await expect(page).toHaveURL(/\/lap-trinh\/khoa-hoc\/openclaw(--[a-z0-9-]+)?$/)
   await expect(
     page.getByRole('heading', { name: 'OpenClaw — dựng trợ lý AI của riêng bạn' }),
   ).toBeVisible()

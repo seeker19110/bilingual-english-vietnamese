@@ -9,6 +9,7 @@
 // hạng người. Không hướng nào được gắn nhãn "xịn hơn"; mỗi thẻ nói rõ hợp với ai và cần bậc nào.
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { duongDanHuong } from '../../../lib/programmingRoutes'
 import { Compass, Clock, Lock, ArrowRight, Boxes, Layers, CheckCircle2 } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
@@ -146,7 +147,7 @@ export default function ProgrammingSpecializations() {
                 spec={spec}
                 theo={isEnrolled(progress, spec.id)}
                 soChangXong={countCompletedStages(progress, spec.id)}
-                onOpen={() => nav(`/lap-trinh/huong/${spec.id}`)}
+                onOpen={() => nav(duongDanHuong(spec))}
               />
             ))}
           </ul>
@@ -171,7 +172,7 @@ export default function ProgrammingSpecializations() {
                 spec={spec}
                 theo={isEnrolled(progress, spec.id)}
                 soChangXong={countCompletedStages(progress, spec.id)}
-                onOpen={() => nav(`/lap-trinh/huong/${spec.id}`)}
+                onOpen={() => nav(duongDanHuong(spec))}
               />
             ))}
           </ul>

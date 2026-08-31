@@ -96,7 +96,7 @@ export const OPENCLAW_U1_LESSONS: ProgrammingLesson[] = [
       'Ngoài đời OpenClaw có mấy đường cài:\n1. SCRIPT MỘT DÒNG — `curl -fsSL https://openclaw.ai/install.sh | bash` (Windows có bản PowerShell). Nhanh nhất, cài thẳng vào máy. Hợp máy cá nhân.\n2. DOCKER — đóng OpenClaw vào một "hộp" (container) tách biệt: không đụng gì vào hệ thống, xoá hộp là sạch, chạy được trên máy chủ. Hợp máy dùng chung, máy công ty.\n3. Đường khác (Nix…) cho người đã quen công cụ đó.\n\nDù cài đường nào, bước tiếp theo LUÔN là `openclaw onboard`. Có một biến thể đáng biết: `openclaw setup --baseline` tạo config nền KHÔNG qua trình hướng dẫn — dùng khi dựng máy hàng loạt theo kịch bản; người mới cứ đi đường onboard.\n\nMột điều quan trọng: cài + onboard xong, trợ lý CHƯA chạy — gateway (trái tim của nó, bài sau) vẫn đứng yên cho tới khi bạn tự bật. Kiểm tra bằng `openclaw gateway status`. Tự host là thế: không có gì tự động chạy sau lưng bạn.',
     workedExample: {
       code: `openclaw onboard
-openclaw gateway status`,
+openclaw models`,
       stdinLines: [],
     },
     predict: {

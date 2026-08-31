@@ -9,13 +9,19 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import { getProgrammingLevel } from '@dhcb/subject-programming/curriculum'
 import { unitsOfStage } from '@dhcb/subject-programming/specializations/stageUnits'
+import { getSpecialization } from '@dhcb/subject-programming/specializations/registry'
+import { buildSlugSegment } from '@core/slug'
 import ProgrammingSpecializationPage from './ProgrammingSpecializationPage'
 
 vi.mock('../../../components/Layout', () => ({ default: () => null }))
 
+// URL thật của trang là `<mã hướng>--<tên đã slug hoá>` (đổi 2026-08-31); render bằng đúng
+// URL chuẩn, còn chuyện link chỉ-có-mã tự chuyển hướng có test riêng bên dưới.
 function render(specId: string) {
+  const spec = getSpecialization(specId)
+  const doan = spec ? buildSlugSegment(spec.id, spec.name) : specId
   return renderToStaticMarkup(
-    <MemoryRouter initialEntries={[`/lap-trinh/huong/${specId}`]}>
+    <MemoryRouter initialEntries={[`/lap-trinh/huong/${doan}`]}>
       <Routes>
         <Route path="/lap-trinh/huong/:specId" element={<ProgrammingSpecializationPage />} />
       </Routes>
@@ -47,6 +53,18 @@ describe('ProgrammingSpecializationPage — lối vào bài học', () => {
 
   it('hướng chưa soạn bài: KHÔNG hiện lối vào nào (không hứa suông)', () => {
     expect(render('game')).not.toContain(NHAN_VAO_HOC)
+  })
+
+  it('link cũ chỉ có mã: chuyển hướng về URL chuẩn thay vì render trang thứ hai', () => {
+    // Navigate chỉ đổi URL, không vẽ gì — trang rỗng nghĩa là đã chuyển hướng.
+    const html = renderToStaticMarkup(
+      <MemoryRouter initialEntries={['/lap-trinh/huong/web']}>
+        <Routes>
+          <Route path="/lap-trinh/huong/:specId" element={<ProgrammingSpecializationPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+    expect(html).not.toContain(NHAN_VAO_HOC)
   })
 
   it('mã hướng lạ: nói không biết, không đoán bừa một hướng', () => {

@@ -9,6 +9,7 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import { getLearningPath, pathStageRefs } from '@dhcb/subject-programming/learningPaths/registry'
 import { unitsOfStage } from '@dhcb/subject-programming/specializations/stageUnits'
 import { stageHasQuiz } from '@dhcb/subject-programming/learningPaths/stageQuizzes'
+import { buildSlugSegment } from '@core/slug'
 import ProgrammingPathPage from './ProgrammingPathPage'
 
 vi.mock('../../../components/Layout', () => ({ default: () => null }))
@@ -26,9 +27,12 @@ vi.mock('../../../lib/programmingPathArtifacts', () => ({
   fetchPathArtifacts: async () => [],
 }))
 
+// URL thật là `<mã lộ trình>--<tiêu đề đã slug hoá>` (đổi 2026-08-31).
 function render(pathId: string) {
+  const path = getLearningPath(pathId)
+  const doan = path ? buildSlugSegment(path.id, path.title) : pathId
   return renderToStaticMarkup(
-    <MemoryRouter initialEntries={[`/lap-trinh/lo-trinh/${pathId}`]}>
+    <MemoryRouter initialEntries={[`/lap-trinh/lo-trinh/${doan}`]}>
       <Routes>
         <Route path="/lap-trinh/lo-trinh/:pathId" element={<ProgrammingPathPage />} />
       </Routes>

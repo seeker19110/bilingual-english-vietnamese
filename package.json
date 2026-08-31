@@ -34,6 +34,7 @@
     "format:check": "prettier --check .",
     "preview": "vite preview --config apps/dhcb/vite.config.ts",
     "codemap": "tsx scripts/codemap.ts",
+    "audit:lessons": "tsx scripts/audit-lessons.ts",
     "changelog": "tsx scripts/changelog.ts",
     "eval:tutor": "npx tsx scripts/eval-tutor.ts",
     "eval:code-feedback": "npx tsx scripts/eval-code-feedback.ts",

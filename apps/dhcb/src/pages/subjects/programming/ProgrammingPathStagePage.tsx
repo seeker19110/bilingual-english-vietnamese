@@ -18,7 +18,8 @@ import {
   isLessonCompleted,
   type ProgrammingLessonProgress,
 } from '../../../lib/programmingProgress'
-import { buildSlugSegment } from '@core/slug'
+import { buildSlugSegment, idFromSlugSegment } from '@core/slug'
+import { duongDanChangLoTrinh, duongDanLoTrinh } from '../../../lib/programmingRoutes'
 import { getLearningPath } from '@dhcb/subject-programming/learningPaths/registry'
 import { getPathStage } from '@dhcb/subject-programming/learningPaths/pathStages'
 import { unitsOfStage } from '@dhcb/subject-programming/specializations/stageUnits'
@@ -29,7 +30,13 @@ import PathStageQuiz from '../../../components/PathStageQuiz'
 export default function ProgrammingPathStagePage() {
   const nav = useNavigate()
   const { user } = useAuth()
-  const { pathId, stageId } = useParams<{ pathId: string; stageId: string }>()
+  // Cả hai đoạn URL mang dạng `<mã>--<tên đã slug hoá>`; mã đứng đầu nên link cũ vẫn tra ra.
+  const { pathId: pathSlugParam, stageId: stageSlugParam } = useParams<{
+    pathId: string
+    stageId: string
+  }>()
+  const pathId = pathSlugParam ? idFromSlugSegment(pathSlugParam) : undefined
+  const stageId = stageSlugParam ? idFromSlugSegment(stageSlugParam) : undefined
   const [progress, setProgress] = useState<ProgrammingLessonProgress[]>([])
 
   useEffect(() => {
@@ -44,6 +51,12 @@ export default function ProgrammingPathStagePage() {
   if (!path || !stage)
     return <Navigate to={pathId ? `/lap-trinh/lo-trinh/${pathId}` : '/lap-trinh'} replace />
 
+  // Link cũ (chỉ mã) hoặc tên đã đổi → về URL chuẩn.
+  const canonicalStage = duongDanChangLoTrinh(path, stage)
+  if (`/lap-trinh/lo-trinh/${pathSlugParam}/chang/${stageSlugParam}` !== canonicalStage) {
+    return <Navigate to={canonicalStage} replace />
+  }
+
   const unitIds = unitsOfStage(stage.id)
   const stageLessons = unitIds.flatMap((u) => getLessonsByUnit(u))
   const lessonCount = stageLessons.length
@@ -51,7 +64,7 @@ export default function ProgrammingPathStagePage() {
 
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
-      <Layout onBack={() => nav(`/lap-trinh/lo-trinh/${path.id}`)} />
+      <Layout onBack={() => nav(duongDanLoTrinh(path))} />
 
       <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-5">
         <PageHeader title={stage.name} subtitle={stage.canDo} />

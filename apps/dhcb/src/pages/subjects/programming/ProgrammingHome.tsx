@@ -41,6 +41,7 @@ import { SHORT_COURSES } from '@dhcb/subject-programming/courses/registry'
 import { LEARNING_PATHS } from '@dhcb/subject-programming/learningPaths/registry'
 import { goToSubjects } from '../../../lib/subjectsHost'
 import { buildSlugSegment } from '@core/slug'
+import { duongDanKhoa, duongDanLoTrinh } from '../../../lib/programmingRoutes'
 
 export default function ProgrammingHome() {
   const nav = useNavigate()
@@ -232,7 +233,7 @@ export default function ProgrammingHome() {
             {SHORT_COURSES.map((course) => (
               <button
                 key={course.id}
-                onClick={() => nav(`/lap-trinh/khoa-hoc/${course.id}`)}
+                onClick={() => nav(duongDanKhoa(course))}
                 className={`${nutPhu} w-full flex-col items-start !py-3 text-left`}
               >
                 <span className="flex items-center gap-2 w-full">
@@ -263,7 +264,7 @@ export default function ProgrammingHome() {
             {LEARNING_PATHS.map((path) => (
               <button
                 key={path.id}
-                onClick={() => nav(`/lap-trinh/lo-trinh/${path.id}`)}
+                onClick={() => nav(duongDanLoTrinh(path))}
                 className={`${nutPhu} w-full flex-col items-start !py-3 text-left`}
               >
                 <span className="flex items-center gap-2 w-full">

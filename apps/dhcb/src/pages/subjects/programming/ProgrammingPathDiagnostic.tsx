@@ -20,12 +20,14 @@ import {
   type DiagnosticAnswer,
 } from '@dhcb/subject-programming/learningPaths/diagnostic'
 import { getSpecStage } from '@dhcb/subject-programming/specializations/registry'
+import { idFromSlugSegment } from '@core/slug'
+import { duongDanLoTrinh } from '../../../lib/programmingRoutes'
 
 export default function ProgrammingPathDiagnostic() {
   const nav = useNavigate()
   const { pathId } = useParams()
   const { user } = useAuth()
-  const path = getLearningPath(pathId ?? '')
+  const path = getLearningPath(idFromSlugSegment(pathId ?? ''))
 
   const [chosen, setChosen] = useState<Record<string, number>>({})
   const [submitted, setSubmitted] = useState(false)
@@ -78,7 +80,7 @@ export default function ProgrammingPathDiagnostic() {
     setSaving(false)
     if (ok) {
       setSaved(true)
-      setTimeout(() => nav(`/lap-trinh/lo-trinh/${path!.id}`), 900)
+      setTimeout(() => nav(duongDanLoTrinh(path!)), 900)
     }
   }
 
@@ -86,7 +88,7 @@ export default function ProgrammingPathDiagnostic() {
     const entryStage = entryStageId ? getSpecStage(entryStageId) : undefined
     return (
       <div className="min-h-dvh bg-zinc-950 text-zinc-100">
-        <Layout onBack={() => nav(`/lap-trinh/lo-trinh/${path.id}`)} />
+        <Layout onBack={() => nav(duongDanLoTrinh(path))} />
         <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
           <PageHeader
             title="Gợi ý điểm bắt đầu"
@@ -137,7 +139,7 @@ export default function ProgrammingPathDiagnostic() {
 
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
-      <Layout onBack={() => nav(`/lap-trinh/lo-trinh/${path.id}`)} />
+      <Layout onBack={() => nav(duongDanLoTrinh(path))} />
       <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
         <PageHeader
           title={`Chẩn đoán: ${path.title}`}

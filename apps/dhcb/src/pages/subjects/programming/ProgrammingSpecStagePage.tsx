@@ -13,7 +13,7 @@
 // Tiến độ: mỗi module và mỗi tiêu chí rubric là một mục đánh dấu được, lưu qua
 // /api/programming/progress (khoá 'web-s2-m1' / 'web-s2-r3') — cùng bảng với bài học P1–P6.
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import {
   Check,
   ClipboardCheck,
@@ -32,6 +32,8 @@ import {
   type ProgrammingLessonProgress,
 } from '../../../lib/programmingProgress'
 import { getSpecialization } from '@dhcb/subject-programming/specializations/registry'
+import { buildSlugSegment, idFromSlugSegment } from '@core/slug'
+import { duongDanChangHuong, duongDanHuong } from '../../../lib/programmingRoutes'
 import {
   getSpecStageDetail,
   type SpecBrief,
@@ -212,9 +214,20 @@ function BriefBlock({ brief }: { brief: SpecBrief }) {
 export default function ProgrammingSpecStagePage() {
   const nav = useNavigate()
   const { user } = useAuth()
-  const { specId, stageId } = useParams<{ specId: string; stageId: string }>()
-  const spec = getSpecialization(specId ?? '')
-  const stage = spec?.stages.find((s) => s.id === (stageId ?? '').trim().toLowerCase())
+  // Cả hai đoạn URL đều mang dạng `<mã>--<tên đã slug hoá>`; mã đứng đầu nên link cũ vẫn tra
+  // ra đúng chặng rồi được chuyển hướng về URL chuẩn.
+  const { specId: specSlugParam, stageId: stageSlugParam } = useParams<{
+    specId: string
+    stageId: string
+  }>()
+  const spec = getSpecialization(idFromSlugSegment(specSlugParam ?? ''))
+  const stage = spec?.stages.find(
+    (s) =>
+      s.id ===
+      idFromSlugSegment(stageSlugParam ?? '')
+        .trim()
+        .toLowerCase(),
+  )
   const detail = stage ? getSpecStageDetail(stage.id) : undefined
 
   const [progress, setProgress] = useState<ProgrammingLessonProgress[]>([])
@@ -268,6 +281,13 @@ export default function ProgrammingSpecStagePage() {
     )
   }
 
+  // Link cũ (chỉ mã) hoặc tên hướng/chặng đã đổi → về URL chuẩn.
+  const canonicalSpec = buildSlugSegment(spec.id, spec.name)
+  const canonicalStage = buildSlugSegment(stage.id, stage.name)
+  if (specSlugParam !== canonicalSpec || stageSlugParam !== canonicalStage) {
+    return <Navigate to={duongDanChangHuong(spec, stage)} replace />
+  }
+
   const totalItems = stage.modules.length + (detail?.rubric.length ?? 0)
   const doneCount =
     stage.modules.filter((m) => doneIds.has(m.id)).length +
@@ -276,7 +296,7 @@ export default function ProgrammingSpecStagePage() {
 
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
-      <Layout onBack={() => nav(`/lap-trinh/huong/${spec.id}`)} />
+      <Layout onBack={() => nav(duongDanHuong(spec))} />
 
       <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
         <PageHeader title={stage.name} subtitle={`${spec.name} · ${TIER_LABEL[stage.tier]}`} />
