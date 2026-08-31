@@ -17,17 +17,16 @@ hình để xem bằng mắt.
 
 ## Đã kiểm, kết quả
 
-| Trang/tính năng                                                                       | Kết quả                                                                     |
-| ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| Sidebar desktop (mở rộng)                                                             | ✅ Đúng thiết kế                                                            |
-| Sidebar thu gọn (icon-only, bấm nút)                                                  | ✅ Đổi `--sidebar-w`, nội dung tự co giãn                                   |
-| Chat hai cột — "Sửa lỗi & giải thích" + vote 👍👎                                     | ✅ Hiện đúng cột phải, vote hoạt động                                       |
-| CEFR master–detail (bấm vào 1 bài)                                                    | ✅ Cột trái danh sách unit + cột phải flashcard, không rời trang            |
-| Dashboard cột ngữ cảnh (Streak/Mục tiêu tuần/QuickActions)                            | ✅ Đúng cột phải cố định                                                    |
-| Phím tắt `⌘K`                                                                         | ✅ Mở đúng Studio switcher dropdown                                         |
-| Mobile 390px (Home, Dashboard)                                                        | ✅ Giữ nguyên 1 cột đúng thứ tự cũ, BottomNav đủ 5 tab                      |
-| Console lỗi                                                                           | 0 lỗi thật — chỉ 401 ở trang CEFR do chưa mock API từ điển/âm thanh khi thử |
-| thủ công (script test tự viết, không đủ mock như `e2e/`), không liên quan code đã đổi |
+| Trang/tính năng                                            | Kết quả                                                                                                                                                           |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sidebar desktop (mở rộng)                                  | ✅ Đúng thiết kế                                                                                                                                                  |
+| Sidebar thu gọn (icon-only, bấm nút)                       | ✅ Đổi `--sidebar-w`, nội dung tự co giãn                                                                                                                         |
+| Chat hai cột — "Sửa lỗi & giải thích" + vote 👍👎          | ✅ Hiện đúng cột phải, vote hoạt động                                                                                                                             |
+| CEFR master–detail (bấm vào 1 bài)                         | ✅ Cột trái danh sách unit + cột phải flashcard, không rời trang                                                                                                  |
+| Dashboard cột ngữ cảnh (Streak/Mục tiêu tuần/QuickActions) | ✅ Đúng cột phải cố định                                                                                                                                          |
+| Phím tắt `⌘K`                                              | ✅ Mở đúng Studio switcher dropdown                                                                                                                               |
+| Mobile 390px (Home, Dashboard)                             | ✅ Giữ nguyên 1 cột đúng thứ tự cũ, BottomNav đủ 5 tab                                                                                                            |
+| Console lỗi                                                | 0 lỗi thật — chỉ 401 ở trang CEFR do chưa mock API từ điển/âm thanh khi thử thủ công (script test tự viết, không đủ mock như `e2e/`), không liên quan code đã đổi |
 
 Không phát hiện vấn đề nào ngoài kết quả 4 PR đã merge. Toàn bộ loạt "thiết kế lại web cho
 desktop" (PR 1→4) coi như **đã xong và đã xác minh 2 lớp**: E2E tự động (634/648/651 test tuỳ
