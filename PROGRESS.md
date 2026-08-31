@@ -1268,20 +1268,26 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   S1 của 11 hướng còn lại. Nay `p6-u61…u93` là S1 của 11 hướng đó, **S2/S3 dời xuống `p6-u94`**
   — xem `docs/specs/2026-08-27-dai-ma-unit-s1-cac-huong-con-lai.md`. Không mã đã phát hành nào
   bị đổi nên không khoá tiến độ Postgres nào bị ảnh hưởng.
-  **Việc để ngỏ (cố ý):** ~~chưa soạn bài 8 bước cho hướng nào~~ → **bốn chặng `web-s1`,
-  `architecture-s1`, `web-s4` và `backend-s1` ĐÃ có bài 8 bước**; **48/52 chặng còn lại chưa
-  có** (tầng khác với chi tiết chặng, `stageUnits.ts`). Mục kế tiếp hợp lý: `data-s1`
-  (`p6-u64…u66`). Bốn hướng `game`, `embedded`, `desktop` và phần lớn `systems` KHÔNG có bộ
-  chạy trong trình duyệt — cần quyết định riêng về làn trước khi soạn. **Cố ý KHÔNG làm bài học 8 bước cho cả 13 hướng** — 9/13
-  hướng không có bộ chạy trong trình duyệt, ép khuôn sẽ đẻ nội dung giả. Chưa nối tiến độ chặng
-  với tiến độ bài học (đánh dấu chặng vẫn là thao tác tay); chưa gợi ý hướng theo hồ sơ người học.
-  **Bài học kỹ thuật (đợt 0183):** một test dùng "thứ chưa làm" làm ví dụ phản chứng sẽ tự hết
-  hạn đúng vào ngày thứ đó được làm — `progress.test.ts` từng lấy `web-s1-r1` làm khoá "không
-  tồn tại" và đỏ ngay khi S1 được soạn. Phản chứng phải chọn thứ **không bao giờ tồn tại**
-  (`-r99`, `-s5`), đừng chọn thứ đang trống trong kế hoạch.
-  **Bài học kỹ thuật:** trong `packages/` **không đặt tên file là `index.ts`** khi file có thể
-  vào chunk riêng — Rollup đặt tên chunk theo tên file, `index-*.js` trùng glob "Initial JS" của
-  `.size-limit.json` và làm ngân sách đội 27 kB (đã dính thật, đổi thành `registry.ts` là hết).
+  **Việc để ngỏ (cố ý):** ~~chưa soạn bài 8 bước cho hướng nào~~ → **sáu chặng `web-s1`,
+  `architecture-s1`, `web-s4`, `backend-s1`, `ai-s1` và `data-s1` ĐÃ có bài 8 bước** (`ai-s1`
+  và `data-s1` soạn 2026-08-31, nhật ký `docs/changelog/0210-2026-08-31-bai-hoc-huong-ai.md`
+  - `docs/changelog/0211-2026-08-31-bai-hoc-chang-s1-huong-du-lieu.md` — lưu ý số `0210`/`0211`
+    TRÙNG với hai đợt việc khác không liên quan (lộ trình "Kỹ Sư Trưởng AI" đợt 3/4), trùng số là
+    chuyện bình thường theo `docs/changelog/README.md`; `data-s1` dùng dải `p6-u66…u68` — dải
+    `p6-u64…u66` từng ghi ở đây ĐÃ ĐỔI vì `p6-u64`/`p6-u65` bị `ai-s1` lấy trước); **46/52 chặng
+    còn lại chưa có** (tầng khác với chi tiết chặng, `stageUnits.ts`). Mã unit TIẾP THEO còn
+    trống bắt đầu từ `p6-u69` (dải `p6-u94…u101` đã bị lộ trình "Kỹ Sư Trưởng AI" lấy riêng).
+    Bốn hướng `game`, `embedded`, `desktop` và phần lớn `systems` KHÔNG có bộ
+    chạy trong trình duyệt — cần quyết định riêng về làn trước khi soạn. **Cố ý KHÔNG làm bài học 8 bước cho cả 13 hướng** — 9/13
+    hướng không có bộ chạy trong trình duyệt, ép khuôn sẽ đẻ nội dung giả. Chưa nối tiến độ chặng
+    với tiến độ bài học (đánh dấu chặng vẫn là thao tác tay); chưa gợi ý hướng theo hồ sơ người học.
+    **Bài học kỹ thuật (đợt 0183):** một test dùng "thứ chưa làm" làm ví dụ phản chứng sẽ tự hết
+    hạn đúng vào ngày thứ đó được làm — `progress.test.ts` từng lấy `web-s1-r1` làm khoá "không
+    tồn tại" và đỏ ngay khi S1 được soạn. Phản chứng phải chọn thứ **không bao giờ tồn tại**
+    (`-r99`, `-s5`), đừng chọn thứ đang trống trong kế hoạch.
+    **Bài học kỹ thuật:** trong `packages/` **không đặt tên file là `index.ts`** khi file có thể
+    vào chunk riêng — Rollup đặt tên chunk theo tên file, `index-*.js` trùng glob "Initial JS" của
+    `.size-limit.json` và làm ngân sách đội 27 kB (đã dính thật, đổi thành `registry.ts` là hết).
 
 - **[2026-08-27] Môn Lập trình — NỘI DUNG CHẶNG S1 HƯỚNG WEB — ✅ XONG.** Nhật ký:
   `docs/changelog/0176-2026-08-27-feat-noi-dung-chang-s1-huong-web.md`. **7 bài học 8 bước** phủ
