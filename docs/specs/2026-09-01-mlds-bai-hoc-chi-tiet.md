@@ -16,13 +16,13 @@ trong code được chấm.
 
 ### 0.1. Điểm chạm file bắt buộc (ngoài nội dung bài)
 
-| File                                                | Việc                                                                                     |
-| --------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `packages/subject-programming/lessonTypes.ts`        | Nới regex `id` và `unitId`: thêm `mlds` vào nhánh `(git\|hermes\|vibe\|openclaw\|ml)`     |
-| `packages/subject-programming/courses/types.ts`      | `ShortCourseId` thêm `\| 'mlds'`                                                          |
-| `packages/subject-programming/courses/registry.ts`   | Đăng ký `MLDS_COURSE`                                                                     |
-| `packages/subject-programming/lessons/mldsu1..u3.ts` | 3 file bài học mới (4 + 4 + 3 bài)                                                        |
-| `packages/subject-programming/lessons.ts`            | Nối 3 mảng bài mới vào danh sách tổng                                                     |
+| File                                                 | Việc                                                                                  |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `packages/subject-programming/lessonTypes.ts`        | Nới regex `id` và `unitId`: thêm `mlds` vào nhánh `(git\|hermes\|vibe\|openclaw\|ml)` |
+| `packages/subject-programming/courses/types.ts`      | `ShortCourseId` thêm `\| 'mlds'`                                                      |
+| `packages/subject-programming/courses/registry.ts`   | Đăng ký `MLDS_COURSE`                                                                 |
+| `packages/subject-programming/lessons/mldsu1..u3.ts` | 3 file bài học mới (4 + 4 + 3 bài)                                                    |
+| `packages/subject-programming/lessons.ts`            | Nối 3 mảng bài mới vào danh sách tổng                                                 |
 
 > ⚠️ Vướng mắc đã ghi nhận, KHÔNG tự chế: đặc tả cụm §1.3 nói "nới thêm 5 tiền tố mới ở 4 chỗ".
 > Đặc tả này chỉ nêu 3 chỗ chắc chắn đọc được từ mã nguồn (`lessonTypes.ts` có 2 regex, `types.ts`,
@@ -37,23 +37,23 @@ phân kỳ theo thời gian.
 
 **C1 — Bản đồ ML & học có giám sát** (5 bài, đã có sẵn trong `lessons/mlu1.ts`):
 
-| id         | Tiêu đề bài đã có                                          |
-| ---------- | ---------------------------------------------------------- |
-| `ml-u1-l1` | Học máy là gì — luật viết tay vs học từ dữ liệu             |
-| `ml-u1-l2` | Hồi quy tuyến tính — tự cài mô hình đoán con số             |
-| `ml-u1-l3` | Phân loại k-NN — "hàng xóm gần nhất nói bạn là ai"          |
+| id         | Tiêu đề bài đã có                                                  |
+| ---------- | ------------------------------------------------------------------ |
+| `ml-u1-l1` | Học máy là gì — luật viết tay vs học từ dữ liệu                    |
+| `ml-u1-l2` | Hồi quy tuyến tính — tự cài mô hình đoán con số                    |
+| `ml-u1-l3` | Phân loại k-NN — "hàng xóm gần nhất nói bạn là ai"                 |
 | `ml-u1-l4` | Train/test split & accuracy — đừng chấm bài bằng đề đã phát đáp án |
-| `ml-u1-l5` | Overfitting — khi mô hình học vẹt thay vì học hiểu          |
+| `ml-u1-l5` | Overfitting — khi mô hình học vẹt thay vì học hiểu                 |
 
 **C2 — Học không giám sát** (5 bài, đã có sẵn trong `lessons/mlu2.ts`):
 
-| id         | Tiêu đề bài đã có                                                  |
-| ---------- | ------------------------------------------------------------------ |
-| `ml-u2-l1` | K-means — tự cài một vòng gán-cụm                                   |
+| id         | Tiêu đề bài đã có                                                     |
+| ---------- | --------------------------------------------------------------------- |
+| `ml-u2-l1` | K-means — tự cài một vòng gán-cụm                                     |
 | `ml-u2-l2` | Chuẩn hoá dữ liệu — vì sao thang đo khác nhau làm khoảng cách nói dối |
-| `ml-u2-l3` | Giảm chiều — giữ trục nào, bỏ trục nào                              |
-| `ml-u2-l4` | Luật kết hợp — "mua bia thì hay mua thêm gì?"                       |
-| `ml-u2-l5` | DBSCAN — gom cụm theo mật độ, không cần biết trước số cụm           |
+| `ml-u2-l3` | Giảm chiều — giữ trục nào, bỏ trục nào                                |
+| `ml-u2-l4` | Luật kết hợp — "mua bia thì hay mua thêm gì?"                         |
+| `ml-u2-l5` | DBSCAN — gom cụm theo mật độ, không cần biết trước số cụm             |
 
 Nội dung 10 bài trên **không được chép vào đây**. Chúng là ngữ cảnh đầu vào: các bài mới ở C3/C4
 được soạn để NỐI TIẾP đúng mạch đó — gọi lại (nhắc tên, không dạy lại) train/test split, accuracy,
@@ -1392,12 +1392,12 @@ của từng test-case, và output khớp `expected` theo đúng luật `include
 
 ## 5. Nghiệm thu
 
-| Tiêu chí                                                                              | Cách kiểm                                            |
-| ------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| 11 bài mới hợp `LessonSchema` (testCases 1–10, srsCards 2–4, answerIndex hợp lệ…)      | `npm test -- lessons`                                 |
-| Mọi `sampleSolution` chạy đúng MỌI `testCases` bằng python3 thật                       | `npm test -- lessonsPython`                            |
-| 10 `lessonIds` tham chiếu của C1/C2 tra ra được bằng `getLesson()`                      | `npm test -- courses`                                  |
-| Không có bài nào của `ml` bị sửa                                                        | `git diff --stat -- packages/subject-programming/lessons/mlu*.ts` phải RỖNG |
-| Không dùng numpy/sklearn/pandas trong code được chấm                                    | `grep -n "import numpy\|sklearn\|pandas" packages/subject-programming/lessons/mldsu*.ts` phải rỗng |
-| Mọi `print()` không dấu tiếng Việt                                                      | Tự đọc lại diff                                        |
-| Cổng dự án                                                                              | `npm run build` · `typecheck` · `lint` · `test`        |
+| Tiêu chí                                                                          | Cách kiểm                                                                                          |
+| --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| 11 bài mới hợp `LessonSchema` (testCases 1–10, srsCards 2–4, answerIndex hợp lệ…) | `npm test -- lessons`                                                                              |
+| Mọi `sampleSolution` chạy đúng MỌI `testCases` bằng python3 thật                  | `npm test -- lessonsPython`                                                                        |
+| 10 `lessonIds` tham chiếu của C1/C2 tra ra được bằng `getLesson()`                | `npm test -- courses`                                                                              |
+| Không có bài nào của `ml` bị sửa                                                  | `git diff --stat -- packages/subject-programming/lessons/mlu*.ts` phải RỖNG                        |
+| Không dùng numpy/sklearn/pandas trong code được chấm                              | `grep -n "import numpy\|sklearn\|pandas" packages/subject-programming/lessons/mldsu*.ts` phải rỗng |
+| Mọi `print()` không dấu tiếng Việt                                                | Tự đọc lại diff                                                                                    |
+| Cổng dự án                                                                        | `npm run build` · `typecheck` · `lint` · `test`                                                    |
