@@ -1,6 +1,6 @@
 # 0228 — Đợt tối ưu dự án: tách chunk bài học Lập trình, cache Playwright CI, dọn nợ
 
-- **PR:** #{{PR}}
+- **PR:** #806
 - **Ngày:** 2026-09-01
 - **Nhánh:** `claude/project-optimization-qpxoir`
 - **Bối cảnh:** người dùng yêu cầu "quét dự án xem còn gì cần tối ưu" rồi "fix toàn bộ". Đợt quét
