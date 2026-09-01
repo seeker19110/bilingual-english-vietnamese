@@ -1190,3 +1190,185 @@ print(f"MAPE naive: {round(mape, 2)}%")`,
   ],
 }
 ```
+
+### 3.7. `mlds-u3-l3` — Project 7: hệ gợi ý bằng lọc cộng tác + tổng kết khoá
+
+```typescript
+{
+  id: 'mlds-u3-l3',
+  unitId: 'mlds-u3',
+  language: 'python',
+  title: 'Project 7 — "người giống bạn cũng thích" và tổng kết khoá',
+  hook: 'Netflix không hiểu bộ phim bạn vừa xem nói về cái gì. Nó chỉ biết một điều: có 4.000 người chấm điểm giống hệt bạn, và 3.900 người trong số đó đã xem tiếp bộ này. Lọc cộng tác là thuật toán kiếm ra nhiều tiền bậc nhất ngành, và ruột của nó là một phép đo góc giữa hai vector.',
+  theory:
+    'Project cuối: hệ gợi ý, rồi tổng kết cả khoá.\n\nHAI TRƯỜNG PHÁI GỢI Ý:\n- Content-based: gợi ý thứ GIỐNG món bạn đã thích (cùng thể loại, cùng đạo diễn). Cần mô tả nội dung.\n- Collaborative filtering (LỌC CỘNG TÁC): gợi ý thứ mà NGƯỜI GIỐNG BẠN đã thích. Không cần biết gì về nội dung món hàng — chỉ cần ma trận đánh giá. Đây là thứ ta cài hôm nay.\n\nMA TRẬN ĐÁNH GIÁ: hàng là người, cột là phim, ô là điểm chấm; 0 nghĩa là CHƯA XEM (không phải "chấm 0 điểm" — hai thứ khác hẳn nhau và lẫn lộn chúng là lỗi thiết kế kinh điển). Ma trận thật THƯA khủng khiếp: mỗi người chỉ xem vài chục trong hàng triệu món.\n\nCOSINE SIMILARITY đo GÓC giữa hai vector đánh giá:\n  cos(u, v) = (u · v) / (|u| × |v|)\nBằng 1 khi hai người cùng hướng sở thích, bằng 0 khi không liên quan. Vì sao dùng cosine chứ không phải khoảng cách Euclid: cosine bỏ qua ĐỘ LỚN. Người hào phóng chấm toàn 4–5 và người khó tính chấm toàn 1–2 nhưng cùng thứ tự ưu tiên sẽ có cosine rất cao, dù khoảng cách Euclid giữa họ rất xa. Ta muốn bắt GU, không phải bắt thói quen chấm điểm.\n\nQUY TRÌNH user-based, đúng bốn bước:\n1. Tính cosine giữa người cần gợi ý và mọi người khác.\n2. Lấy N người giống nhất (ở đây N = 2).\n3. Với mỗi món người đó CHƯA xem: điểm = tổng (cosine × điểm người hàng xóm chấm). Nhân với cosine để hàng xóm giống hơn có tiếng nói nặng hơn.\n4. Gợi ý món điểm cao nhất.\n\nHAI VẤN ĐỀ CỦA NGÀNH phải biết tên: KHỞI ĐẦU LẠNH (cold start) — người mới chưa chấm gì thì không có hàng xóm, phải chữa bằng gợi ý phổ biến hoặc hỏi vài câu lúc đăng ký. VÒNG PHẢN HỒI (filter bubble) — hệ chỉ gợi ý thứ giống cái đã xem, dần bịt kín tầm nhìn người dùng; các hệ tốt cố ý chèn thêm yếu tố đa dạng. Đây là quyết định đạo đức, không phải quyết định kỹ thuật.\n\n=== TỔNG KẾT KHOÁ mlds ===\nBạn đã đi trọn một vòng nghề dữ liệu: LÀM SẠCH (thiếu/trùng/ngoại lai) → KHÁM PHÁ (group-by) → TẠO ĐẶC TRƯNG (one-hot, binning, chuẩn hoá, chống rò rỉ) → ĐÁNH GIÁ ĐÚNG (precision/recall/F1) → BẢY PROJECT phủ hồi quy, phân loại, gom cụm, văn bản, ảnh, chuỗi thời gian, hệ gợi ý.\n\nBa điều đáng mang theo hơn cả code:\n1. Chất lượng DỮ LIỆU quyết định nhiều hơn lựa chọn thuật toán.\n2. Mọi con số phải đi kèm cách đo và đường cơ sở để so.\n3. Mô hình học từ quá khứ nên nó kế thừa cả thiên kiến của quá khứ.\n\nLỐI ĐI TIẾP: khoá cv1 (deep learning cho thị giác — bạn đã chạm giới hạn của k-NN pixel ở project 5), khoá llmagent (LLM và tác tử — nối tiếp bag-of-words của project 4), hoặc hướng chuyên sâu `data` / `ai` để đi theo bản đồ nghề dài hạn.',
+  workedExample: {
+    code: `import math
+DANH_GIA = {"an": [5, 4, 0, 1, 0],       # 0 = CHUA XEM, khong phai cham 0 diem
+            "binh": [4, 5, 3, 1, 0],
+            "chi": [1, 0, 4, 5, 4]}
+
+def cosine(u, v):
+    tich = sum(u[i] * v[i] for i in range(len(u)))          # tich vo huong
+    do_dai_u = math.sqrt(sum(x * x for x in u))             # do dai vector u
+    do_dai_v = math.sqrt(sum(x * x for x in v))
+    if do_dai_u == 0 or do_dai_v == 0:
+        return 0.0                                          # nguoi chua cham gi
+    return tich / (do_dai_u * do_dai_v)
+
+print("an vs binh:", round(cosine(DANH_GIA["an"], DANH_GIA["binh"]), 2))
+print("an vs chi:", round(cosine(DANH_GIA["an"], DANH_GIA["chi"]), 2))`,
+    stdinLines: [],
+  },
+  predict: {
+    code: `import math\nu = [1, 2, 3]\nv = [2, 4, 6]\ntich = sum(u[i] * v[i] for i in range(3))\nprint(round(tich / (math.sqrt(14) * math.sqrt(56)), 2))`,
+    question: 'Hai người có gu y hệt nhau nhưng một người chấm điểm gấp đôi. Cosine bằng bao nhiêu?',
+    choices: ['1.0', '0.5', '2.0', '0.0'],
+    answerIndex: 0,
+    explain:
+      'v = 2u nên hai vector cùng HƯỚNG, góc bằng 0 và cosine bằng 1.0 — đúng điều ta muốn: hai người cùng gu, chỉ khác thói quen chấm điểm rộng tay. Khoảng cách Euclid giữa hai vector này lại khá lớn, nên nếu dùng Euclid ta sẽ kết luận sai rằng họ không giống nhau.',
+  },
+  parsons: {
+    prompt: 'Xếp đúng bốn bước lọc cộng tác user-based.',
+    lines: [
+      'hang_xom = [(cosine(toi, vec), nguoi) for nguoi, vec in DANH_GIA.items() if nguoi != ten]',
+      'hang_xom.sort(reverse=True)',
+      'top2 = hang_xom[:2]',
+      'diem = {PHIM[i]: sum(c * DANH_GIA[n][i] for c, n in top2) for i in range(len(PHIM)) if toi[i] == 0}',
+      'tot = max(diem, key=lambda p: diem[p])',
+    ],
+  },
+  make: {
+    prompt:
+      'Làm trọn project hệ gợi ý phim. Ma trận đánh giá 4 người × 5 phim đã nhúng sẵn, điểm 1–5 và 0 nghĩa là chưa xem.\n\nChương trình đọc MỘT dòng input(): tên người cần gợi ý ("an", "binh", "chi" hoặc "dung").\n\nQuy trình: tính cosine giữa người đó và 3 người còn lại → lấy 2 người giống nhất → với mỗi phim người đó CHƯA xem, điểm gợi ý = tổng (cosine × điểm mà hàng xóm đó chấm) → chọn phim điểm cao nhất.\n\nIn đúng 2 dòng:\nNguoi giong nhat: <tên> (cosine <x>)\nGoi y cho <tên>: <tên phim> (diem <y>)\n\nCả hai con số làm tròn 2 chữ số.',
+    starterCode: `import math\n\nPHIM = ["Bo Gia", "Mat Biec", "Rom", "De Men", "Trang Ti"]\nDANH_GIA = {\n    "an": [5, 4, 0, 1, 0],\n    "binh": [4, 5, 3, 1, 0],\n    "chi": [1, 0, 4, 5, 4],\n    "dung": [0, 1, 5, 4, 5],\n}\n# Viet ham cosine(u, v), tinh do giong voi 3 nguoi con lai\n# Lay 2 nguoi giong nhat, cham diem cac phim CHUA xem (o bang 0), chon phim cao nhat\n`,
+    testCases: [
+      {
+        stdinLines: ['an'],
+        expected: 'Nguoi giong nhat: binh (cosine 0.89)\nGoi y cho an: Rom (diem 3.47)',
+        match: 'contains',
+        hidden: false,
+        label: 'An giống Binh nhất; phim Rom được Binh chấm 3 điểm',
+      },
+      {
+        stdinLines: ['chi'],
+        expected: 'Goi y cho chi: Mat Biec (diem 2.89)',
+        match: 'contains',
+        hidden: false,
+        label: 'Chi chỉ còn đúng một phim chưa xem',
+      },
+      {
+        stdinLines: ['dung'],
+        expected: 'Goi y cho dung: Bo Gia (diem 2.6)',
+        match: 'contains',
+        hidden: true,
+        label: 'Ca ẩn: hàng xóm giống nhất chấm phim đó thấp, người kia chấm cao',
+      },
+    ],
+    hints: [
+      'Hàm cosine cần ba đại lượng: tích vô hướng, độ dài u, độ dài v. Nhớ nhánh trả về 0.0 khi một vector toàn 0, nếu không sẽ chia cho 0.',
+      'Xây danh sách hàng xóm dạng (cosine, tên) rồi hang_xom.sort(reverse=True) — Python sắp xếp theo phần tử đầu nên tự động ra giảm dần theo độ giống.',
+      'Chỉ chấm điểm những phim mà toi[i] == 0 (chưa xem). Gợi ý một phim người ta đã xem là lỗi nghiệp vụ, dù điểm có cao tới đâu.',
+      'Chọn phim tốt nhất: max(diem, key=lambda p: diem[p]) — max trên dict duyệt các KHOÁ, tham số key nói cho nó so sánh bằng giá trị nào.',
+    ],
+    sampleSolution: `import math\n\nPHIM = ["Bo Gia", "Mat Biec", "Rom", "De Men", "Trang Ti"]\nDANH_GIA = {\n    "an": [5, 4, 0, 1, 0],\n    "binh": [4, 5, 3, 1, 0],\n    "chi": [1, 0, 4, 5, 4],\n    "dung": [0, 1, 5, 4, 5],\n}\n\n\ndef cosine(u, v):\n    tich = sum(u[i] * v[i] for i in range(len(u)))\n    do_dai_u = math.sqrt(sum(x * x for x in u))\n    do_dai_v = math.sqrt(sum(x * x for x in v))\n    if do_dai_u == 0 or do_dai_v == 0:\n        return 0.0\n    return tich / (do_dai_u * do_dai_v)\n\n\nten = input("Ban la ai: ").strip()\ntoi = DANH_GIA[ten]\n\nhang_xom = []\nfor nguoi, vec in DANH_GIA.items():\n    if nguoi != ten:\n        hang_xom.append((cosine(toi, vec), nguoi))\nhang_xom.sort(reverse=True)\nprint(f"Nguoi giong nhat: {hang_xom[0][1]} (cosine {round(hang_xom[0][0], 2)})")\n\ntop2 = hang_xom[:2]\ndiem = {}\nfor i in range(len(PHIM)):\n    if toi[i] == 0:\n        s = 0.0\n        for cos_val, nguoi in top2:\n            s += cos_val * DANH_GIA[nguoi][i]\n        diem[PHIM[i]] = s\ntot = max(diem, key=lambda p: diem[p])\nprint(f"Goi y cho {ten}: {tot} (diem {round(diem[tot], 2)})")`,
+  },
+  homework:
+    'Hai việc chốt khoá. (1) Thêm một người thứ năm chưa chấm phim nào (toàn số 0) rồi chạy chương trình cho người đó — bạn sẽ tự tay chạm vào bài toán khởi đầu lạnh; viết ra cách bạn sẽ chữa. (2) Nhìn lại 7 project và chọn MỘT cái bạn muốn làm nghiêm túc với dữ liệu thật của mình, rồi viết nửa trang: câu hỏi cần trả lời, dữ liệu lấy ở đâu, feature nào (đã rà rò rỉ chưa), thước đo nào và baseline là gì. Nửa trang đó chính là bản đặc tả một dự án dữ liệu — thứ mà người đi làm viết trước khi gõ dòng code đầu tiên.',
+  srsCards: [
+    {
+      hoi: 'Lọc cộng tác khác gợi ý theo nội dung ở chỗ nào?',
+      dap: 'Content-based gợi ý thứ GIỐNG món bạn đã thích (cần mô tả nội dung). Lọc cộng tác gợi ý thứ mà NGƯỜI GIỐNG BẠN đã thích — chỉ cần ma trận đánh giá, không cần biết gì về món hàng.',
+    },
+    {
+      hoi: 'Vì sao dùng cosine chứ không phải khoảng cách Euclid để đo độ giống người dùng?',
+      dap: 'Cosine đo GÓC nên bỏ qua độ lớn: người chấm rộng tay (toàn 4–5) và người khó tính (toàn 1–2) cùng gu vẫn có cosine cao. Ta muốn bắt gu, không bắt thói quen chấm điểm.',
+    },
+    {
+      hoi: 'Trong ma trận đánh giá, số 0 nghĩa là gì?',
+      dap: 'CHƯA XEM, không phải "chấm 0 điểm". Lẫn lộn hai thứ này là lỗi thiết kế kinh điển — nó biến sự vắng mặt của dữ liệu thành một đánh giá tiêu cực.',
+    },
+    {
+      hoi: 'Hai vấn đề kinh điển của hệ gợi ý là gì?',
+      dap: 'Khởi đầu lạnh (người/món mới chưa có dữ liệu để tìm hàng xóm) và vòng phản hồi/bong bóng lọc (chỉ gợi ý thứ giống cái đã xem, bịt kín tầm nhìn người dùng).',
+    },
+  ],
+}
+```
+
+## 4. File `packages/subject-programming/courses/mlds.ts` (hoàn chỉnh, copy-paste)
+
+```typescript
+// courses/mlds.ts — Khoá ngắn "Machine Learning & Data Science", khoá 03 của cụm 6 khoá
+// "Kỹ sư AI thực chiến" (docs/specs/2026-09-01-cum-6-khoa-ai-engineer.md §03c; nội dung bài
+// soạn đầy đủ ở docs/specs/2026-09-01-mlds-bai-hoc-chi-tiet.md).
+//
+// Luật số 1 của tầng khoá ngắn được áp ở đây một cách rõ rệt nhất trong toàn dự án: hai chương
+// đầu THAM CHIẾU nguyên 10 bài của khoá `ml` bằng lessonIds, không nhúng và không sao chép.
+// Sửa nội dung bản đồ ML thì sửa ở lessons/mlu1.ts + mlu2.ts, khoá này tự hưởng theo.
+import type { ShortCourse } from './types.js'
+
+export const MLDS_COURSE: ShortCourse = {
+  id: 'mlds',
+  title: 'Machine Learning & Data Science',
+  canDo:
+    'Đi trọn pipeline dữ liệu thật: làm sạch → khám phá → tạo đặc trưng → train và đánh giá mô hình, rồi làm 7 project nhỏ phủ hồi quy, phân loại, gom cụm, NLP, ảnh, chuỗi thời gian và hệ gợi ý — tự cài lõi bằng Python thuần, đọc được code sklearn tương ứng. Biết chọn thước đo theo cái giá của lỗi và nhận ra rò rỉ dữ liệu trước khi nó phá hỏng kết quả.',
+  duration: '5–7 tuần, mỗi bài một buổi ngắn',
+  prerequisites: ['Khoá Toán Thiết Yếu cho AI (mathai)', 'Khoá Python / AI Cơ Bản (pyai)'],
+  chapters: [
+    {
+      id: 'mlds-c1',
+      title: 'Bản đồ ML & học có giám sát',
+      summary:
+        'Dùng lại nền của khoá "Học máy": học máy khác luật viết tay ra sao, tự cài hồi quy tuyến tính và k-NN, chia train/test đo accuracy đúng cách, nhận diện overfitting.',
+      lessonIds: ['ml-u1-l1', 'ml-u1-l2', 'ml-u1-l3', 'ml-u1-l4', 'ml-u1-l5'],
+    },
+    {
+      id: 'mlds-c2',
+      title: 'Học không giám sát',
+      summary:
+        'Cũng từ khoá "Học máy": k-means gom cụm khách hàng, chuẩn hoá trước khi đo khoảng cách, trực giác giảm chiều và luật kết hợp, DBSCAN cho cụm hình dạng bất kỳ.',
+      lessonIds: ['ml-u2-l1', 'ml-u2-l2', 'ml-u2-l3', 'ml-u2-l4', 'ml-u2-l5'],
+    },
+    {
+      id: 'mlds-c3',
+      title: 'Data Science thực chiến',
+      summary:
+        'Bốn kỹ năng mà dữ liệu thật đòi hỏi nhưng dữ liệu bài tập không dạy: làm sạch (thiếu, trùng, ngoại lai bằng IQR), khám phá bằng group-by, tạo đặc trưng và chống rò rỉ dữ liệu, đánh giá bằng precision/recall/F1 thay vì accuracy.',
+      lessonIds: ['mlds-u1-l1', 'mlds-u1-l2', 'mlds-u1-l3', 'mlds-u1-l4'],
+    },
+    {
+      id: 'mlds-c4',
+      title: 'Bảy project nhỏ',
+      summary:
+        'Bốn project trên dữ liệu bảng và văn bản (giá nhà, duyệt khoản vay, phân cụm khách hàng, lọc thư rác Naive Bayes) rồi ba project trên dữ liệu có cấu trúc riêng (ảnh 5×5, chuỗi thời gian, hệ gợi ý) — mỗi bài một project trọn gói, dữ liệu nhúng sẵn.',
+      lessonIds: [
+        'mlds-u2-l1',
+        'mlds-u2-l2',
+        'mlds-u2-l3',
+        'mlds-u2-l4',
+        'mlds-u3-l1',
+        'mlds-u3-l2',
+        'mlds-u3-l3',
+      ],
+    },
+  ],
+}
+```
+
+> Ghi chú thi hành: chương C4 gộp cả hai unit `mlds-u2` và `mlds-u3` vào MỘT chương (7 bài) vì
+> `CourseChapter.lessonIds` cho phép trộn id thuộc nhiều unit. Việc chia thành hai unit ở tầng
+> BÀI là để tách file nguồn và nhóm theo dạng dữ liệu (§3.0), không bắt buộc phải phản ánh thành
+> hai chương ở tầng khoá.
+
+## 5. Nghiệm thu
+
+| Tiêu chí                                                                              | Cách kiểm                                            |
+| ------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| 11 bài mới hợp `LessonSchema` (testCases 1–10, srsCards 2–4, answerIndex hợp lệ…)      | `npm test -- lessons`                                 |
+| Mọi `sampleSolution` chạy đúng MỌI `testCases` bằng python3 thật                       | `npm test -- lessonsPython`                            |
+| 10 `lessonIds` tham chiếu của C1/C2 tra ra được bằng `getLesson()`                      | `npm test -- courses`                                  |
+| Không có bài nào của `ml` bị sửa                                                        | `git diff --stat -- packages/subject-programming/lessons/mlu*.ts` phải RỖNG |
+| Không dùng numpy/sklearn/pandas trong code được chấm                                    | `grep -n "import numpy\|sklearn\|pandas" packages/subject-programming/lessons/mldsu*.ts` phải rỗng |
+| Mọi `print()` không dấu tiếng Việt                                                      | Tự đọc lại diff                                        |
+| Cổng dự án                                                                              | `npm run build` · `typecheck` · `lint` · `test`        |
