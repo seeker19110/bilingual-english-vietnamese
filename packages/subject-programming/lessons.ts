@@ -154,6 +154,13 @@ import { MLDS_U3_LESSONS } from './lessons/mldsu3.js'
 import { CV1_U1_LESSONS } from './lessons/cv1u1.js'
 import { CV1_U2_LESSONS } from './lessons/cv1u2.js'
 import { CV1_U3_LESSONS } from './lessons/cv1u3.js'
+import { CV2_U1_LESSONS } from './lessons/cv2u1.js'
+import { CV2_U2_LESSONS } from './lessons/cv2u2.js'
+import { CV2_U3_LESSONS } from './lessons/cv2u3.js'
+import { CV2_U4_LESSONS } from './lessons/cv2u4.js'
+import { LLMAGENT_U1_LESSONS } from './lessons/llmagentu1.js'
+import { LLMAGENT_U2_LESSONS } from './lessons/llmagentu2.js'
+import { LLMAGENT_U3_LESSONS } from './lessons/llmagentu3.js'
 
 export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...P1U1_LESSONS,
@@ -299,6 +306,13 @@ export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...CV1_U1_LESSONS,
   ...CV1_U2_LESSONS,
   ...CV1_U3_LESSONS,
+  ...CV2_U1_LESSONS,
+  ...CV2_U2_LESSONS,
+  ...CV2_U3_LESSONS,
+  ...CV2_U4_LESSONS,
+  ...LLMAGENT_U1_LESSONS,
+  ...LLMAGENT_U2_LESSONS,
+  ...LLMAGENT_U3_LESSONS,
 ]
 
 const lessonMap = new Map(PROGRAMMING_LESSONS.map((l) => [l.id, l]))

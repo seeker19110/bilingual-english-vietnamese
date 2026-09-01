@@ -11,6 +11,8 @@ import { ML_COURSE } from './ml.js'
 import { PYAI_COURSE } from './pyai.js'
 import { MLDS_COURSE } from './mlds.js'
 import { CV1_COURSE } from './cv1.js'
+import { CV2_COURSE } from './cv2.js'
+import { LLMAGENT_COURSE } from './llmagent.js'
 
 export const SHORT_COURSES: ShortCourse[] = [
   GIT_COURSE,
@@ -21,6 +23,8 @@ export const SHORT_COURSES: ShortCourse[] = [
   PYAI_COURSE,
   MLDS_COURSE,
   CV1_COURSE,
+  CV2_COURSE,
+  LLMAGENT_COURSE,
 ]
 
 const courseMap = new Map(SHORT_COURSES.map((c) => [c.id, c]))
