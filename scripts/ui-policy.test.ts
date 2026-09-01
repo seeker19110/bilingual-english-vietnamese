@@ -47,7 +47,9 @@ function findViolations(re: RegExp): string[] {
     lines.forEach((line, i) => {
       // Bản sao regex mỗi lần dùng để cờ `g` không giữ lastIndex giữa các dòng.
       if (new RegExp(re.source).test(line)) {
-        hits.push(`${relative(ROOT, file)}:${i + 1}`)
+        // relative() dùng `\\` trên Windows, trong khi baseline được lưu theo POSIX `/`
+        // để ổn định trên mọi runner CI. Chuẩn hoá trước khi so với baseline.
+        hits.push(`${relative(ROOT, file).replaceAll('\\', '/')}:${i + 1}`)
       }
     })
   }
