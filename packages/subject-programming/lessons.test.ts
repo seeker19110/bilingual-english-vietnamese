@@ -37,6 +37,7 @@ describe('programming lessons', () => {
         lesson.unitId.startsWith('openclaw-u') ||
         lesson.unitId.startsWith('ml-u') ||
         lesson.unitId.startsWith('pyai-u') ||
+        lesson.unitId.startsWith('mathai-u') ||
         lesson.unitId.startsWith('mlds-u') ||
         lesson.unitId.startsWith('cv1-u') ||
         lesson.unitId.startsWith('cv2-u') ||

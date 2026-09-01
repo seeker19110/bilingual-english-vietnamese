@@ -9,6 +9,7 @@ import { VIBE_COURSE } from './vibe.js'
 import { OPENCLAW_COURSE } from './openclaw.js'
 import { ML_COURSE } from './ml.js'
 import { PYAI_COURSE } from './pyai.js'
+import { MATHAI_COURSE } from './mathai.js'
 import { MLDS_COURSE } from './mlds.js'
 import { CV1_COURSE } from './cv1.js'
 import { CV2_COURSE } from './cv2.js'
@@ -21,6 +22,7 @@ export const SHORT_COURSES: ShortCourse[] = [
   OPENCLAW_COURSE,
   ML_COURSE,
   PYAI_COURSE,
+  MATHAI_COURSE,
   MLDS_COURSE,
   CV1_COURSE,
   CV2_COURSE,
