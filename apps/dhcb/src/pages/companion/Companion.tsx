@@ -1,6 +1,7 @@
 import { useCallback, useState, useRef, useEffect, Suspense } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Layers, X } from 'lucide-react'
+import { usePageTitle } from '../../lib/usePageTitle'
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import RealtimeTelemetryBar from '../../components/MeshTelemetry/RealtimeTelemetryBar'
@@ -45,6 +46,7 @@ const StudioSynthesis = lazyWithRetry(
 )
 
 export default function Companion() {
+  usePageTitle('Bạn Đồng Hành | Đồng hành cùng bạn')
   const { user } = useAuth()
   const toast = useToast()
   const navigate = useNavigate()

@@ -12,6 +12,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CalendarClock, Target, BookOpen, RotateCcw, Sparkles } from 'lucide-react'
+import { usePageTitle } from '../../lib/usePageTitle'
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import { Skeleton } from '../../components/Skeleton'
@@ -219,6 +220,7 @@ function TodayTasks({ plan }: { plan: TodayPlan }) {
 }
 
 export default function ExamPlanPage() {
+  usePageTitle('Đếm ngược kỳ thi | Đồng hành cùng bạn')
   const { user } = useAuth()
   const uid = user?.id ?? ''
   const [record, setRecord] = useState<ExamPlanRecord | null>(null)

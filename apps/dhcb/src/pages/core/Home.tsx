@@ -19,6 +19,7 @@ import PricePromoBanner from '../../components/PricePromoBanner.js'
 import RewardTipBanner from '../../components/RewardTipBanner.js'
 import HomeAiBriefingCard from '../../components/Home/HomeAiBriefingCard.js'
 import HomeUniversalAiBar from '../../components/Home/HomeUniversalAiBar.js'
+import { usePageTitle } from '../../lib/usePageTitle'
 import { getDirection } from '../../lib/storage'
 import type { Direction } from '../../types'
 import { useLang } from '../../context/useLang'
@@ -63,6 +64,9 @@ export default function Home() {
 
   const [cefrLevels, setCefrLevels] = useState<CefrLevel[]>([])
   const [circleById, setCircleById] = useState<Record<string, Circle>>({})
+
+  usePageTitle('Trang chủ | Đồng hành cùng bạn')
+
   useEffect(() => {
     Promise.all([loadCefr(), loadFoundation()]).then(([lv, foundation]) => {
       setCefrLevels(lv)

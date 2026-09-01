@@ -10,6 +10,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Brain, Eye, CheckCircle2, Trophy, BookOpen } from 'lucide-react'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { useAuth } from '../../../context/useAuth'
@@ -32,6 +33,7 @@ const MUC: { rating: Rating; nhan: string; mau: string }[] = [
 ]
 
 export default function ProgrammingReview() {
+  usePageTitle('Ôn tập | Môn Lập trình · Đồng hành cùng bạn')
   const nav = useNavigate()
   const { user } = useAuth()
   const [viTri, setViTri] = useState(0)

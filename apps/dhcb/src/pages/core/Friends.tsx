@@ -6,6 +6,7 @@ import QRCode from 'qrcode'
 import { Users, Copy, Check, UserMinus, MessageSquare, MapPin } from 'lucide-react'
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
+import { usePageTitle } from '../../lib/usePageTitle'
 import { useToast } from '@core/ToastProvider'
 import {
   fetchFriendsState,
@@ -21,6 +22,8 @@ export default function Friends() {
   const [loading, setLoading] = useState(true)
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+
+  usePageTitle('Bạn bè | Đồng hành cùng bạn')
 
   useEffect(() => {
     let cancelled = false

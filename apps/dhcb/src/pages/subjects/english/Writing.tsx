@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { PenLine, Send, RotateCcw, ChevronDown, Trophy } from 'lucide-react'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { saveWritingSub, getUsage, incrementUsage, getDirection } from '../../../lib/storage'
@@ -228,6 +229,7 @@ function ResultView({
 }
 
 export default function Writing() {
+  usePageTitle('Luyện viết & chấm điểm | Môn Tiếng Anh · Đồng hành cùng bạn')
   const user = useAuth().user! // RequireAuth đã đảm bảo có user trước khi vào trang
   const toast = useToast()
   useCloudSync(user.id) // kéo lượt dùng từ Supabase khi mở trang

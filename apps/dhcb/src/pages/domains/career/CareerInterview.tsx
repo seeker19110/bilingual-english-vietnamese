@@ -7,6 +7,7 @@
 // người dùng (cờ isFallback) thay vì đưa nội dung mẫu ra như thể AI vừa nghĩ.
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import {
   Bot,
   User,
@@ -40,6 +41,7 @@ const KIND_LABELS: Array<{ value: InterviewKind; label: string }> = [
 ]
 
 export default function CareerInterview() {
+  usePageTitle('Luyện phỏng vấn | Đồng hành cùng bạn')
   const nav = useNavigate()
   const toast = useToast()
   const [session, setSession] = useState<InterviewSession | null>(null)

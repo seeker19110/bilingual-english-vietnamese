@@ -1,6 +1,7 @@
 // apps/dhcb/src/pages/EnglishSettings.tsx — Cài đặt học Tiếng Anh chuyên biệt
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import { ArrowLeftRight, Gauge, CalendarCheck, Users, Volume2, VolumeX } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
@@ -45,6 +46,7 @@ const GOAL_LABEL: Record<WeeklyGoal, { vi: string; en: string }> = {
 }
 
 export default function EnglishSettings() {
+  usePageTitle('Cài đặt | Môn Tiếng Anh · Đồng hành cùng bạn')
   const nav = useNavigate()
   const { user } = useAuth()
   const { T, setLang } = useLang()

@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
+import { usePageTitle } from '../../lib/usePageTitle'
 import {
   getChatSessions,
   getWritingSubs,
@@ -308,6 +309,8 @@ export default function History() {
   const nav = useNavigate()
   const { user } = useAuth()
   useCloudSync(user?.id)
+
+  usePageTitle('Lịch sử học tập | Đồng hành cùng bạn')
 
   const [tab, setTab] = useState<ActiveTab>('chat')
   const step = useIsDesktopViewport() ? STEP_DESKTOP : STEP_MOBILE

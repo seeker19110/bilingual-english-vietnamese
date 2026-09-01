@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { usePageTitle } from '../../lib/usePageTitle'
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import { useToast } from '@core/ToastProvider'
@@ -25,6 +26,7 @@ import {
 } from 'lucide-react'
 
 export default function ActionCanvas() {
+  usePageTitle('Kế hoạch hành động | Đồng hành cùng bạn')
   const toast = useToast()
   const [canvas, setCanvas] = useState<ActionCanvasState | null>(null)
   const [loading, setLoading] = useState(true)

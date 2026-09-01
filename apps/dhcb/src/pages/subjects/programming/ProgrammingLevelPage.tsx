@@ -16,13 +16,16 @@ import {
 } from '../../../lib/programmingProgress'
 import { getProgrammingLevel } from '@dhcb/subject-programming/curriculum'
 import { getLessonsByUnit } from '@dhcb/subject-programming/lessons'
-import { buildSlugSegment } from '@core/slug'
+import { buildSlugSegment, idFromSlugSegment } from '@core/slug'
+import { duongDanBac } from '../../../lib/programmingRoutes'
 
 export default function ProgrammingLevelPage() {
   const nav = useNavigate()
   const { user } = useAuth()
-  const { levelId } = useParams<{ levelId: string }>()
-  const level = levelId ? getProgrammingLevel(levelId) : undefined
+  // URL là `<mã bậc>--<tên bậc đã slug hoá>` — mã đứng đầu nên link cũ (chỉ mã) vẫn tra ra
+  // đúng bậc rồi được chuyển hướng về URL chuẩn.
+  const { levelId: levelSlugParam } = useParams<{ levelId: string }>()
+  const level = levelSlugParam ? getProgrammingLevel(idFromSlugSegment(levelSlugParam)) : undefined
   const [progress, setProgress] = useState<ProgrammingLessonProgress[]>([])
 
   useEffect(() => {
@@ -32,6 +35,12 @@ export default function ProgrammingLevelPage() {
 
   // Id bậc lạ → về trang tổng quan môn, không render trang rỗng.
   if (!level) return <Navigate to="/lap-trinh" replace />
+
+  // Link cũ (chỉ mã) hoặc tên bậc đã đổi → về URL chuẩn, tránh hai URL cùng nội dung.
+  const canonicalLevel = buildSlugSegment(level.id, level.name)
+  if (levelSlugParam !== canonicalLevel) {
+    return <Navigate to={duongDanBac(level)} replace />
+  }
 
   // Tiến độ bậc: đếm trên các bài ĐÃ SOẠN của bậc (unit chưa có bài không tính vào mẫu số,
   // để thanh tiến độ không "đứng im" ở mức thấp khi nội dung còn đang soạn dần).

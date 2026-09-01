@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Activity, Save } from 'lucide-react'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { useToast } from '@core/ToastProvider'
@@ -76,6 +77,7 @@ const DEFAULT_DIMENSIONS: Dimension[] = [
 ]
 
 export default function LifeWheel() {
+  usePageTitle('Bánh xe cuộc sống | Đồng hành cùng bạn')
   const nav = useNavigate()
   const toast = useToast()
   const [dimensions, setDimensions] = useState<Dimension[]>(DEFAULT_DIMENSIONS)

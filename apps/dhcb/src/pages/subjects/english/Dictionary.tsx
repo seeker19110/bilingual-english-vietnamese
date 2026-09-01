@@ -12,6 +12,7 @@ import {
   ChevronRight,
   CheckCircle2,
 } from 'lucide-react'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import PronounceButton from '../../../components/PronounceButton'
@@ -85,6 +86,7 @@ const QUICK_TOPICS = [
 ]
 
 export default function Dictionary() {
+  usePageTitle('Từ điển Anh-Việt | Đồng hành cùng bạn')
   const { user } = useAuth()
   const onboarding = useOnboarding(user?.id) // nhóm tuổi (GĐ 4, PROGRESS.md) — lọc vòng từ vựng
   const dir = getDirection()

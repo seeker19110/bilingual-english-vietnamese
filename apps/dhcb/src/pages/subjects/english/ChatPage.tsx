@@ -1,4 +1,5 @@
 import { useSearchParams } from 'react-router-dom'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import ChatList from '../../../components/chat/ChatList'
 import ChatWindow from '../../../components/chat/ChatWindow'
@@ -6,6 +7,7 @@ import { useChat } from '../../../lib/useChat'
 import { useToast } from '@core/ToastProvider'
 
 export default function ChatPage() {
+  usePageTitle('Tin nhắn | Đồng hành cùng bạn')
   const [searchParams] = useSearchParams()
   const initialRoomId = searchParams.get('roomId')
   const initialPeerId = searchParams.get('peerId')

@@ -5,6 +5,7 @@ import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import ReferralSection from '../../components/ReferralSection'
 import QuestsPanel from '../../components/QuestsPanel'
+import { usePageTitle } from '../../lib/usePageTitle'
 import { useAuth } from '../../context/useAuth'
 import { useLang } from '../../context/useLang'
 
@@ -12,6 +13,8 @@ export default function Quests() {
   const { lang } = useLang()
   const isA = lang === 'vi'
   const { user } = useAuth()
+
+  usePageTitle('Nhiệm vụ | Đồng hành cùng bạn')
 
   return (
     <div className="min-h-dvh bg-zinc-950">

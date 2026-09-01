@@ -13,6 +13,7 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Briefcase, Rocket, ArrowRight } from 'lucide-react'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import Career from '../career/Career'
 import Startup from '../startup/Startup'
@@ -49,6 +50,7 @@ const TABS: {
 ]
 
 export default function CareerStartup() {
+  usePageTitle('Sự nghiệp & Khởi nghiệp | Đồng hành cùng bạn')
   const nav = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const [tab, setTab] = useState<Tab>(() => readTab(searchParams.get('muc')))

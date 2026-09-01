@@ -1,6 +1,7 @@
 // apps/dhcb/src/pages/AppliedKnowledge.tsx — Interactive Applied Knowledge & Simulation Lab
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { usePageTitle } from '../../lib/usePageTitle'
 import {
   Sparkles,
   TrendingUp,
@@ -44,6 +45,7 @@ import {
 // Mọi thanh trượt mô phỏng đều lấy chữ mô tả từ <span> bên trên, KHÔNG gắn với ô nhập
 // → trình đọc màn hình chỉ đọc "slider" (axe: label). Gắn aria-label cho từng thanh.
 export default function AppliedKnowledge() {
+  usePageTitle('Ứng dụng thực tế | Đồng hành cùng bạn')
   const nav = useNavigate()
   const [activeTab, setActiveTab] = useState<'simulators' | 'library' | 'explainer' | 'projects'>(
     'simulators',

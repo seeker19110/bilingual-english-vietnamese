@@ -16,6 +16,7 @@
 
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import { GraduationCap, ArrowLeft, Sparkles, RotateCcw } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
@@ -77,6 +78,8 @@ export default function Placement() {
   const [answers, setAnswers] = useState<boolean[]>([])
   const [result, setResult] = useState<PlacementResult | null>(null)
   const [loading, setLoading] = useState(false)
+
+  usePageTitle('Kiểm tra trình độ | Môn Tiếng Anh · Đồng hành cùng bạn')
 
   if (!user) return null // như /onboarding: chưa đăng nhập thì AuthProvider tự điều hướng /login
 

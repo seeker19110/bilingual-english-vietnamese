@@ -8,6 +8,7 @@
 // Workspace bền server (lib/programmingProject), tiến độ bước dùng chung bảng tiến độ bài học.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import {
   Store,
   Play,
@@ -58,6 +59,7 @@ function isStageUnlocked(index: number, done: Set<string>): boolean {
 }
 
 export default function ProgrammingProjectPage() {
+  usePageTitle('Dự án trục | Môn Lập trình · Đồng hành cùng bạn')
   const nav = useNavigate()
   const { user } = useAuth()
   const [params, setParams] = useSearchParams()

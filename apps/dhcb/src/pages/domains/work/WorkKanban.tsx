@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus, Clock, CheckCircle2, ArrowRight, ArrowLeft, Filter, Search } from 'lucide-react'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { useToast } from '@core/ToastProvider'
@@ -21,6 +22,7 @@ const PRIORITY_COLORS: Record<string, { label: string; cls: string }> = {
 }
 
 export default function WorkKanban() {
+  usePageTitle('Bảng công việc Kanban | Đồng hành cùng bạn')
   const nav = useNavigate()
   const toast = useToast()
   const [tasks, setTasks] = useState<WorkTask[]>([])

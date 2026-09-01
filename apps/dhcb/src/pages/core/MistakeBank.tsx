@@ -4,6 +4,7 @@ import { Eye, Check, Trash2, RotateCcw, Sparkles, ArrowRight, BookMarked } from 
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import KaraokeText from '../../components/KaraokeText'
+import { usePageTitle } from '../../lib/usePageTitle'
 import { useAuth } from '../../context/useAuth'
 import { getDirection } from '../../lib/storage'
 import { useIsDesktopViewport } from '../../lib/useIsDesktopViewport'
@@ -198,6 +199,8 @@ export default function MistakeBank() {
   const [pos, setPos] = useState(0)
   // Toàn bộ lỗi (tab "Tất cả") giữ ở state, cập nhật lại sau mỗi lần xóa.
   const [all, setAll] = useState<Mistake[]>(() => getMistakes(user.id))
+
+  usePageTitle('Sổ tay lỗi sai | Đồng hành cùng bạn')
 
   const totalDue = deck.length
   const current = deck[pos]

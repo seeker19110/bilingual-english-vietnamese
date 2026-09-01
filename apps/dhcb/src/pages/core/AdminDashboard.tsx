@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
+import { usePageTitle } from '../../lib/usePageTitle'
 import AdminUsersPanel from '../../components/admin/AdminUsersPanel'
 import AdminLimitsPanel from '../../components/admin/AdminLimitsPanel'
 import AdminGrantPlanPanel from '../../components/admin/AdminGrantPlanPanel'
@@ -116,6 +117,8 @@ export default function AdminDashboard() {
   const [openKey, setOpenKey] = useState<TabKey | null>(
     TABS.some((t) => t.key === tabParam) ? (tabParam as TabKey) : 'usage',
   )
+
+  usePageTitle('Quản trị | Đồng hành cùng bạn')
 
   const toggle = (key: TabKey) => {
     const next = openKey === key ? null : key

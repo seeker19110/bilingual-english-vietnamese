@@ -14,6 +14,12 @@ import type {
 } from '@dhcb/subject-programming/specializations/types'
 import type { LearningPath } from '@dhcb/subject-programming/learningPaths/types'
 import { getSpecialization } from '@dhcb/subject-programming/specializations/registry'
+import type { ProgrammingLevel } from '@dhcb/subject-programming/curriculum'
+
+/** Trang một bậc P1–P6. */
+export function duongDanBac(level: Pick<ProgrammingLevel, 'id' | 'name'>): string {
+  return `/lap-trinh/${buildSlugSegment(level.id, level.name)}`
+}
 
 /** Trang một khoá ngắn. */
 export function duongDanKhoa(course: Pick<ShortCourse, 'id' | 'title'>): string {

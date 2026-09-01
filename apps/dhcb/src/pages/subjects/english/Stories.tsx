@@ -4,6 +4,7 @@
 // Gom 6 thể loại, lọc bằng chip (thay vì 8 tab — không đủ chỗ trên điện thoại).
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { CardListSkeleton } from '../../../components/Skeleton'
@@ -65,6 +66,7 @@ function EmptyState({ isA }: { isA: boolean }) {
 }
 
 export default function Stories() {
+  usePageTitle('Truyện song ngữ | Đồng hành cùng bạn')
   const nav = useNavigate()
   const { T } = useLang()
   const isA = getDirection() === 'A'

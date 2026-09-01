@@ -9,6 +9,7 @@ import {
   Check,
   Sparkles,
 } from 'lucide-react'
+import { usePageTitle } from '../../lib/usePageTitle'
 import { useAuth } from '../../context/useAuth'
 import { saveOnboarding } from '../../lib/cloud'
 import { cacheOnboarding, minutesToSpeed } from '../../lib/onboarding'
@@ -88,6 +89,8 @@ export default function Onboarding() {
   const [goal, setGoal] = useState<OnboardGoal>('daily')
   const [minutes, setMinutes] = useState<number>(10)
   const [saving, setSaving] = useState(false)
+
+  usePageTitle('Làm quen | Đồng hành cùng bạn')
 
   async function finish() {
     if (!user) return

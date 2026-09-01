@@ -10,6 +10,7 @@
 //  3. Khối "trạng thái thật" (chưa ai đi hết môn) BẮT BUỘC hiển thị, và chỉ nói ở ĐÂY — không
 //     rải lên trang môn hay trang bậc, vì nhắc nhiều lần thành tự bôi xấu.
 import { useNavigate } from 'react-router-dom'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import {
   Rocket,
   Trophy,
@@ -107,6 +108,7 @@ const KHONG_CO: string[] = [
 ]
 
 export default function ProgrammingAbout() {
+  usePageTitle('Giới thiệu môn Lập trình | Đồng hành cùng bạn')
   const nav = useNavigate()
   const { user } = useAuth()
 

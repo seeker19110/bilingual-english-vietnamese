@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef, useDeferredValue } from 'react'
 import { Search, X, ChevronRight, Loader2, Play } from 'lucide-react'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { useLang } from '../../../context/useLang'
@@ -192,6 +193,7 @@ function interleave(items: SubjectMeta[]): SubjectMeta[] {
 }
 
 export default function CommonPhrases() {
+  usePageTitle('Câu thông dụng | Môn Tiếng Anh · Đồng hành cùng bạn')
   const { T } = useLang()
   const { user } = useAuth()
   const uid = user?.id ?? ''
