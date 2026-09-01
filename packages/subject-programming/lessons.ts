@@ -151,6 +151,12 @@ import { PYAI_U4_LESSONS } from './lessons/pyaiu4.js'
 import { MATHAI_U1_LESSONS } from './lessons/mathaiu1.js'
 import { MATHAI_U2_LESSONS } from './lessons/mathaiu2.js'
 import { MATHAI_U3_LESSONS } from './lessons/mathaiu3.js'
+import { MLDS_U1_LESSONS } from './lessons/mldsu1.js'
+import { MLDS_U2_LESSONS } from './lessons/mldsu2.js'
+import { MLDS_U3_LESSONS } from './lessons/mldsu3.js'
+import { CV1_U1_LESSONS } from './lessons/cv1u1.js'
+import { CV1_U2_LESSONS } from './lessons/cv1u2.js'
+import { CV1_U3_LESSONS } from './lessons/cv1u3.js'
 
 export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...P1U1_LESSONS,
@@ -293,6 +299,12 @@ export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...MATHAI_U1_LESSONS,
   ...MATHAI_U2_LESSONS,
   ...MATHAI_U3_LESSONS,
+  ...MLDS_U1_LESSONS,
+  ...MLDS_U2_LESSONS,
+  ...MLDS_U3_LESSONS,
+  ...CV1_U1_LESSONS,
+  ...CV1_U2_LESSONS,
+  ...CV1_U3_LESSONS,
 ]
 
 const lessonMap = new Map(PROGRAMMING_LESSONS.map((l) => [l.id, l]))
