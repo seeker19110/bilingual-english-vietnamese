@@ -339,7 +339,7 @@ export default function SubjectDetail() {
             <div className="flex-1 min-w-0 space-y-2">
               <div className="flex items-center gap-2 flex-wrap">
                 <span
-                  className={`text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border ${theme.ring} bg-zinc-900/60 ${theme.accent}`}
+                  className={`text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border ${theme.ring} bg-zinc-900/60 ${theme.accent}`}
                 >
                   AI Gia Sư
                 </span>
