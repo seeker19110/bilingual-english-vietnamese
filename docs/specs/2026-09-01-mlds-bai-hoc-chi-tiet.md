@@ -700,7 +700,14 @@ print(du_doan(14, 11))  # thu nhap thap, no cao`,
     testCases: [
       {
         stdinLines: ['21', '4'],
-        expected: 'TP=2 FP=0 FN=0 TN=2\nAccuracy tren tap test: 1.0\nHo so cua ban: duyet',
+        expected: 'TP=2 FP=0 FN=0 TN=2\nAccuracy tren tap test: 1.0',
+        match: 'contains',
+        hidden: false,
+        label: 'Chấm đúng 4 hồ sơ test: 2 duyệt, 2 từ chối',
+      },
+      {
+        stdinLines: ['21', '4'],
+        expected: 'Ho so cua ban: duyet',
         match: 'contains',
         hidden: false,
         label: 'Thu nhập khá, nợ thấp → 3 hàng xóm đều là hồ sơ được duyệt',
@@ -811,7 +818,14 @@ for c in range(2):
     testCases: [
       {
         stdinLines: ['2', '2'],
-        expected: 'Cum 0: tam (1.75, 2.0), so khach 4\nCum 1: tam (21.5, 16.75), so khach 4\nCum chi tieu cao nhat: cum 1\nKhach moi thuoc: cum 0',
+        expected: 'Cum 0: tam (1.75, 2.0), so khach 4\nCum 1: tam (21.5, 16.75), so khach 4\nCum chi tieu cao nhat: cum 1',
+        match: 'contains',
+        hidden: false,
+        label: 'Hai tâm cụm hội tụ sau 3 vòng, mỗi cụm 4 khách',
+      },
+      {
+        stdinLines: ['2', '2'],
+        expected: 'Khach moi thuoc: cum 0',
         match: 'contains',
         hidden: false,
         label: 'Khách mới chi tiêu thấp → nhóm khách nhỏ',
@@ -1360,6 +1374,21 @@ export const MLDS_COURSE: ShortCourse = {
 > `CourseChapter.lessonIds` cho phép trộn id thuộc nhiều unit. Việc chia thành hai unit ở tầng
 > BÀI là để tách file nguồn và nhóm theo dạng dữ liệu (§3.0), không bắt buộc phải phản ánh thành
 > hai chương ở tầng khoá.
+
+## 4.1. Bẫy đã dính khi soạn — đọc trước khi sửa test-case
+
+`gradeTestCase()` (`packages/subject-programming/grading.ts`) so bằng `actual.includes(expected)`
+trên output THÔ, chỉ chuẩn hoá khoảng trắng cuối dòng. Mà `input("Loi nhac: ")` in lời nhắc ra
+**cùng dòng** với dòng kế tiếp. Hệ quả: một `expected` nhiều dòng sẽ TRƯỢT nếu có lời gọi
+`input()` xen vào giữa các dòng đó — dù chương trình chạy hoàn toàn đúng.
+
+Luật rút ra, áp cho mọi bài về sau: **một `expected` nhiều dòng chỉ được phủ các dòng in ra
+LIÊN TIẾP mà không có `input()` nào ở giữa.** Cần khẳng định thêm một dòng nằm sau lời gọi
+`input()` thì tách thành một test-case riêng với cùng `stdinLines`. Bài `mlds-u2-l2` và
+`mlds-u2-l3` đã bị lỗi này lúc soạn và đã được tách (nên chúng có 4 test-case).
+
+Mọi `sampleSolution` trong đặc tả này đã được chạy thật bằng `python3` với đúng `stdinLines`
+của từng test-case, và output khớp `expected` theo đúng luật `includes` ở trên.
 
 ## 5. Nghiệm thu
 
