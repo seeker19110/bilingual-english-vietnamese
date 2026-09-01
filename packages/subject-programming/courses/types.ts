@@ -12,8 +12,25 @@
 //
 // Dữ liệu là hằng biên dịch, không I/O, không phụ thuộc thời gian.
 
-/** Mã khoá ngắn — ổn định, dùng làm URL `/lap-trinh/khoa-hoc/<id>`. */
-export type ShortCourseId = 'git' | 'hermes' | 'vibe' | 'openclaw' | 'ml' | 'pyai'
+/**
+ * Mã khoá ngắn — ổn định, dùng làm URL `/lap-trinh/khoa-hoc/<id>`.
+ * 6 mã cuối (pyai/mathai/mlds/cv1/cv2/llmagent) thuộc cụm "Kỹ sư AI thực chiến" — xem
+ * docs/specs/2026-09-01-cum-6-khoa-ai-engineer.md. Nới kiểu ở đây KHÔNG tự đăng ký khoá:
+ * mỗi khoá chỉ vào SHORT_COURSES (registry.ts) khi bài học thật đã tồn tại — đăng ký sớm mà
+ * lessonIds trỏ tới bài chưa có sẽ làm courses.test.ts đỏ ngay.
+ */
+export type ShortCourseId =
+  | 'git'
+  | 'hermes'
+  | 'vibe'
+  | 'openclaw'
+  | 'ml'
+  | 'pyai'
+  | 'mathai'
+  | 'mlds'
+  | 'cv1'
+  | 'cv2'
+  | 'llmagent'
 
 /** Một chương trong khoá — nhóm các bài theo chủ đề, không phải một bài riêng. */
 export interface CourseChapter {

@@ -56,10 +56,12 @@ export const LessonSchema = z
   .object({
     /**
      * id ổn định `<unit>-l<số>` (vd 'p1-u4-l1') — khoá tiến độ trong Postgres.
-     * Nhánh `git-u\d+-l\d+` (vd 'git-u2-l1') và `hermes-u\d+-l\d+` dành riêng cho bài thuộc
-     * TẦNG KHOÁ NGẮN (packages/subject-programming/courses/) — khoá cắt ngang bậc P1–P6 nên
-     * không đánh số theo `p[1-6]`. Xem docs/specs/2026-08-30-khoa-hoc-thuc-hanh-github.md và
-     * docs/specs/2026-08-31-khoa-dieu-phoi-ai-van-phong.md.
+     * Nhánh `git-u\d+-l\d+` (vd 'git-u2-l1') và các tiền tố khoá ngắn khác (hermes/vibe/
+     * openclaw/ml/pyai/mathai/mlds/cv1/cv2/llmagent) dành riêng cho bài thuộc TẦNG KHOÁ NGẮN
+     * (packages/subject-programming/courses/) — khoá cắt ngang bậc P1–P6 nên không đánh số
+     * theo `p[1-6]`. Xem docs/specs/2026-08-30-khoa-hoc-thuc-hanh-github.md,
+     * docs/specs/2026-08-31-khoa-dieu-phoi-ai-van-phong.md và
+     * docs/specs/2026-09-01-cum-6-khoa-ai-engineer.md (cụm 6 khoá pyai→llmagent).
      */
     id: z
       .string()
