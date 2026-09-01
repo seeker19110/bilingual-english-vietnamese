@@ -8,16 +8,24 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { vi } from 'vitest'
 
-// Khắc phục cảnh báo và lỗi crash của localStorage trên Node 22+ / 26+
+// Khắc phục cảnh báo và lỗi crash của localStorage trên Node 22+ / 26+.
+// QUAN TRỌNG: Gán trực tiếp lên globalThis (KHÔNG dùng vi.stubGlobal) để stub này
+// sống sót qua vi.unstubAllGlobals() — nhiều file test gọi unstubAllGlobals() trong
+// afterEach để dọn stub fetch, nhưng điều đó vô tình hủy luôn stub localStorage,
+// khiến localStorage.clear() trong beforeEach tiếp theo crash với "Cannot read
+// properties of undefined". Gán thẳng lên globalThis thoát khỏi vòng kiểm soát
+// của Vitest stub registry nên không bị unstub.
 try {
   globalThis.localStorage?.clear()
 } catch {
+  // localStorage của Node 26+ tồn tại nhưng ném lỗi khi dùng không có --localstorage-file
   delete (globalThis as Record<string, unknown>).localStorage
 }
 
 if (typeof globalThis.localStorage === 'undefined') {
   const store = new Map<string, string>()
-  vi.stubGlobal('localStorage', {
+  // Gán thẳng (không qua vi.stubGlobal) để vi.unstubAllGlobals() không hủy được.
+  ;(globalThis as Record<string, unknown>).localStorage = {
     getItem: (key: string) => store.get(key) ?? null,
     setItem: (key: string, value: string) => {
       store.set(key, value)
@@ -32,7 +40,7 @@ if (typeof globalThis.localStorage === 'undefined') {
     get length() {
       return store.size
     },
-  })
+  }
 }
 
 const PUBLIC_DIR = join(dirname(fileURLToPath(import.meta.url)), 'apps', 'dhcb', 'public')

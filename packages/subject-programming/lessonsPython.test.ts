@@ -59,6 +59,19 @@ function chayTheoLan(lane: PythonLane, code: string, stdinLines: string[]) {
   return runPython3(noiCodeTheoLan(lane, code), stdinLines, thuMucCuaLan(lane))
 }
 
+/** Python in CRLF trên Windows nhưng LF trên Linux/macOS; nội dung bài học dùng LF. */
+function chuanHoaXuongDong(text: string): string {
+  return text.replaceAll('\r\n', '\n')
+}
+
+/**
+ * Các test nội dung gọi python3 đồng bộ rất nhiều lần. Nhường một lượt sau từng test
+ * để worker Vitest nhận phản hồi RPC/reporting thay vì để hàng đợi onTaskUpdate vượt timeout.
+ */
+function nhuongEventLoop(): Promise<void> {
+  return new Promise((resolve) => setImmediate(resolve))
+}
+
 // Prelude PHẢI khớp hành vi input() của sandbox trình duyệt (apps/dhcb/src/workers/
 // pyodideWorker.ts): đọc tuần tự các dòng đã điền sẵn và ECHO "prompt + giá trị" ra stdout.
 // Lệch prelude = test xanh nhưng học viên vẫn rớt → giữ hai nơi này khớp nhau.
@@ -146,20 +159,21 @@ describe.skipIf(!hasPython)('nội dung môn Lập trình chạy THẬT bằng p
 
   it.each(PYTHON_LESSONS)(
     '$id — code mẫu đạt HẾT test-case',
-    (lesson) => {
+    async (lesson) => {
       const results = gradeAllTheoLan(
         lesson.language as PythonLane,
         lesson.make.sampleSolution,
         lesson.make.testCases,
       )
       expect(allTestsPassed(results), `Bài ${lesson.id}: ${describeFailures(results)}`).toBe(true)
+      await nhuongEventLoop()
     },
     PYTHON_TEST_TIMEOUT_MS,
   )
 
   it.each(PYTHON_LESSONS)(
     '$id — ví dụ mẫu chạy không lỗi',
-    (lesson) => {
+    async (lesson) => {
       const r = chayTheoLan(
         lesson.language as PythonLane,
         lesson.workedExample.code,
@@ -167,24 +181,27 @@ describe.skipIf(!hasPython)('nội dung môn Lập trình chạy THẬT bằng p
       )
       expect(r.error, `Bài ${lesson.id} ví dụ mẫu lỗi: ${r.error}`).toBeUndefined()
       expect(r.output.trim().length, `Bài ${lesson.id}: ví dụ mẫu không in gì`).toBeGreaterThan(0)
+      await nhuongEventLoop()
     },
     PYTHON_TEST_TIMEOUT_MS,
   )
 
-  it.each(PYTHON_LESSONS)('$id — đáp án Predict khớp output thật', (lesson) => {
+  it.each(PYTHON_LESSONS)('$id — đáp án Predict khớp output thật', async (lesson) => {
     const r = chayTheoLan(lesson.language as PythonLane, lesson.predict.code, [])
     expect(r.error, `Bài ${lesson.id} code Predict lỗi: ${r.error}`).toBeUndefined()
     const answer = lesson.predict.choices[lesson.predict.answerIndex]!
     // Lựa chọn đúng phải xuất hiện trong output thật; các lựa chọn SAI thì không được
     // trùng khớp (tránh soạn nhầm 2 đáp án cùng đúng).
+    const output = chuanHoaXuongDong(r.output)
     expect(
-      r.output.includes(answer),
-      `Bài ${lesson.id}: đáp án "${answer}" KHÔNG có trong output thật "${r.output.trim()}"`,
+      output.includes(answer),
+      `Bài ${lesson.id}: đáp án "${answer}" KHÔNG có trong output thật "${output.trim()}"`,
     ).toBe(true)
     const wrongMatches = lesson.predict.choices.filter(
-      (c, i) => i !== lesson.predict.answerIndex && r.output.includes(c),
+      (c, i) => i !== lesson.predict.answerIndex && output.includes(c),
     )
     expect(wrongMatches, `Bài ${lesson.id}: lựa chọn sai lại khớp output`).toEqual([])
+    await nhuongEventLoop()
   })
 
   // Bước dự án THUẦN PYTHON của mọi chặng đã mở. Bước nhiều file (milestone P2) được dựng
@@ -201,7 +218,7 @@ describe.skipIf(!hasPython)('nội dung môn Lập trình chạy THẬT bằng p
     laLanPython(getStepLanguage(s)),
   )
 
-  it.each(ALL_STEPS)('$id — code tham chiếu đạt HẾT milestone check', (step) => {
+  it.each(ALL_STEPS)('$id — code tham chiếu đạt HẾT milestone check', async (step) => {
     const lane = getStepLanguage(step) as PythonLane
     const dir = mkdtempSync(join(tmpdir(), `dhcb-step-${step.id}-`))
     for (const [name, content] of Object.entries(fileCuaLan(lane))) {
@@ -218,5 +235,6 @@ describe.skipIf(!hasPython)('nội dung môn Lập trình chạy THẬT bằng p
     const entry = noiCodeTheoLan(lane, step.probeCode ?? step.referenceCode)
     const results = gradeAll(entry, step.checks, dir)
     expect(allTestsPassed(results), `Bước ${step.id}: ${describeFailures(results)}`).toBe(true)
+    await nhuongEventLoop()
   })
 })
