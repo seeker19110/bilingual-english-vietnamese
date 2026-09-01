@@ -206,6 +206,20 @@ Hệ thống được chuẩn hóa theo 10 bộ quy chuẩn SOTA chuyên biệt 
 - KHÔNG đưa API key/mật khẩu vào code — luôn dùng `.env`. Mọi lệnh gọi AI phải **đếm/giới hạn lượt** (Free vs Pro) tránh tốn tiền API.
 - Trước khi sửa nhiều file hoặc đổi cấu trúc: **giải thích kế hoạch ngắn gọn rồi hỏi trước**. Mỗi thay đổi nhỏ, dễ kiểm tra; sau khi sửa nói rõ đã đổi gì + cách chạy thử.
 - Gặp khái niệm mới: **giải thích cho người mới hiểu**. Ưu tiên giải pháp **miễn phí / chi phí thấp** (dự án vốn tối thiểu).
+- **Quy ước URL mang tiêu đề (chốt 2026-09-01, PR #795 mở rộng cho môn Lập trình).** Route nào
+  có tham số là id một nội dung có tiêu đề (bài học, bậc học, hướng chuyên sâu, khoá học, lộ
+  trình, chặng…) PHẢI dùng khuôn `<mã>--<tiêu đề đã slug hoá>` — ví dụ `p1--nhap-mon-tu-duy`,
+  `web--lap-trinh-web`, `cv1--deep-learning-for-computer-vision-co-ban`. Dùng `buildSlugSegment`/
+  `idFromSlugSegment` ở `packages/core-ui/slug.ts`: mã giữ nguyên (không đổi khoá tiến độ, không
+  phá link cũ), phần slug chỉ để người đọc/Google biết trang nói về gì — trang tự đọc `idFromSlugSegment`
+  ra mã, bỏ qua phần mô tả. **Không tự ghép chuỗi URL rải rác ở nhiều nơi** — dựng qua đúng MỘT
+  hàm dùng chung theo mẫu `apps/dhcb/src/lib/programmingRoutes.ts` (`duongDanBac`, `duongDanKhoa`,
+  `duongDanHuong`, `duongDanLoTrinh`, `duongDanChangHuong`…), rồi mọi nơi tạo link gọi hàm đó.
+  Route chỉ khớp mã cũ (không có `--`) vẫn phải tra đúng và tự `<Navigate replace>` về URL chuẩn
+  để không phá link đã chia sẻ. Ngoại lệ đã quyết định KHÔNG áp dụng: param đã tự mô tả nội dung
+  hoặc là mã mời (`/tu-vung/:word`, `/ket-ban/:code`, `/nhom-di-chung/:code`), mã cố định giá trị
+  SEO thấp (`/lo-trinh-hoc/:levelId` — mã CEFR A1–C2), và route có logic định tuyến đa host riêng
+  (`/mon-hoc/:subjectId`).
 
 ## 8. Cổng trước khi COMMIT (chạy và đạt hết)
 
