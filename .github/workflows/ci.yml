@@ -179,8 +179,27 @@ jobs:
 
       # Trên CI không có Chromium cài sẵn → tự cài (playwright.config.ts sẽ tự
       # bỏ executablePath khi đường dẫn /opt/pw-browsers không tồn tại).
+      #
+      # CACHE trình duyệt theo phiên bản @playwright/test (đo run 33537608110 ngày
+      # 2026-09-01): tải Chromium mất ~22 giây MỖI mảnh, và một mảnh kẹt tải tới 10,5 phút
+      # — một mình nó kéo CI từ ~5 phút lên 13,8 phút. Cache trúng thì chỉ còn cài dependency
+      # hệ thống (install-deps), không tải trình duyệt nữa. Khoá cache đổi theo phiên bản
+      # gói nên nâng Playwright là tự tải bản mới, không dùng nhầm bản cũ.
+      - name: Phiên bản Playwright (khoá cache)
+        id: pw
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright Chromium
+        id: pw-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ runner.os }}-${{ steps.pw.outputs.version }}
       - name: Install Playwright Chromium
+        if: steps.pw-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
+      - name: Install Playwright OS deps (cache trúng, không tải trình duyệt)
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
 
       - name: E2E (Playwright + axe) — mảnh ${{ matrix.shard }}/6
         run: npm run test:e2e -- --shard=${{ matrix.shard }}/6

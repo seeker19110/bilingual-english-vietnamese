@@ -18,7 +18,7 @@ import {
   type ProgrammingLessonProgress,
 } from '../../../lib/programmingProgress'
 import { getShortCourse } from '@dhcb/subject-programming/courses/registry'
-import { getLesson } from '@dhcb/subject-programming/lessons'
+import { getLessonSummary } from '@dhcb/subject-programming/lessonsLoader'
 import { buildSlugSegment, idFromSlugSegment } from '@core/slug'
 
 export default function ProgrammingCoursePage() {
@@ -46,7 +46,7 @@ export default function ProgrammingCoursePage() {
   }
 
   const allLessons = course.chapters.flatMap((ch) =>
-    ch.lessonIds.map((id) => getLesson(id)).filter((l) => l !== undefined),
+    ch.lessonIds.map((id) => getLessonSummary(id)).filter((l) => l !== undefined),
   )
   const lessonCount = allLessons.length
   const completedCount = allLessons.filter((l) => isLessonCompleted(progress, l.id)).length
@@ -107,7 +107,7 @@ export default function ProgrammingCoursePage() {
           )}
           {course.chapters.map((chapter, idx) => {
             const lessons = chapter.lessonIds
-              .map((id) => getLesson(id))
+              .map((id) => getLessonSummary(id))
               .filter((l) => l !== undefined)
             const chapterCompleted =
               lessons.length > 0 && lessons.every((l) => isLessonCompleted(progress, l.id))

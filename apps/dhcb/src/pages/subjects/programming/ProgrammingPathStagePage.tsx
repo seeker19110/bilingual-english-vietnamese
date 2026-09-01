@@ -23,7 +23,7 @@ import { duongDanChangLoTrinh, duongDanLoTrinh } from '../../../lib/programmingR
 import { getLearningPath } from '@dhcb/subject-programming/learningPaths/registry'
 import { getPathStage } from '@dhcb/subject-programming/learningPaths/pathStages'
 import { unitsOfStage } from '@dhcb/subject-programming/specializations/stageUnits'
-import { getLessonsByUnit } from '@dhcb/subject-programming/lessons'
+import { getUnitSummaries } from '@dhcb/subject-programming/lessonsLoader'
 import { stageHasQuiz } from '@dhcb/subject-programming/learningPaths/stageQuizzes'
 import PathStageQuiz from '../../../components/PathStageQuiz'
 
@@ -58,7 +58,7 @@ export default function ProgrammingPathStagePage() {
   }
 
   const unitIds = unitsOfStage(stage.id)
-  const stageLessons = unitIds.flatMap((u) => getLessonsByUnit(u))
+  const stageLessons = unitIds.flatMap((u) => getUnitSummaries(u))
   const lessonCount = stageLessons.length
   const completedCount = stageLessons.filter((l) => isLessonCompleted(progress, l.id)).length
 
@@ -88,7 +88,7 @@ export default function ProgrammingPathStagePage() {
         {/* Bài học 8 bước, theo unit */}
         <section className="space-y-3">
           {unitIds.map((unitId, idx) => {
-            const lessons = getLessonsByUnit(unitId)
+            const lessons = getUnitSummaries(unitId)
             return (
               <div
                 key={unitId}

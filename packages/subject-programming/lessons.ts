@@ -6,6 +6,11 @@
 //
 // Mọi bài PHẢI qua LessonSchema (lessons.test.ts) và code mẫu PHẢI chạy thật đạt hết
 // test-case (lessonsPython.test.ts chạy python3 — cổng nội dung mạnh nhất của môn).
+//
+// APP KHÔNG IMPORT FILE NÀY (đợt tối ưu 2026-09-01): registry đồng bộ này kéo trọn ~3 MB nội
+// dung vào một chunk, nên chỉ server/test/script dùng. Giao diện đi qua `lessonsLoader.ts`
+// (chỉ mục nhẹ + nạp lười theo unit, sinh bởi `npm run gen:lesson-index` → `lessonsLazy.ts`).
+// Thêm unit mới: ngoài dòng import + phần tử mảng dưới đây, PHẢI chạy lại lệnh gen đó.
 import type { ProgrammingLesson } from './lessonTypes.js'
 import { P1U1_LESSONS } from './lessons/p1u1.js'
 import { P1U2_LESSONS } from './lessons/p1u2.js'

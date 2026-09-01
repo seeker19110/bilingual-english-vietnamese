@@ -38,6 +38,11 @@ beforeAll(() => {
     'src/dynamicImport.ts',
     "export async function lazyTarget(): Promise<unknown> {\n  return import('./target')\n}\n",
   )
+  // 4. worker qua new URL(..., import.meta.url) — có đuôi .ts như code thật trong lib/*Runner.ts
+  write(
+    'src/workerHost.ts',
+    "export const w = new Worker(new URL('./target.ts', import.meta.url), { type: 'module' })\n",
+  )
   // Thư viện ngoài: KHÔNG được thành cạnh
   write('src/external.ts', "import path from 'node:path'\n\nexport const sep = path.sep\n")
   // Ngoài scanRoots: KHÔNG được xuất hiện trong đồ thị
@@ -58,6 +63,10 @@ const hasImport = (from: string, to: string): boolean =>
 describe('scanGraph — cạnh import', () => {
   it('bắt import tĩnh', () => {
     expect(hasImport('src/staticImport.ts', 'src/target.ts')).toBe(true)
+  })
+
+  it("bắt worker qua new URL('./x', import.meta.url) — trước đây bị báo mồ côi nhầm", () => {
+    expect(hasImport('src/workerHost.ts', 'src/target.ts')).toBe(true)
   })
 
   it('bắt re-export', () => {

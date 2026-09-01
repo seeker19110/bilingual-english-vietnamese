@@ -83,10 +83,14 @@ export function scanGraph({ rootDir, scanRoots, entryPoints = [] }: ScanOptions)
       //   1. import tĩnh:   import X from './x'
       //   2. re-export:     export { X } from './x'
       //   3. import động:   import('./x')  — dùng ở App.tsx qua lazyWithRetry()
+      //   4. worker:        new Worker(new URL('./x', import.meta.url)) — 5 file trong
+      //      apps/dhcb/src/workers/ từng bị `orphans` báo mồ côi nhầm vì thiếu dạng này.
       let moduleSpecifier: ts.StringLiteral | undefined
       if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword) {
         const arg = node.arguments[0]
         if (arg && ts.isStringLiteral(arg)) moduleSpecifier = arg
+      } else if (isNewUrlWithImportMetaUrl(node)) {
+        moduleSpecifier = node.arguments[0]
       } else if (
         (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
         node.moduleSpecifier &&
@@ -198,4 +202,20 @@ function enclosingFunctionName(node: ts.Node): string {
     }
   }
   return '<module>'
+}
+
+/** `new URL('<chuỗi>', import.meta.url)` — cách Vite tham chiếu file worker/asset theo module. */
+function isNewUrlWithImportMetaUrl(
+  node: ts.Node,
+): node is ts.NewExpression & { arguments: [ts.StringLiteral, ts.Expression] } {
+  if (!ts.isNewExpression(node) || !node.arguments || node.arguments.length < 2) return false
+  if (!ts.isIdentifier(node.expression) || node.expression.text !== 'URL') return false
+  const [first, second] = node.arguments
+  if (!first || !second || !ts.isStringLiteral(first)) return false
+  return (
+    ts.isPropertyAccessExpression(second) &&
+    ts.isMetaProperty(second.expression) &&
+    second.expression.keywordToken === ts.SyntaxKind.ImportKeyword &&
+    second.name.text === 'url'
+  )
 }

@@ -9,6 +9,7 @@ import {
   addLessonCardsToSrs,
   reviewProgCard,
   getDueProgCards,
+  hydrateProgCards,
   countProgCards,
 } from './programmingSrs'
 import { getSRSStats, _resetSrsMemCacheForTests } from './srs'
@@ -31,16 +32,27 @@ describe('programmingSrs', () => {
     expect(countProgCards()).toBeGreaterThan(0)
   })
 
-  it('đạt bài → TOÀN BỘ thẻ của bài vào vòng ôn, mỗi thẻ một lịch riêng', () => {
+  it('đạt bài → TOÀN BỘ thẻ của bài vào vòng ôn, mỗi thẻ một lịch riêng', async () => {
     addLessonCardsToSrs(UID, BAI.id)
     // Thẻ mới chưa tới hạn ngay (NEW_CARD_DELAY_MS), nên phải nhìn bằng đồng hồ tương lai.
     vi.useFakeTimers()
     vi.setSystemTime(Date.now() + 30 * 24 * 3_600_000)
     const due = getDueProgCards(UID)
     expect(due.filter((c) => c.lessonId === BAI.id)).toHaveLength(BAI.srsCards!.length)
-    // Mỗi thẻ mang đủ ngữ cảnh để dựng màn ôn.
     expect(due[0]!.lessonTitle).toBe(BAI.title)
-    expect(due[0]!.hoi.length).toBeGreaterThan(0)
+    // Nội dung thẻ nạp lười từ đúng bài học — khớp từng chữ với nguồn sự thật.
+    const cards = await hydrateProgCards(due)
+    expect(cards).toHaveLength(due.length)
+    expect(cards[0]!.hoi).toBe(BAI.srsCards![due[0]!.index]!.hoi)
+    expect(cards[0]!.dap).toBe(BAI.srsCards![due[0]!.index]!.dap)
+  })
+
+  it('hydrate bỏ qua thẻ mà bài học không còn (nội dung đã đổi), không hiện thẻ trống', async () => {
+    const cards = await hydrateProgCards([
+      { key: 'prog:khong-co-bai-nay:0', lessonId: 'khong-co-bai-nay', lessonTitle: '?', index: 0 },
+      { key: `prog:${BAI.id}:999`, lessonId: BAI.id, lessonTitle: BAI.title, index: 999 },
+    ])
+    expect(cards).toEqual([])
   })
 
   it('bài KHÔNG có thẻ thì không thêm gì (không tạo thẻ rỗng)', () => {

@@ -49,10 +49,9 @@ import { idFromSlugSegment } from '@core/slug'
 import {
   duongDanChanDoan,
   duongDanChangLoTrinh,
-  duongDanChangTheoId,
-  duongDanHuongTheoChangId,
   duongDanLoTrinh,
 } from '../../../lib/programmingRoutes'
+import { duongDanChangTheoId, duongDanHuongTheoChangId } from '../../../lib/programmingRoutesSpec'
 import PathStageQuiz from '../../../components/PathStageQuiz'
 import PathArtifactVault from '../../../components/PathArtifactVault'
 

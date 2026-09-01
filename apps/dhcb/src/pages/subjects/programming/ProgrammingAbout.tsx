@@ -25,7 +25,7 @@ import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { useAuth } from '../../../context/useAuth'
 import { PROGRAMMING_LEVELS } from '@dhcb/subject-programming/curriculum'
-import { PROGRAMMING_LESSONS } from '@dhcb/subject-programming/lessons'
+import { LESSON_INDEX, getLessonSummary } from '@dhcb/subject-programming/lessonsLoader'
 import { buildSlugSegment } from '@core/slug'
 import { PROJECT_STAGES } from '@dhcb/subject-programming/projectSteps'
 
@@ -113,7 +113,7 @@ export default function ProgrammingAbout() {
   const { user } = useAuth()
 
   // Đếm TẠI CHỖ từ dữ liệu giáo trình — xem ghi chú (2) ở đầu file.
-  const soBai = PROGRAMMING_LESSONS.length
+  const soBai = LESSON_INDEX.length
   const soBac = PROGRAMMING_LEVELS.length
   const soChang = PROJECT_STAGES.length
   const tongTuan = PROGRAMMING_LEVELS.reduce((tong, bac) => {
@@ -285,7 +285,7 @@ export default function ProgrammingAbout() {
             onClick={() =>
               nav(
                 user
-                  ? `/lap-trinh/bai-hoc/${buildSlugSegment('p1-u1-l1', PROGRAMMING_LESSONS.find((l) => l.id === 'p1-u1-l1')?.title ?? '')}`
+                  ? `/lap-trinh/bai-hoc/${buildSlugSegment('p1-u1-l1', getLessonSummary('p1-u1-l1')?.title ?? '')}`
                   : '/login',
               )
             }
