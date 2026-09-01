@@ -9,6 +9,7 @@ import { VIBE_COURSE } from './vibe.js'
 import { OPENCLAW_COURSE } from './openclaw.js'
 import { ML_COURSE } from './ml.js'
 import { PYAI_COURSE } from './pyai.js'
+import { MATHAI_COURSE } from './mathai.js'
 
 export const SHORT_COURSES: ShortCourse[] = [
   GIT_COURSE,
@@ -17,6 +18,7 @@ export const SHORT_COURSES: ShortCourse[] = [
   OPENCLAW_COURSE,
   ML_COURSE,
   PYAI_COURSE,
+  MATHAI_COURSE,
 ]
 
 const courseMap = new Map(SHORT_COURSES.map((c) => [c.id, c]))
