@@ -476,10 +476,10 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
 - [x] **Cụm 6 khoá ngắn "Kỹ sư AI thực chiến" (môn Lập trình, 2026-09-01, 5 đợt PR #798-#803 +
       #800/#801/#802/#803)** — chuỗi `pyai` (Python/AI cơ bản, 17 bài) → `mathai` (Toán thiết yếu
       cho AI, 13 bài) → `mlds` (Machine Learning & Data Science) → `cv1` (Deep Learning for CV cơ
-      bản) → `cv2` (Transformer/ViT, Object Detection...) → `llmagent`, mỗi khoá có
-      `prerequisites` trỏ khoá trước. File khoá: `packages/subject-programming/courses/
-      {pyai,mathai,mlds,cv1,cv2,llmagent}.ts`, nội dung bài: `packages/subject-programming/
-      lessons/`. Đặc tả khung: `docs/specs/2026-09-01-cum-6-khoa-ai-engineer.md` + đặc tả nội
-      dung riêng từng khoá cùng thư mục `docs/specs/`.
+      bản) → `cv2` (Transformer/ViT, Object Detection...) → `llmagent`, mỗi khoá có `prerequisites`
+      trỏ khoá trước. File khoá: `packages/subject-programming/courses/{pyai,mathai,mlds,cv1,cv2,llmagent}.ts`,
+      nội dung bài: `packages/subject-programming/lessons/`. Đặc tả khung:
+      `docs/specs/2026-09-01-cum-6-khoa-ai-engineer.md` + đặc tả nội dung riêng từng khoá cùng
+      thư mục `docs/specs/`.
 
 Chú thích: `[x]` xong · `[~]` làm một phần · `[ ]` chưa làm.

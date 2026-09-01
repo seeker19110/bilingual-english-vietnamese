@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
+import SubjectIllustration from '../../components/SubjectIllustration'
 import { listSubjects } from '../../lib/subjectApi'
 import type { SubjectManifest } from '@dhcb/core-contracts/subjectManifest'
 import { goToSubjects } from '../../lib/subjectsHost'
@@ -266,16 +267,25 @@ export default function Subjects() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredSubjects.map((sub) => {
+            {filteredSubjects.map((sub, subIdx) => {
               const Icon = SUBJECT_ICONS[sub.id] || BookOpen
               const style = SUBJECT_COLORS[sub.id] || SUBJECT_COLORS.english!
 
               return (
                 <div
                   key={sub.id}
-                  className={`bg-zinc-900/80 rounded-3xl p-5 border transition-all flex flex-col justify-between group shadow-sm ${style.border}`}
+                  className={`relative overflow-hidden bg-zinc-900/80 rounded-3xl border transition-all flex flex-col justify-between group shadow-sm hover:shadow-lg animate-fade-up ${style.border}`}
+                  style={{ animationDelay: `${subIdx * 80}ms` }}
                 >
-                  <div>
+                  {/* Illustration nền mờ — góc phải trên */}
+                  <div
+                    className="absolute top-0 right-0 opacity-[0.08] pointer-events-none select-none"
+                    aria-hidden="true"
+                  >
+                    <SubjectIllustration subjectId={sub.id} size="hero" />
+                  </div>
+
+                  <div className="relative p-5">
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div className="flex items-center gap-3">
                         <div
@@ -298,12 +308,21 @@ export default function Subjects() {
                           </span>
                         </div>
                       </div>
-                      <span className="text-xs px-2.5 py-1 rounded-xl bg-zinc-800/80 text-zinc-400 border border-zinc-700/80">
+                      <span className="text-xs px-2.5 py-1 rounded-xl bg-zinc-800/80 text-zinc-400 border border-zinc-700/80 shrink-0">
                         {sub.taxonomyKind === 'cefr' ? 'Chuẩn CEFR' : 'Theo Khối Lớp'}
                       </span>
                     </div>
 
-                    <p className="text-sm text-zinc-300 leading-relaxed mb-4">{sub.description}</p>
+                    {/* Illustration nhỏ nổi bật — chỉ hiện dưới md */}
+                    <div className="flex items-start gap-4 mb-3 md:block">
+                      <div className="shrink-0 md:hidden animate-float">
+                        <SubjectIllustration subjectId={sub.id} size="md" />
+                      </div>
+                      <p className="text-sm text-zinc-300 leading-relaxed">{sub.description}</p>
+                    </div>
+                    <p className="text-sm text-zinc-300 leading-relaxed mb-4 hidden md:block">
+                      {sub.description}
+                    </p>
 
                     {/* Mức độ chuẩn hóa */}
                     <div className="space-y-2 mb-4">
@@ -333,32 +352,34 @@ export default function Subjects() {
                   </div>
 
                   {/* Nút hành động */}
-                  <button
-                    onClick={() => {
-                      if (sub.id === 'english') {
-                        nav('/hoc-tieng-anh')
-                      } else if (sub.id === 'programming') {
-                        nav('/lap-trinh')
-                      } else {
-                        nav(`/mon-hoc/${sub.id}`)
-                      }
-                    }}
-                    className={`w-full mt-2 tap-44 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-semibold transition active:scale-[0.98] ${
-                      sub.id === 'english'
-                        ? 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-md shadow-emerald-500/20'
-                        : 'bg-accent-500 hover:bg-accent-400 text-black shadow-md shadow-accent-500/20'
-                    }`}
-                  >
-                    <Bot className="w-4 h-4" />
-                    <span>
-                      {sub.id === 'english'
-                        ? 'Vào Không Gian Học Tiếng Anh'
-                        : sub.id === 'programming'
-                          ? 'Vào Lộ Trình Lập Trình'
-                          : 'Vào phòng học & Giải đề AI'}
-                    </span>
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
+                  <div className="relative px-5 pb-5">
+                    <button
+                      onClick={() => {
+                        if (sub.id === 'english') {
+                          nav('/hoc-tieng-anh')
+                        } else if (sub.id === 'programming') {
+                          nav('/lap-trinh')
+                        } else {
+                          nav(`/mon-hoc/${sub.id}`)
+                        }
+                      }}
+                      className={`w-full tap-44 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-semibold transition active:scale-[0.98] ${
+                        sub.id === 'english'
+                          ? 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-md shadow-emerald-500/20'
+                          : 'bg-accent-500 hover:bg-accent-400 text-black shadow-md shadow-accent-500/20'
+                      }`}
+                    >
+                      <Bot className="w-4 h-4" />
+                      <span>
+                        {sub.id === 'english'
+                          ? 'Vào Không Gian Học Tiếng Anh'
+                          : sub.id === 'programming'
+                            ? 'Vào Lộ Trình Lập Trình'
+                            : 'Vào phòng học & Giải đề AI'}
+                      </span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               )
             })}
