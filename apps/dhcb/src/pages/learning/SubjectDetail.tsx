@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
+import SubjectIllustration from '../../components/SubjectIllustration'
 import { getSubjectDetails } from '../../lib/subjectApi'
 import { solveProblemImage } from '../../lib/visionSolverApi'
 import { speak } from '../../lib/tts'
@@ -263,11 +264,117 @@ export default function SubjectDetail() {
 
   if (!subject) return null
 
+  // Màu chủ đạo theo môn học
+  const subjectTheme: Record<
+    string,
+    { from: string; via: string; to: string; accent: string; ring: string }
+  > = {
+    mathematics: {
+      from: 'from-blue-600/30',
+      via: 'via-cyan-600/15',
+      to: 'to-indigo-600/20',
+      accent: 'text-blue-400',
+      ring: 'ring-blue-500/30',
+    },
+    physics: {
+      from: 'from-purple-600/30',
+      via: 'via-violet-600/15',
+      to: 'to-indigo-600/20',
+      accent: 'text-purple-400',
+      ring: 'ring-purple-500/30',
+    },
+    chemistry: {
+      from: 'from-amber-600/30',
+      via: 'via-orange-600/15',
+      to: 'to-yellow-600/20',
+      accent: 'text-amber-400',
+      ring: 'ring-amber-500/30',
+    },
+    biology: {
+      from: 'from-rose-600/30',
+      via: 'via-pink-600/15',
+      to: 'to-red-600/20',
+      accent: 'text-rose-400',
+      ring: 'ring-rose-500/30',
+    },
+    english: {
+      from: 'from-emerald-600/30',
+      via: 'via-teal-600/15',
+      to: 'to-green-600/20',
+      accent: 'text-emerald-400',
+      ring: 'ring-emerald-500/30',
+    },
+    programming: {
+      from: 'from-indigo-600/30',
+      via: 'via-blue-600/15',
+      to: 'to-violet-600/20',
+      accent: 'text-indigo-400',
+      ring: 'ring-indigo-500/30',
+    },
+  }
+  const theme = (subjectTheme[subjectId ?? ''] ?? subjectTheme['mathematics'])!
+
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => goToSubjects(nav)} />
 
       <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
+        {/* ─── HERO BANNER với Illustration động ─── */}
+        <section
+          className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${theme.from} ${theme.via} ${theme.to} border border-zinc-800/60 p-5 sm:p-6 shadow-xl backdrop-blur-sm animate-fade-up`}
+        >
+          {/* Nền mờ hình lục giác */}
+          <div
+            className="absolute inset-0 opacity-[0.04]"
+            aria-hidden="true"
+            style={{
+              backgroundImage:
+                "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 1 l17 9.8v19.6L20 39 3 30.4V10.4z' fill='none' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E\")",
+              backgroundSize: '40px 40px',
+            }}
+          />
+
+          <div className="relative flex items-center justify-between gap-4">
+            {/* Nội dung trái */}
+            <div className="flex-1 min-w-0 space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span
+                  className={`text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border ${theme.ring} bg-zinc-900/60 ${theme.accent}`}
+                >
+                  AI Gia Sư
+                </span>
+                <span className="text-xs text-zinc-400">STEM Học Bổ Trợ</span>
+              </div>
+              <h1 className="text-xl sm:text-2xl font-extrabold text-white leading-tight tracking-tight">
+                {subject.label}
+              </h1>
+              <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed line-clamp-2">
+                {subject.description}
+              </p>
+              <div className="flex items-center gap-3 pt-1">
+                <div className="flex items-center gap-1.5">
+                  <BookOpen className={`w-3.5 h-3.5 ${theme.accent}`} />
+                  <span className="text-xs text-zinc-400 font-medium">
+                    {currentGradeData?.chapters.length ?? 0} chương
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className={`w-3.5 h-3.5 ${theme.accent}`} />
+                  <span className="text-xs text-zinc-400 font-medium">AI giải từng bước</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Illustration động bên phải */}
+            <div className="shrink-0 animate-float hidden sm:block">
+              <SubjectIllustration subjectId={subjectId ?? 'mathematics'} size="hero" />
+            </div>
+            <div className="shrink-0 animate-float sm:hidden">
+              <SubjectIllustration subjectId={subjectId ?? 'mathematics'} size="lg" />
+            </div>
+          </div>
+        </section>
+
         <PageHeader
           title={`Gia Sư AI: ${subject.label}`}
           subtitle={`Phòng học thông minh và giải bài tập từng bước (${subject.description})`}
@@ -520,31 +627,53 @@ export default function SubjectDetail() {
         {/* TAB 2: CURRICULUM & FORMULAS */}
         {activeTab === 'curriculum' && currentGradeData && (
           <div className="space-y-4">
-            {currentGradeData.chapters.map((chap) => (
+            {currentGradeData.chapters.map((chap, chapIdx) => (
               <div
                 key={chap.id}
-                className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 space-y-3"
+                className="bg-zinc-900/80 border border-zinc-800 hover:border-zinc-700 rounded-3xl p-5 space-y-4 transition-all shadow-sm animate-fade-up"
+                style={{ animationDelay: `${chapIdx * 60}ms` }}
               >
+                {/* Header chương với illustration nhỏ */}
                 <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h4 className="text-base font-bold text-white">{chap.title}</h4>
-                    <p className="text-xs text-zinc-400 mt-1 leading-relaxed">{chap.description}</p>
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    {/* Số thứ tự chương */}
+                    <div
+                      className={`shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-black ${theme.accent} bg-zinc-950 border border-zinc-800`}
+                    >
+                      {String(chapIdx + 1).padStart(2, '0')}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm sm:text-base font-bold text-white leading-snug">
+                        {chap.title}
+                      </h4>
+                      <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
+                        {chap.description}
+                      </p>
+                    </div>
+                  </div>
+                  {/* Mini illustration theo môn học — chỉ hiện trên màn to */}
+                  <div className="shrink-0 hidden md:block opacity-80">
+                    <SubjectIllustration subjectId={subjectId ?? 'mathematics'} size="sm" />
                   </div>
                 </div>
 
                 {/* Danh sách công thức cốt lõi */}
-                <div className="pt-2 space-y-2">
-                  <span className="text-xs font-semibold text-accent-300 uppercase tracking-wider block">
+                <div className="space-y-2">
+                  <span
+                    className={`text-xs font-semibold ${theme.accent} uppercase tracking-wider block`}
+                  >
                     Công thức & Định lý cốt lõi:
                   </span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {chap.keyFormulas.map((kf, i) => (
                       <div
                         key={i}
-                        className="bg-zinc-950 p-3.5 rounded-2xl border border-zinc-800/80 space-y-1.5"
+                        className="bg-zinc-950 p-3.5 rounded-2xl border border-zinc-800/80 space-y-1.5 hover:border-zinc-700 transition-colors group"
                       >
-                        <p className="text-xs font-semibold text-zinc-200">{kf.name}</p>
-                        <p className="text-xs font-mono text-amber-300 bg-zinc-900/90 px-2.5 py-1.5 rounded-xl border border-zinc-800">
+                        <p className="text-xs font-semibold text-zinc-200 group-hover:text-white transition-colors">
+                          {kf.name}
+                        </p>
+                        <p className="text-xs font-mono text-amber-300 bg-zinc-900/90 px-2.5 py-1.5 rounded-xl border border-zinc-800 overflow-x-auto">
                           {kf.formula}
                         </p>
                         {kf.note && <p className="text-[11px] text-zinc-400 italic">{kf.note}</p>}

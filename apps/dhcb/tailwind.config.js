@@ -86,6 +86,21 @@ export default {
           '20%, 60%': { transform: 'translateX(-5px)' },
           '40%, 80%': { transform: 'translateX(5px)' },
         },
+        // Illustration nổi lên xuống nhẹ
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-8px)' },
+        },
+        // Particle orbit xung quanh subject hero
+        orbit: {
+          '0%': { transform: 'rotate(0deg) translateX(48px) rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg) translateX(48px) rotate(-360deg)' },
+        },
+        // Glow pulse cho hero icon
+        'glow-pulse': {
+          '0%, 100%': { boxShadow: '0 0 20px 4px rgba(var(--a-500) / 0.25)' },
+          '50%': { boxShadow: '0 0 36px 8px rgba(var(--a-500) / 0.45)' },
+        },
       },
       animation: {
         'fade-in': 'fade-in 0.35s ease-out both',
@@ -95,6 +110,9 @@ export default {
         shimmer: 'shimmer 2s linear infinite',
         'pop-correct': 'pop-correct 0.3s ease-out both',
         shake: 'shake 0.35s ease-in-out both',
+        float: 'float 4s ease-in-out infinite',
+        orbit: 'orbit 8s linear infinite',
+        'glow-pulse': 'glow-pulse 3s ease-in-out infinite',
       },
     },
   },
