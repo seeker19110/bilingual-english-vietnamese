@@ -3,11 +3,11 @@
 Khoá ngắn `mathai` là khoá 02 của cụm "Kỹ sư AI thực chiến"
 (`docs/specs/2026-09-01-cum-6-khoa-ai-engineer.md` §03b). Khoá có **13 bài** chia 3 chương:
 
-| Chương     | unitId      | Số bài | Nội dung                                                         | File đích              |
-| ---------- | ----------- | ------ | ---------------------------------------------------------------- | ---------------------- |
-| C1         | `mathai-u1` | 5      | Xác suất & thống kê                                               | `lessons/mathaiu1.ts`  |
-| C2         | `mathai-u2` | 4      | Đại số tuyến tính                                                 | `lessons/mathaiu2.ts`  |
-| C3         | `mathai-u3` | 4      | Giải tích & tối ưu hoá                                            | `lessons/mathaiu3.ts`  |
+| Chương | unitId      | Số bài | Nội dung               | File đích             |
+| ------ | ----------- | ------ | ---------------------- | --------------------- |
+| C1     | `mathai-u1` | 5      | Xác suất & thống kê    | `lessons/mathaiu1.ts` |
+| C2     | `mathai-u2` | 4      | Đại số tuyến tính      | `lessons/mathaiu2.ts` |
+| C3     | `mathai-u3` | 4      | Giải tích & tối ưu hoá | `lessons/mathaiu3.ts` |
 
 **Người thi hành chỉ copy-paste** các object dưới đây vào mảng
 `MATHAI_U1_LESSONS` / `MATHAI_U2_LESSONS` / `MATHAI_U3_LESSONS` (kiểu `ProgrammingLesson[]`)
