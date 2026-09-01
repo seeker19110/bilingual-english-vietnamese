@@ -33,7 +33,7 @@ const UpdateSchema = z
     lessonId: z
       .string()
       .regex(
-        /^(p[1-6]-(u\d+-l\d+|s\d+)|[a-z]+-s[1-4]-[mr]\d+|(git|hermes|vibe|openclaw|ml)-u\d+-l\d+)$/,
+        /^(p[1-6]-(u\d+-l\d+|s\d+)|[a-z]+-s[1-4]-[mr]\d+|(git|hermes|vibe|openclaw|ml|pyai|mathai|mlds|cv1|cv2|llmagent)-u\d+-l\d+)$/,
       ),
     status: z.enum(['in_progress', 'completed']),
   })
