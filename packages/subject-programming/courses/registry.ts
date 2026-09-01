@@ -8,6 +8,7 @@ import { HERMES_COURSE } from './hermes.js'
 import { VIBE_COURSE } from './vibe.js'
 import { OPENCLAW_COURSE } from './openclaw.js'
 import { ML_COURSE } from './ml.js'
+import { PYAI_COURSE } from './pyai.js'
 import { MLDS_COURSE } from './mlds.js'
 import { CV1_COURSE } from './cv1.js'
 
@@ -17,6 +18,7 @@ export const SHORT_COURSES: ShortCourse[] = [
   VIBE_COURSE,
   OPENCLAW_COURSE,
   ML_COURSE,
+  PYAI_COURSE,
   MLDS_COURSE,
   CV1_COURSE,
 ]

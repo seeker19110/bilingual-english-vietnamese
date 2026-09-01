@@ -144,6 +144,10 @@ import { ML_U1_LESSONS } from './lessons/mlu1.js'
 import { ML_U2_LESSONS } from './lessons/mlu2.js'
 import { ML_U3_LESSONS } from './lessons/mlu3.js'
 import { ML_U4_LESSONS } from './lessons/mlu4.js'
+import { PYAI_U1_LESSONS } from './lessons/pyaiu1.js'
+import { PYAI_U2_LESSONS } from './lessons/pyaiu2.js'
+import { PYAI_U3_LESSONS } from './lessons/pyaiu3.js'
+import { PYAI_U4_LESSONS } from './lessons/pyaiu4.js'
 import { MLDS_U1_LESSONS } from './lessons/mldsu1.js'
 import { MLDS_U2_LESSONS } from './lessons/mldsu2.js'
 import { MLDS_U3_LESSONS } from './lessons/mldsu3.js'
@@ -285,6 +289,10 @@ export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...ML_U2_LESSONS,
   ...ML_U3_LESSONS,
   ...ML_U4_LESSONS,
+  ...PYAI_U1_LESSONS,
+  ...PYAI_U2_LESSONS,
+  ...PYAI_U3_LESSONS,
+  ...PYAI_U4_LESSONS,
   ...MLDS_U1_LESSONS,
   ...MLDS_U2_LESSONS,
   ...MLDS_U3_LESSONS,
