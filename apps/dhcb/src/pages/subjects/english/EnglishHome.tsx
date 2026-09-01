@@ -1,6 +1,7 @@
 // apps/dhcb/src/pages/EnglishHome.tsx — Không gian Chuyên Sâu Môn Tiếng Anh (English Studio Hub)
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import {
   MessageCircle,
   PenLine,
@@ -55,6 +56,7 @@ import {
 const RECENT_WORDS_FOR_SPEAKING = 8
 
 export default function EnglishHome() {
+  usePageTitle('Học tiếng Anh | Đồng hành cùng bạn')
   const nav = useNavigate()
   const { user } = useAuth()
   const syncVersion = useCloudSync(user?.id)

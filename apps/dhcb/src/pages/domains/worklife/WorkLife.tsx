@@ -12,6 +12,7 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Briefcase, HeartHandshake } from 'lucide-react'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import Work from '../work/Work'
@@ -26,6 +27,7 @@ function readTab(raw: string | null): Tab {
 }
 
 export default function WorkLife() {
+  usePageTitle('Công việc & Cuộc sống | Đồng hành cùng bạn')
   const nav = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const [tab, setTab] = useState<Tab>(() => readTab(searchParams.get('muc')))

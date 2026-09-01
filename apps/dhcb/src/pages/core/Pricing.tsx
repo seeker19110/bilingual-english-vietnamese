@@ -10,12 +10,15 @@ import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import UpgradeSection from '../../components/UpgradeSection'
 import PricePromoBanner from '../../components/PricePromoBanner'
+import { usePageTitle } from '../../lib/usePageTitle'
 import { useAuth } from '../../context/useAuth'
 import { getDirection } from '../../lib/storage'
 
 export default function Pricing() {
   const { user } = useAuth()
   const isA = getDirection() === 'A'
+
+  usePageTitle('Nâng cấp Pro/VIP | Đồng hành cùng bạn')
 
   return (
     <div className="min-h-dvh bg-zinc-950">

@@ -7,6 +7,7 @@
 // dùng chung cột lượt "speaking" đã có (LIMITS trong types.ts), KHÔNG thêm cột mới.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { usePageTitle } from '../../lib/usePageTitle'
 import {
   Headphones,
   Mic,
@@ -1085,6 +1086,7 @@ function ReverseInterview({ isA, user, onExit }: { isA: boolean; user: User; onE
 
 // ── Trang chính ─────────────────────────────────────────────────────────
 export default function Practice() {
+  usePageTitle('Luyện tập | Đồng hành cùng bạn')
   const nav = useNavigate()
   const { user } = useAuth()
   const dir = getDirection()

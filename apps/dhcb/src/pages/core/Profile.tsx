@@ -34,6 +34,7 @@ import TwoFactorSection from '../../components/TwoFactorSection'
 import UpgradeSection from '../../components/UpgradeSection'
 import PricePromoBanner from '../../components/PricePromoBanner'
 import FeedbackModal from '../../components/FeedbackModal'
+import { usePageTitle } from '../../lib/usePageTitle'
 import { useAuth } from '../../context/useAuth'
 import { useLang } from '../../context/useLang'
 import { useToast } from '@core/ToastProvider'
@@ -73,6 +74,8 @@ export default function Profile() {
   const [claimingId, setClaimingId] = useState<string | null>(null)
   const [questsOpen, setQuestsOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
+
+  usePageTitle('Trang cá nhân | Đồng hành cùng bạn')
 
   // Backfill huy hiệu — chạy trong callback bất đồng bộ để không setState đồng bộ
   // trong effect (luật react-hooks/set-state-in-effect).

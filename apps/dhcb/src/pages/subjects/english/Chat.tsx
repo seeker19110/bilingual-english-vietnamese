@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import { Send, Plus, ChevronDown, Sparkles, Award } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
@@ -459,6 +460,7 @@ function currentTimeMs(): number {
 
 // ── Main Chat page ────────────────────────────────────────────────────────────
 export default function Chat() {
+  usePageTitle('Trò chuyện với gia sư AI | Môn Tiếng Anh · Đồng hành cùng bạn')
   const user = useAuth().user! // RequireAuth đã đảm bảo có user trước khi vào trang
   const toast = useToast()
   useCloudSync(user.id) // kéo lịch sử + lượt dùng từ Supabase khi mở trang

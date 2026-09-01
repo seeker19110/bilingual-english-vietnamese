@@ -1,6 +1,7 @@
 // apps/dhcb/src/pages/Subjects.tsx — Multi-Subject Learning Hub & AI Diagnostic Studio
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { usePageTitle } from '../../lib/usePageTitle'
 import {
   BookOpen,
   Calculator,
@@ -71,6 +72,7 @@ const SUBJECT_COLORS: Record<
 }
 
 export default function Subjects() {
+  usePageTitle('Môn học | Đồng hành cùng bạn')
   const nav = useNavigate()
   const [subjects, setSubjects] = useState<SubjectManifest[]>([])
   const [filter, setFilter] = useState<'all' | 'language' | 'stem'>('all')

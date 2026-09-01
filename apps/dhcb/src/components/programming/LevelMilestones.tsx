@@ -11,7 +11,7 @@ interface Props {
   levels: readonly ProgrammingLevel[]
   /** Tiến độ từng bậc, khoá theo id bậc. */
   progressOf: (levelId: string) => { done: number; total: number }
-  onOpen: (levelId: string) => void
+  onOpen: (level: ProgrammingLevel) => void
   /** Bậc chứa bài học tiếp — được đánh dấu "bạn đang ở đây". */
   currentLevelId?: string | undefined
 }
@@ -83,7 +83,7 @@ export default function LevelMilestones({ levels, progressOf, onOpen, currentLev
               />
             )}
             <button
-              onClick={() => onOpen(level.id)}
+              onClick={() => onOpen(level)}
               aria-label={`Bậc ${level.id.toUpperCase()} ${level.name} — đã xong ${done} trên ${total} bài`}
               className={`tap-44 w-full text-left rounded-3xl p-4 transition flex items-start gap-3 active:scale-[0.99] border ${
                 dangO

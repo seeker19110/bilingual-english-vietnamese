@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Eye, EyeOff, KeyRound } from 'lucide-react'
+import { usePageTitle } from '../../lib/usePageTitle'
 import { useLang } from '../../context/useLang'
 
 async function postAuth(body: Record<string, unknown>): Promise<{ ok: boolean; error?: string }> {
@@ -31,6 +32,8 @@ export default function ResetPassword() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
+
+  usePageTitle('Đặt lại mật khẩu | Đồng hành cùng bạn')
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()

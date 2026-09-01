@@ -12,6 +12,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Sparkles, ArrowRight, Loader2, Check } from 'lucide-react'
+import { usePageTitle } from '../../lib/usePageTitle'
 import { useAuth } from '../../context/useAuth'
 import {
   fetchIntake,
@@ -57,6 +58,8 @@ export default function Intake() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [checking, setChecking] = useState(true)
+
+  usePageTitle('Bắt đầu | Đồng hành cùng bạn')
 
   // Đã trả lời rồi thì không hỏi lại — đi thẳng tới onboarding của môn.
   //

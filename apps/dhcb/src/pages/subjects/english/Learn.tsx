@@ -9,6 +9,7 @@
 
 import { useState } from 'react'
 import { Target, Brain, Star, ClipboardList } from 'lucide-react'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import VocabMilestone from '../../../components/VocabMilestone'
@@ -28,6 +29,7 @@ type TabDef = {
 }
 
 export default function Learn() {
+  usePageTitle('Lộ trình học | Môn Tiếng Anh · Đồng hành cùng bạn')
   const { user } = useAuth()
   const onboarding = useOnboarding(user?.id) // nhóm tuổi (GĐ 4, PROGRESS.md) — lọc vòng từ vựng
   const isA = getDirection() === 'A'

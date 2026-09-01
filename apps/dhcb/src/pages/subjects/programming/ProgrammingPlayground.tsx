@@ -5,6 +5,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Play, Square, Loader2, Terminal, Keyboard, ListOrdered } from 'lucide-react'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import CodeEditor from '../../../components/CodeEditor'
@@ -17,6 +18,7 @@ import { P1_SAMPLES } from '@dhcb/subject-programming/samplesP1'
 type RunState = 'idle' | 'loading-env' | 'running' | 'done'
 
 export default function ProgrammingPlayground() {
+  usePageTitle('Chạy thử code | Môn Lập trình · Đồng hành cùng bạn')
   const nav = useNavigate()
   const firstSample = P1_SAMPLES[0]!
   const [sampleId, setSampleId] = useState(firstSample.id)

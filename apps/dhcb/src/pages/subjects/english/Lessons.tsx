@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, memo, useMemo, useDeferredValue } from 'react'
 import type { PointerEvent } from 'react'
 import { Link } from 'react-router-dom'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import {
   Play,
   Pause,
@@ -172,6 +173,7 @@ const WordText = memo(function WordText({
 
 // ── Trang chính ───────────────────────────────────────────────────────────────
 export default function Lessons() {
+  usePageTitle('Bài học | Môn Tiếng Anh · Đồng hành cùng bạn')
   const dir: Direction = getDirection()
   const isA = dir === 'A'
   const { user } = useAuth()

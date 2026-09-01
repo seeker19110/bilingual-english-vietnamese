@@ -1,6 +1,7 @@
 // apps/dhcb/src/pages/StartupCanvas.tsx — Interactive 9-Box Lean Canvas (Startup Sub-page)
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import {
   Rocket,
   Plus,
@@ -75,6 +76,7 @@ const DEFAULT_CANVAS: CanvasState = {
 }
 
 export default function StartupCanvas() {
+  usePageTitle('Canvas khởi nghiệp | Đồng hành cùng bạn')
   const nav = useNavigate()
   const toast = useToast()
   const [ventures, setVentures] = useState<Venture[]>([])

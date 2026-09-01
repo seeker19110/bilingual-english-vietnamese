@@ -29,6 +29,7 @@ import ShareToggle from '../../components/location/ShareToggle'
 import TripActions from '../../components/location/TripActions'
 import TripHeader from '../../components/location/TripHeader'
 import TripSetup from '../../components/location/TripSetup'
+import { usePageTitle } from '../../lib/usePageTitle'
 import { useToast } from '@core/ToastProvider'
 import { useAuth } from '../../context/useAuth'
 import { distanceMeters, findStragglers, groupCenter } from '@dhcb/core-location/geo'
@@ -70,6 +71,8 @@ export default function LiveLocation() {
     [state, myUserId],
   )
   const sharing = !!me?.sharingEnabled
+
+  usePageTitle('Đi chung | Đồng hành cùng bạn')
 
   // ── Nạp danh sách chuyến + vào thẳng chuyến nếu mở bằng link mời ────────────────────────
   useEffect(() => {

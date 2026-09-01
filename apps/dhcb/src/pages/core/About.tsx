@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
+import { usePageTitle } from '../../lib/usePageTitle'
 import { useLang } from '../../context/useLang'
 import { navigateTo } from '../../lib/subjectsHost'
 
@@ -221,6 +222,8 @@ export default function About() {
   const { lang } = useLang()
   const isA = lang === 'vi'
   const nav = useNavigate()
+
+  usePageTitle('Giới thiệu | Đồng hành cùng bạn')
 
   return (
     <div className="min-h-dvh bg-zinc-950">

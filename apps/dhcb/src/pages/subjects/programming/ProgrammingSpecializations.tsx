@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { duongDanHuong } from '../../../lib/programmingRoutes'
 import { Compass, Clock, Lock, ArrowRight, Boxes, Layers, CheckCircle2 } from 'lucide-react'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { useAuth } from '../../../context/useAuth'
@@ -87,6 +88,7 @@ function SpecCard({
 }
 
 export default function ProgrammingSpecializations() {
+  usePageTitle('Các hướng chuyên sâu | Môn Lập trình · Đồng hành cùng bạn')
   const nav = useNavigate()
   const { user } = useAuth()
   const [progress, setProgress] = useState<SpecProgressSnapshot>(EMPTY_SPEC_PROGRESS)

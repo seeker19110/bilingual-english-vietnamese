@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import {
   Mic,
   MicOff,
@@ -554,6 +555,7 @@ function currentTimeMs(): number {
 
 // ── Main Speaking page ──────────────────────────────────────────────────
 export default function Speaking() {
+  usePageTitle('Luyện nói song ngữ | Môn Tiếng Anh · Đồng hành cùng bạn')
   const user = useAuth().user! // RequireAuth đã đảm bảo có user trước khi vào trang
   const toast = useToast()
   useCloudSync(user.id) // kéo lịch sử + lượt dùng từ Supabase khi mở trang

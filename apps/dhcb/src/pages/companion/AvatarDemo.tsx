@@ -3,6 +3,7 @@
 // KHÔNG gắn vào luồng Luyện nói thật. Xem docs/research/dac-ta-avatar-ai-noi-chuyen-2026-07-28.md
 // (mục 5, bước 1 "PoC nhỏ") — chứng minh cơ chế viseme animation chạy đúng trước khi mở rộng.
 import { useState } from 'react'
+import { usePageTitle } from '../../lib/usePageTitle'
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import ComingSoonBanner from '../../components/ComingSoonBanner'
@@ -39,6 +40,7 @@ async function fetchWordVisemes(text: string): Promise<Viseme[][] | null> {
 }
 
 export default function AvatarDemo() {
+  usePageTitle('Demo avatar | Đồng hành cùng bạn')
   // Dùng state (không dùng ref) vì phần tử audio được TRUYỀN XUỐNG AvatarSpeaking lúc render
   // — luật react-hooks refs cấm đọc ref.current trong render.
   const [audioEl, setAudioEl] = useState<HTMLAudioElement | null>(null)

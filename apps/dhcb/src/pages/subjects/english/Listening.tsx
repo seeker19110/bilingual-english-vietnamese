@@ -6,6 +6,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Play, Square, Eye, EyeOff, ChevronRight } from 'lucide-react'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import { CardListSkeleton } from '../../../components/Skeleton'
@@ -25,6 +26,7 @@ type Tab = 'phrases' | 'dialogues'
 const TABS: Tab[] = ['phrases', 'dialogues']
 
 export default function Listening() {
+  usePageTitle('Luyện nghe | Môn Tiếng Anh · Đồng hành cùng bạn')
   const { user } = useAuth()
   const { T } = useLang()
   const [searchParams, setSearchParams] = useSearchParams()

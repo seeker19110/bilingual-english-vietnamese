@@ -5,6 +5,7 @@
 // Video KHÔNG upload — chỉ lưu trên máy (IndexedDB, lib/challengeVideo.ts).
 import { useEffect, useRef, useState } from 'react'
 import { Video, Mic, RotateCcw, Send, Square, Type, Trophy, Check, Volume2 } from 'lucide-react'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import Celebration from '../../../components/Celebration'
@@ -271,6 +272,7 @@ function ChallengePlayback({ uid, day, label }: { uid: string; day: string; labe
 }
 
 export default function Challenge() {
+  usePageTitle('Thử thách | Môn Tiếng Anh · Đồng hành cùng bạn')
   const user = useAuth().user!
   const toast = useToast()
   const dir: Direction = getDirection()

@@ -14,6 +14,7 @@ import {
   preloadOAuthProviders,
 } from '../../lib/auth'
 import { claimPendingReferral } from '../../lib/referral'
+import { usePageTitle } from '../../lib/usePageTitle'
 import { useAuth } from '../../context/useAuth'
 import { useLang } from '../../context/useLang'
 import { useToast } from '@core/ToastProvider'
@@ -42,6 +43,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [forgotSending, setForgotSending] = useState(false)
   const [isPopupBlocked, setIsPopupBlocked] = useState(false)
+
+  usePageTitle('Đăng nhập | Đồng hành cùng bạn')
 
   useEffect(() => {
     // 1. Tải trước SDK OAuth

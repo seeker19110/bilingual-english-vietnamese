@@ -11,6 +11,7 @@
 // đang ở bài nào rồi bấm ba lần mới tới nơi. Đó là khiếm khuyết nặng nhất về giữ chân người học.
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import {
   Code2,
   Rocket,
@@ -41,9 +42,10 @@ import { SHORT_COURSES } from '@dhcb/subject-programming/courses/registry'
 import { LEARNING_PATHS } from '@dhcb/subject-programming/learningPaths/registry'
 import { goToSubjects } from '../../../lib/subjectsHost'
 import { buildSlugSegment } from '@core/slug'
-import { duongDanKhoa, duongDanLoTrinh } from '../../../lib/programmingRoutes'
+import { duongDanBac, duongDanKhoa, duongDanLoTrinh } from '../../../lib/programmingRoutes'
 
 export default function ProgrammingHome() {
+  usePageTitle('Môn Lập trình | Đồng hành cùng bạn')
   const nav = useNavigate()
   const { user } = useAuth()
   const [progress, setProgress] = useState<ProgrammingLessonProgress[]>([])
@@ -288,7 +290,7 @@ export default function ProgrammingHome() {
           <LevelMilestones
             levels={PROGRAMMING_LEVELS}
             progressOf={(levelId) => countCompletedByLevel(progress, levelId)}
-            onOpen={(levelId) => nav(`/lap-trinh/${levelId}`)}
+            onOpen={(level) => nav(duongDanBac(level))}
             currentLevelId={next?.levelId}
           />
         </section>

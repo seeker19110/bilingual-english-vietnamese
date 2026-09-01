@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { usePageTitle } from '../../../lib/usePageTitle'
 import {
   GitCommit,
   GitMerge,
@@ -78,6 +79,7 @@ const TABS = [
 ]
 
 export default function LifeGraph() {
+  usePageTitle('Bản đồ cuộc sống | Đồng hành cùng bạn')
   const nav = useNavigate()
   const toast = useToast()
   const [activeTab, setActiveTab] = useState<

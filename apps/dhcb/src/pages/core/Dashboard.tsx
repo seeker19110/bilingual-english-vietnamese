@@ -19,6 +19,7 @@ import {
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import QuickActions from '../../components/QuickActions'
+import { usePageTitle } from '../../lib/usePageTitle'
 import { useIsDesktopViewport } from '../../lib/useIsDesktopViewport'
 import { useAuth } from '../../context/useAuth'
 import { useLang } from '../../context/useLang'
@@ -226,6 +227,9 @@ export default function Dashboard() {
   // Gói Free: kho lượt AI tuần chung nằm ở server (weekly_ai_credit), không suy ra được
   // từ dữ liệu local như Pro/VIP (per-mode, theo ngày) — phải hỏi server (usage-summary.ts).
   const [weeklyCredit, setWeeklyCredit] = useState<WeeklyCreditInfo | null>(null)
+
+  usePageTitle('Tiến độ học tập | Đồng hành cùng bạn')
+
   useEffect(() => {
     if (!user || effectivePlan(user.plan) !== 'free') return
     let alive = true
