@@ -78,62 +78,70 @@ export default function LandingEn() {
 
   return (
     <div className="min-h-dvh bg-zinc-950 theme-light:bg-white text-zinc-100 theme-light:text-zinc-900">
-      <header className="max-w-4xl mx-auto px-4 pt-4 flex justify-end">
+      <header className="mx-auto flex max-w-lg justify-end px-4 pt-4 sm:max-w-2xl lg:max-w-6xl">
         <ThemeToggle />
       </header>
-      <main className="mx-auto max-w-lg px-4 pb-16 pt-6 sm:max-w-2xl">
-        {/* Hero */}
-        <section className="text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-500/15 text-accent-400">
-            <Sparkles className="h-7 w-7" aria-hidden="true" />
-          </div>
-          <p className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/60 theme-light:bg-zinc-50 px-3 py-1 text-xs text-zinc-300 theme-light:text-zinc-700">
-            <span className="font-semibold text-accent-400">Language subject</span>
-            <span aria-hidden="true">·</span>
-            <span>part of the Đồng hành cùng bạn platform</span>
-          </p>
-          <h1 className="text-2xl font-bold leading-tight sm:text-3xl">
-            Learn Vietnamese with AI
-            <br />
-            <span className="text-accent-400">mistakes explained back to you in English</span>
-          </h1>
-          <p className="mt-3 text-base text-zinc-300 theme-light:text-zinc-700">
-            Free. No prior Vietnamese needed to get started.
-          </p>
-
-          <button
-            type="button"
-            onClick={handleCtaClick}
-            className="tap-44 mt-6 w-full rounded-xl bg-accent-500 px-6 py-3.5 text-base font-semibold text-black transition hover:bg-accent-400 sm:w-auto sm:px-10"
-          >
-            Start learning free
-          </button>
-        </section>
-
-        {/* Điểm khác biệt */}
-        <section className="mt-10 rounded-2xl border border-accent-500/30 bg-accent-500/5 p-4">
-          <div className="flex items-start gap-3">
-            <Volume2 className="mt-0.5 h-5 w-5 shrink-0 text-accent-400" aria-hidden="true" />
-            <p className="text-sm text-zinc-300">
-              <strong className="text-zinc-100 theme-light:text-zinc-900">What's different:</strong>{' '}
-              The AI doesn't just correct your text — it{' '}
-              <strong>reads the explanation back to you in a real English voice</strong>, while the
-              conversation itself stays in natural Vietnamese. Content is grounded in everyday
-              Vietnamese life, not textbook phrases.
+      {/* [2026-09-02] Tầng desktop — cùng công thức với bản tiếng Việt (`Landing.tsx`): mọi
+          thay đổi nằm sau `lg:` nên dưới 1024px không đổi gì; chỗ thừa dùng để đặt cạnh nhau
+          những khối vốn phải cuộn mới thấy, không dùng để kéo dài dòng chữ. */}
+      <main className="mx-auto max-w-lg px-4 pb-16 pt-6 sm:max-w-2xl lg:max-w-6xl lg:pt-12">
+        {/* Hero + điểm khác biệt: xếp dọc ở mobile, hai cột ở desktop (lưới CSS, một nhánh DOM). */}
+        <div className="lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-center lg:gap-12">
+          <section className="text-center lg:text-left">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-500/15 text-accent-400 lg:mx-0">
+              <Sparkles className="h-7 w-7" aria-hidden="true" />
+            </div>
+            <p className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/60 theme-light:bg-zinc-50 px-3 py-1 text-xs text-zinc-300 theme-light:text-zinc-700">
+              <span className="font-semibold text-accent-400">Language subject</span>
+              <span aria-hidden="true">·</span>
+              <span>part of the Đồng hành cùng bạn platform</span>
             </p>
-          </div>
-        </section>
+            <h1 className="text-2xl font-bold leading-tight sm:text-3xl lg:text-4xl lg:leading-[1.15] xl:text-5xl xl:leading-[1.1]">
+              Learn Vietnamese with AI
+              <br />
+              <span className="text-accent-400">mistakes explained back to you in English</span>
+            </h1>
+            <p className="mt-3 text-base text-zinc-300 theme-light:text-zinc-700 lg:mt-5 lg:text-lg">
+              Free. No prior Vietnamese needed to get started.
+            </p>
 
-        {/* 3 chế độ */}
-        <section className="mt-8">
+            <button
+              type="button"
+              onClick={handleCtaClick}
+              className="tap-44 mt-6 w-full rounded-xl bg-accent-500 px-6 py-3.5 text-base font-semibold text-black transition hover:bg-accent-400 sm:w-auto sm:px-10"
+            >
+              Start learning free
+            </button>
+          </section>
+
+          {/* Điểm khác biệt — cột PHẢI của hero ở desktop: đây là lý do chọn sản phẩm này, nên
+            phải đọc được cùng lúc với tiêu đề chứ không phải cuộn mới thấy. */}
+          <section className="mt-10 rounded-2xl border border-accent-500/30 bg-accent-500/5 p-4 lg:mt-0 lg:p-6">
+            <div className="flex items-start gap-3">
+              <Volume2 className="mt-0.5 h-5 w-5 shrink-0 text-accent-400" aria-hidden="true" />
+              <p className="text-sm text-zinc-300 lg:text-base lg:leading-relaxed">
+                <strong className="text-zinc-100 theme-light:text-zinc-900">
+                  What's different:
+                </strong>{' '}
+                The AI doesn't just correct your text — it{' '}
+                <strong>reads the explanation back to you in a real English voice</strong>, while
+                the conversation itself stays in natural Vietnamese. Content is grounded in everyday
+                Vietnamese life, not textbook phrases.
+              </p>
+            </div>
+          </section>
+        </div>
+
+        {/* 3 chế độ — ba lựa chọn NGANG HÀNG nhau nên xếp ngang ở desktop. */}
+        <section className="mt-8 lg:mt-16">
           <h2 className="text-center text-sm font-semibold uppercase tracking-wide text-zinc-500">
             Three practice modes
           </h2>
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 space-y-3 lg:mt-8 lg:grid lg:grid-cols-3 lg:gap-5 lg:space-y-0">
             {MODES.map((mode) => (
               <div
                 key={mode.title}
-                className="flex items-start gap-3 rounded-xl border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/60 theme-light:bg-zinc-50 p-4"
+                className="flex items-start gap-3 rounded-xl border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/60 theme-light:bg-zinc-50 p-4 lg:flex-col lg:gap-4 lg:p-6"
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent-500/15 text-accent-400">
                   <mode.icon className="h-5 w-5" aria-hidden="true" />
@@ -152,17 +160,17 @@ export default function LandingEn() {
         </section>
 
         {/* Giới hạn dùng — thành thật, không phóng đại */}
-        <section className="mt-8 rounded-xl border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/40 theme-light:bg-zinc-50 p-4 text-center">
+        <section className="mt-8 rounded-xl border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/40 theme-light:bg-zinc-50 p-4 text-center lg:mt-16 lg:p-6">
           <p className="text-sm text-zinc-300 theme-light:text-zinc-700">
             Free, with a daily usage limit so everyone gets a fair share.
           </p>
         </section>
 
-        <div className="mt-8 text-center">
+        <div className="mt-8 text-center lg:mt-14">
           <button
             type="button"
             onClick={handleCtaClick}
-            className="tap-44 w-full rounded-xl bg-accent-500 px-6 py-3.5 text-base font-semibold text-black transition hover:bg-accent-400 sm:w-auto sm:px-10"
+            className="tap-44 w-full rounded-xl bg-accent-500 px-6 py-3.5 text-base font-semibold text-black transition hover:bg-accent-400 sm:w-auto sm:px-10 lg:px-14 lg:py-4 lg:text-lg"
           >
             Sign up free
           </button>
