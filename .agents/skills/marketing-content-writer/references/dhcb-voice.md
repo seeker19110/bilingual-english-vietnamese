@@ -5,6 +5,7 @@
 > với thực tế sản phẩm (đối chiếu `CLAUDE.md` mục 1 + mục 13 khi nghi ngờ).
 
 ## Về sản phẩm (about-me)
+
 - **Tên:** DHCB — Đồng Hành Cùng Bạn (donghanhcungban.org, môn Anh tại en-vi.donghanhcungban.org)
 - **Là gì:** KHÔNG chỉ là app học tiếng Anh — là **nền tảng đồng hành cá nhân** phát triển mọi
   mảng liên quan tới một con người: **Learning** (nhiều môn học) · **Career** · **Work** ·
@@ -21,6 +22,7 @@
   đồng hành, sửa lỗi, chấm điểm, cá nhân hoá lộ trình theo đúng người học, đúng tốc độ.
 
 ### Môn Anh (chi tiết vì là tính năng cờ)
+
 - Hai chiều học: A — người Việt học tiếng Anh; B — người nước ngoài học tiếng Việt qua tiếng Anh.
 - 3 chế độ: Chat tổng hợp (sửa lỗi + động viên, chấm điểm kiểu IELTS Speaking) · Luyện viết +
   chấm điểm (kiểu IELTS) · **Luyện nói song ngữ** — bạn nói → AI nghe (STT) → AI trả lời bằng
@@ -29,16 +31,19 @@
 - Lộ trình CEFR A1→C2 đầy đủ, cá nhân hoá tốc độ học (5/10/20 từ/ngày), ôn tập SRS không lặp.
 
 ### Môn Lập trình
+
 - 6 bậc P1→P6, 11 hướng chuyên sâu, lộ trình mục tiêu ghép nhiều chặng (VD: "Kỹ Sư Trưởng AI"),
   cụm khoá ngắn AI thực chiến (Python/AI → Toán cho AI → ML/Data Science → Deep Learning CV →
   Transformer/Detection → LLM Agent). Chấm bài AI có eval riêng, không lộ lời giải.
 
 ## Giá
+
 - Có bản miễn phí dùng thử. Pro/VIP giá rẻ: Pro 20k/10 ngày · 40k/tháng · 360k/năm; VIP 30k/10
   ngày · 75k/tháng · 500k/năm. Rẻ hơn nhiều so với thuê gia sư (200-500k/buổi) hoặc mua khoá học
   lập trình vài triệu.
 
 ## Giọng văn (voice)
+
 - Gần gũi, như một người bạn đồng hành — KHÔNG hô khẩu hiệu, KHÔNG "học dễ như ăn kẹo".
 - Thẳng thắn về giá trị thật: sửa lỗi bằng giọng nói, không phải gimmick; không phóng đại số liệu.
 - Ưu tiên ví dụ cụ thể, tình huống đời sống Việt Nam (đi phỏng vấn, đi làm, đi du lịch, thi lớp 10,
@@ -52,6 +57,7 @@
   nhận trong `CLAUDE.md`/`PROGRESS.md`.
 
 ## 4 thông điệp cốt lõi (chọn 1-2 theo yêu cầu mỗi lần viết, đừng nhồi hết vào một bài)
+
 1. **Sửa lỗi bằng giọng nói thật, hai chiều** (môn Anh) — nghe được AI nói chuẩn giọng ngôn ngữ
    đích, rồi nghe được AI giải thích lại bằng giọng mẹ đẻ, như có một gia sư ngồi cạnh.
 2. **Giá rẻ / có bản miễn phí** — ai cũng học được, không cần thuê gia sư đắt đỏ hay mua khoá học
