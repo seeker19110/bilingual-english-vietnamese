@@ -49,6 +49,25 @@ export default {
           800: 'rgb(var(--a-800) / <alpha-value>)',
           900: 'rgb(var(--a-900) / <alpha-value>)',
         },
+        // ── TOKEN NGỮ NGHĨA (thêm 2026-09-02, đợt 1 thiết kế lại desktop) ─────────────
+        // Đặt tên theo VAI TRÒ thay vì theo bậc màu, để chọn đúng là mặc định: mỗi tên
+        // dưới đây đã được đo đạt ngưỡng WCAG trên cả 5 theme (scripts/contrast-audit.ts).
+        // Nội dung mới nên dùng nhóm này; thang `zinc`/`accent` ở trên giữ nguyên cho code cũ.
+        surface: {
+          base: 'rgb(var(--surface-base) / <alpha-value>)', // nền trang
+          card: 'rgb(var(--surface-card) / <alpha-value>)', // thẻ nội dung
+          raised: 'rgb(var(--surface-raised) / <alpha-value>)', // lớp phủ: modal/dropdown/toast
+        },
+        line: {
+          subtle: 'rgb(var(--border-subtle) / <alpha-value>)',
+          strong: 'rgb(var(--border-strong) / <alpha-value>)',
+        },
+        content: {
+          DEFAULT: 'rgb(var(--text-primary) / <alpha-value>)', // AAA — tiêu đề & nội dung
+          secondary: 'rgb(var(--text-secondary) / <alpha-value>)', // AAA — nội dung phụ
+          muted: 'rgb(var(--text-muted) / <alpha-value>)', // AA — nhãn/chú thích, KHÔNG cho nội dung
+          disabled: 'rgb(var(--text-disabled) / <alpha-value>)', // AA — trạng thái tắt
+        },
       },
       fontFamily: {
         sans: ['Inter Variable', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
