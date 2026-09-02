@@ -123,7 +123,7 @@ export default function Stories() {
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout back />
-      <main className="max-w-3xl lg:max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))]">
+      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))]">
         <PageHeader
           title={isA ? 'Nghe - Đọc - Kể Truyện' : 'Listen - Read - Tell Stories'}
           subtitle={

@@ -244,7 +244,7 @@ export default function Dictionary() {
 
       <main>
         <div
-          className={`max-w-3xl lg:max-w-4xl mx-auto px-4 py-6 sm:pb-[calc(1.5rem+var(--bnav-h))] ${
+          className={`max-w-3xl mx-auto px-4 py-6 sm:pb-[calc(1.5rem+var(--bnav-h))] ${
             tab === 'search' ? 'pb-[calc(6rem+var(--bnav-h))]' : 'pb-[calc(1.5rem+var(--bnav-h))]'
           }`}
         >
