@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   BookOpen,
+  ChevronDown,
   Crown,
   Home,
   PanelLeftClose,
@@ -23,6 +24,17 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { useAuth } from '../context/useAuth'
+import SubjectsLink from './SubjectsLink'
+import {
+  ENGLISH_CHILDREN,
+  PRACTICE_CHILDREN,
+  SUBJECT_CHILDREN,
+  groupContainsPath,
+  readOpenGroups,
+  toggleGroup,
+  writeOpenGroups,
+  type NavChild,
+} from '../lib/navTree'
 import { STUDIOS, NAV_HIDDEN_PATHS } from '../lib/studios'
 import {
   CAREER_PATHS,
@@ -49,6 +61,8 @@ interface Item {
   paths?: readonly string[]
   /** Chỉ sáng khi đường dẫn TRÙNG KHÍT (dùng cho Trang chủ `/`). */
   exact?: boolean
+  /** Mục con đóng/mở được (xem lib/navTree.ts). Không có = mục lá như cũ. */
+  children?: readonly NavChild[]
 }
 
 /** Tra nhanh studio theo id — sidebar sắp xếp lại thứ tự nên không duyệt tuần tự được. */
@@ -58,9 +72,14 @@ function studio(id: string): (typeof STUDIOS)[number] {
   return st
 }
 
-function studioItem(id: string, paths: readonly string[], label?: string): Item {
+function studioItem(
+  id: string,
+  paths: readonly string[],
+  label?: string,
+  children?: readonly NavChild[],
+): Item {
   const st = studio(id)
-  return { to: st.to, label: label ?? st.title, icon: st.icon, color: st.color, paths }
+  return { to: st.to, label: label ?? st.title, icon: st.icon, color: st.color, paths, children }
 }
 
 // NHÓM 1 — 4 điểm đến TƯƠNG ỨNG 4 tab đầu của BottomNav mobile (tab thứ 5 "Profile" nằm ở
@@ -71,15 +90,15 @@ function studioItem(id: string, paths: readonly string[], label?: string): Item 
 const HOME_ITEM: Item = { to: '/', label: 'Trang chủ', icon: Home, exact: true }
 const MAIN_NAV: Item[] = [
   HOME_ITEM,
-  studioItem('subjects', LEARNING_PATHS, 'Phòng Học'),
+  studioItem('subjects', LEARNING_PATHS, 'Phòng Học', SUBJECT_CHILDREN),
   studioItem('companion', COMPANION_PATHS, 'Bạn Đồng Hành'),
-  studioItem('practice', PRACTICE_PATHS, 'Luyện tập'),
+  studioItem('practice', PRACTICE_PATHS, 'Luyện tập', PRACTICE_CHILDREN),
 ]
 
 // NHÓM 2 — các studio CÒN LẠI (3 studio kia đã lên MAIN_NAV), kèm bảng path riêng để
 // active-state không chồng lấn nhau.
 const STUDIO_NAV: Item[] = [
-  studioItem('english', ENGLISH_PATHS),
+  studioItem('english', ENGLISH_PATHS, undefined, ENGLISH_CHILDREN),
   studioItem('career', CAREER_PATHS),
   studioItem('worklife', WORKLIFE_PATHS),
 ]
@@ -115,6 +134,7 @@ export default function DesktopSidebar() {
   const { user } = useAuth()
   const location = useLocation()
   const [collapsed, setCollapsed] = useState(readCollapsed)
+  const [openGroups, setOpenGroups] = useState<string[]>(readOpenGroups)
 
   // Trang đăng nhập/onboarding không có sidebar → nội dung không được chừa lề trái.
   const hidden = !user || NAV_HIDDEN_PATHS.includes(location.pathname)
@@ -146,11 +166,61 @@ export default function DesktopSidebar() {
   // /tu-dien, /bai-hoc…) không làm sáng mục nào cả — xem lib/navPaths.ts.
   const activeTo = resolveActiveNav(location.pathname, ACTIVE_ORDER)
 
+  function toggleGroupOpen(id: string) {
+    setOpenGroups((prev) => {
+      const next = toggleGroup(prev, id)
+      writeOpenGroups(next)
+      return next
+    })
+  }
+
+  /** Nhóm đang mở khi người dùng tự mở, HOẶC khi trang hiện tại nằm trong nhóm đó. */
+  function isGroupOpen(item: Item): boolean {
+    if (!item.children || collapsed) return false
+    return openGroups.includes(item.to) || groupContainsPath(item.children, location.pathname)
+  }
+
+  function renderChild(child: NavChild) {
+    const Icon = child.icon
+    const active = child.paths.some((p) => location.pathname.startsWith(p))
+    // Cùng một bộ lớp cho <Link> và <a>: mục con môn học có thể trỏ sang origin khác
+    // (trụ Học tập ở subdomain riêng — xem lib/subjectsHost.ts), lúc đó phải là thẻ <a> thật.
+    const cls = `flex items-center gap-2.5 rounded-lg pl-3 pr-2 py-2 text-[13px] font-medium transition ${
+      active ? 'bg-zinc-800 text-white' : 'text-zinc-300 hover:bg-zinc-800/70 hover:text-white'
+    }`
+    const inner = (
+      <>
+        <Icon className="w-4 h-4 shrink-0 text-accent-400 theme-light:text-accent-800" />
+        <span className="truncate">{child.label}</span>
+      </>
+    )
+    return (
+      <li key={child.label}>
+        {child.subjectId ? (
+          <SubjectsLink
+            subjectId={child.subjectId}
+            className={cls}
+            ariaCurrent={active ? 'page' : undefined}
+          >
+            {inner}
+          </SubjectsLink>
+        ) : (
+          <Link to={child.to ?? '/'} aria-current={active ? 'page' : undefined} className={cls}>
+            {inner}
+          </Link>
+        )}
+      </li>
+    )
+  }
+
   function renderItem(item: Item) {
     const Icon = item.icon
     const active = item.to === activeTo
+    const hasChildren = !!item.children && !collapsed
+    const open = isGroupOpen(item)
+    const groupId = `nav-group-${item.to.replace(/\W+/g, '-')}`
     return (
-      <li key={item.to}>
+      <li key={item.to} className="relative">
         <Link
           to={item.to}
           // Icon-only vẫn phải có TÊN đọc được cho trình đọc màn hình: khi thu gọn, nhãn
@@ -159,7 +229,7 @@ export default function DesktopSidebar() {
           aria-current={active ? 'page' : undefined}
           className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
             collapsed ? 'justify-center' : ''
-          } ${
+          } ${hasChildren ? 'pr-10' : ''} ${
             active
               ? 'bg-zinc-800 border border-accent-500/40 text-white'
               : 'border border-transparent text-zinc-300 hover:bg-zinc-800/70 hover:text-white'
@@ -174,6 +244,29 @@ export default function DesktopSidebar() {
           </span>
           <span className={collapsed ? 'sr-only' : 'truncate'}>{item.label}</span>
         </Link>
+        {hasChildren && (
+          <>
+            <button
+              type="button"
+              onClick={() => toggleGroupOpen(item.to)}
+              aria-expanded={open}
+              aria-controls={groupId}
+              // Nhãn nói RÕ mở/đóng nhóm nào: trong sidebar có nhiều nút giống hệt nhau,
+              // "Mở rộng" trơ trọi thì trình đọc màn hình đọc ra ba nút không phân biệt được.
+              aria-label={`${open ? 'Thu gọn' : 'Mở rộng'} mục ${item.label}`}
+              className="absolute right-1 top-1.5 p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition"
+            >
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+              />
+            </button>
+            {open && (
+              <ul id={groupId} className="mt-1 mb-1 ml-5 pl-2 space-y-0.5 border-l border-zinc-800">
+                {item.children?.map(renderChild)}
+              </ul>
+            )}
+          </>
+        )}
       </li>
     )
   }
