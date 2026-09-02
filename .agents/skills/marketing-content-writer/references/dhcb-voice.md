@@ -14,7 +14,9 @@
 - **Trụ Learning hiện có:** Tiếng Anh (môn đầu tiên, chín nhất — chi tiết bên dưới), **Lập trình**
   (từ nhập môn tới 11 hướng chuyên sâu: web · di động · backend · dữ liệu · AI · DevOps · bảo mật
   · hệ thống · game · nhúng · desktop, cả lộ trình mục tiêu "Kỹ Sư Trưởng AI" và cụm khoá AI thực
-  chiến Python→ML→Deep Learning→Agent), và đang mở rộng sang Toán/Lý/Hoá/Sinh (STEM).
+  chiến Python→ML→Deep Learning→Agent), và **STEM — Toán/Lý/Hoá/Sinh** (chương trình bám khung
+  GDPT 2018, đã hiển thị trong app — xem `apps/dhcb/src/data/stemCurriculum.ts` — chưa xác nhận
+  có tính năng chấm bài AI riêng như môn Anh/Lập trình, đừng nhắc tới trong nội dung quảng bá).
 - **Đối tượng chính:** người Việt cần đồng hành lâu dài trong học tập/sự nghiệp — học sinh, sinh
   viên, người đi làm muốn học ngoại ngữ, học lập trình, hoặc tìm hướng đi nghề nghiệp — ngân sách
   thấp, muốn học tự nhiên chứ không khô khan.
@@ -35,6 +37,13 @@
 - 6 bậc P1→P6, 11 hướng chuyên sâu, lộ trình mục tiêu ghép nhiều chặng (VD: "Kỹ Sư Trưởng AI"),
   cụm khoá ngắn AI thực chiến (Python/AI → Toán cho AI → ML/Data Science → Deep Learning CV →
   Transformer/Detection → LLM Agent). Chấm bài AI có eval riêng, không lộ lời giải.
+
+### Môn STEM (Toán/Lý/Hoá/Sinh)
+
+- Chương trình bám khung GDPT 2018, chia theo chương/khối lớp. Có Companion AI giải thích lại
+  kiến thức. Đối tượng: học sinh phổ thông ôn bài/ôn thi, không riêng gì học sinh giỏi.
+- KHÔNG nhắc "chấm bài kiểu IELTS" hay cơ chế eval riêng cho STEM trong nội dung marketing — chưa
+  xác nhận có, chỉ chắc chắn có chương trình + Companion giải thích.
 
 ## Giá
 
