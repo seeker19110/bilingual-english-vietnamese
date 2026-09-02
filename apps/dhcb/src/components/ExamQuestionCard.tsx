@@ -5,6 +5,8 @@
 // tự vẽ vì nội dung khác nhau — component này chỉ lo phần "thân câu hỏi".
 
 import { Volume2, ChevronRight } from 'lucide-react'
+import { useQuizKeyboard } from '@dhcb/core-ui/useQuizKeyboard'
+import QuizOptionKey from './QuizOptionKey'
 import type { ExamQuestion } from '../lib/cefrExam'
 import type { AccentClasses } from '../lib/cefrAccent'
 import { speak } from '../lib/tts'
@@ -37,6 +39,20 @@ export default function ExamQuestionCard({
   // riêng theo cấp (lib/listening.ts) — không ảnh hưởng đề thi/placement.
   rate?: number
 }) {
+  // Phím tắt đặt Ở ĐÂY chứ không ở từng trang cha: component này sở hữu cả danh sách đáp án,
+  // `onPick` lẫn `onNext`, nên mọi nơi dùng nó (thi cuối cấp, test xếp lớp, luyện nghe) có
+  // phím tắt cùng lúc. Nếu để mỗi trang tự lắp thì ô số 1·2·3·4 vẫn hiện ở trang quên lắp —
+  // tức giao diện hứa một thao tác không tồn tại.
+  useQuizKeyboard({
+    optionCount: q.options.length,
+    onPick: (i) => {
+      const opt = q.options[i]
+      if (opt !== undefined) onPick(opt)
+    },
+    onNext,
+    answered: selected !== null,
+  })
+
   const meta = PART_META[q.part]
   const MetaIcon = meta.icon
   const isLast = current + 1 >= total
@@ -102,20 +118,26 @@ export default function ExamQuestionCard({
 
       {/* Đáp án */}
       <div className="space-y-2.5">
-        {q.options.map((opt) => {
+        {q.options.map((opt, optIdx) => {
           let cls = 'bg-zinc-900/80 border-zinc-800 text-zinc-300 hover:border-zinc-600'
           if (selected !== null) {
-            if (opt === q.correct) cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300'
-            else if (opt === selected) cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300'
+            // Đúng → phồng nhẹ; đáp án sai đã chọn → lắc ngang. Giống hệt mini-quiz và tab
+            // Kiểm tra: phản hồi phải là quy ước của cả app, không phải đặc sản của vài màn —
+            // trước đây bài nghe là loại bài DUY NHẤT trả lời xong mà màn hình đứng im.
+            if (opt === q.correct)
+              cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300 animate-pop-correct'
+            else if (opt === selected)
+              cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300 animate-shake'
             else cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-400'
           }
           return (
             <button
               key={opt}
               onClick={() => onPick(opt)}
-              className={`w-full text-left px-4 py-3.5 rounded-2xl border font-medium text-[15px] transition-all ${cls}`}
+              className={`w-full flex items-center gap-3 text-left px-4 py-3.5 rounded-2xl border font-medium text-[15px] transition-all ${cls}`}
             >
-              {opt}
+              <QuizOptionKey index={optIdx} />
+              <span className="min-w-0 flex-1">{opt}</span>
             </button>
           )
         })}

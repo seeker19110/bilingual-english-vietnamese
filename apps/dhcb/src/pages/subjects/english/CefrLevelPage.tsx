@@ -397,9 +397,28 @@ export default function CefrLevelPage() {
   }
 
   if (!ready || !level) {
+    // Khung xương thay cho một dòng chữ "Đang tải…": nó vẽ sẵn ĐÚNG hình dạng nội dung sắp
+    // hiện (thẻ tổng quan có hai thanh tiến độ, rồi danh sách phần), nên khi dữ liệu vào,
+    // trang điền vào chỗ trống thay vì nhảy dựng — mắt không phải tìm lại vị trí đang đọc.
+    // `aria-busy` + nhãn ẩn để trình đọc màn hình vẫn nghe được "đang tải", vì các khối xám
+    // này với họ là vô nghĩa.
     return shell(
-      <div className="glass rounded-xl p-8 text-center animate-fade-in">
-        <p className="text-zinc-400 text-sm">{isA ? 'Đang tải lộ trình…' : 'Loading roadmap…'}</p>
+      <div className="animate-fade-in space-y-3" aria-busy="true">
+        <span className="sr-only">{isA ? 'Đang tải lộ trình…' : 'Loading roadmap…'}</span>
+        <div className="glass rounded-2xl p-5 space-y-3">
+          <div className="h-5 w-40 rounded-lg bg-zinc-800 animate-pulse" />
+          <div className="h-3 w-full rounded-full bg-zinc-800 animate-pulse" />
+          <div className="h-3 w-2/3 rounded-full bg-zinc-800 animate-pulse" />
+        </div>
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="glass rounded-2xl p-4 flex items-center gap-3">
+            <div className="h-10 w-10 shrink-0 rounded-xl bg-zinc-800 animate-pulse" />
+            <div className="min-w-0 flex-1 space-y-2">
+              <div className="h-3 w-24 rounded-full bg-zinc-800 animate-pulse" />
+              <div className="h-4 w-48 max-w-full rounded-lg bg-zinc-800 animate-pulse" />
+            </div>
+          </div>
+        ))}
       </div>,
     )
   }
@@ -836,6 +855,52 @@ export default function CefrLevelPage() {
                 </div>
               )}
 
+              {/* Học tiếp / hoàn thành cấp
+                  THỨ TỰ VÀ ĐỘ NẶNG THỊ GIÁC LÀ CÓ CHỦ ĐÍCH (sửa 2026-09-02): trước đây thẻ
+                  "Thi cuối cấp" đứng TRÊN thẻ này và có cùng kiểu, cùng cỡ, nên hai hành động
+                  trông ngang nhau — người học đủ điều kiện thi rất dễ bấm thi trước khi học
+                  hết phần còn lại. Việc đúng gần như luôn là "học tiếp", nên nó đứng trước và
+                  mang nền accent (hành động chính); thẻ thi lùi xuống sau, giữ nền trung tính
+                  (hành động phụ). Đây là phân cấp bằng thị giác, không phải trang trí. */}
+              {nextOnClick ? (
+                <button
+                  onClick={nextOnClick}
+                  className={`w-full rounded-2xl p-4 mb-4 flex items-center gap-3 text-left border ${accent.soft} ${accent.ring} hover:brightness-110 transition shadow-lg shadow-black/5`}
+                >
+                  <div
+                    className={`w-10 h-10 rounded-xl ${accent.soft} flex items-center justify-center shrink-0`}
+                  >
+                    <Play className={`w-5 h-5 fill-current ${accent.text}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-zinc-400">
+                      {isA ? 'Học tiếp' : 'Continue'} · {isA ? 'Phần' : 'Part'}{' '}
+                      {(next?.unitIndex ?? 0) + 1} — {isA ? next?.unit.titleVi : next?.unit.titleEn}
+                    </p>
+                    <p className="text-sm font-semibold text-white truncate mt-0.5">{nextLabel}</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-zinc-400 shrink-0" />
+                </button>
+              ) : (
+                <div className="glass rounded-2xl p-5 mb-4 text-center space-y-2">
+                  <PartyPopper className="w-8 h-8 text-amber-400 theme-light:text-amber-700 mx-auto" />
+                  <p className="text-white font-semibold">
+                    {isA
+                      ? `Chúc mừng! Bạn đã hoàn thành cấp ${level.id} 🎉`
+                      : `Congrats! You finished ${level.id} 🎉`}
+                  </p>
+                  {nextLevel && !(lockedMap.get(nextLevel.id) ?? false) && (
+                    <button
+                      onClick={() => nav(`/lo-trinh-hoc/${nextLevel.id.toLowerCase()}`)}
+                      className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition"
+                    >
+                      {isA ? `Sang cấp ${nextLevel.id}` : `Go to ${nextLevel.id}`}
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              )}
+
               {/* Thẻ CTA bài thi cuối cấp — khi đủ điều kiện dự thi hoặc đã qua */}
               {(examEligible || examPassedThis) && (
                 <button
@@ -871,46 +936,6 @@ export default function CefrLevelPage() {
                   </div>
                   <ChevronRight className="w-5 h-5 text-zinc-400 shrink-0" />
                 </button>
-              )}
-
-              {/* Học tiếp / hoàn thành cấp */}
-              {nextOnClick ? (
-                <button
-                  onClick={nextOnClick}
-                  className={`w-full glass rounded-2xl p-4 mb-4 flex items-center gap-3 text-left border ${accent.ring} hover:border-zinc-500 transition`}
-                >
-                  <div
-                    className={`w-10 h-10 rounded-xl ${accent.soft} flex items-center justify-center shrink-0`}
-                  >
-                    <Play className={`w-5 h-5 fill-current ${accent.text}`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-zinc-400">
-                      {isA ? 'Học tiếp' : 'Continue'} · {isA ? 'Phần' : 'Part'}{' '}
-                      {(next?.unitIndex ?? 0) + 1} — {isA ? next?.unit.titleVi : next?.unit.titleEn}
-                    </p>
-                    <p className="text-sm font-semibold text-white truncate mt-0.5">{nextLabel}</p>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-zinc-400 shrink-0" />
-                </button>
-              ) : (
-                <div className="glass rounded-2xl p-5 mb-4 text-center space-y-2">
-                  <PartyPopper className="w-8 h-8 text-amber-400 theme-light:text-amber-700 mx-auto" />
-                  <p className="text-white font-semibold">
-                    {isA
-                      ? `Chúc mừng! Bạn đã hoàn thành cấp ${level.id} 🎉`
-                      : `Congrats! You finished ${level.id} 🎉`}
-                  </p>
-                  {nextLevel && !(lockedMap.get(nextLevel.id) ?? false) && (
-                    <button
-                      onClick={() => nav(`/lo-trinh-hoc/${nextLevel.id.toLowerCase()}`)}
-                      className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 text-sm font-medium transition"
-                    >
-                      {isA ? `Sang cấp ${nextLevel.id}` : `Go to ${nextLevel.id}`}
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
               )}
 
               {/* Danh sách unit — "Phần 1..n", trình tự: từ vựng → ngữ pháp → hội thoại */}

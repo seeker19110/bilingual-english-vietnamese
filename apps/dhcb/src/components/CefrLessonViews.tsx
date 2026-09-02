@@ -12,6 +12,8 @@
 
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import { useQuizKeyboard } from '@dhcb/core-ui/useQuizKeyboard'
+import QuizOptionKey from './QuizOptionKey'
 import {
   ChevronRight,
   ChevronLeft,
@@ -389,6 +391,17 @@ export function VocabFlash({
     setIdx((i) => i + 1)
   }
 
+  // Phím tắt cho thẻ từ vựng: 1 = Để sau, 2 = Đã thuộc. Dùng lại đúng hook của bài trắc
+  // nghiệm (`answered: false` nên chỉ nhánh phím số sống) — đây là thao tác lặp nhiều nhất
+  // của người học, 20–100 lượt mỗi ngày, nên rời tay khỏi bàn phím mỗi lượt là tốn thật.
+  // Tắt khi đang ở màn test-out để phím số không vừa chọn đáp án vừa lật thẻ.
+  useQuizKeyboard({
+    optionCount: 2,
+    onPick: (i) => (i === 0 ? setIdx((n) => n + 1) : learn()),
+    answered: false,
+    enabled: testOutMode === null && !done && Boolean(card),
+  })
+
   if (testOutMode === 'quiz') {
     const q = testOutQs[testOutIdx]
     if (!q) return null
@@ -593,12 +606,14 @@ export function VocabFlash({
               onClick={() => setIdx((i) => i + 1)}
               className="flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition py-3 rounded-xl text-sm font-medium"
             >
+              <QuizOptionKey index={0} />
               <X className="w-4 h-4" /> {isA ? 'Để sau' : 'Later'}
             </button>
             <button
               onClick={learn}
               className="flex items-center justify-center gap-2 bg-accent-500/20 hover:bg-accent-500/30 text-accent-300 theme-light:text-accent-800 transition py-3 rounded-xl text-sm font-medium"
             >
+              <QuizOptionKey index={1} />
               <Check className="w-4 h-4" /> {isA ? 'Đã thuộc' : 'Got it'}
             </button>
           </div>
