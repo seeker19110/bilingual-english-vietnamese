@@ -74,3 +74,55 @@ Mọi màn hình hoặc component có tương tác/tải dữ liệu phải xử
 - **Nút bấm & Card tương tác:** Đầy đủ `hover:border-accent-500/50`, `active:scale-[0.98]`, `focus-visible:ring-2 focus-visible:ring-accent-500`, `disabled:opacity-50 disabled:pointer-events-none`.
 - **Chuyển động (Motion Ergonomics):** Sử dụng Spring Physics hoặc CSS Transitions (`transition-all duration-200 ease-out`).
 - **A11y:** Mọi nút Icon-only phải có `aria-label` và `title` rõ nghĩa cho Screen Readers.
+
+---
+
+## 5. TÀI LIỆU DESIGN.md — 8 MỤC CHUẨN THAM KHẢO (nghiên cứu từ VoltAgent/awesome-design-md)
+
+Kho `VoltAgent/awesome-design-md` tổng hợp 73 file `DESIGN.md` — tài liệu hệ thống thiết kế dạng
+văn bản thuần (khởi xướng bởi Google Stitch) để AI agent đọc và sinh giao diện nhất quán, thay
+vì phải parse Figma/JSON. Bổ sung skill này bằng **8 mục chuẩn** làm khung tự kiểm khi thiết kế
+màn hình mới cho DHCB — không tạo file `DESIGN.md` riêng (dự án đã có `index.css` +
+`tailwind.config.js` làm nguồn sự thật), mà dùng làm CHECKLIST khi review:
+
+1. **Sắc thái & Tâm trạng thị giác (Visual Theme & Atmosphere):** mỗi theme trong 4 theme
+   (🌙 Xanh đêm mặc định · ☀️ Blue sky · 🌸 Pink · 🎉 Rực rỡ) phải giữ đúng "mood" của nó — độ
+   đậm nhạt nền, mật độ thông tin, không trộn phong cách giữa các theme khi thêm component mới.
+2. **Bảng màu & Vai trò (Color Palette & Roles):** đã có ở mục 2 (design tokens `--a-*`/`--z-*`,
+   không hardcode hex). Bổ sung: khi thêm màu ngữ nghĩa MỚI (không phải accent/zinc có sẵn), phải
+   đặt tên vai trò rõ ràng (`--c-success`, `--c-danger`…) trong `index.css`, không chèn hex rời.
+3. **Quy tắc Typography — bảng phân cấp đầy đủ:** dự án chưa có bảng phân cấp chính thức — khi
+   thêm màn hình mới, khai rõ heading dùng cỡ nào theo thang Tailwind hiện có
+   (`text-2xl font-bold` cho `h1`, `text-xl font-semibold` cho `h2`, `text-base` cho thân bài,
+   `text-sm`/`text-xs` cho phụ trợ — sàn 11px tuyệt đối theo mục 2), tránh mỗi trang tự chế một
+   cỡ chữ khác nhau cho cùng cấp tiêu đề.
+4. **Component Stylings kèm biến thể trạng thái:** khi định nghĩa 1 component tái dùng (nút, thẻ,
+   input, nav item), liệt kê ĐỦ biến thể trong cùng 1 chỗ — mặc định/hover/active/focus/disabled
+   (đã có ở mục 4) — **VÀ** kích thước (sm/md/lg nếu có nhiều nơi dùng), không rải rác định nghĩa
+   lại cùng component ở nhiều file.
+5. **Nguyên tắc Bố cục — thang khoảng cách (Layout Principles & Spacing Scale):** dùng thang
+   spacing gốc của Tailwind (`gap-2/3/4/6/8`…), KHÔNG tự chế giá trị `px` tuỳ ý; card/section
+   cách nhau tối thiểu `gap-4` trên mobile, `gap-6` trở lên trên desktop.
+6. **Chiều sâu & Phân lớp (Depth & Elevation — mục còn thiếu trước bản V7.0 này):** dự án dùng
+   3 cấp bề mặt rõ rệt qua nền + viền (KHÔNG dùng shadow nặng gây rối mắt trên nền tối):
+   cấp nền trang (`bg-zinc-950`) → cấp thẻ/card (`bg-zinc-900` + `border-zinc-800`) → cấp nổi
+   (modal/dropdown/toast: `bg-zinc-900/95` + `border-zinc-700` + `backdrop-blur` nếu che nội dung
+   phía sau). Modal/toast luôn có lớp phủ nền `bg-black/60` phía sau để tách bạch cấp.
+7. **Do's and Don'ts (rào chắn thiết kế) — chốt lại các luật đã có rải rác:**
+   - ✅ Dùng token, không hardcode hex · ✅ Đủ 5 trạng thái (mục 3) · ✅ Vùng chạm ≥44px ·
+     ✅ Giữ màu ngữ nghĩa nhất quán (xanh lá = "đúng", đỏ = lỗi) · ✅ Tương phản AAA cho nội
+     dung/tiêu đề, AA cho phần còn lại.
+   - ❌ Không thêm shadow đậm/gradient loè loẹt phá vỡ "mood" theme tối · ❌ Không tự chế cỡ chữ/
+     khoảng cách ngoài thang chuẩn · ❌ Không để icon-only thiếu `aria-label` · ❌ Không copy y
+     nguyên phong cách "retro web"/trang ngoài vào DHCB — mọi component mới phải khớp 1 trong 4
+     theme sẵn có, không du nhập phong cách rời rạc.
+8. **Hành vi Responsive (mục còn thiếu trước bản V7.0 này) — breakpoint & chiến lược:** mobile-
+   first tuyệt đối (mục 4, KHUNG bất biến #7): thiết kế cho màn hẹp nhất trước, dùng breakpoint
+   Tailwind mặc định `sm(640) / md(768) / lg(1024) / xl(1280)`; nav/menu chuyển từ dạng tab dưới
+   (mobile) sang sidebar/topbar (từ `md` trở lên — xem `apps/dhcb/src/components` nav desktop vs
+   mobile hiện có); bảng dữ liệu rộng trên mobile phải có phương án cuộn ngang hoặc rút gọn cột,
+   không được tràn layout.
+
+**Ghi chú nguồn:** áp dụng như checklist tư duy, KHÔNG sinh file `DESIGN.md`/`preview.html` mới
+trong repo — DHCB đã có nguồn sự thật token riêng (`apps/dhcb/src/index.css` +
+`tailwind.config.js` + `packages/core-ui/theme.ts`), tránh hai nguồn song song gây lệch.
