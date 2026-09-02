@@ -177,7 +177,7 @@ export default function WorkKanban() {
                     </button>
                     <button
                       onClick={handleQuickAdd}
-                      className="px-3 py-1 bg-accent-500 text-white font-semibold rounded-lg text-xs"
+                      className="px-3 py-1 bg-accent-500 text-[#09090b] font-semibold rounded-lg text-xs"
                     >
                       Lưu
                     </button>

@@ -250,7 +250,7 @@ export default function EmailVerifySection({
           type="button"
           onClick={handleVerify}
           disabled={verifying || code.length !== 6}
-          className="tap-44 shrink-0 flex items-center justify-center gap-2 rounded-xl bg-accent-500 hover:bg-accent-400 transition-colors px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+          className="tap-44 shrink-0 flex items-center justify-center gap-2 rounded-xl bg-accent-500 hover:bg-accent-400 transition-colors px-4 py-2.5 text-sm font-semibold text-[#09090b] disabled:opacity-60"
         >
           {verifying && <Loader2 className="w-4 h-4 animate-spin" />}
           {isA ? 'Xác thực' : 'Verify'}
