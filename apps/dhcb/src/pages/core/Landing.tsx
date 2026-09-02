@@ -84,61 +84,72 @@ export default function Landing() {
 
   return (
     <div className="min-h-dvh bg-zinc-950 theme-light:bg-white text-zinc-100 theme-light:text-zinc-900">
-      <header className="max-w-4xl mx-auto px-4 pt-4 flex justify-end">
+      <header className="mx-auto flex max-w-lg justify-end px-4 pt-4 sm:max-w-2xl lg:max-w-6xl">
         <ThemeToggle />
       </header>
-      <main className="mx-auto max-w-lg px-4 pb-16 pt-6 sm:max-w-2xl">
-        {/* Hero */}
-        <section className="text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-500/15 text-accent-400">
-            <Sparkles className="h-7 w-7" aria-hidden="true" />
-          </div>
-          <p className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/60 theme-light:bg-zinc-50 px-3 py-1 text-xs text-zinc-300 theme-light:text-zinc-700">
-            <span className="font-semibold text-accent-400">Môn Tiếng Anh</span>
-            <span aria-hidden="true">·</span>
-            <span>một môn của nền tảng Đồng hành cùng bạn</span>
-          </p>
-          <h1 className="text-2xl font-bold leading-tight sm:text-3xl">
-            Nói tiếng Anh với AI
-            <br />
-            <span className="text-accent-400">sai chỗ nào, được giảng lại bằng tiếng Việt</span>
-          </h1>
-          <p className="mt-3 text-base text-zinc-300 theme-light:text-zinc-700">
-            Miễn phí. Không cần biết trước tiếng Anh vẫn học được.
-          </p>
-
-          <button
-            type="button"
-            onClick={handleCtaClick}
-            className="tap-44 mt-6 w-full rounded-xl bg-accent-500 px-6 py-3.5 text-base font-semibold text-black transition hover:bg-accent-400 sm:w-auto sm:px-10"
-          >
-            Bắt đầu học miễn phí
-          </button>
-        </section>
-
-        {/* Điểm khác biệt */}
-        <section className="mt-10 rounded-2xl border border-accent-500/30 bg-accent-500/5 p-4">
-          <div className="flex items-start gap-3">
-            <Volume2 className="mt-0.5 h-5 w-5 shrink-0 text-accent-400" aria-hidden="true" />
-            <p className="text-sm text-zinc-300">
-              <strong className="text-zinc-100 theme-light:text-zinc-900">Điểm khác biệt:</strong>{' '}
-              AI không chỉ sửa lỗi bằng chữ — mà còn{' '}
-              <strong>đọc to lời giải thích bằng giọng tiếng Việt</strong>, trong khi hội thoại
-              chính vẫn bằng giọng tiếng Anh chuẩn. Nội dung bài học sát với đời sống người Việt.
+      {/* [2026-09-02] Tầng desktop cho trang landing. Trước đây trang này là MỘT cột
+          `max-w-2xl` ở mọi bề rộng: trên màn 1440px nó là một dải chữ hẹp giữa hai khoảng
+          trống lớn — đúng nghĩa "mobile phóng to" (đo bằng ảnh chụp thật).
+          Nguyên tắc: KHÔNG đổi bất cứ thứ gì dưới 1024px (mọi thay đổi đều nằm sau `lg:`),
+          và không kéo dài dòng chữ — chỗ thừa dùng để ĐẶT CẠNH NHAU những khối vốn phải cuộn
+          mới thấy, nên người đọc nắm được toàn bộ lời chào hàng trong một màn. */}
+      <main className="mx-auto max-w-lg px-4 pb-16 pt-6 sm:max-w-2xl lg:max-w-6xl lg:pt-12">
+        {/* Hero + điểm khác biệt: xếp dọc ở mobile (giữ nguyên thứ tự cũ), hai cột ở desktop.
+            Dùng lưới CSS chứ không dựng hai nhánh DOM — thứ tự đọc và thứ tự Tab vẫn y hệt. */}
+        <div className="lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-center lg:gap-12">
+          <section className="text-center lg:text-left">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent-500/15 text-accent-400 lg:mx-0">
+              <Sparkles className="h-7 w-7" aria-hidden="true" />
+            </div>
+            <p className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/60 theme-light:bg-zinc-50 px-3 py-1 text-xs text-zinc-300 theme-light:text-zinc-700">
+              <span className="font-semibold text-accent-400">Môn Tiếng Anh</span>
+              <span aria-hidden="true">·</span>
+              <span>một môn của nền tảng Đồng hành cùng bạn</span>
             </p>
-          </div>
-        </section>
+            <h1 className="text-2xl font-bold leading-tight sm:text-3xl lg:text-5xl lg:leading-[1.1]">
+              Nói tiếng Anh với AI
+              <br />
+              <span className="text-accent-400">sai chỗ nào, được giảng lại bằng tiếng Việt</span>
+            </h1>
+            <p className="mt-3 text-base text-zinc-300 theme-light:text-zinc-700 lg:mt-5 lg:text-lg">
+              Miễn phí. Không cần biết trước tiếng Anh vẫn học được.
+            </p>
 
-        {/* 3 chế độ */}
-        <section className="mt-8">
+            <button
+              type="button"
+              onClick={handleCtaClick}
+              className="tap-44 mt-6 w-full rounded-xl bg-accent-500 px-6 py-3.5 text-base font-semibold text-black transition hover:bg-accent-400 sm:w-auto sm:px-10"
+            >
+              Bắt đầu học miễn phí
+            </button>
+          </section>
+
+          {/* Điểm khác biệt — ở desktop đây là cột PHẢI của hero: nó là lý do chọn sản phẩm này
+            thay vì sản phẩm khác, nên phải đọc được cùng lúc với tiêu đề, không phải cuộn mới thấy. */}
+          <section className="mt-10 rounded-2xl border border-accent-500/30 bg-accent-500/5 p-4 lg:mt-0 lg:p-6">
+            <div className="flex items-start gap-3">
+              <Volume2 className="mt-0.5 h-5 w-5 shrink-0 text-accent-400" aria-hidden="true" />
+              <p className="text-sm text-zinc-300 lg:text-base lg:leading-relaxed">
+                <strong className="text-zinc-100 theme-light:text-zinc-900">Điểm khác biệt:</strong>{' '}
+                AI không chỉ sửa lỗi bằng chữ — mà còn{' '}
+                <strong>đọc to lời giải thích bằng giọng tiếng Việt</strong>, trong khi hội thoại
+                chính vẫn bằng giọng tiếng Anh chuẩn. Nội dung bài học sát với đời sống người Việt.
+              </p>
+            </div>
+          </section>
+        </div>
+
+        {/* 3 chế độ — một cột ở mobile, ba cột ngang ở desktop: ba chế độ là các lựa chọn NGANG
+            HÀNG nhau, xếp dọc làm chúng trông như ba bước nối tiếp. */}
+        <section className="mt-8 lg:mt-16">
           <h2 className="text-center text-sm font-semibold uppercase tracking-wide text-zinc-500">
             3 chế độ luyện tập
           </h2>
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 space-y-3 lg:mt-8 lg:grid lg:grid-cols-3 lg:gap-5 lg:space-y-0">
             {MODES.map((mode) => (
               <div
                 key={mode.title}
-                className="flex items-start gap-3 rounded-xl border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/60 theme-light:bg-zinc-50 p-4"
+                className="flex items-start gap-3 rounded-xl border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/60 theme-light:bg-zinc-50 p-4 lg:flex-col lg:gap-4 lg:p-6"
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent-500/15 text-accent-400">
                   <mode.icon className="h-5 w-5" aria-hidden="true" />
@@ -156,36 +167,41 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* Giới hạn dùng — thành thật, không phóng đại */}
-        <section className="mt-8 rounded-xl border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/40 theme-light:bg-zinc-50 p-4 text-center">
-          <p className="text-sm text-zinc-300 theme-light:text-zinc-700">
-            Miễn phí, có giới hạn lượt dùng mỗi ngày để mọi người cùng dùng được.
-          </p>
-        </section>
+        {/* Hai khối cuối đứng CẠNH NHAU ở desktop: một khối nói giới hạn (thành thật), một khối
+            nói phạm vi nền tảng — cùng là "thông tin cần biết trước khi đăng ký", nên đọc một
+            lượt thay vì cuộn qua hai màn. */}
+        <div className="lg:mt-16 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6">
+          {/* Giới hạn dùng — thành thật, không phóng đại */}
+          <section className="mt-8 rounded-xl border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/40 theme-light:bg-zinc-50 p-4 text-center lg:mt-0 lg:p-6">
+            <p className="text-sm text-zinc-300 theme-light:text-zinc-700">
+              Miễn phí, có giới hạn lượt dùng mỗi ngày để mọi người cùng dùng được.
+            </p>
+          </section>
 
-        {/* Không dừng ở môn tiếng Anh: cho người đọc biết tài khoản này dùng được cả nền tảng */}
-        <section className="mt-8 rounded-2xl border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/40 theme-light:bg-zinc-50 p-4">
-          <h2 className="text-sm font-semibold text-zinc-100 theme-light:text-zinc-900">
-            Tiếng Anh chỉ là một môn ở đây
-          </h2>
-          <p className="mt-1.5 text-sm text-zinc-300 theme-light:text-zinc-700">
-            Cùng một tài khoản, bạn còn dùng được bốn trụ khác của nền tảng: sự nghiệp, công việc,
-            khởi nghiệp và đời sống — cùng Bạn Đồng Hành, người bạn AI hiểu ngữ cảnh cả năm mảng.
-            Không phải mua thêm gói nào.
-          </p>
-          <a
-            href="https://www.donghanhcungban.org"
-            className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-400 hover:underline"
-          >
-            Xem toàn bộ nền tảng →
-          </a>
-        </section>
+          {/* Không dừng ở môn tiếng Anh: cho người đọc biết tài khoản này dùng được cả nền tảng */}
+          <section className="mt-8 rounded-2xl border border-zinc-800 theme-light:border-zinc-200 bg-zinc-900/40 theme-light:bg-zinc-50 p-4 lg:mt-0 lg:p-6">
+            <h2 className="text-sm font-semibold text-zinc-100 theme-light:text-zinc-900">
+              Tiếng Anh chỉ là một môn ở đây
+            </h2>
+            <p className="mt-1.5 text-sm text-zinc-300 theme-light:text-zinc-700">
+              Cùng một tài khoản, bạn còn dùng được bốn trụ khác của nền tảng: sự nghiệp, công việc,
+              khởi nghiệp và đời sống — cùng Bạn Đồng Hành, người bạn AI hiểu ngữ cảnh cả năm mảng.
+              Không phải mua thêm gói nào.
+            </p>
+            <a
+              href="https://www.donghanhcungban.org"
+              className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-400 hover:underline"
+            >
+              Xem toàn bộ nền tảng →
+            </a>
+          </section>
+        </div>
 
-        <div className="mt-8 text-center">
+        <div className="mt-8 text-center lg:mt-14">
           <button
             type="button"
             onClick={handleCtaClick}
-            className="tap-44 w-full rounded-xl bg-accent-500 px-6 py-3.5 text-base font-semibold text-black transition hover:bg-accent-400 sm:w-auto sm:px-10"
+            className="tap-44 w-full rounded-xl bg-accent-500 px-6 py-3.5 text-base font-semibold text-black transition hover:bg-accent-400 sm:w-auto sm:px-10 lg:px-14 lg:py-4 lg:text-lg"
           >
             Đăng ký ngay — miễn phí
           </button>
