@@ -19,6 +19,7 @@ import RoadmapTab from '../../../components/RoadmapTab'
 import { getDirection } from '../../../lib/storage'
 import { useAuth } from '../../../context/useAuth'
 import { useOnboarding } from '../../../lib/onboarding'
+import { countBadgeClass, badgeCount } from '@core/badgeStyles'
 
 type TabDef = {
   key: StudyTab
@@ -107,9 +108,7 @@ export default function Learn() {
                 <Icon className="w-4 h-4" />
                 <span>{isA ? labelA : labelB}</span>
                 {badge != null && badge > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[11px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
-                    {badge > 99 ? '99+' : badge}
-                  </span>
+                  <span className={countBadgeClass()}>{badgeCount(badge)}</span>
                 )}
               </button>
             ))}

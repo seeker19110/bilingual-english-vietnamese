@@ -20,7 +20,7 @@ import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import QuickActions from '../../components/QuickActions'
 import { usePageTitle } from '../../lib/usePageTitle'
-import { useIsDesktopViewport } from '../../lib/useIsDesktopViewport'
+import { useIsDesktopViewport, useMediaQuery } from '../../lib/useIsDesktopViewport'
 import { PageShell } from '@core/PageShell'
 import { TwoPane } from '@core/TwoPane'
 import { useAuth } from '../../context/useAuth'
@@ -207,6 +207,15 @@ function Bar({ pct, color }: { pct: number; color: string }) {
   )
 }
 
+// Số tuần của lịch hoạt động trên desktop (bố cục tuần-theo-cột — xem chú thích ở khối
+// render). HAI mức, chọn theo bề ngang thật ĐO ĐƯỢC chứ không theo cảm giác: cột trái
+// (sidebar 256px) và cột phải ngữ cảnh ăn hết phần lớn màn 1024px, nên thẻ ở đó chỉ còn
+// ~430px = vừa 13 tuần (một quý); từ 1280px trở lên thẻ mới đủ rộng cho 26 tuần (nửa năm).
+// Đặt sai ngưỡng thì lịch bị CẮT giữa chừng — trông như lỗi render chứ không như nội dung
+// cuộn được.
+const CALENDAR_WEEKS_WIDE = 26
+const CALENDAR_WEEKS_DESKTOP = 13
+
 export default function Dashboard() {
   const nav = useNavigate()
   const { user } = useAuth()
@@ -223,6 +232,9 @@ export default function Dashboard() {
   // trong DOM (bài học từ PR trước, changelog `0199`), khác PR đó chỉ vì ở đây gọn hơn — không
   // cần tách state/logic dùng chung.
   const isDesktop = useIsDesktopViewport()
+  // ≥1280px thì thẻ lịch đủ rộng cho nửa năm; 1024–1279px chỉ đủ một quý (xem hằng số ở trên).
+  const isWide = useMediaQuery('(min-width: 1280px)')
+  const calendarWeeks = isWide ? CALENDAR_WEEKS_WIDE : CALENDAR_WEEKS_DESKTOP
 
   const [ready, setReady] = useState(false)
   const [cefr, setCefr] = useState<LevelProgress[]>([])
@@ -275,7 +287,10 @@ export default function Dashboard() {
       streak: getStreak(user.id),
       week: getActivity7Days(user.id),
       weekTotal: getWeekTotal(user.id),
-      calendar: getActivityCalendar(user.id, 35),
+      // Desktop có bề ngang để kể chuyện dài hơn: 16 tuần (một quý) thay vì 5 tuần.
+      // Xem chú thích ở khối render — lịch desktop xếp TUẦN THEO CỘT nên thêm tuần là
+      // rộng ra, không phải cao lên.
+      calendar: getActivityCalendar(user.id, isDesktop ? calendarWeeks * 7 : 35),
       weekly: getWeeklyProgress(user.id),
       writing: getWritingProgress(user.id),
       learnedToday: getDailyLearned(user.id),
@@ -294,7 +309,7 @@ export default function Dashboard() {
     }
     // syncVersion: bắt buộc có trong deps dù không dùng trong thân hàm — xem examMap ở trên.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, ready, onboarding?.ageGroup, syncVersion])
+  }, [user, ready, onboarding?.ageGroup, syncVersion, isDesktop, calendarWeeks])
 
   if (!user || !stats) return null
 
@@ -407,41 +422,82 @@ export default function Dashboard() {
             {vi ? 'Lịch hoạt động' : 'Activity calendar'}
           </h2>
           <span className="text-xs text-zinc-400">
-            {stats.calendar.activeDays} {vi ? 'ngày / 5 tuần' : 'days / 5 weeks'}
+            {stats.calendar.activeDays}{' '}
+            {vi
+              ? `ngày / ${isDesktop ? calendarWeeks : 5} tuần`
+              : `days / ${isDesktop ? calendarWeeks : 5} weeks`}
           </span>
         </div>
 
-        {/* Bọc lưới lịch: trên desktop giới hạn bề rộng để ô ngày không phình to
-            (grid 7 cột + aspect-square nên ô to theo bề ngang khối), tránh đẩy các
-            số liệu chính xuống dưới màn hình. */}
-        <div className="lg:max-w-sm">
-          {/* Nhãn thứ */}
-          <div className="grid grid-cols-7 gap-1.5 mb-1.5">
-            {WDOW.map((w, i) => (
-              <span key={i} className="text-[11px] text-zinc-400 text-center">
-                {w}
-              </span>
-            ))}
+        {/* HAI BỐ CỤC LỊCH — đổi 2026-09-02.
+            Trước đây chỉ có một bố cục: lưới 7 CỘT (thứ) × 5 hàng (tuần), và trên desktop
+            phải chặn `lg:max-w-sm` để ô ngày khỏi phình to. Hệ quả là nửa phải của thẻ bỏ
+            trống trên màn rộng — vừa xấu, vừa phí đúng thứ desktop có nhiều nhất.
+            Nay desktop xếp NGƯỢC LẠI: 7 HÀNG (thứ) × N cột (tuần), đúng lối heatmap quen
+            thuộc. Thêm tuần là rộng ra chứ không cao lên, nên bề ngang thừa được dùng để
+            kể một câu chuyện dài hơn — 16 tuần (một quý) thay vì 5 tuần. Với người học,
+            nhìn thấy cả quý phía sau là thứ tạo cảm giác "mình đã đi được xa", điều mà
+            5 tuần không cho được.
+            Dưới 1024px giữ nguyên bố cục cũ: màn hẹp không đủ chỗ cho 16 cột. */}
+        {isDesktop ? (
+          <div className="flex gap-1.5 overflow-x-auto">
+            {/* Nhãn thứ ở cột trái, thẳng hàng với từng hàng ngày. */}
+            <div className="grid grid-rows-7 gap-1 text-[11px] text-zinc-400 shrink-0">
+              {WDOW.map((w, i) => (
+                <span key={i} className="h-4 leading-4 pr-0.5">
+                  {w}
+                </span>
+              ))}
+            </div>
+            {/* `grid-flow-col` = đổ dữ liệu theo CỘT: mỗi cột là một tuần. */}
+            <div className="grid grid-rows-7 grid-flow-col gap-1">
+              {stats.calendar.days.map((d, idx) => (
+                <div
+                  key={d.date}
+                  tabIndex={0}
+                  role="img"
+                  aria-label={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
+                  /* Ô đầu tiên lệch HÀNG theo thứ trong tuần (bố cục dọc), khác bản mobile
+                     lệch CỘT. */
+                  style={idx === 0 ? { gridRowStart: stats.calendar.firstColumn + 1 } : undefined}
+                  className={`w-4 h-4 rounded-[4px] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 ${heatColor(d.count)} ${d.date === stats.calendar.days[stats.calendar.days.length - 1]?.date ? 'ring-1 ring-accent-400/70' : ''}`}
+                  title={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
+                />
+              ))}
+            </div>
           </div>
+        ) : (
+          <div>
+            {/* Nhãn thứ */}
+            <div className="grid grid-cols-7 gap-1.5 mb-1.5">
+              {WDOW.map((w, i) => (
+                <span key={i} className="text-[11px] text-zinc-400 text-center">
+                  {w}
+                </span>
+              ))}
+            </div>
 
-          {/* Lưới ngày — ô đầu lệch cột theo thứ trong tuần */}
-          <div className="grid grid-cols-7 gap-1.5">
-            {stats.calendar.days.map((d, idx) => (
-              /* Ô lịch phải đọc được bằng bàn phím/trình đọc màn hình: `title` chỉ hiện khi
-               rê chuột nên trên mobile và với người dùng bàn phím là mất hẳn thông tin.
-               Giữ `title` cho desktop, thêm tabIndex + aria-label cho phần còn lại. */
-              <div
-                key={d.date}
-                tabIndex={0}
-                role="img"
-                aria-label={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
-                style={idx === 0 ? { gridColumnStart: stats.calendar.firstColumn + 1 } : undefined}
-                className={`aspect-square rounded-[4px] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 ${heatColor(d.count)} ${d.date === stats.calendar.days[stats.calendar.days.length - 1]?.date ? 'ring-1 ring-accent-400/70' : ''}`}
-                title={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
-              />
-            ))}
+            {/* Lưới ngày — ô đầu lệch cột theo thứ trong tuần */}
+            <div className="grid grid-cols-7 gap-1.5">
+              {stats.calendar.days.map((d, idx) => (
+                /* Ô lịch phải đọc được bằng bàn phím/trình đọc màn hình: `title` chỉ hiện khi
+                 rê chuột nên trên mobile và với người dùng bàn phím là mất hẳn thông tin.
+                 Giữ `title` cho desktop, thêm tabIndex + aria-label cho phần còn lại. */
+                <div
+                  key={d.date}
+                  tabIndex={0}
+                  role="img"
+                  aria-label={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
+                  style={
+                    idx === 0 ? { gridColumnStart: stats.calendar.firstColumn + 1 } : undefined
+                  }
+                  className={`aspect-square rounded-[4px] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 ${heatColor(d.count)} ${d.date === stats.calendar.days[stats.calendar.days.length - 1]?.date ? 'ring-1 ring-accent-400/70' : ''}`}
+                  title={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Chú thích đậm nhạt */}
         <div className="flex items-center justify-end gap-1.5 mt-3 text-[11px] text-zinc-400">

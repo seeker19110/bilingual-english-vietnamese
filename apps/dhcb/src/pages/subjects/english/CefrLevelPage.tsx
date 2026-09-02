@@ -92,6 +92,7 @@ import CefrExam from '../../../components/CefrExam'
 import { useOnboarding } from '../../../lib/onboarding'
 import { PageShell } from '@core/PageShell'
 import { TwoPane } from '@core/TwoPane'
+import { countBadgeClass, badgeCount } from '@core/badgeStyles'
 
 // % an toàn (0 khi total = 0, không chia cho 0).
 const pct = (done: number, total: number) => (total > 0 ? Math.round((done / total) * 100) : 0)
@@ -625,9 +626,7 @@ export default function CefrLevelPage() {
                   làm các tab cao thấp so le. */}
               <span className="whitespace-nowrap">{isA ? labelA : labelB}</span>
               {badge != null && badge > 0 && (
-                <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[11px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
-                  {badge > 99 ? '99+' : badge}
-                </span>
+                <span className={countBadgeClass()}>{badgeCount(badge)}</span>
               )}
             </button>
           ))}
