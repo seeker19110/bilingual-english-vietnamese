@@ -1,6 +1,6 @@
 # 0242 — 2026-09-02 — Lịch hoạt động dùng hết bề ngang desktop, badge đếm đạt AA
 
-PR: (điền khi tạo) · Nhánh: `claude/modern-ui-redesign-jull9n`
+PR: #825 · Nhánh: `claude/modern-ui-redesign-jull9n`
 
 ## Bối cảnh
 
