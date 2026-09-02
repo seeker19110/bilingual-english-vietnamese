@@ -12,6 +12,7 @@ import { BookOpen, CheckCircle2, Play, Target, Trophy } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
 import LangBadge from '../../../components/programming/LangBadge'
+import { PageShell } from '@core/PageShell'
 import { useAuth } from '../../../context/useAuth'
 import {
   fetchProgress,
@@ -66,7 +67,8 @@ export default function ProgrammingPathStagePage() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => nav(duongDanLoTrinh(path))} />
 
-      <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-5">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trước đây một cột `max-w-4xl` ở mọi bề rộng. */}
+      <PageShell width="standard" baseWidth="max-w-4xl" className="space-y-5">
         <PageHeader title={stage.name} subtitle={stage.canDo} />
 
         {lessonCount > 0 && (
@@ -166,7 +168,7 @@ export default function ProgrammingPathStagePage() {
             ))}
           </ul>
         </section>
-      </main>
+      </PageShell>
     </div>
   )
 }

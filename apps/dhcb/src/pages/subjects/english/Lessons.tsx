@@ -21,6 +21,7 @@ import {
 import { startListening, isSTTSupported } from '../../../lib/stt'
 import { scorePronunciation, pronounceFeedback, scoreWords } from '../../../lib/pronounceScore'
 import Layout from '../../../components/Layout'
+import { PageShell } from '@core/PageShell'
 import PageHeader from '../../../components/PageHeader'
 import { getDirection, getUsage, incrementUsage } from '../../../lib/storage'
 import { useAuth } from '../../../context/useAuth'
@@ -254,8 +255,14 @@ export default function Lessons() {
     <div className="bg-zinc-950 flex flex-col h-[calc(100dvh-var(--bnav-h))] sm:h-auto sm:block sm:min-h-dvh">
       <Layout back />
 
-      <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
-        <div className="max-w-3xl mx-auto px-4 pt-4 pb-2 sm:pb-[calc(1.5rem+var(--bnav-h))]">
+      {/* <div> chứ không phải <main>: landmark <main> do PageShell render bên trong. */}
+      <div className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
+        {/* [2026-09-02, đợt 4 thiết kế lại desktop] Danh sách bài hội thoại → width standard. */}
+        <PageShell
+          width="standard"
+          baseWidth="max-w-3xl"
+          className="!pt-4 !pb-2 sm:!pb-[calc(1.5rem+var(--bnav-h))]"
+        >
           {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
           <PageHeader
             title={isA ? 'Các bài hội thoại mẫu thông dụng' : 'Common sample dialogues'}
@@ -295,8 +302,8 @@ export default function Lessons() {
             <SearchBar query={query} setQuery={setQuery} isA={isA} variant="desktop" />
           </div>
           <LessonList lessons={index} isA={isA} query={deferredQuery} onSelect={setSelectedMeta} />
-        </div>
-      </main>
+        </PageShell>
+      </div>
 
       {/* Search bar cố định ở dưới — CHỈ trên mobile */}
       <div className="sm:hidden shrink-0 border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md px-4 pt-3 pb-safe">

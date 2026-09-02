@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
+import { PageShell } from '@core/PageShell'
 import PageHeader from '../../../components/PageHeader'
 import PronounceButton from '../../../components/PronounceButton'
 import VocabMilestone from '../../../components/VocabMilestone'
@@ -242,10 +243,15 @@ export default function Dictionary() {
     <div className="min-h-dvh bg-zinc-950">
       <Layout />
 
-      <main>
-        <div
-          className={`max-w-3xl mx-auto px-4 py-6 sm:pb-[calc(1.5rem+var(--bnav-h))] ${
-            tab === 'search' ? 'pb-[calc(6rem+var(--bnav-h))]' : 'pb-[calc(1.5rem+var(--bnav-h))]'
+      {/* Thẻ bọc này CHỈ để nhóm; landmark <main> do PageShell render bên trong — hai <main>
+          lồng nhau là vi phạm a11y (landmark trùng) và cổng e2e/a11y.spec.ts quét đúng trang này. */}
+      <div>
+        {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trang tra cứu/danh sách → width standard. */}
+        <PageShell
+          width="standard"
+          baseWidth="max-w-3xl"
+          className={`!py-6 ${
+            tab === 'search' ? '!pb-[calc(6rem+var(--bnav-h))]' : '!pb-[calc(1.5rem+var(--bnav-h))]'
           }`}
         >
           {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
@@ -732,8 +738,8 @@ export default function Dictionary() {
               ))}
             </div>
           )}
-        </div>
-      </main>
+        </PageShell>
+      </div>
 
       {/* Search bar cố định dưới — CHỈ trên mobile, tab Tra từ. Cố định ngay TRÊN
           BottomNav (bottom: var(--bnav-only-h) — chiều cao THẬT của riêng nav, xem

@@ -18,6 +18,7 @@ import {
   type ProgrammingLessonProgress,
 } from '../../../lib/programmingProgress'
 import { getShortCourse } from '@dhcb/subject-programming/courses/registry'
+import { PageShell } from '@core/PageShell'
 import { getLessonSummary } from '@dhcb/subject-programming/lessonsLoader'
 import { buildSlugSegment, idFromSlugSegment } from '@core/slug'
 
@@ -55,7 +56,8 @@ export default function ProgrammingCoursePage() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => nav('/lap-trinh')} />
 
-      <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trước đây một cột `max-w-4xl` ở mọi bề rộng. */}
+      <PageShell width="standard" baseWidth="max-w-4xl" className="space-y-6">
         <PageHeader title={course.title} subtitle={course.canDo} />
 
         <section className="bg-zinc-900/80 border border-accent-500/30 rounded-3xl p-5 space-y-2 shadow-sm">
@@ -154,7 +156,7 @@ export default function ProgrammingCoursePage() {
             )
           })}
         </section>
-      </main>
+      </PageShell>
     </div>
   )
 }

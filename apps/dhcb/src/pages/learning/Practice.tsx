@@ -37,6 +37,7 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import Layout from '../../components/Layout.js'
+import { PageShell } from '@core/PageShell'
 import PageHeader from '../../components/PageHeader.js'
 import PronunciationCheck from '../../components/PronunciationCheck.js'
 import PvPArenaCard from '../../components/PvPArena/PvPArenaCard.js'
@@ -1145,7 +1146,12 @@ export default function Practice() {
     return (
       <>
         <Layout onBack={() => setMode('hub')} />
-        <main className="max-w-2xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
+        {/* [2026-09-02, đợt 4 thiết kế lại desktop] Bài luyện tập 1 lượt → width reading. */}
+        <PageShell
+          width="reading"
+          baseWidth="max-w-2xl"
+          className="!pb-[calc(1.5rem+var(--bnav-h))]"
+        >
           <MiniHeader title={title} sub={sub} onBack={() => setMode('hub')} />
           {mode === 'vocab-listen' && (
             <VocabListenGuess pool={pool} isA={isA} onExit={() => setMode('hub')} />
@@ -1185,7 +1191,7 @@ export default function Practice() {
           {mode === 'interview' && user && (
             <ReverseInterview isA={isA} user={user} onExit={() => setMode('hub')} />
           )}
-        </main>
+        </PageShell>
       </>
     )
   }
@@ -1193,7 +1199,8 @@ export default function Practice() {
   return (
     <>
       <Layout back={false} />
-      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-7">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trung tâm luyện tập, nhiều thẻ → width standard. */}
+      <PageShell width="standard" baseWidth="max-w-3xl" className="space-y-7">
         <PageHeader
           title={
             isA ? 'Phòng Luyện Tập Đa Môn & Sửa Lỗi' : 'Multi-Subject Practice & Mistake Studio'
@@ -1760,7 +1767,7 @@ export default function Practice() {
             </button>
           </div>
         </section>
-      </main>
+      </PageShell>
     </>
   )
 }

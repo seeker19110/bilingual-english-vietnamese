@@ -14,6 +14,7 @@
 // /api/programming/progress (khoá 'web-s2-m1' / 'web-s2-r3') — cùng bảng với bài học P1–P6.
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { PageShell } from '@core/PageShell'
 import {
   Check,
   ClipboardCheck,
@@ -265,7 +266,8 @@ export default function ProgrammingSpecStagePage() {
     return (
       <div className="min-h-dvh bg-zinc-950 text-zinc-100">
         <Layout onBack={() => nav('/lap-trinh/huong')} />
-        <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-4">
+        {/* [2026-09-02, đợt 4 thiết kế lại desktop] */}
+        <PageShell width="standard" baseWidth="max-w-4xl" className="space-y-4">
           <PageHeader
             title="Không có chặng này"
             subtitle="Đường dẫn không khớp chặng nào của hướng nào. Quay lại danh sách để chọn hướng có thật."
@@ -276,7 +278,7 @@ export default function ProgrammingSpecStagePage() {
           >
             Xem các hướng chuyên sâu
           </button>
-        </main>
+        </PageShell>
       </div>
     )
   }
@@ -298,7 +300,8 @@ export default function ProgrammingSpecStagePage() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => nav(duongDanHuong(spec))} />
 
-      <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trước đây một cột `max-w-4xl` ở mọi bề rộng. */}
+      <PageShell width="standard" baseWidth="max-w-4xl" className="space-y-6">
         <PageHeader title={stage.name} subtitle={`${spec.name} · ${TIER_LABEL[stage.tier]}`} />
 
         <section className="rounded-3xl border border-accent-500/40 bg-zinc-900 p-5 space-y-3">
@@ -396,7 +399,7 @@ export default function ProgrammingSpecStagePage() {
         </section>
 
         {detail && <BriefBlock brief={detail.specBrief} />}
-      </main>
+      </PageShell>
     </div>
   )
 }

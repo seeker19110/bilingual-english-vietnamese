@@ -27,6 +27,7 @@ import {
 } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
+import { PageShell } from '@core/PageShell'
 import CrossDomainSynergyCard from '../../../components/LifeGraph/CrossDomainSynergyCard'
 import OutcomeCalibrationCard from '../../../components/DecisionLedger/OutcomeCalibrationCard'
 import { useToast } from '@core/ToastProvider'
@@ -329,10 +330,15 @@ export default function LifeGraph() {
     return (
       <div className="min-h-dvh bg-zinc-950 text-zinc-100 flex flex-col">
         <Layout onBack={() => nav('/trang-ca-nhan')} title="Mạng lưới & Ký ức" />
-        <main className="max-w-4xl mx-auto px-4 pt-12 pb-12 flex flex-col items-center justify-center flex-1">
+        {/* [2026-09-02, đợt 4 thiết kế lại desktop] width="standard". */}
+        <PageShell
+          width="standard"
+          baseWidth="max-w-4xl"
+          className="!pt-12 !pb-12 flex flex-1 flex-col items-center justify-center"
+        >
           <Loader2 className="w-8 h-8 animate-spin text-accent-400 theme-light:text-accent-800 mb-3" />
           <p className="text-zinc-400 text-sm">Đang tải cấu trúc tri thức cá nhân...</p>
-        </main>
+        </PageShell>
       </div>
     )
   }
@@ -341,7 +347,12 @@ export default function LifeGraph() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100 flex flex-col">
       <Layout onBack={() => nav('/trang-ca-nhan')} title="Mạng lưới & Ký ức" />
 
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-6 pb-20 space-y-6">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] width="standard". */}
+      <PageShell
+        width="standard"
+        baseWidth="max-w-4xl"
+        className="!pt-6 !pb-20 flex flex-1 flex-col space-y-6"
+      >
         {/* Top Header & Privacy Toolbar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800 pb-4">
           <PageHeader
@@ -789,7 +800,7 @@ export default function LifeGraph() {
             </div>
           </div>
         )}
-      </main>
+      </PageShell>
 
       {/* ── Add Node Modal ──────────────────────────────────────────────────── */}
       {showAddNodeModal && (

@@ -8,6 +8,7 @@ import { usePageTitle } from '../../lib/usePageTitle'
 import { useAuth } from '../../context/useAuth'
 import { getDirection } from '../../lib/storage'
 import { useIsDesktopViewport } from '../../lib/useIsDesktopViewport'
+import { PageShell } from '@core/PageShell'
 import {
   getMistakes,
   getDueMistakes,
@@ -260,7 +261,8 @@ export default function MistakeBank() {
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout />
-      <main className="max-w-2xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-5">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trang danh sách → width="standard". */}
+      <PageShell width="standard" baseWidth="max-w-2xl" className="space-y-5">
         <PageHeader
           title={isA ? 'Sổ lỗi của tôi' : 'My Mistake Bank'}
           subtitle={
@@ -407,7 +409,7 @@ export default function MistakeBank() {
             )}
           </>
         )}
-      </main>
+      </PageShell>
     </div>
   )
 }

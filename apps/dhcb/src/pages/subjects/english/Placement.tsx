@@ -19,6 +19,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { usePageTitle } from '../../../lib/usePageTitle'
 import { GraduationCap, ArrowLeft, Sparkles, RotateCcw } from 'lucide-react'
 import Layout from '../../../components/Layout'
+import { PageShell } from '@core/PageShell'
 import PageHeader from '../../../components/PageHeader'
 import ExamQuestionCard from '../../../components/ExamQuestionCard'
 import { useAuth } from '../../../context/useAuth'
@@ -193,8 +194,11 @@ export default function Placement() {
     return (
       <div className="min-h-dvh bg-zinc-950">
         {!fromOnboarding && <Layout />}
-        <main
-          className={`max-w-lg mx-auto px-4 pb-[calc(1.5rem+var(--bnav-h))] space-y-5 ${fromOnboarding ? 'pt-10' : 'pt-6'}`}
+        {/* [2026-09-02, đợt 4 thiết kế lại desktop] Luồng tuần tự hẹp → width reading. */}
+        <PageShell
+          width="reading"
+          baseWidth="max-w-lg"
+          className={`!pb-[calc(1.5rem+var(--bnav-h))] space-y-5 ${fromOnboarding ? '!pt-10' : ''}`}
         >
           <PageHeader
             title={isA ? '🎯 Test xếp lớp' : '🎯 Placement test'}
@@ -251,7 +255,7 @@ export default function Placement() {
               </button>
             </div>
           )}
-        </main>
+        </PageShell>
       </div>
     )
   }
@@ -267,8 +271,10 @@ export default function Placement() {
     return (
       <div className="min-h-dvh bg-zinc-950">
         {!fromOnboarding && <Layout />}
-        <main
-          className={`max-w-lg mx-auto px-4 pb-[calc(1.5rem+var(--bnav-h))] space-y-5 ${fromOnboarding ? 'pt-10' : 'pt-6'}`}
+        <PageShell
+          width="reading"
+          baseWidth="max-w-lg"
+          className={`!pb-[calc(1.5rem+var(--bnav-h))] space-y-5 ${fromOnboarding ? '!pt-10' : ''}`}
         >
           <div className="glass rounded-2xl p-8 text-center space-y-3 animate-fade-in">
             <p className="text-5xl">🎓</p>
@@ -285,7 +291,7 @@ export default function Placement() {
               {isA ? 'Tiếp tục' : 'Continue'}
             </button>
           </div>
-        </main>
+        </PageShell>
       </div>
     )
   }
@@ -294,8 +300,10 @@ export default function Placement() {
   return (
     <div className="min-h-dvh bg-zinc-950">
       {!fromOnboarding && <Layout />}
-      <main
-        className={`max-w-lg mx-auto px-4 pb-[calc(1.5rem+var(--bnav-h))] space-y-4 ${fromOnboarding ? 'pt-10' : 'pt-6'}`}
+      <PageShell
+        width="reading"
+        baseWidth="max-w-lg"
+        className={`!pb-[calc(1.5rem+var(--bnav-h))] space-y-4 ${fromOnboarding ? '!pt-10' : ''}`}
       >
         {loading || !questions || !levelObj ? (
           <div className="glass rounded-xl p-8 text-center animate-fade-in">
@@ -345,7 +353,7 @@ export default function Placement() {
             />
           </div>
         )}
-      </main>
+      </PageShell>
     </div>
   )
 }

@@ -25,6 +25,7 @@ import { parseJson } from '../../lib/ai'
 import { situationLabel } from '../../prompts'
 import { LEVELS } from '../../types'
 import type { ChatSession, WritingSubmission, SpeakingSession } from '../../types'
+import { PageShell } from '@core/PageShell'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -343,7 +344,8 @@ export default function History() {
     <div className="min-h-dvh bg-zinc-950">
       <Layout />
 
-      <main className="max-w-3xl mx-auto px-4 pt-5 pb-[calc(1.25rem+var(--bnav-h))]">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trang danh sách → width="standard". */}
+      <PageShell width="standard" baseWidth="max-w-3xl">
         {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
         <PageHeader title="Lịch sử học" subtitle="Xem lại chat, bài viết và buổi luyện nói" />
 
@@ -404,7 +406,7 @@ export default function History() {
             )}
           </div>
         )}
-      </main>
+      </PageShell>
     </div>
   )
 }

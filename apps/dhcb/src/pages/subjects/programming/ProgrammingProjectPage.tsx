@@ -9,6 +9,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { usePageTitle } from '../../../lib/usePageTitle'
+import { PageShell } from '@core/PageShell'
 import {
   Store,
   Play,
@@ -215,7 +216,8 @@ export default function ProgrammingProjectPage() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => nav('/lap-trinh')} />
 
-      <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-5">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trước đây một cột `max-w-4xl` ở mọi bề rộng. */}
+      <PageShell width="standard" baseWidth="max-w-4xl" className="space-y-5">
         <PageHeader
           title="Dự án: Cửa hàng của tôi"
           subtitle="Một sản phẩm duy nhất lớn dần qua từng chặng: máy tính tiền chạy chữ (P1) → sổ sách tử tế có file dữ liệu (P2) → cửa hàng lên web, có trang đặt hàng và kho dữ liệu SQL (P3). Đạt hết test của bước là mở bước sau."
@@ -483,7 +485,7 @@ export default function ProgrammingProjectPage() {
             </div>
           </div>
         )}
-      </main>
+      </PageShell>
     </div>
   )
 }

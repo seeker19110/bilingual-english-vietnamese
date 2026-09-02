@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { BookOpen, Volume2, ArrowLeft } from 'lucide-react'
 import { loadDictionary } from '../../../data/dictionary/loader'
 import type { DictEntry } from '../../../types'
+import { PageShell } from '@core/PageShell'
 
 // Trang CÔNG KHAI cho 1 từ trong từ điển — /tu-vung/:word — KHÔNG bọc RequireAuth. Đây là phần
 // SEO thật: /dictionary (trang tra cứu chính) đang nằm sau RequireAuth nên Google không index
@@ -76,7 +77,12 @@ export default function WordDetail() {
 
   return (
     <div className="min-h-dvh bg-zinc-950 theme-light:bg-white text-zinc-100 theme-light:text-zinc-900">
-      <main className="mx-auto max-w-xl px-4 pt-8 pb-[calc(1.5rem+var(--bnav-h))]">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trang từ vựng công khai, chữ để đọc → width reading. */}
+      <PageShell
+        width="reading"
+        baseWidth="max-w-xl"
+        className="!pt-8 !pb-[calc(1.5rem+var(--bnav-h))]"
+      >
         <Link
           to="/welcome"
           className="tap-44 inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-200 mb-6"
@@ -147,7 +153,7 @@ export default function WordDetail() {
             Học miễn phí ngay
           </button>
         </div>
-      </main>
+      </PageShell>
     </div>
   )
 }

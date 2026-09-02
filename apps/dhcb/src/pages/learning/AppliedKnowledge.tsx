@@ -21,6 +21,7 @@ import {
   Lightbulb,
 } from 'lucide-react'
 import Layout from '../../components/Layout'
+import { PageShell } from '@core/PageShell'
 import PageHeader from '../../components/PageHeader'
 import {
   APPLIED_KNOWLEDGE_DATABASE,
@@ -201,7 +202,12 @@ export default function AppliedKnowledge() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => nav('/')} />
 
-      <main className="max-w-5xl mx-auto px-4 pt-6 pb-[calc(2.5rem+var(--bnav-h))] space-y-6">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Lưới ứng dụng thực tế → width standard. */}
+      <PageShell
+        width="standard"
+        baseWidth="max-w-5xl"
+        className="!pb-[calc(2.5rem+var(--bnav-h))] space-y-6"
+      >
         <PageHeader
           title="Ứng Dụng Thực Tế & Mô Phỏng Đời Sống"
           subtitle="Khám phá vì sao chúng ta học những kiến thức này: Biến công thức SGK thành công cụ giải quyết bài toán thực tế, tài chính, sức khỏe và công nghệ"
@@ -1885,7 +1891,7 @@ export default function AppliedKnowledge() {
             </div>
           </div>
         )}
-      </main>
+      </PageShell>
     </div>
   )
 }

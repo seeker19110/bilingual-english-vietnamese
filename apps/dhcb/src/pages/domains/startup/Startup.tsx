@@ -19,6 +19,7 @@ import Field from '../../../components/Field'
 import LoadError from '../../../components/LoadError'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
+import { PageShell } from '@core/PageShell'
 import { useToast } from '@core/ToastProvider'
 import {
   listVentures,
@@ -256,8 +257,14 @@ export default function Startup({ embedded = false }: { embedded?: boolean } = {
 
   const currentVenture = ventures.find((v) => v.id === selectedVentureId)
 
+  // [2026-09-02, đợt 4 thiết kế lại desktop] width="standard"; giữ bố cục flex cột (dùng chung
+  // cho cả bản độc lập lẫn bản nhúng trong CareerStartup.tsx).
   const body = (
-    <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-6 pb-20 space-y-6">
+    <PageShell
+      width="standard"
+      baseWidth="max-w-6xl"
+      className="!pt-6 !pb-20 flex flex-1 flex-col space-y-6"
+    >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800 pb-4">
         {embedded ? (
           <div className="mb-0">
@@ -956,7 +963,7 @@ export default function Startup({ embedded = false }: { embedded?: boolean } = {
           </form>
         </Modal>
       )}
-    </main>
+    </PageShell>
   )
 
   if (embedded) return body

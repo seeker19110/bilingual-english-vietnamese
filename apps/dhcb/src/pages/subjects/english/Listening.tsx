@@ -8,6 +8,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Play, Square, Eye, EyeOff, ChevronRight } from 'lucide-react'
 import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
+import { PageShell } from '@core/PageShell'
 import PageHeader from '../../../components/PageHeader'
 import { CardListSkeleton } from '../../../components/Skeleton'
 import KaraokeText, { KARAOKE_INDENT } from '../../../components/KaraokeText'
@@ -49,7 +50,8 @@ export default function Listening() {
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout back />
-      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))]">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Thư viện nghe (2 tab, danh sách) → width standard. */}
+      <PageShell width="standard" baseWidth="max-w-3xl">
         <PageHeader title={T.listeningPageTitle} subtitle={T.listeningPageSub} />
 
         {/* Thanh 2 tab */}
@@ -77,7 +79,7 @@ export default function Listening() {
 
         {tab === 'phrases' && <PhrasesTab isA={isA} T={T} />}
         {tab === 'dialogues' && <DialoguesTab isA={isA} T={T} plan={user?.plan ?? 'free'} />}
-      </main>
+      </PageShell>
     </div>
   )
 }
