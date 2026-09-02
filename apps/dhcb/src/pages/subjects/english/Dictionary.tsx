@@ -32,6 +32,7 @@ import { useOnboarding } from '../../../lib/onboarding'
 import { POS_LABEL, POS_COLOR, POS_LIST, LEVEL_COLOR } from '../../../lib/pos'
 import { getLearnedWords } from '../../../lib/vocab'
 import { useIsDesktopViewport } from '../../../lib/useIsDesktopViewport'
+import { countBadgeClass, badgeCount } from '@core/badgeStyles'
 
 // Số kết quả mỗi trang: desktop rộng nên hiện nhiều hơn hẳn (3 kết quả/trang là quá thưa,
 // người dùng phải bấm sang trang liên tục); mobile giữ ít để không phải cuộn dài.
@@ -314,9 +315,7 @@ export default function Dictionary() {
                 >
                   <Icon className="w-4 h-4 shrink-0" /> <span className="truncate">{label}</span>
                   {badge != null && badge > 0 && (
-                    <span className="absolute -top-1.5 -right-1 bg-rose-500 text-white text-[11px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
-                      {badge > 99 ? '99+' : badge}
-                    </span>
+                    <span className={countBadgeClass()}>{badgeCount(badge)}</span>
                   )}
                 </button>
               ))}

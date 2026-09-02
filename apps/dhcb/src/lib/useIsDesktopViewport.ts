@@ -7,18 +7,27 @@ import { useState, useEffect } from 'react'
 
 const QUERY = '(min-width: 1024px)'
 
-export function useIsDesktopViewport(): boolean {
-  const [isDesktop, setIsDesktop] = useState(
-    () => typeof window !== 'undefined' && window.matchMedia(QUERY).matches,
+/**
+ * Theo dõi MỘT media query bất kỳ bằng JS. Tách ra từ `useIsDesktopViewport` (2026-09-02)
+ * khi cần thêm ngưỡng thứ hai: cùng một cơ chế, chỉ khác chuỗi truy vấn, nên chép lại là
+ * nhân đôi chỗ có thể sai (quên `onChange()` lần đầu, quên gỡ listener).
+ */
+export function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(query).matches,
   )
 
   useEffect(() => {
-    const mql = window.matchMedia(QUERY)
-    const onChange = () => setIsDesktop(mql.matches)
+    const mql = window.matchMedia(query)
+    const onChange = () => setMatches(mql.matches)
     onChange()
     mql.addEventListener('change', onChange)
     return () => mql.removeEventListener('change', onChange)
-  }, [])
+  }, [query])
 
-  return isDesktop
+  return matches
+}
+
+export function useIsDesktopViewport(): boolean {
+  return useMediaQuery(QUERY)
 }
