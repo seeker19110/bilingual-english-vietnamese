@@ -19,7 +19,7 @@ import type { ReactNode } from 'react'
 export interface TwoPaneProps {
   /** Cột chính. */
   children: ReactNode
-  /** Cột phải — chỉ dựng khi `isDesktop` là true. Bỏ trống thì không có cột nào. */
+  /** Cột phụ — chỉ dựng khi `isDesktop` là true. Bỏ trống thì không có cột nào. */
   rail?: ReactNode
   /**
    * Có đang ở desktop không. Truyền từ `useIsDesktopViewport()` của app.
@@ -27,10 +27,18 @@ export interface TwoPaneProps {
    * app giữ một nguồn sự thật duy nhất về ngưỡng 1024px.
    */
   isDesktop: boolean
-  /** Bề rộng cột phải. `normal` cho mục lục/tiến độ, `wide` cho bảng sửa lỗi nhiều chữ. */
+  /** Bề rộng cột phụ. `normal` cho mục lục/tiến độ, `wide` cho bảng sửa lỗi nhiều chữ. */
   railWidth?: 'normal' | 'wide'
-  /** Nhãn cho vùng cột phải (đọc bởi trình đọc màn hình). */
+  /** Nhãn cho vùng cột phụ (đọc bởi trình đọc màn hình). */
   railLabel?: string
+  /**
+   * Cột phụ đứng bên nào. Mặc định `right` — dùng cho cột NGỮ CẢNH (hỗ trợ việc đang làm).
+   *
+   * `left` dành cho bố cục master–detail, nơi cột phụ là DANH SÁCH ĐỂ CHỌN: mắt người đọc từ
+   * trái sang, nên thứ "chọn trước rồi mới xem" phải đứng trước thứ được chọn. Đặt danh sách
+   * bên phải sẽ buộc người dùng đọc ngược.
+   */
+  railSide?: 'left' | 'right'
 }
 
 const RAIL_CLASS = {
@@ -44,21 +52,29 @@ export function TwoPane({
   isDesktop,
   railWidth = 'normal',
   railLabel = 'Thông tin hỗ trợ',
+  railSide = 'right',
 }: TwoPaneProps) {
   if (!isDesktop || !rail) return <>{children}</>
 
+  // `sticky` + `max-h` + cuộn riêng: cột phụ bám theo khi đọc nội dung dài, nhưng không bao giờ
+  // cao hơn khung nhìn nên không tự sinh thêm thanh cuộn cho cả trang. `top-20` chừa đúng chiều
+  // cao header sticky (h-14) cộng khoảng thở.
+  const asideEl = (
+    <aside
+      aria-label={railLabel}
+      className={`sticky top-20 max-h-[calc(100dvh-6rem)] shrink-0 overflow-y-auto ${RAIL_CLASS[railWidth]}`}
+    >
+      {rail}
+    </aside>
+  )
+  const mainEl = <div className="min-w-0 flex-1">{children}</div>
+
+  // Thứ tự trong DOM đi theo thứ tự thị giác (không dùng `order-*` của CSS để đảo): trình đọc
+  // màn hình và phím Tab đi theo DOM, nên đảo bằng CSS sẽ làm hai luồng đó lệch nhau.
   return (
     <div className="flex items-start gap-6">
-      <div className="min-w-0 flex-1">{children}</div>
-      {/* `sticky` + `max-h` + cuộn riêng: cột phải bám theo khi đọc nội dung dài, nhưng không
-          bao giờ cao hơn khung nhìn nên không tự sinh thêm thanh cuộn cho cả trang.
-          `top-20` chừa đúng chiều cao header sticky (h-14) cộng khoảng thở. */}
-      <aside
-        aria-label={railLabel}
-        className={`sticky top-20 max-h-[calc(100dvh-6rem)] shrink-0 overflow-y-auto ${RAIL_CLASS[railWidth]}`}
-      >
-        {rail}
-      </aside>
+      {railSide === 'left' ? asideEl : mainEl}
+      {railSide === 'left' ? mainEl : asideEl}
     </div>
   )
 }

@@ -90,6 +90,8 @@ import {
 import { getExamMap } from '../../../lib/cefrExam'
 import CefrExam from '../../../components/CefrExam'
 import { useOnboarding } from '../../../lib/onboarding'
+import { PageShell } from '@core/PageShell'
+import { TwoPane } from '@core/TwoPane'
 
 // % an toàn (0 khi total = 0, không chia cho 0).
 const pct = (done: number, total: number) => (total > 0 ? Math.round((done / total) * 100) : 0)
@@ -370,25 +372,26 @@ export default function CefrLevelPage() {
   // Gate bằng JS (`useIsDesktopViewport`), không phải class Tailwind: bài học ở đợt thiết kế
   // desktop trước (changelog 0199) là ẩn-bằng-CSS vẫn để nội dung trùng trong DOM.
   function shell(children: React.ReactNode, headerBack?: () => void, master?: React.ReactNode) {
-    if (master && isDesktop) {
-      return (
-        <div className="min-h-dvh bg-zinc-950">
-          <Layout back onBack={headerBack ?? (() => nav('/lo-trinh-hoc'))} />
-          <div className="max-w-6xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] flex gap-5 items-start">
-            <aside className="w-72 xl:w-80 shrink-0 max-h-[calc(100dvh-6rem)] overflow-y-auto pr-1">
-              {master}
-            </aside>
-            <main className="flex-1 min-w-0">{children}</main>
-          </div>
-        </div>
-      )
-    }
+    // [2026-09-02, đợt 3] Bố cục master–detail trước đây viết tay tại chỗ; nay dùng chung
+    // `PageShell` + `TwoPane` với `railSide="left"` — cột phụ ở đây là DANH SÁCH ĐỂ CHỌN nên
+    // phải đứng trước phần được chọn, khác với cột ngữ cảnh (đứng sau) ở các trang khác.
     return (
       <div className="min-h-dvh bg-zinc-950">
         <Layout back onBack={headerBack ?? (() => nav('/lo-trinh-hoc'))} />
-        <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
-          {children}
-        </main>
+        {/* Bề rộng phụ thuộc CÓ cột danh sách hay không: có thì `standard` (1152px = danh sách
+            288px + phần chi tiết ~840px); không thì `reading` (768px) để dòng chữ không dài quá
+            khổ đọc — màn tổng quan cấp toàn chữ và danh sách mục tiêu, kéo rộng 1152px là mắt
+            mất dấu dòng khi xuống hàng. */}
+        <PageShell width={isDesktop && master ? 'standard' : 'reading'} baseWidth="max-w-3xl">
+          <TwoPane
+            isDesktop={isDesktop && !!master}
+            railSide="left"
+            railLabel="Danh sách trong cấp học"
+            rail={master}
+          >
+            {children}
+          </TwoPane>
+        </PageShell>
       </div>
     )
   }

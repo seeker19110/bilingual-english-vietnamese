@@ -18,6 +18,8 @@ import { effectivePlan } from '../../../lib/promo'
 import { getLimits } from '../../../lib/appSettings'
 import { useEdgeAi } from '../../../lib/edgeAi/useEdgeAi.js'
 import { useIsDesktopViewport } from '../../../lib/useIsDesktopViewport'
+import { PageShell } from '@core/PageShell'
+import { TwoPane } from '@core/TwoPane'
 import EdgeAiIndicator from '../../../components/EdgeAi/EdgeAiIndicator'
 
 // Đề bài mẫu — Chiều A: đề IELTS tiếng Anh | Chiều B: đề viết tiếng Việt
@@ -522,33 +524,43 @@ export default function Writing() {
   )
 
   // DESKTOP: 2 cột — trái soạn bài (rộng hơn), phải kết quả chấm dính (sticky) cuộn độc lập.
+  // [2026-09-02, đợt 3] Bố cục này trước đây viết tay tại chỗ; nay dùng chung `PageShell` +
+  // `TwoPane` (`railWidth="wide"` — bảng chấm nhiều chữ nên cần rộng hơn cột ngữ cảnh thường).
   if (isDesktop) {
     return (
       <div className="min-h-dvh bg-zinc-950">
         <Layout />
-        <div className="max-w-6xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] flex gap-5 items-start">
-          <main className="flex-1 min-w-0 max-w-3xl space-y-4 animate-fade-up">{composer}</main>
-          <aside className="w-80 xl:w-96 shrink-0 sticky top-20 max-h-[calc(100dvh-6rem)] overflow-y-auto pr-1">
-            {result && feedback ? (
-              <ResultPanel feedback={feedback} onReset={reset} dir={dir} />
-            ) : (
-              // Trạng thái rỗng có ý nghĩa — tránh để cột phải trống trơn khi chưa chấm.
-              <div className="bg-zinc-900/60 border border-dashed border-zinc-800 rounded-3xl p-6 text-center space-y-2">
-                <div className="w-11 h-11 rounded-2xl bg-violet-500/10 flex items-center justify-center mx-auto">
-                  <Trophy className="w-5 h-5 text-violet-300" />
-                </div>
-                <p className="text-sm font-bold text-zinc-100">
-                  {isA ? 'Kết quả chấm sẽ hiện ở đây' : 'Your results will appear here'}
-                </p>
-                <p className="text-xs text-zinc-400 leading-relaxed">
-                  {isA
-                    ? 'Chọn đề bài, viết bài rồi bấm “Chấm bài ngay” — điểm 4 tiêu chí, lỗi cần sửa và gợi ý nâng band sẽ hiện ở cột này.'
-                    : 'Pick a prompt, write your essay, then press “Grade my essay” — scores, corrections and suggestions will show up in this column.'}
-                </p>
-              </div>
-            )}
-          </aside>
-        </div>
+        <PageShell width="standard" baseWidth="max-w-2xl">
+          <TwoPane
+            isDesktop
+            railWidth="wide"
+            railLabel="Kết quả chấm bài"
+            rail={
+              <>
+                {result && feedback ? (
+                  <ResultPanel feedback={feedback} onReset={reset} dir={dir} />
+                ) : (
+                  // Trạng thái rỗng có ý nghĩa — tránh để cột phải trống trơn khi chưa chấm.
+                  <div className="bg-zinc-900/60 border border-dashed border-zinc-800 rounded-3xl p-6 text-center space-y-2">
+                    <div className="w-11 h-11 rounded-2xl bg-violet-500/10 flex items-center justify-center mx-auto">
+                      <Trophy className="w-5 h-5 text-violet-300" />
+                    </div>
+                    <p className="text-sm font-bold text-zinc-100">
+                      {isA ? 'Kết quả chấm sẽ hiện ở đây' : 'Your results will appear here'}
+                    </p>
+                    <p className="text-xs text-zinc-400 leading-relaxed">
+                      {isA
+                        ? 'Chọn đề bài, viết bài rồi bấm “Chấm bài ngay” — điểm 4 tiêu chí, lỗi cần sửa và gợi ý nâng band sẽ hiện ở cột này.'
+                        : 'Pick a prompt, write your essay, then press “Grade my essay” — scores, corrections and suggestions will show up in this column.'}
+                    </p>
+                  </div>
+                )}
+              </>
+            }
+          >
+            <div className="max-w-3xl space-y-4 animate-fade-up">{composer}</div>
+          </TwoPane>
+        </PageShell>
       </div>
     )
   }
