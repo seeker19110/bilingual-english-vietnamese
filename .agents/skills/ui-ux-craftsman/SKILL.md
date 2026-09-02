@@ -20,7 +20,10 @@ Mọi thay đổi giao diện trong `apps/english/src/**` đều phải tuân th
 ### Chi Tiết Phân Loại 5 Focus Studios & Gamification Hub:
 
 1. **Studio 1: Đối thoại & Voice Thời gian thực (Realtime Voice & CyberTutor):**
-   - CyberTutor 3D WebGL Avatar kết hợp PBR lighting, dải LED Viseme 15 trạng thái và Interactive Gaze Tracking theo chuột/chạm.
+   - CyberTutor Avatar (`apps/dhcb/src/components/Companion3D/CyberTutorAvatar3D.tsx`) — thực
+     tế hiện là **Canvas 2D** (`canvas.getContext('2d')`), KHÔNG phải WebGL/PBR lighting như tên
+     gọi "3D" gợi ý; có dải viseme 15 trạng thái. Nâng lên WebGL thật (three.js/PBR/gaze
+     tracking) là việc CHƯA làm, cần quyết định riêng trước khi đầu tư.
    - Trạng thái Voice trực quan: `Idle` $\rightarrow$ `Listening (Waveform animation)` $\rightarrow$ `Thinking (Glow pulse)` $\rightarrow$ `Speaking (Viseme morph)`.
 2. **Studio 2: Nhận thức Sâu & Cung điện Trí nhớ (Metacognitive Journal & Memory Palace):**
    - Không gian 3D/Isometric hiển thị bản đồ Loci và các điểm neo giác quan.
@@ -85,8 +88,8 @@ vì phải parse Figma/JSON. Bổ sung skill này bằng **8 mục chuẩn** là
 màn hình mới cho DHCB — không tạo file `DESIGN.md` riêng (dự án đã có `index.css` +
 `tailwind.config.js` làm nguồn sự thật), mà dùng làm CHECKLIST khi review:
 
-1. **Sắc thái & Tâm trạng thị giác (Visual Theme & Atmosphere):** mỗi theme trong 4 theme
-   (🌙 Xanh đêm mặc định · ☀️ Blue sky · 🌸 Pink · 🎉 Rực rỡ) phải giữ đúng "mood" của nó — độ
+1. **Sắc thái & Tâm trạng thị giác (Visual Theme & Atmosphere):** mỗi theme trong 5 theme
+   (🌙 Xanh đêm mặc định · ☀️ Blue sky · 🌸 Pink · 🎉 Rực rỡ · 🧒 Nhi đồng) phải giữ đúng "mood" của nó — độ
    đậm nhạt nền, mật độ thông tin, không trộn phong cách giữa các theme khi thêm component mới.
 2. **Bảng màu & Vai trò (Color Palette & Roles):** đã có ở mục 2 (design tokens `--a-*`/`--z-*`,
    không hardcode hex). Bổ sung: khi thêm màu ngữ nghĩa MỚI (không phải accent/zinc có sẵn), phải
