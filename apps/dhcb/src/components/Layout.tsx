@@ -144,9 +144,12 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
           <button
             onClick={onBack ?? (() => nav('/'))}
             aria-label={T.home}
-            // `lg:hidden`: trên desktop nút Back được THAY bằng breadcrumb bên dưới — nó
-            // nói được cả "đang ở đâu" lẫn "lùi về đâu", còn Back chỉ nói vế sau.
-            className="lg:hidden flex items-center gap-1.5 text-zinc-400 hover:text-white transition shrink-0 -ml-1 p-2.5 rounded-xl hover:bg-zinc-800/60 active:scale-95"
+            // GIỮ hiện ở mọi kích thước — nhiều trang truyền `onBack` riêng để lùi ĐÚNG một
+            // bậc theo phân cấp của trang đó (vd bài học Lập trình lùi về đúng chặng, không
+            // phải P1). Breadcrumb chỉ biết cây route TĨNH nên không thay được logic đó; nó
+            // là phần BỔ SUNG bên cạnh Back, không phải thay thế (đã thử thay hẳn — vỡ
+            // `e2e/programming-lesson.spec.ts` vì nút "Trang chủ" biến mất trên desktop).
+            className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition shrink-0 -ml-1 p-2.5 rounded-xl hover:bg-zinc-800/60 active:scale-95"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm font-medium hidden sm:inline">{T.home}</span>
@@ -157,8 +160,7 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
             to="/gioi-thieu"
             aria-label={T.aboutApp}
             title={T.aboutApp}
-            // `lg:hidden`: DesktopSidebar đã có logo ở đầu cột trái, hiện hai lần là thừa.
-            className="lg:hidden tap-44 flex items-center gap-2.5 shrink-0 -ml-1 p-1.5 rounded-xl hover:bg-zinc-800/60 transition active:scale-95 group"
+            className="tap-44 flex items-center gap-2.5 shrink-0 -ml-1 p-1.5 rounded-xl hover:bg-zinc-800/60 transition active:scale-95 group"
           >
             <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-accent-500 via-accent-400 to-indigo-500 flex items-center justify-center shadow-md shadow-accent-500/30 group-hover:scale-105 transition-transform">
               <BookOpen className="w-3.5 h-3.5 text-white" />
@@ -247,16 +249,15 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
           )}
         </div>
 
-        {/* Desktop: breadcrumb thay cho cặp title/subtitle — cùng một chỗ, nhưng nói thêm
-            được người dùng đang đứng ở tầng nào và lùi về đâu. */}
-        <Breadcrumb
-          pathname={location.pathname}
-          currentLabel={title}
-          className="hidden lg:block flex-1"
-        />
-
-        {/* Mobile: title/subtitle như cũ (bề ngang không đủ cho chuỗi đốt breadcrumb) */}
-        <div className="flex-1 min-w-0 lg:hidden">
+        {/* Title/subtitle — như cũ, hiện ở MỌI kích thước (Back/logo vẫn là đường lùi chính,
+            xem lý do giữ Back ở trên). Breadcrumb desktop là dòng NHỎ phía trên, chỉ vẽ khi
+            có tầng cha thật sự (rỗng ở Trang chủ — Breadcrumb tự ẩn, xem lib/breadcrumb.ts). */}
+        <div className="flex-1 min-w-0">
+          <Breadcrumb
+            pathname={location.pathname}
+            currentLabel={title}
+            className="hidden lg:block mb-0.5"
+          />
           {title && <p className="font-semibold text-[15px] truncate text-white">{title}</p>}
           {subtitle && <p className="text-xs text-zinc-400 truncate">{subtitle}</p>}
         </div>

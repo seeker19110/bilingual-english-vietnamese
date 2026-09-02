@@ -308,6 +308,21 @@ một mạch, KHÔNG hỏi lại giữa chừng:**
    Bẫy đã dính: **scope chỉ nhận CHỮ THƯỜNG** — `fix(kotlinSim)` trượt, `fix(programming)` đạt.
    Tên module viết hoa lạc đà thì dùng tên trụ/gói thay vì bê nguyên tên file.
 
+   **[Bổ sung 2026-09-02, PR #810] Cổng `metadata` còn kiểm cả MÔ TẢ PR, không chỉ tiêu đề —
+   đã dính đỏ 3 lượt liên tiếp vì viết mô tả tự do.** Đọc `.github/workflows/pr-policy.yml`
+   TRƯỚC khi viết mô tả, không đoán khuôn. Hai luật:
+   - **PR không phải nháp** phải có ĐỦ 6 tiêu đề (khớp chữ, có dấu, đúng thứ tự không bắt buộc
+     nhưng đủ mặt): `## Tóm tắt` · `## Issue / outcome` · `## Research / spec` ·
+     `## Validation` · `## Rủi ro, rollout và rollback` · `## Definition of Done`. Khuôn khác
+     (vd "## Test plan") KHÔNG thay thế được — cổng so khớp `body.includes(heading)` từng chữ.
+   - **Tiêu đề bắt đầu `feat(` hoặc `feat:`** còn bị kiểm THÊM: mô tả phải chứa một đường dẫn
+     khớp `docs/specs/YYYY-MM-DD-slug.md` hoặc `docs/research/<slug>.md` VÀ file đó phải THẬT
+     SỰ tồn tại trong nhánh (cổng tự `getContent` kiểm), cộng cụm chữ "Approved for
+     implementation" ở đâu đó trong mô tả. Việc KHÔNG có đặc tả trước (vd tái cấu trúc UI theo
+     yêu cầu trực tiếp trong phiên, không phải tính năng nghiệp vụ mới) thì đổi loại commit
+     sang `refactor`/`style`/`chore` cho đúng bản chất thay vì cố nhét `feat` — vừa đúng ngữ
+     nghĩa Conventional Commits, vừa khỏi vướng cổng spec-link.
+
 2. **Tạo PR ở trạng thái SẴN SÀNG (ready), không bao giờ để nháp.** Nếu công cụ mặc định tạo
    nháp thì bỏ nháp NGAY. Lý do: GitHub từ chối bật auto-merge trên PR nháp ("Pull request is a
    draft" — đã dính thật ở PR #693).
