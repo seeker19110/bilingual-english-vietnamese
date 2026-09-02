@@ -1,6 +1,6 @@
 # 0240 — 2026-09-02 — Phiên học trên desktop: bàn phím, phản hồi, phân cấp hành động
 
-PR: (điền khi tạo) · Nhánh: `claude/modern-ui-redesign-jull9n`
+PR: #823 · Nhánh: `claude/modern-ui-redesign-jull9n`
 
 ## Bối cảnh
 

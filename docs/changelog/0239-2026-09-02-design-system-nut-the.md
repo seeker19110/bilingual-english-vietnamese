@@ -1,6 +1,6 @@
 # 0239 — 2026-09-02 — Design system: nút và thẻ dùng chung, vá 17 lỗi tương phản
 
-PR: (điền khi tạo) · Nhánh: `claude/modern-ui-redesign-jull9n`
+PR: #823 · Nhánh: `claude/modern-ui-redesign-jull9n`
 
 ## Bối cảnh
 
