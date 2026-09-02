@@ -5,6 +5,7 @@ import { useLang } from '../context/useLang'
 import { useAuth } from '../context/useAuth'
 import { getStreak } from '../lib/storage'
 import ThemeToggle from './ThemeToggle'
+import Breadcrumb from './Breadcrumb'
 import OfflineStatusBanner from './OfflineStatusBanner'
 import { navigateTo } from '../lib/subjectsHost'
 import { STUDIOS } from '../lib/studios'
@@ -143,6 +144,11 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
           <button
             onClick={onBack ?? (() => nav('/'))}
             aria-label={T.home}
+            // GIỮ hiện ở mọi kích thước — nhiều trang truyền `onBack` riêng để lùi ĐÚNG một
+            // bậc theo phân cấp của trang đó (vd bài học Lập trình lùi về đúng chặng, không
+            // phải P1). Breadcrumb chỉ biết cây route TĨNH nên không thay được logic đó; nó
+            // là phần BỔ SUNG bên cạnh Back, không phải thay thế (đã thử thay hẳn — vỡ
+            // `e2e/programming-lesson.spec.ts` vì nút "Trang chủ" biến mất trên desktop).
             className="flex items-center gap-1.5 text-zinc-400 hover:text-white transition shrink-0 -ml-1 p-2.5 rounded-xl hover:bg-zinc-800/60 active:scale-95"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -243,8 +249,15 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
           )}
         </div>
 
-        {/* Title — chỉ hiện khi trang truyền title cho header */}
+        {/* Title/subtitle — như cũ, hiện ở MỌI kích thước (Back/logo vẫn là đường lùi chính,
+            xem lý do giữ Back ở trên). Breadcrumb desktop là dòng NHỎ phía trên, chỉ vẽ khi
+            có tầng cha thật sự (rỗng ở Trang chủ — Breadcrumb tự ẩn, xem lib/breadcrumb.ts). */}
         <div className="flex-1 min-w-0">
+          <Breadcrumb
+            pathname={location.pathname}
+            currentLabel={title}
+            className="hidden lg:block mb-0.5"
+          />
           {title && <p className="font-semibold text-[15px] truncate text-white">{title}</p>}
           {subtitle && <p className="text-xs text-zinc-400 truncate">{subtitle}</p>}
         </div>
