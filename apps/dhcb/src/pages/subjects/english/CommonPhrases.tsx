@@ -282,7 +282,7 @@ export default function CommonPhrases() {
     return (
       <div className="h-[calc(100dvh-var(--bnav-h))] overflow-hidden bg-zinc-950 flex flex-col">
         <Layout title={selected.starter} back />
-        <main className="flex-1 overflow-hidden max-w-3xl mx-auto w-full px-4 py-4 flex flex-col">
+        <main className="flex-1 overflow-hidden max-w-3xl lg:max-w-4xl mx-auto w-full px-4 py-4 flex flex-col">
           {/* danh sách câu cuộn trong khung cố định, không đẩy trang xuống */}
           <div className="flex-1 overflow-y-auto space-y-2 pr-0.5">
             {selected.sentences.map((sent, idx) => (
@@ -327,7 +327,7 @@ export default function CommonPhrases() {
       <Layout back />
 
       <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
-        <div className="max-w-3xl mx-auto px-4 pt-4 pb-2 sm:pt-6 sm:pb-[calc(1.5rem+var(--bnav-h))] space-y-4">
+        <div className="max-w-3xl lg:max-w-4xl mx-auto px-4 pt-4 pb-2 sm:pt-6 sm:pb-[calc(1.5rem+var(--bnav-h))] space-y-4">
           {/* Tiêu đề trang — đặt ngay dưới AppHeader, cỡ chữ lớn */}
           <PageHeader title={T.phrasesPageTitle} subtitle={T.phrasesPageSub} />
 

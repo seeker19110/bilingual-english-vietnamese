@@ -99,7 +99,7 @@ export default function EnglishSettings() {
     <div className="min-h-dvh bg-zinc-950">
       <Layout onBack={() => nav(-1)} />
 
-      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
+      <main className="max-w-3xl lg:max-w-4xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
         <PageHeader
           title={isA ? 'Cài đặt học Tiếng Anh' : 'English Learning Settings'}
           subtitle={

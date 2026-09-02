@@ -255,7 +255,7 @@ export default function Lessons() {
       <Layout back />
 
       <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
-        <div className="max-w-3xl mx-auto px-4 pt-4 pb-2 sm:pb-[calc(1.5rem+var(--bnav-h))]">
+        <div className="max-w-3xl lg:max-w-4xl mx-auto px-4 pt-4 pb-2 sm:pb-[calc(1.5rem+var(--bnav-h))]">
           {/* Tiêu đề trang — ngay dưới AppHeader, cỡ chữ lớn */}
           <PageHeader
             title={isA ? 'Các bài hội thoại mẫu thông dụng' : 'Common sample dialogues'}
@@ -981,7 +981,7 @@ function LessonView({
     <>
       {/* Thanh điều khiển audio — không cuộn, giống CommonPhrases giữ nội dung trong flex */}
       <div className="bg-zinc-950/95 backdrop-blur-sm border-b border-zinc-800/40 px-4 py-2.5">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl lg:max-w-4xl mx-auto">
           <div className="glass rounded-xl px-3 py-2 flex flex-wrap items-center gap-x-3 gap-y-2">
             {/* Nút quay lại danh sách */}
             <button
@@ -1229,7 +1229,7 @@ function LessonView({
 
       {/* Bong bóng hội thoại — cuộn nội bộ, không cuộn cả trang */}
       <div className="flex-1 overflow-y-auto">
-        <div className="max-w-3xl mx-auto px-4 py-4 space-y-3 pb-8">
+        <div className="max-w-3xl lg:max-w-4xl mx-auto px-4 py-4 space-y-3 pb-8">
           {lesson.turns.map((t, i) => {
             const isActive = activeTurn === i
             const isLeft = t.speaker === 'A'
@@ -1360,7 +1360,7 @@ function LessonView({
           bấm (không phải cuộn lên) — giống thanh tìm kiếm cố định dưới ở màn danh sách. */}
       {rolePlay && rpFinished && (
         <div className="shrink-0 border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md px-4 py-3 pb-safe animate-fade-in">
-          <div className="max-w-3xl mx-auto flex items-center gap-2">
+          <div className="max-w-3xl lg:max-w-4xl mx-auto flex items-center gap-2">
             <button
               onClick={() => void gradeRolePlay()}
               disabled={rpEvaluating || rpThrottled}

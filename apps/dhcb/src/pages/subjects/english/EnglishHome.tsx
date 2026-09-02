@@ -141,7 +141,7 @@ export default function EnglishHome() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout title={isA ? 'Không Gian Tiếng Anh' : 'English Studio'} back />
 
-      <main className="max-w-3xl mx-auto px-4 pt-4 pb-[calc(2rem+var(--bnav-h))] space-y-5">
+      <main className="max-w-3xl lg:max-w-4xl mx-auto px-4 pt-4 pb-[calc(2rem+var(--bnav-h))] space-y-5">
         <h1 className="sr-only">{isA ? 'Không Gian Tiếng Anh' : 'English Studio'}</h1>
 
         {/* ── TIÊU ĐỀ & TIẾP TỤC HỌC CEFR ── */}
