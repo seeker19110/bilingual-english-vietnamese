@@ -5,7 +5,8 @@
 ## Bối cảnh
 
 Rà soát UI/UX theo skill `.agents/skills/ui-ux-craftsman/` phát hiện hai chỗ tài liệu (CLAUDE.md
-+ chính skill đó) đã đi SAU code thực tế, không phải trước:
+
+- chính skill đó) đã đi SAU code thực tế, không phải trước:
 
 1. **Số theme:** CLAUDE.md mục 4.8/8/13 và skill `ui-ux-craftsman` mục 88 đều ghi "4 theme"
    (🌙 Xanh đêm · ☀️ Blue sky · 🌸 Pink · 🎉 Rực rỡ). Nhưng `packages/core-ui/theme.ts` và
@@ -40,7 +41,7 @@ Sửa tại chỗ (không đổi code, không tạo tính năng mới) để tà
 ## Bằng chứng kiểm chứng
 
 - Đọc trực tiếp `packages/core-ui/theme.ts` (`export type Theme = 'dark-blue' | 'blue-sky' |
-  'pink' | 'vibrant' | 'kid'`) và `e2e/a11y.spec.ts` (comment + code lặp qua `THEMES` gồm 5 giá
+'pink' | 'vibrant' | 'kid'`) và `e2e/a11y.spec.ts` (comment + code lặp qua `THEMES` gồm 5 giá
   trị) xác nhận 5 theme là thật, không phải suy đoán.
 - Đọc trực tiếp `CyberTutorAvatar3D.tsx` dòng 54 (`canvas.getContext('2d')`) và
   `package.json` (không có gói `three`) xác nhận Canvas 2D, không WebGL.
