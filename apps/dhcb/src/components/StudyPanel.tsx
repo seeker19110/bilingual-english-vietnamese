@@ -97,7 +97,16 @@ export default function StudyPanel({
       {tab === 'hard' && <HardWords uid={uid} isA={isA} pool={pool} onUpdate={bump} />}
       {tab === 'quiz' && (
         // Trang từ điển không có phần ngữ pháp ⇒ grammarPool rỗng, không mở lại bài.
-        <QuizTab uid={uid} isA={isA} pool={pool} grammarPool={[]} onOpenLesson={() => {}} />
+        // `sessionScope` riêng ("dictionary") để bài đang dở ở đây không lẫn với bài của một
+        // cấp CEFR — hai nơi lấy câu hỏi từ hai vốn từ khác nhau.
+        <QuizTab
+          uid={uid}
+          isA={isA}
+          pool={pool}
+          grammarPool={[]}
+          onOpenLesson={() => {}}
+          sessionScope="dictionary"
+        />
       )}
     </>
   )

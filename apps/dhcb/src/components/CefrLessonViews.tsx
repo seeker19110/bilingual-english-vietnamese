@@ -381,6 +381,10 @@ export function VocabFlash({
     }
   }
 
+  // Đếm số lần bấm "Đã thuộc" — dùng làm `key` để phát lại hoạt ảnh ghi nhận ở mỗi lượt.
+  // Đây CHỈ để hiển thị, không phải nguồn sự thật về tiến độ (nguồn đó là markLearned).
+  const [learnedFlash, setLearnedFlash] = useState(0)
+
   function learn() {
     if (!card) return
     markLearned(uid, card.word)
@@ -388,6 +392,7 @@ export function VocabFlash({
     bumpDailyLearned(uid)
     markStudiedToday(uid) // ghi nhận có học hôm nay → tính streak (đồng bộ server)
     onProgress()
+    setLearnedFlash((n) => n + 1)
     setIdx((i) => i + 1)
   }
 
@@ -600,6 +605,24 @@ export function VocabFlash({
           </div>
 
           <WordCard key={card.word} card={card} isA={isA} uid={uid} onUpdate={onProgress} />
+
+          {/* Ghi nhận "Đã thuộc" — thêm 2026-09-02.
+              Trước đây bấm "Đã thuộc" là thẻ lật sang từ kế tiếp, không một hồi đáp nào. Đây là
+              thao tác lặp 20–100 lượt mỗi ngày, tức là nơi người học cần cảm giác "mình vừa
+              làm được một việc" nhất trong toàn app.
+              KHÔNG chặn và KHÔNG làm chậm nhịp: thẻ vẫn lật ngay lập tức, dấu tích chỉ trôi
+              lên rồi tự mờ đi bên cạnh. `key` đổi theo mỗi lượt bấm để hoạt ảnh chạy lại;
+              `pointer-events-none` để nó không bao giờ chắn mất nút bên dưới. */}
+          {learnedFlash > 0 && (
+            <div className="relative h-0" aria-hidden="true">
+              <span
+                key={learnedFlash}
+                className="pointer-events-none absolute -top-1 right-2 flex items-center gap-1 text-xs font-semibold text-accent-300 theme-light:text-accent-800 animate-fade-up"
+              >
+                <Check className="w-3.5 h-3.5" /> +1
+              </span>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-3">
             <button
@@ -1289,6 +1312,21 @@ export function DialogueView({
             )}
           </div>
         </div>
+
+        {/* Thanh tiến độ hội thoại — thêm 2026-09-02.
+            Trước đây phần "Đóng vai" chỉ có con số 11px ở góc phải ("3/12"), trong khi mọi
+            dạng bài khác của app (quiz, flashcard, luyện nghe) đều có thanh tiến độ. Với một
+            hội thoại dài, con số nhỏ đó không cho cảm giác "còn bao xa" — mà chính cảm giác đó
+            giữ người học đi hết bài. Dùng đúng chiều cao/bo góc của các thanh khác để nhất
+            quán, và `aria-hidden` vì con số bên trên đã nói đủ cho trình đọc màn hình. */}
+        {(playing || rolePlay) && activeLine !== null && dialogue.lines.length > 0 && (
+          <div aria-hidden="true" className="h-1 bg-zinc-800 rounded-full mt-2 overflow-hidden">
+            <div
+              className="h-full bg-accent-500 rounded-full transition-all duration-300"
+              style={{ width: `${((activeLine + 1) / dialogue.lines.length) * 100}%` }}
+            />
+          </div>
+        )}
 
         {/* Giọng đang phát cho từng nhân vật (random mỗi lần mở) + nút đặt làm mặc định — chỉ
             hiện khi bấm "Cài đặt giọng", tự ẩn 3s sau khi đặt mặc định */}

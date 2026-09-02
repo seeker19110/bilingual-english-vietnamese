@@ -692,6 +692,7 @@ export default function CefrLevelPage() {
                 pool={studyPool}
                 grammarPool={grammarQuizPool}
                 onOpenLesson={openLessonById}
+                sessionScope={level.id}
               />
             )}
             {activeTab === 'listening' && (

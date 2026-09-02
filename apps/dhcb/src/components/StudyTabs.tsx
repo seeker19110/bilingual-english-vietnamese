@@ -29,6 +29,7 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useQuizKeyboard } from '@dhcb/core-ui/useQuizKeyboard'
+import { loadQuizSession, saveQuizSession, clearQuizSession } from '../lib/quizSession'
 import QuizOptionKey from './QuizOptionKey'
 import KaraokeText, { KARAOKE_INDENT } from './KaraokeText'
 import WordCard from './WordCard'
@@ -1375,19 +1376,38 @@ export function QuizTab({
   pool,
   grammarPool,
   onOpenLesson,
+  sessionScope,
 }: {
   uid: string
   isA: boolean
   pool: DictEntry[]
   grammarPool: GrammarQuizSource[]
   onOpenLesson: (lessonId: string) => void
+  /** Mã cấp học — tách phiên làm dở theo từng cấp (xem lib/quizSession.ts). */
+  sessionScope: string
 }) {
   const nav = useNavigate()
-  const [questions] = useState<QuizQuestion[]>(() => buildQuiz(uid, pool, grammarPool))
-  const [current, setCurrent] = useState(0)
-  const [selected, setSelected] = useState<string | null>(null)
-  const [answers, setAnswers] = useState<boolean[]>([])
+  // Khôi phục bài đang làm dở nếu có (đổi tab rồi quay lại thì học tiếp đúng chỗ, không phải
+  // làm lại từ câu 1 — lý do đầy đủ ở đầu lib/quizSession.ts). Đọc MỘT LẦN lúc dựng, gom vào
+  // các initializer để bốn state dưới đây luôn nhất quán với nhau.
+  const [restored] = useState(() => loadQuizSession(uid, sessionScope))
+  const [questions] = useState<QuizQuestion[]>(
+    () => (restored?.questions as QuizQuestion[] | undefined) ?? buildQuiz(uid, pool, grammarPool),
+  )
+  const [current, setCurrent] = useState(restored?.current ?? 0)
+  const [selected, setSelected] = useState<string | null>(restored?.selected ?? null)
+  const [answers, setAnswers] = useState<boolean[]>(restored?.answers ?? [])
   const [done, setDone] = useState(false)
+
+  // Ghi lại phiên sau mỗi thay đổi. Làm xong cả bài thì XOÁ: giữ lại sẽ khiến lần vào sau bị
+  // ném thẳng vào màn kết quả cũ thay vì được làm một bài mới.
+  useEffect(() => {
+    if (done || questions.length === 0) {
+      clearQuizSession(uid, sessionScope)
+      return
+    }
+    saveQuizSession(uid, sessionScope, { questions, current, selected, answers })
+  }, [uid, sessionScope, questions, current, selected, answers, done])
 
   // Bàn phím: 1..n chọn đáp án, Enter/Space sang câu tiếp. Đặt TRƯỚC các nhánh return sớm bên
   // dưới vì hook phải chạy ở mọi lượt render (luật hooks). `pick`/`next` là khai báo hàm nên
@@ -1456,6 +1476,7 @@ export function QuizTab({
   }
 
   function restart() {
+    clearQuizSession(uid, sessionScope)
     setCurrent(0)
     setSelected(null)
     setAnswers([])
