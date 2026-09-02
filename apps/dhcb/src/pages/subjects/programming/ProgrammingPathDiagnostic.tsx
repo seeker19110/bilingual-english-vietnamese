@@ -142,7 +142,11 @@ export default function ProgrammingPathDiagnostic() {
 
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
-      <Layout onBack={() => nav(duongDanLoTrinh(path))} />
+      {/* Breadcrumb: đốt cha động = lộ trình đang chẩn đoán. */}
+      <Layout
+        onBack={() => nav(duongDanLoTrinh(path))}
+        crumbs={[{ label: path.title, to: duongDanLoTrinh(path) }]}
+      />
       {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trước đây một cột `max-w-4xl` ở mọi bề rộng. */}
       <PageShell width="standard" baseWidth="max-w-4xl" className="space-y-6">
         <PageHeader

@@ -298,7 +298,12 @@ export default function ProgrammingSpecStagePage() {
 
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
-      <Layout onBack={() => nav(duongDanHuong(spec))} />
+      {/* Breadcrumb: thêm đốt cha ĐỘNG là chính hướng chuyên sâu này (cây route tĩnh
+          chỉ biết tới tầng "Hướng chuyên sâu"). */}
+      <Layout
+        onBack={() => nav(duongDanHuong(spec))}
+        crumbs={[{ label: spec.name, to: duongDanHuong(spec) }]}
+      />
 
       {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trước đây một cột `max-w-4xl` ở mọi bề rộng. */}
       <PageShell width="standard" baseWidth="max-w-4xl" className="space-y-6">
