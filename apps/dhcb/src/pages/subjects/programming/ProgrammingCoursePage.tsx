@@ -19,6 +19,10 @@ import {
 } from '../../../lib/programmingProgress'
 import { getShortCourse } from '@dhcb/subject-programming/courses/registry'
 import { PageShell } from '@core/PageShell'
+import { TwoPane } from '@core/TwoPane'
+import { TocRail, type TocItem } from '@core/TocRail'
+import { useActiveSection } from '@core/useActiveSection'
+import { useIsDesktopViewport } from '../../../lib/useIsDesktopViewport'
 import { getLessonSummary } from '@dhcb/subject-programming/lessonsLoader'
 import { buildSlugSegment, idFromSlugSegment } from '@core/slug'
 
@@ -30,6 +34,10 @@ export default function ProgrammingCoursePage() {
   const { courseId: courseSlugParam } = useParams<{ courseId: string }>()
   const course = courseSlugParam ? getShortCourse(idFromSlugSegment(courseSlugParam)) : undefined
   const [progress, setProgress] = useState<ProgrammingLessonProgress[]>([])
+  const isDesktop = useIsDesktopViewport()
+  // Hook phải chạy TRƯỚC mọi nhánh return sớm (luật hook của React), nên danh sách mã chương
+  // tính ngay tại đây — mã khoá lạ thì là mảng rỗng, hook vẫn được gọi đúng số lần.
+  const activeChapter = useActiveSection(course?.chapters.map((ch) => `chuong-${ch.id}`) ?? [])
 
   useEffect(() => {
     if (!user) return
@@ -52,110 +60,136 @@ export default function ProgrammingCoursePage() {
   const lessonCount = allLessons.length
   const completedCount = allLessons.filter((l) => isLessonCompleted(progress, l.id)).length
 
+  /* Mục lục chương — khoá dài nhất hiện có 4 chương/17 bài, cuộn hết mới thấy chương cuối. */
+  const tocItems: TocItem[] = course.chapters.map((ch) => {
+    const lessons = ch.lessonIds.map((id) => getLessonSummary(id)).filter((l) => l !== undefined)
+    return {
+      id: `chuong-${ch.id}`,
+      label: ch.title,
+      // Số bài, KHÔNG phải "C1/C2" — số thứ tự đã nằm ở cột trái của mục lục rồi.
+      hint: `${lessons.length} bài`,
+      done: lessons.length > 0 && lessons.every((l) => isLessonCompleted(progress, l.id)),
+    }
+  })
+
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => nav('/lap-trinh')} />
 
       {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trước đây một cột `max-w-4xl` ở mọi bề rộng. */}
-      <PageShell width="standard" baseWidth="max-w-4xl" className="space-y-6">
-        <PageHeader title={course.title} subtitle={course.canDo} />
+      <PageShell width="standard" baseWidth="max-w-4xl">
+        {/* Mục lục đứng BÊN TRÁI: nó là danh sách để CHỌN, mà mắt đọc từ trái sang — thứ
+            "chọn trước rồi mới xem" phải đứng trước thứ được chọn (xem TwoPane.tsx). */}
+        <TwoPane
+          isDesktop={isDesktop}
+          railSide="left"
+          railLabel="Mục lục khoá học"
+          rail={<TocRail items={tocItems} activeId={activeChapter} title="Mục lục chương" />}
+        >
+          <div className="space-y-6">
+            <PageHeader title={course.title} subtitle={course.canDo} />
 
-        <section className="bg-zinc-900/80 border border-accent-500/30 rounded-3xl p-5 space-y-2 shadow-sm">
-          <p className="text-xs text-zinc-300 leading-relaxed">
-            <strong>Thời lượng:</strong> {course.duration}
-          </p>
-          <p className="text-xs text-zinc-300 leading-relaxed">
-            {course.prerequisites.length === 0 ? (
-              <>
-                <strong>Cần biết trước:</strong> không — vào thẳng học được.
-              </>
-            ) : (
-              <>
-                <strong>Nên biết trước:</strong> {course.prerequisites.join(', ')}
-              </>
-            )}
-          </p>
-        </section>
-
-        <section className="space-y-3">
-          <div className="flex items-baseline justify-between gap-3 flex-wrap">
-            <h2 className="text-base font-bold text-white">
-              {course.chapters.length} chương, {lessonCount} bài
-            </h2>
-            {lessonCount > 0 && (
-              <p className="text-xs text-zinc-400">
-                Đã hoàn thành{' '}
-                <strong className="text-emerald-300 theme-light:text-emerald-800">
-                  {completedCount}/{lessonCount}
-                </strong>{' '}
-                bài học
+            <section className="bg-zinc-900/80 border border-accent-500/30 rounded-3xl p-5 space-y-2 shadow-sm">
+              <p className="text-xs text-zinc-300 leading-relaxed">
+                <strong>Thời lượng:</strong> {course.duration}
               </p>
-            )}
-          </div>
-          {lessonCount > 0 && (
-            <div
-              className="h-2 rounded-full bg-zinc-900 border border-zinc-800 overflow-hidden"
-              role="progressbar"
-              aria-label={`Tiến độ khoá ${course.title}`}
-              aria-valuenow={completedCount}
-              aria-valuemin={0}
-              aria-valuemax={lessonCount}
-            >
-              <div
-                className="h-full bg-emerald-500 transition-all"
-                style={{ width: `${Math.round((completedCount / lessonCount) * 100)}%` }}
-              />
-            </div>
-          )}
-          {course.chapters.map((chapter, idx) => {
-            const lessons = chapter.lessonIds
-              .map((id) => getLessonSummary(id))
-              .filter((l) => l !== undefined)
-            const chapterCompleted =
-              lessons.length > 0 && lessons.every((l) => isLessonCompleted(progress, l.id))
-            return (
-              <div
-                key={chapter.id}
-                className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 space-y-2.5"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <p className="text-sm font-bold text-white">
-                    <span className="text-zinc-500 mr-2">Chương {idx + 1}</span>
-                    {chapter.title}
+              <p className="text-xs text-zinc-300 leading-relaxed">
+                {course.prerequisites.length === 0 ? (
+                  <>
+                    <strong>Cần biết trước:</strong> không — vào thẳng học được.
+                  </>
+                ) : (
+                  <>
+                    <strong>Nên biết trước:</strong> {course.prerequisites.join(', ')}
+                  </>
+                )}
+              </p>
+            </section>
+
+            <section className="space-y-3">
+              <div className="flex items-baseline justify-between gap-3 flex-wrap">
+                <h2 className="text-base font-bold text-white">
+                  {course.chapters.length} chương, {lessonCount} bài
+                </h2>
+                {lessonCount > 0 && (
+                  <p className="text-xs text-zinc-400">
+                    Đã hoàn thành{' '}
+                    <strong className="text-emerald-300 theme-light:text-emerald-800">
+                      {completedCount}/{lessonCount}
+                    </strong>{' '}
+                    bài học
                   </p>
-                  {chapterCompleted && (
-                    <span className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-[11px] font-semibold text-emerald-300 theme-light:text-emerald-800">
-                      <CheckCircle2 className="w-3 h-3" /> Hoàn thành
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-zinc-400 leading-relaxed flex items-start gap-1.5">
-                  <BookOpen className="w-3.5 h-3.5 shrink-0 mt-0.5 text-zinc-500" />
-                  <span>{chapter.summary}</span>
-                </p>
-                {lessons.map((lesson) => (
-                  <div key={lesson.id} className="space-y-1.5">
-                    <LangBadge language={lesson.language} />
-                    <button
-                      onClick={() =>
-                        nav(`/lap-trinh/bai-hoc/${buildSlugSegment(lesson.id, lesson.title)}`)
-                      }
-                      className="tap-44 w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition active:scale-[0.98]"
-                    >
-                      <span className="flex items-center gap-2 min-w-0">
-                        <Play className="w-4 h-4 shrink-0" />
-                        <span className="truncate">Học bài: {lesson.title}</span>
-                      </span>
-                      {isLessonCompleted(progress, lesson.id) && (
-                        <CheckCircle2 className="w-4 h-4 shrink-0" />
-                      )}
-                    </button>
-                  </div>
-                ))}
+                )}
               </div>
-            )
-          })}
-        </section>
+              {lessonCount > 0 && (
+                <div
+                  className="h-2 rounded-full bg-zinc-900 border border-zinc-800 overflow-hidden"
+                  role="progressbar"
+                  aria-label={`Tiến độ khoá ${course.title}`}
+                  aria-valuenow={completedCount}
+                  aria-valuemin={0}
+                  aria-valuemax={lessonCount}
+                >
+                  <div
+                    className="h-full bg-emerald-500 transition-all"
+                    style={{ width: `${Math.round((completedCount / lessonCount) * 100)}%` }}
+                  />
+                </div>
+              )}
+              {course.chapters.map((chapter, idx) => {
+                const lessons = chapter.lessonIds
+                  .map((id) => getLessonSummary(id))
+                  .filter((l) => l !== undefined)
+                const chapterCompleted =
+                  lessons.length > 0 && lessons.every((l) => isLessonCompleted(progress, l.id))
+                return (
+                  <div
+                    key={chapter.id}
+                    id={`chuong-${chapter.id}`}
+                    // `scroll-mt-20` chừa chiều cao header dính — không có nó thì nhảy tới chương
+                    // qua mục lục sẽ đưa tiêu đề chương nằm khuất sau header.
+                    className="scroll-mt-20 bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 space-y-2.5"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="text-sm font-bold text-white">
+                        <span className="text-zinc-500 mr-2">Chương {idx + 1}</span>
+                        {chapter.title}
+                      </p>
+                      {chapterCompleted && (
+                        <span className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/40 text-[11px] font-semibold text-emerald-300 theme-light:text-emerald-800">
+                          <CheckCircle2 className="w-3 h-3" /> Hoàn thành
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-zinc-400 leading-relaxed flex items-start gap-1.5">
+                      <BookOpen className="w-3.5 h-3.5 shrink-0 mt-0.5 text-zinc-500" />
+                      <span>{chapter.summary}</span>
+                    </p>
+                    {lessons.map((lesson) => (
+                      <div key={lesson.id} className="space-y-1.5">
+                        <LangBadge language={lesson.language} />
+                        <button
+                          onClick={() =>
+                            nav(`/lap-trinh/bai-hoc/${buildSlugSegment(lesson.id, lesson.title)}`)
+                          }
+                          className="tap-44 w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition active:scale-[0.98]"
+                        >
+                          <span className="flex items-center gap-2 min-w-0">
+                            <Play className="w-4 h-4 shrink-0" />
+                            <span className="truncate">Học bài: {lesson.title}</span>
+                          </span>
+                          {isLessonCompleted(progress, lesson.id) && (
+                            <CheckCircle2 className="w-4 h-4 shrink-0" />
+                          )}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )
+              })}
+            </section>
+          </div>
+        </TwoPane>
       </PageShell>
     </div>
   )

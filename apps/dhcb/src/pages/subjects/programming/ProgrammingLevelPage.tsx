@@ -20,6 +20,8 @@ import { buildSlugSegment, idFromSlugSegment } from '@core/slug'
 import { duongDanBac } from '../../../lib/programmingRoutes'
 import { PageShell } from '@core/PageShell'
 import { TwoPane } from '@core/TwoPane'
+import { TocRail, type TocItem } from '@core/TocRail'
+import { useActiveSection } from '@core/useActiveSection'
 import { useIsDesktopViewport } from '../../../lib/useIsDesktopViewport'
 
 export default function ProgrammingLevelPage() {
@@ -34,6 +36,8 @@ export default function ProgrammingLevelPage() {
   // (React khớp hook theo THỨ TỰ gọi, nên một lần render bỏ qua hook này sẽ làm lệch toàn bộ
   // state của component).
   const isDesktop = useIsDesktopViewport()
+  // Cùng lý do: mã unit tính ngay ở đây (mảng rỗng khi id bậc lạ) để hook luôn được gọi.
+  const activeUnit = useActiveSection(level?.units.map((u) => `unit-${u.id}`) ?? [])
 
   useEffect(() => {
     if (!user) return
@@ -73,11 +77,29 @@ export default function ProgrammingLevelPage() {
       </div>
     ) : null
 
+  /* Mục lục unit — thứ học viên quét mắt nhiều nhất ở trang này. Mã mục dùng tiền tố `unit-`
+     để không đụng id nào khác trên trang. */
+  const tocItems: TocItem[] = level.units.map((unit) => {
+    const lessons = getUnitSummaries(unit.id)
+    return {
+      id: `unit-${unit.id}`,
+      label: unit.title,
+      // Số bài, KHÔNG phải "U1/U2" — số thứ tự đã nằm ở cột trái của mục lục rồi.
+      hint: lessons.length > 0 ? `${lessons.length} bài` : 'sắp mở',
+      done: lessons.length > 0 && lessons.every((l) => isLessonCompleted(progress, l.id)),
+    }
+  })
+
   /* Cột phải ở desktop: tóm tắt bậc — đích đến (chặng dự án) và mình đang ở đâu (tiến độ).
      Đưa hai khối này ra khỏi luồng dọc giúp danh sách unit — thứ học viên thật sự cần quét
      mắt — bắt đầu ngay đầu trang thay vì bị đẩy xuống dưới hai thẻ. */
   const rail = (
     <div className="space-y-4">
+      <TocRail
+        items={tocItems}
+        activeId={activeUnit}
+        title={`Mục lục ${level.units.length} unit`}
+      />
       {lessonCount > 0 && (
         <section className="rounded-2xl border border-line-subtle bg-surface-card p-4">
           <h2 className="t-label text-content">Tiến độ bậc</h2>
@@ -162,7 +184,10 @@ export default function ProgrammingLevelPage() {
                 return (
                   <div
                     key={unit.id}
-                    className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 space-y-2.5"
+                    id={`unit-${unit.id}`}
+                    // `scroll-mt-20` chừa đúng chiều cao header dính, nếu không thì nhảy tới
+                    // unit qua mục lục sẽ đưa tiêu đề unit nằm KHUẤT sau header.
+                    className="scroll-mt-20 bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5 space-y-2.5"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <p className="text-sm font-bold text-white">
