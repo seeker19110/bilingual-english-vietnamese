@@ -103,7 +103,7 @@ function RewardRowEditor({ row, onReload }: { row: RewardRow; onReload: () => Pr
         type="button"
         onClick={save}
         disabled={saving}
-        className="tap-44 flex items-center justify-center gap-1.5 rounded-lg bg-accent-500 text-white text-sm font-semibold px-3 py-1.5 disabled:opacity-60 whitespace-nowrap sm:ml-auto"
+        className="tap-44 flex items-center justify-center gap-1.5 rounded-lg bg-accent-500 text-[#09090b] text-sm font-semibold px-3 py-1.5 disabled:opacity-60 whitespace-nowrap sm:ml-auto"
       >
         {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
         Lưu

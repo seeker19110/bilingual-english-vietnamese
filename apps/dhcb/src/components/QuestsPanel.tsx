@@ -105,7 +105,7 @@ export default function QuestsPanel({ isA, userId }: { isA: boolean; userId?: st
       type="button"
       onClick={onClick}
       disabled={claiming === key}
-      className="tap-44 inline-flex items-center gap-1.5 bg-accent-500 hover:bg-accent-400 disabled:opacity-60 text-white text-xs font-medium px-3 py-2 rounded-lg transition active:scale-[0.97]"
+      className="tap-44 inline-flex items-center gap-1.5 bg-accent-500 hover:bg-accent-400 disabled:opacity-60 text-[#09090b] text-xs font-medium px-3 py-2 rounded-lg transition active:scale-[0.97]"
     >
       {claiming === key && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
       {label}

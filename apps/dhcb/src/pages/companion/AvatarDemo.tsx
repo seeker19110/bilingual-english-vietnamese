@@ -121,7 +121,7 @@ export default function AvatarDemo() {
             type="button"
             onClick={handlePlay}
             disabled={loading || isPlaying}
-            className="min-h-11 px-6 rounded-full bg-accent-500 text-white font-medium disabled:opacity-50"
+            className="min-h-11 px-6 rounded-full bg-accent-500 text-[#09090b] font-medium disabled:opacity-50"
           >
             {loading ? 'Đang tạo audio…' : isPlaying ? 'Đang nói…' : 'Phát demo'}
           </button>

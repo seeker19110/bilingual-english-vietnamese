@@ -253,7 +253,7 @@ export default function AdminPlanFeaturesPanel() {
             type="button"
             onClick={handleAdd}
             disabled={adding}
-            className="tap-44 flex items-center justify-center gap-2 rounded-xl bg-accent-500 text-white font-semibold px-4 py-2.5 disabled:opacity-60 whitespace-nowrap"
+            className="tap-44 flex items-center justify-center gap-2 rounded-xl bg-accent-500 text-[#09090b] font-semibold px-4 py-2.5 disabled:opacity-60 whitespace-nowrap"
           >
             {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
             Thêm

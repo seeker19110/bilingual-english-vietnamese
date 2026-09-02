@@ -170,7 +170,7 @@ function PlanSection({ entry, onReload }: { entry: PlanEntry; onReload: () => Pr
           type="button"
           onClick={saveInfo}
           disabled={savingInfo}
-          className="tap-44 flex items-center justify-center gap-1.5 rounded-xl bg-accent-500 text-white font-semibold px-4 py-2.5 disabled:opacity-60 whitespace-nowrap"
+          className="tap-44 flex items-center justify-center gap-1.5 rounded-xl bg-accent-500 text-[#09090b] font-semibold px-4 py-2.5 disabled:opacity-60 whitespace-nowrap"
         >
           {savingInfo ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           Lưu

@@ -43,7 +43,7 @@ export default function FeatureGate({
         <button
           type="button"
           onClick={() => nav('/cai-dat')}
-          className="tap-44 inline-flex items-center gap-2 rounded-xl bg-accent-500 text-white font-semibold px-5 py-3"
+          className="tap-44 inline-flex items-center gap-2 rounded-xl bg-accent-500 text-[#09090b] font-semibold px-5 py-3"
         >
           <Sparkles className="w-4 h-4" />
           {isVi ? 'Nâng cấp gói' : 'Upgrade plan'}

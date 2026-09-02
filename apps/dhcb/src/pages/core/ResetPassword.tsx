@@ -88,7 +88,7 @@ export default function ResetPassword() {
         <button
           type="button"
           onClick={() => nav('/login')}
-          className="tap-44 rounded-xl bg-accent-500 px-6 py-3 text-sm font-semibold text-white"
+          className="tap-44 rounded-xl bg-accent-500 px-6 py-3 text-sm font-semibold text-[#09090b]"
         >
           {isA ? 'Đăng nhập ngay' : 'Sign in now'}
         </button>
@@ -141,7 +141,7 @@ export default function ResetPassword() {
           <button
             type="submit"
             disabled={loading}
-            className="tap-44 w-full rounded-xl bg-accent-500 py-3 text-sm font-semibold text-white disabled:opacity-60"
+            className="tap-44 w-full rounded-xl bg-accent-500 py-3 text-sm font-semibold text-[#09090b] disabled:opacity-60"
           >
             {loading
               ? isA

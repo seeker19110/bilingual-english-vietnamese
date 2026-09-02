@@ -171,7 +171,7 @@ export default function AdminPricePromoPanel({ onForbiddenChange }: Props) {
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="tap-44 w-full flex items-center justify-center gap-2 rounded-xl bg-accent-500 text-white font-semibold py-3 disabled:opacity-60"
+            className="tap-44 w-full flex items-center justify-center gap-2 rounded-xl bg-accent-500 text-[#09090b] font-semibold py-3 disabled:opacity-60"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             Lưu cấu hình

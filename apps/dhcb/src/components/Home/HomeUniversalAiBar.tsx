@@ -303,7 +303,7 @@ export default function HomeUniversalAiBar() {
           aria-label="Gửi câu hỏi tới AI"
           className={`tap-44 px-3 py-2 rounded-xl transition-all duration-200 flex items-center justify-center gap-1.5 shrink-0 text-xs font-semibold ${
             query.trim()
-              ? 'bg-accent-500 hover:bg-accent-400 text-white shadow-md shadow-accent-500/20 active:scale-95'
+              ? 'bg-accent-500 hover:bg-accent-400 text-[#09090b] shadow-md shadow-accent-500/20 active:scale-95'
               : 'bg-zinc-800/80 text-zinc-500 cursor-not-allowed'
           }`}
         >
@@ -402,7 +402,7 @@ export default function HomeUniversalAiBar() {
                   setQuickAnswerOpen(false)
                   nav(activeDomainRoute)
                 }}
-                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-white font-semibold text-xs transition shadow-md shadow-accent-500/20 active:scale-95"
+                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-[#09090b] font-semibold text-xs transition shadow-md shadow-accent-500/20 active:scale-95"
               >
                 <span>Mở Chuyên Trang Học Sâu</span>
                 <ArrowRight className="w-4 h-4" />

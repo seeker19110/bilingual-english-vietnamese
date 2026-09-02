@@ -28,6 +28,8 @@ import {
   Keyboard,
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useQuizKeyboard } from '@dhcb/core-ui/useQuizKeyboard'
+import QuizOptionKey from './QuizOptionKey'
 import KaraokeText, { KARAOKE_INDENT } from './KaraokeText'
 import WordCard from './WordCard'
 import type { DictEntry } from '../types'
@@ -568,6 +570,29 @@ export function TodayLesson({
     }
   }
 
+  // Bàn phím cho mini-quiz mở batch mới: 1..n chọn đáp án, Enter/Space sang câu tiếp.
+  // Hook phải nằm ở cấp component (không đặt được trong nhánh render bên dưới), nên điều kiện
+  // "đang ở màn mini-quiz và chưa chấm xong" được đưa vào `enabled`.
+  const miniQuizQ = quizQs[quizIdx]
+  useQuizKeyboard({
+    optionCount: miniQuizQ?.options.length ?? 0,
+    onPick: (i) => {
+      const opt = miniQuizQ?.options[i]
+      if (opt === undefined || quizSel !== null) return
+      setQuizSel(opt)
+      if (opt === miniQuizQ?.correct) {
+        haptics.success()
+        sound.correct()
+      } else {
+        vibrate(60)
+        sound.wrong()
+      }
+    },
+    onNext: quizNext,
+    answered: quizSel !== null,
+    enabled: phase === 'mini-quiz' && !quizDone && Boolean(miniQuizQ),
+  })
+
   // Xem lại flashcard của từng từ trả lời sai TRƯỚC KHI làm lại quiz.
   function startWrongReview() {
     setReviewIdx(0)
@@ -775,7 +800,7 @@ export function TodayLesson({
           <p className="text-4xl font-bold text-white">{q.prompt}</p>
         </div>
         <div className="space-y-2.5">
-          {q.options.map((opt) => {
+          {q.options.map((opt, optIdx) => {
             let cls = 'bg-zinc-900/80 border-zinc-800 text-zinc-300 hover:border-zinc-600'
             if (quizSel !== null) {
               // Đúng → phồng nhẹ; đáp án sai đã chọn → lắc ngang (phản hồi tức thì)
@@ -800,9 +825,10 @@ export function TodayLesson({
                     }
                   }
                 }}
-                className={`w-full text-left px-4 py-3.5 rounded-2xl border font-medium text-[15px] transition-all ${cls}`}
+                className={`w-full flex items-center gap-3 text-left px-4 py-3.5 rounded-2xl border font-medium text-[15px] transition-all ${cls}`}
               >
-                {opt}
+                <QuizOptionKey index={optIdx} />
+                <span className="min-w-0 flex-1">{opt}</span>
               </button>
             )
           })}
@@ -1363,6 +1389,20 @@ export function QuizTab({
   const [answers, setAnswers] = useState<boolean[]>([])
   const [done, setDone] = useState(false)
 
+  // Bàn phím: 1..n chọn đáp án, Enter/Space sang câu tiếp. Đặt TRƯỚC các nhánh return sớm bên
+  // dưới vì hook phải chạy ở mọi lượt render (luật hooks). `pick`/`next` là khai báo hàm nên
+  // được hoist — gọi trong callback ở đây vẫn trỏ đúng hàm định nghĩa phía dưới.
+  useQuizKeyboard({
+    optionCount: questions[current]?.options.length ?? 0,
+    onPick: (i) => {
+      const opt = questions[current]?.options[i]
+      if (opt !== undefined) pick(opt)
+    },
+    onNext: () => next(),
+    answered: selected !== null,
+    enabled: !done && questions.length > 0,
+  })
+
   if (questions.length === 0) {
     return (
       <div className="glass rounded-xl p-8 text-center animate-fade-in">
@@ -1521,7 +1561,7 @@ export function QuizTab({
         )}
       </div>
       <div className="space-y-2.5">
-        {q.options.map((opt) => {
+        {q.options.map((opt, optIdx) => {
           let cls = 'bg-zinc-900/80 border-zinc-800 text-zinc-300 hover:border-zinc-600'
           if (selected !== null) {
             // Đúng → phồng nhẹ; đáp án sai đã chọn → lắc ngang (đồng bộ mini-quiz)
@@ -1535,9 +1575,10 @@ export function QuizTab({
             <button
               key={opt}
               onClick={() => pick(opt)}
-              className={`w-full text-left px-4 py-3.5 rounded-2xl border font-medium text-[15px] transition-all ${cls}`}
+              className={`w-full flex items-center gap-3 text-left px-4 py-3.5 rounded-2xl border font-medium text-[15px] transition-all ${cls}`}
             >
-              {opt}
+              <QuizOptionKey index={optIdx} />
+              <span className="min-w-0 flex-1">{opt}</span>
             </button>
           )
         })}
