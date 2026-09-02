@@ -2798,6 +2798,35 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
     đổi sang **stream từng trang** (`streamRows()`), bỏ hẳn mảng đầy đủ.
   - Kết quả người dùng xác nhận: hết treo, hết OOM, tốc độ xoá orphan "cải thiện rất nhanh".
 
+## Sự cố hạ tầng đã xử lý (post-mortem ngắn)
+
+- 🟢 **[2026-08-30 16:20 UTC → 2026-09-02 ~03:00 UTC, ĐÃ XỬ LÝ] VPS mất kết nối outbound tới
+  GitHub — auto-deploy fail liên tục ~34 giờ, production đứng ở code cũ.**
+
+  **Phát hiện:** kiểm tra thủ công workflow `Deploy to VPS` (`.github/workflows/deploy.yml`)
+  thấy **toàn bộ ≥30 lần chạy liên tiếp** đều `failure`/`cancelled` kể từ lần thành công gần
+  nhất (`2026-08-30T16:20:50Z`) — bao gồm cả lần chạy ngay sau khi merge PR #807. App (`pm2`/
+  `/api/health`) không bị ảnh hưởng vì runtime không cần gọi GitHub — chỉ đường **deploy** đứt.
+
+  **Log lỗi thấy được (2 dạng xen kẽ, cùng gốc mạng phía VPS):**
+  - `dial tcp <VPS_IP>:22: i/o timeout` — Actions không SSH vào được VPS.
+  - `fatal: unable to access 'https://github.com/...': Failed to connect to github.com port 443
+... Couldn't connect to server` — SSH vào được nhưng VPS không ra được Internet để
+    `git fetch`.
+
+  **Nguyên nhân gốc:** sự cố mạng phía **nhà cung cấp VPS** (không phải do cấu hình DNS/
+  firewall/iptables trên VPS — đã loại trừ qua checklist chẩn đoán SSH). Tự phục hồi/được xử lý
+  ở tầng hạ tầng, không cần đổi code hay cấu hình trong repo.
+
+  **Xác minh đã khôi phục:** run deploy `33584562143` (commit `4551ba6c` = PR #807) chuyển từ
+  `failure` sang `success` sau khi người dùng chạy lại; các lần deploy kế tiếp lên xanh bình
+  thường.
+
+  **Bài học:** `deploy.yml` hiện KHÔNG có cảnh báo khi fail liên tiếp nhiều lần — sự cố này bị
+  phát hiện muộn (thủ công, không phải qua thông báo tự động). Cân nhắc thêm bước báo (ví dụ
+  comment/issue tự động) khi 2-3 lần deploy liên tiếp fail, để không phải chờ ai đó chủ động rà
+  Actions mới biết production bị "đứng" so với `main`. Chưa làm — để mở nếu thấy cần.
+
 ## Nợ kỹ thuật còn mở
 
 > Mục này CHỈ giữ nợ **đang mở** (🟡/🔴). Nợ đã đóng (🟢) được dời sang
