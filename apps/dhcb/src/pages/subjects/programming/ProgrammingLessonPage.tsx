@@ -25,6 +25,10 @@ import LangBadge from '../../../components/programming/LangBadge'
 import CodeSurface from '../../../components/programming/CodeSurface'
 import RunOutput, { type RunState } from '../../../components/programming/RunOutput'
 import StepBar, { type LessonStep } from '../../../components/programming/StepBar'
+import StepRail from '../../../components/programming/StepRail'
+import { PageShell } from '@core/PageShell'
+import { TwoPane } from '@core/TwoPane'
+import { useIsDesktopViewport } from '../../../lib/useIsDesktopViewport'
 import LivePreview from '../../../components/programming/LivePreview'
 import PredictStep from '../../../components/programming/PredictStep'
 import ParsonsStep from '../../../components/programming/ParsonsStep'
@@ -190,6 +194,7 @@ function LessonBody({ lesson }: { lesson: ProgrammingLesson }) {
   }
 
   const current = STEPS[step]!
+  const isDesktop = useIsDesktopViewport()
   const levelId = getLevelIdOfLesson(lesson.id)
   const backTo = levelId ? `/lap-trinh/${levelId}` : '/lap-trinh'
 
@@ -199,233 +204,256 @@ function LessonBody({ lesson }: { lesson: ProgrammingLesson }) {
           học xong bài P5 bấm quay lại là rơi về bậc P1. Mã bài lạ → lùi về trang môn. */}
       <Layout onBack={() => nav(backTo)} />
 
-      <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-5">
-        <PageHeader title={lesson.title} subtitle={`Bài học unit ${lesson.unitId.toUpperCase()}`} />
-
-        {/* Ngôn ngữ của bài + lối về đúng bậc (PR-UX1). */}
-        <div className="flex items-center gap-2 flex-wrap -mt-3">
-          <LangBadge language={lesson.language} />
-          {levelId && (
-            <button
-              onClick={() => nav(backTo)}
-              className="tap-44 text-[11px] font-semibold text-zinc-400 hover:text-white underline underline-offset-2 transition"
-            >
-              Bậc {levelId.toUpperCase()}
-            </button>
-          )}
-        </div>
-
-        <StepBar steps={STEPS} current={step} isDone={stepDone} onGo={setStep} />
-
-        {/* ①② Móc thực tế + khái niệm */}
-        {current.key === 'concept' && (
-          <section className="space-y-4">
-            <div className="bg-accent-500/10 border border-accent-500/30 rounded-3xl p-5">
-              <p className="text-sm text-zinc-100 leading-relaxed">{lesson.hook}</p>
-            </div>
-            <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5">
-              <LessonProse text={lesson.theory} />
-            </div>
-          </section>
-        )}
-
-        {/* ③ Ví dụ mẫu chạy được */}
-        {current.key === 'example' && (
-          <section className="space-y-3">
-            <p className="text-sm text-zinc-300">
-              Đọc từng dòng (chú thích tiếng Việt trong code) rồi bấm chạy để thấy kết quả thật:
-            </p>
-            <CodeSurface code={lesson.workedExample.code} />
-            <button
-              onClick={() => void runExample()}
-              disabled={exampleState === 'running'}
-              className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-black font-semibold text-sm transition"
-            >
-              {exampleState === 'running' ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Play className="w-4 h-4" />
-              )}
-              <span>{laBaiDongLenh(lesson.language) ? 'Chạy thử các lệnh' : 'Chạy ví dụ'}</span>
-            </button>
-            <RunOutput state={exampleState} output={exampleOutput} />
-          </section>
-        )}
-
-        {/* ④ Predict — dự đoán TRƯỚC khi chạy */}
-        {current.key === 'predict' && (
-          <PredictStep
-            predict={lesson.predict}
-            choice={predictChoice}
-            revealed={predictRevealed}
-            onChoose={(i) => {
-              setPredictChoice(i)
-              setPredictRevealed(true)
-            }}
-          />
-        )}
-
-        {/* ⑤ Parsons — bấm dòng để xếp thứ tự */}
-        {current.key === 'parsons' && (
-          <ParsonsStep
-            prompt={lesson.parsons.prompt}
-            shuffledLines={shuffledLines}
-            arranged={arranged}
-            result={parsonsResult}
-            onArrangedChange={(lines) => {
-              setArranged(lines)
-              setParsonsResult(null)
-            }}
-            onCheck={() =>
-              setParsonsResult(
-                checkParsonsOrder(arranged, lesson.parsons.lines) ? 'correct' : 'wrong',
-              )
-            }
-          />
-        )}
-
-        {/* ⑥ Make — tự viết, chấm test-case */}
-        {current.key === 'make' && (
-          <section className="space-y-3">
-            <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5">
-              <p className="text-sm text-zinc-200 leading-relaxed whitespace-pre-line">
-                {lesson.make.prompt}
-              </p>
-            </div>
-            <CodeEditor
-              value={code}
-              onChange={setCode}
-              // Bài Git/dòng lệnh: học viên gõ LỆNH chứ không phải code — nhãn phải nói đúng
-              // thứ đang làm, nhất là với người dùng trình đọc màn hình.
-              ariaLabel={
-                laBaiDongLenh(lesson.language) ? 'Ô gõ lệnh bài tự viết' : 'Ô soạn code bài tự viết'
-              }
+      {/* [2026-09-02, đợt 1 thiết kế lại desktop] Trước đây trang này là MỘT cột `max-w-4xl`
+          căn giữa ở mọi bề rộng màn hình: trên màn 1440px học viên thấy một cột chữ hẹp và
+          gần một phần ba màn hình bỏ trống bên phải, lại không có gì cho biết mình đang ở
+          bước nào trong bài. Nay ở desktop, chỗ trống đó thành cột điều hướng bước (StepRail),
+          còn cột chữ giữ đúng khoảng đọc dễ chịu — "chiều sâu thay vì chiều rộng". */}
+      <PageShell width="standard" baseWidth="max-w-4xl">
+        <TwoPane
+          isDesktop={isDesktop}
+          railLabel="Các bước bài học"
+          rail={<StepRail steps={STEPS} current={step} isDone={stepDone} onGo={setStep} />}
+        >
+          <div className="space-y-5">
+            <PageHeader
+              title={lesson.title}
+              subtitle={`Bài học unit ${lesson.unitId.toUpperCase()}`}
             />
-            <LivePreview language={lesson.language} domHtml={lesson.domHtml} code={code} />
-            <div className="flex items-center gap-2 flex-wrap">
-              <button
-                onClick={() => void gradeMake()}
-                disabled={grading || !code.trim()}
-                className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-black font-semibold text-sm transition"
-              >
-                {grading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Play className="w-4 h-4" />
-                )}
-                <span>{grading ? 'Đang chấm…' : 'Chấm bài'}</span>
-              </button>
-              {hintsShown < lesson.make.hints.length && (
+
+            {/* Ngôn ngữ của bài + lối về đúng bậc (PR-UX1). */}
+            <div className="flex items-center gap-2 flex-wrap -mt-3">
+              <LangBadge language={lesson.language} />
+              {levelId && (
                 <button
-                  onClick={() => setHintsShown(hintsShown + 1)}
-                  className="tap-44 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-zinc-600 text-zinc-200 font-semibold text-sm transition"
+                  onClick={() => nav(backTo)}
+                  className="tap-44 text-[11px] font-semibold text-zinc-400 hover:text-white underline underline-offset-2 transition"
                 >
-                  <Lightbulb className="w-4 h-4 text-amber-400" />
-                  <span>
-                    Gợi ý ({hintsShown}/{lesson.make.hints.length})
-                  </span>
-                </button>
-              )}
-              {!sampleViewed && (
-                <button
-                  onClick={() => {
-                    // "Phao": xem code mẫu — không phạt, chỉ ghi nhận để Companion kèm sát hơn.
-                    setSampleViewed(true)
-                    setCode(lesson.make.sampleSolution)
-                  }}
-                  className="tap-44 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-zinc-600 text-zinc-300 font-semibold text-sm transition"
-                >
-                  <Eye className="w-4 h-4" />
-                  <span>Xem code mẫu</span>
+                  Bậc {levelId.toUpperCase()}
                 </button>
               )}
             </div>
-            {hintsShown > 0 && (
-              <ul className="space-y-2">
-                {lesson.make.hints.slice(0, hintsShown).map((hint, i) => (
-                  <li
-                    key={i}
-                    className="flex items-start gap-2 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-3 text-sm text-zinc-100"
-                  >
-                    <Lightbulb className="w-4 h-4 shrink-0 mt-0.5 text-amber-400" />
-                    <span>{hint}</span>
-                  </li>
-                ))}
-              </ul>
+
+            {/* Ở desktop thanh bước NGANG được thay hẳn bằng cột dọc bên phải. Dựng đúng một
+                trong hai (không `lg:hidden`) để DOM không chứa hai danh sách bước trùng nhau —
+                trình đọc màn hình sẽ đọc hai lần và Playwright báo strict-mode violation. */}
+            {!isDesktop && (
+              <StepBar steps={STEPS} current={step} isDone={stepDone} onGo={setStep} />
             )}
-            {/* ⑥b AI đồng hành — gợi ý soạn sẵn ở trên vẫn là đường CHÍNH (0đ, tức thì);
-                AI chỉ dùng khi bí thật, và mỗi lượt hỏi tiêu 1 lượt AI trong ngày. */}
-            <AiHelpPanel lessonId={lesson.id} code={code} results={results} passed={passed} />
-            {results && <TestResultList results={results} />}
-            {passed && (
-              <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-sm text-zinc-100 flex items-start gap-2">
-                <Trophy className="w-5 h-5 text-emerald-400 shrink-0" />
-                <p>
-                  <strong>Đạt toàn bộ test!</strong> Bài được ghi nhận hoàn thành
-                  {sampleViewed ? ' (bạn có xem code mẫu — thử tự viết lại lần nữa nhé)' : ''}. Sang
-                  bước "Về nhà" để chốt bài.
+
+            {/* ①② Móc thực tế + khái niệm */}
+            {current.key === 'concept' && (
+              <section className="space-y-4">
+                <div className="bg-accent-500/10 border border-accent-500/30 rounded-3xl p-5">
+                  <p className="text-sm text-zinc-100 leading-relaxed">{lesson.hook}</p>
+                </div>
+                <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5">
+                  <LessonProse text={lesson.theory} />
+                </div>
+              </section>
+            )}
+
+            {/* ③ Ví dụ mẫu chạy được */}
+            {current.key === 'example' && (
+              <section className="space-y-3">
+                <p className="text-sm text-zinc-300">
+                  Đọc từng dòng (chú thích tiếng Việt trong code) rồi bấm chạy để thấy kết quả thật:
                 </p>
-              </div>
+                <CodeSurface code={lesson.workedExample.code} />
+                <button
+                  onClick={() => void runExample()}
+                  disabled={exampleState === 'running'}
+                  className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-black font-semibold text-sm transition"
+                >
+                  {exampleState === 'running' ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Play className="w-4 h-4" />
+                  )}
+                  <span>{laBaiDongLenh(lesson.language) ? 'Chạy thử các lệnh' : 'Chạy ví dụ'}</span>
+                </button>
+                <RunOutput state={exampleState} output={exampleOutput} />
+              </section>
             )}
-          </section>
-        )}
 
-        {/* ⑦ Ứng dụng về nhà */}
-        {current.key === 'done' && (
-          <section className="space-y-4">
-            <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5">
-              <h2 className="text-sm font-bold text-white mb-2 flex items-center gap-2">
-                <Home className="w-4 h-4 text-accent-400" />
-                <span>Ứng dụng vào đời thật</span>
-              </h2>
-              <p className="text-sm text-zinc-200 leading-relaxed">{lesson.homework}</p>
-            </div>
-            <div
-              className={`rounded-3xl border p-5 text-sm ${
-                passed
-                  ? 'border-emerald-500/40 bg-emerald-500/10 text-zinc-100'
-                  : 'border-zinc-800 bg-zinc-900/80 text-zinc-300'
-              }`}
-            >
-              {passed
-                ? 'Bài học đã hoàn thành — tiến độ đã được lưu. 🎉'
-                : 'Bạn chưa đạt hết test ở bước "Tự viết" — quay lại chấm bài để hoàn thành bài học.'}
-            </div>
-            <button
-              onClick={() => nav(backTo)}
-              className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition"
-            >
-              <span>{levelId ? `Về trang bậc ${levelId.toUpperCase()}` : 'Về trang môn'}</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </section>
-        )}
+            {/* ④ Predict — dự đoán TRƯỚC khi chạy */}
+            {current.key === 'predict' && (
+              <PredictStep
+                predict={lesson.predict}
+                choice={predictChoice}
+                revealed={predictRevealed}
+                onChoose={(i) => {
+                  setPredictChoice(i)
+                  setPredictRevealed(true)
+                }}
+              />
+            )}
 
-        {/* Điều hướng trước / sau */}
-        <div className="flex items-center justify-between pt-2">
-          <button
-            onClick={() => setStep(Math.max(0, step - 1))}
-            disabled={step === 0}
-            className="tap-44 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-zinc-900 border border-zinc-800 disabled:opacity-40 text-zinc-200 font-semibold text-sm transition"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            <span>Bước trước</span>
-          </button>
-          {step < STEPS.length - 1 && (
-            <button
-              onClick={() => setStep(step + 1)}
-              className={`tap-44 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl font-semibold text-sm transition ${
-                stepDone(step)
-                  ? 'bg-accent-500 hover:bg-accent-400 text-black'
-                  : 'bg-zinc-900 border border-zinc-800 text-zinc-200'
-              }`}
-            >
-              <span>Bước tiếp</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-      </main>
+            {/* ⑤ Parsons — bấm dòng để xếp thứ tự */}
+            {current.key === 'parsons' && (
+              <ParsonsStep
+                prompt={lesson.parsons.prompt}
+                shuffledLines={shuffledLines}
+                arranged={arranged}
+                result={parsonsResult}
+                onArrangedChange={(lines) => {
+                  setArranged(lines)
+                  setParsonsResult(null)
+                }}
+                onCheck={() =>
+                  setParsonsResult(
+                    checkParsonsOrder(arranged, lesson.parsons.lines) ? 'correct' : 'wrong',
+                  )
+                }
+              />
+            )}
+
+            {/* ⑥ Make — tự viết, chấm test-case */}
+            {current.key === 'make' && (
+              <section className="space-y-3">
+                <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5">
+                  <p className="text-sm text-zinc-200 leading-relaxed whitespace-pre-line">
+                    {lesson.make.prompt}
+                  </p>
+                </div>
+                <CodeEditor
+                  value={code}
+                  onChange={setCode}
+                  // Bài Git/dòng lệnh: học viên gõ LỆNH chứ không phải code — nhãn phải nói đúng
+                  // thứ đang làm, nhất là với người dùng trình đọc màn hình.
+                  ariaLabel={
+                    laBaiDongLenh(lesson.language)
+                      ? 'Ô gõ lệnh bài tự viết'
+                      : 'Ô soạn code bài tự viết'
+                  }
+                />
+                <LivePreview language={lesson.language} domHtml={lesson.domHtml} code={code} />
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    onClick={() => void gradeMake()}
+                    disabled={grading || !code.trim()}
+                    className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-black font-semibold text-sm transition"
+                  >
+                    {grading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Play className="w-4 h-4" />
+                    )}
+                    <span>{grading ? 'Đang chấm…' : 'Chấm bài'}</span>
+                  </button>
+                  {hintsShown < lesson.make.hints.length && (
+                    <button
+                      onClick={() => setHintsShown(hintsShown + 1)}
+                      className="tap-44 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-zinc-600 text-zinc-200 font-semibold text-sm transition"
+                    >
+                      <Lightbulb className="w-4 h-4 text-amber-400" />
+                      <span>
+                        Gợi ý ({hintsShown}/{lesson.make.hints.length})
+                      </span>
+                    </button>
+                  )}
+                  {!sampleViewed && (
+                    <button
+                      onClick={() => {
+                        // "Phao": xem code mẫu — không phạt, chỉ ghi nhận để Companion kèm sát hơn.
+                        setSampleViewed(true)
+                        setCode(lesson.make.sampleSolution)
+                      }}
+                      className="tap-44 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-zinc-600 text-zinc-300 font-semibold text-sm transition"
+                    >
+                      <Eye className="w-4 h-4" />
+                      <span>Xem code mẫu</span>
+                    </button>
+                  )}
+                </div>
+                {hintsShown > 0 && (
+                  <ul className="space-y-2">
+                    {lesson.make.hints.slice(0, hintsShown).map((hint, i) => (
+                      <li
+                        key={i}
+                        className="flex items-start gap-2 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-3 text-sm text-zinc-100"
+                      >
+                        <Lightbulb className="w-4 h-4 shrink-0 mt-0.5 text-amber-400" />
+                        <span>{hint}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {/* ⑥b AI đồng hành — gợi ý soạn sẵn ở trên vẫn là đường CHÍNH (0đ, tức thì);
+                AI chỉ dùng khi bí thật, và mỗi lượt hỏi tiêu 1 lượt AI trong ngày. */}
+                <AiHelpPanel lessonId={lesson.id} code={code} results={results} passed={passed} />
+                {results && <TestResultList results={results} />}
+                {passed && (
+                  <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-sm text-zinc-100 flex items-start gap-2">
+                    <Trophy className="w-5 h-5 text-emerald-400 shrink-0" />
+                    <p>
+                      <strong>Đạt toàn bộ test!</strong> Bài được ghi nhận hoàn thành
+                      {sampleViewed ? ' (bạn có xem code mẫu — thử tự viết lại lần nữa nhé)' : ''}.
+                      Sang bước "Về nhà" để chốt bài.
+                    </p>
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* ⑦ Ứng dụng về nhà */}
+            {current.key === 'done' && (
+              <section className="space-y-4">
+                <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5">
+                  <h2 className="text-sm font-bold text-white mb-2 flex items-center gap-2">
+                    <Home className="w-4 h-4 text-accent-400" />
+                    <span>Ứng dụng vào đời thật</span>
+                  </h2>
+                  <p className="text-sm text-zinc-200 leading-relaxed">{lesson.homework}</p>
+                </div>
+                <div
+                  className={`rounded-3xl border p-5 text-sm ${
+                    passed
+                      ? 'border-emerald-500/40 bg-emerald-500/10 text-zinc-100'
+                      : 'border-zinc-800 bg-zinc-900/80 text-zinc-300'
+                  }`}
+                >
+                  {passed
+                    ? 'Bài học đã hoàn thành — tiến độ đã được lưu. 🎉'
+                    : 'Bạn chưa đạt hết test ở bước "Tự viết" — quay lại chấm bài để hoàn thành bài học.'}
+                </div>
+                <button
+                  onClick={() => nav(backTo)}
+                  className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition"
+                >
+                  <span>{levelId ? `Về trang bậc ${levelId.toUpperCase()}` : 'Về trang môn'}</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </section>
+            )}
+
+            {/* Điều hướng trước / sau */}
+            <div className="flex items-center justify-between pt-2">
+              <button
+                onClick={() => setStep(Math.max(0, step - 1))}
+                disabled={step === 0}
+                className="tap-44 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl bg-zinc-900 border border-zinc-800 disabled:opacity-40 text-zinc-200 font-semibold text-sm transition"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Bước trước</span>
+              </button>
+              {step < STEPS.length - 1 && (
+                <button
+                  onClick={() => setStep(step + 1)}
+                  className={`tap-44 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl font-semibold text-sm transition ${
+                    stepDone(step)
+                      ? 'bg-accent-500 hover:bg-accent-400 text-black'
+                      : 'bg-zinc-900 border border-zinc-800 text-zinc-200'
+                  }`}
+                >
+                  <span>Bước tiếp</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+        </TwoPane>
+      </PageShell>
     </div>
   )
 }
