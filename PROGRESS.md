@@ -1210,6 +1210,36 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   **Việc để ngỏ (cố ý, nêu rõ trong spec mục "KHÔNG LÀM"):** cột ngữ cảnh cho Kanban/LifeGraph,
   command palette tìm kiếm mờ đầy đủ (hiện `⌘K` chỉ mở lại Studio switcher có sẵn).
 
+- **[2026-09-02] ✅ ĐỢT 2 THIẾT KẾ LẠI DESKTOP — HỆ THỐNG THIẾT KẾ + BREADCRUMB TOÀN SITE, ĐÃ
+  XONG TRỌN VẸN 5 PR.** Loạt 2026-08-31 ở trên mới sửa 4 trang tiêu biểu; loạt này phủ toàn bộ
+  và chốt nền hệ thống thiết kế.
+  1. **Đợt 1 — nền hệ thống** (`#815`, nhật ký `docs/changelog/0232-*.md`): thang chữ, token bề
+     mặt, khung trang chung `PageShell`.
+  2. **Đợt 2 — bề rộng chuẩn** (`#816`, `0233-*.md`): chốt `max-w-6xl` (1152px) là bề rộng chuẩn
+     của app, gom bố cục 2 cột của Trang chủ/Tiến độ; header đổi `5xl → 6xl` cho KHỚP MÉP với
+     nội dung (trước đó nội dung thò ra 48px mỗi bên, nhìn như hai lớp lệch nhau).
+  3. **Đợt 3 — gom nốt 2 cột** (`#817`, `0234-*.md`): Luyện viết + `CefrLevelPage`.
+  4. **Đợt 4 — phủ 45 trang còn lại** (`#818`, `0235-*.md`).
+  5. **Breadcrumb: phủ nốt môn Lập trình và các trụ** (`#819`, `0236-*.md`) — hai vùng trắng
+     cuối cùng của breadcrumb desktop:
+     - **Lập trình:** thêm tầng tĩnh (`huong`/`du-an`/`on-tap`/`chay-thu`/`gioi-thieu`) và cơ chế
+       **đốt cha ĐỘNG** — tham số `extra` của `buildCrumbs` + prop `crumbs` của
+       `Breadcrumb`/`Layout` — để trang chặng, chẩn đoán và bài học tự cấp tên hướng/lộ
+       trình/bậc mà cây route TĨNH không thể biết.
+     - **Các trụ:** trang công cụ của trụ trước đây không có tầng cha nào nên breadcrumb **tự ẩn
+       hẳn**. Nay `/career/interview`, `/startup/canvas`, `/work/kanban`, `/life/wheel`,
+       `/action-canvas`, `/life-graph`, `/ung-dung-thuc-te` đều lồng dưới đúng studio; đốt tab
+       của hai studio gộp giữ tham số `?muc=` nên bấm vào rơi đúng tab.
+
+  **Hai quyết định giữ lại cho lần sau:** (a) KHÔNG đưa các trụ vào `navTree.ts` — sidebar chưa
+  có nhóm con cho hai studio trụ, thêm dữ liệu chỉ để breadcrumb dùng là dựng sẵn một nguồn dễ
+  lệch; (b) KHÔNG đặt nút breadcrumb cho đường dẫn không có trang thật — một đốt bấm vào rơi vào
+  route `*` (về Trang chủ) còn tệ hơn là không có đốt.
+
+  **Việc để ngỏ:** breadcrumb chỉ hiện trên desktop (`hidden lg:block`) và là phần BỔ SUNG bên
+  cạnh nút Back, không thay thế — mobile vẫn chỉ có Back. Cột ngữ cảnh cho Kanban/LifeGraph và
+  command palette tìm kiếm mờ vẫn để ngỏ như loạt trước.
+
 - **[2026-08-26] ✅ HAI TÍNH NĂNG GIỮ CHÂN ĐÃ LÀM XONG (đặc tả + code + test + cổng a11y).**
   Đợt research-first 2026-08-26 (`docs/changelog/0168-*.md`) rồi thi hành trọn vẹn cùng ngày
   (`0169-*.md` và `0170-*.md`):
