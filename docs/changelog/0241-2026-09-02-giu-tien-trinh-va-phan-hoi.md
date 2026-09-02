@@ -1,6 +1,6 @@
 # 0241 — 2026-09-02 — Giữ tiến trình bài kiểm tra, phản hồi khi học thuộc, tiến độ hội thoại
 
-PR: (điền khi tạo) · Nhánh: `claude/modern-ui-redesign-jull9n`
+PR: #824 · Nhánh: `claude/modern-ui-redesign-jull9n`
 
 ## Bối cảnh
 
