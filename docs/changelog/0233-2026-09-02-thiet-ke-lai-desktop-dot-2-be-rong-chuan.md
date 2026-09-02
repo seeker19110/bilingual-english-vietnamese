@@ -10,12 +10,17 @@
 bắt đầu bằng việc **đo mép đã render** ở 1440×900 thay vì đọc class Tailwind, và phát hiện suy
 luận đó sai:
 
-| Trang       | Mép header | Mép nội dung | Lệch                     |
-| ----------- | ---------- | ------------ | ------------------------ |
-| Trang chủ   | 336 → 1360 | 288 → 1408   | **nội dung thò ra 48px** |
-| Tiến độ     | 336 → 1360 | 288 → 1408   | **thò ra 48px**          |
-| Luyện viết  | 336 → 1360 | 288 → …      | **thò ra 48px**          |
-| Lộ trình A1 | 336 → 1360 | 464 → 1232   | **thụt vào 128px**       |
+| Trang      | Mép header | Mép nội dung | Lệch                     |
+| ---------- | ---------- | ------------ | ------------------------ |
+| Trang chủ  | 336 → 1360 | 288 → 1408   | **nội dung thò ra 48px** |
+| Tiến độ    | 336 → 1360 | 288 → 1408   | **thò ra 48px**          |
+| Luyện viết | 336 → 1360 | 288 → …      | **thò ra 48px**          |
+
+**Đính chính (đo lại sau khi sửa):** lượt đo đầu có thêm dòng `/lo-trinh-hoc/a1` ghi "thụt vào
+128px", nhưng đó là ĐO NHẦM ĐỐI TƯỢNG — trang này dùng bố cục master–detail với cột danh sách
+nằm bên TRÁI, nên thẻ `<main>` mà phép đo bám vào chính là cột chi tiết, không phải khung trang.
+Đo lại đúng khung: `272 → 1424`, thẳng hàng header như mọi trang khác. Trang này **không hề có
+lỗi lệch mép**; chỉ có 3 trang trong bảng trên là lệch thật.
 
 Nguyên nhân: header là `max-w-5xl` (1024) còn mọi trang CÓ cột phải là `max-w-6xl` (1152) — nội
 dung rộng hơn cả header, nên hai lớp lệch nhau ở mọi trang quan trọng nhất. Đây chính là lỗi mà
