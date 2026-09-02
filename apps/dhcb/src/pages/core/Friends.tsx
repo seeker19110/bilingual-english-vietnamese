@@ -14,6 +14,7 @@ import {
   removeFriend,
   type FriendUserSummary,
 } from '../../lib/friends'
+import { PageShell } from '@core/PageShell'
 
 export default function Friends() {
   const toast = useToast()
@@ -68,7 +69,9 @@ export default function Friends() {
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout />
-      <main className="max-w-lg mx-auto px-4 pb-24 pt-4">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trang danh sách → width="standard"; giữ
+      nguyên đệm dưới cũ (pb-24, không theo --bnav-h) qua className. */}
+      <PageShell width="standard" baseWidth="max-w-lg" className="!pt-4 !pb-24">
         <PageHeader title="Bạn bè" subtitle="Chia sẻ mã/QR để kết bạn — chỉ bạn bè mới chat được" />
 
         {loading && <p className="text-sm text-zinc-400">Đang tải…</p>}
@@ -149,7 +152,7 @@ export default function Friends() {
             ))}
           </ul>
         </section>
-      </main>
+      </PageShell>
     </div>
   )
 }

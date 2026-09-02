@@ -23,6 +23,7 @@ import {
   AlertCircle,
 } from 'lucide-react'
 import Layout from '../../../components/Layout.js'
+import { PageShell } from '@core/PageShell'
 import PricePromoBanner from '../../../components/PricePromoBanner.js'
 import RewardTipBanner from '../../../components/RewardTipBanner.js'
 import { getDirection } from '../../../lib/storage'
@@ -141,7 +142,8 @@ export default function EnglishHome() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout title={isA ? 'Không Gian Tiếng Anh' : 'English Studio'} back />
 
-      <main className="max-w-3xl mx-auto px-4 pt-4 pb-[calc(2rem+var(--bnav-h))] space-y-5">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Danh sách/lưới nhiều thẻ → width standard. */}
+      <PageShell width="standard" baseWidth="max-w-3xl" className="!pt-4 space-y-5">
         <h1 className="sr-only">{isA ? 'Không Gian Tiếng Anh' : 'English Studio'}</h1>
 
         {/* ── TIÊU ĐỀ & TIẾP TỤC HỌC CEFR ── */}
@@ -491,7 +493,7 @@ export default function EnglishHome() {
         </div>
 
         <PricePromoBanner isA={isA} />
-      </main>
+      </PageShell>
     </div>
   )
 }

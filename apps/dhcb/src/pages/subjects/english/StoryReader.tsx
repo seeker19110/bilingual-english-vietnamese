@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Play, Pause, Square, Eye, EyeOff, Sparkles } from 'lucide-react'
 import Layout from '../../../components/Layout'
+import { PageShell } from '@core/PageShell'
 import PageHeader from '../../../components/PageHeader'
 import { CardListSkeleton } from '../../../components/Skeleton'
 import KaraokeText, { KARAOKE_INDENT } from '../../../components/KaraokeText'
@@ -162,9 +163,10 @@ export default function StoryReader() {
     return (
       <div className="min-h-dvh bg-zinc-950">
         <Layout back onBack={() => nav(-1)} />
-        <main className="max-w-3xl mx-auto px-4 pt-6 text-center">
+        {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trang chữ để đọc → width reading. */}
+        <PageShell width="reading" baseWidth="max-w-3xl" className="!pb-0 text-center">
           <p className="text-zinc-400 text-sm py-16">{T.storyNotFound}</p>
-        </main>
+        </PageShell>
       </div>
     )
   }
@@ -182,7 +184,8 @@ export default function StoryReader() {
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout back onBack={() => nav(-1)} />
-      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))]">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trang chữ để đọc → width reading. */}
+      <PageShell width="reading" baseWidth="max-w-3xl">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-2xl leading-none" aria-hidden="true">
             {story.flag}
@@ -359,7 +362,7 @@ export default function StoryReader() {
             )}
           </div>
         )}
-      </main>
+      </PageShell>
     </div>
   )
 }

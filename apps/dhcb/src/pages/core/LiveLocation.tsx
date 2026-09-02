@@ -31,6 +31,7 @@ import TripHeader from '../../components/location/TripHeader'
 import TripSetup from '../../components/location/TripSetup'
 import { usePageTitle } from '../../lib/usePageTitle'
 import { useToast } from '@core/ToastProvider'
+import { PageShell } from '@core/PageShell'
 import { useAuth } from '../../context/useAuth'
 import { distanceMeters, findStragglers, groupCenter } from '@dhcb/core-location/geo'
 import { formatDistance } from '../../lib/locationFormat'
@@ -329,7 +330,8 @@ export default function LiveLocation() {
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout />
-      <main className="mx-auto max-w-2xl px-4 pt-4 pb-[calc(1.5rem+var(--bnav-h))]">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trang danh sách → width="standard". */}
+      <PageShell width="standard" baseWidth="max-w-2xl">
         <PageHeader
           title="Đi chung"
           subtitle="Thấy nhau trên bản đồ khi đi chơi chung, để không ai bị lạc — bật/tắt lúc nào cũng được"
@@ -437,7 +439,7 @@ export default function LiveLocation() {
             />
           </div>
         )}
-      </main>
+      </PageShell>
     </div>
   )
 }

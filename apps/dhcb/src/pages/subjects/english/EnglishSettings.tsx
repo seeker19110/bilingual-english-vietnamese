@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { usePageTitle } from '../../../lib/usePageTitle'
 import { ArrowLeftRight, Gauge, CalendarCheck, Users, Volume2, VolumeX } from 'lucide-react'
 import Layout from '../../../components/Layout'
+import { PageShell } from '@core/PageShell'
 import PageHeader from '../../../components/PageHeader'
 import VoicePicker from '../../../components/VoicePicker'
 import RateToggle from '../../../components/RateToggle'
@@ -99,7 +100,12 @@ export default function EnglishSettings() {
     <div className="min-h-dvh bg-zinc-950">
       <Layout onBack={() => nav(-1)} />
 
-      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Biểu mẫu cài đặt → width reading, giữ hẹp. */}
+      <PageShell
+        width="reading"
+        baseWidth="max-w-3xl"
+        className="!pb-[calc(1.5rem+var(--bnav-h))] space-y-6"
+      >
         <PageHeader
           title={isA ? 'Cài đặt học Tiếng Anh' : 'English Learning Settings'}
           subtitle={
@@ -303,7 +309,7 @@ export default function EnglishSettings() {
               : 'A small "ting" when you answer right/wrong and when you hit a milestone.'}
           </p>
         </section>
-      </main>
+      </PageShell>
     </div>
   )
 }

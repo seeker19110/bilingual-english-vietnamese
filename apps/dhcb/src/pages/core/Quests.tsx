@@ -8,6 +8,7 @@ import QuestsPanel from '../../components/QuestsPanel'
 import { usePageTitle } from '../../lib/usePageTitle'
 import { useAuth } from '../../context/useAuth'
 import { useLang } from '../../context/useLang'
+import { PageShell } from '@core/PageShell'
 
 export default function Quests() {
   const { lang } = useLang()
@@ -19,7 +20,8 @@ export default function Quests() {
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout />
-      <main className="max-w-2xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-4">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trang danh sách → width="standard". */}
+      <PageShell width="standard" baseWidth="max-w-2xl" className="space-y-4">
         <PageHeader
           title={isA ? 'Nhiệm vụ' : 'Quests'}
           subtitle={
@@ -47,7 +49,7 @@ export default function Quests() {
           </div>
         </div>
         <ReferralSection isA={isA} />
-      </main>
+      </PageShell>
     </div>
   )
 }

@@ -13,6 +13,7 @@ import { Brain, Eye, CheckCircle2, Trophy, BookOpen } from 'lucide-react'
 import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
+import { PageShell } from '@core/PageShell'
 import { useAuth } from '../../../context/useAuth'
 import {
   getDueProgCards,
@@ -85,7 +86,8 @@ export default function ProgrammingReview() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => nav('/lap-trinh')} />
 
-      <main className="max-w-2xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-5">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trước đây một cột `max-w-2xl` ở mọi bề rộng. */}
+      <PageShell width="standard" baseWidth="max-w-2xl" className="space-y-5">
         <PageHeader
           title="Ôn thẻ Lập trình"
           subtitle={`Những khái niệm cốt lõi bạn đã học, quay lại đúng lúc sắp quên. Kho thẻ hiện có ${tongThe} thẻ — thẻ vào vòng ôn khi bạn đạt bài tương ứng.`}
@@ -205,7 +207,7 @@ export default function ProgrammingReview() {
             </button>
           </section>
         )}
-      </main>
+      </PageShell>
     </div>
   )
 }

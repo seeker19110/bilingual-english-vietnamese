@@ -8,6 +8,7 @@
 // Chấm hoàn toàn ở CLIENT, tất định (`suggestEntry`), không gọi AI.
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { PageShell } from '@core/PageShell'
 import { CheckCircle2, Compass, ListChecks } from 'lucide-react'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
@@ -45,12 +46,13 @@ export default function ProgrammingPathDiagnostic() {
     return (
       <div className="min-h-dvh bg-zinc-950 text-zinc-100">
         <Layout onBack={() => nav('/lap-trinh')} />
-        <main className="max-w-4xl mx-auto px-4 pt-6">
+        {/* [2026-09-02, đợt 4 thiết kế lại desktop] */}
+        <PageShell width="standard" baseWidth="max-w-4xl">
           <PageHeader
             title="Không có lộ trình này"
             subtitle="Quay lại trang môn để xem lộ trình."
           />
-        </main>
+        </PageShell>
       </div>
     )
   }
@@ -89,7 +91,8 @@ export default function ProgrammingPathDiagnostic() {
     return (
       <div className="min-h-dvh bg-zinc-950 text-zinc-100">
         <Layout onBack={() => nav(duongDanLoTrinh(path))} />
-        <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
+        {/* [2026-09-02, đợt 4 thiết kế lại desktop] */}
+        <PageShell width="standard" baseWidth="max-w-4xl" className="space-y-6">
           <PageHeader
             title="Gợi ý điểm bắt đầu"
             subtitle="Đây là công cụ chọn việc, không phải bảng chấm điểm — bạn xem và sửa lại thoải mái."
@@ -132,7 +135,7 @@ export default function ProgrammingPathDiagnostic() {
               <span>{saved ? 'Đã lưu' : saving ? 'Đang lưu…' : 'Lưu và bắt đầu'}</span>
             </button>
           </section>
-        </main>
+        </PageShell>
       </div>
     )
   }
@@ -140,7 +143,8 @@ export default function ProgrammingPathDiagnostic() {
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => nav(duongDanLoTrinh(path))} />
-      <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trước đây một cột `max-w-4xl` ở mọi bề rộng. */}
+      <PageShell width="standard" baseWidth="max-w-4xl" className="space-y-6">
         <PageHeader
           title={`Chẩn đoán: ${path.title}`}
           subtitle="Trả lời vài câu để mình gợi ý điểm bắt đầu phù hợp — không có điểm số, không bắt buộc đúng hết."
@@ -188,7 +192,7 @@ export default function ProgrammingPathDiagnostic() {
             Xem gợi ý điểm bắt đầu ({answered}/{questions.length})
           </span>
         </button>
-      </main>
+      </PageShell>
     </div>
   )
 }

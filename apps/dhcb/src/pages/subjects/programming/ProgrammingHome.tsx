@@ -43,6 +43,7 @@ import { LEARNING_PATHS } from '@dhcb/subject-programming/learningPaths/registry
 import { goToSubjects } from '../../../lib/subjectsHost'
 import { buildSlugSegment } from '@core/slug'
 import { duongDanBac, duongDanKhoa, duongDanLoTrinh } from '../../../lib/programmingRoutes'
+import { PageShell } from '@core/PageShell'
 
 export default function ProgrammingHome() {
   usePageTitle('Môn Lập trình | Đồng hành cùng bạn')
@@ -80,7 +81,8 @@ export default function ProgrammingHome() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => goToSubjects(nav)} />
 
-      <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trước đây một cột `max-w-4xl` ở mọi bề rộng. */}
+      <PageShell width="standard" baseWidth="max-w-4xl" className="space-y-6">
         <PageHeader
           title="Môn Lập trình"
           subtitle="Từ số 0 tới sản phẩm chạy thật trên Internet — Python, JavaScript/TypeScript, SQL. Hoàn thành môn là hoàn thành luôn dự án của chính bạn."
@@ -313,7 +315,7 @@ export default function ProgrammingHome() {
             <span>Xem {PROGRAMMING_SPECIALIZATIONS.length} hướng chuyên sâu</span>
           </button>
         </section>
-      </main>
+      </PageShell>
     </div>
   )
 }

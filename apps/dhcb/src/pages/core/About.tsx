@@ -23,6 +23,7 @@ import PageHeader from '../../components/PageHeader'
 import { usePageTitle } from '../../lib/usePageTitle'
 import { useLang } from '../../context/useLang'
 import { navigateTo } from '../../lib/subjectsHost'
+import { PageShell } from '@core/PageShell'
 
 type IconType = typeof BookOpen
 
@@ -228,7 +229,8 @@ export default function About() {
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout />
-      <main className="max-w-2xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trang chữ dài để đọc → width="reading". */}
+      <PageShell width="reading" baseWidth="max-w-2xl" className="space-y-6">
         <PageHeader
           title={isA ? 'Giới thiệu nền tảng' : 'About the platform'}
           subtitle={
@@ -390,7 +392,7 @@ export default function About() {
           <Sparkles className="w-4 h-4" aria-hidden="true" />
           {isA ? 'Về trang chủ nền tảng' : 'Back to the platform home'}
         </button>
-      </main>
+      </PageShell>
     </div>
   )
 }

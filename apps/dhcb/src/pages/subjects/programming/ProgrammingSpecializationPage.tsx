@@ -13,6 +13,7 @@
 // Mã hướng lạ thì nói KHÔNG BIẾT và mời quay lại danh sách — tuyệt đối không đoán bừa một hướng.
 import { useEffect, useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { PageShell } from '@core/PageShell'
 import {
   CheckCircle2,
   Circle,
@@ -271,7 +272,8 @@ export default function ProgrammingSpecializationPage() {
     return (
       <div className="min-h-dvh bg-zinc-950 text-zinc-100">
         <Layout onBack={() => nav('/lap-trinh/huong')} />
-        <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-4">
+        {/* [2026-09-02, đợt 4 thiết kế lại desktop] */}
+        <PageShell width="standard" baseWidth="max-w-4xl" className="space-y-4">
           <PageHeader
             title="Không có hướng này"
             subtitle="Đường dẫn không khớp hướng nào trong môn Lập trình. Quay lại danh sách để chọn hướng có thật."
@@ -282,7 +284,7 @@ export default function ProgrammingSpecializationPage() {
           >
             Xem 14 hướng chuyên sâu
           </button>
-        </main>
+        </PageShell>
       </div>
     )
   }
@@ -297,7 +299,8 @@ export default function ProgrammingSpecializationPage() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => nav('/lap-trinh/huong')} />
 
-      <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trước đây một cột `max-w-4xl` ở mọi bề rộng. */}
+      <PageShell width="standard" baseWidth="max-w-4xl" className="space-y-6">
         <PageHeader title={spec.name} subtitle={spec.tagline} />
 
         {/* Chọn/bỏ hướng — tiến độ lưu ở server, không phải localStorage, nên đổi máy vẫn còn. */}
@@ -516,7 +519,7 @@ export default function ProgrammingSpecializationPage() {
             ))}
           </ul>
         </section>
-      </main>
+      </PageShell>
     </div>
   )
 }

@@ -11,6 +11,7 @@
 //     rải lên trang môn hay trang bậc, vì nhắc nhiều lần thành tự bôi xấu.
 import { useNavigate } from 'react-router-dom'
 import { usePageTitle } from '../../../lib/usePageTitle'
+import { PageShell } from '@core/PageShell'
 import {
   Rocket,
   Trophy,
@@ -129,7 +130,8 @@ export default function ProgrammingAbout() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => nav(user ? '/lap-trinh' : '/')} />
 
-      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trang toàn chữ để đọc → giữ hẹp cho dễ đọc. */}
+      <PageShell width="reading" baseWidth="max-w-3xl" className="space-y-6">
         <PageHeader
           title="Lập trình — từ số 0 tới một sản phẩm chạy thật trên Internet"
           subtitle="Không phải một khoá học 60 video rồi bạn tự xoay xở. Đây là một sản phẩm của bạn, lớn dần qua 5 chặng, và mỗi bài học là một viên gạch xây tiếp nó."
@@ -304,7 +306,7 @@ export default function ProgrammingAbout() {
             <ChevronRight className="w-4 h-4" />
           </button>
         </section>
-      </main>
+      </PageShell>
     </div>
   )
 }

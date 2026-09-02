@@ -18,6 +18,7 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import Layout from '../../components/Layout'
+import { PageShell } from '@core/PageShell'
 import PageHeader from '../../components/PageHeader'
 import SubjectIllustration from '../../components/SubjectIllustration'
 import { getSubjectDetails } from '../../lib/subjectApi'
@@ -318,7 +319,8 @@ export default function SubjectDetail() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => goToSubjects(nav)} />
 
-      <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Danh sách bài học/bậc → width standard. */}
+      <PageShell width="standard" baseWidth="max-w-4xl" className="space-y-6">
         {/* ─── HERO BANNER với Illustration động ─── */}
         <section
           className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${theme.from} ${theme.via} ${theme.to} border border-zinc-800/60 p-5 sm:p-6 shadow-xl backdrop-blur-sm animate-fade-up`}
@@ -757,7 +759,7 @@ export default function SubjectDetail() {
               ))}
           </div>
         )}
-      </main>
+      </PageShell>
 
       <IntegrationsModal
         isOpen={isCalendarModalOpen}

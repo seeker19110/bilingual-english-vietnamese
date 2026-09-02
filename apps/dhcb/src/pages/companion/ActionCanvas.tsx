@@ -13,6 +13,7 @@ import {
 import InteractiveCanvasViewport from '../../components/ActionCanvas/InteractiveCanvasViewport'
 import CanvasAiOrchestratorModal from '../../components/ActionCanvas/CanvasAiOrchestratorModal'
 import CanvasExportModal from '../../components/ActionCanvas/CanvasExportModal'
+import { PageShell } from '@core/PageShell'
 import {
   Sparkles,
   LayoutGrid,
@@ -197,7 +198,8 @@ export default function ActionCanvas() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100 flex flex-col">
       <Layout back={true} title="Action Canvas" />
 
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-4 flex flex-col">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] width="standard"; giữ bố cục flex cột full-height. */}
+      <PageShell width="standard" baseWidth="max-w-6xl" className="!pt-4 flex flex-1 flex-col">
         <PageHeader
           title="Không Gian Làm Việc Trực Quan (Action Canvas)"
           subtitle="Đồng sáng tạo và liên kết 5 miền tri thức cùng Bạn Đồng Hành AI."
@@ -304,7 +306,7 @@ export default function ActionCanvas() {
             onUpdateViewport={handleUpdateViewport}
           />
         )}
-      </main>
+      </PageShell>
 
       <CanvasAiOrchestratorModal
         isOpen={aiModalOpen}

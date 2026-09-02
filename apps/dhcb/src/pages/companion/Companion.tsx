@@ -29,6 +29,7 @@ import type {
 } from '../../components/CompanionStudios/studioTypes'
 import { DOMAIN_OPTIONS, STUDIO_TABS_CONFIG } from '../../components/CompanionStudios/studioTypes'
 import { useDialogBehavior } from '../../components/useDialogBehavior'
+import { PageShell } from '@core/PageShell'
 
 // Nạp lười (Lazy-loading) từng Studio để giảm mạnh Initial Bundle Size
 const StudioDialogue = lazyWithRetry(
@@ -376,7 +377,12 @@ export default function Companion() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100 flex flex-col">
       <Layout back={true} title="Bạn Đồng Hành" />
 
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-4 flex flex-col">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trang danh sách/khu trò chuyện → width="standard";
+          giữ nguyên bố cục flex cột full-height qua className.
+          `!py-4` ép ĐÚNG khoảng đệm cũ: đây là khung chiều-cao-đầy (`flex flex-1 flex-col`), nên
+          đệm dưới lớn hơn của PageShell (`pb-[calc(2rem+var(--bnav-h))]`) đẩy nội dung chồng lên
+          hàng nút Studio — đo được là 3 vi phạm `target-size` ở cổng a11y (nút bị che một phần). */}
+      <PageShell width="standard" baseWidth="max-w-4xl" className="!py-4 flex flex-1 flex-col">
         <PageHeader
           title="Bạn Đồng Hành Đa Lĩnh Vực"
           subtitle="Người đồng hành trí tuệ kết nối sâu Học tập, Sự nghiệp, Công việc, Khởi nghiệp & Đời sống."
@@ -451,7 +457,7 @@ export default function Companion() {
 
           {activeStudio === 'synthesis' && <StudioSynthesis navigate={navigate} />}
         </Suspense>
-      </main>
+      </PageShell>
 
       {/* Context Transparency Inspector Modal */}
       {activeContext && (

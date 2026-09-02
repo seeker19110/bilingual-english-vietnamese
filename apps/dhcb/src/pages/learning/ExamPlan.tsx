@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import { CalendarClock, Target, BookOpen, RotateCcw, Sparkles } from 'lucide-react'
 import { usePageTitle } from '../../lib/usePageTitle'
 import Layout from '../../components/Layout'
+import { PageShell } from '@core/PageShell'
 import PageHeader from '../../components/PageHeader'
 import { Skeleton } from '../../components/Skeleton'
 import { useAuth } from '../../context/useAuth'
@@ -266,7 +267,8 @@ export default function ExamPlanPage() {
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout />
-      <main className="max-w-2xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Đồng hồ đếm ngược + 3 việc hôm nay → width reading. */}
+      <PageShell width="reading" baseWidth="max-w-2xl" className="!pb-[calc(1.5rem+var(--bnav-h))]">
         <PageHeader
           title="Ôn thi"
           subtitle="Đặt ngày thi, mỗi ngày chỉ cần làm đúng phần việc của ngày đó."
@@ -337,7 +339,7 @@ export default function ExamPlanPage() {
             </button>
           </div>
         )}
-      </main>
+      </PageShell>
     </div>
   )
 }

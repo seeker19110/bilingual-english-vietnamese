@@ -9,6 +9,7 @@
 //    trình là việc của đợt 2).
 import { useEffect, useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { PageShell } from '@core/PageShell'
 import {
   Map,
   Clock,
@@ -80,12 +81,13 @@ export default function ProgrammingPathPage() {
     return (
       <div className="min-h-dvh bg-zinc-950 text-zinc-100">
         <Layout onBack={() => nav('/lap-trinh')} />
-        <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))]">
+        {/* [2026-09-02, đợt 4 thiết kế lại desktop] */}
+        <PageShell width="standard" baseWidth="max-w-4xl">
           <PageHeader
             title="Không có lộ trình này"
             subtitle="Đường dẫn không đúng hoặc lộ trình chưa tồn tại. Quay lại trang môn để xem các lộ trình đang mở."
           />
-        </main>
+        </PageShell>
       </div>
     )
   }
@@ -103,7 +105,8 @@ export default function ProgrammingPathPage() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => nav('/lap-trinh')} />
 
-      <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trước đây một cột `max-w-4xl` ở mọi bề rộng. */}
+      <PageShell width="standard" baseWidth="max-w-4xl" className="space-y-6">
         <PageHeader title={`Lộ trình: ${path.title}`} subtitle={path.tagline} />
 
         {/* Thông tin đầu vào + tiến độ tổng — đọc từ tiến độ hướng sẵn có */}
@@ -265,7 +268,7 @@ export default function ProgrammingPathPage() {
             ))}
           </ul>
         </section>
-      </main>
+      </PageShell>
     </div>
   )
 }

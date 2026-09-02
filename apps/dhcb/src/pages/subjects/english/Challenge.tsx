@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Video, Mic, RotateCcw, Send, Square, Type, Trophy, Check, Volume2 } from 'lucide-react'
 import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
+import { PageShell } from '@core/PageShell'
 import PageHeader from '../../../components/PageHeader'
 import Celebration from '../../../components/Celebration'
 import LeagueSection from '../../../components/LeagueSection'
@@ -611,7 +612,8 @@ export default function Challenge() {
     return (
       <div className="min-h-dvh bg-zinc-950">
         <Layout />
-        <main className="max-w-lg mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))]">
+        {/* [2026-09-02, đợt 4 thiết kế lại desktop] Luồng tuần tự hẹp → width reading. */}
+        <PageShell width="reading" baseWidth="max-w-lg">
           <PageHeader
             title={isA ? 'Challenge 1 phút mỗi ngày' : 'Daily 1-Minute Challenge'}
             subtitle={
@@ -651,7 +653,7 @@ export default function Challenge() {
               {isA ? '🎬 Bắt đầu thử thách' : '🎬 Start the challenge'}
             </button>
           </div>
-        </main>
+        </PageShell>
       </div>
     )
   }
@@ -678,7 +680,7 @@ export default function Challenge() {
         />
       )}
 
-      <main className="max-w-lg mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-5">
+      <PageShell width="reading" baseWidth="max-w-lg" className="space-y-5">
         <PageHeader
           title={isA ? 'Challenge 1 phút mỗi ngày' : 'Daily 1-Minute Challenge'}
           subtitle={
@@ -956,7 +958,7 @@ export default function Challenge() {
             )}
           </div>
         )}
-      </main>
+      </PageShell>
     </div>
   )
 }

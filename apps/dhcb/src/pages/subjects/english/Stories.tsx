@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
+import { PageShell } from '@core/PageShell'
 import PageHeader from '../../../components/PageHeader'
 import { CardListSkeleton } from '../../../components/Skeleton'
 import StoryCard from '../../../components/StoryCard'
@@ -123,7 +124,8 @@ export default function Stories() {
   return (
     <div className="min-h-dvh bg-zinc-950">
       <Layout back />
-      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))]">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Lưới thẻ truyện → width standard. */}
+      <PageShell width="standard" baseWidth="max-w-3xl">
         <PageHeader
           title={isA ? 'Nghe - Đọc - Kể Truyện' : 'Listen - Read - Tell Stories'}
           subtitle={
@@ -218,7 +220,7 @@ export default function Stories() {
             </div>
           </div>
         )}
-      </main>
+      </PageShell>
     </div>
   )
 }

@@ -14,6 +14,7 @@ import { Compass, Clock, Lock, ArrowRight, Boxes, Layers, CheckCircle2 } from 'l
 import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import PageHeader from '../../../components/PageHeader'
+import { PageShell } from '@core/PageShell'
 import { useAuth } from '../../../context/useAuth'
 import {
   fetchSpecProgress,
@@ -103,7 +104,8 @@ export default function ProgrammingSpecializations() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout onBack={() => nav('/lap-trinh')} />
 
-      <main className="max-w-4xl mx-auto px-4 pt-6 pb-[calc(2rem+var(--bnav-h))] space-y-6">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trước đây một cột `max-w-4xl` ở mọi bề rộng. */}
+      <PageShell width="standard" baseWidth="max-w-4xl" className="space-y-6">
         <PageHeader
           title="Hướng chuyên sâu"
           subtitle={`Xong xương sống P1–P5 là bạn lập trình được. Muốn đi tới mức chuyên gia thì phải chọn một con đường — dưới đây là ${PROGRAMMING_SPECIALIZATIONS.length} con đường thật của nghề, mỗi con đường 4 chặng, 5 sản phẩm phải nộp và một bản đồ kiến trúc riêng.`}
@@ -179,7 +181,7 @@ export default function ProgrammingSpecializations() {
             ))}
           </ul>
         </section>
-      </main>
+      </PageShell>
     </div>
   )
 }

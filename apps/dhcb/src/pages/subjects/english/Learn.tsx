@@ -11,6 +11,7 @@ import { useState } from 'react'
 import { Target, Brain, Star, ClipboardList } from 'lucide-react'
 import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
+import { PageShell } from '@core/PageShell'
 import PageHeader from '../../../components/PageHeader'
 import VocabMilestone from '../../../components/VocabMilestone'
 import StudyPanel, { type StudyTab } from '../../../components/StudyPanel'
@@ -78,7 +79,12 @@ export default function Learn() {
     <div className="min-h-dvh bg-zinc-950">
       <Layout back />
 
-      <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))]">
+      {/* [2026-09-02, đợt 4 thiết kế lại desktop] Bản đồ lộ trình → width standard. */}
+      <PageShell
+        width="standard"
+        baseWidth="max-w-3xl"
+        className="!pb-[calc(1.5rem+var(--bnav-h))]"
+      >
         <PageHeader
           title={isA ? 'Học theo lộ trình' : 'Learning Path'}
           subtitle={isA ? 'Lộ trình chuẩn CEFR A1 → C2' : 'CEFR roadmap A1 → C2'}
@@ -119,7 +125,7 @@ export default function Learn() {
         </div>
 
         <RoadmapTab uid={user.id} isA={isA} />
-      </main>
+      </PageShell>
     </div>
   )
 }

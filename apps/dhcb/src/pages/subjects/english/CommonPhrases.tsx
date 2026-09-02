@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef, useDeferredValue } from 'react'
 import { Search, X, ChevronRight, Loader2, Play } from 'lucide-react'
 import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
+import { PageShell } from '@core/PageShell'
 import PageHeader from '../../../components/PageHeader'
 import { useLang } from '../../../context/useLang'
 import { useAuth } from '../../../context/useAuth'
@@ -326,8 +327,14 @@ export default function CommonPhrases() {
     <div className="bg-zinc-950 flex flex-col h-[calc(100dvh-var(--bnav-h))] sm:h-auto sm:block sm:min-h-dvh">
       <Layout back />
 
-      <main className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
-        <div className="max-w-3xl mx-auto px-4 pt-4 pb-2 sm:pt-6 sm:pb-[calc(1.5rem+var(--bnav-h))] space-y-4">
+      {/* <div> chứ không phải <main>: landmark <main> do PageShell render bên trong. */}
+      <div className="flex-1 overflow-y-auto sm:overflow-visible sm:flex-none">
+        {/* [2026-09-02, đợt 4 thiết kế lại desktop] Danh sách chủ đề → width standard. */}
+        <PageShell
+          width="standard"
+          baseWidth="max-w-3xl"
+          className="!pt-4 !pb-2 sm:!pt-6 sm:!pb-[calc(1.5rem+var(--bnav-h))] space-y-4"
+        >
           {/* Tiêu đề trang — đặt ngay dưới AppHeader, cỡ chữ lớn */}
           <PageHeader title={T.phrasesPageTitle} subtitle={T.phrasesPageSub} />
 
@@ -440,8 +447,8 @@ export default function CommonPhrases() {
           {filtered.length === 0 && (
             <div className="text-center py-16 text-zinc-400 text-sm">{T.phrasesNoResult}</div>
           )}
-        </div>
-      </main>
+        </PageShell>
+      </div>
 
       {/* Search bar cố định ở dưới — CHỈ trên mobile */}
       <div className="sm:hidden shrink-0 border-t border-zinc-800/40 bg-zinc-950/95 backdrop-blur-md px-4 pt-3 pb-safe">
