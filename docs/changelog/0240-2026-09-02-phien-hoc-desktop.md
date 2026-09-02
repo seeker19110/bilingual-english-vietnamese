@@ -76,6 +76,23 @@ ba dòng danh sách), kèm `aria-busy` và nhãn ẩn cho trình đọc màn hì
   chọn nhầm đáp án).
 - `npm run lint` · `npm run typecheck` · `npm test` — xem phần Validation của PR.
 
+## Phụ: vá lỗ hổng `qs` để CI xanh (không liên quan nội dung đợt này)
+
+Cổng CI `npm audit + chu trình import` đỏ trên PR #823 vì **advisory mới của `qs`**
+(GHSA-x5fp-wj9c-mxmx và GHSA-4mjr-xmp4-gh2g), tới qua `express` → `body-parser` → `qs@6.15.2`.
+Không phải do đợt việc này — diff không đụng dependency nào, và lỗi tái hiện y hệt ở máy.
+
+Vá theo đúng tiền lệ sẵn có của repo cho loại việc này (`overrides` đã dùng cho `js-yaml` và
+`nanoid`): thêm `"qs": "^6.16.0"`. Sau khi vá `npm audit --omit=dev` → **0 lỗ hổng**.
+
+`qs` là lõi phân tích query string của Express nên **không tin mỗi kết quả audit**: đã build
+lại và boot `dist-server/server.js` thật — `/api/health` trả 200, và query dạng mảng
+(`?a[]=1&a[]=2`) vẫn phân tích đúng, tức đường đi của `qs` còn nguyên.
+
+Còn một advisory `fast-uri` mức cao nhưng **chỉ ở nhánh devDependency** — cổng CI chạy
+`npm audit --omit=dev` nên không chặn, và cố vá trong PR này là mở rộng phạm vi không cần
+thiết. Ghi lại ở đây để đợt sau xử lý riêng.
+
 ## Việc tiếp theo
 
 Còn 8 điểm yếu đã ghi nhận trong khảo sát, đáng làm nhất:
