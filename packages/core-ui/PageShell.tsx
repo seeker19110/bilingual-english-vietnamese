@@ -30,7 +30,10 @@ const WIDTH_CLASS: Record<PageWidth, string> = {
   // ~65–75 ký tự/dòng. Dùng cho trang KHÔNG có cột phải; trang có cột phải nên chọn
   // `standard` để sau khi trừ cột phải, cột chữ vẫn rơi đúng khoảng đọc này.
   reading: 'lg:max-w-3xl',
-  standard: 'lg:max-w-5xl', // khớp đúng bề rộng header → mép nội dung thẳng hàng
+  // 1152px — BỀ RỘNG CHUẨN của app, khớp đúng header (`Layout.tsx`) nên mép thẳng hàng.
+  // Con số này không tuỳ tiện: 1152 = cột chữ ~840px + cột phải 288px + khoảng cách, tức trang
+  // CÓ cột phải vẫn giữ được cột chữ trong khoảng đọc dễ chịu.
+  standard: 'lg:max-w-6xl',
   wide: 'lg:max-w-7xl',
 }
 

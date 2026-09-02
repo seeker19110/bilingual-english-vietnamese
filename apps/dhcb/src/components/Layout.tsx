@@ -138,7 +138,12 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
 
       <OfflineStatusBanner />
 
-      <div className="max-w-3xl lg:max-w-5xl mx-auto px-4 h-14 flex items-center gap-3 relative">
+      {/* [2026-09-02, đợt 2 thiết kế lại desktop] Bề rộng desktop đổi 5xl → 6xl để KHỚP MÉP với
+          nội dung trang. Đo thật ở 1440px trước khi sửa: header 336→1360 trong khi nội dung các
+          trang có cột phải (Trang chủ, Tiến độ, Luyện viết, CEFR) là 288→1408 — tức nội dung
+          THÒ RA 48px mỗi bên so với header, nhìn như hai lớp lệch nhau. 1152px (`max-w-6xl`) nay
+          là bề rộng chuẩn của app: `PageShell` cấp `standard` dùng đúng giá trị này. */}
+      <div className="max-w-3xl lg:max-w-6xl mx-auto px-4 h-14 flex items-center gap-3 relative">
         {/* Back / Logo */}
         {back ? (
           <button
