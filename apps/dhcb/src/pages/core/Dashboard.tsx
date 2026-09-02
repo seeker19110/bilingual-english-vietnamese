@@ -21,6 +21,8 @@ import PageHeader from '../../components/PageHeader'
 import QuickActions from '../../components/QuickActions'
 import { usePageTitle } from '../../lib/usePageTitle'
 import { useIsDesktopViewport } from '../../lib/useIsDesktopViewport'
+import { PageShell } from '@core/PageShell'
+import { TwoPane } from '@core/TwoPane'
 import { useAuth } from '../../context/useAuth'
 import { useLang } from '../../context/useLang'
 import { useCloudSync } from '../../lib/useCloudSync'
@@ -782,9 +784,25 @@ export default function Dashboard() {
     <div className="min-h-dvh bg-zinc-950">
       <Layout />
 
-      {isDesktop ? (
-        <div className="max-w-6xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] flex gap-5 items-start">
-          <main className="flex-1 min-w-0 space-y-6">
+      {/* [2026-09-02, đợt 2] Bố cục 2 cột trước đây được viết tay ngay tại đây — một trong SÁU
+          bản sao cùng công thức nằm rải ở Home/Dashboard/CefrLevelPage/Chat/Speaking/Writing,
+          với bề rộng cột phải lệch nhau giữa các bản. Nay dùng chung `PageShell` + `TwoPane`
+          nên bề rộng và hành vi dính-theo-cuộn chỉ còn MỘT nơi định nghĩa. Thứ tự nội dung ở
+          mobile khác desktop (streak/mục tiêu nằm trong luồng chính) nên vẫn giữ nhánh riêng —
+          đó là khác biệt thật về thông tin, không phải trùng lặp. */}
+      <PageShell width="standard" baseWidth="max-w-3xl">
+        <TwoPane
+          isDesktop={isDesktop}
+          railLabel="Chuỗi ngày và mục tiêu"
+          rail={
+            <div className="space-y-6">
+              {streakSection}
+              {weeklyGoalSection}
+              <QuickActions />
+            </div>
+          }
+        >
+          <div className="space-y-6">
             <PageHeader
               title={vi ? 'Tiến độ học' : 'Your Progress'}
               subtitle={
@@ -793,30 +811,13 @@ export default function Dashboard() {
                   : 'Streak, today’s goal and roadmap progress'
               }
             />
+            {!isDesktop && streakSection}
+            {!isDesktop && weeklyGoalSection}
             {restSections}
-          </main>
-          <aside className="w-72 xl:w-80 shrink-0 space-y-6 sticky top-20 max-h-[calc(100dvh-6rem)] overflow-y-auto">
-            {streakSection}
-            {weeklyGoalSection}
-            <QuickActions />
-          </aside>
-        </div>
-      ) : (
-        <main className="max-w-3xl mx-auto px-4 pt-6 pb-[calc(1.5rem+var(--bnav-h))] space-y-6">
-          <PageHeader
-            title={vi ? 'Tiến độ học' : 'Your Progress'}
-            subtitle={
-              vi
-                ? 'Chuỗi ngày, mục tiêu hôm nay và tiến độ lộ trình'
-                : 'Streak, today’s goal and roadmap progress'
-            }
-          />
-          {streakSection}
-          {weeklyGoalSection}
-          {restSections}
-          <QuickActions />
-        </main>
-      )}
+            {!isDesktop && <QuickActions />}
+          </div>
+        </TwoPane>
+      </PageShell>
     </div>
   )
 }

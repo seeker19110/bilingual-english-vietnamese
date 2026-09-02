@@ -42,6 +42,8 @@ import { getSRSStats } from '../../lib/srs'
 import { getDailyLearned, getDailyMax } from '../../lib/curriculum'
 import { goToSubjects } from '../../lib/subjectsHost'
 import { useIsDesktopViewport } from '../../lib/useIsDesktopViewport'
+import { PageShell } from '@core/PageShell'
+import { TwoPane } from '@core/TwoPane'
 import {
   shouldShowComeback,
   dismissComebackToday,
@@ -430,8 +432,12 @@ export default function Home() {
 
   // ── TIẾN ĐỘ & LỊCH SỬ HỌC ──
   // Desktop: nằm ở cột ngữ cảnh hẹp (w-72) nên xếp 1 cột cho dễ đọc; mobile giữ 2 cột như cũ.
+  // [2026-09-02, đợt 2] Bỏ `lg:grid-cols-1`: trong cột phải desktop, một cột làm hai nút này
+  // giãn hết bề ngang mà chỉ chứa một icon + một chữ, nên đọc như hai THẺ RỖNG chiếm chỗ lớn
+  // (thấy rõ khi chụp màn hình 1440px). Giữ hai cột ở mọi bề rộng thì chúng trở lại đúng vai
+  // trò: một cặp nút điều hướng gọn.
   const progressHistory = (
-    <div className="grid grid-cols-2 lg:grid-cols-1 gap-3 pt-1">
+    <div className="grid grid-cols-2 gap-3 pt-1">
       {/* GIỮ transition-all: đổi cả màu viền/nền (hover) LẪN transform (active:scale). */}
       <button
         onClick={() => nav('/tien-do')}
@@ -466,34 +472,33 @@ export default function Home() {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       <Layout title={T.greeting} back={false} />
 
-      {isDesktop ? (
-        // Desktop ≥1024px: cột trái = luồng thao tác chính (AI, hành động nhanh, không gian bộ
-        // môn); cột phải = ngữ cảnh phụ (mẹo thưởng, tiến độ/lịch sử, khuyến mãi) và dính theo
-        // cuộn giống Dashboard.
-        <div className="max-w-6xl mx-auto px-4 pt-4 pb-[calc(2rem+var(--bnav-h))] flex gap-5 items-start">
-          <main className="flex-1 min-w-0 space-y-5">
+      {/* [2026-09-02, đợt 2] Cột trái = luồng thao tác chính (AI, hành động nhanh, không gian bộ
+          môn); cột phải = ngữ cảnh phụ (mẹo thưởng, tiến độ/lịch sử, khuyến mãi). Bố cục này
+          trước đây viết tay tại chỗ — nay dùng chung `PageShell` + `TwoPane`. Ở mobile thứ tự
+          nội dung khác (ngữ cảnh phụ xen vào luồng chính) nên vẫn giữ nhánh riêng. */}
+      <PageShell width="standard" baseWidth="max-w-3xl">
+        <TwoPane
+          isDesktop={isDesktop}
+          railLabel="Gợi ý và tiến độ"
+          rail={
+            <div className="space-y-5">
+              {rewardTip}
+              {progressHistory}
+              <PricePromoBanner isA={isA} />
+            </div>
+          }
+        >
+          <div className="space-y-5">
             <h1 className="sr-only">{T.greeting}</h1>
             {topBlocks}
+            {!isDesktop && rewardTip}
             {spacesSection}
             {companionHero}
-          </main>
-          <aside className="w-72 xl:w-80 shrink-0 space-y-5 sticky top-20 max-h-[calc(100dvh-6rem)] overflow-y-auto">
-            {rewardTip}
-            {progressHistory}
-            <PricePromoBanner isA={isA} />
-          </aside>
-        </div>
-      ) : (
-        <main className="max-w-3xl mx-auto px-4 pt-4 pb-[calc(2rem+var(--bnav-h))] space-y-5">
-          <h1 className="sr-only">{T.greeting}</h1>
-          {topBlocks}
-          {rewardTip}
-          {spacesSection}
-          {companionHero}
-          {progressHistory}
-          <PricePromoBanner isA={isA} />
-        </main>
-      )}
+            {!isDesktop && progressHistory}
+            {!isDesktop && <PricePromoBanner isA={isA} />}
+          </div>
+        </TwoPane>
+      </PageShell>
     </div>
   )
 }
