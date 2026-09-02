@@ -90,7 +90,7 @@ Hệ thống được chuẩn hóa theo 10 bộ quy chuẩn SOTA chuyên biệt 
 2. `financial-security-sentinel`: VietQR Webhook HMAC-SHA256, Idempotency, Prompt Caching Gateway, Referral VIP, Streak Freeze Vault.
 3. `pedagogy-linguistics-master`: Sư phạm song ngữ 2 chiều, CEFR A1-C2, CAT IRT 3PL, BKT DAG, Acoustic GOP, Echo Shadowing.
 4. `principal-engineer-architect`: Type safety strict, Zod validation, RRF Hybrid RAG, Web Worker Audio DSP, OPFS Edge AI, 5 Quality Gates.
-5. `ui-ux-craftsman`: 5 Focus Studios, CyberTutor 3D Avatar WebGL 15-visemes, 1v1 PvP 60 FPS, WCAG 2.2 AAA/AA, Design Tokens.
+5. `ui-ux-craftsman`: 5 Focus Studios, CyberTutor Avatar Canvas 2D 15-visemes (WebGL chưa làm), 1v1 PvP 60 FPS, WCAG 2.2 AAA/AA, Design Tokens.
 6. `gamification-viral-growth-architect`: 1v1 PvP Arena, Elo FIDE ($K=32$), Ghost Rival Matchmaking, Referral VIP 4 tầng mốc, Story Canvas.
 7. `multimodal-realtime-voice-master`: Full-Duplex WebRTC (<250ms), Barge-in (<50ms), Web Audio Worker ($F_0, F_1, F_2$), 3D Viseme Shaders.
 8. `memory-palace-cognitive-scaffolder`: Method of Loci 3D/Isometric, BKT DAG gap backtrack, Flow State CLI Regulator, Metacognitive MAI.
@@ -155,7 +155,10 @@ Hệ thống được chuẩn hóa theo 10 bộ quy chuẩn SOTA chuyên biệt 
    - Màu chữ lấy từ token `--z-*`/`--a-*` (`apps/dhcb/src/index.css`) — sửa tương phản thì **sửa token**, đừng vá từng chỗ. Lưu ý `text-white` map sang `--c-white` và **bị đảo thành màu tối ở theme nền sáng**: nền cố định tối (nút thương hiệu OAuth…) phải dùng `text-[#fff]`.
 6. **Không bí mật trong code:** dùng biến môi trường; `.env` đã nằm trong `.gitignore`.
 7. **Mobile-first & hiệu năng:** thiết kế màn nhỏ trước, vùng chạm ≥ 44px; hướng tới ngân sách Core Web Vitals (LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1) — Lighthouse CI _(đang bổ sung)_.
-8. **Theme:** **4 theme, mặc định "Xanh đêm"**; dùng design tokens qua biến CSS `--a-*` (`apps/dhcb/src/index.css` + `tailwind.config.js`), **không hard-code màu**; giữ màu ngữ nghĩa (xanh lá = "đúng", phân cấp A1–B2/loại từ). AA ở mọi theme.
+8. **Theme:** **5 theme, mặc định "Xanh đêm"** (thêm theme "Nhi đồng" — `kid` — tách riêng khỏi
+   danh sách cycle của `ThemeToggle`, xem `packages/core-ui/theme.ts`); dùng design tokens qua
+   biến CSS `--a-*` (`apps/dhcb/src/index.css` + `tailwind.config.js`), **không hard-code màu**;
+   giữ màu ngữ nghĩa (xanh lá = "đúng", phân cấp A1–B2/loại từ). AA ở mọi theme.
 9. **Chống lỗi logic:** type-checker không bắt lỗi nghiệp vụ — rà ca biên/rỗng, `null` vs 0, async race/idempotency, thời gian UTC, đếm lượt đúng; mỗi nhánh logic phức tạp có ≥ 1 test ca biên.
 
 ## 5. Chống "ảo giác" (bắt buộc)
@@ -409,7 +412,7 @@ Yêu cầu mơ hồ / nhiều cách hiểu · thao tác không thể hoàn tác 
 - [x] (v2) Theo dõi tiến bộ, streak, chấm phát âm — streak, WordOfTheDay, Flashcard, cache phát âm (`apps/server/src/api/subjects/english/pronunciation.ts`); chấm phát âm chạy trình duyệt bằng Web Speech + Levenshtein (`apps/dhcb/src/lib/pronounceScore.ts` + `apps/dhcb/src/components/PronunciationCheck.tsx`).
 - [x] Bảng tiến độ (`/progress`) — streak + biểu đồ 7 ngày, mục tiêu từ mới hôm nay + lượt còn lại, số từ đã thuộc + cần ôn SRS + % lộ trình, % hoàn thành từng cấp CEFR A1→B2, tổng kết phiên. Logic: `apps/dhcb/src/lib/stats.ts`; UI: `apps/dhcb/src/pages/core/Dashboard.tsx`.
 - [x] Tên miền canonical (SEO) đọc từ `VITE_SITE_URL` trong `apps/dhcb/src/App.tsx`, mặc định domain production. Xem `.env.example`.
-- [x] **Hệ thống theme + audit UI** — màu nhấn thương hiệu thành biến CSS `--a-*` (class `accent-*`, map trong `tailwind.config.js`). **4 theme, mặc định Xanh đêm**: 🌙 Xanh đêm · ☀️ Blue sky · 🌸 Pink · 🎉 Rực rỡ. Chọn theme qua menu swatch (`apps/dhcb/src/components/ThemeToggle.tsx`); định nghĩa ở `apps/dhcb/src/index.css` + `packages/core-ui/theme.ts`. Giữ màu ngữ nghĩa. Font: sàn chữ ≥ 11px, input 16px. Zoom mobile khóa chủ động (đánh đổi 1 mục a11y, bù bằng sàn chữ).
+- [x] **Hệ thống theme + audit UI** — màu nhấn thương hiệu thành biến CSS `--a-*` (class `accent-*`, map trong `tailwind.config.js`). **5 theme, mặc định Xanh đêm**: 🌙 Xanh đêm · ☀️ Blue sky · 🌸 Pink · 🎉 Rực rỡ · 🧒 Nhi đồng (theme `kid`, tách riêng khỏi 4 theme cycle qua `ThemeToggle`, chọn bằng đường riêng — xem `packages/core-ui/theme.ts`). Chọn theme qua menu swatch (`apps/dhcb/src/components/ThemeToggle.tsx`); định nghĩa ở `apps/dhcb/src/index.css` + `packages/core-ui/theme.ts`. Giữ màu ngữ nghĩa. Font: sàn chữ ≥ 11px, input 16px. Zoom mobile khóa chủ động (đánh đổi 1 mục a11y, bù bằng sàn chữ).
 - [x] Giọng điệu Chat/Speaking thân mật, nhẹ nhàng hơn + nút "Kết thúc & chấm điểm" cuối phiên
       (chấm kiểu IELTS Speaking: fluency/từ vựng/ngữ pháp, riêng Speaking có thêm phát âm) — kết quả
       chỉ hiện tạm trong phiên, không lưu Supabase. Xem `PROGRESS.md` (PR #170).
