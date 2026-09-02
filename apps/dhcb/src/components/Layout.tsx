@@ -9,6 +9,7 @@ import Breadcrumb from './Breadcrumb'
 import OfflineStatusBanner from './OfflineStatusBanner'
 import { navigateTo } from '../lib/subjectsHost'
 import { STUDIOS } from '../lib/studios'
+import type { Crumb } from '../lib/breadcrumb'
 
 interface Props {
   // title/subtitle KHÔNG bắt buộc: nhiều trang nay hiển thị tiêu đề LỚN ngay dưới header
@@ -21,10 +22,13 @@ interface Props {
   // lùi ĐÚNG 1 BƯỚC theo cấp bậc đó, KỂ CẢ khi người dùng vào "tắt" từ Home (vd nút "Học tiếp"
   // nhảy thẳng vào 1 cấp) — không phụ thuộc lối vào, back luôn nhất quán theo cấu trúc trang.
   onBack?: () => void
+  // Đốt cha ĐỘNG cho breadcrumb desktop: trang lồng sâu có tên cha mà cây route TĨNH không
+  // biết (vd bài học của hướng "Lập trình Web") tự truyền vào đây. Xem lib/breadcrumb.ts.
+  crumbs?: readonly Crumb[]
   extra?: ReactNode
 }
 
-export default function Layout({ title, subtitle, back = true, onBack, extra }: Props) {
+export default function Layout({ title, subtitle, back = true, onBack, crumbs, extra }: Props) {
   const nav = useNavigate()
   const location = useLocation()
   const { user } = useAuth()
@@ -261,6 +265,7 @@ export default function Layout({ title, subtitle, back = true, onBack, extra }: 
           <Breadcrumb
             pathname={location.pathname}
             currentLabel={title}
+            crumbs={crumbs}
             className="hidden lg:block mb-0.5"
           />
           {title && <p className="font-semibold text-[15px] truncate text-white">{title}</p>}

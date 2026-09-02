@@ -46,6 +46,8 @@ function childNodes(children: readonly NavChild[], parent: string): RouteNode[] 
 const SUBJECTS = studioPath('subjects')
 const PRACTICE = studioPath('practice')
 const ENGLISH = studioPath('english')
+const CAREER = studioPath('career')
+const WORKLIFE = studioPath('worklife')
 
 /**
  * Cây route dùng cho breadcrumb.
@@ -67,6 +69,44 @@ const ROUTE_NODES: readonly RouteNode[] = [
   { path: '/ban-be', label: 'Bạn bè', parent: '/trang-ca-nhan' },
   { path: '/tin-nhan', label: 'Tin nhắn', parent: '/trang-ca-nhan' },
   { path: '/nhiem-vu', label: 'Nhiệm vụ', parent: '/tien-do' },
+
+  // --- Môn Lập trình: các tầng TĨNH dưới `/lap-trinh` ---
+  // Chỉ liệt kê nhánh nào có TRANG THẬT để bấm về (xem App.tsx). Nhánh có id động
+  // (`/lap-trinh/khoa-hoc/:id`, `/lap-trinh/lo-trinh/:id`, `/lap-trinh/bai-hoc/:id`) KHÔNG có
+  // trang danh sách riêng, nên không đặt nút ở đây — trang tự truyền đốt cha động vào
+  // `Layout crumbs` (xem tham số `extra` của `buildCrumbs` bên dưới).
+  { path: '/lap-trinh/huong', label: 'Hướng chuyên sâu', parent: '/lap-trinh' },
+  { path: '/lap-trinh/du-an', label: 'Dự án', parent: '/lap-trinh' },
+  { path: '/lap-trinh/on-tap', label: 'Ôn tập', parent: '/lap-trinh' },
+  { path: '/lap-trinh/chay-thu', label: 'Chạy thử', parent: '/lap-trinh' },
+  { path: '/lap-trinh/gioi-thieu', label: 'Giới thiệu môn', parent: '/lap-trinh' },
+
+  // --- Các TRỤ: công cụ nằm dưới hai studio gộp ---
+  // Trang công cụ của trụ trước đây không có tầng cha nào nên breadcrumb tự ẩn hẳn: đứng ở
+  // "Phòng Luyện Phỏng Vấn AI" không có gì cho biết nó thuộc trụ Sự nghiệp. Đích của đốt cha
+  // giữ nguyên tham số `?muc=` như nút Back của chính trang đó, để rơi đúng tab.
+  {
+    path: '/career/interview',
+    label: 'Sự nghiệp',
+    to: `${CAREER}?muc=su-nghiep`,
+    parent: CAREER,
+  },
+  {
+    path: '/startup/canvas',
+    label: 'Khởi nghiệp',
+    to: `${CAREER}?muc=khoi-nghiep`,
+    parent: CAREER,
+  },
+  {
+    path: '/work/kanban',
+    label: 'Công việc',
+    to: `${WORKLIFE}?muc=cong-viec`,
+    parent: WORKLIFE,
+  },
+  { path: '/life/wheel', label: 'Đời sống', to: `${WORKLIFE}?muc=doi-song`, parent: WORKLIFE },
+  { path: '/action-canvas', label: 'Action Canvas', parent: studioPath('companion') },
+  { path: '/life-graph', label: 'Mạng lưới & Ký ức', parent: '/trang-ca-nhan' },
+  { path: '/ung-dung-thuc-te', label: 'Ứng dụng thực tế', parent: SUBJECTS },
 ]
 
 /** Tra nhanh theo tiền tố. Trùng tiền tố thì mục ĐẦU TIÊN thắng (có test canh). */
@@ -93,9 +133,16 @@ function deepestNode(pathname: string): RouteNode | null {
  *
  * @param pathname đường dẫn đang xem
  * @param currentLabel tiêu đề trang hiện tại (nếu có) — thành đốt CUỐI, không phải liên kết
+ * @param extra đốt cha ĐỘNG do trang tự cấp (tên hướng chuyên sâu, tên lộ trình, tên bậc…),
+ *   chèn SAU các tầng tĩnh. Cây route ở file này chỉ biết đường dẫn cố định, không biết
+ *   `/lap-trinh/huong/web--lap-trinh-web` tên là "Lập trình Web" — chỉ trang đó mới biết.
  * @returns mảng đốt; đốt cuối có `to` rỗng. Ở Trang chủ trả về mảng RỖNG (không vẽ gì).
  */
-export function buildCrumbs(pathname: string, currentLabel?: string): Crumb[] {
+export function buildCrumbs(
+  pathname: string,
+  currentLabel?: string,
+  extra: readonly Crumb[] = [],
+): Crumb[] {
   if (pathname === '/') return []
 
   const trail: Crumb[] = []
@@ -108,6 +155,11 @@ export function buildCrumbs(pathname: string, currentLabel?: string): Crumb[] {
     node = node.parent ? (BY_PATH.get(node.parent) ?? null) : null
   }
   trail.unshift(HOME)
+
+  // Đốt cha động của trang — bỏ đốt trùng ngay trước nó (tránh "Lập trình › Lập trình").
+  for (const c of extra) {
+    if (trail[trail.length - 1]?.label !== c.label) trail.push(c)
+  }
 
   // Tiêu đề trang: chỉ thêm khi nó KHÁC đốt cuối, tránh "Toán học › Toán học".
   if (currentLabel && trail[trail.length - 1]?.label !== currentLabel) {

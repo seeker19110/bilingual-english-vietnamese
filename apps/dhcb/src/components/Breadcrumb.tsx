@@ -11,17 +11,19 @@
 import { Fragment } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
-import { buildCrumbs } from '../lib/breadcrumb'
+import { buildCrumbs, type Crumb } from '../lib/breadcrumb'
 
 interface Props {
   pathname: string
   /** Tiêu đề trang hiện tại — dùng để cây route xác định đúng nhánh, KHÔNG tự vẽ ra (xem trên). */
   currentLabel?: string
+  /** Đốt cha ĐỘNG do trang tự cấp (tên hướng, tên lộ trình, tên bậc…) — xem lib/breadcrumb.ts. */
+  crumbs?: readonly Crumb[]
   className?: string
 }
 
-export default function Breadcrumb({ pathname, currentLabel, className = '' }: Props) {
-  const ancestors = buildCrumbs(pathname, currentLabel).slice(0, -1)
+export default function Breadcrumb({ pathname, currentLabel, crumbs, className = '' }: Props) {
+  const ancestors = buildCrumbs(pathname, currentLabel, crumbs).slice(0, -1)
   // Không có tầng cha nào đáng kể (Trang chủ, hoặc trang tầng 1 mà cha DUY NHẤT chính là
   // Trang chủ) thì vẽ ra là thừa — tiêu đề trang bên dưới đã đủ nói "đang ở đâu".
   if (ancestors.length < 1) return null

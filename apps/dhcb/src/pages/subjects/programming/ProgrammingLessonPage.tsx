@@ -29,6 +29,7 @@ import StepRail from '../../../components/programming/StepRail'
 import { PageShell } from '@core/PageShell'
 import { TwoPane } from '@core/TwoPane'
 import { useIsDesktopViewport } from '../../../lib/useIsDesktopViewport'
+import { duongDanBac } from '../../../lib/programmingRoutes'
 import LivePreview from '../../../components/programming/LivePreview'
 import PredictStep from '../../../components/programming/PredictStep'
 import ParsonsStep from '../../../components/programming/ParsonsStep'
@@ -43,7 +44,7 @@ import { addLessonCardsToSrs } from '../../../lib/programmingSrs'
 import type { ProgrammingLesson } from '@dhcb/subject-programming/lessonTypes'
 import { useProgrammingLesson } from '../../../lib/useProgrammingLesson'
 import { buildSlugSegment, idFromSlugSegment } from '@core/slug'
-import { getLevelIdOfLesson } from '@dhcb/subject-programming/curriculum'
+import { getLevelIdOfLesson, getProgrammingLevel } from '@dhcb/subject-programming/curriculum'
 import {
   gradeTestCase,
   allTestsPassed,
@@ -197,12 +198,16 @@ function LessonBody({ lesson }: { lesson: ProgrammingLesson }) {
   const isDesktop = useIsDesktopViewport()
   const levelId = getLevelIdOfLesson(lesson.id)
   const backTo = levelId ? `/lap-trinh/${levelId}` : '/lap-trinh'
+  // Đốt cha ĐỘNG cho breadcrumb: bậc học chứa bài này (cây route tĩnh chỉ tới "Lập trình").
+  // Dựng URL qua `duongDanBac` để có đúng dạng `<mã>--<tiêu đề>` như mọi nơi khác.
+  const level = levelId ? getProgrammingLevel(levelId) : undefined
+  const crumbs = level ? [{ label: level.name, to: duongDanBac(level) }] : []
 
   return (
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       {/* Quay lại ĐÚNG bậc của bài đang học (PR-UX1). Trước đây ghi cứng '/lap-trinh/p1' nên
           học xong bài P5 bấm quay lại là rơi về bậc P1. Mã bài lạ → lùi về trang môn. */}
-      <Layout onBack={() => nav(backTo)} />
+      <Layout onBack={() => nav(backTo)} crumbs={crumbs} />
 
       {/* [2026-09-02, đợt 1 thiết kế lại desktop] Trước đây trang này là MỘT cột `max-w-4xl`
           căn giữa ở mọi bề rộng màn hình: trên màn 1440px học viên thấy một cột chữ hẹp và
