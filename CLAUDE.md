@@ -180,7 +180,7 @@ Hệ thống được chuẩn hóa theo 10 bộ quy chuẩn SOTA chuyên biệt 
   — dời từ gốc repo ở PR-S2; npm script gốc gọi `vite --config apps/dhcb/vite.config.ts`,
   **output build VẪN là `dist/` ở gốc** cho nginx/deploy không đổi; tsconfig gốc chỉ còn là
   solution file, compilerOptions chung ở `tsconfig.base.json`), `apps/server/` (gói `@dhcb/server` — Express: `apps/server/src/server.ts` khởi tạo app/middleware/static/scheduler, `apps/server/src/routes.ts` bảng gắn ~100 route API, `apps/server/src/api/{core,billing,admin,personal,domains,learning,platform,subjects/english}/` handler chia theo trụ (PR-S4, URL không đổi) + `_lib/` hạ tầng; dời từ gốc ở PR-S3, output biên dịch VẪN là `dist-server/server.js`), `packages/`
-  (16 gói npm workspace thật: `@dhcb/core-*` + `@dhcb/subject-english` (logic môn Anh) + `@dhcb/subject-programming` (logic môn Lập trình, thêm ở PR-L1); `core-domains` gộp 4 gói career/work/startup/life; đã xoá `core-grading` mồ côi, MỖI GÓI có `package.json` + `tsconfig.json`
+  (16 gói npm workspace thật: `@dhcb/core-*` + `@dhcb/subject-english` (logic môn Anh) + `@dhcb/subject-programming` (logic môn Lập trình, thêm ở PR-L1); `core-domains` gộp 4 gói career/work/startup/life; `core-grading` từng bị xoá vì mồ côi, đã KHÔI PHỤC 2026-08-31 cho 3 gói môn STEM `subject-physics`/`subject-chemistry`/`subject-biology` (nội dung bản nháp chờ duyệt, CHƯA nối vào `apps/` — xem `docs/goals/2026-08-31-mon-hoc-toan-ly-hoa-sinh.md`), MỖI GÓI có `package.json` + `tsconfig.json`
   composite; gói mới `core-http` = hạ tầng http/validation/mailer tách từ `api/_lib` cũ (thư mục đã không còn sau đợt cải tổ)),
   `apps/hub/` (gói `@dhcb/hub` — Vite app **riêng, tách khỏi `@dhcb/app`**: trang chủ/landing
   giới thiệu nền tảng "Đồng Hành Cùng Bạn" tại domain gốc, "Global Studio Switcher" chuyển nhanh
@@ -202,6 +202,12 @@ Hệ thống được chuẩn hóa theo 10 bộ quy chuẩn SOTA chuyên biệt 
   `-- hotspots` (file bị import nhiều nhất = rủi ro cao nhất) · `-- cycles` · `-- orphans`.
   Dùng nó thay cho việc đoán phạm vi ảnh hưởng. Code: `scripts/codemap.ts` + `scripts/lib/codemap.ts`.
 
+- **Bài học môn Lập trình nạp lười theo unit (2026-09-01).** App KHÔNG import
+  `@dhcb/subject-programming/lessons` (registry đồng bộ 3 MB — chỉ server/test/script dùng);
+  giao diện dùng `@dhcb/subject-programming/lessonsLoader` (chỉ mục nhẹ `LESSON_INDEX` +
+  `loadLesson`/`loadUnitLessons` nạp đúng unit). **Thêm/đổi bài học xong PHẢI chạy
+  `npm run gen:lesson-index`** để sinh lại `lessonsLazy.ts`; quên thì `lessonsLazy.test.ts` đỏ
+  với đúng câu nhắc đó.
 - Code đơn giản, dễ đọc, **thêm comment tiếng Việt** ở chỗ quan trọng. Mỗi file/hàm làm 1 việc; tên biến tiếng Anh dễ hiểu.
 - KHÔNG đưa API key/mật khẩu vào code — luôn dùng `.env`. Mọi lệnh gọi AI phải **đếm/giới hạn lượt** (Free vs Pro) tránh tốn tiền API.
 - Trước khi sửa nhiều file hoặc đổi cấu trúc: **giải thích kế hoạch ngắn gọn rồi hỏi trước**. Mỗi thay đổi nhỏ, dễ kiểm tra; sau khi sửa nói rõ đã đổi gì + cách chạy thử.

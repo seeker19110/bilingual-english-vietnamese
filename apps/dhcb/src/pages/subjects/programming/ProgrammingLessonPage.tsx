@@ -36,7 +36,8 @@ import { useAuth } from '../../../context/useAuth'
 import { runLessonCode, resetLessonRunners, laBaiDongLenh } from '../../../lib/codeRunner'
 import { saveLessonProgress } from '../../../lib/programmingProgress'
 import { addLessonCardsToSrs } from '../../../lib/programmingSrs'
-import { getLesson } from '@dhcb/subject-programming/lessons'
+import type { ProgrammingLesson } from '@dhcb/subject-programming/lessonTypes'
+import { useProgrammingLesson } from '../../../lib/useProgrammingLesson'
 import { buildSlugSegment, idFromSlugSegment } from '@core/slug'
 import { getLevelIdOfLesson } from '@dhcb/subject-programming/curriculum'
 import {
@@ -58,12 +59,65 @@ const STEPS: readonly LessonStep[] = [
   { key: 'done', label: 'Về nhà', icon: Home, startsPhase: 'hoàn tất' },
 ] as const
 
+/**
+ * VỎ NGOÀI: đọc URL → nạp lười ĐÚNG unit chứa bài (mỗi unit một chunk, không kéo cả môn) →
+ * mới dựng thân trang. Tách vỏ/thân vì các hook của thân trang khởi tạo từ nội dung bài
+ * (starterCode, Parsons…) nên bài phải có sẵn TRƯỚC khi thân trang mount.
+ */
 export default function ProgrammingLessonPage() {
-  const nav = useNavigate()
-  const { user } = useAuth()
   const { lessonId: lessonSlugParam } = useParams<{ lessonId: string }>()
   const lessonId = lessonSlugParam ? idFromSlugSegment(lessonSlugParam) : undefined
-  const lesson = lessonId ? getLesson(lessonId) : undefined
+  const trangThai = useProgrammingLesson(lessonId)
+
+  if (trangThai.status === 'loading') {
+    return (
+      <div className="min-h-dvh bg-zinc-950 text-zinc-100">
+        <Layout />
+        <main className="max-w-4xl mx-auto px-4 pt-6" aria-busy="true">
+          <p className="flex items-center gap-2 text-sm text-zinc-300" role="status">
+            <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+            <span>Đang tải bài học…</span>
+          </p>
+        </main>
+      </div>
+    )
+  }
+  if (trangThai.status === 'error') {
+    return (
+      <div className="min-h-dvh bg-zinc-950 text-zinc-100">
+        <Layout />
+        <main className="max-w-4xl mx-auto px-4 pt-6 space-y-3">
+          <p className="text-sm text-zinc-200" role="alert">
+            Không tải được nội dung bài học (mất mạng?). Thử lại nhé.
+          </p>
+          <button
+            type="button"
+            onClick={trangThai.retry}
+            className="tap-44 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition"
+          >
+            Tải lại bài học
+          </button>
+        </main>
+      </div>
+    )
+  }
+  const lesson = trangThai.lesson
+  if (!lesson) return <Navigate to="/lap-trinh" replace />
+
+  // URL cũ chỉ có id (không có phần mô tả) hoặc slug mô tả không khớp tiêu đề hiện tại
+  // (bài học đã đổi tên) → chuyển hướng về URL chuẩn để không bị Google coi là 2 trang khác
+  // nhau (nội dung trùng).
+  const canonicalSegment = buildSlugSegment(lesson.id, lesson.title)
+  if (lessonSlugParam !== canonicalSegment) {
+    return <Navigate to={`/lap-trinh/bai-hoc/${canonicalSegment}`} replace />
+  }
+  // key theo id: đổi bài là dựng lại thân trang từ đầu (state bước/code không dính bài cũ).
+  return <LessonBody key={lesson.id} lesson={lesson} />
+}
+
+function LessonBody({ lesson }: { lesson: ProgrammingLesson }) {
+  const nav = useNavigate()
+  const { user } = useAuth()
 
   const [step, setStep] = useState(0)
   // ③ Ví dụ mẫu
@@ -74,14 +128,11 @@ export default function ProgrammingLessonPage() {
   const [predictChoice, setPredictChoice] = useState<number | null>(null)
   const [predictRevealed, setPredictRevealed] = useState(false)
   // ⑤ Parsons
-  const shuffledLines = useMemo(
-    () => (lesson ? parsonsShuffle(lesson.parsons.lines, lesson.id) : []),
-    [lesson],
-  )
+  const shuffledLines = useMemo(() => parsonsShuffle(lesson.parsons.lines, lesson.id), [lesson])
   const [arranged, setArranged] = useState<string[]>([])
   const [parsonsResult, setParsonsResult] = useState<'correct' | 'wrong' | null>(null)
   // ⑥ Make
-  const [code, setCode] = useState(lesson?.make.starterCode ?? '')
+  const [code, setCode] = useState(lesson.make.starterCode)
   const [grading, setGrading] = useState(false)
   const [results, setResults] = useState<TestCaseResult[] | null>(null)
   const [hintsShown, setHintsShown] = useState(0)
@@ -90,19 +141,9 @@ export default function ProgrammingLessonPage() {
 
   // Ghi "đang học" khi vào bài; rời trang huỷ mọi worker chạy code (Python/JavaScript).
   useEffect(() => {
-    if (user && lesson) void saveLessonProgress(user.id, lesson.id, 'in_progress')
+    if (user) void saveLessonProgress(user.id, lesson.id, 'in_progress')
     return () => resetLessonRunners()
   }, [user, lesson])
-
-  if (!lesson) return <Navigate to="/lap-trinh" replace />
-
-  // URL cũ chỉ có id (không có phần mô tả) hoặc slug mô tả không khớp tiêu đề hiện tại
-  // (bài học đã đổi tên) → chuyển hướng về URL chuẩn để không bị Google coi là 2 trang khác
-  // nhau (nội dung trùng).
-  const canonicalSegment = buildSlugSegment(lesson.id, lesson.title)
-  if (lessonSlugParam !== canonicalSegment) {
-    return <Navigate to={`/lap-trinh/bai-hoc/${canonicalSegment}`} replace />
-  }
 
   const runExample = async () => {
     setExampleState('running')

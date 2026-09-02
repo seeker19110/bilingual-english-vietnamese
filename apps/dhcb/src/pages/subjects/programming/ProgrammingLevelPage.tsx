@@ -15,7 +15,7 @@ import {
   type ProgrammingLessonProgress,
 } from '../../../lib/programmingProgress'
 import { getProgrammingLevel } from '@dhcb/subject-programming/curriculum'
-import { getLessonsByUnit } from '@dhcb/subject-programming/lessons'
+import { getUnitSummaries } from '@dhcb/subject-programming/lessonsLoader'
 import { buildSlugSegment, idFromSlugSegment } from '@core/slug'
 import { duongDanBac } from '../../../lib/programmingRoutes'
 
@@ -44,7 +44,7 @@ export default function ProgrammingLevelPage() {
 
   // Tiến độ bậc: đếm trên các bài ĐÃ SOẠN của bậc (unit chưa có bài không tính vào mẫu số,
   // để thanh tiến độ không "đứng im" ở mức thấp khi nội dung còn đang soạn dần).
-  const levelLessons = level.units.flatMap((u) => getLessonsByUnit(u.id))
+  const levelLessons = level.units.flatMap((u) => getUnitSummaries(u.id))
   const lessonCount = levelLessons.length
   const completedCount = levelLessons.filter((l) => isLessonCompleted(progress, l.id)).length
 
@@ -111,7 +111,7 @@ export default function ProgrammingLevelPage() {
             </div>
           )}
           {level.units.map((unit, idx) => {
-            const lessons = getLessonsByUnit(unit.id)
+            const lessons = getUnitSummaries(unit.id)
             const unitCompleted =
               lessons.length > 0 && lessons.every((l) => isLessonCompleted(progress, l.id))
             return (

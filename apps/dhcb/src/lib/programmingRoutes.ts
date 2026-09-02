@@ -5,7 +5,10 @@
 // để người đọc và Google biết trang nói về gì. Ghép chuỗi đó rải rác ở từng trang là cách
 // chắc chắn để một chỗ nào đó quên phần mô tả rồi sinh ra URL thứ hai cùng nội dung.
 //
-// Mọi hàm ở đây là hàm thuần, không I/O — tra cứu trên hằng biên dịch của gói môn học.
+// Mọi hàm ở đây là hàm thuần, không I/O, và CHỈ nhận đối tượng đã có tên/tiêu đề — file này
+// cố ý KHÔNG import registry dữ liệu nào (hướng chuyên sâu, khoá học…): nó được 10 chunk dùng
+// chung, mà kéo registry 14 hướng vào là +48 kB gzip cho mọi trang cần dựng một URL (đo
+// 2026-09-01). Hàm tra cứu theo id (cần registry) nằm ở `programmingRoutesSpec.ts`.
 import { buildSlugSegment } from '@core/slug'
 import type { ShortCourse } from '@dhcb/subject-programming/courses/types'
 import type {
@@ -13,7 +16,6 @@ import type {
   SpecStage,
 } from '@dhcb/subject-programming/specializations/types'
 import type { LearningPath } from '@dhcb/subject-programming/learningPaths/types'
-import { getSpecialization } from '@dhcb/subject-programming/specializations/registry'
 import type { ProgrammingLevel } from '@dhcb/subject-programming/curriculum'
 
 /** Trang một bậc P1–P6. */
@@ -55,22 +57,4 @@ export function duongDanChangLoTrinh(
 /** Màn chẩn đoán chọn điểm vào của một lộ trình. */
 export function duongDanChanDoan(path: Pick<LearningPath, 'id' | 'title'>): string {
   return `${duongDanLoTrinh(path)}/chan-doan`
-}
-
-/**
- * URL của một chặng khi chỉ biết id chặng (ví dụ 'ai-s1' trong bảng lắp ghép của lộ trình).
- * Trả về undefined nếu id không thuộc hướng nào — nơi gọi tự quyết định đường thay thế.
- */
-export function duongDanChangTheoId(stageId: string): string | undefined {
-  const [specId] = stageId.split('-')
-  const spec = getSpecialization(specId ?? '')
-  const stage = spec?.stages.find((s) => s.id === stageId)
-  return spec && stage ? duongDanChangHuong(spec, stage) : undefined
-}
-
-/** Trang hướng khi chỉ biết id chặng — dùng cho nút "xem bản đồ hướng". */
-export function duongDanHuongTheoChangId(stageId: string): string | undefined {
-  const [specId] = stageId.split('-')
-  const spec = getSpecialization(specId ?? '')
-  return spec ? duongDanHuong(spec) : undefined
 }

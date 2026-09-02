@@ -8,12 +8,12 @@
 //  2. Không có bài dở → bài CHƯA HOÀN THÀNH đầu tiên.
 //  3. Hoàn thành hết → null (giao diện chuyển sang lời chúc mừng, không đẩy đi đâu nữa).
 import { PROGRAMMING_LEVELS } from '@dhcb/subject-programming/curriculum'
-import { getLessonsByUnit } from '@dhcb/subject-programming/lessons'
-import type { ProgrammingLesson } from '@dhcb/subject-programming/lessonTypes'
+import { getUnitSummaries, type LessonSummary } from '@dhcb/subject-programming/lessonsLoader'
 import type { ProgrammingLessonProgress } from './programmingProgress'
 
 export interface NextLesson {
-  lesson: ProgrammingLesson
+  /** Tóm tắt (id · tiêu đề · ngôn ngữ) — đủ cho nút "học tiếp", không kéo nội dung bài. */
+  lesson: LessonSummary
   levelId: string
   levelName: string
   /** Đang học dở (khác với bài chưa từng mở) — giao diện đổi chữ nút cho đúng. */
@@ -22,13 +22,13 @@ export interface NextLesson {
 
 /** Toàn bộ bài đã soạn, THEO ĐÚNG thứ tự giáo trình. */
 export function lessonsInOrder(): {
-  lesson: ProgrammingLesson
+  lesson: LessonSummary
   levelId: string
   levelName: string
 }[] {
   return PROGRAMMING_LEVELS.flatMap((level) =>
     level.units.flatMap((unit) =>
-      getLessonsByUnit(unit.id).map((lesson) => ({
+      getUnitSummaries(unit.id).map((lesson) => ({
         lesson,
         levelId: level.id,
         levelName: level.name,

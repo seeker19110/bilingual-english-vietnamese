@@ -7,7 +7,7 @@
 // NHỊP CỦA MÀN ÔN (cố ý): hiện câu hỏi → học viên NGHĨ đã rồi mới bấm "Xem đáp án" → tự đánh
 // giá 4 mức. Bắt nghĩ trước khi thấy đáp án chính là thứ tạo ra trí nhớ; hiện sẵn cả hai mặt
 // thì học viên chỉ đọc lướt và tưởng mình nhớ.
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Brain, Eye, CheckCircle2, Trophy, BookOpen } from 'lucide-react'
 import { usePageTitle } from '../../../lib/usePageTitle'
@@ -16,12 +16,13 @@ import PageHeader from '../../../components/PageHeader'
 import { useAuth } from '../../../context/useAuth'
 import {
   getDueProgCards,
+  hydrateProgCards,
   reviewProgCard,
   countProgCards,
   type ProgSrsCard,
+  type ProgSrsCardRef,
 } from '../../../lib/programmingSrs'
 import { SRS_SESSION_CAP, type Rating } from '../../../lib/srs'
-import { getLesson } from '@dhcb/subject-programming/lessons'
 import { buildSlugSegment } from '@core/slug'
 
 /** 4 mức tự đánh giá — nhãn nói bằng lời người học, không dùng thuật ngữ FSRS. */
@@ -46,12 +47,31 @@ export default function ProgrammingReview() {
   // chấm xong một thẻ là nó hết đến hạn, nếu tính lại sau mỗi lần chấm thì danh sách tụt dần
   // dưới chân người học và số đếm nhảy loạn. getDueProgCards đọc localStorage đồng bộ nên
   // không cần effect — dùng effect + setState ở đây còn gây render dây chuyền (lint chặn).
-  const hangDoi = useMemo<ProgSrsCard[] | null>(
+  const hangDoiRef = useMemo<ProgSrsCardRef[] | null>(
     () => (user ? getDueProgCards(user.id, SRS_SESSION_CAP) : null),
     [user],
   )
 
-  const the = hangDoi?.[viTri]
+  // Nội dung thẻ (câu hỏi/đáp án) nằm trong bài học, nạp lười đúng các unit có thẻ đến hạn —
+  // không kéo cả môn vào màn ôn. Ba trạng thái: chưa nạp (null) · lỗi mạng ('error') · xong.
+  const [hangDoi, setHangDoi] = useState<ProgSrsCard[] | 'error' | null>(null)
+  const [lanThu, setLanThu] = useState(0)
+  useEffect(() => {
+    if (!hangDoiRef) return
+    let huy = false
+    hydrateProgCards(hangDoiRef)
+      .then((cards) => {
+        if (!huy) setHangDoi(cards)
+      })
+      .catch(() => {
+        if (!huy) setHangDoi('error')
+      })
+    return () => {
+      huy = true
+    }
+  }, [hangDoiRef, lanThu])
+
+  const the = hangDoi !== null && hangDoi !== 'error' ? hangDoi[viTri] : undefined
 
   const cham = (rating: Rating) => {
     if (!user || !the) return
@@ -72,12 +92,33 @@ export default function ProgrammingReview() {
         />
 
         {hangDoi === null && (
-          <p className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4 text-sm text-zinc-300">
+          <p
+            className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4 text-sm text-zinc-300"
+            role="status"
+          >
             Đang tải thẻ của bạn…
           </p>
         )}
 
-        {hangDoi !== null && hangDoi.length === 0 && (
+        {hangDoi === 'error' && (
+          <div className="rounded-2xl border border-rose-500/40 bg-zinc-900/60 p-4 space-y-3">
+            <p className="text-sm text-zinc-200" role="alert">
+              Không tải được nội dung thẻ (mất mạng?). Thử lại nhé.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setHangDoi(null)
+                setLanThu((n) => n + 1)
+              }}
+              className="tap-44 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-accent-500 hover:bg-accent-400 text-black font-semibold text-sm transition"
+            >
+              Tải lại thẻ
+            </button>
+          </div>
+        )}
+
+        {hangDoi !== null && hangDoi !== 'error' && hangDoi.length === 0 && (
           <div className="rounded-3xl border border-zinc-800 bg-zinc-900/80 p-5 space-y-2">
             <p className="flex items-center gap-2 text-sm font-bold text-white">
               <CheckCircle2 className="w-5 h-5 text-emerald-400" />
@@ -97,7 +138,7 @@ export default function ProgrammingReview() {
           </div>
         )}
 
-        {hangDoi !== null && hangDoi.length > 0 && !the && (
+        {hangDoi !== null && hangDoi !== 'error' && hangDoi.length > 0 && !the && (
           <div className="rounded-3xl border border-emerald-500/40 bg-emerald-500/10 p-5 flex items-start gap-3">
             <Trophy className="w-6 h-6 text-emerald-400 shrink-0" />
             <div>
@@ -113,7 +154,8 @@ export default function ProgrammingReview() {
         {the && (
           <section className="space-y-4">
             <p className="text-xs text-zinc-400" aria-live="polite">
-              Thẻ {viTri + 1}/{hangDoi!.length} · từ bài “{the.lessonTitle}”
+              Thẻ {viTri + 1}/{hangDoi !== null && hangDoi !== 'error' ? hangDoi.length : 0} · từ
+              bài “{the.lessonTitle}”
             </p>
 
             <div className="rounded-3xl border border-accent-500/30 bg-zinc-900/80 p-6">
@@ -154,9 +196,7 @@ export default function ProgrammingReview() {
 
             <button
               onClick={() =>
-                nav(
-                  `/lap-trinh/bai-hoc/${buildSlugSegment(the.lessonId, getLesson(the.lessonId)?.title ?? '')}`,
-                )
+                nav(`/lap-trinh/bai-hoc/${buildSlugSegment(the.lessonId, the.lessonTitle)}`)
               }
               className="tap-44 inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-zinc-600 text-zinc-300 text-sm transition"
             >

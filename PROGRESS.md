@@ -2800,6 +2800,10 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Nợ kỹ thuật còn mở
 
+> Mục này CHỈ giữ nợ **đang mở** (🟡/🔴). Nợ đã đóng (🟢) được dời sang
+> `docs/legacy/no-ky-thuat-da-dong.md` (2026-09-01) để file này chỉ nói trạng thái hiện tại —
+> đúng vai trò ở mục 2 `CLAUDE.md`. Đóng một món nợ = cắt khối đó dán sang file kia, kèm ngày.
+
 - 🟡 **[2026-08-28] Repo có HAI file cấu hình Nginx mô tả cùng một server.** `nginx/dhcb.conf`
   tự nhận là "cấu hình ĐANG CHẠY THẬT trên VPS", trong khi `docs/cloudflare-setup.md` và
   `docs/runbook-dung-vps-moi-tu-dau.md` lại hướng dẫn copy `nginx/en-vi.conf`. Không biết bản
@@ -2807,18 +2811,6 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   (changelog 0191) đã sửa CẢ HAI cho khớp, nhưng đó là chữa triệu chứng. Việc cần làm: SSH lên
   VPS đọc `/etc/nginx/sites-enabled/`, giữ đúng một file trong repo, xoá file kia và sửa tài
   liệu trỏ theo.
-- 🟢 **[ĐÓNG 2026-08-28] Giao diện coi người dùng là khách khi mở subdomain khác.**
-  **Đính chính mô tả ban đầu của mục này:** nó viết "`validateAuth` chấp nhận cookie khi thiếu
-  Bearer" — SAI. Từ Bước 6 (`docs/adr/0002-quan-ly-nguoi-dung.md`), `validateAuth` **chỉ** đọc
-  cookie `session_token` và **bỏ qua hoàn toàn** header `Authorization`. Đo trực tiếp trên
-  server đã build với DB thật: cùng một phiên, gọi `/api/auth?action=me` chỉ với cookie → 200,
-  chỉ với Bearer → 401. Nghĩa là API trên subdomain mới **vốn đã xác thực được** nhờ cookie
-  `Domain=.donghanhcungban.org`.
-  Chỗ thật sự hỏng nằm ở CLIENT: app dùng "có token trong `localStorage` không" làm cờ
-  đã-đăng-nhập, mà `localStorage` cô lập theo origin — `getCurrentUser()` thoát sớm, và
-  `cloud.ts`/`challengeCloud.ts`/`tutorFeedback.ts` lặng lẽ bỏ qua đồng bộ. Đã vá bằng action
-  `session-from-cookie`: nạp lại cờ đó đúng một lần lúc khởi động.
-
 - 🟡 **[2026-08-28 — rà UI/UX 5 trang trụ cột, xem `docs/changelog/0186-*.md`] Ba việc còn để
   ngỏ, cần người dùng quyết hoặc tách đợt riêng.**
 
@@ -2868,33 +2860,6 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   **Điều kiện gỡ nợ:** cả hai tính năng chạy được ở `direction === 'B'` với 0 chuỗi tiếng Việt
   lọt ra, và hai cổng a11y xanh ở cả hai ngôn ngữ giao diện.
 
-- 🟢 **[2026-08-26 — ĐÃ GỠ, kiểm chứng bằng bài thử] Rate limit từng bị né hoàn toàn bằng
-  header `X-Forwarded-For` giả; nay đã bịt cả hai tầng.**
-
-  **Trước khi vá** — 40 request vào `/api/app-settings` (giới hạn 30/phút) với IP giả ngẫu
-  nhiên mỗi lần: **40 lần `200`, không một `429`**. Nguyên nhân: nginx dùng
-  `$proxy_add_x_forwarded_for` (NỐI ip thật vào CUỐI) trong khi `getClientIp()` đọc phần tử
-  ĐẦU — tức giá trị client tự khai.
-
-  **Sau khi vá** — chạy lại đúng hai bài thử ở `docs/cloudflare-setup.md`:
-
-  | Bài thử                           | Kết quả                            | Đọc thế nào                                                                                                        |
-  | --------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-  | A — IP giả **ngẫu nhiên** mỗi lần | **30 × `200`, rồi 10 × `429`**     | Khớp CHÍNH XÁC giới hạn 30/phút ⇒ đếm theo IP thật, header giả vô tác dụng                                         |
-  | B — IP giả **cố định**            | **40 × `429`** ngay từ request đầu | Chạy từ cùng máy với A nên cùng IP thật; quota đã bị A dùng hết ⇒ hai bài dùng CHUNG một bộ đếm, đúng như phải thế |
-
-  Bài B trả `429` ngay từ đầu thoạt nhìn có vẻ lạ, nhưng đó mới là bằng chứng mạnh nhất: nếu
-  rate limit còn tin header giả thì B đã có bộ đếm riêng và trả `200`.
-
-  **Hai tầng đã áp:** (1) `getClientIp()` đọc `CF-Connecting-IP` → `X-Real-IP` → XFF phần tử
-  CUỐI (PR #701, 7 test chặn hồi quy trong `packages/core-http/http.test.ts`); (2) nginx
-  `cloudflare-realip.conf` chỉ nhận header từ đúng dải IP Cloudflare — người dùng đã áp lên VPS
-  cùng ngày.
-
-  **Bài học ghi lại:** lỗ hổng sống sót qua nhiều lần rà soát vì cách kiểm chứng cũ hỏi sai
-  câu — _"IP hiển thị có đúng không?"_ (nhìn log là trả lời được) thay vì _"IP có ghi đè được
-  không?"_ (chỉ trả lời được bằng cách tự tấn công mình). Tài liệu đã đổi sang câu thứ hai.
-
 - 🟡 **[2026-08-26 — HẠ MỨC sau khi chẩn đoán; ban đầu ghi 🔴 là ĐÁNH GIÁ QUÁ NẶNG] Redis rớt
   kết nối 7 lần/ngày, mỗi lần DƯỚI MỘT GIÂY.** `pm2 logs dhcb --err` cho thấy 7 cặp log
   (00:03 · 00:27 · 02:50 · 03:41 · 04:37 · 05:28 · 08:03), mỗi cặp là "Redis lỗi (Stream isn't
@@ -2929,54 +2894,15 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   treo request khi Redis chết). Ứng viên hợp lý là nới `connectTimeout` (đang 2000ms) — nhưng
   chỉ khi có bằng chứng, không theo linh cảm.
 
-- 🟢 **[2026-08-26 — ĐÃ GỠ] VPS production đã có swap 6 GB.** `scripts/setup-swap.sh` chạy
-  thật trên máy: `free -h` nay báo `Swap: 6.0Gi · used 0B` (dùng 0B là đúng —
-  `vm.swappiness=10` nên kernel chỉ chạm swap khi RAM thật sự cạn). Đĩa còn 22 GB trước khi
-  tạo nên không sát đáy. Ghi lại bối cảnh gốc: Số đo người dùng gửi từ VPS hôm nay:
-
-  ```
-  free -h  →  total 2.9Gi · used 1.1Gi · available 1.8Gi · Swap 0B
-  pm2 list →  3 instance dhcb: 218,7 + 217,6 + 231,1 MB · pm2-logrotate 57,5 MB
-  ```
-
-  Lúc rảnh dư dả (dùng ~40% RAM). Chỗ nguy hiểm là **lúc deploy**: `scripts/deploy.sh` chạy
-  `npm ci` + `npm run build` ngay trên máy đang phục vụ, Vite + `tsc -b` 16 workspace ngốn thêm
-  1–1,5 GB ở đỉnh — chạm trần 2,9 GB. Không swap thì kernel gọi OOM killer, mà OOM killer
-  **không chọn tiến trình đáng chết**: nó có thể giết PostgreSQL giữa lúc deploy.
-
-  **Điều kiện gỡ nợ:** trên VPS chạy `sudo bash scripts/setup-swap.sh 6G` rồi xác nhận
-  `free -h` thấy dòng Swap khác `0B`. Xem `docs/deploy-vps-ubuntu.md` Bước 3a.
-
-  **Hai thứ nữa phát hiện cùng lúc, chưa vá (đề xuất, chờ người dùng chốt):**
-  1. `ecosystem.config.cjs` **thiếu `max_memory_restart`** — instance rò rỉ bộ nhớ thì PM2
-     không tự khởi động lại, để mặc kernel giết bừa. Đề xuất `'400M'` (mỗi instance đang dùng
-     ~220 MB, nên 400 MB là ngưỡng bất thường rõ ràng chứ không phải mức bình thường).
-  2. `PG_POOL_MAX` mặc định **10 mỗi tiến trình × 3 instance = 30 kết nối** Postgres thật.
-     Chưa vỡ (`max_connections` mặc định 100) nhưng thừa; đề xuất đặt `PG_POOL_MAX=5`.
-
-  **↺ 64 — ĐÃ KẾT LUẬN, không phải crash.** Đọc `pm2 logs dhcb --err --lines 200`: 200 dòng
-  log lỗi gần nhất KHÔNG có một stack trace crash nào, không có tiến trình thoát bất thường.
-  Toàn bộ là cảnh báo Redis rớt (mục trên) và 2 lỗi TTS Gemini có xử lý sẵn. Vậy 64 là cộng
-  dồn qua các lần `pm2 reload` khi deploy — bình thường.
-
-- 🟢 **[2026-08-25 → ĐÃ GỠ 2026-08-26] `nginx/en-vi.conf` nay ĐÃ áp lên VPS thật** (làm cùng lúc với việc áp `cloudflare-realip.conf` để bịt lỗ hổng rate limit — xác nhận bằng bài thử A/B ở mục trên). Ghi lại bối cảnh gốc: Audit
-  2026-08-25 (F5) phát hiện bản `Content-Security-Policy-Report-Only` trong nginx còn whitelist
-  `*.supabase.co` dù dự án rời Supabase từ 2026-07-20, lại thiếu facebook/apple/microsoft,
-  `media-src blob:` và `frame-src accounts.google.com` so với CSP thật — nên nó chỉ sinh báo cáo
-  vi phạm GIẢ. Đã xoá hẳn ở PR #664 (giữ đúng MỘT nguồn CSP là Express).
-
-  **Điều kiện gỡ nợ:** copy file lên VPS rồi:
-
-  ```bash
-  sudo nginx -t && sudo systemctl reload nginx
-  ```
-
-  **Vì sao chưa gỡ được từ đây:** repo chỉ chứa BẢN SAO cấu hình; file thi hành thật nằm trên
-  server. Sửa trong repo mà quên áp = tài liệu nói một đằng, server chạy một nẻo — đúng loại
-  lệch mà Tầng 6b của quy trình audit sinh ra để bắt.
-
 - 🟡 **[ĐO LẠI 2026-08-26 — nợ này ĐÃ THU HẸP, không còn đúng như mô tả cũ] Chỉ COVERAGE còn
-  mỏng; ngân sách BUNDLE nay rộng.** Số đo thật hôm nay trên `main` (chạy `npm ci` sạch rồi
+  mỏng; ngân sách BUNDLE nay rộng.**
+
+  **[Đo lại 2026-09-01, đợt tối ưu dự án]** Trước đợt: JS 127,36 / 140 kB · CSS **17,00 / 18 kB
+  (còn đúng 1 kB — PR #797 thêm keyframes/utility)** · branches **90,19%** (còn 0,19 điểm).
+  Sau đợt: JS 127,26 kB (chunk `lessons` 3 MB của môn Lập trình đã tách thành 153 chunk theo
+  unit, nạp lười; `programmingRoutes` 48 kB gzip → 0,5 kB) · branches **90,67%** (còn 0,67 điểm) nhờ test
+  `progressSync.ts` (74 → 92%) + `co-learning-audio.ts`. CSS KHÔNG đổi — vẫn là biên độ mỏng nhất, thêm animation/theme
+  mới là phải rà `tailwind.config.js` trước. Chạy `npm run budget` để xem số hiện tại. Số đo thật hôm nay trên `main` (chạy `npm ci` sạch rồi
   `npm run build`):
 
   | Ngân sách            | Số thật   | Ngưỡng | Biên độ          |
@@ -3036,43 +2962,6 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   1 trang CEFR (ngân sách LCP ≤ 2,5s · INP ≤ 200ms · CLS ≤ 0,1), và đọc Sentry (lỗi mới chưa
   xem xét) + `pm2 logs`/số lần restart + dung lượng ổ đĩa.
 
-- 🟢 **[2026-08-26 — ĐÃ GỠ] Baseline eval gia sư ĐÃ CÓ SỐ THẬT, chất lượng sư phạm không tụt.**
-  Chạy trên VPS với key thật: **62/62 câu chấm được**, recall 97,7% · precision 97,7% ·
-  FP-rate 5,6% · specificity 94,4% · Feedback VI 100% · Type-hit 76,7%. 9/11 nhóm lỗi đạt
-  tuyệt đối; chỉ bỏ sót `adj-02` (trật tự tính từ). Số liệu ở
-  `docs/research/eval-tutor-baseline.md`.
-
-  **Đính chính một điều mục nợ này từng ghi sai:** nó viết "baseline vẫn là bản 2026-08-21".
-  Không đúng — `git log -- docs/research/eval-tutor-baseline.md` cho ĐÚNG MỘT commit trong
-  toàn bộ lịch sử (PR #625), và nội dung là bản mẫu rỗng ghi rõ "⏳ CHƯA CÓ SỐ LIỆU BASELINE".
-  Tức **chưa từng có baseline số nào, ở bất kỳ ngày nào**, và luật ở `CLAUDE.md` mục 8 ("PR
-  sửa prompt/model phải dán bảng so sánh, recall/precision không được tụt") **chưa bao giờ thi
-  hành được** vì không có mốc để so. Lần chạy 2026-08-26 là baseline ĐẦU TIÊN, không phải một
-  lần so sánh. Bài học: một mục nợ khẳng định "bản ngày X" mà không ai mở file ra xem thì nó
-  chỉ là tin đồn được chép lại — kiểm bằng `git log` trước khi chép.
-
-  **Đo đúng đường production.** `chatFallback.ts` gọi theo thứ tự Groq → Anthropic → Gemini,
-  và script eval cũng ưu tiên Groq trước, nên số trên là chất lượng của **provider chính** mà
-  người dùng thật đang gặp. Gemini (`gemini-3.6-flash`) là lớp dự phòng thứ ba — health-check
-  07:00 ngày 26/8 xác nhận nó gọi được (512ms), nhưng chất lượng sư phạm của riêng nhánh đó
-  vẫn chưa đo; chạy `npm run eval:tutor` trên máy KHÔNG có `GROQ_API_KEY`/`ANTHROPIC_API_KEY`
-  thì script sẽ rơi xuống Gemini và đo được. Hai tính năng vision
-  (`visionSolverService.ts`, `ambientVisionService.ts`) dùng chung model đó, cũng chưa thử tay.
-
-  **Ba việc phải làm để chạy được, ghi lại vì đều là bẫy thật:**
-  1. Script đọc `process.env.GROQ_API_KEY` nguyên chuỗi làm Bearer token, trong khi production
-     đi qua `groqKeyPool()` tách nhiều key theo dấu phẩy → 62/62 lỗi `401` và một báo động sự
-     cố production hoàn toàn không có thật. Đã vá.
-  2. Báo lỗi chỉ giữ `lastErr` nên `429` của khoá đang sống bị `401` của khoá hỏng che mất →
-     chẩn đoán sai thêm hai vòng. Nay in trạng thái TỪNG khoá: `[#1→429 #2→429]`. Đã vá.
-  3. Một khoá trong `.env` hỏng vật lý — dài 50 ký tự thay vì 56, kết thúc bằng ký tự `>`, sai
-     định dạng `gsk_[A-Za-z0-9]+`. Bị cắt cụt lúc ghi file, không phải bị thu hồi. Đã thay.
-
-  Groq tính hạn mức theo **TÀI KHOẢN chứ không theo khoá**, nên gộp nhiều khoá cùng một tài
-  khoản vào bể KHÔNG tăng quota — chỉ có giá trị dự phòng khi một khoá bị thu hồi. Đúng cho cả
-  production. Chạy eval cần `--delay 3000` (62 câu ≈ 3–4 phút); `--delay 500` mặc định làm tắc
-  từ câu 22.
-
 - 🟡 **[2026-08-26] Dải nhiễu của eval rộng hơn mức một PR có thể phân biệt được.** Hai lượt
   chạy liên tiếp, cùng prompt · model · bộ đề · `--delay`, cách nhau vài phút: FP-rate 0% →
   5,6%, specificity 100% → 94,4%, Type-hit 86,0% → 76,7%. Chỉ MỘT câu đổi phán đoán
@@ -3123,23 +3012,6 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   ② hoãn C1b-2, làm **S-1 (2FA TOTP)** trước — 2FA độc lập hoàn toàn với mã hoá và không bị chặn
   bởi câu hỏi khoá gốc.
 
-- 🟢 **[2026-08-21] Đã vá 15 test e2e đỏ trên `main`** (phát hiện khi driving PR #617 tới green —
-  commit `fd188ef` "restructure platform hub and dedicated english studio routing" đổi route "/"
-  từ `EnglishHome` sang `Home` (platform hub mới) và dời `EnglishHome` sang `/hoc-tieng-anh`, kéo
-  theo 2 loại lỗi:
-  1. **5 test sai route** (`e2e/a11y.spec.ts` "Home — gợi ý luyện nói..." × 5 theme,
-     `e2e/comeback.spec.ts` × 2, `e2e/bottomnav.spec.ts` × 1 — nhãn tab đổi "Lộ trình" →
-     "Học Tiếng Anh"): sửa test trỏ đúng `/hoc-tieng-anh` thay vì `/` cho nội dung đã dời, và
-     cập nhật locator theo nhãn mới.
-  2. **9 lỗi a11y `color-contrast` thật** trên `Home.tsx` (platform hub mới) và `EnglishHome.tsx`
-     — 2 dạng bug lặp lại từ đợt vá PR #616 trước: (a) pill/nút dùng thẳng `text-emerald/blue/
-purple/orange/amber/sky-300` thiếu biến thể `theme-light:text-*-800` nên nhạt trên 3 theme
-     sáng; (b) nút nền `bg-accent-500`/`bg-emerald-500` dùng `text-zinc-950` — token `--z-950`
-     BỊ ĐẢO CHIỀU ở theme sáng (nhạt nhất thay vì đậm nhất, xem PROGRESS.md đợt vá PR #616) nên
-     chữ gần trắng trên nền sáng → sửa bằng màu cố định `text-[#09090b]` (không qua token z-\*,
-     đã tính contrast ≥ 5.9:1 trên cả 5 theme accent màu khác nhau) thay vì `text-zinc-950`.
-     Xác nhận: `npx playwright test e2e/a11y.spec.ts e2e/bottomnav.spec.ts e2e/comeback.spec.ts`
-     134/134 pass cục bộ; build/typecheck/lint/format/`npm test` (5019/5019) đều xanh.
 - 🟡 **[2026-08-21] Gemini Live — đã thay code GIẢ bằng kết nối WebSocket THẬT, nhưng CHƯA test
   với API key thật.** Nhánh `claude/gemini-live-integration-xo175x` trước đó (commit `cf44362`
   "feat: implement horizon features and stress test suite") đã có sẵn một bộ khung lớn (~4100
@@ -3157,9 +3029,6 @@ purple/orange/amber/sky-300` thiếu biến thể `theme-light:text-*-800` nên 
   `gemini-2.0-flash-exp`, Google hay đổi tên/khả dụng model Live), (3) thử 1 phiên thật qua
   `/ws/gemini-live`, (4) audit lại các file "V6.x/V7.0" khác cùng thời điểm với `cf44362` xem có
   scaffolding giả tương tự không (chưa rà — người dùng đã được báo, quyết định xử lý riêng sau).
-- 🟢 **[ĐÃ TRẢ 2026-08-24 — xem mục "Giai đoạn hiện tại"]** Nâng lại plugin lên `7.1.1` + sửa
-  đúng bản chất 95 lỗi (danh sách 73 lỗi cũ đã phình theo code mới), 0 eslint-disable mới.
-  Ghi chú gốc giữ lại bên dưới để tra cứu:
 - ~~🟡~~ **[2026-08-18, cập nhật khi fix PR #603] `eslint-plugin-react-hooks` đã ghim TẠM về lại
   `^4.6.2`** (đúng bản trước PR #574) để CI/lint xanh trở lại ngay — bản `7.1.1` mà PR #574 bump
   lên mang theo 5 rule React Compiler mới, làm lộ **73 lỗi trải trên 45+ file**: `set-state-in-effect`

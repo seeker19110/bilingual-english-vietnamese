@@ -131,4 +131,108 @@ describe('api/co-learning-audio', () => {
     const leaveRes = await handler(leaveReq)
     expect(leaveRes.status).toBe(200)
   })
+
+  // ── Ca biên từng nhánh của handler (thêm 2026-09-01, nới biên coverage branches) ──
+  const AUTH = { 'Content-Type': 'application/json', Authorization: 'Bearer valid-token' }
+  const post = (action: string, body: unknown) =>
+    handler(
+      new Request(`http://localhost/api/co-learning-audio?action=${action}`, {
+        method: 'POST',
+        headers: AUTH,
+        body: typeof body === 'string' ? body : JSON.stringify(body),
+      }),
+    )
+  const taoPhong = async () => {
+    const res = await post('create_room', { topic: 'T', subject: 'english' })
+    return (await res.json()).room.id as string
+  }
+
+  it('OPTIONS → 204 (preflight CORS), không cần đăng nhập', async () => {
+    const res = await handler(
+      new Request('http://localhost/api/co-learning-audio', { method: 'OPTIONS' }),
+    )
+    expect(res.status).toBe(204)
+  })
+
+  it('vượt rate limit → 429 và ghi log bảo mật', async () => {
+    const sec = await import('@dhcb/core-auth/security')
+    vi.mocked(sec.checkRateLimit).mockResolvedValueOnce(false)
+    const res = await handler(
+      new Request('http://localhost/api/co-learning-audio', {
+        method: 'GET',
+        headers: AUTH,
+      }),
+    )
+    expect(res.status).toBe(429)
+    expect(sec.logSecurityEvent).toHaveBeenCalledWith(
+      'RATE_LIMIT_EXCEEDED',
+      expect.any(String),
+      expect.objectContaining({ path: '/api/co-learning-audio' }),
+    )
+  })
+
+  it('GET roomId không tồn tại → 404', async () => {
+    const res = await handler(
+      new Request('http://localhost/api/co-learning-audio?roomId=khong-co', {
+        method: 'GET',
+        headers: AUTH,
+      }),
+    )
+    expect(res.status).toBe(404)
+  })
+
+  it('create_room: thiếu displayName → đặt tên mặc định theo id người dùng', async () => {
+    const res = await post('create_room', { topic: 'T', subject: 'math' })
+    const data = await res.json()
+    expect(res.status).toBe(200)
+    expect(data.room.members[0].displayName).toBe('Host_user-')
+  })
+
+  it('create_room: server đầy phòng (createAudioRoom trả null) → 503', async () => {
+    for (let i = 0; i < 100; i++) await taoPhong()
+    const res = await post('create_room', { topic: 'T', subject: 'english' })
+    expect(res.status).toBe(503)
+  })
+
+  it('join_room: thiếu roomId → 400; phòng không tồn tại → 400 kèm lý do', async () => {
+    expect((await post('join_room', {})).status).toBe(400)
+    const res = await post('join_room', { roomId: 'khong-co' })
+    expect(res.status).toBe(400)
+    expect((await res.json()).error).toBe('Room not found')
+  })
+
+  it('join_room thành công với tên mặc định, rồi toggle_mute đúng người', async () => {
+    const roomId = await taoPhong()
+    const join = await post('join_room', { roomId })
+    expect(join.status).toBe(200)
+    expect((await post('toggle_mute', { roomId, isMuted: true })).status).toBe(200)
+    expect((await post('toggle_mute', { roomId: 'khong-co', isMuted: true })).status).toBe(404)
+    // isMuted không phải boolean → 400
+    expect((await post('toggle_mute', { roomId, isMuted: 'yes' })).status).toBe(400)
+    expect((await post('toggle_mute', { isMuted: true })).status).toBe(400)
+  })
+
+  it('leave_room: thiếu roomId → 400; phòng không tồn tại → 404', async () => {
+    expect((await post('leave_room', {})).status).toBe(400)
+    expect((await post('leave_room', { roomId: 'khong-co' })).status).toBe(404)
+  })
+
+  it('request_hint: thiếu roomId → 400; phòng không có → 404; thiếu text/type → dùng mặc định', async () => {
+    expect((await post('request_hint', {})).status).toBe(400)
+    expect((await post('request_hint', { roomId: 'khong-co' })).status).toBe(404)
+    const roomId = await taoPhong()
+    const res = await post('request_hint', { roomId })
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(data.event.socraticType ?? data.event.payload?.socraticType).toBe('clarification')
+  })
+
+  it('action lạ → 400; body không phải JSON → 400; method khác → 405', async () => {
+    expect((await post('bay_nhay', {})).status).toBe(400)
+    expect((await post('create_room', '{hong')).status).toBe(400)
+    const res = await handler(
+      new Request('http://localhost/api/co-learning-audio', { method: 'PUT', headers: AUTH }),
+    )
+    expect(res.status).toBe(405)
+  })
 })

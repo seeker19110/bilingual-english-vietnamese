@@ -362,3 +362,228 @@ describe('pullProgress', () => {
     expect(exams.C1.bestPct).toBe(80) // Cloud only
   })
 })
+
+// ── Ca biên hợp nhất — thêm 2026-09-01 để nới biên coverage branches (đang sát sàn 90%) ──
+// Các helper đọc/hợp nhất là hàm nội bộ nên đi qua đúng hai cửa công khai: pushProgressAsync
+// (đọc localStorage → body gửi đi) và pullProgress (cloud → hợp nhất → localStorage).
+function mockFetchPull(cloud: unknown) {
+  const calls: { method: string; body?: unknown }[] = []
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (_url: string, init?: RequestInit) => {
+      const method = init?.method ?? 'GET'
+      calls.push({ method, body: init?.body ? JSON.parse(init.body as string) : undefined })
+      return method === 'GET'
+        ? new Response(JSON.stringify(cloud), { status: 200 })
+        : new Response('{}', { status: 200 })
+    }),
+  )
+  return calls
+}
+
+async function bodyOfPush(userId: string): Promise<Record<string, unknown>> {
+  let body: Record<string, unknown> = {}
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (_url: string, init: RequestInit) => {
+      body = JSON.parse(init.body as string)
+      return new Response('{}', { status: 200 })
+    }),
+  )
+  await pushProgressAsync(userId)
+  return body
+}
+
+describe('progressSync — ca biên đọc localStorage hỏng/lạ', () => {
+  it('placement/weeklyGoal/cefrExams/srs là JSON hợp lệ nhưng SAI HÌNH DẠNG → coi như rỗng', async () => {
+    localStorage.setItem('et_placement_u9', JSON.stringify('chuoi')) // không phải object
+    localStorage.setItem('et_weekly_goal_u9', JSON.stringify({ goal: 5 })) // thiếu updatedAt
+    localStorage.setItem('et_cefr_exams_u9', JSON.stringify(7)) // số
+    localStorage.setItem('srs_u9', JSON.stringify('x'))
+    localStorage.setItem('et_learned_u9', JSON.stringify({ khong: 'phai-mang' }))
+    const body = await bodyOfPush('u9')
+    expect(body.placement).toEqual({})
+    expect(body.weeklyGoal).toEqual({})
+    expect(body.cefrExams).toEqual({})
+    expect(body.srs).toEqual({})
+    expect(body.learned).toEqual([])
+  })
+
+  it('placement/weeklyGoal/cefrExams/srs KHÔNG parse được → rỗng, không ném', async () => {
+    for (const k of ['et_placement_u9', 'et_weekly_goal_u9', 'et_cefr_exams_u9', 'srs_u9']) {
+      localStorage.setItem(k, '{{hong')
+    }
+    const body = await bodyOfPush('u9')
+    expect(body.placement).toEqual({})
+    expect(body.weeklyGoal).toEqual({})
+    expect(body.cefrExams).toEqual({})
+    expect(body.srs).toEqual({})
+  })
+
+  it('settings: gửi đủ các khoá đang có trong localStorage kèm mốc updatedAt', async () => {
+    localStorage.setItem('ui_lang', 'en')
+    localStorage.setItem('tts_voice', 'en-GB-A')
+    localStorage.setItem('et_settings_updated_at', '2026-09-01T00:00:00.000Z')
+    const body = await bodyOfPush('u9')
+    expect(body.settings).toEqual({
+      updatedAt: '2026-09-01T00:00:00.000Z',
+      uiLang: 'en',
+      voicePref: 'en-GB-A',
+    })
+  })
+})
+
+describe('progressSync — ca biên hợp nhất khi kéo về', () => {
+  it('placement: chỉ có local → giữ local; cloud có nhưng thiếu lastAt → coi như không có', async () => {
+    const local = { cefr: 'B1', appLevel: 'inter', lastAt: '2026-01-01' }
+    localStorage.setItem('et_placement_u2', JSON.stringify(local))
+    mockFetchPull({ placement: { cefr: 'A1', appLevel: 'x' } })
+    await pullProgress('u2')
+    expect(JSON.parse(localStorage.getItem('et_placement_u2')!)).toEqual(local)
+  })
+
+  it('placement: chỉ có cloud → ghi cloud xuống local', async () => {
+    const cloud = { cefr: 'A2', appLevel: 'x', lastAt: '2026-02-02' }
+    mockFetchPull({ placement: cloud })
+    await pullProgress('u2')
+    expect(JSON.parse(localStorage.getItem('et_placement_u2')!)).toEqual(cloud)
+  })
+
+  it('placement/weeklyGoal: lastAt/updatedAt là null ở một bên → bên có mốc thắng, không ném', async () => {
+    localStorage.setItem(
+      'et_placement_u2',
+      JSON.stringify({ cefr: 'B2', appLevel: 'y', lastAt: null }),
+    )
+    localStorage.setItem('et_weekly_goal_u2', JSON.stringify({ goal: 3, updatedAt: null }))
+    mockFetchPull({
+      placement: { cefr: 'A1', appLevel: 'z', lastAt: '2026-03-03' },
+      weeklyGoal: { goal: 9, updatedAt: '2026-03-03' },
+    })
+    await pullProgress('u2')
+    expect(JSON.parse(localStorage.getItem('et_placement_u2')!).cefr).toBe('A1')
+    expect(JSON.parse(localStorage.getItem('et_weekly_goal_u2')!).goal).toBe(9)
+  })
+
+  it('weeklyGoal: chỉ có local → giữ; cloud thiếu updatedAt → bỏ qua', async () => {
+    localStorage.setItem('et_weekly_goal_u2', JSON.stringify({ goal: 4, updatedAt: '2026-01-01' }))
+    mockFetchPull({ weeklyGoal: { goal: 99 } })
+    await pullProgress('u2')
+    expect(JSON.parse(localStorage.getItem('et_weekly_goal_u2')!).goal).toBe(4)
+  })
+
+  it('weeklyGoal: chỉ có cloud → ghi cloud xuống local', async () => {
+    mockFetchPull({ weeklyGoal: { goal: 7, updatedAt: '2026-01-01' } })
+    await pullProgress('u2')
+    expect(JSON.parse(localStorage.getItem('et_weekly_goal_u2')!).goal).toBe(7)
+  })
+
+  it('cefrExams: cùng cấp thi → passed OR, bestPct/attempts max (thiếu coi là 0), lastAt mới hơn', async () => {
+    localStorage.setItem(
+      'et_cefr_exams_u2',
+      JSON.stringify({
+        a1: { passed: false, bestPct: 40, attempts: 1, lastAt: '2026-01-01' },
+        b1: { passed: true, bestPct: 80, attempts: 2, lastAt: '2026-05-05' },
+      }),
+    )
+    mockFetchPull({
+      cefrExams: {
+        a1: { passed: true, lastAt: '2026-02-02' }, // thiếu bestPct/attempts
+        a2: { passed: false, bestPct: 10, attempts: 1, lastAt: '2026-01-01' },
+        b1: { passed: false, bestPct: 50, attempts: 5, lastAt: '2026-04-04' },
+      },
+    })
+    await pullProgress('u2')
+    const exams = JSON.parse(localStorage.getItem('et_cefr_exams_u2')!)
+    expect(exams.a1).toEqual({ passed: true, bestPct: 40, attempts: 1, lastAt: '2026-02-02' })
+    expect(exams.a2).toEqual({ passed: false, bestPct: 10, attempts: 1, lastAt: '2026-01-01' })
+    expect(exams.b1).toEqual({ passed: true, bestPct: 80, attempts: 5, lastAt: '2026-05-05' })
+  })
+
+  it('SRS: cloud có thẻ reps cao hơn → giữ cloud; local thiếu reps coi là 0', async () => {
+    localStorage.setItem(
+      'srs_u2',
+      JSON.stringify({
+        book: { interval: 1, ease: 2, due: 0, reps: 1 },
+        pen: { interval: 1, ease: 2, due: 0 }, // thiếu reps
+      }),
+    )
+    mockFetchPull({
+      srs: {
+        book: { interval: 9, ease: 2.5, due: 5, reps: 4 },
+        pen: { interval: 3, ease: 2.5, due: 5, reps: 2 },
+      },
+    })
+    await pullProgress('u2')
+    const srs = JSON.parse(localStorage.getItem('srs_u2')!)
+    expect(srs.book.reps).toBe(4)
+    expect(srs.pen.reps).toBe(2)
+  })
+
+  it('settings: cloud có mốc updatedAt MỚI HƠN → ghi đè từng khoá có giá trị, giữ khoá cloud không gửi', async () => {
+    localStorage.setItem('ui_lang', 'vi')
+    localStorage.setItem('tts_voice', 'vi-VN-A')
+    localStorage.setItem('et_settings_updated_at', '2026-01-01T00:00:00.000Z')
+    mockFetchPull({
+      settings: { uiLang: 'en', updatedAt: '2026-06-06T00:00:00.000Z' },
+    })
+    await pullProgress('u2')
+    expect(localStorage.getItem('ui_lang')).toBe('en')
+    expect(localStorage.getItem('tts_voice')).toBe('vi-VN-A') // cloud không có → không đụng
+    expect(localStorage.getItem('et_settings_updated_at')).toBe('2026-06-06T00:00:00.000Z')
+  })
+
+  it('settings: cloud KHÔNG có mốc → giữ local (kể cả local chưa có mốc)', async () => {
+    localStorage.setItem('ui_lang', 'vi')
+    mockFetchPull({ settings: { uiLang: 'en' } })
+    await pullProgress('u2')
+    expect(localStorage.getItem('ui_lang')).toBe('vi')
+    expect(localStorage.getItem('et_settings_updated_at')).toBeNull()
+  })
+
+  it('cùng user gọi pullProgress hai lần đồng thời → dùng chung MỘT lượt kéo (chỉ 1 GET)', async () => {
+    const calls = mockFetchPull({})
+    const p1 = pullProgress('u3')
+    const p2 = pullProgress('u3')
+    expect(p1).toBe(p2)
+    await p1
+    expect(calls.filter((c) => c.method === 'GET')).toHaveLength(1)
+  })
+
+  it('localStorage đầy (setItem ném) khi ghi bản hợp nhất → nuốt lỗi, vẫn đẩy lên server', async () => {
+    const calls = mockFetchPull({ learned: ['x'] })
+    const setItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('QuotaExceededError')
+    })
+    await expect(pullProgress('u4')).resolves.toBeUndefined()
+    setItem.mockRestore()
+    await flush()
+    expect(calls.some((c) => c.method === 'POST')).toBe(true)
+  })
+})
+
+describe('progressSync — hàng chờ review offline sau khi đẩy thành công', () => {
+  it('có review chờ → xoá đúng các id có thật; không có → không gọi xoá', async () => {
+    const offline = await import('./offlineSrsStore')
+    const getPending = vi.spyOn(offline, 'getPendingOfflineReviews')
+    const clearPending = vi
+      .spyOn(offline, 'clearPendingOfflineReviews')
+      .mockResolvedValue(undefined)
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('{}', { status: 200 })),
+    )
+
+    getPending.mockResolvedValue([])
+    await pushProgressAsync('u5')
+    await flush()
+    expect(clearPending).not.toHaveBeenCalled()
+
+    getPending.mockResolvedValue([
+      { id: 11, uid: 'u5', word: 'a', rating: 'good', at: 1 },
+      { id: undefined, uid: 'u5', word: 'b', rating: 'good', at: 1 },
+    ] as never)
+    await pushProgressAsync('u5')
+    await flush()
+    expect(clearPending).toHaveBeenCalledWith('u5', [11])
+  })
+})

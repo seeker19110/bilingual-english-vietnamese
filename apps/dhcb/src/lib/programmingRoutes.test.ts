@@ -12,11 +12,11 @@ import { getPathStage } from '@dhcb/subject-programming/learningPaths/pathStages
 import {
   duongDanChangHuong,
   duongDanChangLoTrinh,
-  duongDanChangTheoId,
   duongDanHuong,
   duongDanKhoa,
   duongDanLoTrinh,
 } from './programmingRoutes'
+import { duongDanChangTheoId } from './programmingRoutesSpec'
 
 /** Đoạn cuối của URL — phần mang `<mã>--<tiêu đề>`. */
 const doanCuoi = (url: string) => url.split('/').pop() ?? ''

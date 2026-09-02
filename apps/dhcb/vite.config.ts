@@ -98,6 +98,17 @@ function pyodideSelfHostPlugin(): Plugin {
   }
 }
 
+// Gói thuộc chunk vendor-core: React/Router và dependency runtime của chúng (xem manualChunks).
+const VENDOR_CORE_PACKAGES = [
+  'react',
+  'react-dom',
+  'react-router',
+  'react-router-dom',
+  'scheduler',
+  'cookie',
+  'set-cookie-parser',
+]
+
 export default defineConfig(({ mode }) => {
   // Đọc các biến môi trường server-only trực tiếp từ file .env (Node) —
   // các biến này KHÔNG có tiền tố VITE_ nên sẽ không bị Vite đóng gói vào file JS gửi cho browser.
@@ -215,12 +226,13 @@ export default defineConfig(({ mode }) => {
             ) {
               return 'vendor-codemirror'
             }
-            // Nhóm 1: React + Router (core framework)
-            if (
-              id.includes('node_modules/react') ||
-              id.includes('node_modules/react-dom') ||
-              id.includes('node_modules/react-router')
-            ) {
+            // Nhóm 1: React + Router (core framework) — kèm dependency RUNTIME của chúng
+            // (scheduler của react-dom; cookie/set-cookie-parser của react-router). Phải so
+            // khớp ĐÚNG TÊN GÓI: bản cũ dùng `includes('node_modules/react')` bắt cả mọi gói
+            // tên bắt đầu bằng "react", còn dependency của react-dom lại rơi sang vendor-misc
+            // → Rollup cảnh báo "Circular chunk: vendor-misc -> vendor-core -> vendor-misc"
+            // (hai chunk chờ nhau lúc khởi động). Sửa 2026-09-01.
+            if (VENDOR_CORE_PACKAGES.some((pkg) => id.includes(`/node_modules/${pkg}/`))) {
               return 'vendor-core'
             }
             // Nhóm 3: UI library
@@ -245,6 +257,10 @@ export default defineConfig(({ mode }) => {
             if (id.includes('/data/dictionary/')) return 'js/dict-[name]-[hash:8].js'
             if (id.includes('/data/patterns/')) return 'js/pattern-[name]-[hash:8].js'
             if (id.includes('/data/lessons/')) return 'js/lesson-[name]-[hash:8].js'
+            // Mỗi unit bài học môn Lập trình một chunk (nạp lười qua lessonsLazy.ts).
+            if (id.includes('/subject-programming/lessons/')) {
+              return 'js/prog-lesson-[name]-[hash:8].js'
+            }
             return 'js/[name]-[hash:8].js'
           },
           assetFileNames: 'assets/[name]-[hash:8][extname]',
