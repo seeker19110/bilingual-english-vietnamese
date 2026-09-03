@@ -383,6 +383,16 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Kotlin nhập môn — model dữ liệu',
         topics: 'val/var, kiểu suy ra, chuỗi mẫu; hàm, when; data class · Dự án: Sổ chi tiêu',
       },
+      {
+        id: 'p6-u6',
+        title: 'Kotlin — null safety và collections',
+        topics: 'T?, ?., ?:, !!, smart cast, toIntOrNull; lambda, filter/sumOf/groupBy',
+      },
+      {
+        id: 'p6-u7',
+        title: 'Kotlin — sealed class và trạng thái',
+        topics: 'sealed class, object vs data class, when is · Dự án khép track: Sổ chi tiêu',
+      },
       // Từ u16 trở đi là NỘI DUNG HỌC THẬT của các hướng chuyên sâu (bản đồ hướng ở
       // `specializations/`). Dải u5…u15 đã được CHƯƠNG TRÌNH M giữ chỗ (Kotlin · Swift ·
       // paradigm), nên nội dung hướng bắt đầu từ u16 để hai dòng việc không tranh mã unit.

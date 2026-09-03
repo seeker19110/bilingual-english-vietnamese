@@ -75,6 +75,14 @@ export const KHAC_BIET = [
       'Suy sai còn tệ hơn không suy. Bài học nào cần mẫu ngoài phạm vi này thì phải viết `!!` hoặc `?:` cho tường minh.',
   },
   {
+    diem: '`when` biểu thức KHÔNG khớp nhánh nào',
+    boChay: 'Trả về `kotlin.Unit` và chạy tiếp, không báo gì.',
+    kotlinThat:
+      'LỖI BIÊN DỊCH. `when` dùng làm biểu thức phải vét hết trường hợp — thiếu `else`, hoặc thiếu một nhánh của `sealed class`, là chương trình không dịch được.',
+    viSao:
+      'Bộ chạy không có bước kiểm tra tĩnh nào (xem mục "Thời điểm bắt lỗi kiểu"), nên không chứng minh được tính vét cạn trước khi chạy. Hệ quả PHẢI nói ra ở bài dạy `sealed class`: ở đây bỏ bớt một nhánh thì chương trình vẫn chạy và in ra "kotlin.Unit", còn trên máy thật nó KHÔNG dịch nổi — mà chính khả năng bắt lỗi lúc biên dịch đó mới là lý do người ta dùng sealed class. Bài phải giao việc kiểm chứng này sang làn C.',
+  },
+  {
     diem: 'Thứ tự duyệt Map',
     boChay: 'Sắp theo khoá, tất định.',
     kotlinThat: '`mapOf`/`mutableMapOf` giữ THỨ TỰ CHÈN (LinkedHashMap) — khác với bộ chạy này.',
