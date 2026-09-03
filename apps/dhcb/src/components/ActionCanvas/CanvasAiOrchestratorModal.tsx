@@ -115,7 +115,7 @@ export default function CanvasAiOrchestratorModal({
             <button
               type="submit"
               disabled={!prompt.trim() || loading}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-cyan-500 text-zinc-950 hover:bg-cyan-400 disabled:opacity-50 transition shadow-lg shadow-cyan-500/25"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-cyan-500 text-zinc-950 hover:bg-cyan-400 disabled:opacity-50 transition shadow-lg"
             >
               {loading ? (
                 <>

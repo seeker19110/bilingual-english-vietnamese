@@ -285,7 +285,7 @@ export default function DesktopSidebar() {
           to="/gioi-thieu"
           className="flex items-center gap-2.5 min-w-0 rounded-xl p-1 hover:bg-zinc-800/60 transition"
         >
-          <span className="w-7 h-7 rounded-xl bg-gradient-to-br from-accent-500 via-accent-400 to-indigo-500 flex items-center justify-center shadow-md shadow-accent-500/30 shrink-0">
+          <span className="w-7 h-7 rounded-xl bg-gradient-to-br from-accent-500 via-accent-400 to-indigo-500 flex items-center justify-center shadow-md shrink-0">
             <BookOpen className="w-3.5 h-3.5 text-[#fff]" />
           </span>
           <span className={collapsed ? 'sr-only' : 'font-bold text-sm text-white truncate'}>

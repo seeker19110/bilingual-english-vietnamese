@@ -34,7 +34,7 @@ export default function StemScratchpadCard() {
           <button
             type="button"
             onClick={() => setIsOpenModal(true)}
-            className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-400 hover:to-emerald-500 text-zinc-950 font-bold text-xs sm:text-sm shadow-lg shadow-teal-500/25 transition-all transform active:scale-95 flex items-center justify-center gap-2 flex-shrink-0"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-400 hover:to-emerald-500 text-zinc-950 font-bold text-xs sm:text-sm shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-2 flex-shrink-0"
           >
             <span>Mở Bảng Nháp</span>
             <span>✨</span>

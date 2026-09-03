@@ -101,7 +101,7 @@ export default function ProgrammingHome() {
             </p>
           </section>
         ) : (
-          <section className="rounded-3xl border border-accent-500/40 bg-zinc-900 p-5 space-y-3 shadow-md shadow-accent-500/10">
+          <section className="rounded-3xl border border-accent-500/40 bg-zinc-900 p-5 space-y-3 shadow-md">
             <p className="text-xs font-semibold text-zinc-300 uppercase tracking-wide">
               {next?.resuming ? 'Đang học dở' : 'Học tiếp'}
             </p>

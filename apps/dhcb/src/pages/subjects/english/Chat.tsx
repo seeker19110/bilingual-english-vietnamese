@@ -77,7 +77,7 @@ function SetupScreen({
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-4 py-10 overflow-y-auto">
-      <div className="w-18 h-18 rounded-3xl bg-gradient-to-br from-accent-500 via-accent-600 to-indigo-600 flex items-center justify-center mb-5 shadow-xl shadow-accent-500/25 animate-scale-in p-4">
+      <div className="w-18 h-18 rounded-3xl bg-gradient-to-br from-accent-500 via-accent-600 to-indigo-600 flex items-center justify-center mb-5 shadow-xl animate-scale-in p-4">
         <Sparkles className="w-9 h-9 text-white drop-shadow-md" />
       </div>
       <h2 className="text-2xl font-extrabold text-white mb-1.5 tracking-tight animate-fade-in delay-50">
@@ -166,7 +166,7 @@ function SetupScreen({
         <button
           onClick={() => onStart(situation, level)}
           disabled={loading}
-          className="w-full bg-gradient-to-r from-accent-600 via-accent-500 to-indigo-600 hover:from-accent-500 hover:to-indigo-500 disabled:opacity-60 text-white font-bold py-3.5 rounded-2xl text-sm transition-all duration-200 active:scale-98 flex items-center justify-center gap-2 shadow-lg shadow-accent-500/25 mt-2"
+          className="w-full bg-gradient-to-r from-accent-600 via-accent-500 to-indigo-600 hover:from-accent-500 hover:to-indigo-500 disabled:opacity-60 text-white font-bold py-3.5 rounded-2xl text-sm transition-all duration-200 active:scale-98 flex items-center justify-center gap-2 shadow-lg mt-2"
         >
           {loading ? (
             <>
@@ -238,7 +238,7 @@ function Bubble({
   if (msg.role === 'user') {
     return (
       <div className={`flex justify-end ${isNew ? 'animate-fade-in' : ''}`}>
-        <div className="max-w-[82%] sm:max-w-[75%] bg-gradient-to-r from-accent-600 to-accent-500 text-white rounded-3xl rounded-tr-xs px-5 py-3.5 text-sm leading-relaxed shadow-md shadow-accent-600/20 break-words">
+        <div className="max-w-[82%] sm:max-w-[75%] bg-gradient-to-r from-accent-600 to-accent-500 text-white rounded-3xl rounded-tr-xs px-5 py-3.5 text-sm leading-relaxed shadow-md break-words">
           {msg.content}
         </div>
       </div>
@@ -917,7 +917,7 @@ export default function Chat() {
               <button
                 onClick={() => sendMessage()}
                 disabled={!input.trim() || loading || limitHit || isThrottled}
-                className="tap-44 flex items-center justify-center p-2.5 bg-gradient-to-br from-accent-600 to-accent-500 hover:from-accent-500 hover:to-teal-400 disabled:opacity-40 text-white rounded-xl transition shrink-0 shadow-md shadow-accent-500/20 active:scale-95 relative"
+                className="tap-44 flex items-center justify-center p-2.5 bg-gradient-to-br from-accent-600 to-accent-500 hover:from-accent-500 hover:to-teal-400 disabled:opacity-40 text-white rounded-xl transition shrink-0 shadow-md active:scale-95 relative"
                 aria-label={isA ? 'Gửi tin nhắn' : 'Send message'}
               >
                 <Send className="w-4 h-4" />

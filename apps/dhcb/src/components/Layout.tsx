@@ -209,7 +209,7 @@ export default function Layout({
             title={T.aboutApp}
             className="tap-44 flex items-center gap-2.5 shrink-0 -ml-1 p-1.5 rounded-xl hover:bg-zinc-800/60 transition active:scale-95 group"
           >
-            <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-accent-500 via-accent-400 to-indigo-500 flex items-center justify-center shadow-md shadow-accent-500/30 group-hover:scale-105 transition-transform">
+            <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-accent-500 via-accent-400 to-indigo-500 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
               <BookOpen className="w-3.5 h-3.5 text-white" />
             </div>
             <span className="font-bold text-sm text-white hidden sm:inline tracking-tight">
@@ -327,11 +327,11 @@ export default function Layout({
             // Header có cả title/subtitle LẪN nút "Đồng Hành AI" ở màn hẹp (390px) thì 3 phần tử
             // này tràn ngang (đo được 54px) — ẩn streak badge trên di động, chỉ hiện lại từ `sm`
             // trở lên khi đã đủ chỗ. Không mất thông tin: streak vẫn thấy ở /progress.
-            <div className="hidden sm:flex items-center gap-1.5 bg-gradient-to-r from-orange-500/15 to-amber-500/10 border border-orange-500/30 rounded-full px-3 py-1 shadow-sm shadow-orange-500/10 shrink-0">
+            <div className="hidden sm:flex items-center gap-1.5 bg-gradient-to-r from-orange-500/15 to-amber-500/10 border border-orange-500/30 rounded-full px-3 py-1 shadow-sm shrink-0">
               {streakBadge}
             </div>
           ) : (
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-gradient-to-r from-orange-500/15 to-amber-500/10 border border-orange-500/30 rounded-full px-3 py-1 shadow-sm shadow-orange-500/10 pointer-events-none">
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-gradient-to-r from-orange-500/15 to-amber-500/10 border border-orange-500/30 rounded-full px-3 py-1 shadow-sm pointer-events-none">
               {streakBadge}
             </div>
           ))}
@@ -365,7 +365,7 @@ export default function Layout({
             title={T.profile}
             className="tap-44 flex items-center gap-2 shrink-0 hover:opacity-90 transition active:scale-95 min-w-0 group"
           >
-            <span className="w-7 h-7 rounded-full bg-gradient-to-br from-accent-500 via-accent-400 to-indigo-500 ring-1.5 ring-accent-500/30 flex items-center justify-center text-xs font-bold text-white shadow-sm shadow-accent-500/20 shrink-0 group-hover:scale-105 transition-transform">
+            <span className="w-7 h-7 rounded-full bg-gradient-to-br from-accent-500 via-accent-400 to-indigo-500 ring-1.5 ring-accent-500/30 flex items-center justify-center text-xs font-bold text-white shadow-sm shrink-0 group-hover:scale-105 transition-transform">
               {user.name[0]?.toUpperCase()}
             </span>
             <span className="text-sm font-medium text-white truncate hidden sm:inline max-w-[10rem]">

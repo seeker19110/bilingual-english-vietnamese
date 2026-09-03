@@ -109,7 +109,7 @@ export default function WorkplaceHarvesterCard() {
       {/* Header */}
       <div className="flex items-center justify-between pb-4 border-b border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/25">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-orange-500 flex items-center justify-center shadow-lg">
             <Briefcase className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -166,7 +166,7 @@ export default function WorkplaceHarvesterCard() {
         <button
           type="submit"
           disabled={!testText.trim() || isHarvesting}
-          className="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-600/30 transition-all disabled:opacity-50"
+          className="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-lg transition-all disabled:opacity-50"
         >
           <Zap className="w-3.5 h-3.5" />
           <span>{isHarvesting ? 'Đang quét...' : 'Thu hoạch Lỗi'}</span>

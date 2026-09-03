@@ -288,7 +288,7 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
                 type="button"
                 onClick={handleLaunch}
                 disabled={loading || !title.trim() || !goal.trim()}
-                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-400 hover:to-sky-400 text-white transition active:scale-98 disabled:opacity-50 shadow-md shadow-indigo-500/20"
+                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-400 hover:to-sky-400 text-white transition active:scale-98 disabled:opacity-50 shadow-md"
               >
                 {loading ? (
                   <>

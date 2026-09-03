@@ -121,7 +121,7 @@ export default function ScenarioHolodeckCard() {
       {/* Header */}
       <div className="flex items-center justify-between pb-4 border-b border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/25">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg">
             <Users className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -240,7 +240,7 @@ export default function ScenarioHolodeckCard() {
               <button
                 onClick={() => handleStartSession(currentScenario.id)}
                 disabled={isLoading}
-                className="w-full mt-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                className="w-full mt-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold text-sm shadow-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>Bước vào phòng giả lập ngay</span>
@@ -427,7 +427,7 @@ export default function ScenarioHolodeckCard() {
               <button
                 type="submit"
                 disabled={!userUtterance.trim() || isLoading}
-                className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-indigo-600/30 transition-colors disabled:opacity-50"
+                className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-lg transition-colors disabled:opacity-50"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>Gửi</span>

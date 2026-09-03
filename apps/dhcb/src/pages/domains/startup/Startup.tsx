@@ -330,7 +330,7 @@ export default function Startup({ embedded = false }: { embedded?: boolean } = {
           </p>
           <button
             onClick={() => setShowVentureModal(true)}
-            className="tap-44 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-[#fff] text-sm font-semibold shadow-lg shadow-purple-900/30 transition"
+            className="tap-44 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-[#fff] text-sm font-semibold shadow-lg transition"
           >
             Tạo Dự Án Đầu Tiên
           </button>

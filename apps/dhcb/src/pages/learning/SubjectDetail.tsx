@@ -526,7 +526,7 @@ export default function SubjectDetail() {
                         type="button"
                         onClick={handleVisionSolve}
                         disabled={solving}
-                        className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 disabled:opacity-50 text-white font-semibold text-sm transition shadow-md shadow-indigo-500/20 active:scale-[0.98]"
+                        className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 hover:to-purple-500 disabled:opacity-50 text-white font-semibold text-sm transition shadow-md active:scale-[0.98]"
                       >
                         {solving ? (
                           <>
@@ -544,7 +544,7 @@ export default function SubjectDetail() {
                       <button
                         type="submit"
                         disabled={solving || !problemInput.trim()}
-                        className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-[#09090b] font-semibold text-sm transition shadow-md shadow-accent-500/20 active:scale-[0.98]"
+                        className="tap-44 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-[#09090b] font-semibold text-sm transition shadow-md active:scale-[0.98]"
                       >
                         {solving ? (
                           <>

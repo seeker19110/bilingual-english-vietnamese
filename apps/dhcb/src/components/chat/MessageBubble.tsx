@@ -67,7 +67,7 @@ export default function MessageBubble({ message, isMine, onDelete }: MessageBubb
         <div
           className={`rounded-2xl px-4 py-2.5 shadow-sm text-sm break-words relative transition-all duration-200 ${
             isMine
-              ? 'bg-gradient-to-r from-accent-600 to-accent-500 text-white rounded-tr-xs shadow-md shadow-accent-500/15'
+              ? 'bg-gradient-to-r from-accent-600 to-accent-500 text-white rounded-tr-xs shadow-md'
               : 'bg-zinc-900/90 text-zinc-100 border border-zinc-800/80 rounded-tl-xs'
           }`}
         >

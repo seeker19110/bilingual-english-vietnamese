@@ -180,7 +180,7 @@ export default function CareerInterview() {
             <button
               onClick={handleStart}
               disabled={starting}
-              className="tap-44 inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-bold text-[#09090b] shadow-md shadow-emerald-500/20 transition hover:bg-emerald-400 active:scale-[0.98] disabled:opacity-60"
+              className="tap-44 inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-bold text-[#09090b] shadow-md transition hover:bg-emerald-400 active:scale-[0.98] disabled:opacity-60"
             >
               <Sparkles className={`h-4 w-4 ${starting ? 'animate-spin' : ''}`} />
               <span>{starting ? 'Đang soạn câu hỏi…' : 'Bắt đầu buổi phỏng vấn'}</span>
@@ -321,7 +321,7 @@ export default function CareerInterview() {
                 <button
                   type="submit"
                   disabled={analyzing || !answerInput.trim()}
-                  className="tap-44 inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-bold text-[#09090b] shadow-md shadow-emerald-500/20 transition hover:bg-emerald-400 active:scale-[0.98] disabled:opacity-50"
+                  className="tap-44 inline-flex items-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-sm font-bold text-[#09090b] shadow-md transition hover:bg-emerald-400 active:scale-[0.98] disabled:opacity-50"
                 >
                   {analyzing ? (
                     <>

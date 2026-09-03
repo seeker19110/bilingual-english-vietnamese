@@ -241,7 +241,7 @@ export default function PvPBattlefieldModal({
             <button
               type="button"
               onClick={onClose}
-              className="tap-44 px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-black text-sm shadow-xl shadow-amber-500/25 transition active:scale-95"
+              className="tap-44 px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-black text-sm shadow-xl transition active:scale-95"
             >
               Hoàn tất & Nhận Thưởng
             </button>

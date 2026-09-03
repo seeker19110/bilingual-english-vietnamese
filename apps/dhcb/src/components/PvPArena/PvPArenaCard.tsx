@@ -36,7 +36,7 @@ export default function PvPArenaCard() {
           <button
             type="button"
             onClick={() => setIsOpenModal(true)}
-            className="tap-44 w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-black text-xs sm:text-sm shadow-lg shadow-amber-500/25 transition active:scale-95 flex items-center justify-center gap-2 shrink-0"
+            className="tap-44 w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-black text-xs sm:text-sm shadow-lg transition active:scale-95 flex items-center justify-center gap-2 shrink-0"
           >
             <Swords className="w-4 h-4" />
             <span>Vào Đấu Trường</span>

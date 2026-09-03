@@ -242,7 +242,7 @@ export default function StudioDialogue({
               <button
                 onClick={voice.start}
                 disabled={!voice.supported}
-                className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 disabled:opacity-50 text-white font-bold text-sm shadow-xl shadow-sky-500/25 transition-all transform hover:scale-105"
+                className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 disabled:opacity-50 text-white font-bold text-sm shadow-xl transition-all transform hover:scale-105"
               >
                 <Mic className="w-5 h-5" />
                 Nhấn Để Nói
@@ -311,7 +311,7 @@ export default function StudioDialogue({
                   className={`flex gap-3.5 ${isBot ? 'justify-start' : 'justify-end'} animate-fade-in`}
                 >
                   {isBot && (
-                    <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-accent-600 via-accent-500 to-indigo-500 flex items-center justify-center shrink-0 shadow-md shadow-accent-500/25 mt-1 ring-1 ring-accent-400/30">
+                    <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-accent-600 via-accent-500 to-indigo-500 flex items-center justify-center shrink-0 shadow-md mt-1 ring-1 ring-accent-400/30">
                       <Bot className="w-4.5 h-4.5 text-white" />
                     </div>
                   )}
@@ -320,7 +320,7 @@ export default function StudioDialogue({
                     className={`max-w-[88%] sm:max-w-[78%] rounded-3xl p-5 shadow-sm transition-all ${
                       isBot
                         ? 'bg-zinc-900/90 border border-zinc-800/80 text-zinc-200'
-                        : 'bg-gradient-to-r from-accent-600 to-accent-500 text-white shadow-md shadow-accent-600/20'
+                        : 'bg-gradient-to-r from-accent-600 to-accent-500 text-white shadow-md'
                     }`}
                   >
                     {isBot && (msg.domain || msg.intent) && (
@@ -470,7 +470,7 @@ export default function StudioDialogue({
 
             {loading && (
               <div className="flex gap-3.5 justify-start animate-fade-in">
-                <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-accent-600 to-accent-400 flex items-center justify-center shrink-0 shadow-md shadow-accent-500/20">
+                <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-accent-600 to-accent-400 flex items-center justify-center shrink-0 shadow-md">
                   <Bot className="w-4.5 h-4.5 text-white" />
                 </div>
                 <div className="bg-zinc-900 border border-zinc-800/80 rounded-3xl px-5 py-3.5 text-zinc-300 text-sm flex items-center gap-2.5 shadow-sm">
@@ -533,7 +533,7 @@ export default function StudioDialogue({
                 aria-label="Gửi tin nhắn"
                 className={`p-2.5 rounded-xl transition flex items-center justify-center shrink-0 ${
                   input.trim() && !loading
-                    ? 'bg-accent-500 hover:bg-accent-400 text-black shadow-md shadow-accent-500/25'
+                    ? 'bg-accent-500 hover:bg-accent-400 text-black shadow-md'
                     : 'bg-zinc-800 text-zinc-400 cursor-not-allowed'
                 }`}
               >

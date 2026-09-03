@@ -61,7 +61,7 @@ export default function MemoryPalaceCard() {
           <button
             type="button"
             onClick={() => setIsOpenModal(true)}
-            className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/25 transition-all transform active:scale-95 flex items-center justify-center gap-2 flex-shrink-0"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-white font-bold text-xs sm:text-sm shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-2 flex-shrink-0"
           >
             <span>Khám phá Cung Điện</span>
             <span>🗝️</span>

@@ -221,7 +221,7 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
                     type="button"
                     disabled={isMatching}
                     onClick={() => handleStartMatch(m.id)}
-                    className="tap-44 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-black text-xs shadow-lg shadow-amber-500/20 transition active:scale-95 flex items-center justify-center gap-1.5 shrink-0"
+                    className="tap-44 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-black font-black text-xs shadow-lg transition active:scale-95 flex items-center justify-center gap-1.5 shrink-0"
                   >
                     {isMatching && selectedMode === m.id ? (
                       <span className="animate-pulse">Đang ghép trận...</span>

@@ -268,7 +268,7 @@ export default function LifeWheel() {
             <button
               onClick={handleSaveAssessment}
               disabled={saving}
-              className="tap-44 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-400 text-black font-bold text-xs transition shadow-md shadow-rose-500/20 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+              className="tap-44 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-400 text-black font-bold text-xs transition shadow-md active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <Save className="w-4 h-4" />
               <span>{saving ? 'Đang lưu…' : 'Lưu kết quả đánh giá'}</span>

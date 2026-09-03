@@ -121,7 +121,7 @@ function SetupScreen({
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-4 py-10 overflow-y-auto">
-      <div className="w-18 h-18 rounded-3xl bg-gradient-to-br from-sky-500 via-cyan-500 to-indigo-600 flex items-center justify-center mb-5 shadow-xl shadow-sky-500/25 animate-scale-in p-4">
+      <div className="w-18 h-18 rounded-3xl bg-gradient-to-br from-sky-500 via-cyan-500 to-indigo-600 flex items-center justify-center mb-5 shadow-xl animate-scale-in p-4">
         <Mic className="w-9 h-9 text-white drop-shadow-md" />
       </div>
       <h2 className="text-2xl font-extrabold text-white mb-1.5 tracking-tight animate-fade-in delay-50">
@@ -229,7 +229,7 @@ function SetupScreen({
           onClick={() => onStart(situation, level)}
           disabled={loading}
           aria-label={isA ? 'Bắt đầu luyện nói' : 'Start speaking practice'}
-          className="w-full bg-gradient-to-r from-sky-500 via-cyan-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 disabled:opacity-60 text-white font-bold py-3.5 rounded-2xl text-sm transition-all duration-200 active:scale-98 flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 mt-2"
+          className="w-full bg-gradient-to-r from-sky-500 via-cyan-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 disabled:opacity-60 text-white font-bold py-3.5 rounded-2xl text-sm transition-all duration-200 active:scale-98 flex items-center justify-center gap-2 shadow-lg mt-2"
         >
           {loading ? (
             <>
@@ -477,7 +477,7 @@ function SpeakBubble({
   if (msg.role === 'user') {
     return (
       <div className={`flex justify-end ${isNew ? 'animate-fade-in' : ''}`}>
-        <div className="max-w-[82%] sm:max-w-[75%] bg-gradient-to-r from-sky-600 to-indigo-600 text-white rounded-3xl rounded-tr-xs px-5 py-3.5 text-sm leading-relaxed shadow-md shadow-sky-600/20 break-words">
+        <div className="max-w-[82%] sm:max-w-[75%] bg-gradient-to-r from-sky-600 to-indigo-600 text-white rounded-3xl rounded-tr-xs px-5 py-3.5 text-sm leading-relaxed shadow-md break-words">
           {msg.content}
         </div>
       </div>
@@ -1221,7 +1221,7 @@ export default function Speaking() {
                       className={`relative w-20 h-20 rounded-full flex items-center justify-center transition shadow-xl disabled:opacity-40 active:scale-95 ${
                         recording
                           ? 'bg-red-500 shadow-red-500/40'
-                          : 'bg-gradient-to-br from-sky-500 to-cyan-400 shadow-sky-500/30'
+                          : 'bg-gradient-to-br from-sky-500 to-cyan-400'
                       }`}
                     >
                       {recording && (
