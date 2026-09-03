@@ -129,3 +129,65 @@ màn hình mới cho DHCB — không tạo file `DESIGN.md` riêng (dự án đ�
 **Ghi chú nguồn:** áp dụng như checklist tư duy, KHÔNG sinh file `DESIGN.md`/`preview.html` mới
 trong repo — DHCB đã có nguồn sự thật token riêng (`apps/dhcb/src/index.css` +
 `tailwind.config.js` + `packages/core-ui/theme.ts`), tránh hai nguồn song song gây lệch.
+
+---
+
+## 9. RÀO CHẮN CHỐNG "UI DO AI SINH" — 9 LUẬT (chắt lọc 2026-09-03)
+
+**Nguồn:** đọc toàn bộ 61 luật của `pbakaus/impeccable`
+(`scripts/detector/registry/antipatterns.mjs`, Apache 2.0) rồi **đối chiếu bằng grep trên
+`apps/`** để chỉ giữ luật có bằng chứng chạm dự án. **KHÔNG cài công cụ đó vào repo** (nó cài
+hook + `.impeccable/config.json` + đòi file `DESIGN.md` riêng — dựng nguồn sự thật thứ hai, trái
+ghi chú mục 5). Chỉ nhập tri thức, diễn đạt lại bằng token và quy ước của DHCB.
+
+52 luật còn lại bị **loại có lý do** — đừng bàn lại: nhóm copywriting landing page SaaS tiếng
+Anh (buzzword, em-dash, kicker hero, cream palette…) không áp được cho app học tiếng Việt; nhóm
+tương phản/cấp tiêu đề/cỡ chữ đã có cổng `e2e/a11y.spec.ts` + `a11y-aaa.spec.ts` + `jsx-a11y`
+bắt rồi, nhập vào là dựng cổng thứ hai cho cùng một việc; luật "bỏ font Inter" bị loại vì đổi
+font toàn app đánh đổi CLS + bundle + chạy lại 2 cổng a11y × 15 trang × 5 theme để lấy "cá
+tính" — không đáng.
+
+### A. Bốn luật MỚI (lấp lỗ hổng V7.0 chưa nói tới)
+
+1. **Độ dài dòng đọc ≤ ~75ch.** Mọi khối văn xuôi dài (bài học, giải thích ngữ pháp, mô tả năng
+   lực, nhật ký) phải có `max-w-prose` hoặc `max-w-[70ch]`. Dòng dài quá ~80 ký tự làm mắt lạc
+   dòng khi quay về đầu dòng sau — với app mà **đọc hiểu là công việc chính**, đây là lỗi trải
+   nghiệm học, không phải chuyện thẩm mỹ. Đo 2026-09-03: cả `apps/` chỉ có **2** chỗ giới hạn
+   độ dài dòng.
+2. **Nhịp tiêu đề: khoảng trống TRÊN tiêu đề phải LỚN HƠN khoảng dưới nó.** Tiêu đề thuộc về
+   phần nội dung nó mở ra. Khi khoảng trên bằng hoặc nhỏ hơn khoảng dưới, mỗi mục đọc như đang
+   chú thích cho mục TRƯỚC nó — đây là nguyên nhân của cảm giác "các mục dính vào nhau" mà
+   thang `gap-*` ở mục 5 không giải thích được.
+3. **Chiều cao dòng thân bài 1.5–1.7** (`leading-relaxed`). Dưới 1.3 là chữ nhiều dòng khó đọc.
+4. **KHÔNG lồng thẻ trong thẻ.** Hệ quả trực tiếp của 3 cấp bề mặt ở mục 6: phân tách bằng
+   khoảng cách, đường kẻ và phân cấp chữ, không bằng cách bọc thêm một `border` + `bg` nữa.
+
+### B. Ba luật SIẾT LẠI cái đã có
+
+5. **Bóng phát sáng màu chỉ dùng khi có nghĩa.** `shadow-<màu>/xx` và `radial-gradient` quầng
+   sáng là dấu hiệu dễ nhận nhất của UI do AI sinh, và nền tối của DHCB dính nặng nhất
+   (đo 2026-09-03: **~70+ chỗ** dùng `shadow-accent-500/*`, `shadow-violet-*`, `shadow-cyan-*`).
+   Độ nổi mặc định lấy theo **3 cấp bề mặt ở mục 6** (nền + viền). Bóng màu chỉ hợp lệ khi mang
+   nghĩa trạng thái — đang ghi âm, đang được chọn, tiêu điểm bàn phím. **Không thêm mới** ngoài
+   các ca đó; chỗ cũ gỡ dần khi đụng tới, không mở đợt quét riêng.
+6. **Pulse chỉ dành cho thứ ĐANG THAY ĐỔI THẬT.** `animate-pulse` hợp lệ cho skeleton tải (mục
+   3.2) và cho trạng thái sống thật của Companion (đang nghe / đang nghĩ / đang nói). Nhãn
+   trạng thái tĩnh thì để tĩnh — nhấp nháy trang trí vừa là "tell", vừa tốn pin, vừa là thứ
+   `prefers-reduced-motion` phải tắt. Đo 2026-09-03: **29 file** dùng `animate-pulse`.
+7. **11px là SÀN TUYỆT ĐỐI, không phải cỡ mặc định cho chữ phụ trợ.** Đo 2026-09-03: **560**
+   chỗ dùng đúng `text-[11px]` — dự án đang sống sát mép sàn. Chữ có chức năng (link, nút, nav,
+   nhãn, ô bảng) mặc định nên là `text-sm`; hạ xuống 11px phải có lý do chật chỗ thật.
+
+### C. Hai luật kỹ thuật
+
+8. **Chỉ animate `transform` và `opacity`** (và `grid-template-rows` khi cần mở/đóng chiều cao).
+   Animate `width`/`height`/`padding`/`margin` gây layout thrash — phá thẳng cam kết 60 FPS và
+   ngân sách CLS < 0.1 ở mục 3.2.
+9. **Nhãn HOA nhỏ giãn chữ đặt riêng một dòng trên tiêu đề (kicker/eyebrow): KHÔNG THÊM MỚI.**
+   Tiêu đề tự đủ sức nặng; chữ trong nhãn đó nếu quan trọng thì đưa vào chính tiêu đề hoặc câu
+   mở. Đo 2026-09-03: **54 file** đang có mẫu này — chưa gỡ, chỉ chặn không sinh thêm.
+
+> **Nợ liên quan (KHÔNG thuộc skill này):** đợt đối chiếu còn phát hiện **423** chỗ dùng màu
+> Tailwind cứng (`violet/purple/cyan/fuchsia-xxx`) ngoài token — tức luật bất biến §4.8 của
+> `CLAUDE.md` đang rò rỉ ở quy mô lớn. Đã ghi vào mục "Nợ kỹ thuật còn mở" của `PROGRESS.md`;
+> cần một đợt rà riêng phân loại giữ/đổi, không gộp vào việc giao diện thường ngày.
