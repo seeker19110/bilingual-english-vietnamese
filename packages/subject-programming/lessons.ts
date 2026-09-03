@@ -75,6 +75,8 @@ import { P6U4_LESSONS } from './lessons/p6u4.js'
 import { P6U5_LESSONS } from './lessons/p6u5.js'
 import { P6U6_LESSONS } from './lessons/p6u6.js'
 import { P6U7_LESSONS } from './lessons/p6u7.js'
+import { P6U13_LESSONS } from './lessons/p6u13.js'
+import { P6U14_LESSONS } from './lessons/p6u14.js'
 import { P6U16_LESSONS } from './lessons/p6u16.js'
 import { P6U17_LESSONS } from './lessons/p6u17.js'
 import { P6U18_LESSONS } from './lessons/p6u18.js'
@@ -235,6 +237,8 @@ export const PROGRAMMING_LESSONS: ProgrammingLesson[] = [
   ...P6U5_LESSONS,
   ...P6U6_LESSONS,
   ...P6U7_LESSONS,
+  ...P6U13_LESSONS,
+  ...P6U14_LESSONS,
   ...P6U16_LESSONS,
   ...P6U17_LESSONS,
   ...P6U18_LESSONS,
