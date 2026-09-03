@@ -411,6 +411,44 @@ test('bài dòng lệnh: gõ sai lệnh thì hiện thông báo dạy được n
   await expect(page.getByText(/them "-r"/).first()).toBeVisible({ timeout: 60_000 })
 })
 
+// PR-M8 — bài KOTLIN đầu tiên (p6-u5), chạy trên kotlinSim.ts (PR-M7, cổng đối chiếu §3.4 mở
+// ngày 2026-09-03). Cùng lý do với bài Git/bash ở trên: cổng CI `lessonsKotlin.test.ts` gọi
+// thẳng chayKotlin() nên đã chứng minh NỘI DUNG đúng, nhưng chỉ test trình duyệt mới chốt được
+// ĐƯỜNG ĐI — trang chọn đúng bộ chạy theo language 'kotlin', và luật tự khai §3.3 (huy hiệu
+// "· mô phỏng" + dòng [GIA LAP]) tới được mắt học viên chứ không chỉ nằm trong engine.
+test('bài Kotlin p6-u5-l3: code mẫu đạt hết test-case, huy hiệu tự khai là mô phỏng', async ({
+  page,
+}) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p6-u5-l3', { waitUntil: 'domcontentloaded' })
+
+  // Huy hiệu phải tự khai là mô phỏng NGAY trước khi học viên vào bài (§3.3 luật 1).
+  await expect(page.getByText('Kotlin').first()).toBeVisible()
+  await expect(page.getByText('· mô phỏng').first()).toBeVisible()
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page.getByRole('button', { name: 'Xem code mẫu' }).click()
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 60_000 })
+})
+
+test('bài Kotlin: gán lại một `val` thì báo lỗi nói được, ngay tại chỗ', async ({ page }) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p6-u5-l1', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page
+    .getByRole('textbox')
+    .first()
+    .fill('fun main() {\n    val x = 1\n    x = 2\n    println(x)\n}')
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  // Bộ chạy phải NÓI RA vì sao, không im lặng đánh rớt — đây là lý do sư phạm chính đáng của
+  // việc tự viết interpreter (§3.4 "lỗi phải nói được").
+  await expect(page.getByText(/khong gan lai duoc/).first()).toBeVisible({ timeout: 60_000 })
+})
+
 test('bài DOM: vòng lặp vô hạn khi CHẤM bị ngắt, trang không treo', async ({ page }) => {
   test.setTimeout(120_000)
   await mockLogin(page, 'vi', 'dark-blue')

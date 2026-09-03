@@ -375,6 +375,14 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         topics: 'C nền tảng bộ nhớ → Rust ownership',
       },
       { id: 'p6-u4', title: 'Dẫn nhập hướng thuật toán', topics: 'Luyện đề có Socratic hints' },
+      // u5–u7: track KOTLIN của CHƯƠNG TRÌNH M (PR-M8/M9). Sản phẩm trục nhỏ "Sổ chi tiêu"
+      // tích luỹ qua ba unit: model dữ liệu → null safety + collections → sealed class.
+      // Chạy trên bộ chạy rút gọn `kotlinSim` (không phải kotlinc) — xem luật tự khai §3.3.
+      {
+        id: 'p6-u5',
+        title: 'Kotlin nhập môn — model dữ liệu',
+        topics: 'val/var, kiểu suy ra, chuỗi mẫu; hàm, when; data class · Dự án: Sổ chi tiêu',
+      },
       // Từ u16 trở đi là NỘI DUNG HỌC THẬT của các hướng chuyên sâu (bản đồ hướng ở
       // `specializations/`). Dải u5…u15 đã được CHƯƠNG TRÌNH M giữ chỗ (Kotlin · Swift ·
       // paradigm), nên nội dung hướng bắt đầu từ u16 để hai dòng việc không tranh mã unit.
