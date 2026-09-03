@@ -916,6 +916,20 @@ export function TodayLesson({
                 : `+ ${srsWaiting} SRS cards waiting after`}
             </p>
           )}
+          {/* NÓI RÕ khi phiên bị rút gọn (2026-09-03).
+              Luồng "quay lại sau khi bỏ bẵng" (lib/comeback.ts) trỏ tới `?cap=3`, khiến lượt
+              đầu chỉ còn 3 từ thay vì tốc độ đã chọn. Trước đây app KHÔNG nói gì: người học
+              thấy ít bài hơn thường lệ mà không biết vì sao — dễ tưởng mất tiến độ hoặc app
+              lỗi. Một dòng giải thích rẻ hơn nhiều so với việc để họ tự đoán.
+              Chỉ hiện khi cap thật sự NHỎ HƠN tốc độ thường; `?cap=` bằng hoặc lớn hơn thì
+              không có gì để giải thích. */}
+          {sessionCap != null && sessionCap < speed && (
+            <p className="text-xs text-accent-300 theme-light:text-accent-800 mt-0.5">
+              {isA
+                ? `Phiên nhẹ để quay lại: ${sessionCap} từ thay vì ${speed}. Xong vẫn học tiếp được.`
+                : `Easy restart session: ${sessionCap} words instead of ${speed}. You can keep going after.`}
+            </p>
+          )}
         </div>
       )}
       {/* Tên chủ đề + cấp CEFR + tiến độ vòng */}

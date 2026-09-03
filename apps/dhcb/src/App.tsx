@@ -9,6 +9,7 @@ import { CardListSkeleton } from './components/Skeleton'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import BottomNav from './components/BottomNav'
 import DesktopSidebar from './components/DesktopSidebar'
+import { SkipLink } from '@core/SkipLink'
 import PromoEndingBanner from './components/PromoEndingBanner'
 import PlanExpiryBanner from './components/PlanExpiryBanner'
 import { lazyWithRetry } from './lib/lazyWithRetry'
@@ -264,6 +265,13 @@ export default function App() {
           <ToastProvider>
             <BrowserRouter>
               <CanonicalUpdater />
+              {/* "Bỏ qua tới nội dung chính" — WCAG 2.4.1 (mức A).
+                  ĐẶT Ở ĐÂY, KHÔNG PHẢI TRONG Layout: `DesktopSidebar` render trước Layout
+                  trong cây, nên skip link nằm trong Layout thì người dùng đã Tab qua hết
+                  sidebar mới tới nó — tức vô dụng. Đo thật lúc đặt sai chỗ: Tab lần 1 rơi
+                  vào logo sidebar, không phải skip link. Phần tử này phải là điểm dừng Tab
+                  ĐẦU TIÊN của trang. */}
+              <SkipLink />
               {/* Chỉ hiện từ 1024px (`lg:`) — xem components/DesktopSidebar.tsx.
                   Ở ngoài ErrorBoundary/div kéo 1 tay vì tự định vị `fixed`, giống BottomNav. */}
               <DesktopSidebar />

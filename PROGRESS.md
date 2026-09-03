@@ -2863,6 +2863,19 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 > `docs/legacy/no-ky-thuat-da-dong.md` (2026-09-01) để file này chỉ nói trạng thái hiện tại —
 > đúng vai trò ở mục 2 `CLAUDE.md`. Đóng một món nợ = cắt khối đó dán sang file kia, kèm ngày.
 
+- 🔴 **[2026-09-03] Cổng a11y có thể cho XANH GIẢ vì chờ cứng 1 giây.**
+  `e2e/a11y.spec.ts` gọi `page.waitForTimeout(1000)` rồi mới quét axe. Trên máy phát triển,
+  trang `/tien-do` sau 1 giây **chưa render xong lịch hoạt động** — đo được `gridcells: 0` —
+  nên axe quét một trang gần như trống và báo 0 vi phạm. Phát hiện khi chữa CI đỏ của PR #826:
+  lỗi `aria-required-parent` (182 phần tử, mức critical) mà CI bắt được thì chạy cục bộ KHÔNG
+  tái hiện nổi; đổi sang chờ theo trạng thái (đợi lưới xuất hiện) là lỗi hiện ra ngay.
+  **Vì sao xếp 🔴:** cổng này là thứ dự án dựa vào để khẳng định "AA sàn cứng, dung sai 0"
+  (CLAUDE.md mục 4.5). Nếu nó quét trang chưa render xong thì mọi kết luận a11y đều kém tin
+  cậy hơn ta tưởng — và không ai biết nó đang bỏ sót những gì.
+  **Việc cần làm:** thay chờ cứng bằng chờ theo trạng thái ở cả `a11y.spec.ts` và
+  `a11y-aaa.spec.ts` (15 trang × 5 theme mỗi file), rồi ĐO lại xem có trang nào bật ra vi phạm
+  mới không. Phải là đợt riêng có đo đạc, không nhét kèm việc khác.
+
 - 🟡 **[2026-08-28] Repo có HAI file cấu hình Nginx mô tả cùng một server.** `nginx/dhcb.conf`
   tự nhận là "cấu hình ĐANG CHẠY THẬT trên VPS", trong khi `docs/cloudflare-setup.md` và
   `docs/runbook-dung-vps-moi-tu-dau.md` lại hướng dẫn copy `nginx/en-vi.conf`. Không biết bản
