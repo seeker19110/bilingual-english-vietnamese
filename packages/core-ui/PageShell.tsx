@@ -25,6 +25,13 @@ import type { ReactNode } from 'react'
  */
 export type PageWidth = 'reading' | 'standard' | 'wide'
 
+/**
+ * `id` của vùng nội dung chính — đích của liên kết "Bỏ qua tới nội dung chính".
+ * Xuất ra hằng số thay vì gõ chuỗi ở hai nơi: đổi một bên mà quên bên kia thì liên kết
+ * đứt LẶNG LẼ (trình duyệt không báo lỗi khi anchor không tồn tại).
+ */
+export const MAIN_CONTENT_ID = 'noi-dung-chinh'
+
 /** Bề rộng ở DESKTOP (≥1024px) — phần mà component này thật sự quyết định. */
 const WIDTH_CLASS: Record<PageWidth, string> = {
   // ~65–75 ký tự/dòng. Dùng cho trang KHÔNG có cột phải; trang có cột phải nên chọn
@@ -69,7 +76,13 @@ export function PageShell({
 }: PageShellProps) {
   return (
     <main
-      className={`mx-auto w-full px-4 pt-6 lg:pt-8 ${baseWidth} ${WIDTH_CLASS[width]} pb-[calc(2rem+var(--bnav-h))] ${className}`}
+      // Đích của liên kết "Bỏ qua tới nội dung chính" (xem `SkipLink` + Layout.tsx).
+      // `tabIndex={-1}`: KHÔNG thêm điểm dừng Tab mới, nhưng cho phép nhận tiêu điểm bằng
+      // mã lệnh — thiếu nó thì nhảy tới `#${MAIN_CONTENT_ID}` chỉ cuộn màn hình còn tiêu
+      // điểm vẫn kẹt trên thanh điều hướng, tức phím Tab tiếp theo lại quay về đầu menu.
+      id={MAIN_CONTENT_ID}
+      tabIndex={-1}
+      className={`mx-auto w-full px-4 pt-6 lg:pt-8 ${baseWidth} ${WIDTH_CLASS[width]} pb-[calc(2rem+var(--bnav-h))] focus:outline-none ${className}`}
     >
       {children}
     </main>
