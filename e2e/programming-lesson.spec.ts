@@ -484,6 +484,38 @@ test('bài Kotlin null safety: dùng thẳng dấu chấm trên kiểu có thể
   await expect(page.getByText(/KHONG duoc dung thang dau/).first()).toBeVisible({ timeout: 60_000 })
 })
 
+// PR-M12 — GOM NHÓM unit P6 theo mạch. Cổng a11y đã quét /lap-trinh/p6 ở cả 5 theme, nhưng nó
+// chỉ chứng minh trang KHÔNG vi phạm tương phản/ngữ nghĩa — không chứng minh việc chia mạch có
+// thật sự xảy ra. Hai test dưới chốt đúng điều đó, và chốt cả mặt trái: bậc KHÔNG chia mạch
+// phải giữ nguyên danh sách phẳng như trước.
+test('bậc P6: 65 unit được gom thành các mạch, mục lục trỏ tới mạch', async ({ page }) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/p6', { waitUntil: 'domcontentloaded' })
+
+  // Ba mạch của chương trình M phải hiện thành tiêu đề thật, không lẫn vào dải unit.
+  await expect(page.getByRole('heading', { name: 'Dẫn nhập bốn hướng phổ biến' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Track Kotlin/ })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Track Paradigm/ })).toBeVisible()
+  // `exact` là bắt buộc: cột phải có sẵn một h2 "Hướng chuyên sâu tự chọn — …" (chặng dự án
+  // của bậc), nếu không khớp chính xác thì locator dính cả hai và test đỏ oan.
+  await expect(page.getByRole('heading', { name: 'Hướng chuyên sâu', exact: true })).toBeVisible()
+
+  // Mục lục đổi sang đếm MẠCH (4 mục quét được) thay vì 65 unit liền một dải.
+  await expect(page.getByText(/Mục lục \d+ mạch/).first()).toBeVisible()
+})
+
+test('bậc P3: không chia mạch thì giữ nguyên danh sách phẳng như trước', async ({ page }) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/p3', { waitUntil: 'domcontentloaded' })
+
+  // Nhãn nhóm MẶC ĐỊNH tuyệt đối không được rò ra ở bậc không chia mạch — nếu rò thì P1–P5
+  // sẽ hiện một tiêu đề "Hướng chuyên sâu" hoàn toàn sai ngữ cảnh.
+  await expect(page.getByRole('heading', { name: 'Hướng chuyên sâu', exact: true })).toHaveCount(0)
+  await expect(page.getByText(/Mục lục \d+ unit/).first()).toBeVisible()
+})
+
 test('bài DOM: vòng lặp vô hạn khi CHẤM bị ngắt, trang không treo', async ({ page }) => {
   test.setTimeout(120_000)
   await mockLogin(page, 'vi', 'dark-blue')

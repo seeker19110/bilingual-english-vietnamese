@@ -19,6 +19,16 @@ export interface ProgrammingUnit {
   topics: string
   /** Bước xây tiếp dự án trục T1 "Cửa hàng của tôi" (làn DỰ ÁN) — rỗng nếu unit thuần luyện. */
   projectStep?: string
+  /**
+   * Nhóm (track) chứa unit — chỉ dùng ở bậc P6, nơi 65 unit thuộc nhiều mạch khác hẳn nhau
+   * (dẫn nhập · Kotlin · Paradigm · hướng chuyên sâu). Giá trị phải khớp `id` của một mục
+   * trong `UNIT_TRACKS`.
+   *
+   * KHÔNG khai track thì unit rơi vào nhóm MẶC ĐỊNH (mục có `macDinh: true`) — nhóm đó được
+   * KHAI RÕ trong `UNIT_TRACKS` chứ không phải quy ước ngầm, và nhờ vậy 55 unit hướng chuyên
+   * sâu không phải sửa từng cái một.
+   */
+  track?: string
 }
 
 export interface ProgrammingLevel {
@@ -363,18 +373,30 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
     // cả 14 hướng nằm ở `specializations/` (mỗi hướng 4 chặng × module + 5 dự án) — đó mới là
     // nguồn thi hành, các unit này chỉ là cửa vào trong dòng bài học tuần tự.
     units: [
-      { id: 'p6-u1', title: 'Dẫn nhập hướng AI', topics: 'Python: gọi LLM API, RAG cơ bản' },
+      {
+        id: 'p6-u1',
+        title: 'Dẫn nhập hướng AI',
+        topics: 'Python: gọi LLM API, RAG cơ bản',
+        track: 'dan-nhap',
+      },
       {
         id: 'p6-u2',
         title: 'Dẫn nhập hướng backend/cloud',
         topics: 'Go: goroutine, Docker, CI/CD',
+        track: 'dan-nhap',
       },
       {
         id: 'p6-u3',
         title: 'Dẫn nhập hướng hệ thống',
         topics: 'C nền tảng bộ nhớ → Rust ownership',
+        track: 'dan-nhap',
       },
-      { id: 'p6-u4', title: 'Dẫn nhập hướng thuật toán', topics: 'Luyện đề có Socratic hints' },
+      {
+        id: 'p6-u4',
+        title: 'Dẫn nhập hướng thuật toán',
+        topics: 'Luyện đề có Socratic hints',
+        track: 'dan-nhap',
+      },
       // u5–u7: track KOTLIN của CHƯƠNG TRÌNH M (PR-M8/M9). Sản phẩm trục nhỏ "Sổ chi tiêu"
       // tích luỹ qua ba unit: model dữ liệu → null safety + collections → sealed class.
       // Chạy trên bộ chạy rút gọn `kotlinSim` (không phải kotlinc) — xem luật tự khai §3.3.
@@ -382,16 +404,19 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         id: 'p6-u5',
         title: 'Kotlin nhập môn — model dữ liệu',
         topics: 'val/var, kiểu suy ra, chuỗi mẫu; hàm, when; data class · Dự án: Sổ chi tiêu',
+        track: 'kotlin',
       },
       {
         id: 'p6-u6',
         title: 'Kotlin — null safety và collections',
         topics: 'T?, ?., ?:, !!, smart cast, toIntOrNull; lambda, filter/sumOf/groupBy',
+        track: 'kotlin',
       },
       {
         id: 'p6-u7',
         title: 'Kotlin — sealed class và trạng thái',
         topics: 'sealed class, object vs data class, when is · Dự án khép track: Sổ chi tiêu',
+        track: 'kotlin',
       },
       // u13–u15: track PARADIGM của CHƯƠNG TRÌNH M (PR-M10/M11). Tầng 3 KHÔNG thêm ngôn ngữ —
       // dạy bằng Python đã có bộ chạy, mở theo CÁCH NGHĨ. Ba trụ F/C/S.
@@ -399,17 +424,20 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         id: 'p6-u13',
         title: 'Paradigm F — Lập trình hàm',
         topics: 'Hàm thuần, bất biến, map/filter/reduce · Dự án: tách lõi thuần khỏi vỏ hiệu ứng',
+        track: 'paradigm',
       },
       {
         id: 'p6-u14',
         title: 'Paradigm C — Đồng thời & phân tán',
         topics: 'Xen kẽ tất định, tranh chấp, khoá, deadlock; idempotency, at-least-once, backoff',
+        track: 'paradigm',
       },
       {
         id: 'p6-u15',
         title: 'Paradigm S — Thiết kế hệ thống & tư duy kỹ sư',
         topics:
           'Ước lượng số lớn, cache/hàng đợi/phân mảnh, quan sát được · Dự án: phân tích sự cố thật + post-mortem',
+        track: 'paradigm',
       },
       // Từ u16 trở đi là NỘI DUNG HỌC THẬT của các hướng chuyên sâu (bản đồ hướng ở
       // `specializations/`). Dải u5…u15 đã được CHƯƠNG TRÌNH M giữ chỗ (Kotlin · Swift ·
@@ -743,6 +771,73 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
 const levelMap = new Map<string, ProgrammingLevel>(PROGRAMMING_LEVELS.map((l) => [l.id, l]))
 
 /** Lấy bậc theo id ('p1'…'p6'), không phân biệt hoa thường; undefined nếu id lạ. */
+/**
+ * Các NHÓM (track) của danh sách unit, theo thứ tự hiển thị.
+ *
+ * Vì sao cần (đo 2026-09-03): bậc P6 có **65 unit** và tất cả đều đã có bài, nên trang bậc là
+ * một dải 65 thẻ liền mạch — học viên không phân biệt nổi "dẫn nhập bốn hướng" với "track
+ * Kotlin của chương trình M" với "55 unit hướng chuyên sâu", vì chúng nằm cạnh nhau y hệt.
+ * Nhóm lại theo mạch là việc PR-M12 của chương trình M đặt ra.
+ *
+ * Nhóm MẶC ĐỊNH (`macDinh: true`) hứng mọi unit không khai `track`. Khai nó ra thành một mục
+ * thật, thay vì để ngầm, vì hai lý do: nhóm đó có TÊN hiện trên giao diện, và 55 unit hướng
+ * chuyên sâu không phải sửa từng cái.
+ */
+export interface UnitTrack {
+  id: string
+  title: string
+  /** Một câu nói rõ nhóm này là gì — hiện dưới tiêu đề nhóm. */
+  moTa: string
+  /** Đúng MỘT mục được đánh dấu: nơi hứng unit không khai `track`. */
+  macDinh?: boolean
+}
+
+export const UNIT_TRACKS: UnitTrack[] = [
+  {
+    id: 'dan-nhap',
+    title: 'Dẫn nhập bốn hướng phổ biến',
+    moTa: 'Cửa vào ngắn của bốn hướng nghề hay chọn nhất — đọc để biết mình hợp hướng nào.',
+  },
+  {
+    id: 'kotlin',
+    title: 'Track Kotlin — lập trình di động',
+    moTa: 'Cú pháp Kotlin thật trên bộ chạy rút gọn; sản phẩm trục nhỏ "Sổ chi tiêu" đi xuyên ba unit.',
+  },
+  {
+    id: 'paradigm',
+    title: 'Track Paradigm — ba cách nghĩ',
+    moTa: 'Không thêm ngôn ngữ mới: hàm thuần · đồng thời & phân tán · thiết kế hệ thống.',
+  },
+  {
+    id: 'chuyen-sau',
+    title: 'Hướng chuyên sâu',
+    moTa: 'Nội dung học thật của 14 hướng nghề — chọn một hướng và đi hết bốn chặng của nó.',
+    macDinh: true,
+  },
+]
+
+export interface NhomUnit {
+  track: UnitTrack
+  units: ProgrammingUnit[]
+}
+
+/**
+ * Gom unit của một bậc thành các nhóm theo `UNIT_TRACKS`, giữ đúng thứ tự khai báo.
+ *
+ * Nhóm RỖNG bị bỏ đi (bậc P1–P5 không unit nào khai `track` nên chỉ còn đúng MỘT nhóm) — nhờ
+ * vậy giao diện tự biết khi nào cần chia nhóm và khi nào giữ nguyên danh sách phẳng như cũ,
+ * không phải đặc biệt hoá riêng cho P6.
+ */
+export function nhomUnitTheoTrack(units: ProgrammingUnit[]): NhomUnit[] {
+  const macDinh = UNIT_TRACKS.find((t) => t.macDinh)
+  return UNIT_TRACKS.map((track) => ({
+    track,
+    units: units.filter((u) =>
+      u.track === undefined ? track.id === macDinh?.id : u.track === track.id,
+    ),
+  })).filter((n) => n.units.length > 0)
+}
+
 export function getProgrammingLevel(levelId: string): ProgrammingLevel | undefined {
   return levelMap.get(levelId.toLowerCase())
 }
