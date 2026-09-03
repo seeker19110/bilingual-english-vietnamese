@@ -1,6 +1,6 @@
 # 0246 — 2026-09-03 — Bắt đầu di trú nút cũ sang `Button` dùng chung
 
-PR: (điền khi tạo) · Nhánh: `claude/modern-ui-redesign-jull9n`
+PR: #829 · Nhánh: `claude/modern-ui-redesign-jull9n`
 
 ## Bối cảnh
 
