@@ -393,6 +393,18 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Kotlin — sealed class và trạng thái',
         topics: 'sealed class, object vs data class, when is · Dự án khép track: Sổ chi tiêu',
       },
+      // u13–u15: track PARADIGM của CHƯƠNG TRÌNH M (PR-M10/M11). Tầng 3 KHÔNG thêm ngôn ngữ —
+      // dạy bằng Python đã có bộ chạy, mở theo CÁCH NGHĨ. Ba trụ F/C/S.
+      {
+        id: 'p6-u13',
+        title: 'Paradigm F — Lập trình hàm',
+        topics: 'Hàm thuần, bất biến, map/filter/reduce · Dự án: tách lõi thuần khỏi vỏ hiệu ứng',
+      },
+      {
+        id: 'p6-u14',
+        title: 'Paradigm C — Đồng thời & phân tán',
+        topics: 'Xen kẽ tất định, tranh chấp, khoá, deadlock; idempotency, at-least-once, backoff',
+      },
       // Từ u16 trở đi là NỘI DUNG HỌC THẬT của các hướng chuyên sâu (bản đồ hướng ở
       // `specializations/`). Dải u5…u15 đã được CHƯƠNG TRÌNH M giữ chỗ (Kotlin · Swift ·
       // paradigm), nên nội dung hướng bắt đầu từ u16 để hai dòng việc không tranh mã unit.

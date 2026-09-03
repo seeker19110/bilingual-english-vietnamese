@@ -1408,8 +1408,13 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   NAY XONG TRỌN VẸN `p6-u5…u7`.** Đợt này còn PHÁT HIỆN một khác biệt chưa có trong bảng —
   `when` biểu thức không khớp nhánh nào thì bộ chạy trả `kotlin.Unit` còn Kotlin thật không dịch
   nổi — đã bổ sung vào hằng `KHAC_BIET` và nói ra trong bài `u7-l1`. Nhật ký
-  `docs/changelog/0250-*.md`. Việc tiếp của mạch M: PR-M10/M11 (Paradigm `p6-u13…u15`) — mạch
-  DUY NHẤT còn đi tiếp được ngay, vì M4–M6 (Swift) vẫn kẹt cổng cứng §8.** **ĐÃ ĐẢO THỨ TỰ M7 lên trước M4–M6, người dùng duyệt 2026-08-27:** M4 bị
+  `docs/changelog/0250-*.md`. ** · **PR-M10 ✅ (2026-09-03) — Paradigm trụ F
+  (`p6-u13` lập trình hàm, dự án tách lõi thuần khỏi vỏ hiệu ứng) và trụ C (`p6-u14` đồng thời &
+  phân tán, dự án webhook idempotent), 4 bài bằng Python (tầng 3 không thêm ngôn ngữ). Trụ C kế
+  thừa mô hình `chay_xen_ke` của `p6-u2`, không viết lại. Nhật ký `docs/changelog/0251-*.md`.
+  Việc tiếp: **PR-M11 = trụ S** (`p6-u15` thiết kế hệ thống, dự án phân tích sự cố thật từ
+  `docs/ke-hoach-khoi-phuc-su-co-server.md`), rồi PR-M12 (giao diện gom nhóm 15 unit P6).
+  M4–M6 (Swift) vẫn kẹt cổng cứng §8.** **ĐÃ ĐẢO THỨ TỰ M7 lên trước M4–M6, người dùng duyệt 2026-08-27:** M4 bị
   cổng cứng §8 chặn tới khi có người chạy `npm run swift:conformance` trên máy có Xcode, còn M7
   là bộ chạy KHÁC không đi qua cổng đó (`conformance.test.ts` của Swift chỉ đỏ khi có bài
   `language: 'swift'`). Cổng cứng M3→M4 **vẫn nguyên vẹn**, PR-M7 không chạm vào.
