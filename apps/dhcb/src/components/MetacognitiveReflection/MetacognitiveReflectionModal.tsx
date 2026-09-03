@@ -149,7 +149,7 @@ export default function MetacognitiveReflectionModal({
                     }
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
                       domain === d.id
-                        ? 'bg-teal-500/20 border-teal-400 text-teal-300 shadow-sm'
+                        ? 'bg-teal-500/20 border-teal-400 text-teal-300 theme-light:text-teal-900 shadow-sm'
                         : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700'
                     }`}
                   >
@@ -161,15 +161,15 @@ export default function MetacognitiveReflectionModal({
               {/* Socratic Prompt Card */}
               {prompt && (
                 <div className="p-4 rounded-2xl bg-gradient-to-r from-teal-950/40 to-emerald-950/30 border border-teal-500/30">
-                  <div className="flex items-center gap-2 text-teal-400 text-xs font-bold uppercase tracking-wider mb-1.5">
+                  <div className="flex items-center gap-2 text-teal-400 theme-light:text-teal-900 text-xs font-bold uppercase tracking-wider mb-1.5">
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>Chủ đề: {prompt.theme}</span>
                   </div>
                   <p className="text-sm font-semibold text-zinc-100 leading-relaxed mb-2">
                     {prompt.promptText}
                   </p>
-                  <div className="p-3 rounded-xl bg-zinc-900/80 border border-teal-500/20 text-xs text-teal-200/90 leading-relaxed flex items-start gap-2">
-                    <Brain className="w-4 h-4 text-teal-400 flex-shrink-0 mt-0.5" />
+                  <div className="p-3 rounded-xl bg-zinc-900/80 border border-teal-500/20 text-xs text-teal-200 theme-light:text-teal-900/90 leading-relaxed flex items-start gap-2">
+                    <Brain className="w-4 h-4 text-teal-400 theme-light:text-teal-900 flex-shrink-0 mt-0.5" />
                     <div>
                       <strong>Câu hỏi đào sâu Socratic:</strong> {prompt.deepDivingQuestion}
                     </div>
@@ -218,10 +218,10 @@ export default function MetacognitiveReflectionModal({
                       <h4 className="font-bold text-sm text-white">Kết Quả Phân Tích Nhận Thức</h4>
                     </div>
                     <div className="flex items-center gap-4 text-xs">
-                      <span className="px-2.5 py-1 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30 font-bold">
+                      <span className="px-2.5 py-1 rounded-full bg-teal-500/20 text-teal-300 theme-light:text-teal-900 border border-teal-500/30 font-bold">
                         MAI: {currentReflection.metacognitiveIndex}/100
                       </span>
-                      <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
+                      <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-900 border border-emerald-500/30 font-bold">
                         Growth Mindset: {currentReflection.growthMindsetScore}/100
                       </span>
                     </div>
@@ -231,7 +231,7 @@ export default function MetacognitiveReflectionModal({
                   {currentReflection.identifiedBiases.length > 0 && (
                     <div className="space-y-2">
                       <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
-                        <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                        <AlertTriangle className="w-3.5 h-3.5 text-amber-400 theme-light:text-amber-900" />
                         Thiên kiến & Điểm mù nhận diện:
                       </span>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -240,9 +240,11 @@ export default function MetacognitiveReflectionModal({
                             key={i}
                             className="p-3 rounded-xl bg-zinc-950 border border-amber-500/30 space-y-1.5"
                           >
-                            <div className="text-xs font-bold text-amber-300">{b.biasName}</div>
+                            <div className="text-xs font-bold text-amber-300 theme-light:text-amber-900">
+                              {b.biasName}
+                            </div>
                             <p className="text-xs text-zinc-300">{b.explanation}</p>
-                            <div className="p-2 rounded-lg bg-zinc-900 border border-amber-500/20 text-[11px] text-amber-200/90">
+                            <div className="p-2 rounded-lg bg-zinc-900 border border-amber-500/20 text-[11px] text-amber-200 theme-light:text-amber-900/90">
                               💡 <strong>Gợi ý giải trừ:</strong> {b.antidotePrompt}
                             </div>
                           </div>
@@ -255,13 +257,15 @@ export default function MetacognitiveReflectionModal({
                   {currentReflection.ahaMoments.length > 0 && (
                     <div className="space-y-2">
                       <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
-                        <Lightbulb className="w-3.5 h-3.5 text-yellow-400" />
+                        <Lightbulb className="w-3.5 h-3.5 text-yellow-400 theme-light:text-yellow-900" />
                         Khoảnh khắc "Aha!" sáng suốt:
                       </span>
-                      <div className="p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-xs text-yellow-100 space-y-1">
+                      <div className="p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-xs text-yellow-100 theme-light:text-yellow-900 space-y-1">
                         {currentReflection.ahaMoments.map((aha, i) => (
                           <div key={i} className="flex items-start gap-2">
-                            <span className="text-yellow-400 font-bold">•</span>
+                            <span className="text-yellow-400 theme-light:text-yellow-900 font-bold">
+                              •
+                            </span>
                             <span>{aha}</span>
                           </div>
                         ))}
@@ -271,7 +275,7 @@ export default function MetacognitiveReflectionModal({
 
                   {/* Socratic Follow-up */}
                   <div className="p-3 rounded-xl bg-zinc-950 border border-teal-500/30 text-xs space-y-1.5">
-                    <span className="font-bold text-teal-400 flex items-center gap-1.5">
+                    <span className="font-bold text-teal-400 theme-light:text-teal-900 flex items-center gap-1.5">
                       <ChevronRight className="w-3.5 h-3.5" />
                       Gợi mở suy ngẫm tiếp theo:
                     </span>
@@ -291,13 +295,13 @@ export default function MetacognitiveReflectionModal({
                 <div className="p-4 rounded-2xl bg-zinc-900 border border-teal-500/30 flex flex-wrap items-center justify-between gap-3 text-xs">
                   <div>
                     <div className="text-zinc-400">Chỉ số Tự nhận thức (MAI) trung bình</div>
-                    <div className="text-lg font-bold text-teal-400">
+                    <div className="text-lg font-bold text-teal-400 theme-light:text-teal-900">
                       {summary.overallAwarenessIndex}/100
                     </div>
                   </div>
                   <div>
                     <div className="text-zinc-400">Xu hướng tư duy</div>
-                    <div className="font-bold text-emerald-400 uppercase">
+                    <div className="font-bold text-emerald-400 theme-light:text-emerald-900 uppercase">
                       {summary.mindsetTrend}
                     </div>
                   </div>
@@ -321,7 +325,9 @@ export default function MetacognitiveReflectionModal({
                     className="p-4 rounded-2xl bg-zinc-900/60 border border-zinc-800 hover:border-teal-500/30 transition-all space-y-2"
                   >
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-teal-300">{h.title}</span>
+                      <span className="font-bold text-teal-300 theme-light:text-teal-900">
+                        {h.title}
+                      </span>
                       <span className="text-zinc-500">
                         {new Date(h.createdAt).toLocaleDateString('vi-VN')}
                       </span>

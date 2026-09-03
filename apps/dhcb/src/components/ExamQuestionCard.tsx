@@ -127,7 +127,8 @@ export default function ExamQuestionCard({
             if (opt === q.correct)
               cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300 animate-pop-correct'
             else if (opt === selected)
-              cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300 animate-shake'
+              cls =
+                'bg-rose-500/20 border-rose-500/60 text-rose-300 theme-light:text-rose-900 animate-shake'
             else cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-400'
           }
           return (

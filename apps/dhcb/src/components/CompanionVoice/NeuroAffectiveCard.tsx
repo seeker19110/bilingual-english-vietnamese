@@ -75,10 +75,10 @@ export const NeuroAffectiveCard: React.FC = () => {
           <div
             className={`p-1.5 rounded-xl border ${
               isPeakFlow
-                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 animate-pulse'
+                ? 'bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-900 border-emerald-500/40 animate-pulse'
                 : isBurnout
-                  ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
-                  : 'bg-teal-500/20 text-teal-300 border-teal-500/30'
+                  ? 'bg-rose-500/20 text-rose-300 theme-light:text-rose-900 border-rose-500/40'
+                  : 'bg-teal-500/20 text-teal-300 theme-light:text-teal-900 border-teal-500/30'
             }`}
           >
             <Activity className="w-4 h-4" />
@@ -100,10 +100,10 @@ export const NeuroAffectiveCard: React.FC = () => {
         <span
           className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border ${
             isPeakFlow
-              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+              ? 'bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-900 border-emerald-500/30'
               : isBurnout
-                ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
-                : 'bg-teal-500/20 text-teal-300 border-teal-500/30'
+                ? 'bg-rose-500/20 text-rose-300 theme-light:text-rose-900 border-rose-500/30'
+                : 'bg-teal-500/20 text-teal-300 theme-light:text-teal-900 border-teal-500/30'
           }`}
         >
           {state.energyLevel.toUpperCase()}
@@ -117,7 +117,7 @@ export const NeuroAffectiveCard: React.FC = () => {
             <div className="bg-zinc-900/90 border border-zinc-800 p-3 rounded-xl space-y-1.5">
               <div className="flex items-center justify-between text-zinc-400 text-[11px]">
                 <span className="flex items-center gap-1">
-                  <Zap className="w-3.5 h-3.5 text-amber-400" />
+                  <Zap className="w-3.5 h-3.5 text-amber-400 theme-light:text-amber-900" />
                   Điểm tập trung (Focus)
                 </span>
                 <span className="font-bold text-white">{state.focusScore}/100</span>
@@ -133,7 +133,7 @@ export const NeuroAffectiveCard: React.FC = () => {
             <div className="bg-zinc-900/90 border border-zinc-800 p-3 rounded-xl space-y-1.5">
               <div className="flex items-center justify-between text-zinc-400 text-[11px]">
                 <span className="flex items-center gap-1">
-                  <Heart className="w-3.5 h-3.5 text-rose-400" />
+                  <Heart className="w-3.5 h-3.5 text-rose-400 theme-light:text-rose-900" />
                   Chỉ số Căng thẳng (Stress)
                 </span>
                 <span className="font-bold text-white">{state.stressIndex}/100</span>
@@ -155,9 +155,9 @@ export const NeuroAffectiveCard: React.FC = () => {
 
           {/* Recommended Action */}
           <div className="bg-zinc-900/90 border border-zinc-800 rounded-xl p-3 text-zinc-300 leading-relaxed font-medium flex items-start gap-2.5">
-            <Sliders className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" />
+            <Sliders className="w-4 h-4 text-teal-400 theme-light:text-teal-900 shrink-0 mt-0.5" />
             <div>
-              <span className="text-[11px] uppercase font-bold tracking-wider text-teal-400 block mb-0.5">
+              <span className="text-[11px] uppercase font-bold tracking-wider text-teal-400 theme-light:text-teal-900 block mb-0.5">
                 Khuyến nghị điều tiết
               </span>
               <p className="text-xs text-zinc-200">{state.recommendedAction}</p>
@@ -167,7 +167,7 @@ export const NeuroAffectiveCard: React.FC = () => {
           {/* Active Adaptive Shields */}
           <div className="space-y-2">
             <div className="text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5 text-emerald-400" />
+              <Shield className="w-3.5 h-3.5 text-emerald-400 theme-light:text-emerald-900" />
               <span>Lá chắn thích ứng thần kinh (Adaptive Shields):</span>
             </div>
 
@@ -203,7 +203,7 @@ export const NeuroAffectiveCard: React.FC = () => {
                     disabled={toggling === shield.id}
                     className={`tap-44 p-2.5 rounded-xl border flex items-center justify-between transition text-left ${
                       isEnabled
-                        ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-200'
+                        ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-200 theme-light:text-emerald-900'
                         : 'bg-zinc-900/60 border-zinc-800 text-zinc-400 hover:text-zinc-200'
                     }`}
                   >
@@ -211,11 +211,13 @@ export const NeuroAffectiveCard: React.FC = () => {
                       {toggling === shield.id ? (
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
                       ) : (
-                        <Icon className="w-3.5 h-3.5 text-emerald-400" />
+                        <Icon className="w-3.5 h-3.5 text-emerald-400 theme-light:text-emerald-900" />
                       )}
                       <span className="font-semibold text-xs">{shield.label}</span>
                     </div>
-                    {isEnabled && <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />}
+                    {isEnabled && (
+                      <CheckCircle className="w-3.5 h-3.5 text-emerald-400 theme-light:text-emerald-900" />
+                    )}
                   </button>
                 )
               })}

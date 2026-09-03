@@ -110,7 +110,7 @@ const CORE_BOTTOM: Item[] = [
     to: '/nang-cap',
     label: 'Nâng cấp',
     icon: Crown,
-    color: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
+    color: 'text-amber-400 theme-light:text-amber-900 bg-amber-500/10 border-amber-500/30',
     paths: PRICING_PATHS,
   },
   { to: '/trang-ca-nhan', label: 'Hồ sơ', icon: User, paths: PROFILE_PATHS },

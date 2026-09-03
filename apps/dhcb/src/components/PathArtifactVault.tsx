@@ -90,7 +90,7 @@ export default function PathArtifactVault({ pathId, phases }: Props) {
           placeholder="Ghi chú ngắn (tuỳ chọn)"
           className="tap-44 w-full rounded-xl bg-zinc-900 border border-zinc-800 px-3 py-2.5 text-sm text-zinc-100"
         />
-        {error && <p className="text-xs text-rose-400">{error}</p>}
+        {error && <p className="text-xs text-rose-400 theme-light:text-rose-900">{error}</p>}
         <button
           onClick={() => void handleSubmit()}
           disabled={submitting || url.trim().length === 0}

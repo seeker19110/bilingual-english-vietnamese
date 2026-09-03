@@ -34,14 +34,18 @@ const OVERALL_LABEL: Record<FeatureStatusRun['overall_status'], string> = {
 }
 
 const OVERALL_CLASS: Record<FeatureStatusRun['overall_status'], string> = {
-  up: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40',
-  degraded: 'bg-amber-500/20 text-amber-400 border-amber-500/40',
-  down: 'bg-rose-500/20 text-rose-400 border-rose-500/40',
+  up: 'bg-emerald-500/20 text-emerald-400 theme-light:text-emerald-900 border-emerald-500/40',
+  degraded: 'bg-amber-500/20 text-amber-400 theme-light:text-amber-900 border-amber-500/40',
+  down: 'bg-rose-500/20 text-rose-400 theme-light:text-rose-900 border-rose-500/40',
 }
 
 function StatusIcon({ status }: { status: FeatureCheckResult['status'] }) {
-  if (status === 'up') return <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-  if (status === 'down') return <XCircle className="w-4 h-4 text-rose-400 shrink-0" />
+  if (status === 'up')
+    return (
+      <CheckCircle2 className="w-4 h-4 text-emerald-400 theme-light:text-emerald-900 shrink-0" />
+    )
+  if (status === 'down')
+    return <XCircle className="w-4 h-4 text-rose-400 theme-light:text-rose-900 shrink-0" />
   return <MinusCircle className="w-4 h-4 text-zinc-500 shrink-0" />
 }
 
@@ -109,7 +113,7 @@ export default function AdminFeatureStatusPanel() {
       <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 space-y-4">
         <div className="flex items-start justify-between gap-4 border-b border-zinc-800 pb-3">
           <div className="flex items-center gap-2.5">
-            <Activity className="w-6 h-6 text-sky-400" />
+            <Activity className="w-6 h-6 text-sky-400 theme-light:text-sky-900" />
             <div>
               <h3 className="font-bold text-white text-base">Trạng thái tính năng</h3>
               <p className="text-xs text-zinc-400">
@@ -139,7 +143,7 @@ export default function AdminFeatureStatusPanel() {
         </div>
 
         {error && (
-          <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-lg text-xs flex items-center gap-2">
+          <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 theme-light:text-rose-900 rounded-lg text-xs flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>

@@ -61,7 +61,7 @@ export default function ShareProgress({ userId, isA, onClose }: Props) {
       emoji: '🔥',
       value: streak,
       label: isA ? 'ngày streak' : 'day streak',
-      color: 'text-orange-400',
+      color: 'text-orange-400 theme-light:text-orange-900',
     },
   ]
 

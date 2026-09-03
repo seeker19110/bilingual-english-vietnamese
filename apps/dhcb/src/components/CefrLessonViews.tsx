@@ -413,7 +413,7 @@ export function VocabFlash({
     return (
       <div className="animate-fade-in space-y-4">
         <div className="flex items-center justify-between text-xs text-zinc-400 mb-1">
-          <span className="text-violet-400 font-medium">
+          <span className="text-violet-400 theme-light:text-violet-800 font-medium">
             {isA ? 'Kiểm tra "Đã biết vòng này"' : 'Test-out quiz'}
           </span>
           <span>
@@ -437,7 +437,8 @@ export function VocabFlash({
             let cls = 'bg-zinc-900/80 border-zinc-800 text-zinc-300 hover:border-zinc-600'
             if (testOutSel !== null) {
               if (opt === q.correct) cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300'
-              else if (opt === testOutSel) cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300'
+              else if (opt === testOutSel)
+                cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300 theme-light:text-rose-900'
               else cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-400'
             }
             return (
@@ -529,7 +530,7 @@ export function VocabFlash({
       {idx === 0 && !done && pool.length >= TESTOUT_CHOICES && (
         <button
           onClick={startTestOut}
-          className="w-full flex items-center justify-center gap-2 mb-3 py-2.5 rounded-xl bg-violet-500/15 hover:bg-violet-500/25 text-violet-300 text-sm font-medium transition"
+          className="w-full flex items-center justify-center gap-2 mb-3 py-2.5 rounded-xl bg-violet-500/15 hover:bg-violet-500/25 text-violet-300 theme-light:text-violet-800 text-sm font-medium transition"
         >
           <Zap className="w-4 h-4" />{' '}
           {isA ? 'Tôi đã biết vòng này — kiểm tra nhanh' : 'I already know this set — quick test'}
@@ -1249,7 +1250,7 @@ export function DialogueView({
                         </button>
                       </div>
                       {!canRecord && (
-                        <p className="text-[11px] text-amber-400 mt-2">
+                        <p className="text-[11px] text-amber-400 theme-light:text-amber-900 mt-2">
                           {isA
                             ? 'Trình duyệt này không hỗ trợ ghi âm.'
                             : 'This browser does not support recording.'}

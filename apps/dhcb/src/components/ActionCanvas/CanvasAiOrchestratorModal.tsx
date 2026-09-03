@@ -58,7 +58,7 @@ export default function CanvasAiOrchestratorModal({
         </button>
 
         <div className="flex items-center gap-2 mb-3">
-          <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+          <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 theme-light:text-cyan-900 border border-cyan-500/30">
             <Sparkles className="w-5 h-5" />
           </div>
           <div>

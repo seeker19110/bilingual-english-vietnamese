@@ -44,13 +44,13 @@ export default function AcousticPhoneticsLab() {
     <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-br from-indigo-950/40 via-zinc-900/90 to-zinc-950 p-5 shadow-xl backdrop-blur-md">
       <div className="flex items-center justify-between border-b border-indigo-800/30 pb-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-400">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-400 theme-light:text-indigo-800">
             <Activity className="h-5 w-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-zinc-100">Acoustic Phonetics &amp; GOP Lab</h3>
-              <span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-[11px] font-medium text-indigo-300">
+              <span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-[11px] font-medium text-indigo-300 theme-light:text-indigo-800">
                 Phoneme Engine V4
               </span>
             </div>
@@ -94,7 +94,7 @@ export default function AcousticPhoneticsLab() {
               }}
               className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
                 targetSentence === sample
-                  ? 'bg-indigo-500/30 text-indigo-200 border border-indigo-500/40'
+                  ? 'bg-indigo-500/30 text-indigo-200 theme-light:text-indigo-800 border border-indigo-500/40'
                   : 'bg-zinc-800/80 text-zinc-400 hover:bg-zinc-800'
               }`}
             >
@@ -109,23 +109,25 @@ export default function AcousticPhoneticsLab() {
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-3 text-center">
                 <div className="text-xs text-zinc-400">Điểm GOP Tổng</div>
-                <div className="mt-1 text-lg font-bold text-emerald-400">
+                <div className="mt-1 text-lg font-bold text-emerald-400 theme-light:text-emerald-900">
                   {report.overallGopScore} / 100
                 </div>
               </div>
               <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-3 text-center">
                 <div className="text-xs text-zinc-400">Độ trôi chảy</div>
-                <div className="mt-1 text-lg font-bold text-cyan-400">{report.fluencyScore} %</div>
+                <div className="mt-1 text-lg font-bold text-cyan-400 theme-light:text-cyan-900">
+                  {report.fluencyScore} %
+                </div>
               </div>
               <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-3 text-center">
                 <div className="text-xs text-zinc-400">Tốc độ (WPM)</div>
-                <div className="mt-1 text-lg font-bold text-indigo-400">
+                <div className="mt-1 text-lg font-bold text-indigo-400 theme-light:text-indigo-800">
                   {report.speechRateWpm} wpm
                 </div>
               </div>
               <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-3 text-center">
                 <div className="text-xs text-zinc-400">Ngữ điệu Prosody</div>
-                <div className="mt-1 text-lg font-bold text-purple-400">
+                <div className="mt-1 text-lg font-bold text-purple-400 theme-light:text-purple-800">
                   {report.prosodyScore} %
                 </div>
               </div>
@@ -142,10 +144,10 @@ export default function AcousticPhoneticsLab() {
                     key={idx}
                     className={`rounded-lg border p-2.5 ${
                       ph.gopScore >= 80
-                        ? 'border-emerald-500/30 bg-emerald-950/20 text-emerald-300'
+                        ? 'border-emerald-500/30 bg-emerald-950/20 text-emerald-300 theme-light:text-emerald-900'
                         : ph.gopScore >= 60
-                          ? 'border-amber-500/30 bg-amber-950/20 text-amber-300'
-                          : 'border-red-500/30 bg-red-950/20 text-red-300'
+                          ? 'border-amber-500/30 bg-amber-950/20 text-amber-300 theme-light:text-amber-900'
+                          : 'border-red-500/30 bg-red-950/20 text-red-300 theme-light:text-red-900'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -161,8 +163,10 @@ export default function AcousticPhoneticsLab() {
             </div>
 
             {/* Mẹo điều chỉnh cơ miệng */}
-            <div className="rounded-xl border border-indigo-500/20 bg-indigo-950/20 p-3 text-xs text-indigo-200">
-              <span className="font-semibold text-indigo-300">💡 Mẹo điều chỉnh: </span>
+            <div className="rounded-xl border border-indigo-500/20 bg-indigo-950/20 p-3 text-xs text-indigo-200 theme-light:text-indigo-800">
+              <span className="font-semibold text-indigo-300 theme-light:text-indigo-800">
+                💡 Mẹo điều chỉnh:{' '}
+              </span>
               {report.correctiveDrillRecommendation}
             </div>
           </div>

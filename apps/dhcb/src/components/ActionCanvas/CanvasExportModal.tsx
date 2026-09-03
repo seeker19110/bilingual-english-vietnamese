@@ -56,7 +56,7 @@ export default function CanvasExportModal({
         </button>
 
         <div className="flex items-center gap-2 mb-4">
-          <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+          <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400 theme-light:text-emerald-900 border border-emerald-500/30">
             <FileText className="w-5 h-5" />
           </div>
           <div>
@@ -88,7 +88,7 @@ export default function CanvasExportModal({
             >
               {copied ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <Check className="w-3.5 h-3.5 text-emerald-400 theme-light:text-emerald-900" />
                   Đã sao chép
                 </>
               ) : (

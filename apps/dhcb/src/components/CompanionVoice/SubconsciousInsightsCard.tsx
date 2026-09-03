@@ -48,8 +48,8 @@ export const SubconsciousInsightsCard: React.FC = () => {
   if (loading) {
     return (
       <div className="bg-gradient-to-br from-purple-950/40 via-zinc-900/60 to-indigo-950/40 border border-purple-800/40 rounded-2xl p-4 flex items-center gap-3 animate-pulse">
-        <Brain className="w-5 h-5 text-purple-400 animate-spin" />
-        <span className="text-xs text-purple-300 font-medium">
+        <Brain className="w-5 h-5 text-purple-400 theme-light:text-purple-800 animate-spin" />
+        <span className="text-xs text-purple-300 theme-light:text-purple-800 font-medium">
           Đang đọc luồng nhận thức ngầm và chiến lược đón đầu ngày mới...
         </span>
       </div>
@@ -64,13 +64,13 @@ export const SubconsciousInsightsCard: React.FC = () => {
     <div className="bg-gradient-to-br from-purple-950/50 via-zinc-900/90 to-indigo-950/50 border border-purple-700/50 rounded-2xl p-4 space-y-3.5 shadow-xl animate-fade-in text-xs">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-xl bg-purple-500/20 text-purple-300 border border-purple-500/30">
+          <div className="p-1.5 rounded-xl bg-purple-500/20 text-purple-300 theme-light:text-purple-800 border border-purple-500/30">
             <Brain className="w-4 h-4" />
           </div>
           <div>
             <h4 className="font-bold text-white text-sm flex items-center gap-1.5">
               <span>Nhận Thức Ngầm & Dự Đoán Đón Đầu</span>
-              <span className="px-1.5 py-0.5 rounded text-[11px] font-mono bg-purple-500/20 text-purple-300 border border-purple-500/30">
+              <span className="px-1.5 py-0.5 rounded text-[11px] font-mono bg-purple-500/20 text-purple-300 theme-light:text-purple-800 border border-purple-500/30">
                 V3 Autonomous
               </span>
             </h4>
@@ -83,7 +83,7 @@ export const SubconsciousInsightsCard: React.FC = () => {
         <button
           onClick={triggerConsolidation}
           disabled={triggering}
-          className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 border border-purple-500/40 transition disabled:opacity-50 text-xs font-semibold"
+          className="tap-44 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 theme-light:text-purple-800 border border-purple-500/40 transition disabled:opacity-50 text-xs font-semibold"
           title="Kích hoạt chu trình hợp nhất nhận thức ngầm"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${triggering ? 'animate-spin' : ''}`} />
@@ -92,20 +92,22 @@ export const SubconsciousInsightsCard: React.FC = () => {
       </div>
 
       {/* Recommended Mindset */}
-      <div className="bg-purple-950/60 border border-purple-800/50 rounded-xl p-3 text-purple-200 leading-relaxed font-medium flex items-start gap-2.5">
-        <Sparkles className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
+      <div className="bg-purple-950/60 border border-purple-800/50 rounded-xl p-3 text-purple-200 theme-light:text-purple-800 leading-relaxed font-medium flex items-start gap-2.5">
+        <Sparkles className="w-4 h-4 text-purple-400 theme-light:text-purple-800 shrink-0 mt-0.5" />
         <div>
-          <span className="text-[11px] uppercase font-bold tracking-wider text-purple-400 block mb-0.5">
+          <span className="text-[11px] uppercase font-bold tracking-wider text-purple-400 theme-light:text-purple-800 block mb-0.5">
             Tâm thế khuyến nghị ngày mới
           </span>
-          <p className="text-xs text-purple-100">{preComputedStrategy.recommendedMindset}</p>
+          <p className="text-xs text-purple-100 theme-light:text-purple-800">
+            {preComputedStrategy.recommendedMindset}
+          </p>
         </div>
       </div>
 
       {/* Vital Tasks */}
       <div className="space-y-1.5">
         <div className="text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5">
-          <Target className="w-3.5 h-3.5 text-emerald-400" />
+          <Target className="w-3.5 h-3.5 text-emerald-400 theme-light:text-emerald-900" />
           <span>Top nhiệm vụ đón đầu đã tính toán sẵn:</span>
         </div>
         <div className="space-y-1">
@@ -114,7 +116,7 @@ export const SubconsciousInsightsCard: React.FC = () => {
               key={idx}
               className="bg-zinc-950/80 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2 text-zinc-200"
             >
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 theme-light:text-emerald-900 shrink-0" />
               <span className="font-medium text-[11px]">{task}</span>
             </div>
           ))}
@@ -127,9 +129,9 @@ export const SubconsciousInsightsCard: React.FC = () => {
           {preComputedStrategy.potentialObstacles.map((obs, idx) => (
             <div
               key={idx}
-              className="bg-rose-950/30 border border-rose-900/50 rounded-xl p-2.5 flex items-center gap-2 text-rose-300 text-[11px]"
+              className="bg-rose-950/30 border border-rose-900/50 rounded-xl p-2.5 flex items-center gap-2 text-rose-300 theme-light:text-rose-900 text-[11px]"
             >
-              <ShieldAlert className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+              <ShieldAlert className="w-3.5 h-3.5 text-rose-400 theme-light:text-rose-900 shrink-0" />
               <span>{obs}</span>
             </div>
           ))}
@@ -140,7 +142,7 @@ export const SubconsciousInsightsCard: React.FC = () => {
       <div className="pt-1">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="text-[11px] text-purple-400 hover:text-purple-300 font-semibold flex items-center gap-1 transition"
+          className="text-[11px] text-purple-400 theme-light:text-purple-800 hover:text-purple-300 font-semibold flex items-center gap-1 transition"
         >
           <Layers className="w-3.5 h-3.5" />
           <span>
@@ -158,11 +160,13 @@ export const SubconsciousInsightsCard: React.FC = () => {
                 <div className="text-[11px] text-zinc-400">Nút tri thức</div>
               </div>
               <div className="bg-zinc-950 p-2 rounded-lg border border-zinc-800">
-                <div className="font-bold text-purple-400 text-xs">{graphChanges.edgesRewired}</div>
+                <div className="font-bold text-purple-400 theme-light:text-purple-800 text-xs">
+                  {graphChanges.edgesRewired}
+                </div>
                 <div className="text-[11px] text-zinc-400">Liên kết mới</div>
               </div>
               <div className="bg-zinc-950 p-2 rounded-lg border border-zinc-800">
-                <div className="font-bold text-sky-400 text-xs">
+                <div className="font-bold text-sky-400 theme-light:text-sky-900 text-xs">
                   {graphChanges.redundantItemsPruned}
                 </div>
                 <div className="text-[11px] text-zinc-400">Đã lọc nhiễu</div>
@@ -171,7 +175,7 @@ export const SubconsciousInsightsCard: React.FC = () => {
 
             {hypothesesEvaluated.length > 0 && (
               <div className="space-y-1.5 pt-1">
-                <div className="text-[11px] uppercase font-bold text-purple-300">
+                <div className="text-[11px] uppercase font-bold text-purple-300 theme-light:text-purple-800">
                   Giả thuyết AI tự động kiểm chứng:
                 </div>
                 {hypothesesEvaluated.map((h, idx) => (
@@ -181,7 +185,9 @@ export const SubconsciousInsightsCard: React.FC = () => {
                   >
                     <div className="text-zinc-200 font-medium">💡 {h.hypothesis}</div>
                     {h.actionProposed && (
-                      <div className="text-purple-300 text-[11px]">↳ {h.actionProposed}</div>
+                      <div className="text-purple-300 theme-light:text-purple-800 text-[11px]">
+                        ↳ {h.actionProposed}
+                      </div>
                     )}
                   </div>
                 ))}

@@ -114,7 +114,7 @@ export default function AdminLimitsPanel({ onForbiddenChange }: Props) {
       )}
 
       {!loading && forbidden && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-5 flex items-center gap-3 text-red-300">
+        <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-5 flex items-center gap-3 text-red-300 theme-light:text-red-900">
           <ShieldAlert className="w-5 h-5 shrink-0" />
           <p className="text-sm">Bạn không có quyền truy cập trang này.</p>
         </div>
@@ -123,16 +123,16 @@ export default function AdminLimitsPanel({ onForbiddenChange }: Props) {
       {!loading && !forbidden && settings && (
         <>
           <section className="bg-red-500/10 border border-red-500/30 rounded-2xl p-4">
-            <p className="text-sm font-semibold text-red-200 mb-1 flex items-center gap-2">
+            <p className="text-sm font-semibold text-red-200 theme-light:text-red-900 mb-1 flex items-center gap-2">
               <ShieldAlert className="w-4 h-4 shrink-0" />
               Cầu dao khẩn cấp — chặn toàn bộ AI
             </p>
-            <p className="text-xs text-red-300/80 mb-3">
+            <p className="text-xs text-red-300 theme-light:text-red-900/80 mb-3">
               Bật khi phát hiện chi phí gọi AI bất thường (lỗi vòng lặp, spam) cần dừng ngay trong
               lúc điều tra — chặn TẤT CẢ lượt Chat/Viết/Nói/STT/Chấm phát âm của MỌI người dùng, bất
               kể còn hạn mức hay không. Nhớ tắt lại sau khi xử lý xong.
             </p>
-            <label className="flex items-center gap-2 text-sm text-red-100">
+            <label className="flex items-center gap-2 text-sm text-red-100 theme-light:text-red-900">
               <input
                 type="checkbox"
                 checked={settings.aiCircuitBreaker}

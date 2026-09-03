@@ -231,9 +231,9 @@ export default function Onboarding() {
               }
               const iconColors: Record<string, string> = {
                 emerald: 'text-accent-400',
-                sky: 'text-sky-400',
-                violet: 'text-violet-400',
-                amber: 'text-amber-400',
+                sky: 'text-sky-400 theme-light:text-sky-900',
+                violet: 'text-violet-400 theme-light:text-violet-800',
+                amber: 'text-amber-400 theme-light:text-amber-900',
               }
               return (
                 <button

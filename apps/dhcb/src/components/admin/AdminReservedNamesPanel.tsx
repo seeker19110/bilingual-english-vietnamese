@@ -85,7 +85,7 @@ export default function AdminReservedNamesPanel() {
       <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 space-y-4">
         <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
           <div className="flex items-center gap-2">
-            <Ban className="w-5 h-5 text-rose-400" />
+            <Ban className="w-5 h-5 text-rose-400 theme-light:text-rose-900" />
             <div>
               <h3 className="font-bold text-white text-base">Chặn Tên Giả Danh Ban Quản Trị</h3>
               <p className="text-xs text-zinc-400">
@@ -106,7 +106,7 @@ export default function AdminReservedNamesPanel() {
         </div>
 
         {error && (
-          <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-lg text-xs flex items-center gap-2">
+          <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 theme-light:text-rose-900 rounded-lg text-xs flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>

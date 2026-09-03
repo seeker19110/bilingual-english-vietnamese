@@ -106,7 +106,7 @@ export default function AdminPricePromoPanel({ onForbiddenChange }: Props) {
       )}
 
       {!loading && forbidden && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-5 flex items-center gap-3 text-red-300">
+        <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-5 flex items-center gap-3 text-red-300 theme-light:text-red-900">
           <ShieldAlert className="w-5 h-5 shrink-0" />
           <p className="text-sm">Bạn không có quyền truy cập trang này.</p>
         </div>

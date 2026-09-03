@@ -883,7 +883,7 @@ export default function CefrLevelPage() {
                 </button>
               ) : (
                 <div className="glass rounded-2xl p-5 mb-4 text-center space-y-2">
-                  <PartyPopper className="w-8 h-8 text-amber-400 theme-light:text-amber-700 mx-auto" />
+                  <PartyPopper className="w-8 h-8 text-amber-400 theme-light:text-amber-900 mx-auto" />
                   <p className="text-white font-semibold">
                     {isA
                       ? `Chúc mừng! Bạn đã hoàn thành cấp ${level.id} 🎉`

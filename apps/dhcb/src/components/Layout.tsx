@@ -280,7 +280,9 @@ export default function Layout({ title, subtitle, back = true, onBack, crumbs, e
             // trở lên khi đã đủ chỗ. Không mất thông tin: streak vẫn thấy ở /progress.
             <div className="hidden sm:flex items-center gap-1.5 bg-gradient-to-r from-orange-500/15 to-amber-500/10 border border-orange-500/30 rounded-full px-3 py-1 shadow-sm shadow-orange-500/10 shrink-0">
               <span className="text-base leading-none animate-pulse">🔥</span>
-              <span className="text-sm font-bold text-orange-400 leading-none">{streak}</span>
+              <span className="text-sm font-bold text-orange-400 theme-light:text-orange-900 leading-none">
+                {streak}
+              </span>
               <span className="text-[11px] font-medium text-orange-400 theme-light:text-orange-800 leading-none">
                 {T.streakDays}
               </span>
@@ -288,7 +290,9 @@ export default function Layout({ title, subtitle, back = true, onBack, crumbs, e
           ) : (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-gradient-to-r from-orange-500/15 to-amber-500/10 border border-orange-500/30 rounded-full px-3 py-1 shadow-sm shadow-orange-500/10 pointer-events-none">
               <span className="text-base leading-none animate-pulse">🔥</span>
-              <span className="text-sm font-bold text-orange-400 leading-none">{streak}</span>
+              <span className="text-sm font-bold text-orange-400 theme-light:text-orange-900 leading-none">
+                {streak}
+              </span>
               <span className="text-[11px] font-medium text-orange-400 theme-light:text-orange-800 leading-none">
                 {T.streakDays}
               </span>

@@ -53,20 +53,20 @@ export default function OfflineSyncIndicator() {
       <div
         className={`flex items-center justify-between px-4 py-2.5 rounded-xl shadow-lg border text-sm font-medium transition-all ${
           !isOnline
-            ? 'bg-amber-950/90 border-amber-600/50 text-amber-200'
+            ? 'bg-amber-950/90 border-amber-600/50 text-amber-200 theme-light:text-amber-900'
             : justSynced
-              ? 'bg-emerald-950/90 border-emerald-600/50 text-emerald-200'
+              ? 'bg-emerald-950/90 border-emerald-600/50 text-emerald-200 theme-light:text-emerald-900'
               : 'bg-zinc-900/90 border-zinc-700 text-zinc-200'
         }`}
       >
         <div className="flex items-center gap-2.5">
           {!isOnline ? (
-            <WifiOff className="w-4 h-4 text-amber-400 shrink-0" />
+            <WifiOff className="w-4 h-4 text-amber-400 theme-light:text-amber-900 shrink-0" />
           ) : justSynced ? (
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 theme-light:text-emerald-900 shrink-0" />
           ) : (
             <RefreshCw
-              className={`w-4 h-4 text-blue-400 shrink-0 ${syncing ? 'animate-spin' : ''}`}
+              className={`w-4 h-4 text-blue-400 theme-light:text-blue-800 shrink-0 ${syncing ? 'animate-spin' : ''}`}
             />
           )}
 
@@ -85,7 +85,7 @@ export default function OfflineSyncIndicator() {
         </div>
 
         {!isOnline && (
-          <span className="text-xs px-2 py-0.5 rounded bg-amber-900/60 text-amber-300 border border-amber-700/50">
+          <span className="text-xs px-2 py-0.5 rounded bg-amber-900/60 text-amber-300 theme-light:text-amber-900 border border-amber-700/50">
             Tự lưu cục bộ
           </span>
         )}

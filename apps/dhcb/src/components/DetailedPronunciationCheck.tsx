@@ -217,7 +217,7 @@ export default function DetailedPronunciationCheck({ target, isA }: Props) {
 
       {stage === 'error' && (
         <div className="text-center space-y-1.5">
-          <p className="text-xs text-rose-400/80">{message}</p>
+          <p className="text-xs text-rose-400 theme-light:text-rose-900/80">{message}</p>
           <button
             onClick={() => void start()}
             className="tap-44 text-xs text-zinc-400 hover:text-zinc-300 underline"

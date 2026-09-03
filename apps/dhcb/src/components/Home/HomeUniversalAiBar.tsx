@@ -376,7 +376,7 @@ export default function HomeUniversalAiBar() {
                   </div>
 
                   {aiAnswerContent.formulaOrKey && (
-                    <div className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-800 font-mono text-[11px] text-amber-300 overflow-x-auto">
+                    <div className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-800 font-mono text-[11px] text-amber-300 theme-light:text-amber-900 overflow-x-auto">
                       {aiAnswerContent.formulaOrKey}
                     </div>
                   )}

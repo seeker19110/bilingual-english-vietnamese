@@ -167,7 +167,7 @@ export default function EmailVerifySection({
   return (
     <section className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 animate-fade-in">
       <div className="flex items-center gap-2 mb-2">
-        <MailCheck className="w-4 h-4 text-amber-400" />
+        <MailCheck className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
         <h2 className="text-sm font-semibold text-amber-100 theme-light:text-amber-900">
           {isA ? 'Xác thực email' : 'Verify your email'}
         </h2>
@@ -177,7 +177,7 @@ export default function EmailVerifySection({
           ? 'Xác thực email để nhận 14 ngày dùng thử gói Pro (tặng 1 lần) và mở khoá thưởng mời bạn. Bạn vẫn học bình thường nếu chưa xác thực.'
           : 'Verify your email for a one-time 14-day Pro trial and to unlock invite rewards. You can keep learning without it.'}
       </p>
-      <p className="text-xs text-amber-200/60 theme-light:text-amber-700 mb-3 break-all">
+      <p className="text-xs text-amber-200/60 theme-light:text-amber-900 mb-3 break-all">
         {isA ? 'Mã gửi tới: ' : 'Code sent to: '}
         <strong className="font-semibold">{currentEmail}</strong>
         {' · '}

@@ -165,15 +165,17 @@ export default function EnglishHome() {
                 </h2>
                 <p className="text-xs text-zinc-400">
                   {isA ? 'Hôm nay đã học:' : 'Today learned:'}{' '}
-                  <span className="text-emerald-400 font-bold">{dailyLearned}</span> / {dailyMax} từ
-                  vựng
+                  <span className="text-emerald-400 theme-light:text-emerald-900 font-bold">
+                    {dailyLearned}
+                  </span>{' '}
+                  / {dailyMax} từ vựng
                 </p>
               </div>
             </div>
             {srsDue > 0 && (
               <button
                 onClick={() => nav('/luyen-tap')}
-                className="tap-44 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/30 text-xs text-sky-300 font-semibold transition"
+                className="tap-44 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/30 text-xs text-sky-300 theme-light:text-sky-900 font-semibold transition"
               >
                 <Brain className="w-3.5 h-3.5" />
                 <span>{srsDue} thẻ đến hạn</span>
@@ -235,7 +237,7 @@ export default function EnglishHome() {
                       `/lo-trinh-hoc/${continueLevel.level.id.toLowerCase()}?tab=srs&cap=${COMEBACK_SRS_CARDS}`,
                     )
                   }
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 text-sm font-medium transition"
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 theme-light:text-sky-900 text-sm font-medium transition"
                 >
                   <Brain className="w-4 h-4" />
                   {isA
@@ -295,7 +297,7 @@ export default function EnglishHome() {
               className="tap-44 flex flex-col items-center justify-center gap-2 p-3.5 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800/80 hover:border-rose-500/40 transition active:scale-95 group shadow-sm"
             >
               <div className="w-10 h-10 rounded-xl bg-rose-500/15 flex items-center justify-center group-hover:scale-110 transition">
-                <Headphones className="w-5 h-5 text-rose-400" />
+                <Headphones className="w-5 h-5 text-rose-400 theme-light:text-rose-900" />
               </div>
               <span className="text-xs font-semibold text-zinc-200">Luyện Nghe</span>
             </button>
@@ -315,7 +317,7 @@ export default function EnglishHome() {
               className="tap-44 flex flex-col items-center justify-center gap-2 p-3.5 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800/80 hover:border-sky-500/40 transition active:scale-95 group shadow-sm"
             >
               <div className="w-10 h-10 rounded-xl bg-sky-500/15 flex items-center justify-center group-hover:scale-110 transition">
-                <Mic className="w-5 h-5 text-sky-400" />
+                <Mic className="w-5 h-5 text-sky-400 theme-light:text-sky-900" />
               </div>
               <span className="text-xs font-semibold text-zinc-200">Luyện Nói IPA</span>
             </button>
@@ -325,7 +327,7 @@ export default function EnglishHome() {
               className="tap-44 flex flex-col items-center justify-center gap-2 p-3.5 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800/80 hover:border-violet-500/40 transition active:scale-95 group shadow-sm"
             >
               <div className="w-10 h-10 rounded-xl bg-violet-500/15 flex items-center justify-center group-hover:scale-110 transition">
-                <PenLine className="w-5 h-5 text-violet-400" />
+                <PenLine className="w-5 h-5 text-violet-400 theme-light:text-violet-800" />
               </div>
               <span className="text-xs font-semibold text-zinc-200">Luyện Viết IELTS</span>
             </button>
@@ -391,7 +393,7 @@ export default function EnglishHome() {
               onClick={() => nav('/bai-hoc')}
               className="p-3 rounded-2xl bg-zinc-900/70 hover:bg-zinc-800/80 border border-zinc-800/80 text-left transition active:scale-95 flex items-center gap-2.5 group"
             >
-              <div className="w-8 h-8 rounded-lg bg-teal-500/15 text-teal-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+              <div className="w-8 h-8 rounded-lg bg-teal-500/15 text-teal-400 theme-light:text-teal-900 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
                 <Bookmark className="w-4 h-4" />
               </div>
               <div className="min-w-0 flex-1">
@@ -405,7 +407,7 @@ export default function EnglishHome() {
               onClick={() => nav('/cau-thong-dung')}
               className="p-3 rounded-2xl bg-zinc-900/70 hover:bg-zinc-800/80 border border-zinc-800/80 text-left transition active:scale-95 flex items-center gap-2.5 group"
             >
-              <div className="w-8 h-8 rounded-lg bg-blue-500/15 text-blue-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+              <div className="w-8 h-8 rounded-lg bg-blue-500/15 text-blue-400 theme-light:text-blue-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
                 <MessageSquare className="w-4 h-4" />
               </div>
               <div className="min-w-0 flex-1">
@@ -419,7 +421,7 @@ export default function EnglishHome() {
               onClick={() => nav('/truyen-song-ngu')}
               className="p-3 rounded-2xl bg-zinc-900/70 hover:bg-zinc-800/80 border border-zinc-800/80 text-left transition active:scale-95 flex items-center gap-2.5 group"
             >
-              <div className="w-8 h-8 rounded-lg bg-purple-500/15 text-purple-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+              <div className="w-8 h-8 rounded-lg bg-purple-500/15 text-purple-400 theme-light:text-purple-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
                 <BookOpen className="w-4 h-4" />
               </div>
               <div className="min-w-0 flex-1">
@@ -433,7 +435,7 @@ export default function EnglishHome() {
               onClick={() => nav('/so-tay-loi-sai')}
               className="p-3 rounded-2xl bg-zinc-900/70 hover:bg-zinc-800/80 border border-zinc-800/80 text-left transition active:scale-95 flex items-center gap-2.5 group"
             >
-              <div className="w-8 h-8 rounded-lg bg-rose-500/15 text-rose-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+              <div className="w-8 h-8 rounded-lg bg-rose-500/15 text-rose-400 theme-light:text-rose-900 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
                 <AlertCircle className="w-4 h-4" />
               </div>
               <div className="min-w-0 flex-1">
@@ -450,7 +452,7 @@ export default function EnglishHome() {
           className="w-full p-3.5 rounded-2xl bg-gradient-to-r from-zinc-900 via-zinc-900 to-rose-950/30 border border-rose-500/20 hover:border-rose-500/40 text-left transition flex items-center justify-between group shadow-sm"
         >
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-rose-500/15 text-rose-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
+            <div className="w-9 h-9 rounded-xl bg-rose-500/15 text-rose-400 theme-light:text-rose-900 flex items-center justify-center shrink-0 group-hover:scale-105 transition">
               <Video className="w-4 h-4" />
             </div>
             <div>

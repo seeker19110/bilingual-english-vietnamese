@@ -215,7 +215,7 @@ export default function ProgrammingAbout() {
         {/* Khối 5 — nói thẳng thứ KHÔNG có */}
         <section className={`${the} space-y-3`}>
           <h2 className={tieuDe}>
-            <ShieldAlert className="w-5 h-5 text-amber-400" />
+            <ShieldAlert className="w-5 h-5 text-amber-400 theme-light:text-amber-900" />
             <span>Nói thẳng: thứ bạn sẽ KHÔNG có</span>
           </h2>
           <p className="text-sm text-zinc-200 leading-relaxed">
@@ -227,7 +227,10 @@ export default function ProgrammingAbout() {
                 key={item}
                 className="flex items-start gap-2 text-sm text-zinc-200 leading-relaxed"
               >
-                <span className="text-amber-400 shrink-0" aria-hidden="true">
+                <span
+                  className="text-amber-400 theme-light:text-amber-900 shrink-0"
+                  aria-hidden="true"
+                >
                   •
                 </span>
                 <span>{item}</span>

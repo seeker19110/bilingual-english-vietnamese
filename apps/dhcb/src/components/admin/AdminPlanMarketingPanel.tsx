@@ -210,7 +210,7 @@ function PlanSection({ entry, onReload }: { entry: PlanEntry; onReload: () => Pr
                 type="button"
                 onClick={() => deleteRow(row.id)}
                 disabled={deletingId === row.id}
-                className="tap-44 inline-flex items-center justify-center rounded-lg border border-red-500/30 text-red-400 p-2 disabled:opacity-60"
+                className="tap-44 inline-flex items-center justify-center rounded-lg border border-red-500/30 text-red-400 theme-light:text-red-900 p-2 disabled:opacity-60"
                 aria-label="Xoá hàng này"
               >
                 {deletingId === row.id ? (

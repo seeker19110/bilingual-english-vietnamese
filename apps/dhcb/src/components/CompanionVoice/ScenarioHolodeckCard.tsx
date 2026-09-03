@@ -130,11 +130,11 @@ export default function ScenarioHolodeckCard() {
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-base font-bold text-white tracking-wide">Scenario Holodeck V3</h3>
-              <span className="text-[11px] px-2 py-0.5 font-bold uppercase rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+              <span className="text-[11px] px-2 py-0.5 font-bold uppercase rounded-full bg-indigo-500/20 text-indigo-300 theme-light:text-indigo-800 border border-indigo-500/30">
                 Multi-Agent VR
               </span>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 theme-light:text-slate-700">
               Phòng giả lập đa nhân vật AI áp lực cao & chấm Rubric chuẩn quốc tế
             </p>
           </div>
@@ -146,14 +146,18 @@ export default function ScenarioHolodeckCard() {
               <Flame
                 className={`w-4 h-4 ${
                   activeSession.currentPressure > 60
-                    ? 'text-red-400 animate-pulse'
-                    : 'text-amber-400'
+                    ? 'text-red-400 theme-light:text-red-900 animate-pulse'
+                    : 'text-amber-400 theme-light:text-amber-900'
                 }`}
               />
-              <span className="text-xs font-semibold text-slate-300">Áp lực:</span>
+              <span className="text-xs font-semibold text-slate-300 theme-light:text-slate-700">
+                Áp lực:
+              </span>
               <span
                 className={`text-xs font-bold ${
-                  activeSession.currentPressure > 60 ? 'text-red-400' : 'text-amber-300'
+                  activeSession.currentPressure > 60
+                    ? 'text-red-400 theme-light:text-red-900'
+                    : 'text-amber-300 theme-light:text-amber-900'
                 }`}
               >
                 {activeSession.currentPressure}%
@@ -161,7 +165,7 @@ export default function ScenarioHolodeckCard() {
             </div>
             <button
               onClick={() => setActiveSession(null)}
-              className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors"
+              className="p-1.5 text-slate-400 theme-light:text-slate-700 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors"
               title="Đổi kịch bản"
             >
               <RotateCcw className="w-4 h-4" />
@@ -171,7 +175,7 @@ export default function ScenarioHolodeckCard() {
       </div>
 
       {errorMsg && (
-        <div className="mt-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-400 flex items-center gap-2">
+        <div className="mt-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-400 theme-light:text-red-900 flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 shrink-0" />
           <span>{errorMsg}</span>
         </div>
@@ -194,15 +198,17 @@ export default function ScenarioHolodeckCard() {
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[11px] font-semibold uppercase px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">
+                    <span className="text-[11px] font-semibold uppercase px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 theme-light:text-indigo-800">
                       {sc.difficulty}
                     </span>
-                    <span className="text-[11px] text-slate-400 flex items-center gap-1">
+                    <span className="text-[11px] text-slate-400 theme-light:text-slate-700 flex items-center gap-1">
                       <Users className="w-3 h-3" /> {sc.personas.length} Persona
                     </span>
                   </div>
                   <h4 className="text-sm font-semibold text-white mb-1.5">{sc.title}</h4>
-                  <p className="text-xs text-slate-400 line-clamp-2">{sc.description}</p>
+                  <p className="text-xs text-slate-400 theme-light:text-slate-700 line-clamp-2">
+                    {sc.description}
+                  </p>
                 </div>
               )
             })}
@@ -210,7 +216,7 @@ export default function ScenarioHolodeckCard() {
 
           {currentScenario && (
             <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/60 mt-4">
-              <div className="text-xs font-semibold text-slate-300 mb-2">
+              <div className="text-xs font-semibold text-slate-300 theme-light:text-slate-700 mb-2">
                 Hội đồng nhân vật tham gia:
               </div>
               <div className="flex flex-wrap gap-3">
@@ -226,7 +232,9 @@ export default function ScenarioHolodeckCard() {
                     />
                     <div>
                       <div className="text-xs font-bold text-white">{p.name}</div>
-                      <div className="text-[11px] text-slate-400">{p.speakingStyle}</div>
+                      <div className="text-[11px] text-slate-400 theme-light:text-slate-700">
+                        {p.speakingStyle}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -264,7 +272,9 @@ export default function ScenarioHolodeckCard() {
                   }`}
                 >
                   <img src={p.avatar} alt={p.name} className="w-6 h-6 rounded-full object-cover" />
-                  <span className="text-xs font-semibold text-slate-200">{p.name}</span>
+                  <span className="text-xs font-semibold text-slate-200 theme-light:text-slate-700">
+                    {p.name}
+                  </span>
                 </div>
               )
             })}
@@ -278,11 +288,17 @@ export default function ScenarioHolodeckCard() {
 
               return (
                 <div key={idx} className={`flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
-                  <div className="text-[11px] text-slate-400 mb-1 flex items-center gap-1.5">
+                  <div className="text-[11px] text-slate-400 theme-light:text-slate-700 mb-1 flex items-center gap-1.5">
                     {!isUser && speakerPersona && (
-                      <span className="font-bold text-indigo-400">{speakerPersona.name}</span>
+                      <span className="font-bold text-indigo-400 theme-light:text-indigo-800">
+                        {speakerPersona.name}
+                      </span>
                     )}
-                    {isUser && <span className="font-bold text-emerald-400">Bạn</span>}
+                    {isUser && (
+                      <span className="font-bold text-emerald-400 theme-light:text-emerald-900">
+                        Bạn
+                      </span>
+                    )}
                     <span>
                       •{' '}
                       {new Date(turn.timestamp).toLocaleTimeString([], {
@@ -295,8 +311,8 @@ export default function ScenarioHolodeckCard() {
                   <div
                     className={`max-w-[85%] p-3 rounded-xl text-xs leading-relaxed ${
                       isUser
-                        ? 'bg-emerald-950/40 border border-emerald-500/30 text-emerald-100 rounded-tr-none'
-                        : 'bg-slate-800/80 border border-slate-700 text-slate-100 rounded-tl-none'
+                        ? 'bg-emerald-950/40 border border-emerald-500/30 text-emerald-100 theme-light:text-emerald-900 rounded-tr-none'
+                        : 'bg-slate-800/80 border border-slate-700 text-slate-100 theme-light:text-slate-700 rounded-tl-none'
                     }`}
                   >
                     {turn.content}
@@ -306,19 +322,19 @@ export default function ScenarioHolodeckCard() {
                   {isUser && turn.instantFeedback && (
                     <div className="mt-1.5 max-w-[85%] p-2 rounded-lg bg-slate-900 border border-slate-800 text-[11px] space-y-1 text-slate-300">
                       {turn.instantFeedback.strengths.length > 0 && (
-                        <div className="flex items-center gap-1 text-emerald-400">
+                        <div className="flex items-center gap-1 text-emerald-400 theme-light:text-emerald-900">
                           <CheckCircle2 className="w-3 h-3 shrink-0" />
                           <span>{turn.instantFeedback.strengths.join(', ')}</span>
                         </div>
                       )}
                       {turn.instantFeedback.weaknesses.length > 0 && (
-                        <div className="flex items-center gap-1 text-amber-400">
+                        <div className="flex items-center gap-1 text-amber-400 theme-light:text-amber-900">
                           <AlertTriangle className="w-3 h-3 shrink-0" />
                           <span>{turn.instantFeedback.weaknesses.join(', ')}</span>
                         </div>
                       )}
                       {turn.instantFeedback.suggestedNuance && (
-                        <div className="text-[11px] text-indigo-300 italic pt-0.5 border-t border-slate-800">
+                        <div className="text-[11px] text-indigo-300 theme-light:text-indigo-800 italic pt-0.5 border-t border-slate-800">
                           💡 Gợi ý tinh chỉnh: {turn.instantFeedback.suggestedNuance}
                         </div>
                       )}
@@ -334,53 +350,64 @@ export default function ScenarioHolodeckCard() {
             <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-950/60 to-purple-950/60 border border-indigo-500/40 space-y-3 animate-fadeIn">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Award className="w-5 h-5 text-amber-400" />
+                  <Award className="w-5 h-5 text-amber-400 theme-light:text-amber-900" />
                   <h4 className="text-sm font-bold text-white">
                     Bảng Điểm Rubric Tổng Kết Chuẩn Quốc Tế
                   </h4>
                 </div>
-                <div className="text-lg font-black text-amber-400 bg-amber-400/10 px-3 py-1 rounded-lg border border-amber-400/30">
+                <div className="text-lg font-black text-amber-400 theme-light:text-amber-900 bg-amber-400/10 px-3 py-1 rounded-lg border border-amber-400/30">
                   Overall Band: {activeSession.finalRubric.overallBand}
                 </div>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-center">
                 <div className="p-2 rounded bg-slate-900/60 border border-slate-800">
-                  <div className="text-[11px] text-slate-400">Fluency</div>
-                  <div className="text-xs font-bold text-indigo-300">
+                  <div className="text-[11px] text-slate-400 theme-light:text-slate-700">
+                    Fluency
+                  </div>
+                  <div className="text-xs font-bold text-indigo-300 theme-light:text-indigo-800">
                     {activeSession.finalRubric.fluencyAndCoherence}
                   </div>
                 </div>
                 <div className="p-2 rounded bg-slate-900/60 border border-slate-800">
-                  <div className="text-[11px] text-slate-400">Lexical</div>
-                  <div className="text-xs font-bold text-indigo-300">
+                  <div className="text-[11px] text-slate-400 theme-light:text-slate-700">
+                    Lexical
+                  </div>
+                  <div className="text-xs font-bold text-indigo-300 theme-light:text-indigo-800">
                     {activeSession.finalRubric.lexicalResource}
                   </div>
                 </div>
                 <div className="p-2 rounded bg-slate-900/60 border border-slate-800">
-                  <div className="text-[11px] text-slate-400">Grammar</div>
-                  <div className="text-xs font-bold text-indigo-300">
+                  <div className="text-[11px] text-slate-400 theme-light:text-slate-700">
+                    Grammar
+                  </div>
+                  <div className="text-xs font-bold text-indigo-300 theme-light:text-indigo-800">
                     {activeSession.finalRubric.grammaticalRange}
                   </div>
                 </div>
                 <div className="p-2 rounded bg-slate-900/60 border border-slate-800">
-                  <div className="text-[11px] text-slate-400">Persuasion</div>
-                  <div className="text-xs font-bold text-indigo-300">
+                  <div className="text-[11px] text-slate-400 theme-light:text-slate-700">
+                    Persuasion
+                  </div>
+                  <div className="text-xs font-bold text-indigo-300 theme-light:text-indigo-800">
                     {activeSession.finalRubric.strategicPersuasion}
                   </div>
                 </div>
               </div>
 
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-300 theme-light:text-slate-700 leading-relaxed">
                 {activeSession.finalRubric.detailedCritique}
               </p>
 
               <div className="space-y-1">
-                <div className="text-[11px] font-semibold text-amber-300">
+                <div className="text-[11px] font-semibold text-amber-300 theme-light:text-amber-900">
                   🎯 Lộ trình bài tập đề xuất tiếp theo:
                 </div>
                 {activeSession.finalRubric.recommendedDrills.map((drill, i) => (
-                  <div key={i} className="text-xs text-slate-400 flex items-center gap-1.5">
+                  <div
+                    key={i}
+                    className="text-xs text-slate-400 theme-light:text-slate-700 flex items-center gap-1.5"
+                  >
                     <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
                     <span>{drill}</span>
                   </div>

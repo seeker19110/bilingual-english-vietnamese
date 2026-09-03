@@ -107,13 +107,15 @@ export default function PathStageQuiz({ pathId, stageId, stageName, topics, onPa
             </button>
           )}
 
-          {error && <p className="text-xs text-rose-400">{error}</p>}
+          {error && <p className="text-xs text-rose-400 theme-light:text-rose-900">{error}</p>}
 
           {result && (
             <div className="space-y-2.5">
               <p
                 className={`flex items-center gap-2 text-sm font-semibold ${
-                  result.passed ? 'text-emerald-300' : 'text-amber-300'
+                  result.passed
+                    ? 'text-emerald-300 theme-light:text-emerald-900'
+                    : 'text-amber-300 theme-light:text-amber-900'
                 }`}
               >
                 {result.passed ? (
@@ -132,7 +134,13 @@ export default function PathStageQuiz({ pathId, stageId, stageName, topics, onPa
                   const right = yourChoice === q.answerIndex
                   return (
                     <li key={q.id} className="text-xs text-zinc-300 leading-relaxed">
-                      <span className={right ? 'text-emerald-300' : 'text-rose-300'}>
+                      <span
+                        className={
+                          right
+                            ? 'text-emerald-300 theme-light:text-emerald-900'
+                            : 'text-rose-300 theme-light:text-rose-900'
+                        }
+                      >
                         Câu {idx + 1}: {right ? 'Đúng' : 'Chưa đúng'}.
                       </span>{' '}
                       {q.explain}
@@ -243,8 +251,12 @@ function CompanionCheckIn({ stageName, topics }: { stageName: string; topics: st
           </button>
         </div>
       )}
-      {reply && <p className="text-xs text-emerald-200 leading-relaxed">{reply}</p>}
-      {err && <p className="text-xs text-rose-400">{err}</p>}
+      {reply && (
+        <p className="text-xs text-emerald-200 theme-light:text-emerald-900 leading-relaxed">
+          {reply}
+        </p>
+      )}
+      {err && <p className="text-xs text-rose-400 theme-light:text-rose-900">{err}</p>}
     </div>
   )
 }

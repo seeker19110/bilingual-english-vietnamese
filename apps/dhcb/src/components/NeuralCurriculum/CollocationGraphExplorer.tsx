@@ -26,7 +26,7 @@ export default function CollocationGraphExplorer({
     <div className="flex flex-col gap-3 rounded-2xl border border-sky-500/30 bg-zinc-950/80 p-4 shadow-xl backdrop-blur-md">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-sky-500/20 text-sky-400 border border-sky-500/30">
+          <div className="p-1.5 rounded-lg bg-sky-500/20 text-sky-400 theme-light:text-sky-900 border border-sky-500/30">
             <Network className="w-4 h-4" />
           </div>
           <div>
@@ -36,7 +36,7 @@ export default function CollocationGraphExplorer({
             </p>
           </div>
         </div>
-        <span className="rounded px-2 py-0.5 text-[11px] font-bold uppercase bg-sky-500/20 text-sky-300 border border-sky-500/40">
+        <span className="rounded px-2 py-0.5 text-[11px] font-bold uppercase bg-sky-500/20 text-sky-300 theme-light:text-sky-900 border border-sky-500/40">
           {collocations.length} Collocations
         </span>
       </div>
@@ -56,7 +56,12 @@ export default function CollocationGraphExplorer({
                   : 'bg-zinc-900 text-zinc-300 hover:bg-zinc-800 border border-zinc-800')
               }
             >
-              <Sparkles className={'w-3 h-3 ' + (isSelected ? 'text-zinc-950' : 'text-sky-400')} />
+              <Sparkles
+                className={
+                  'w-3 h-3 ' +
+                  (isSelected ? 'text-zinc-950' : 'text-sky-400 theme-light:text-sky-900')
+                }
+              />
               <span>{col.phraseEn}</span>
               <span
                 className={
@@ -77,11 +82,13 @@ export default function CollocationGraphExplorer({
         <div className="mt-1 rounded-xl border border-sky-500/20 bg-sky-950/20 p-3.5 flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-sky-200">{activeCol.phraseEn}</span>
+              <span className="text-sm font-bold text-sky-200 theme-light:text-sky-900">
+                {activeCol.phraseEn}
+              </span>
               <button
                 type="button"
                 onClick={() => playAudio(activeCol.phraseEn)}
-                className="p-1 text-sky-400 hover:text-sky-200 hover:bg-sky-900/40 rounded-lg transition"
+                className="p-1 text-sky-400 theme-light:text-sky-900 hover:text-sky-200 hover:bg-sky-900/40 rounded-lg transition"
                 title="Phát âm"
               >
                 <Volume2 className="w-3.5 h-3.5" />
@@ -91,18 +98,19 @@ export default function CollocationGraphExplorer({
               )}
             </div>
             <div className="flex items-center gap-1 text-[11px] text-zinc-400">
-              <Layers className="w-3 h-3 text-sky-400" />
+              <Layers className="w-3 h-3 text-sky-400 theme-light:text-sky-900" />
               <span className="capitalize">{activeCol.type.replace('_', ' ')}</span>
             </div>
           </div>
 
           <p className="text-xs text-zinc-300 font-medium">
-            👉 <span className="text-sky-300">Nghĩa:</span> {activeCol.meaningVi}
+            👉 <span className="text-sky-300 theme-light:text-sky-900">Nghĩa:</span>{' '}
+            {activeCol.meaningVi}
           </p>
 
           <div className="rounded-lg bg-zinc-950/60 p-2.5 border border-zinc-800/80 text-xs">
             <div className="flex items-start gap-1.5 text-zinc-200 mb-1">
-              <BookOpen className="w-3.5 h-3.5 text-sky-400 mt-0.5 flex-shrink-0" />
+              <BookOpen className="w-3.5 h-3.5 text-sky-400 theme-light:text-sky-900 mt-0.5 flex-shrink-0" />
               <p className="italic font-sans">"{activeCol.exampleSentenceEn}"</p>
             </div>
             <p className="text-[11px] text-zinc-400 pl-5">{activeCol.exampleSentenceVi}</p>

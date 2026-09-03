@@ -39,7 +39,7 @@ export default function RewardTipBanner({ uid, isA }: { uid: string; isA: boolea
     >
       <div className="flex items-start gap-3">
         <span className="w-9 h-9 rounded-xl bg-amber-500/15 flex items-center justify-center shrink-0">
-          <Gift className="w-4 h-4 text-amber-300" aria-hidden="true" />
+          <Gift className="w-4 h-4 text-amber-300 theme-light:text-amber-900" aria-hidden="true" />
         </span>
         <div className="flex-1 min-w-0">
           <p className="text-white font-semibold text-sm">

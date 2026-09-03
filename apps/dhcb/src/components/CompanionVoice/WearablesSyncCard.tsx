@@ -72,11 +72,11 @@ export default function WearablesSyncCard() {
               <h3 className="text-base font-bold text-white tracking-wide">
                 Wearables & Circadian Bio-Adaptive MCP
               </h3>
-              <span className="text-[11px] px-2 py-0.5 font-bold uppercase rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              <span className="text-[11px] px-2 py-0.5 font-bold uppercase rounded-full bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-900 border border-emerald-500/30">
                 Bio-Sync Active
               </span>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 theme-light:text-slate-700">
               Đồng bộ nhịp tim (HRV) & giấc ngủ ➔ Tự động xác định Khung Giờ Học Vàng
             </p>
           </div>
@@ -107,8 +107,8 @@ export default function WearablesSyncCard() {
               onClick={() => setSelectedSource(src)}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border ${
                 isSelected
-                  ? 'bg-emerald-950/60 border-emerald-400 text-emerald-200 shadow-md shadow-emerald-500/20'
-                  : 'bg-slate-800/50 border-slate-800 text-slate-400 hover:text-slate-200'
+                  ? 'bg-emerald-950/60 border-emerald-400 text-emerald-200 theme-light:text-emerald-900 shadow-md shadow-emerald-500/20'
+                  : 'bg-slate-800/50 border-slate-800 text-slate-400 theme-light:text-slate-700 hover:text-slate-200'
               }`}
             >
               {labels[src]}
@@ -122,38 +122,44 @@ export default function WearablesSyncCard() {
           {/* Bio Metrics Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
             <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
-              <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                <Heart className="w-3.5 h-3.5 text-rose-400" />
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-400 theme-light:text-slate-700">
+                <Heart className="w-3.5 h-3.5 text-rose-400 theme-light:text-rose-900" />
                 <span>Biến thiên HRV</span>
               </div>
               <div className="text-base font-bold text-white">{bio.hrvMs} ms</div>
-              <div className="text-[11px] text-emerald-400 font-medium">Phục hồi tốt</div>
+              <div className="text-[11px] text-emerald-400 theme-light:text-emerald-900 font-medium">
+                Phục hồi tốt
+              </div>
             </div>
 
             <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
-              <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                <Moon className="w-3.5 h-3.5 text-indigo-400" />
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-400 theme-light:text-slate-700">
+                <Moon className="w-3.5 h-3.5 text-indigo-400 theme-light:text-indigo-800" />
                 <span>Chất lượng Giấc ngủ</span>
               </div>
               <div className="text-base font-bold text-white">{bio.sleepQualityScore}/100</div>
-              <div className="text-[11px] text-indigo-300 font-medium">
+              <div className="text-[11px] text-indigo-300 theme-light:text-indigo-800 font-medium">
                 {bio.deepSleepMinutes} phút ngủ sâu
               </div>
             </div>
 
             <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
-              <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                <Heart className="w-3.5 h-3.5 text-pink-400" />
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-400 theme-light:text-slate-700">
+                <Heart className="w-3.5 h-3.5 text-pink-400 theme-light:text-pink-900" />
                 <span>Nhịp tim Nghỉ ngơi</span>
               </div>
               <div className="text-base font-bold text-white">{bio.restingHeartRateBpm} bpm</div>
-              <div className="text-[11px] text-slate-400">Bình ổn</div>
+              <div className="text-[11px] text-slate-400 theme-light:text-slate-700">Bình ổn</div>
             </div>
 
             <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-500/40 space-y-1">
-              <div className="text-[11px] font-bold text-emerald-300">Readiness Score</div>
-              <div className="text-xl font-black text-emerald-400">{bio.readinessScore}%</div>
-              <div className="text-[11px] text-emerald-300 font-semibold uppercase">
+              <div className="text-[11px] font-bold text-emerald-300 theme-light:text-emerald-900">
+                Readiness Score
+              </div>
+              <div className="text-xl font-black text-emerald-400 theme-light:text-emerald-900">
+                {bio.readinessScore}%
+              </div>
+              <div className="text-[11px] text-emerald-300 theme-light:text-emerald-900 font-semibold uppercase">
                 {window.currentCognitiveBand.replace(/_/g, ' ')}
               </div>
             </div>
@@ -163,17 +169,19 @@ export default function WearablesSyncCard() {
           <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-amber-400" />
-                <span className="text-xs font-bold text-slate-200">
+                <Clock className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
+                <span className="text-xs font-bold text-slate-200 theme-light:text-slate-700">
                   Khung Giờ Học Vàng (Circadian Golden Window):
                 </span>
               </div>
-              <span className="text-xs font-bold text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-lg border border-amber-400/30">
+              <span className="text-xs font-bold text-amber-400 theme-light:text-amber-900 bg-amber-400/10 px-2.5 py-0.5 rounded-lg border border-amber-400/30">
                 {window.goldenWindowStart} — {window.goldenWindowEnd}
               </span>
             </div>
 
-            <p className="text-xs text-slate-300 leading-relaxed">💡 {window.adaptationAdvice}</p>
+            <p className="text-xs text-slate-300 theme-light:text-slate-700 leading-relaxed">
+              💡 {window.adaptationAdvice}
+            </p>
           </div>
         </div>
       )}

@@ -83,7 +83,7 @@ export const OutcomeCalibrationCard: React.FC = () => {
     <div className="bg-zinc-900/90 border border-zinc-800/90 rounded-2xl p-5 shadow-xl space-y-4">
       <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
         <div className="flex items-center gap-2">
-          <div className="p-2 rounded-xl bg-purple-500/10 text-purple-400">
+          <div className="p-2 rounded-xl bg-purple-500/10 text-purple-400 theme-light:text-purple-800">
             <Scale className="w-5 h-5" />
           </div>
           <div>
@@ -108,7 +108,7 @@ export const OutcomeCalibrationCard: React.FC = () => {
           <span className="text-[11px] uppercase font-bold tracking-wider text-zinc-400">
             Điểm Hiệu Chuẩn
           </span>
-          <div className="text-xl font-extrabold text-purple-400 mt-0.5">
+          <div className="text-xl font-extrabold text-purple-400 theme-light:text-purple-800 mt-0.5">
             {data.calibrationScore}
             <span className="text-xs font-normal text-zinc-400">/100</span>
           </div>
@@ -118,7 +118,7 @@ export const OutcomeCalibrationCard: React.FC = () => {
           <span className="text-[11px] uppercase font-bold tracking-wider text-zinc-400">
             Tỷ Lệ Đạt Kỳ Vọng
           </span>
-          <div className="text-xl font-extrabold text-emerald-400 mt-0.5">
+          <div className="text-xl font-extrabold text-emerald-400 theme-light:text-emerald-900 mt-0.5">
             {Math.round(data.overallSuccessRate * 100)}%
           </div>
         </div>
@@ -127,7 +127,9 @@ export const OutcomeCalibrationCard: React.FC = () => {
           <span className="text-[11px] uppercase font-bold tracking-wider text-zinc-400">
             Đã Đưa Ra
           </span>
-          <div className="text-xl font-extrabold text-sky-400 mt-0.5">{data.decidedCount}</div>
+          <div className="text-xl font-extrabold text-sky-400 theme-light:text-sky-900 mt-0.5">
+            {data.decidedCount}
+          </div>
         </div>
 
         <div className="bg-zinc-950/80 p-3 rounded-xl border border-zinc-800/80">
@@ -136,7 +138,9 @@ export const OutcomeCalibrationCard: React.FC = () => {
           </span>
           <div
             className={`text-xl font-extrabold mt-0.5 ${
-              data.pendingReviewCount > 0 ? 'text-amber-400' : 'text-zinc-400'
+              data.pendingReviewCount > 0
+                ? 'text-amber-400 theme-light:text-amber-900'
+                : 'text-zinc-400'
             }`}
           >
             {data.pendingReviewCount}
@@ -159,7 +163,7 @@ export const OutcomeCalibrationCard: React.FC = () => {
                   <span className="text-zinc-400 text-[11px]">
                     {stat.totalDecisions} quyết định
                   </span>
-                  <span className="font-semibold text-emerald-400">
+                  <span className="font-semibold text-emerald-400 theme-light:text-emerald-900">
                     {Math.round(stat.successRate * 100)}%
                   </span>
                 </div>
@@ -177,18 +181,18 @@ export const OutcomeCalibrationCard: React.FC = () => {
               key={idx}
               className={`flex items-start gap-2.5 p-3 rounded-xl text-xs border ${
                 insight.type === 'positive'
-                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300'
+                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300 theme-light:text-emerald-900'
                   : insight.type === 'warning'
-                    ? 'bg-amber-500/10 border-amber-500/20 text-amber-300'
+                    ? 'bg-amber-500/10 border-amber-500/20 text-amber-300 theme-light:text-amber-900'
                     : 'bg-zinc-950 border-zinc-800 text-zinc-300'
               }`}
             >
               {insight.type === 'positive' ? (
-                <CheckCircle className="w-4 h-4 shrink-0 mt-0.5 text-emerald-400" />
+                <CheckCircle className="w-4 h-4 shrink-0 mt-0.5 text-emerald-400 theme-light:text-emerald-900" />
               ) : insight.type === 'warning' ? (
-                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-amber-400" />
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-amber-400 theme-light:text-amber-900" />
               ) : (
-                <Info className="w-4 h-4 shrink-0 mt-0.5 text-sky-400" />
+                <Info className="w-4 h-4 shrink-0 mt-0.5 text-sky-400 theme-light:text-sky-900" />
               )}
               <div>
                 <div className="font-semibold">{insight.title}</div>

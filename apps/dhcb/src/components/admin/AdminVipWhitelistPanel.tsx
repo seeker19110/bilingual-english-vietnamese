@@ -175,7 +175,7 @@ export default function AdminVipWhitelistPanel() {
                 type="button"
                 onClick={() => handleRemove(item.email)}
                 disabled={removingEmail === item.email}
-                className="tap-44 shrink-0 flex items-center gap-1.5 rounded-lg border border-red-500/30 text-red-400 text-xs font-medium px-3 py-2 disabled:opacity-60"
+                className="tap-44 shrink-0 flex items-center gap-1.5 rounded-lg border border-red-500/30 text-red-400 theme-light:text-red-900 text-xs font-medium px-3 py-2 disabled:opacity-60"
               >
                 {removingEmail === item.email ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />

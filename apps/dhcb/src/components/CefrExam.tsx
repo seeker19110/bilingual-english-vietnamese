@@ -221,7 +221,7 @@ export default function CefrExam({
             {wrong.map((qq) => (
               <div
                 key={qq.key}
-                className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm bg-rose-500/10 text-rose-300"
+                className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm bg-rose-500/10 text-rose-300 theme-light:text-rose-900"
               >
                 <span className="text-[11px] font-semibold uppercase shrink-0 opacity-80">
                   {isA ? PART_META[qq.part].vi : PART_META[qq.part].en}
@@ -233,7 +233,7 @@ export default function CefrExam({
                 {qq.part === 'grammar' && qq.lessonId && (
                   <button
                     onClick={() => onOpenLesson(qq.lessonId!)}
-                    className="text-xs text-violet-300 hover:text-violet-200 underline underline-offset-2 shrink-0"
+                    className="text-xs text-violet-300 theme-light:text-violet-800 hover:text-violet-200 underline underline-offset-2 shrink-0"
                   >
                     {isA ? 'Mở lại bài' : 'Review'}
                   </button>

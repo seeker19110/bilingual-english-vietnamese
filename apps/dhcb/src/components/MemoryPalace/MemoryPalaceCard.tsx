@@ -23,7 +23,7 @@ export default function MemoryPalaceCard() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 tracking-wide uppercase">
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 theme-light:text-amber-900 border border-amber-500/30 tracking-wide uppercase">
                   Platform V5 Method of Loci
                 </span>
                 <span className="text-[11px] font-semibold text-zinc-400">
@@ -38,7 +38,7 @@ export default function MemoryPalaceCard() {
                 các điểm neo giác quan.
               </p>
               {state && (
-                <div className="flex items-center gap-3 mt-2 text-xs text-amber-300/90 font-medium">
+                <div className="flex items-center gap-3 mt-2 text-xs text-amber-300 theme-light:text-amber-900/90 font-medium">
                   <span>
                     🏛️ Phòng Loci:{' '}
                     <strong className="text-white">{state.rooms.length} phòng</strong>

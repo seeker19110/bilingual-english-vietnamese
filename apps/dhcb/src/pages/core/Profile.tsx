@@ -157,7 +157,7 @@ export default function Profile() {
         ? 'Hồ sơ nghề, mục tiêu, Lean Canvas & kiểm chứng giả thuyết'
         : 'Career profile, goals, lean canvas & hypothesis validation',
       icon: Briefcase,
-      color: 'text-emerald-400',
+      color: 'text-emerald-400 theme-light:text-emerald-900',
       bg: 'bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/60',
     },
     {
@@ -167,7 +167,7 @@ export default function Profile() {
         ? 'Dự án, việc cần làm, cuộc họp · thói quen, sức khoẻ, kế hoạch'
         : 'Projects, tasks, meetings · habits, wellbeing, life plans',
       icon: Heart,
-      color: 'text-rose-400',
+      color: 'text-rose-400 theme-light:text-rose-900',
       bg: 'bg-rose-500/10 border-rose-500/30 hover:border-rose-500/60',
     },
     {
@@ -177,7 +177,7 @@ export default function Profile() {
         ? 'Mạng lưới tri thức, ký ức & quyền riêng tư'
         : 'Personal facts, memory fabric & GDPR',
       icon: GitMerge,
-      color: 'text-indigo-400',
+      color: 'text-indigo-400 theme-light:text-indigo-800',
       bg: 'bg-indigo-500/10 border-indigo-500/30 hover:border-indigo-500/60',
     },
     {
@@ -187,7 +187,7 @@ export default function Profile() {
         ? 'Toán học, Vật lý, Hóa học, Sinh học & Tiếng Anh'
         : 'Math, Physics, Chemistry, Biology & English',
       icon: BookOpen,
-      color: 'text-amber-400',
+      color: 'text-amber-400 theme-light:text-amber-900',
       bg: 'bg-amber-500/10 border-amber-500/30 hover:border-amber-500/60',
     },
     {
@@ -197,7 +197,7 @@ export default function Profile() {
         ? 'Trợ lý đàm thoại & đề xuất đa lĩnh vực'
         : 'Multi-domain companion & proposed actions',
       icon: Bot,
-      color: 'text-teal-400',
+      color: 'text-teal-400 theme-light:text-teal-900',
       bg: 'bg-teal-500/10 border-teal-500/30 hover:border-teal-500/60',
     },
     {
@@ -205,7 +205,7 @@ export default function Profile() {
       title: isA ? 'Bạn bè' : 'Friends',
       desc: isA ? 'Kết bạn qua link/QR — nền tảng cho chat' : 'Add friends via link/QR code',
       icon: Users,
-      color: 'text-cyan-400',
+      color: 'text-cyan-400 theme-light:text-cyan-900',
       bg: 'bg-cyan-500/10 border-cyan-500/30 hover:border-cyan-500/60',
     },
     {
@@ -213,7 +213,7 @@ export default function Profile() {
       title: isA ? 'Tin nhắn' : 'Chat & Direct Messages',
       desc: isA ? 'Nhắn tin thời gian thực 1-1 với bạn bè' : 'Real-time 1-on-1 chat with friends',
       icon: MessageSquare,
-      color: 'text-blue-400',
+      color: 'text-blue-400 theme-light:text-blue-800',
       bg: 'bg-blue-500/10 border-blue-500/30 hover:border-blue-500/60',
     },
   ]
@@ -247,14 +247,17 @@ export default function Profile() {
       <section className="grid grid-cols-2 gap-3">
         <div className="rounded-2xl border border-line-subtle bg-surface-card p-3 text-center">
           <Flame
-            className={`mx-auto h-5 w-5 ${streak > 0 ? 'text-orange-400' : 'text-content-muted'}`}
+            className={`mx-auto h-5 w-5 ${streak > 0 ? 'text-orange-400 theme-light:text-orange-900' : 'text-content-muted'}`}
             aria-hidden="true"
           />
           <p className="t-h3 mt-1.5 font-bold leading-none text-content">{streak}</p>
           <p className="t-caption mt-1 text-content-muted">{T.streakDays}</p>
         </div>
         <div className="rounded-2xl border border-line-subtle bg-surface-card p-3 text-center">
-          <BookOpen className="mx-auto h-5 w-5 text-amber-300" aria-hidden="true" />
+          <BookOpen
+            className="mx-auto h-5 w-5 text-amber-300 theme-light:text-amber-900"
+            aria-hidden="true"
+          />
           <p className="t-h3 mt-1.5 font-bold leading-none text-content">{learned}</p>
           <p className="t-caption mt-1 text-content-muted">
             {isA ? 'từ đã thuộc' : 'words learned'}
@@ -321,7 +324,7 @@ export default function Profile() {
                     className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${streak > 0 ? 'bg-orange-500/15' : 'bg-zinc-800'}`}
                   >
                     <Flame
-                      className={`w-5 h-5 ${streak > 0 ? 'text-orange-400' : 'text-zinc-400'}`}
+                      className={`w-5 h-5 ${streak > 0 ? 'text-orange-400 theme-light:text-orange-900' : 'text-zinc-400'}`}
                     />
                   </div>
                   <div>
@@ -331,7 +334,7 @@ export default function Profile() {
                 </div>
                 <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-amber-500/15 flex items-center justify-center shrink-0">
-                    <BookOpen className="w-5 h-5 text-amber-300" />
+                    <BookOpen className="w-5 h-5 text-amber-300 theme-light:text-amber-900" />
                   </div>
                   <div>
                     <p className="text-xl font-bold text-white leading-none">{learned}</p>
@@ -459,7 +462,7 @@ export default function Profile() {
                 className="w-full bg-zinc-900/80 border border-zinc-800/80 hover:border-accent-500/40 rounded-2xl p-4 flex items-center gap-4 transition group text-left active:scale-[0.99]"
               >
                 <div className="w-11 h-11 rounded-xl bg-purple-500/15 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                  <MessageSquareHeart className="w-5 h-5 text-purple-400" />
+                  <MessageSquareHeart className="w-5 h-5 text-purple-400 theme-light:text-purple-800" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-white text-[15px]">
@@ -540,7 +543,7 @@ export default function Profile() {
             <section className="animate-fade-in">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-sm font-semibold text-zinc-300 flex items-center gap-2">
-                  <Award className="w-4 h-4 text-amber-400" />
+                  <Award className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
                   {isA ? 'Huy hiệu & mốc' : 'Achievements'}
                 </h2>
                 <span className="text-xs text-zinc-400">
@@ -611,7 +614,7 @@ export default function Profile() {
                             <span className="text-lg shrink-0">{def.icon}</span>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-semibold text-white truncate">{name}</p>
-                              <p className="text-xs text-amber-300 mt-0.5 flex items-center gap-1">
+                              <p className="text-xs text-amber-300 theme-light:text-amber-900 mt-0.5 flex items-center gap-1">
                                 <Gift className="w-3 h-3" />
                                 {isA
                                   ? `+${r.reward.rewardDays} ngày gói ${planLabel}`

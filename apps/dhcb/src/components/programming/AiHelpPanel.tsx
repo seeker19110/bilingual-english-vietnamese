@@ -96,7 +96,7 @@ export default function AiHelpPanel({ lessonId, code, results, passed }: Props) 
             {busy === 'explain_error' ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              <AlertCircle className="w-4 h-4 text-rose-400" />
+              <AlertCircle className="w-4 h-4 text-rose-400 theme-light:text-rose-900" />
             )}
             <span>Lỗi này nghĩa là gì?</span>
           </button>

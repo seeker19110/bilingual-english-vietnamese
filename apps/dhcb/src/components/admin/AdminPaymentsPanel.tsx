@@ -134,7 +134,7 @@ export default function AdminPaymentsPanel() {
     <div className="space-y-4 text-sm">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-zinc-950 p-3.5 rounded-xl border border-zinc-800">
         <div className="flex items-center gap-2">
-          <CreditCard className="w-5 h-5 text-emerald-400" />
+          <CreditCard className="w-5 h-5 text-emerald-400 theme-light:text-emerald-900" />
           <div>
             <h3 className="font-semibold text-white">Quản lý Thanh toán VietQR (SePay)</h3>
             <p className="text-xs text-zinc-400">
@@ -149,26 +149,26 @@ export default function AdminPaymentsPanel() {
           disabled={!payments.length}
           className="flex items-center justify-center gap-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 text-white text-xs rounded-lg font-medium transition"
         >
-          <Download className="w-4 h-4 text-emerald-400" />
+          <Download className="w-4 h-4 text-emerald-400 theme-light:text-emerald-900" />
           Xuất CSV
         </button>
       </div>
 
       {error && (
-        <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-lg text-xs flex items-center gap-2">
+        <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 theme-light:text-rose-900 rounded-lg text-xs flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {successMsg && (
-        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 rounded-lg text-xs flex items-center justify-between">
+        <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 theme-light:text-emerald-900 rounded-lg text-xs flex items-center justify-between">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 shrink-0" />
             <span>{successMsg}</span>
           </div>
           <button type="button" onClick={() => setSuccessMsg(null)}>
-            <X className="w-4 h-4 text-emerald-400" />
+            <X className="w-4 h-4 text-emerald-400 theme-light:text-emerald-900" />
           </button>
         </div>
       )}
@@ -248,8 +248,8 @@ export default function AdminPaymentsPanel() {
                     <span
                       className={`inline-block px-1.5 py-0.5 rounded text-[11px] font-bold uppercase mr-1.5 ${
                         p.plan === 'vip'
-                          ? 'bg-amber-500/20 text-amber-300'
-                          : 'bg-indigo-500/20 text-indigo-300'
+                          ? 'bg-amber-500/20 text-amber-300 theme-light:text-amber-900'
+                          : 'bg-indigo-500/20 text-indigo-300 theme-light:text-indigo-800'
                       }`}
                     >
                       {p.plan}
@@ -261,12 +261,12 @@ export default function AdminPaymentsPanel() {
                   </td>
                   <td className="p-3">
                     {p.status === 'paid' && (
-                      <span className="inline-flex items-center gap-1 text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-full text-[11px]">
+                      <span className="inline-flex items-center gap-1 text-emerald-400 theme-light:text-emerald-900 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-full text-[11px]">
                         <CheckCircle2 className="w-3 h-3" /> Đã trả
                       </span>
                     )}
                     {p.status === 'pending' && (
-                      <span className="inline-flex items-center gap-1 text-amber-400 font-semibold bg-amber-500/10 px-2 py-0.5 rounded-full text-[11px]">
+                      <span className="inline-flex items-center gap-1 text-amber-400 theme-light:text-amber-900 font-semibold bg-amber-500/10 px-2 py-0.5 rounded-full text-[11px]">
                         <Clock className="w-3 h-3" /> Chờ trả
                       </span>
                     )}
@@ -279,7 +279,7 @@ export default function AdminPaymentsPanel() {
                   <td className="p-3 text-zinc-400 text-[11px]">
                     <div>Tạo: {new Date(p.createdAt).toLocaleString('vi-VN')}</div>
                     {p.paidAt && (
-                      <div className="text-emerald-400">
+                      <div className="text-emerald-400 theme-light:text-emerald-900">
                         Trả: {new Date(p.paidAt).toLocaleString('vi-VN')}
                       </div>
                     )}
@@ -310,7 +310,7 @@ export default function AdminPaymentsPanel() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-md w-full p-5 space-y-4 text-white shadow-2xl">
             <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                <ShieldCheck className="w-5 h-5 text-emerald-400 theme-light:text-emerald-900" />
                 <h3 className="font-bold text-base">Khớp đơn thanh toán thủ công</h3>
               </div>
               <button
@@ -330,7 +330,7 @@ export default function AdminPaymentsPanel() {
               </div>
               <div>
                 <span className="text-zinc-500">Gói nâng cấp:</span>{' '}
-                <strong className="text-emerald-400 uppercase">
+                <strong className="text-emerald-400 theme-light:text-emerald-900 uppercase">
                   {matchingPayment.plan} ({matchingPayment.cycle})
                 </strong>
               </div>
@@ -363,9 +363,11 @@ export default function AdminPaymentsPanel() {
                   💡{' '}
                   <em>
                     Mã thanh toán hệ thống hiện sử dụng tiền tố{' '}
-                    <code className="text-emerald-400 font-mono">DHCB</code> (mã cũ{' '}
-                    <code className="text-zinc-300 font-mono">ENVI</code> vẫn khớp tự động vĩnh
-                    viễn).
+                    <code className="text-emerald-400 theme-light:text-emerald-900 font-mono">
+                      DHCB
+                    </code>{' '}
+                    (mã cũ <code className="text-zinc-300 font-mono">ENVI</code> vẫn khớp tự động
+                    vĩnh viễn).
                   </em>
                 </p>
               </div>

@@ -72,7 +72,8 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
       subtitle: 'Phản xạ chọn từ đồng nghĩa, trái nghĩa, collocation nhanh nhất để nhân x1.5 điểm.',
       icon: '⚡',
       time: '5s / lượt',
-      accentColor: 'from-amber-500/20 to-orange-500/30 border-amber-500/40 text-amber-400',
+      accentColor:
+        'from-amber-500/20 to-orange-500/30 border-amber-500/40 text-amber-400 theme-light:text-amber-900',
     },
     {
       id: 'grammar_clash',
@@ -80,7 +81,8 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
       subtitle: 'Phát hiện lỗi sai thì, hòa hợp chủ vị, đảo ngữ và câu điều kiện trong 8 giây.',
       icon: '📐',
       time: '8s / lượt',
-      accentColor: 'from-indigo-500/20 to-purple-500/30 border-indigo-500/40 text-indigo-400',
+      accentColor:
+        'from-indigo-500/20 to-purple-500/30 border-indigo-500/40 text-indigo-400 theme-light:text-indigo-800',
     },
     {
       id: 'toulmin_showdown',
@@ -88,7 +90,8 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
       subtitle: 'Nhận diện ngụy biện logic (Fallacy) và chọn luận điểm phản bác đắt giá nhất.',
       icon: '🏛️',
       time: '10s / lượt',
-      accentColor: 'from-emerald-500/20 to-teal-500/30 border-emerald-500/40 text-emerald-400',
+      accentColor:
+        'from-emerald-500/20 to-teal-500/30 border-emerald-500/40 text-emerald-400 theme-light:text-emerald-900',
     },
   ]
 
@@ -105,7 +108,7 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
           {/* Header */}
           <div className="flex items-center justify-between pb-4 border-b border-zinc-800">
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl border border-amber-500/40 shadow-inner">
+              <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 theme-light:text-amber-900 flex items-center justify-center text-xl border border-amber-500/40 shadow-inner">
                 ⚔️
               </div>
               <div>
@@ -138,18 +141,20 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-bold text-white">{profile.name}</span>
-                    <span className="text-[11px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                    <span className="text-[11px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 theme-light:text-amber-900 border border-amber-500/40">
                       Rank {profile.rankTier}
                     </span>
                   </div>
                   <div className="text-xs text-zinc-300 mt-0.5 flex items-center gap-3">
-                    <span className="font-bold text-amber-400">{profile.eloRating} Elo</span>
+                    <span className="font-bold text-amber-400 theme-light:text-amber-900">
+                      {profile.eloRating} Elo
+                    </span>
                     <span>·</span>
                     <span>
                       Thắng {profile.wins}/{profile.totalMatches} trận
                     </span>
                     {profile.winStreak > 0 && (
-                      <span className="text-orange-400 font-bold flex items-center gap-0.5">
+                      <span className="text-orange-400 theme-light:text-orange-900 font-bold flex items-center gap-0.5">
                         <Flame className="w-3 h-3" /> {profile.winStreak} chuỗi
                       </span>
                     )}
@@ -166,7 +171,7 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
               onClick={() => setTab('modes')}
               className={`tap-44 flex-1 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
                 tab === 'modes'
-                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow'
+                  ? 'bg-amber-500/20 text-amber-300 theme-light:text-amber-900 border border-amber-500/40 shadow'
                   : 'text-zinc-400 hover:text-zinc-200'
               }`}
             >
@@ -178,7 +183,7 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
               onClick={() => setTab('leaderboard')}
               className={`tap-44 flex-1 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
                 tab === 'leaderboard'
-                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow'
+                  ? 'bg-amber-500/20 text-amber-300 theme-light:text-amber-900 border border-amber-500/40 shadow'
                   : 'text-zinc-400 hover:text-zinc-200'
               }`}
             >
@@ -240,11 +245,11 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
                   key={entry.playerId}
                   className={`p-3 rounded-2xl border flex items-center justify-between gap-3 ${
                     entry.rank === 1
-                      ? 'bg-amber-950/30 border-amber-500/40 text-amber-200'
+                      ? 'bg-amber-950/30 border-amber-500/40 text-amber-200 theme-light:text-amber-900'
                       : entry.rank === 2
                         ? 'bg-zinc-800/60 border-zinc-600 text-zinc-200'
                         : entry.rank === 3
-                          ? 'bg-orange-950/20 border-orange-700 text-orange-200'
+                          ? 'bg-orange-950/20 border-orange-700 text-orange-200 theme-light:text-orange-900'
                           : 'bg-zinc-900/60 border-zinc-800 text-zinc-300'
                   }`}
                 >
@@ -268,7 +273,9 @@ export default function PvPArenaLobbyModal({ onClose }: PvPArenaLobbyModalProps)
                   </div>
 
                   <div className="text-right">
-                    <div className="text-sm font-black text-amber-400">{entry.eloRating} Elo</div>
+                    <div className="text-sm font-black text-amber-400 theme-light:text-amber-900">
+                      {entry.eloRating} Elo
+                    </div>
                     <div className="text-[11px] font-semibold text-zinc-400 uppercase">
                       {entry.rankTier}
                     </div>

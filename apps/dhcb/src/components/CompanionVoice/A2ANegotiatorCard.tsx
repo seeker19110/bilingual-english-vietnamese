@@ -97,7 +97,7 @@ export const A2ANegotiatorCard: React.FC = () => {
         className="w-full px-4 py-3 flex items-center justify-between hover:bg-zinc-800/50 transition"
       >
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+          <div className="p-1.5 rounded-xl bg-indigo-500/20 text-indigo-300 theme-light:text-indigo-800 border border-indigo-500/30">
             <Users className="w-4 h-4" />
           </div>
           <div className="text-left">
@@ -110,7 +110,7 @@ export const A2ANegotiatorCard: React.FC = () => {
           </div>
         </div>
 
-        <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+        <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-500/20 text-indigo-300 theme-light:text-indigo-800 border border-indigo-500/30">
           {matches.length} bạn học phù hợp
         </span>
       </button>
@@ -119,7 +119,7 @@ export const A2ANegotiatorCard: React.FC = () => {
         <div className="p-4 border-t border-zinc-800/80 space-y-4 animate-fade-in bg-zinc-950/60">
           {loading ? (
             <div className="flex items-center justify-center py-4 text-zinc-400 gap-2">
-              <Loader2 className="w-4 h-4 animate-spin text-indigo-400" />
+              <Loader2 className="w-4 h-4 animate-spin text-indigo-400 theme-light:text-indigo-800" />
               <span>Đang quét mạng lưới bạn học A2A...</span>
             </div>
           ) : (
@@ -127,7 +127,7 @@ export const A2ANegotiatorCard: React.FC = () => {
               {/* Active Negotiations */}
               {negotiations.length > 0 && (
                 <div className="space-y-2">
-                  <div className="text-[11px] font-semibold text-emerald-400 flex items-center gap-1.5">
+                  <div className="text-[11px] font-semibold text-emerald-400 theme-light:text-emerald-900 flex items-center gap-1.5">
                     <CheckCircle className="w-3.5 h-3.5" />
                     <span>Thỏa thuận A2A đã xác lập ({negotiations.length}):</span>
                   </div>
@@ -138,14 +138,14 @@ export const A2ANegotiatorCard: React.FC = () => {
                         className="bg-emerald-950/20 border border-emerald-800/40 rounded-xl p-3 flex items-center justify-between text-zinc-200"
                       >
                         <div className="space-y-0.5">
-                          <div className="font-semibold text-emerald-300 flex items-center gap-1.5 text-xs">
+                          <div className="font-semibold text-emerald-300 theme-light:text-emerald-900 flex items-center gap-1.5 text-xs">
                             <Handshake className="w-3.5 h-3.5" />
                             <span>{neg.agreedTerms.skillTopic || 'Phiên học nhóm tiếng Anh'}</span>
                           </div>
                           <div className="text-[11px] text-zinc-400 flex items-center gap-2">
                             <span>Thời lượng: {neg.agreedTerms.studyDurationMinutes || 30}p</span>
                             <span>•</span>
-                            <span className="flex items-center gap-1 text-sky-400">
+                            <span className="flex items-center gap-1 text-sky-400 theme-light:text-sky-900">
                               <Lock className="w-2.5 h-2.5" />
                               {neg.agreedTerms.disclosureLevel}
                             </span>
@@ -164,7 +164,7 @@ export const A2ANegotiatorCard: React.FC = () => {
               {/* Peer Matches */}
               <div className="space-y-2">
                 <div className="text-[11px] font-semibold text-zinc-300 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                  <Sparkles className="w-3.5 h-3.5 text-indigo-400 theme-light:text-indigo-800" />
                   <span>Đề xuất bạn cùng học tương thích từ Life Graph:</span>
                 </div>
 
@@ -178,11 +178,11 @@ export const A2ANegotiatorCard: React.FC = () => {
                         <div>
                           <div className="font-bold text-white text-xs flex items-center gap-1.5">
                             <span>{peer.peerDisplayName}</span>
-                            <span className="px-1.5 py-0.5 rounded text-[11px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                            <span className="px-1.5 py-0.5 rounded text-[11px] font-bold bg-indigo-500/20 text-indigo-300 theme-light:text-indigo-800 border border-indigo-500/30">
                               {Math.round(peer.compatibilityScore * 100)}% Tương thích
                             </span>
                           </div>
-                          <p className="text-[11px] text-indigo-300 mt-0.5 font-medium">
+                          <p className="text-[11px] text-indigo-300 theme-light:text-indigo-800 mt-0.5 font-medium">
                             Kỹ năng chung: {peer.sharedSkill}
                           </p>
                         </div>
@@ -211,7 +211,7 @@ export const A2ANegotiatorCard: React.FC = () => {
               </div>
 
               <div className="pt-2 border-t border-zinc-800/80 text-[11px] text-zinc-500 flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 theme-light:text-emerald-900 shrink-0" />
                 <span>
                   Giao thức A2A bảo vệ tuyệt đối lịch trình cá nhân bằng mật mã Zero-Knowledge.
                 </span>

@@ -127,7 +127,9 @@ export default function PronounceButton({ word, lang = 'en-US', random = true }:
       className="tap-44 shrink-0 w-9 h-9 flex items-center justify-center rounded-full bg-zinc-800 hover:bg-accent-500/20 text-zinc-400 hover:text-accent-300 transition disabled:opacity-60"
     >
       {status === 'loading' && <Loader2 className="w-[1.125rem] h-[1.125rem] animate-spin" />}
-      {status === 'error' && <VolumeX className="w-[1.125rem] h-[1.125rem] text-red-400" />}
+      {status === 'error' && (
+        <VolumeX className="w-[1.125rem] h-[1.125rem] text-red-400 theme-light:text-red-900" />
+      )}
       {status === 'idle' && <Volume2 className="w-[1.125rem] h-[1.125rem]" />}
     </button>
   )

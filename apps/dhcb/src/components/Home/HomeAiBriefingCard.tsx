@@ -55,10 +55,10 @@ export default function HomeAiBriefingCard({
 
   const TimeIcon = isMorning ? Sun : isAfternoon ? Sunset : Moon
   const timeBadgeColor = isMorning
-    ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+    ? 'bg-amber-500/15 text-amber-300 theme-light:text-amber-900 border-amber-500/30'
     : isAfternoon
-      ? 'bg-orange-500/15 text-orange-300 border-orange-500/30'
-      : 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30'
+      ? 'bg-orange-500/15 text-orange-300 theme-light:text-orange-900 border-orange-500/30'
+      : 'bg-indigo-500/15 text-indigo-300 theme-light:text-indigo-800 border-indigo-500/30'
 
   useEffect(() => {
     let isMounted = true
@@ -152,7 +152,7 @@ export default function HomeAiBriefingCard({
               </button>
             </div>
             {briefing.insights && briefing.insights.length > 0 && (
-              <div className="mt-2.5 pt-2.5 border-t border-zinc-800/60 flex items-center gap-2 text-xs text-emerald-400">
+              <div className="mt-2.5 pt-2.5 border-t border-zinc-800/60 flex items-center gap-2 text-xs text-emerald-400 theme-light:text-emerald-900">
                 <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                 <span className="truncate">{briefing.insights[0]}</span>
               </div>
@@ -213,7 +213,7 @@ export default function HomeAiBriefingCard({
             className="tap-44 flex items-center justify-between p-3 rounded-2xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 hover:border-accent-500/50 text-left transition-all duration-200 active:scale-[0.98] group shadow-sm"
           >
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-lime-500/15 text-lime-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-lime-500/15 text-lime-400 theme-light:text-lime-900 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <Sparkles className="w-4 h-4" />
               </div>
               <div className="min-w-0">
@@ -240,17 +240,17 @@ export default function HomeAiBriefingCard({
             className="tap-44 flex items-center justify-between p-3 rounded-2xl bg-zinc-900/90 hover:bg-zinc-800 border border-sky-500/30 hover:border-sky-500/60 text-left transition-all duration-200 active:scale-[0.98] group shadow-sm"
           >
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-sky-500/15 text-sky-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-sky-500/15 text-sky-400 theme-light:text-sky-900 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <Brain className="w-4 h-4" />
               </div>
               <div className="min-w-0">
                 <span className="text-xs text-zinc-400 font-medium">Cung điện Trí nhớ SRS</span>
-                <p className="text-xs sm:text-sm font-semibold text-sky-300 truncate mt-0.5">
+                <p className="text-xs sm:text-sm font-semibold text-sky-300 theme-light:text-sky-900 truncate mt-0.5">
                   Ôn ngay {srsDueCount} thẻ đến hạn
                 </p>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-sky-400 group-hover:translate-x-1 transition-transform shrink-0 ml-2" />
+            <ArrowRight className="w-4 h-4 text-sky-400 theme-light:text-sky-900 group-hover:translate-x-1 transition-transform shrink-0 ml-2" />
           </button>
         ) : (
           <button
@@ -258,7 +258,7 @@ export default function HomeAiBriefingCard({
             className="tap-44 flex items-center justify-between p-3 rounded-2xl bg-zinc-900/90 hover:bg-zinc-800 border border-zinc-800 hover:border-blue-500/50 text-left transition-all duration-200 active:scale-[0.98] group shadow-sm"
           >
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/15 text-blue-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/15 text-blue-400 theme-light:text-blue-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                 <Flame className="w-4 h-4" />
               </div>
               <div className="min-w-0">

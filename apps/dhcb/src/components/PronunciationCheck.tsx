@@ -86,7 +86,7 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
         onClick={status === 'listening' ? stop : start}
         className={`flex items-center gap-2 px-4 py-2 min-h-11 rounded-xl text-sm font-medium transition ${
           status === 'listening'
-            ? 'bg-rose-500/20 text-rose-300 hover:bg-rose-500/30'
+            ? 'bg-rose-500/20 text-rose-300 theme-light:text-rose-900 hover:bg-rose-500/30'
             : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-700'
         }`}
       >
@@ -126,7 +126,7 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
                 className={`px-2 py-0.5 rounded-lg text-sm font-medium ${
                   w.ok
                     ? 'bg-accent-500/15 text-accent-300 border border-accent-500/25'
-                    : 'bg-rose-500/15 text-rose-300 border border-rose-500/25'
+                    : 'bg-rose-500/15 text-rose-300 theme-light:text-rose-900 border border-rose-500/25'
                 }`}
               >
                 {w.word}
@@ -150,11 +150,13 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
                   <button
                     onClick={() => void speak(tip.word, lang === 'en' ? 'en-US' : 'vi-VN')}
                     aria-label={isA ? `Nghe lại từ "${tip.word}"` : `Listen to "${tip.word}"`}
-                    className="tap-44 flex-shrink-0 text-amber-300 hover:text-amber-200 transition"
+                    className="tap-44 flex-shrink-0 text-amber-300 theme-light:text-amber-900 hover:text-amber-200 transition"
                   >
                     <Volume2 className="w-4 h-4" />
                   </button>
-                  <p className="text-xs text-amber-200/90 leading-relaxed">{tip.tipVi}</p>
+                  <p className="text-xs text-amber-200 theme-light:text-amber-900/90 leading-relaxed">
+                    {tip.tipVi}
+                  </p>
                 </div>
               ))}
             </div>
@@ -182,7 +184,7 @@ export default function PronunciationCheck({ target, lang, isA }: Props) {
         </div>
       )}
 
-      {error && <p className="text-xs text-rose-400/80">{error}</p>}
+      {error && <p className="text-xs text-rose-400 theme-light:text-rose-900/80">{error}</p>}
 
       {/* Chấm chi tiết bằng AI (① Giai đoạn 2, Azure) — CHỈ tiếng Anh, Azure chưa hỗ trợ vi-VN */}
       {lang === 'en' && <DetailedPronunciationCheck target={target} isA={isA} />}

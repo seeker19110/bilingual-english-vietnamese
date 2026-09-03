@@ -158,8 +158,8 @@ function WritingCard({ s }: { s: WritingSubmission }) {
       : overall >= 7
         ? 'text-accent-400'
         : overall >= 5
-          ? 'text-amber-400'
-          : 'text-red-400'
+          ? 'text-amber-400 theme-light:text-amber-900'
+          : 'text-red-400 theme-light:text-red-900'
 
   return (
     <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl overflow-hidden">
@@ -211,7 +211,7 @@ function WritingCard({ s }: { s: WritingSubmission }) {
                   >
                     <span className="text-xs text-zinc-400">{label}</span>
                     <span
-                      className={`text-sm font-bold ${val >= 7 ? 'text-accent-400' : val >= 5 ? 'text-amber-400' : 'text-red-400'}`}
+                      className={`text-sm font-bold ${val >= 7 ? 'text-accent-400' : val >= 5 ? 'text-amber-400 theme-light:text-amber-900' : 'text-red-400 theme-light:text-red-900'}`}
                     >
                       {val}
                     </span>
@@ -269,7 +269,7 @@ function SpeakingCard({ s }: { s: SpeakingSession }) {
                 <div
                   className={`rounded-xl px-3 py-2 text-sm leading-relaxed ${
                     m.role === 'user'
-                      ? 'bg-sky-600/20 border border-sky-500/20 text-sky-100'
+                      ? 'bg-sky-600/20 border border-sky-500/20 text-sky-100 theme-light:text-sky-900'
                       : 'bg-zinc-800/80 text-zinc-200'
                   }`}
                 >
@@ -277,7 +277,7 @@ function SpeakingCard({ s }: { s: SpeakingSession }) {
                 </div>
                 {/* Hiển thị feedback sửa lỗi nếu có */}
                 {m.feedbackVi && (
-                  <div className="bg-amber-500/8 border border-amber-500/20 rounded-lg px-2.5 py-1.5 text-xs text-amber-200 max-w-full">
+                  <div className="bg-amber-500/8 border border-amber-500/20 rounded-lg px-2.5 py-1.5 text-xs text-amber-200 theme-light:text-amber-900 max-w-full">
                     ✅ {m.feedbackVi}
                     {m.correctedEn && <p className="text-accent-400 mt-1">→ {m.correctedEn}</p>}
                   </div>

@@ -120,11 +120,11 @@ export default function WorkplaceHarvesterCard() {
               <h3 className="text-base font-bold text-white tracking-wide">
                 Workplace Error Harvester & Auto-SRS
               </h3>
-              <span className="text-[11px] px-2 py-0.5 font-bold uppercase rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              <span className="text-[11px] px-2 py-0.5 font-bold uppercase rounded-full bg-amber-500/20 text-amber-300 theme-light:text-amber-900 border border-amber-500/30">
                 Workplace AI
               </span>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 theme-light:text-slate-700">
               Thu hoạch câu từ chưa chuẩn từ công việc thực tế ➔ Tự động sinh Flashcard Spaced
               Repetition
             </p>
@@ -138,7 +138,7 @@ export default function WorkplaceHarvesterCard() {
             className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
               activeTab === 'mistakes'
                 ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                : 'text-slate-400 hover:text-slate-200'
+                : 'text-slate-400 theme-light:text-slate-700 hover:text-slate-200'
             }`}
           >
             Lỗi Thu Hoạch ({mistakes.length})
@@ -148,7 +148,7 @@ export default function WorkplaceHarvesterCard() {
             className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
               activeTab === 'cards'
                 ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-                : 'text-slate-400 hover:text-slate-200'
+                : 'text-slate-400 theme-light:text-slate-700 hover:text-slate-200'
             }`}
           >
             Thẻ SRS ({srsCards.length})
@@ -189,16 +189,16 @@ export default function WorkplaceHarvesterCard() {
                   <span className="text-[11px] font-bold uppercase px-2 py-0.5 rounded bg-slate-700 text-slate-300">
                     {m.sourceType}
                   </span>
-                  <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300">
+                  <span className="text-[11px] font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 theme-light:text-blue-800">
                     CEFR {m.cefrLevel}
                   </span>
                   <span
                     className={`text-[11px] font-semibold ${
                       m.urgency === 'critical'
-                        ? 'text-red-400'
+                        ? 'text-red-400 theme-light:text-red-900'
                         : m.urgency === 'moderate'
-                          ? 'text-amber-400'
-                          : 'text-teal-400'
+                          ? 'text-amber-400 theme-light:text-amber-900'
+                          : 'text-teal-400 theme-light:text-teal-900'
                     }`}
                   >
                     • {m.urgency === 'critical' ? 'Lỗi nặng' : 'Cần sửa'}
@@ -206,14 +206,14 @@ export default function WorkplaceHarvesterCard() {
                 </div>
 
                 {m.convertedToSrs ? (
-                  <span className="text-[11px] font-semibold text-emerald-400 flex items-center gap-1">
+                  <span className="text-[11px] font-semibold text-emerald-400 theme-light:text-emerald-900 flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" /> Đã tạo Flashcard SRS
                   </span>
                 ) : (
                   <button
                     onClick={() => handleConvertToSrs(m.id)}
                     disabled={convertingId === m.id}
-                    className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-[11px] font-semibold flex items-center gap-1 border border-amber-500/30 transition-colors"
+                    className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 theme-light:text-amber-900 text-[11px] font-semibold flex items-center gap-1 border border-amber-500/30 transition-colors"
                   >
                     <Plus className="w-3 h-3" />
                     <span>{convertingId === m.id ? 'Đang tạo...' : 'Tạo Thẻ SRS'}</span>
@@ -221,23 +221,28 @@ export default function WorkplaceHarvesterCard() {
                 )}
               </div>
 
-              <div className="text-xs text-slate-300 italic bg-slate-900/60 p-2 rounded-lg border border-slate-800">
+              <div className="text-xs text-slate-300 theme-light:text-slate-700 italic bg-slate-900/60 p-2 rounded-lg border border-slate-800">
                 &ldquo;{m.originalContextSnippet}&rdquo;
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                <div className="p-2 rounded bg-red-950/30 border border-red-500/30 text-red-200">
-                  <span className="font-bold text-red-400">❌ Cần tránh: </span>
+                <div className="p-2 rounded bg-red-950/30 border border-red-500/30 text-red-200 theme-light:text-red-900">
+                  <span className="font-bold text-red-400 theme-light:text-red-900">
+                    ❌ Cần tránh:{' '}
+                  </span>
                   {m.detectedMistake}
                 </div>
-                <div className="p-2 rounded bg-emerald-950/30 border border-emerald-500/30 text-emerald-200">
-                  <span className="font-bold text-emerald-400">✨ Chuẩn bản xứ: </span>
+                <div className="p-2 rounded bg-emerald-950/30 border border-emerald-500/30 text-emerald-200 theme-light:text-emerald-900">
+                  <span className="font-bold text-emerald-400 theme-light:text-emerald-900">
+                    ✨ Chuẩn bản xứ:{' '}
+                  </span>
                   {m.nativeAlternative}
                 </div>
               </div>
 
-              <p className="text-[11px] text-slate-400">
-                💡 <span className="text-slate-300">Giải thích:</span> {m.explanationVi}
+              <p className="text-[11px] text-slate-400 theme-light:text-slate-700">
+                💡 <span className="text-slate-300 theme-light:text-slate-700">Giải thích:</span>{' '}
+                {m.explanationVi}
               </p>
             </div>
           ))}
@@ -248,7 +253,7 @@ export default function WorkplaceHarvesterCard() {
       {activeTab === 'cards' && (
         <div className="mt-4 space-y-3 max-h-72 overflow-y-auto pr-1">
           {srsCards.length === 0 ? (
-            <div className="p-6 text-center text-xs text-slate-400">
+            <div className="p-6 text-center text-xs text-slate-400 theme-light:text-slate-700">
               Chưa có thẻ SRS nào được tạo từ lỗi công việc. Hãy nhấn &quot;Tạo Thẻ SRS&quot; ở tab
               bên cạnh!
             </div>
@@ -260,23 +265,27 @@ export default function WorkplaceHarvesterCard() {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-indigo-400" />
-                    <span className="text-xs font-bold text-indigo-200">
+                    <BookOpen className="w-4 h-4 text-indigo-400 theme-light:text-indigo-800" />
+                    <span className="text-xs font-bold text-indigo-200 theme-light:text-indigo-800">
                       Thẻ Ôn Tập Spaced Repetition
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-400">
+                  <span className="text-[11px] text-slate-400 theme-light:text-slate-700">
                     Lặp lại sau {c.repetitionIntervalDays} ngày
                   </span>
                 </div>
 
-                <div className="text-xs font-medium text-slate-200">
-                  <span className="text-amber-400 font-bold">Mặt trước: </span>
+                <div className="text-xs font-medium text-slate-200 theme-light:text-slate-700">
+                  <span className="text-amber-400 theme-light:text-amber-900 font-bold">
+                    Mặt trước:{' '}
+                  </span>
                   {c.frontPrompt}
                 </div>
 
-                <div className="text-xs font-medium text-emerald-300 bg-slate-900/80 p-2 rounded-lg border border-slate-800">
-                  <span className="text-emerald-400 font-bold">Đáp án: </span>
+                <div className="text-xs font-medium text-emerald-300 theme-light:text-emerald-900 bg-slate-900/80 p-2 rounded-lg border border-slate-800">
+                  <span className="text-emerald-400 theme-light:text-emerald-900 font-bold">
+                    Đáp án:{' '}
+                  </span>
                   {c.backAnswer}
                 </div>
               </div>

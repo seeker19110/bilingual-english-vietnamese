@@ -16,7 +16,7 @@ interface InteractiveCanvasViewportProps {
 const DEFAULT_THEME = {
   border: 'border-sky-500/40',
   bg: 'bg-sky-950/40',
-  text: 'text-sky-400',
+  text: 'text-sky-400 theme-light:text-sky-900',
   glow: 'rgba(56, 189, 248, 0.2)',
 }
 
@@ -25,25 +25,25 @@ const DOMAIN_COLORS: Record<string, { border: string; bg: string; text: string; 
   career: {
     border: 'border-purple-500/40',
     bg: 'bg-purple-950/40',
-    text: 'text-purple-400',
+    text: 'text-purple-400 theme-light:text-purple-800',
     glow: 'rgba(168, 85, 247, 0.2)',
   },
   work: {
     border: 'border-emerald-500/40',
     bg: 'bg-emerald-950/40',
-    text: 'text-emerald-400',
+    text: 'text-emerald-400 theme-light:text-emerald-900',
     glow: 'rgba(34, 197, 94, 0.2)',
   },
   startup: {
     border: 'border-orange-500/40',
     bg: 'bg-orange-950/40',
-    text: 'text-orange-400',
+    text: 'text-orange-400 theme-light:text-orange-900',
     glow: 'rgba(249, 115, 22, 0.2)',
   },
   life: {
     border: 'border-rose-500/40',
     bg: 'bg-rose-950/40',
-    text: 'text-rose-400',
+    text: 'text-rose-400 theme-light:text-rose-900',
     glow: 'rgba(244, 63, 94, 0.2)',
   },
 }
@@ -248,7 +248,7 @@ export default function InteractiveCanvasViewport({
                 </span>
                 <div className="flex items-center gap-1 text-[11px] text-zinc-400">
                   {node.assignedTo === 'companion_ai' ? (
-                    <span className="flex items-center gap-0.5 text-cyan-300 font-medium">
+                    <span className="flex items-center gap-0.5 text-cyan-300 theme-light:text-cyan-900 font-medium">
                       <Bot className="w-3 h-3" /> AI
                     </span>
                   ) : (
@@ -263,7 +263,7 @@ export default function InteractiveCanvasViewport({
                         e.stopPropagation()
                         onDeleteNode(node.id)
                       }}
-                      className="ml-1 p-0.5 text-rose-400 hover:bg-rose-950/60 rounded"
+                      className="ml-1 p-0.5 text-rose-400 theme-light:text-rose-900 hover:bg-rose-950/60 rounded"
                     >
                       <Trash2 className="w-3 h-3" />
                     </button>
@@ -281,11 +281,11 @@ export default function InteractiveCanvasViewport({
               <div className="flex items-center justify-between text-[11px] text-zinc-400 pt-1 border-t border-zinc-800/60">
                 <span className="flex items-center gap-1">
                   {node.status === 'completed' ? (
-                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                    <CheckCircle2 className="w-3 h-3 text-emerald-400 theme-light:text-emerald-900" />
                   ) : node.status === 'blocked' ? (
-                    <AlertCircle className="w-3 h-3 text-rose-400" />
+                    <AlertCircle className="w-3 h-3 text-rose-400 theme-light:text-rose-900" />
                   ) : (
-                    <Clock className="w-3 h-3 text-amber-400" />
+                    <Clock className="w-3 h-3 text-amber-400 theme-light:text-amber-900" />
                   )}
                   <span className="capitalize">{node.status.replace('_', ' ')}</span>
                 </span>

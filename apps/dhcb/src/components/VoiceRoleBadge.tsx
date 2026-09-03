@@ -112,7 +112,7 @@ export default function VoiceRoleBadge({
         onClick={setDefault}
         className={`mt-0.5 px-2 py-0.5 rounded-full border text-[11px] transition ${
           justSet
-            ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300'
+            ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300 theme-light:text-emerald-900'
             : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:text-zinc-200 hover:border-zinc-600'
         }`}
       >

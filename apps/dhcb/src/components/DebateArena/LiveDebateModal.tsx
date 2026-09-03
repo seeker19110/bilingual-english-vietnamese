@@ -105,7 +105,7 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
               <h2 id={titleId} className="text-base sm:text-lg font-bold text-white">
                 Đấu Trường Tranh Biện AI
               </h2>
-              <p className="text-xs text-indigo-300">
+              <p className="text-xs text-indigo-300 theme-light:text-indigo-800">
                 Chủ đề: {session?.config.motion || 'Đang chuẩn bị...'}
               </p>
             </div>
@@ -140,7 +140,7 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <h4 className="text-xs font-bold text-white truncate">{p.name}</h4>
-                        <span className="text-[11px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-semibold uppercase">
+                        <span className="text-[11px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 theme-light:text-indigo-800 font-semibold uppercase">
                           {p.role}
                         </span>
                       </div>
@@ -173,7 +173,7 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
                   >
                     <div className="flex items-center justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-indigo-300">
+                        <span className="text-xs font-bold text-indigo-300 theme-light:text-indigo-800">
                           {turn.speakerName} ({turn.speakerRole})
                         </span>
                         {/* Nói THẬT khi lượt này là câu mẫu chứ không phải AI vừa nghĩ ra
@@ -184,7 +184,7 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
                           </span>
                         )}
                         {turn.detectedFallacy !== 'none' && (
-                          <span className="text-[11px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold">
+                          <span className="text-[11px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 theme-light:text-rose-900 border border-rose-500/30 font-semibold">
                             ⚠️ Ngụy biện: {turn.detectedFallacy}
                           </span>
                         )}
@@ -201,7 +201,7 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
                     </p>
 
                     {turn.fallacyExplanation && (
-                      <div className="mt-2 text-xs p-2 rounded-xl bg-rose-950/40 text-rose-200 border border-rose-500/20">
+                      <div className="mt-2 text-xs p-2 rounded-xl bg-rose-950/40 text-rose-200 theme-light:text-rose-900 border border-rose-500/20">
                         {turn.fallacyExplanation}
                       </div>
                     )}
@@ -212,7 +212,7 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
                         {turn.advancedVocabulary.map((v) => (
                           <span
                             key={v}
-                            className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold"
+                            className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-900 border border-emerald-500/30 font-semibold"
                           >
                             {v}
                           </span>
@@ -230,7 +230,7 @@ export default function LiveDebateModal({ onClose }: LiveDebateModalProps) {
                     <h3 className="text-sm font-bold text-white flex items-center gap-2">
                       <span>🏆</span> Bảng Điểm & Nhận Xét Toàn Trận
                     </h3>
-                    <span className="text-lg font-extrabold text-indigo-400">
+                    <span className="text-lg font-extrabold text-indigo-400 theme-light:text-indigo-800">
                       {session.finalRubric.overallScore}/100
                     </span>
                   </div>

@@ -937,7 +937,7 @@ export default function Startup({ embedded = false }: { embedded?: boolean } = {
                 onChange={(e) =>
                   setEvidenceForm({ ...evidenceForm, supportsHypothesis: e.target.checked })
                 }
-                className="rounded bg-zinc-950 border-zinc-800 text-emerald-600 focus:ring-emerald-500"
+                className="rounded bg-zinc-950 border-zinc-800 text-emerald-600 theme-light:text-emerald-900 focus:ring-emerald-500"
               />
               <label htmlFor="supportsHyp" className="text-xs text-zinc-300">
                 Bằng chứng này ủng hộ giả thuyết đã chọn

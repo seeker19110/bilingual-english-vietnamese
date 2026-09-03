@@ -134,7 +134,7 @@ export default function Friends() {
                   <Link
                     to={`/tin-nhan?peerId=${encodeURIComponent(friend.id)}`}
                     aria-label={`Nhắn tin với ${friend.name}`}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 text-xs font-semibold min-h-[36px] transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-600/20 text-blue-400 theme-light:text-blue-800 hover:bg-blue-600/30 text-xs font-semibold min-h-[36px] transition-colors"
                   >
                     <MessageSquare size={14} />
                     <span>Nhắn tin</span>

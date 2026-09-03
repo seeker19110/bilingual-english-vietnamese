@@ -123,7 +123,7 @@ export default function ProgrammingReview() {
         {hangDoi !== null && hangDoi !== 'error' && hangDoi.length === 0 && (
           <div className="rounded-3xl border border-zinc-800 bg-zinc-900/80 p-5 space-y-2">
             <p className="flex items-center gap-2 text-sm font-bold text-white">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+              <CheckCircle2 className="w-5 h-5 text-emerald-400 theme-light:text-emerald-900" />
               <span>Hôm nay không có thẻ nào tới hạn</span>
             </p>
             <p className="text-sm text-zinc-300 leading-relaxed">
@@ -142,7 +142,7 @@ export default function ProgrammingReview() {
 
         {hangDoi !== null && hangDoi !== 'error' && hangDoi.length > 0 && !the && (
           <div className="rounded-3xl border border-emerald-500/40 bg-emerald-500/10 p-5 flex items-start gap-3">
-            <Trophy className="w-6 h-6 text-emerald-400 shrink-0" />
+            <Trophy className="w-6 h-6 text-emerald-400 theme-light:text-emerald-900 shrink-0" />
             <div>
               <p className="font-bold text-white">Xong phiên ôn — {daOn} thẻ! 🎉</p>
               <p className="mt-1 text-sm text-zinc-100 leading-relaxed">

@@ -128,7 +128,7 @@ export default function IntegrationsModal({ isOpen, onClose, itemData }: Integra
             className="w-full flex items-center justify-between p-3.5 rounded-xl bg-zinc-800/60 hover:bg-zinc-800 border border-zinc-700/60 hover:border-blue-500/50 transition-all group text-left"
           >
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-400">
+              <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-400 theme-light:text-blue-800">
                 <Calendar className="w-5 h-5" />
               </div>
               <div>
@@ -148,7 +148,7 @@ export default function IntegrationsModal({ isOpen, onClose, itemData }: Integra
             className="w-full flex items-center justify-between p-3.5 rounded-xl bg-zinc-800/60 hover:bg-zinc-800 border border-zinc-700/60 hover:border-purple-500/50 transition-all group text-left"
           >
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-400">
+              <div className="p-2 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-400 theme-light:text-purple-800">
                 <FileText className="w-5 h-5" />
               </div>
               <div>
@@ -166,14 +166,14 @@ export default function IntegrationsModal({ isOpen, onClose, itemData }: Integra
           <div
             className={`p-3 rounded-xl border text-xs flex items-start gap-2.5 mb-4 ${
               statusMessage.type === 'success'
-                ? 'bg-emerald-950/40 border-emerald-500/30 text-emerald-300'
-                : 'bg-rose-950/40 border-rose-500/30 text-rose-300'
+                ? 'bg-emerald-950/40 border-emerald-500/30 text-emerald-300 theme-light:text-emerald-900'
+                : 'bg-rose-950/40 border-rose-500/30 text-rose-300 theme-light:text-rose-900'
             }`}
           >
             {statusMessage.type === 'success' ? (
-              <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+              <Check className="w-4 h-4 text-emerald-400 theme-light:text-emerald-900 shrink-0 mt-0.5" />
             ) : (
-              <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+              <AlertCircle className="w-4 h-4 text-rose-400 theme-light:text-rose-900 shrink-0 mt-0.5" />
             )}
             <div>
               <p>{statusMessage.text}</p>

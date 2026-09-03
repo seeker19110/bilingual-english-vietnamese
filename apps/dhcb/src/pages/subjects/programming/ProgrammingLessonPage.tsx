@@ -351,7 +351,7 @@ function LessonBody({ lesson }: { lesson: ProgrammingLesson }) {
                       onClick={() => setHintsShown(hintsShown + 1)}
                       className="tap-44 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-zinc-600 text-zinc-200 font-semibold text-sm transition"
                     >
-                      <Lightbulb className="w-4 h-4 text-amber-400" />
+                      <Lightbulb className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
                       <span>
                         Gợi ý ({hintsShown}/{lesson.make.hints.length})
                       </span>
@@ -378,7 +378,7 @@ function LessonBody({ lesson }: { lesson: ProgrammingLesson }) {
                         key={i}
                         className="flex items-start gap-2 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-3 text-sm text-zinc-100"
                       >
-                        <Lightbulb className="w-4 h-4 shrink-0 mt-0.5 text-amber-400" />
+                        <Lightbulb className="w-4 h-4 shrink-0 mt-0.5 text-amber-400 theme-light:text-amber-900" />
                         <span>{hint}</span>
                       </li>
                     ))}
@@ -390,7 +390,7 @@ function LessonBody({ lesson }: { lesson: ProgrammingLesson }) {
                 {results && <TestResultList results={results} />}
                 {passed && (
                   <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-sm text-zinc-100 flex items-start gap-2">
-                    <Trophy className="w-5 h-5 text-emerald-400 shrink-0" />
+                    <Trophy className="w-5 h-5 text-emerald-400 theme-light:text-emerald-900 shrink-0" />
                     <p>
                       <strong>Đạt toàn bộ test!</strong> Bài được ghi nhận hoàn thành
                       {sampleViewed ? ' (bạn có xem code mẫu — thử tự viết lại lần nữa nhé)' : ''}.

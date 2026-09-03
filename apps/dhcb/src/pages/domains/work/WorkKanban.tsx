@@ -16,10 +16,22 @@ import {
 import type { WorkTask, WorkProject } from '@dhcb/core-contracts/work'
 
 const PRIORITY_COLORS: Record<string, { label: string; cls: string }> = {
-  urgent: { label: 'Khẩn cấp', cls: 'bg-red-500/15 text-red-400 border-red-500/30' },
-  high: { label: 'Cao', cls: 'bg-orange-500/15 text-orange-400 border-orange-500/30' },
-  medium: { label: 'Vừa', cls: 'bg-amber-500/15 text-amber-400 border-amber-500/30' },
-  low: { label: 'Thấp', cls: 'bg-blue-500/15 text-blue-400 border-blue-500/30' },
+  urgent: {
+    label: 'Khẩn cấp',
+    cls: 'bg-red-500/15 text-red-400 theme-light:text-red-900 border-red-500/30',
+  },
+  high: {
+    label: 'Cao',
+    cls: 'bg-orange-500/15 text-orange-400 theme-light:text-orange-900 border-orange-500/30',
+  },
+  medium: {
+    label: 'Vừa',
+    cls: 'bg-amber-500/15 text-amber-400 theme-light:text-amber-900 border-amber-500/30',
+  },
+  low: {
+    label: 'Thấp',
+    cls: 'bg-blue-500/15 text-blue-400 theme-light:text-blue-800 border-blue-500/30',
+  },
 }
 
 export default function WorkKanban() {
@@ -143,7 +155,7 @@ export default function WorkKanban() {
             <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 flex flex-col justify-between space-y-3">
               <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-amber-400" />
+                  <Clock className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
                   <h3 className="text-sm font-bold text-white">CẦN THỰC HIỆN</h3>
                   <span className="px-2 py-0.5 rounded-full bg-zinc-800 text-xs font-bold text-zinc-300">
                     {todoTasks.length}
@@ -216,7 +228,7 @@ export default function WorkKanban() {
                           </span>
                           <button
                             onClick={() => handleStatusChange(task, 'done')}
-                            className="tap-44 text-xs text-emerald-400 hover:text-emerald-300 flex items-center gap-1 font-medium transition"
+                            className="tap-44 text-xs text-emerald-400 theme-light:text-emerald-900 hover:text-emerald-300 flex items-center gap-1 font-medium transition"
                           >
                             <span>Xong</span>
                             <ArrowRight className="w-3.5 h-3.5" />
@@ -233,9 +245,9 @@ export default function WorkKanban() {
             <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-2xl p-4 flex flex-col justify-between space-y-3">
               <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 theme-light:text-emerald-900" />
                   <h3 className="text-sm font-bold text-white">ĐÃ HOÀN THÀNH</h3>
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-xs font-bold text-emerald-300">
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-xs font-bold text-emerald-300 theme-light:text-emerald-900">
                     {doneTasks.length}
                   </span>
                 </div>
@@ -257,7 +269,9 @@ export default function WorkKanban() {
                         <p className="text-sm font-medium text-zinc-300 line-through leading-relaxed">
                           {task.title}
                         </p>
-                        <span className="text-xs text-emerald-400 shrink-0">✓ Đã xong</span>
+                        <span className="text-xs text-emerald-400 theme-light:text-emerald-900 shrink-0">
+                          ✓ Đã xong
+                        </span>
                       </div>
 
                       <div className="flex justify-end pt-1">

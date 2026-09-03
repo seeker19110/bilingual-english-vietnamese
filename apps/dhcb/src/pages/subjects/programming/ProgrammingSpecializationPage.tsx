@@ -133,7 +133,10 @@ function StageLessons({ stageId }: { stageId: string }) {
   return (
     <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-4 space-y-2">
       <h4 className="text-sm font-bold text-white flex items-center gap-2">
-        <GraduationCap className="w-4 h-4 text-emerald-400 shrink-0" aria-hidden="true" />
+        <GraduationCap
+          className="w-4 h-4 text-emerald-400 theme-light:text-emerald-900 shrink-0"
+          aria-hidden="true"
+        />
         <span>Chặng này đã có bài học ({units.length} phần)</span>
       </h4>
       <ul className="text-sm text-zinc-100 leading-relaxed space-y-1 list-disc pl-5">
@@ -223,7 +226,7 @@ function StageBlock({
           aria-pressed={xong}
           className={`tap-44 w-full flex items-center justify-center gap-2 py-3 rounded-2xl border font-semibold text-sm transition disabled:opacity-60 ${
             xong
-              ? 'bg-emerald-500/15 border-emerald-500/50 text-emerald-200'
+              ? 'bg-emerald-500/15 border-emerald-500/50 text-emerald-200 theme-light:text-emerald-900'
               : 'bg-zinc-950 border-zinc-700 text-zinc-100 hover:border-accent-500/60'
           }`}
         >
@@ -311,7 +314,10 @@ export default function ProgrammingSpecializationPage() {
             }`}
           >
             <h2 className="text-base font-bold text-white flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-300" aria-hidden="true" />
+              <CheckCircle2
+                className="w-5 h-5 text-emerald-300 theme-light:text-emerald-900"
+                aria-hidden="true"
+              />
               <span>{dangTheo ? 'Bạn đang theo hướng này' : 'Theo hướng này?'}</span>
             </h2>
             <p className="text-sm text-zinc-100 leading-relaxed">
@@ -498,7 +504,10 @@ export default function ProgrammingSpecializationPage() {
         {/* ⑤ Bẫy + nguồn học */}
         <section className="rounded-3xl border border-amber-500/40 bg-amber-500/10 p-5 space-y-3">
           <h2 className="text-base font-bold text-white flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-amber-400" aria-hidden="true" />
+            <AlertTriangle
+              className="w-5 h-5 text-amber-400 theme-light:text-amber-900"
+              aria-hidden="true"
+            />
             <span>Bẫy khiến người học đứng lại ở mức trung bình</span>
           </h2>
           <ul className="text-sm text-zinc-100 leading-relaxed space-y-1.5 list-disc pl-5">

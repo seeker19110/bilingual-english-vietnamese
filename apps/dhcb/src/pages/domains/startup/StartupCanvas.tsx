@@ -135,7 +135,7 @@ export default function StartupCanvas() {
         {/* Thanh công cụ chọn dự án & lưu */}
         <section className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3">
-            <Rocket className="w-5 h-5 text-purple-400" />
+            <Rocket className="w-5 h-5 text-purple-400 theme-light:text-purple-800" />
             <select
               value={selectedVentureId}
               onChange={(e) => setSelectedVentureId(e.target.value)}
@@ -167,7 +167,7 @@ export default function StartupCanvas() {
           <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 flex flex-col justify-between space-y-3">
             <div>
               <div className="flex items-center gap-2 mb-2 pb-2 border-b border-zinc-800">
-                <Target className="w-4 h-4 text-red-400" />
+                <Target className="w-4 h-4 text-red-400 theme-light:text-red-900" />
                 <h3 className="text-xs font-bold text-white uppercase">1. Vấn đề (Problem)</h3>
               </div>
               <ul className="space-y-2">
@@ -189,7 +189,7 @@ export default function StartupCanvas() {
             </div>
             <button
               onClick={() => setEditingBox(editingBox === 'problem' ? null : 'problem')}
-              className="tap-44 text-[11px] text-purple-400 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
+              className="tap-44 text-[11px] text-purple-400 theme-light:text-purple-800 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
             >
               <Plus className="w-3 h-3" /> Thêm điểm
             </button>
@@ -200,7 +200,7 @@ export default function StartupCanvas() {
             <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 flex flex-col justify-between space-y-3">
               <div>
                 <div className="flex items-center gap-2 mb-2 pb-2 border-b border-zinc-800">
-                  <Lightbulb className="w-4 h-4 text-amber-400" />
+                  <Lightbulb className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
                   <h3 className="text-xs font-bold text-white uppercase">
                     4. Giải pháp (Solution)
                   </h3>
@@ -224,7 +224,7 @@ export default function StartupCanvas() {
               </div>
               <button
                 onClick={() => setEditingBox(editingBox === 'solution' ? null : 'solution')}
-                className="tap-44 text-[11px] text-purple-400 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
+                className="tap-44 text-[11px] text-purple-400 theme-light:text-purple-800 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
               >
                 <Plus className="w-3 h-3" /> Thêm điểm
               </button>
@@ -233,7 +233,7 @@ export default function StartupCanvas() {
             <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 flex flex-col justify-between space-y-3">
               <div>
                 <div className="flex items-center gap-2 mb-2 pb-2 border-b border-zinc-800">
-                  <Activity className="w-4 h-4 text-cyan-400" />
+                  <Activity className="w-4 h-4 text-cyan-400 theme-light:text-cyan-900" />
                   <h3 className="text-xs font-bold text-white uppercase">
                     8. Chỉ số (Key Metrics)
                   </h3>
@@ -257,7 +257,7 @@ export default function StartupCanvas() {
               </div>
               <button
                 onClick={() => setEditingBox(editingBox === 'keyMetrics' ? null : 'keyMetrics')}
-                className="tap-44 text-[11px] text-purple-400 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
+                className="tap-44 text-[11px] text-purple-400 theme-light:text-purple-800 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
               >
                 <Plus className="w-3 h-3" /> Thêm điểm
               </button>
@@ -268,8 +268,8 @@ export default function StartupCanvas() {
           <div className="bg-zinc-900/90 border border-purple-500/40 rounded-2xl p-4 flex flex-col justify-between space-y-3 shadow-lg shadow-purple-500/5">
             <div>
               <div className="flex items-center gap-2 mb-2 pb-2 border-b border-purple-500/20">
-                <Sparkles className="w-4 h-4 text-purple-400" />
-                <h3 className="text-xs font-bold text-purple-300 uppercase">
+                <Sparkles className="w-4 h-4 text-purple-400 theme-light:text-purple-800" />
+                <h3 className="text-xs font-bold text-purple-300 theme-light:text-purple-800 uppercase">
                   3. Giá trị độc nhất (UVP)
                 </h3>
               </div>
@@ -292,7 +292,7 @@ export default function StartupCanvas() {
             </div>
             <button
               onClick={() => setEditingBox(editingBox === 'uniqueValue' ? null : 'uniqueValue')}
-              className="tap-44 text-[11px] text-purple-400 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
+              className="tap-44 text-[11px] text-purple-400 theme-light:text-purple-800 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
             >
               <Plus className="w-3 h-3" /> Thêm điểm
             </button>
@@ -303,7 +303,7 @@ export default function StartupCanvas() {
             <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 flex flex-col justify-between space-y-3">
               <div>
                 <div className="flex items-center gap-2 mb-2 pb-2 border-b border-zinc-800">
-                  <Shield className="w-4 h-4 text-emerald-400" />
+                  <Shield className="w-4 h-4 text-emerald-400 theme-light:text-emerald-900" />
                   <h3 className="text-xs font-bold text-white uppercase">
                     5. Lợi thế (Unfair Adv)
                   </h3>
@@ -329,7 +329,7 @@ export default function StartupCanvas() {
                 onClick={() =>
                   setEditingBox(editingBox === 'unfairAdvantage' ? null : 'unfairAdvantage')
                 }
-                className="tap-44 text-[11px] text-purple-400 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
+                className="tap-44 text-[11px] text-purple-400 theme-light:text-purple-800 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
               >
                 <Plus className="w-3 h-3" /> Thêm điểm
               </button>
@@ -338,7 +338,7 @@ export default function StartupCanvas() {
             <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 flex flex-col justify-between space-y-3">
               <div>
                 <div className="flex items-center gap-2 mb-2 pb-2 border-b border-zinc-800">
-                  <Share2 className="w-4 h-4 text-sky-400" />
+                  <Share2 className="w-4 h-4 text-sky-400 theme-light:text-sky-900" />
                   <h3 className="text-xs font-bold text-white uppercase">6. Kênh (Channels)</h3>
                 </div>
                 <ul className="space-y-2">
@@ -360,7 +360,7 @@ export default function StartupCanvas() {
               </div>
               <button
                 onClick={() => setEditingBox(editingBox === 'channels' ? null : 'channels')}
-                className="tap-44 text-[11px] text-purple-400 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
+                className="tap-44 text-[11px] text-purple-400 theme-light:text-purple-800 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
               >
                 <Plus className="w-3 h-3" /> Thêm điểm
               </button>
@@ -371,7 +371,7 @@ export default function StartupCanvas() {
           <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 flex flex-col justify-between space-y-3">
             <div>
               <div className="flex items-center gap-2 mb-2 pb-2 border-b border-zinc-800">
-                <Users className="w-4 h-4 text-blue-400" />
+                <Users className="w-4 h-4 text-blue-400 theme-light:text-blue-800" />
                 <h3 className="text-xs font-bold text-white uppercase">
                   2. Khách hàng (Customers)
                 </h3>
@@ -397,7 +397,7 @@ export default function StartupCanvas() {
               onClick={() =>
                 setEditingBox(editingBox === 'customerSegments' ? null : 'customerSegments')
               }
-              className="tap-44 text-[11px] text-purple-400 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
+              className="tap-44 text-[11px] text-purple-400 theme-light:text-purple-800 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
             >
               <Plus className="w-3 h-3" /> Thêm điểm
             </button>
@@ -409,7 +409,7 @@ export default function StartupCanvas() {
           <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 flex flex-col justify-between space-y-3">
             <div>
               <div className="flex items-center gap-2 mb-2 pb-2 border-b border-zinc-800">
-                <PieChart className="w-4 h-4 text-rose-400" />
+                <PieChart className="w-4 h-4 text-rose-400 theme-light:text-rose-900" />
                 <h3 className="text-xs font-bold text-white uppercase">
                   7. Cấu trúc chi phí (Cost Structure)
                 </h3>
@@ -433,7 +433,7 @@ export default function StartupCanvas() {
             </div>
             <button
               onClick={() => setEditingBox(editingBox === 'cost' ? null : 'cost')}
-              className="tap-44 text-[11px] text-purple-400 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
+              className="tap-44 text-[11px] text-purple-400 theme-light:text-purple-800 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
             >
               <Plus className="w-3 h-3" /> Thêm điểm
             </button>
@@ -442,7 +442,7 @@ export default function StartupCanvas() {
           <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 flex flex-col justify-between space-y-3">
             <div>
               <div className="flex items-center gap-2 mb-2 pb-2 border-b border-zinc-800">
-                <DollarSign className="w-4 h-4 text-emerald-400" />
+                <DollarSign className="w-4 h-4 text-emerald-400 theme-light:text-emerald-900" />
                 <h3 className="text-xs font-bold text-white uppercase">
                   9. Dòng doanh thu (Revenue Streams)
                 </h3>
@@ -466,7 +466,7 @@ export default function StartupCanvas() {
             </div>
             <button
               onClick={() => setEditingBox(editingBox === 'revenue' ? null : 'revenue')}
-              className="tap-44 text-[11px] text-purple-400 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
+              className="tap-44 text-[11px] text-purple-400 theme-light:text-purple-800 hover:text-purple-300 flex items-center gap-1 font-semibold pt-2"
             >
               <Plus className="w-3 h-3" /> Thêm điểm
             </button>

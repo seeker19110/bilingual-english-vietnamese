@@ -34,7 +34,7 @@ export default function MetacognitiveJournalCard() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30 tracking-wide uppercase">
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-300 theme-light:text-teal-900 border border-teal-500/30 tracking-wide uppercase">
                   Platform V5 Peak Cognitive
                 </span>
                 <span className="text-[11px] font-semibold text-zinc-400">
@@ -50,7 +50,7 @@ export default function MetacognitiveJournalCard() {
                   : 'Khám phá tư duy sâu, đo lường chỉ số Metacognitive Index và phát hiện thiên kiến nhận thức.'}
               </p>
               {summary && summary.totalReflectionsCount > 0 && (
-                <div className="flex items-center gap-3 mt-2 text-xs text-teal-300/90 font-medium">
+                <div className="flex items-center gap-3 mt-2 text-xs text-teal-300 theme-light:text-teal-900/90 font-medium">
                   <span>
                     💡 MAI Index:{' '}
                     <strong className="text-white">{summary.overallAwarenessIndex}/100</strong>

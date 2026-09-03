@@ -508,7 +508,7 @@ export default function Dictionary() {
                               )}
                               <PronounceButton word={e.word} />
                               {isLearned && (
-                                <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20 ml-auto">
+                                <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-400 theme-light:text-emerald-900 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20 ml-auto">
                                   <CheckCircle2 className="w-3.5 h-3.5" />
                                   {isA ? 'Đã học' : 'Learned'}
                                 </span>
@@ -614,7 +614,7 @@ export default function Dictionary() {
                 ) : searchError ? (
                   /* Lỗi mạng/server — KHÁC với "không tìm thấy từ" */
                   <div className="text-center py-10 animate-fade-in space-y-3">
-                    <p className="text-amber-400 text-sm font-medium">
+                    <p className="text-amber-400 theme-light:text-amber-900 text-sm font-medium">
                       {isA
                         ? 'Không kết nối được máy chủ tra từ'
                         : 'Could not reach the dictionary server'}

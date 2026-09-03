@@ -391,7 +391,7 @@ export default function ProgrammingProjectPage() {
               onClick={() => setHintShown(true)}
               className="tap-44 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-zinc-600 text-zinc-200 font-semibold text-sm transition"
             >
-              <Lightbulb className="w-4 h-4 text-amber-400" />
+              <Lightbulb className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
               <span>Gợi ý</span>
             </button>
           )}
@@ -407,7 +407,7 @@ export default function ProgrammingProjectPage() {
         </div>
         {hintShown && (
           <p className="flex items-start gap-2 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-3 text-sm text-zinc-100">
-            <Lightbulb className="w-4 h-4 shrink-0 mt-0.5 text-amber-400" />
+            <Lightbulb className="w-4 h-4 shrink-0 mt-0.5 text-amber-400 theme-light:text-amber-900" />
             <span>{activeStep.hint}</span>
           </p>
         )}
@@ -426,9 +426,9 @@ export default function ProgrammingProjectPage() {
               >
                 <p className="flex items-center gap-2 font-semibold text-zinc-100">
                   {r.passed ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 theme-light:text-emerald-900" />
                   ) : (
-                    <XCircle className="w-4 h-4 text-rose-400" />
+                    <XCircle className="w-4 h-4 text-rose-400 theme-light:text-rose-900" />
                   )}
                   <span>{r.hidden ? `Ca ẩn ${i + 1}` : r.label}</span>
                 </p>
@@ -472,7 +472,7 @@ export default function ProgrammingProjectPage() {
 
         {stageDone && (
           <div className="rounded-3xl border border-emerald-500/40 bg-emerald-500/10 p-5 text-sm text-zinc-100 flex items-start gap-3">
-            <Trophy className="w-6 h-6 text-emerald-400 shrink-0" />
+            <Trophy className="w-6 h-6 text-emerald-400 theme-light:text-emerald-900 shrink-0" />
             <div>
               <p className="font-bold">Hoàn thành {stage.title}! 🎉</p>
               <p className="mt-1 leading-relaxed">

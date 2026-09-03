@@ -103,7 +103,7 @@ export default function QuickActions() {
           aria-label={isA ? 'Lộ trình học' : 'Learning path'}
           className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-zinc-900/60 border border-zinc-800/60 hover:border-teal-500/40 transition group"
         >
-          <Route className="w-4 h-4 text-teal-400" />
+          <Route className="w-4 h-4 text-teal-400 theme-light:text-teal-900" />
           <span className="text-[11px] text-zinc-400 group-hover:text-zinc-200 transition">
             {isA ? 'Lộ trình' : 'Roadmap'}
           </span>
@@ -141,12 +141,12 @@ export default function QuickActions() {
           }`}
         >
           {pushOn ? (
-            <Bell className="w-4 h-4 text-amber-400" />
+            <Bell className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
           ) : (
             <BellOff className="w-4 h-4 text-zinc-400 group-hover:text-amber-400 transition" />
           )}
           <span
-            className={`text-[11px] transition ${pushOn ? 'text-amber-300' : 'text-zinc-400 group-hover:text-zinc-200'}`}
+            className={`text-[11px] transition ${pushOn ? 'text-amber-300 theme-light:text-amber-900' : 'text-zinc-400 group-hover:text-zinc-200'}`}
           >
             {notifLabel}
           </span>
@@ -177,7 +177,7 @@ export default function QuickActions() {
           >
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-amber-400" />
+                <Clock className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
                 <h3 id={timeDialog.titleId} className="text-sm font-semibold text-white">
                   {isA ? 'Bạn muốn học lúc mấy giờ?' : 'When do you want to study?'}
                 </h3>
