@@ -47,12 +47,15 @@ function Inline({ nodes }: { nodes: InlineNode[] }) {
 export default function LessonProse({ text }: { text: string }) {
   const blocks = parseLessonMarkdown(text)
   return (
-    <div className="space-y-3 text-sm text-zinc-200 leading-relaxed">
+    // `read-body` = cỡ chữ + giãn dòng của thân bài (15px / 1.65), KHÔNG phải `text-sm` cỡ
+    // giao diện. Khoảng đọc `read-measure` áp lên TỪNG khối chữ chứ không lên thẻ bọc: khối
+    // code phải được rộng hết cột (dòng code dài mà bị bó 66ch thì phải cuộn ngang liên tục).
+    <div className="space-y-3 read-body text-zinc-200">
       {blocks.map((b, i) => {
         if (b.kind === 'code') return <CodeSurface key={i} code={b.code} className="text-[13px]" />
         if (b.kind === 'bullets')
           return (
-            <ul key={i} className="list-disc pl-5 space-y-1.5 marker:text-accent-400">
+            <ul key={i} className="read-measure list-disc pl-5 space-y-1.5 marker:text-accent-400">
               {b.items.map((it, j) => (
                 <li key={j}>
                   <Inline nodes={it} />
@@ -62,7 +65,10 @@ export default function LessonProse({ text }: { text: string }) {
           )
         if (b.kind === 'numbers')
           return (
-            <ol key={i} className="list-decimal pl-5 space-y-1.5 marker:text-accent-400">
+            <ol
+              key={i}
+              className="read-measure list-decimal pl-5 space-y-1.5 marker:text-accent-400"
+            >
               {b.items.map((it, j) => (
                 <li key={j}>
                   <Inline nodes={it} />
@@ -71,7 +77,7 @@ export default function LessonProse({ text }: { text: string }) {
             </ol>
           )
         return (
-          <p key={i}>
+          <p key={i} className="read-measure">
             <Inline nodes={b.inline} />
           </p>
         )

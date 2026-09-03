@@ -26,9 +26,30 @@ interface Props {
   // biết (vd bài học của hướng "Lập trình Web") tự truyền vào đây. Xem lib/breadcrumb.ts.
   crumbs?: readonly Crumb[]
   extra?: ReactNode
+  /**
+   * CHẾ ĐỘ TẬP TRUNG — dành cho trang NGỒI HỌC LÂU (bài học, truyện, bài ngữ pháp).
+   *
+   * Header mặc định mang 8 khe trong 56px: Back · Studio · breadcrumb · title · streak ·
+   * `extra` · nút AI · đổi giao diện · avatar. Trên trang tra cứu thì chấp nhận được, nhưng
+   * trên trang đọc lâu thì hai trong số đó KHÔNG phục vụ việc đang làm: bộ chuyển Studio (đi
+   * sang miền khác) và huy hiệu streak (điểm số, thuộc về `/tien-do`). Cả hai đều nằm trong
+   * tầm mắt suốt buổi học và mời người ta rời đi.
+   *
+   * Bật cờ này thì ẩn đúng hai thứ đó. KHÔNG ẩn: Back/breadcrumb (đường lùi), nút Bạn Đồng
+   * Hành (trợ giúp NGAY TRONG lúc học), đổi giao diện (a11y), avatar.
+   */
+  focus?: boolean
 }
 
-export default function Layout({ title, subtitle, back = true, onBack, crumbs, extra }: Props) {
+export default function Layout({
+  title,
+  subtitle,
+  back = true,
+  onBack,
+  crumbs,
+  extra,
+  focus = false,
+}: Props) {
   const nav = useNavigate()
   const location = useLocation()
   const { user } = useAuth()
@@ -42,7 +63,7 @@ export default function Layout({ title, subtitle, back = true, onBack, crumbs, e
 
   // Streak tự lấy ở ĐÂY (không nhận qua prop nữa) — áp dụng TOÀN CỤC, hiện trên MỌI
   // trang có Layout, không cần từng trang tự truyền vào (trước đây dễ quên).
-  const streak = user ? getStreak(user.id) : 0
+  const streak = user && !focus ? getStreak(user.id) : 0
 
   // Đóng menu VÀ trả focus về nút kích hoạt (bắt buộc theo WAI-ARIA APG — nếu không,
   // người dùng bàn phím bị "rơi" về đầu tài liệu và phải Tab mò lại từ đầu).
@@ -100,7 +121,11 @@ export default function Layout({ title, subtitle, back = true, onBack, crumbs, e
       return tag === 'INPUT' || tag === 'TEXTAREA' || t.isContentEditable
     }
     function handleGlobalShortcut(e: KeyboardEvent) {
+      // Chế độ tập trung KHÔNG dựng menu Studio, nên ⌘K ở đó phải là no-op — nếu vẫn
+      // `setSwitcherOpen(true)` thì trạng thái bật mà không có gì hiện ra, và Escape sau đó
+      // cũng không có menu nào để đóng.
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        if (focus) return
         e.preventDefault()
         setSwitcherOpen((v) => !v)
         return
@@ -124,7 +149,20 @@ export default function Layout({ title, subtitle, back = true, onBack, crumbs, e
     }
     window.addEventListener('keydown', handleGlobalShortcut)
     return () => window.removeEventListener('keydown', handleGlobalShortcut)
-  }, [])
+  }, [focus])
+
+  // Nội dung huy hiệu streak — dùng chung cho cả hai lớp bọc bên dưới.
+  const streakBadge = (
+    <>
+      <span className="text-base leading-none">🔥</span>
+      <span className="text-sm font-bold text-orange-400 theme-light:text-orange-900 leading-none">
+        {streak}
+      </span>
+      <span className="text-[11px] font-medium text-orange-400 theme-light:text-orange-800 leading-none">
+        {T.streakDays}
+      </span>
+    </>
+  )
 
   return (
     <header className="sticky top-0 z-50 bg-zinc-950/90 backdrop-blur-xl border-b border-zinc-800/80 relative pt-safe shadow-sm">
@@ -180,83 +218,87 @@ export default function Layout({ title, subtitle, back = true, onBack, crumbs, e
           </Link>
         )}
 
-        {/* Global Studio Switcher Button */}
-        <div className="relative" ref={menuRef}>
-          <button
-            ref={switcherBtnRef}
-            onClick={() => setSwitcherOpen(!switcherOpen)}
-            aria-expanded={switcherOpen}
-            aria-haspopup="menu"
-            aria-keyshortcuts="Meta+K Control+K"
-            aria-label="Chuyển đổi Studio & Không gian học tập (⌘K)"
-            title="Chuyển đổi Studio & Không gian học tập (⌘K)"
-            className="tap-44 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800/90 text-xs font-semibold text-zinc-200 transition active:scale-95 group"
-          >
-            <Layers className="w-3.5 h-3.5 text-accent-400 group-hover:rotate-12 transition-transform" />
-            <span className="hidden xs:inline">Studio</span>
-            <ChevronDown
-              className={`w-3 h-3 text-zinc-400 transition-transform ${switcherOpen ? 'rotate-180' : ''}`}
-            />
-          </button>
+        {/* Bộ chuyển Studio — ẩn ở chế độ tập trung (xem prop `focus`). */}
+        {!focus && (
+          <div className="relative" ref={menuRef}>
+            <button
+              ref={switcherBtnRef}
+              onClick={() => setSwitcherOpen(!switcherOpen)}
+              aria-expanded={switcherOpen}
+              aria-haspopup="menu"
+              aria-keyshortcuts="Meta+K Control+K"
+              aria-label="Chuyển đổi Studio & Không gian học tập (⌘K)"
+              title="Chuyển đổi Studio & Không gian học tập (⌘K)"
+              className="tap-44 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800/90 text-xs font-semibold text-zinc-200 transition active:scale-95 group"
+            >
+              <Layers className="w-3.5 h-3.5 text-accent-400 group-hover:rotate-12 transition-transform" />
+              <span className="hidden xs:inline">Studio</span>
+              <ChevronDown
+                className={`w-3 h-3 text-zinc-400 transition-transform ${switcherOpen ? 'rotate-180' : ''}`}
+              />
+            </button>
 
-          {/* Studio Switcher Dropdown */}
-          {switcherOpen && (
-            <div className="absolute top-full left-0 mt-2 w-72 sm:w-80 p-2 rounded-2xl bg-zinc-900/95 border border-zinc-800 shadow-2xl backdrop-blur-2xl z-50 animate-fade-up">
-              <div className="flex items-center justify-between px-2.5 py-1.5 border-b border-zinc-800/80 mb-1">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
-                  Không Gian Nền Tảng
-                </span>
-                <span className="text-[11px] text-accent-400 font-semibold bg-accent-500/10 px-1.5 py-0.5 rounded">
-                  5 Miền Studio
-                </span>
-              </div>
-              {/* role="menu" + các mục role="menuitem": khai báo đúng ngữ nghĩa để trình đọc
-                  màn hình đọc "menu 6 mục" thay vì một đống nút rời rạc. */}
-              <div className="space-y-1" role="menu" aria-label="Không Gian Nền Tảng">
-                {STUDIOS.map((st, i) => {
-                  const Icon = st.icon
-                  const isActive = location.pathname.startsWith(st.to)
-                  return (
-                    <button
-                      key={st.id}
-                      ref={(el) => {
-                        menuItemsRef.current[i] = el
-                      }}
-                      role="menuitem"
-                      onClick={() => {
-                        // Điều hướng đi nơi khác nên KHÔNG trả focus về nút mở menu.
-                        closeSwitcher(false)
-                        navigateTo(nav, st.to)
-                      }}
-                      className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-left transition-colors ${
-                        isActive
-                          ? 'bg-zinc-800 border border-accent-500/40 text-white'
-                          : 'hover:bg-zinc-800/70 text-zinc-300'
-                      }`}
-                    >
-                      <div
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${st.color}`}
+            {/* Studio Switcher Dropdown */}
+            {switcherOpen && (
+              <div className="absolute top-full left-0 mt-2 w-72 sm:w-80 p-2 rounded-2xl bg-zinc-900/95 border border-zinc-800 shadow-2xl backdrop-blur-2xl z-50 animate-fade-up">
+                <div className="flex items-center justify-between px-2.5 py-1.5 border-b border-zinc-800/80 mb-1">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+                    Không Gian Nền Tảng
+                  </span>
+                  <span className="text-[11px] text-accent-400 font-semibold bg-accent-500/10 px-1.5 py-0.5 rounded">
+                    5 Miền Studio
+                  </span>
+                </div>
+                {/* role="menu" + các mục role="menuitem": khai báo đúng ngữ nghĩa để trình đọc
+                    màn hình đọc "menu 6 mục" thay vì một đống nút rời rạc. */}
+                <div className="space-y-1" role="menu" aria-label="Không Gian Nền Tảng">
+                  {STUDIOS.map((st, i) => {
+                    const Icon = st.icon
+                    const isActive = location.pathname.startsWith(st.to)
+                    return (
+                      <button
+                        key={st.id}
+                        ref={(el) => {
+                          menuItemsRef.current[i] = el
+                        }}
+                        role="menuitem"
+                        onClick={() => {
+                          // Điều hướng đi nơi khác nên KHÔNG trả focus về nút mở menu.
+                          closeSwitcher(false)
+                          navigateTo(nav, st.to)
+                        }}
+                        className={`w-full flex items-center gap-3 p-2.5 rounded-xl text-left transition-colors ${
+                          isActive
+                            ? 'bg-zinc-800 border border-accent-500/40 text-white'
+                            : 'hover:bg-zinc-800/70 text-zinc-300'
+                        }`}
                       >
-                        <Icon className="w-4 h-4" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center justify-between gap-1">
-                          <span className="text-xs font-bold text-white truncate">{st.title}</span>
-                          <span className="text-[11px] font-semibold px-1 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
-                            {st.badge}
-                          </span>
+                        <div
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${st.color}`}
+                        >
+                          <Icon className="w-4 h-4" />
                         </div>
-                        <p className="text-[11px] text-zinc-400 truncate leading-tight mt-0.5">
-                          {st.subtitle}
-                        </p>
-                      </div>
-                    </button>
-                  )
-                })}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="text-xs font-bold text-white truncate">
+                              {st.title}
+                            </span>
+                            <span className="text-[11px] font-semibold px-1 py-0.5 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
+                              {st.badge}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-zinc-400 truncate leading-tight mt-0.5">
+                            {st.subtitle}
+                          </p>
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
 
         {/* Title/subtitle — như cũ, hiện ở MỌI kích thước (Back/logo vẫn là đường lùi chính,
             xem lý do giữ Back ở trên). Breadcrumb desktop là dòng NHỎ phía trên, chỉ vẽ khi
@@ -272,30 +314,25 @@ export default function Layout({ title, subtitle, back = true, onBack, crumbs, e
           {subtitle && <p className="text-xs text-zinc-400 truncate">{subtitle}</p>}
         </div>
 
-        {/* Streak — TOÀN CỤC */}
+        {/* Streak — TOÀN CỤC.
+            [2026-09-03, đợt B dọn header] Trước đây khối này viết HAI LẦN gần như giống hệt
+            (một bản inline khi header có title, một bản căn giữa tuyệt đối khi không) — 12
+            dòng JSX trùng nhau, sửa một bên quên bên kia là lệch. Nay nội dung huy hiệu tách
+            ra một hằng số, chỉ còn lớp bọc là khác nhau.
+            Bỏ `animate-pulse` trên 🔥: streak KHÔNG thay đổi trong lúc người dùng nhìn nó, mà
+            luật mục 9 của `ui-ux-craftsman` chỉ cho phép nhấp nháy khi có thứ đang thay đổi
+            thật. Một điểm chuyển động vĩnh viễn ngay cạnh nội dung học là hút mắt vô cớ. */}
         {streak > 0 &&
           (title || subtitle ? (
             // Header có cả title/subtitle LẪN nút "Đồng Hành AI" ở màn hẹp (390px) thì 3 phần tử
             // này tràn ngang (đo được 54px) — ẩn streak badge trên di động, chỉ hiện lại từ `sm`
             // trở lên khi đã đủ chỗ. Không mất thông tin: streak vẫn thấy ở /progress.
             <div className="hidden sm:flex items-center gap-1.5 bg-gradient-to-r from-orange-500/15 to-amber-500/10 border border-orange-500/30 rounded-full px-3 py-1 shadow-sm shadow-orange-500/10 shrink-0">
-              <span className="text-base leading-none animate-pulse">🔥</span>
-              <span className="text-sm font-bold text-orange-400 theme-light:text-orange-900 leading-none">
-                {streak}
-              </span>
-              <span className="text-[11px] font-medium text-orange-400 theme-light:text-orange-800 leading-none">
-                {T.streakDays}
-              </span>
+              {streakBadge}
             </div>
           ) : (
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 bg-gradient-to-r from-orange-500/15 to-amber-500/10 border border-orange-500/30 rounded-full px-3 py-1 shadow-sm shadow-orange-500/10 pointer-events-none">
-              <span className="text-base leading-none animate-pulse">🔥</span>
-              <span className="text-sm font-bold text-orange-400 theme-light:text-orange-900 leading-none">
-                {streak}
-              </span>
-              <span className="text-[11px] font-medium text-orange-400 theme-light:text-orange-800 leading-none">
-                {T.streakDays}
-              </span>
+              {streakBadge}
             </div>
           ))}
 
@@ -312,7 +349,9 @@ export default function Layout({ title, subtitle, back = true, onBack, crumbs, e
         >
           <Bot className="w-3.5 h-3.5 text-accent-400 group-hover:scale-110 transition-transform" />
           <span className="hidden md:inline">Đồng Hành AI</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+          {/* [2026-09-03, đợt B] Gỡ chấm `animate-ping`: nó chạy VĨNH VIỄN trên mọi trang mà
+              không báo hiệu bất cứ thay đổi nào — không có tin nhắn mới, không có tác vụ đang
+              chạy. Đây là điểm chuyển động duy nhất luôn hiện trong tầm mắt lúc ngồi học. */}
         </button>
 
         {/* Nút đổi giao diện: Sáng / Tối / Xanh đêm */}

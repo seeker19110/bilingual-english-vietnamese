@@ -125,7 +125,7 @@ export function GrammarDetail({
         </div>
 
         {/* Giải thích tiếng Việt */}
-        <div className="mt-4 text-sm text-zinc-300 leading-relaxed whitespace-pre-line">
+        <div className="mt-4 read-body read-measure text-zinc-300 whitespace-pre-line">
           {lesson.explainVi}
         </div>
 
@@ -135,7 +135,7 @@ export function GrammarDetail({
             <p className="text-xs font-semibold text-amber-300 theme-light:text-amber-800 mb-1 flex items-center gap-1.5">
               <Lightbulb className="w-3.5 h-3.5" /> {isA ? 'Mẹo ghi nhớ' : 'Tip'}
             </p>
-            <p className="text-sm text-zinc-300 leading-relaxed whitespace-pre-line">
+            <p className="read-body read-measure text-zinc-300 whitespace-pre-line">
               {lesson.tipVi}
             </p>
           </div>
