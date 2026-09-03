@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright'
 import { mockLogin, USER_ID, type ThemeName } from './helpers/auth'
 import { openLiveLocationTrip } from './helpers/location'
 import { muteTts } from './helpers/tts'
-import { freezeAnimations } from './helpers/axe'
+import { freezeAnimations, waitForStableDom } from './helpers/axe'
 
 // Quét a11y bằng axe-core (WCAG 2.0/2.1/2.2 A & AA). Loại 'meta-viewport' vì dự án
 // CHỦ ĐỘNG khóa zoom (đánh đổi 1 mục a11y, bù bằng sàn chữ ≥11px — CLAUDE.md mục 8).
@@ -125,7 +125,8 @@ for (const route of AUTHED_ROUTES) {
     test(`a11y: ${route} theme=${theme} — 0 vi phạm A/AA`, async ({ page }) => {
       await mockLogin(page, 'vi', theme)
       await page.goto(route, { waitUntil: 'domcontentloaded' })
-      await page.waitForTimeout(1000) // chờ render xong (data offline + animation)
+      // Chờ theo TRẠNG THÁI, không theo thời gian — xem lý do đầy đủ ở `waitForStableDom`.
+      await waitForStableDom(page)
       const { all } = await scan(page)
       expect(all).toEqual([])
     })
@@ -252,7 +253,9 @@ for (const theme of THEMES) {
     await seedChallengeState(page, { startDate: vnDateOffset(0), round: 1, entries: {} })
     await page.goto('/thu-thach', { waitUntil: 'domcontentloaded' })
     await expect(page.getByText(/Challenge 1 phút/)).toBeVisible()
-    await page.waitForTimeout(500)
+    // Đã chờ đúng mốc trạng thái ở trên; `waitForStableDom` bắt nốt phần render sau đó
+    // (đồng hồ đếm ngược chỉ đổi CHỮ, không đổi số phần tử, nên vẫn ổn định nhanh).
+    await waitForStableDom(page)
     const { all } = await scan(page)
     expect(all).toEqual([])
   })
@@ -291,7 +294,7 @@ for (const theme of THEMES) {
     })
     await page.goto('/thu-thach', { waitUntil: 'domcontentloaded' })
     await expect(page.getByText(/Đã nộp challenge hôm nay/)).toBeVisible()
-    await page.waitForTimeout(500)
+    await waitForStableDom(page)
     const { all } = await scan(page)
     expect(all).toEqual([])
   })

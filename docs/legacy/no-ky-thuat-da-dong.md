@@ -6,6 +6,18 @@ bỏ). Thứ tự: như thứ tự cũ trong `PROGRESS.md`, mới hơn ở trên
 
 Khi đóng thêm một món nợ: cắt khối đó khỏi `PROGRESS.md`, dán vào ĐẦU danh sách dưới đây.
 
+- 🟢 **[ĐÓNG 2026-09-03, cùng ngày mở] Cổng a11y đã chờ theo TRẠNG THÁI, không theo thời gian.**
+  Mở buổi sáng khi chữa CI đỏ PR #826, đóng ngay trong ngày — xem
+  `docs/changelog/0245-2026-09-03-cong-a11y-cho-theo-trang-thai.md`.
+  Vấn đề: hai file cổng gọi `waitForTimeout(1000)` rồi mới quét, nên trên máy chậm/nguội axe
+  soi một trang chưa render xong và báo "0 vi phạm" — xanh giả. Đo thật: TRANG CHỦ lúc quét
+  mới có 268/478 phần tử, trong đó **21/55 phần tử tương tác** (38%) và 39/94 phần tử chữ.
+  Đã thay bằng `waitForStableDom` (`e2e/helpers/axe.ts`) + test canh gác
+  `scripts/a11y-gate-policy.test.ts` chặn quay lại lối chờ cứng.
+  **Quét lại toàn bộ với cách chờ mới: 392/392 xanh — KHÔNG có vi phạm nào bị che.** Dự đoán
+  ban đầu ("rất có thể lòi ra vi phạm") là SAI; ghi lại để không ai đi tìm lỗi không tồn tại.
+  Chi phí thời gian: bằng nhau (1,2 phút cho 49 test, cả hai bản).
+
 - 🟢 **[ĐÓNG 2026-08-28] Giao diện coi người dùng là khách khi mở subdomain khác.**
   **Đính chính mô tả ban đầu của mục này:** nó viết "`validateAuth` chấp nhận cookie khi thiếu
   Bearer" — SAI. Từ Bước 6 (`docs/adr/0002-quan-ly-nguoi-dung.md`), `validateAuth` **chỉ** đọc
