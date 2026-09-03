@@ -99,7 +99,6 @@ function ResultPanel({
   return (
     <div className="space-y-4.5 animate-fade-up">
       <div className="bg-gradient-to-b from-zinc-900/90 via-zinc-900/80 to-zinc-950/90 border border-zinc-800/80 rounded-3xl p-7 text-center shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-violet-500/10 rounded-full blur-2xl pointer-events-none" />
         <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 flex items-center justify-center mx-auto mb-4 shadow-xl shadow-violet-500/30 p-3.5">
           <Trophy className="w-8 h-8 text-white drop-shadow-md" />
         </div>
