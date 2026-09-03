@@ -1,6 +1,6 @@
 # 0244 — 2026-09-03 — Bỏ qua tới nội dung chính, và nói rõ khi phiên học bị rút gọn
 
-PR: (điền khi tạo) · Nhánh: `claude/modern-ui-redesign-jull9n`
+PR: #827 · Nhánh: `claude/modern-ui-redesign-jull9n`
 
 ## Bối cảnh
 
