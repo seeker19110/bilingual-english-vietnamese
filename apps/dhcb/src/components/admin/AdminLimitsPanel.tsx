@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react'
 import { ShieldAlert, Loader2, Save } from 'lucide-react'
 import { useToast } from '@core/ToastProvider'
 import { getAuthHeader } from '@core/authHeader'
+import { Button } from '@core/Button'
 
 interface AppSettings {
   limits: { pro: number; vip: number }
@@ -213,15 +214,10 @@ export default function AdminLimitsPanel({ onForbiddenChange }: Props) {
             </div>
           </section>
 
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={saving}
-            className="tap-44 w-full flex items-center justify-center gap-2 rounded-xl bg-accent-500 text-[#09090b] font-semibold py-3 disabled:opacity-60"
-          >
+          <Button type="button" onClick={handleSave} disabled={saving} fullWidth>
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             Lưu cấu hình
-          </button>
+          </Button>
         </>
       )}
     </div>

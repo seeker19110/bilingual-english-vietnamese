@@ -57,6 +57,7 @@ import { CHALLENGE_TOPICS } from '../../data/challengeTopics'
 import type { DictEntry, User } from '../../types'
 import { shuffle } from '@dhcb/core-contracts/shuffle'
 import { goToSubjects } from '../../lib/subjectsHost'
+import { Button } from '@core/Button'
 
 type Mode =
   | 'hub'
@@ -263,15 +264,15 @@ function VocabListenGuess({
         })}
       </div>
       {picked && (
-        <button
+        <Button
           onClick={() => {
             setIdx((i) => i + 1)
             setPicked(null)
           }}
-          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition"
+          fullWidth
         >
           {isA ? 'Câu tiếp theo →' : 'Next →'}
-        </button>
+        </Button>
       )}
     </div>
   )
@@ -415,20 +416,13 @@ function SentenceScramble({
       )}
 
       {checked === null ? (
-        <button
-          onClick={check}
-          disabled={bank.length > 0}
-          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition disabled:opacity-40 disabled:pointer-events-none"
-        >
+        <Button onClick={check} disabled={bank.length > 0} fullWidth>
           {isA ? 'Kiểm tra' : 'Check'}
-        </button>
+        </Button>
       ) : (
-        <button
-          onClick={() => setIdx((i) => i + 1)}
-          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition"
-        >
+        <Button onClick={() => setIdx((i) => i + 1)} fullWidth>
           {isA ? 'Câu tiếp theo →' : 'Next →'}
-        </button>
+        </Button>
       )}
     </div>
   )
@@ -524,24 +518,20 @@ function DictationTyping({
         </div>
       )}
       {checked === null ? (
-        <button
-          onClick={check}
-          disabled={!typed.trim()}
-          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition disabled:opacity-40 disabled:pointer-events-none"
-        >
+        <Button onClick={check} disabled={!typed.trim()} fullWidth>
           {isA ? 'Kiểm tra' : 'Check'}
-        </button>
+        </Button>
       ) : (
-        <button
+        <Button
           onClick={() => {
             setIdx((i) => i + 1)
             setTyped('')
             setChecked(null)
           }}
-          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition"
+          fullWidth
         >
           {isA ? 'Câu tiếp theo →' : 'Next →'}
-        </button>
+        </Button>
       )}
     </div>
   )
@@ -642,15 +632,15 @@ function FillBlankQuiz({
         })}
       </div>
       {picked && (
-        <button
+        <Button
           onClick={() => {
             setIdx((i) => i + 1)
             setPicked(null)
           }}
-          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition"
+          fullWidth
         >
           {isA ? 'Câu tiếp theo →' : 'Next →'}
-        </button>
+        </Button>
       )}
     </div>
   )
@@ -698,12 +688,9 @@ function PronounceList({
       </p>
       <p className="text-center text-lg font-semibold text-white px-2">{current}</p>
       <PronunciationCheck key={current} target={current} lang={lang} isA={isA} />
-      <button
-        onClick={() => setIdx((i) => i + 1)}
-        className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition"
-      >
+      <Button onClick={() => setIdx((i) => i + 1)} fullWidth>
         {isA ? 'Tiếp theo →' : 'Next →'}
-      </button>
+      </Button>
     </div>
   )
 }
@@ -858,12 +845,9 @@ function Shadowing({ pool, isA, onExit }: { pool: DictEntry[]; isA: boolean; onE
       )}
 
       {score !== null && (
-        <button
-          onClick={() => setIdx((i) => i + 1)}
-          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition"
-        >
+        <Button onClick={() => setIdx((i) => i + 1)} fullWidth>
           {isA ? 'Câu tiếp theo →' : 'Next →'}
-        </button>
+        </Button>
       )}
     </div>
   )
@@ -1074,12 +1058,9 @@ function ReverseInterview({ isA, user, onExit }: { isA: boolean; user: User; onE
       )}
 
       {result && (
-        <button
-          onClick={() => setIdx((i) => i + 1)}
-          className="w-full py-3 min-h-11 rounded-xl bg-accent-500 text-black text-sm font-semibold hover:bg-accent-400 transition"
-        >
+        <Button onClick={() => setIdx((i) => i + 1)} fullWidth>
           {isA ? 'Câu hỏi tiếp theo →' : 'Next question →'}
-        </button>
+        </Button>
       )}
     </div>
   )
