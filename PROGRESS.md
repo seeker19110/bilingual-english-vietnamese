@@ -1400,7 +1400,11 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   giao diện P6**. ⚠️ **Cổng cứng giữa M3 và M4:** interpreter Swift phải qua bộ test đối chiếu
   TRƯỚC khi soạn bài nội dung nào.
   **Tiến độ:** PR-M0 ✅ · PR-M1 ✅ · PR-M2 ✅ · PR-M3 ✅ · **PR-M7 ✅ (2026-08-27, LÀM SỚM —
-  xem ngay dưới) + cổng §3.4 ĐÃ MỞ (2026-09-03)**. **ĐÃ ĐẢO THỨ TỰ M7 lên trước M4–M6, người dùng duyệt 2026-08-27:** M4 bị
+  xem ngay dưới) + cổng §3.4 ĐÃ MỞ (2026-09-03)** · **PR-M8 ✅ (2026-09-03) — unit Kotlin ĐẦU
+  TIÊN `p6-u5` "Kotlin nhập môn — model dữ liệu", 3 bài đủ 8 bước, mini-project "Sổ chi tiêu"
+  bản đầu; kèm 2 test TRÌNH DUYỆT cho mạch Kotlin (đã chạy xanh). Nhật ký
+  `docs/changelog/0249-*.md`. Việc tiếp: PR-M9 = `p6-u6` null safety + collections và `p6-u7`
+  sealed class.** **ĐÃ ĐẢO THỨ TỰ M7 lên trước M4–M6, người dùng duyệt 2026-08-27:** M4 bị
   cổng cứng §8 chặn tới khi có người chạy `npm run swift:conformance` trên máy có Xcode, còn M7
   là bộ chạy KHÁC không đi qua cổng đó (`conformance.test.ts` của Swift chỉ đỏ khi có bài
   `language: 'swift'`). Cổng cứng M3→M4 **vẫn nguyên vẹn**, PR-M7 không chạm vào.

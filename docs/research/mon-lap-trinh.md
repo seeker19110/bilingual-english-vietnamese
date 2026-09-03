@@ -1300,11 +1300,16 @@ Cả hai đều có test, và thông báo khi chạm trần nói rõ phải ki�
 
 ## 7. Việc còn lại của chương trình M sau PR này
 
-1. **Chạy `npm run kotlin:conformance` trên máy có Kotlin** — đóng cổng §3.4 (mục 0).
+1. ~~Chạy `npm run kotlin:conformance` trên máy có Kotlin~~ — ✅ **XONG 2026-09-03**, cổng §3.4
+   đã mở (mục 0).
 2. **Chạy `npm run swift:conformance` trên máy có Swift** — cổng cứng §8, vẫn đang chặn PR-M4.
-3. PR-M8…M9: nội dung Kotlin `p6-u5`…`p6-u7` (3 unit) — chỉ được bắt đầu sau bước 1.
-4. Khi có bài Kotlin đầu tiên: thêm **test trình duyệt** cho mạch Kotlin, đúng bài học của PR-M2
-   (cổng CI xanh KHÔNG chứng minh đường đi trong giao diện đúng).
+   Đã thử lại 2026-09-03: `download.swift.org` không tới được, GitHub swiftlang trả 403.
+3. PR-M8…M9: nội dung Kotlin `p6-u5`…`p6-u7` (3 unit). **PR-M8 ✅ xong 2026-09-03** — `p6-u5`
+   ("Kotlin nhập môn — model dữ liệu", 3 bài, mini-project "Sổ chi tiêu" bản đầu). Còn PR-M9:
+   `p6-u6` null safety + collections/lambda, `p6-u7` sealed class xử lý trạng thái.
+4. ~~Khi có bài Kotlin đầu tiên: thêm **test trình duyệt** cho mạch Kotlin~~ — ✅ **XONG cùng
+   PR-M8**: 2 test trong `e2e/programming-lesson.spec.ts` (huy hiệu tự khai + code mẫu đạt hết
+   test-case trong trình duyệt; lỗi gán lại `val` nói được tới mắt học viên).
 
 ## 8. Ghi chú thứ tự thi hành — vì sao M7 làm TRƯỚC M4
 
