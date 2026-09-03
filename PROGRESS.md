@@ -2910,12 +2910,14 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
      đó bằng **thang 5 bậc thành thạo**; chính trang này đã có `PROFICIENCY_BAND` rồi, nên hai
      thước đo mâu thuẫn đang sống song song. **Cần người dùng xác nhận** là cố ý hay sót —
      đổi thước đo là quyết định sản phẩm, không phải việc dọn UI.
-  2. **`Work.tsx`/`Life.tsx` đặt `<Layout>` ở CUỐI JSX** (Career/Startup đặt ở đầu) → thứ tự Tab
-     của thanh điều hướng khác nhau giữa các trụ. Sửa được nhưng đụng thứ tự DOM của trang gộp
-     `/cong-viec-cuoc-song`, nên tách đợt riêng.
-  3. **`components/FeedbackModal.tsx` thiếu Escape + bẫy tiêu điểm** (đã có `role="dialog"` và
-     `aria-modal`). Nó có bố cục riêng nên chuyển sang `components/Modal.tsx` chung sẽ đổi giao
-     diện — nằm ngoài phạm vi "trang trụ cột" của đợt đó.
+  2. ~~**`Work.tsx`/`Life.tsx` đặt `<Layout>` ở CUỐI JSX** (Career/Startup đặt ở đầu)~~ — ✅
+     **KHÔNG CÒN, đo lại 2026-09-03:** cả bốn file nay đều đặt `<Layout>` ở CUỐI, đã nhất quán
+     (Career 966/970 · Startup 973/977 · Work 997/1001 · Life 992/996 — dòng/tổng dòng).
+  3. ~~**`components/FeedbackModal.tsx` thiếu Escape + bẫy tiêu điểm**~~ — ✅ **ĐÃ XONG, đo lại
+     2026-09-03:** file nay dùng hook `useDialogBehavior` (đủ 6 hành vi hộp thoại: Escape, bẫy
+     tiêu điểm, trả tiêu điểm khi đóng, khoá cuộn nền…), giữ nguyên bố cục riêng đúng như lo
+     ngại ban đầu. Hook đó trước đây **không có test nào**; PR đợt này bổ sung 11 test canh cả
+     6 hành vi (`useDialogBehavior.test.tsx`) — xem `docs/changelog/0254-*.md`.
 
   Ngoài ra: **4 trang trụ Career/Work/Startup/Life vẫn chưa có bản chiều B** (0/4 file dùng
   `direction`, toàn bộ chuỗi hardcode tiếng Việt) — cùng loại nợ với mục ngay dưới đây.
