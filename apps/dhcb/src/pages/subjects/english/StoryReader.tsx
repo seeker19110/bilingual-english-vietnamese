@@ -183,7 +183,8 @@ export default function StoryReader() {
 
   return (
     <div className="min-h-dvh bg-zinc-950">
-      <Layout back onBack={() => nav(-1)} />
+      {/* `focus`: trang đọc truyện → ẩn bộ chuyển Studio + huy hiệu streak (xem Layout). */}
+      <Layout back onBack={() => nav(-1)} focus />
       {/* [2026-09-02, đợt 4 thiết kế lại desktop] Trang chữ để đọc → width reading. */}
       <PageShell width="reading" baseWidth="max-w-3xl">
         <div className="flex items-center gap-2 mb-1">

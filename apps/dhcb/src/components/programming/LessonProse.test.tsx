@@ -59,4 +59,28 @@ describe('LessonProse', () => {
     const html = renderToStaticMarkup(<LessonProse text={lesson.theory} />)
     expect((html.match(/<strong/g) ?? []).length).toBe(capDam?.length ?? 0)
   })
+
+  // ── Khoảng đọc (đợt A thiết kế lại UI/UX, 2026-09-03) ──
+  // Đo trước khi sửa: cột chữ 830px + `text-sm` = ~118 ký tự/dòng, gần gấp đôi ngưỡng 75ch
+  // của luật `ui-ux-craftsman` mục 9. Hai test dưới canh để lần sau ai đó gỡ class đi thì đỏ,
+  // chứ không phải im lặng trở lại dòng dài.
+  it('mọi khối CHỮ đều bị bó trong khoảng đọc `read-measure`', () => {
+    const html = renderToStaticMarkup(
+      <LessonProse text={'Một đoạn văn.\n- gạch đầu dòng\n\n1. đánh số'} />,
+    )
+    for (const tag of ['<p', '<ul', '<ol']) {
+      const i = html.indexOf(tag)
+      expect(i, `thiếu thẻ ${tag}`).toBeGreaterThan(-1)
+      expect(html.slice(i, i + 200)).toContain('read-measure')
+    }
+  })
+
+  it('khối CODE thì KHÔNG bị bó — dòng code dài cần trọn bề rộng cột', () => {
+    // Khối code trong bài học đánh dấu bằng THỤT LỀ ≥2 dấu cách (xem lib/lessonMarkdown.ts),
+    // không phải bằng dấu ``` — dùng sai cú pháp thì đây chỉ là một đoạn văn thường.
+    const html = renderToStaticMarkup(<LessonProse text={'Ví dụ:\n  print(1)'} />)
+    const i = html.indexOf('<pre')
+    expect(i).toBeGreaterThan(-1)
+    expect(html.slice(i, i + 200)).not.toContain('read-measure')
+  })
 })

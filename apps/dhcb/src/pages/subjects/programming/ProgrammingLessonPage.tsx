@@ -207,7 +207,8 @@ function LessonBody({ lesson }: { lesson: ProgrammingLesson }) {
     <div className="min-h-dvh bg-zinc-950 text-zinc-100">
       {/* Quay lại ĐÚNG bậc của bài đang học (PR-UX1). Trước đây ghi cứng '/lap-trinh/p1' nên
           học xong bài P5 bấm quay lại là rơi về bậc P1. Mã bài lạ → lùi về trang môn. */}
-      <Layout onBack={() => nav(backTo)} crumbs={crumbs} />
+      {/* `focus`: trang ngồi học lâu → ẩn bộ chuyển Studio + huy hiệu streak (xem Layout). */}
+      <Layout onBack={() => nav(backTo)} crumbs={crumbs} focus />
 
       {/* [2026-09-02, đợt 1 thiết kế lại desktop] Trước đây trang này là MỘT cột `max-w-4xl`
           căn giữa ở mọi bề rộng màn hình: trên màn 1440px học viên thấy một cột chữ hẹp và
@@ -250,7 +251,7 @@ function LessonBody({ lesson }: { lesson: ProgrammingLesson }) {
             {current.key === 'concept' && (
               <section className="space-y-4">
                 <div className="bg-accent-500/10 border border-accent-500/30 rounded-3xl p-5">
-                  <p className="text-sm text-zinc-100 leading-relaxed">{lesson.hook}</p>
+                  <p className="read-body read-measure text-zinc-100">{lesson.hook}</p>
                 </div>
                 <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5">
                   <LessonProse text={lesson.theory} />
@@ -261,7 +262,7 @@ function LessonBody({ lesson }: { lesson: ProgrammingLesson }) {
             {/* ③ Ví dụ mẫu chạy được */}
             {current.key === 'example' && (
               <section className="space-y-3">
-                <p className="text-sm text-zinc-300">
+                <p className="read-body read-measure text-zinc-300">
                   Đọc từng dòng (chú thích tiếng Việt trong code) rồi bấm chạy để thấy kết quả thật:
                 </p>
                 <CodeSurface code={lesson.workedExample.code} />
@@ -317,7 +318,7 @@ function LessonBody({ lesson }: { lesson: ProgrammingLesson }) {
             {current.key === 'make' && (
               <section className="space-y-3">
                 <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-5">
-                  <p className="text-sm text-zinc-200 leading-relaxed whitespace-pre-line">
+                  <p className="read-body read-measure text-zinc-200 whitespace-pre-line">
                     {lesson.make.prompt}
                   </p>
                 </div>
@@ -409,7 +410,7 @@ function LessonBody({ lesson }: { lesson: ProgrammingLesson }) {
                     <Home className="w-4 h-4 text-accent-400" />
                     <span>Ứng dụng vào đời thật</span>
                   </h2>
-                  <p className="text-sm text-zinc-200 leading-relaxed">{lesson.homework}</p>
+                  <p className="read-body read-measure text-zinc-200">{lesson.homework}</p>
                 </div>
                 <div
                   className={`rounded-3xl border p-5 text-sm ${

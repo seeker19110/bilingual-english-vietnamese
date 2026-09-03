@@ -287,6 +287,30 @@ html[data-sidebar='collapsed'] {
     min-height: 44px;
   }
 
+  /* ── KHOẢNG ĐỌC (measure) — luật "độ dài dòng ≤ 75ch" của ui-ux-craftsman mục 9 ──
+     Đặt ở CSS chứ không dùng `max-w-*` của Tailwind vì thang `max-w-*` tính bằng `rem`
+     (một con số cố định), còn độ dài dòng dễ đọc lại phụ thuộc CỠ CHỮ đang dùng. `ch` là
+     đơn vị "bề rộng chữ số 0 của chính font đang render", nên cùng một class cho ra đúng
+     ~66 ký tự/dòng dù thân bài là 14px hay 16px.
+
+     ĐO TRƯỚC KHI SỬA (2026-09-03, trang bài học Lập trình ở 1440px): cột chữ rộng 830px với
+     `text-sm` → ~118 ký tự/dòng, gần gấp đôi ngưỡng. Mắt mất dấu dòng khi xuống hàng, đúng
+     chỗ người học ngồi lâu nhất.
+
+     `max-width` chứ không phải `width`: màn hẹp hơn khoảng đọc thì khối vẫn co theo bình
+     thường, không sinh cuộn ngang. */
+  .read-measure {
+    max-width: 66ch;
+  }
+
+  /* Thân bài dài: cỡ chữ + giãn dòng của NỘI DUNG ĐỂ ĐỌC, tách khỏi cỡ chữ giao diện.
+     15px thay vì `text-sm` (14px) — 14px là cỡ cho nhãn/nút, không phải cho đoạn văn
+     2.000–3.000 ký tự. `line-height` 1.65 nằm giữa khoảng 1.5–1.7 mà luật mục 9 chốt. */
+  .read-body {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
   /* Safe area cho iPhone / notch / bottom bar */
   .pb-safe {
     padding-bottom: max(12px, env(safe-area-inset-bottom));
