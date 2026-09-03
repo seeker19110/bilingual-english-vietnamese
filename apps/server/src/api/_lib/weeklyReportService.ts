@@ -21,6 +21,7 @@ import { getPgPool } from '@dhcb/core-db/pgPool'
 import { vnDateStr, weekStartOf, addDays } from '@dhcb/core-db/date'
 import { sendMailWithQuota } from '@dhcb/core-http/mailQuota'
 import { WeeklyReportDataSchema, type WeeklyReportData } from '@dhcb/core-contracts/companionLink'
+import { DirectionSchema, type ContractDirection } from '@dhcb/core-contracts/shared'
 import {
   buildWeeklyReport,
   renderWeeklyReportHtml,
@@ -91,12 +92,15 @@ export async function collectWeeklyData(
        where user_id = $1 and day >= $2 and day < $3`,
       [learnerId, weekStart, weekEnd],
     ),
+    // `settings` mang chiều học (`direction`) — cùng nguồn AuthProvider dùng ở client, xem
+    // `packages/core-learner/learnerState.ts`, KHÔNG phải bảng mới.
     pool.query<{
       weekly_goal: { goal?: number } | null
       cefr_unlocked: string[] | null
       learned: string[] | null
+      settings: unknown
     }>(
-      `select weekly_goal, cefr_unlocked, learned
+      `select weekly_goal, cefr_unlocked, learned, settings
        from public.learning_progress where user_id = $1`,
       [learnerId],
     ),
@@ -125,8 +129,23 @@ export async function collectWeeklyData(
     weeklyGoalDays,
     streakDays: computeStreakEndingAt(new Set(activeDays.map((r) => r.day)), addDays(weekStart, 6)),
     wordsPracticed,
+    direction: parseDirection(progress?.settings),
     ...(cefrLevel ? { cefrLevel } : {}),
   })
+}
+
+/**
+ * Chiều học ('A' = học tiếng Anh, 'B' = học tiếng Việt) từ `learning_progress.settings` —
+ * cùng cách đọc với `packages/core-learner/learnerState.ts` (không export hàm đó ra để dùng lại
+ * vì nó kéo theo truy vấn `public.profiles` không cần ở đây). Mặc định 'A' khi thiếu/không hợp
+ * lệ — khớp `getDirection()` ở `apps/dhcb/src/lib/storage.ts` (chưa chọn = chiều A).
+ */
+export function parseDirection(settings: unknown): ContractDirection {
+  if (settings && typeof settings === 'object' && 'direction' in settings) {
+    const result = DirectionSchema.safeParse((settings as { direction?: unknown }).direction)
+    if (result.success) return result.data
+  }
+  return 'A'
 }
 
 const CEFR_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const

@@ -12,7 +12,7 @@
 
 import { z } from 'zod'
 import { versionedObject } from './version.js'
-import { IsoDateTimeSchema, UuidSchema } from './shared.js'
+import { IsoDateTimeSchema, UuidSchema, DirectionSchema } from './shared.js'
 
 export const COMPANION_LINK_SCHEMA_VERSION = 1
 
@@ -61,6 +61,9 @@ export const WeeklyReportDataSchema = z
     cefrPercent: z.number().int().min(0).max(100).optional(),
     // Chủ đề tuần này — chỉ để dựng câu gợi ý hỏi chuyện, không phải nội dung bài làm.
     topicHint: z.string().max(120).optional(),
+    // Chiều học của người học ('A' = học tiếng Anh, 'B' = học tiếng Việt) — quyết định thư viết
+    // bằng ngôn ngữ nào. Mặc định 'A' để dữ liệu/test cũ (trước khi có trường này) vẫn hợp lệ.
+    direction: DirectionSchema.default('A'),
   })
   .strict()
 export type WeeklyReportData = z.infer<typeof WeeklyReportDataSchema>

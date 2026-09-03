@@ -317,6 +317,7 @@ describe('canh gác: danh sách trường báo cáo là ĐÓNG', () => {
         'cefrLevel',
         'cefrPercent',
         'daysStudied',
+        'direction',
         'learnerName',
         'wordsPracticed',
         'streakDays',

@@ -532,11 +532,9 @@ export default function Profile() {
             {/* Mời bạn cùng học */}
             <ReferralSection isA={isA} />
 
-            {/* Người thân theo dõi — báo cáo tuần cho bố mẹ/thầy cô.
-            Đợt 1 CHỈ hiện ở chiều A (người Việt học tiếng Anh): nội dung thư và toàn bộ giao diện
-            khối này mới có bản tiếng Việt. Hiện ở chiều B sẽ là giao diện nửa Việt nửa Anh — thà
-            chưa có còn hơn có mà lộn xộn. Xem "việc để lại" trong đặc tả. */}
-            {isA && <CompanionLinkSection />}
+            {/* Người thân theo dõi — báo cáo tuần cho bố mẹ/thầy cô. Cả giao diện lẫn nội dung
+            thư (weeklyReport.ts) nay đều có bản chiều B (2026-09-03, trả nợ ghi ở PROGRESS.md). */}
+            <CompanionLinkSection isA={isA} />
 
             {/* Huy hiệu & mốc */}
             <section className="animate-fade-in">
