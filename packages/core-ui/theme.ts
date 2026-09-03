@@ -26,7 +26,7 @@ const KEY = 'ui_theme'
 
 // Màu thanh trình duyệt (meta theme-color) theo từng theme — đồng bộ với --theme-color trong CSS
 const THEME_COLORS: Record<Theme, string> = {
-  'dark-blue': '#0f172a',
+  'dark-blue': '#0b1226', // = --z-900 mới của theme Sci-Fi (2026-09-03)
   'blue-sky': '#f0f9ff',
   pink: '#fff8fc',
   vibrant: '#1c1428',

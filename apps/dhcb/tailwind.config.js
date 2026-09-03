@@ -72,6 +72,14 @@ export default {
       fontFamily: {
         sans: ['Inter Variable', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       },
+      // Bo góc đọc từ biến CSS để theme tự đổi độ bo (Sci-Fi "Xanh đêm" gọn hơn một nấc) —
+      // giá trị mặc định của biến = đúng mặc định Tailwind, xem packages/core-ui/theme.css.
+      borderRadius: {
+        lg: 'var(--r-lg, 0.5rem)',
+        xl: 'var(--r-xl, 0.75rem)',
+        '2xl': 'var(--r-2xl, 1rem)',
+        '3xl': 'var(--r-3xl, 1.5rem)',
+      },
       keyframes: {
         'fade-in': {
           '0%': { opacity: '0', transform: 'translateY(10px)' },
