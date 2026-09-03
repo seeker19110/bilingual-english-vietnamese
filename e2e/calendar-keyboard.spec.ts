@@ -10,8 +10,10 @@ test.beforeEach(async ({ page }) => {
   await mockLogin(page)
   await page.addInitScript((uid) => {
     const today = new Date()
+    // Gieo hoạt động cho MỌI ngày, không phải cách quãng: bản trước gieo mỗi 3 ngày, nên ô
+    // xa nhất có dữ liệu hay không phụ thuộc HÔM NAY là ngày nào — test đỏ vào một số ngày
+    // và xanh vào những ngày khác. Test điều hướng thì không được phụ thuộc lịch thật.
     for (let i = 0; i < 190; i++) {
-      if (i % 3 !== 0) continue
       const d = new Date(today.getTime() - i * 86400000)
       const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
       localStorage.setItem(

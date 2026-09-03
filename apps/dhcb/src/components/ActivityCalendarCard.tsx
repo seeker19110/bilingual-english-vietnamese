@@ -109,7 +109,12 @@ export default function ActivityCalendarCard({
     move(next)
   }
 
-  const cells = days.map((d, idx) => {
+  // Ô lịch, gom theo TUẦN. `role="grid"` bắt buộc con trực tiếp là `role="row"`, và
+  // `role="gridcell"` bắt buộc có cha là `row` (axe: aria-required-children /
+  // aria-required-parent, đều mức critical) — bản đầu đặt ô thẳng vào lưới nên cổng a11y đỏ
+  // ở cả 5 theme. Hàng dùng `display: contents` để có ĐÚNG ngữ nghĩa mà KHÔNG tạo hộp bố
+  // cục: các ô vẫn tham gia trực tiếp vào lưới CSS của phần tử cha, nên hình hài không đổi.
+  const cell = (d: (typeof days)[number], idx: number) => {
     const isLast = idx === lastIndex
     const isSel = idx === selected
     const label = `${prettyDate(d.date, vi)}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`
@@ -137,7 +142,26 @@ export default function ActivityCalendarCard({
         }`}
       />
     )
-  })
+  }
+
+  // Tuần đầu tiên thường thiếu vài ngày (lịch bắt đầu giữa tuần) — nhóm đúng theo mốc đó để
+  // mỗi `row` là một tuần thật, không phải cứ 7 ô cắt một lần.
+  const weekRows: { start: number; items: typeof days }[] = []
+  {
+    let i = 0
+    let take = 7 - calendar.firstColumn
+    while (i < days.length) {
+      weekRows.push({ start: i, items: days.slice(i, i + take) })
+      i += take
+      take = 7
+    }
+  }
+
+  const rows = weekRows.map((w) => (
+    <div key={w.start} role="row" style={{ display: 'contents' }}>
+      {w.items.map((d, j) => cell(d, w.start + j))}
+    </div>
+  ))
 
   return (
     <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-5 sm:p-6 shadow-sm animate-fade-in">
@@ -171,7 +195,7 @@ export default function ActivityCalendarCard({
             onKeyDown={onKeyDown}
             className="grid grid-rows-7 grid-flow-col gap-1"
           >
-            {cells}
+            {rows}
           </div>
         </div>
       ) : (
@@ -190,7 +214,7 @@ export default function ActivityCalendarCard({
             onKeyDown={onKeyDown}
             className="grid grid-cols-7 gap-1.5"
           >
-            {cells}
+            {rows}
           </div>
         </div>
       )}
