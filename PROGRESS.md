@@ -1412,9 +1412,12 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   (`p6-u13` lập trình hàm, dự án tách lõi thuần khỏi vỏ hiệu ứng) và trụ C (`p6-u14` đồng thời &
   phân tán, dự án webhook idempotent), 4 bài bằng Python (tầng 3 không thêm ngôn ngữ). Trụ C kế
   thừa mô hình `chay_xen_ke` của `p6-u2`, không viết lại. Nhật ký `docs/changelog/0251-*.md`.
-  Việc tiếp: **PR-M11 = trụ S** (`p6-u15` thiết kế hệ thống, dự án phân tích sự cố thật từ
-  `docs/ke-hoach-khoi-phuc-su-co-server.md`), rồi PR-M12 (giao diện gom nhóm 15 unit P6).
-  M4–M6 (Swift) vẫn kẹt cổng cứng §8.** **ĐÃ ĐẢO THỨ TỰ M7 lên trước M4–M6, người dùng duyệt 2026-08-27:** M4 bị
+  ** · **PR-M11 ✅ (2026-09-03) — Paradigm trụ S (`p6-u15`
+  thiết kế hệ thống & tư duy kỹ sư), 2 bài; dự án dùng SỰ CỐ CÓ THẬT 30/07/2026 của chính dự án
+  (ba lỗi độc lập xếp chồng) + công cụ soát post-mortem sáu ô. **PHẦN NỘI DUNG CHƯƠNG TRÌNH M
+  NAY XONG**, trừ mạch Swift. Nhật ký `docs/changelog/0252-*.md`. Việc còn lại: **PR-M12**
+  (giao diện gom nhóm 15 unit P6 theo track) — việc DUY NHẤT không bị chặn; M4–M6 (Swift) vẫn
+  kẹt cổng cứng §8, cần máy có Swift toolchain.** **ĐÃ ĐẢO THỨ TỰ M7 lên trước M4–M6, người dùng duyệt 2026-08-27:** M4 bị
   cổng cứng §8 chặn tới khi có người chạy `npm run swift:conformance` trên máy có Xcode, còn M7
   là bộ chạy KHÁC không đi qua cổng đó (`conformance.test.ts` của Swift chỉ đỏ khi có bài
   `language: 'swift'`). Cổng cứng M3→M4 **vẫn nguyên vẹn**, PR-M7 không chạm vào.
