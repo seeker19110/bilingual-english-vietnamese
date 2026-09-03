@@ -22,6 +22,7 @@ import {
   type IntakeResult,
 } from '../../lib/intakeApi'
 import type { AgeGroup } from '../../types'
+import { Button } from '@core/Button'
 
 const AGE_OPTIONS: { value: AgeGroup; label: string; hint: string }[] = [
   { value: 'nhi_dong', label: 'Dưới 10', hint: 'tuổi' },
@@ -122,14 +123,10 @@ export default function Intake() {
           <section className="rounded-2xl border border-accent-500/40 bg-accent-500/10 p-4 space-y-2">
             <p className="text-base font-semibold text-white">{result.primary.title}</p>
             <p className="text-sm text-zinc-200">{result.primary.why}</p>
-            <button
-              type="button"
-              onClick={() => void pick(result.primary.id)}
-              className="tap-44 mt-2 w-full rounded-xl bg-accent-500 hover:bg-accent-400 transition-colors px-4 text-[#09090b] text-sm font-semibold flex items-center justify-center gap-2"
-            >
+            <Button onClick={() => void pick(result.primary.id)} fullWidth className="mt-2">
               <Check className="w-4 h-4" />
               Được, mình bắt đầu
-            </button>
+            </Button>
           </section>
 
           {result.alternatives.length > 0 && (
@@ -308,14 +305,10 @@ export default function Intake() {
 function NextRow({ onNext, onSkip }: { onNext: () => void; onSkip: () => void }) {
   return (
     <div className="flex items-center gap-3">
-      <button
-        type="button"
-        onClick={onNext}
-        className="tap-44 flex-1 rounded-xl bg-accent-500 hover:bg-accent-400 transition-colors px-4 text-[#09090b] text-sm font-semibold flex items-center justify-center gap-2"
-      >
+      <Button onClick={onNext} className="flex-1">
         Tiếp
         <ArrowRight className="w-4 h-4" />
-      </button>
+      </Button>
       <button
         type="button"
         onClick={onSkip}

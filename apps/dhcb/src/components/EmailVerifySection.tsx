@@ -9,6 +9,7 @@
 
 import { useState } from 'react'
 import { MailCheck, Loader2 } from 'lucide-react'
+import { Button } from '@core/Button'
 import { getAuthHeader } from '@core/authHeader'
 import { useToast } from '@core/ToastProvider'
 
@@ -246,15 +247,15 @@ export default function EmailVerifySection({
           aria-label={isA ? 'Mã xác thực email' : 'Email verification code'}
           className="flex-1 min-w-0 bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2.5 text-sm tracking-widest text-white"
         />
-        <button
-          type="button"
+        <Button
           onClick={handleVerify}
-          disabled={verifying || code.length !== 6}
-          className="tap-44 shrink-0 flex items-center justify-center gap-2 rounded-xl bg-accent-500 hover:bg-accent-400 transition-colors px-4 py-2.5 text-sm font-semibold text-[#09090b] disabled:opacity-60"
+          disabled={code.length !== 6}
+          loading={verifying}
+          loadingLabel={isA ? 'Đang xác thực' : 'Verifying'}
+          className="shrink-0"
         >
-          {verifying && <Loader2 className="w-4 h-4 animate-spin" />}
           {isA ? 'Xác thực' : 'Verify'}
-        </button>
+        </Button>
       </div>
 
       <button
