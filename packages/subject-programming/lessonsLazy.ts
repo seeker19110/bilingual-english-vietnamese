@@ -585,6 +585,20 @@ export const LESSON_INDEX: readonly LessonSummary[] = [
     srsCardCount: 4,
   },
   {
+    id: 'p6-u15-l1',
+    unitId: 'p6-u15',
+    title: 'Ước lượng số lớn và gọi tên đánh đổi',
+    language: 'python',
+    srsCardCount: 4,
+  },
+  {
+    id: 'p6-u15-l2',
+    unitId: 'p6-u15',
+    title: 'Phân tích sự cố và viết post-mortem — dự án khép cụm paradigm',
+    language: 'python',
+    srsCardCount: 4,
+  },
+  {
     id: 'p6-u16-l1',
     unitId: 'p6-u16',
     title: 'Event loop — vì sao trang web "đứng hình"',
@@ -2677,6 +2691,7 @@ export const UNIT_LOADERS: Readonly<Record<string, () => Promise<ProgrammingLess
   'p6-u7': () => import('./lessons/p6u7.js').then((m) => m.P6U7_LESSONS),
   'p6-u13': () => import('./lessons/p6u13.js').then((m) => m.P6U13_LESSONS),
   'p6-u14': () => import('./lessons/p6u14.js').then((m) => m.P6U14_LESSONS),
+  'p6-u15': () => import('./lessons/p6u15.js').then((m) => m.P6U15_LESSONS),
   'p6-u16': () => import('./lessons/p6u16.js').then((m) => m.P6U16_LESSONS),
   'p6-u17': () => import('./lessons/p6u17.js').then((m) => m.P6U17_LESSONS),
   'p6-u18': () => import('./lessons/p6u18.js').then((m) => m.P6U18_LESSONS),

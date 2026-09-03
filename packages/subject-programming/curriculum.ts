@@ -405,6 +405,12 @@ export const PROGRAMMING_LEVELS: ProgrammingLevel[] = [
         title: 'Paradigm C — Đồng thời & phân tán',
         topics: 'Xen kẽ tất định, tranh chấp, khoá, deadlock; idempotency, at-least-once, backoff',
       },
+      {
+        id: 'p6-u15',
+        title: 'Paradigm S — Thiết kế hệ thống & tư duy kỹ sư',
+        topics:
+          'Ước lượng số lớn, cache/hàng đợi/phân mảnh, quan sát được · Dự án: phân tích sự cố thật + post-mortem',
+      },
       // Từ u16 trở đi là NỘI DUNG HỌC THẬT của các hướng chuyên sâu (bản đồ hướng ở
       // `specializations/`). Dải u5…u15 đã được CHƯƠNG TRÌNH M giữ chỗ (Kotlin · Swift ·
       // paradigm), nên nội dung hướng bắt đầu từ u16 để hai dòng việc không tranh mã unit.
