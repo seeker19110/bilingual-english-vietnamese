@@ -19,6 +19,7 @@ function data(over: Partial<WeeklyReportData> = {}): WeeklyReportData {
     weeklyGoalDays: 5,
     streakDays: 9,
     wordsPracticed: 110,
+    direction: 'A',
     ...over,
   }
 }
@@ -165,5 +166,54 @@ describe('render', () => {
     const msg = buildWeeklyReport(data())
     expect(renderWeeklyReportText(msg)).toContain('ngừng chia sẻ bất cứ lúc nào')
     expect(renderWeeklyReportHtml(msg)).toContain('ngừng')
+  })
+})
+
+// Chiều B (2026-09-03): người học học tiếng Việt, người thân đọc thư bằng tiếng Anh — thư PHẢI
+// hoàn toàn tiếng Anh, không được lẫn tiếng Việt (và ngược lại đã kiểm ở các test phía trên).
+describe('chiều B — thư viết bằng tiếng Anh, không lẫn tiếng Việt', () => {
+  function dataB(over: Partial<WeeklyReportData> = {}): WeeklyReportData {
+    return data({ direction: 'B', ...over })
+  }
+
+  it('mọi tình huống đều không có từ trách móc (bản tiếng Anh)', () => {
+    const blameWordsEn = ['lazy', 'failed', 'skipped', 'gave up', 'nag them']
+    for (const days of [0, 1, 3, 5, 7]) {
+      const text = fullText(dataB({ daysStudied: days }))
+      for (const w of blameWordsEn) expect(text, `days=${days}, word="${w}"`).not.toContain(w)
+    }
+  })
+
+  it('tuần vắng vẫn nói thẳng nhưng không trách, không nêu "0 days"', () => {
+    const text = fullText(dataB({ daysStudied: 0, streakDays: 0, wordsPracticed: 0 }))
+    expect(text).not.toContain('0 day')
+    expect(text).toContain('busy')
+  })
+
+  it('không lẫn chữ tiếng Việt có dấu vào thư chiều B', () => {
+    const text = fullText(
+      dataB({ daysStudied: 4, streakDays: 3, cefrLevel: 'B1', cefrPercent: 40 }),
+    )
+    expect(text).not.toMatch(/[ăâđêôơưàáảãạằắẳẵặầấẩẫậ]/)
+  })
+
+  it('câu gợi ý theo cấp là bản tiếng Anh, hỏi về TIẾNG VIỆT', () => {
+    expect(pickQuestion(dataB({ cefrLevel: 'A1' }))).toContain('3 Vietnamese words')
+    expect(pickQuestion(dataB({ cefrLevel: 'A1' }))).not.toBe(
+      pickQuestion(dataB({ cefrLevel: 'B2' })),
+    )
+  })
+
+  it('footer chiều B nói rõ có thể ngừng chia sẻ bất cứ lúc nào (bản tiếng Anh)', () => {
+    const msg = buildWeeklyReport(dataB())
+    expect(renderWeeklyReportText(msg)).toContain('stop sharing at any time')
+    expect(renderWeeklyReportHtml(msg)).toContain('stop sharing')
+  })
+
+  it('HTML escape vẫn hoạt động ở chiều B', () => {
+    const msg = buildWeeklyReport(dataB({ learnerName: '<script>alert(1)</script>' }))
+    const html = renderWeeklyReportHtml(msg)
+    expect(html).not.toContain('<script>')
+    expect(html).toContain('&lt;script&gt;')
   })
 })

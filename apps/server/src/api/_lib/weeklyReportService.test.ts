@@ -141,6 +141,22 @@ describe('sendWeeklyReports — chống gửi trùng', () => {
     expect(bodies[1]).not.toContain('me@example.com')
   })
 
+  it('chiều B (settings.direction=B) → thư gửi bằng tiếng Anh', async () => {
+    routeSql({
+      progress: [
+        {
+          weekly_goal: { goal: 5 },
+          cefr_unlocked: ['A1'],
+          learned: ['a'],
+          settings: { direction: 'B' },
+        },
+      ],
+    })
+    await sendWeeklyReports(SUNDAY)
+    const text = String(sendMail.mock.calls[0]![0].text)
+    expect(text).toContain('stop sharing at any time')
+  })
+
   it('tuần vắng vẫn gửi (người thân cần biết), nhưng nội dung không trách móc', async () => {
     routeSql({
       usage: [],
@@ -185,6 +201,32 @@ describe('collectWeeklyData', () => {
       ],
     })
     expect((await collectWeeklyData(LEARNER, 'Na', WEEK_START))?.daysStudied).toBe(1)
+  })
+
+  it('thiếu settings.direction → mặc định chiều A', async () => {
+    routeSql({ progress: [{ weekly_goal: null, cefr_unlocked: [], learned: ['a'] }] })
+    expect((await collectWeeklyData(LEARNER, 'Na', WEEK_START))?.direction).toBe('A')
+  })
+
+  it('đọc đúng chiều B từ settings.direction', async () => {
+    routeSql({
+      progress: [
+        { weekly_goal: null, cefr_unlocked: [], learned: ['a'], settings: { direction: 'B' } },
+      ],
+    })
+    expect((await collectWeeklyData(LEARNER, 'Na', WEEK_START))?.direction).toBe('B')
+  })
+})
+
+describe('parseDirection', () => {
+  it('giá trị hợp lệ → giữ nguyên; thiếu/rác → mặc định A', async () => {
+    const { parseDirection } = await import('./weeklyReportService.js')
+    expect(parseDirection({ direction: 'B' })).toBe('B')
+    expect(parseDirection({ direction: 'A' })).toBe('A')
+    expect(parseDirection({ direction: 'linh tinh' })).toBe('A')
+    expect(parseDirection(null)).toBe('A')
+    expect(parseDirection(undefined)).toBe('A')
+    expect(parseDirection({})).toBe('A')
   })
 })
 

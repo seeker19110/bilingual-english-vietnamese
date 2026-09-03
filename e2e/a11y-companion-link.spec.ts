@@ -7,6 +7,10 @@
 //
 // Phạm vi quét giới hạn trong chính khối (`include`) — không biến spec này thành cổng cho toàn
 // bộ trang Hồ sơ vốn chưa từng được gác.
+//
+// Chiều B (2026-09-03, trả nợ): khối nay có bản tiếng Anh — quét thêm 1 vòng ở `direction='B'`
+// (2 theme đại diện, giống cách `a11y.spec.ts` gác trang chủ chiều B) để không lặp lại y hệt
+// việc quét 5 theme đã làm ở chiều A.
 
 import { test, expect, type Page } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
@@ -78,6 +82,37 @@ test('a11y AAA: chữ nội dung trong khối đạt tương phản ≥ 7:1', as
   await page.goto('/profile', { waitUntil: 'domcontentloaded' })
   await page.locator(SECTION).waitFor({ state: 'visible', timeout: 15_000 })
   await page.getByText('Họ thấy được những gì?').click()
+
+  expect(await scanSection(page, ['wcag2aaa'])).toEqual([])
+})
+
+const DIRECTION_B_THEMES: ThemeName[] = ['blue-sky', 'pink']
+
+for (const theme of DIRECTION_B_THEMES) {
+  test(`a11y: khối Follow along (chiều B) theme=${theme} — 0 vi phạm A/AA`, async ({ page }) => {
+    await mockLogin(page, 'en', theme)
+    await page.addInitScript(() => localStorage.setItem('et_direction', 'B'))
+    await mockApi(page)
+    await page.goto('/profile', { waitUntil: 'domcontentloaded' })
+
+    const section = page.locator(SECTION)
+    await section.waitFor({ state: 'visible', timeout: 15_000 })
+
+    await page.getByText('What can they see?').click()
+    await page.getByRole('button', { name: 'Create invite code' }).click()
+    await expect(page.getByRole('button', { name: 'Copy invite code' })).toBeVisible()
+
+    expect(await scanSection(page, AA_TAGS)).toEqual([])
+  })
+}
+
+test('a11y AAA chiều B: chữ nội dung trong khối đạt tương phản ≥ 7:1', async ({ page }) => {
+  await mockLogin(page, 'en')
+  await page.addInitScript(() => localStorage.setItem('et_direction', 'B'))
+  await mockApi(page)
+  await page.goto('/profile', { waitUntil: 'domcontentloaded' })
+  await page.locator(SECTION).waitFor({ state: 'visible', timeout: 15_000 })
+  await page.getByText('What can they see?').click()
 
   expect(await scanSection(page, ['wcag2aaa'])).toEqual([])
 })

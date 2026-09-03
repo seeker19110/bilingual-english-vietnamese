@@ -2970,36 +2970,34 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   Ngoài ra: **4 trang trụ Career/Work/Startup/Life vẫn chưa có bản chiều B** (0/4 file dùng
   `direction`, toàn bộ chuỗi hardcode tiếng Việt) — cùng loại nợ với mục ngay dưới đây.
 
-- 🟡 **[2026-08-26 — NỢ CÓ CHỦ ĐÍCH, người dùng chốt] Hai tính năng mới CHƯA có bản chiều B**
-  (người nước ngoài học tiếng Việt). Người dùng xác nhận: "chiều A là ok rồi, chiều B nợ".
+- 🟡 **[2026-08-26 — NỢ CÓ CHỦ ĐÍCH, người dùng chốt; TRẢ MỘT PHẦN 2026-09-03] Hai tính năng mới
+  CHƯA có bản chiều B** (người nước ngoài học tiếng Việt). Người dùng xác nhận: "chiều A là ok
+  rồi, chiều B nợ".
 
-  **Đang thiếu gì.** Cả hai tính năng ra mắt 2026-08-26 mới có tiếng Việt:
+  **[2026-09-03] "Người thân theo dõi" — ĐÃ TRẢ XONG.** Khối `CompanionLinkSection.tsx` nay nhận
+  prop `isA` (như `ReferralSection`) và render đủ ở cả hai chiều — bỏ điều kiện `{isA && ...}` ở
+  `Profile.tsx`. Nội dung thư (`weeklyReport.ts`) viết hoàn toàn bằng tiếng Anh ở chiều B (mở đầu/
+  câu hỏi gợi ý theo cấp/dòng số liệu/footer riêng biệt, không trộn ngôn ngữ) — `direction` đọc
+  từ `learning_progress.settings` qua `weeklyReportService.parseDirection()` (server-side, cùng
+  nguồn `packages/core-learner/learnerState.ts` dùng ở client), thêm vào
+  `WeeklyReportDataSchema` với `.default('A')` để dữ liệu/test cũ không cần đổi. Cổng
+  `e2e/a11y-companion-link.spec.ts` đã nới thêm 2 theme + 1 vòng AAA ở `direction='B'`.
 
-  | Tính năng                 | Trạng thái chiều B                                                                                                  |
-  | ------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-  | Người thân theo dõi       | Khối trong Hồ sơ **ẩn hẳn** khi `isA === false` (`Profile.tsx`); nội dung thư chỉ có tiếng Việt (`weeklyReport.ts`) |
-  | Chế độ ôn thi (`/on-thi`) | Trang **hiện nhưng toàn chữ tiếng Việt**; kỳ thi "vào lớp 10 — Tiếng Anh" cũng không hợp với người học chiều B      |
+  **Còn nợ: Chế độ ôn thi (`/on-thi`).** Trang vẫn toàn chữ tiếng Việt; kỳ thi "vào lớp 10 —
+  Tiếng Anh" cũng không hợp với người học chiều B — **đây là việc NỘI DUNG** (cần một kỳ thi khác,
+  người nước ngoài học tiếng Việt thi VSTEP/chứng chỉ tiếng Việt), không chỉ việc dịch chuỗi, nên
+  tách khỏi đợt vừa xong.
 
-  **Vì sao chọn nợ thay vì làm dở.** Hiện chuỗi ở chiều B sẽ cho ra màn hình nửa Việt nửa Anh —
-  tệ hơn là chưa có. Riêng chế độ ôn thi còn cần một **kỳ thi khác** (người nước ngoài học tiếng
-  Việt thi VSTEP/chứng chỉ tiếng Việt, không thi vào lớp 10), tức là việc nội dung chứ không chỉ
-  việc dịch.
+  **Việc còn lại khi trả nốt:**
 
-  **Việc phải làm khi trả nợ:**
-
-  1. `apps/server/src/api/_lib/weeklyReport.ts` — tách chuỗi theo `direction`, thêm bộ câu gợi ý
-     tiếng Anh; contract `WeeklyReportData` phải thêm `direction` để `weeklyReportService.ts`
-     biết chọn bản nào (hiện chưa có trường này).
-  2. `apps/dhcb/src/components/CompanionLinkSection.tsx` — thêm prop `isA` như `ReferralSection`,
-     bỏ điều kiện `{isA && ...}` ở `Profile.tsx`.
-  3. `apps/dhcb/src/pages/learning/ExamPlan.tsx` + `apps/dhcb/src/lib/examPlan.ts` — chuỗi song
+  1. `apps/dhcb/src/pages/learning/ExamPlan.tsx` + `apps/dhcb/src/lib/examPlan.ts` — chuỗi song
      ngữ, và mở `ExamKindSchema` (`packages/core-contracts/examPlan.ts`) cho kỳ thi của chiều B
      kèm phạm vi từ vựng tương ứng.
-  4. Nới hai cổng a11y (`e2e/a11y-companion-link.spec.ts`, `e2e/a11y-exam-plan.spec.ts`) sang
-     `uiLang: 'en'` — `mockLogin` đã nhận tham số này sẵn.
+  2. Nới cổng `e2e/a11y-exam-plan.spec.ts` sang `uiLang: 'en'` + `direction='B'` (cùng khuôn vừa
+     áp cho `a11y-companion-link.spec.ts`).
 
-  **Điều kiện gỡ nợ:** cả hai tính năng chạy được ở `direction === 'B'` với 0 chuỗi tiếng Việt
-  lọt ra, và hai cổng a11y xanh ở cả hai ngôn ngữ giao diện.
+  **Điều kiện gỡ nợ (phần còn lại):** chế độ ôn thi chạy được ở `direction === 'B'` với 0 chuỗi
+  tiếng Việt lọt ra, và cổng a11y xanh ở cả hai ngôn ngữ giao diện.
 
 - 🟡 **[2026-08-26 — HẠ MỨC sau khi chẩn đoán; ban đầu ghi 🔴 là ĐÁNH GIÁ QUÁ NẶNG] Redis rớt
   kết nối 7 lần/ngày, mỗi lần DƯỚI MỘT GIÂY.** `pm2 logs dhcb --err` cho thấy 7 cặp log
