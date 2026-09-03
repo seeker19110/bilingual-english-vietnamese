@@ -449,6 +449,41 @@ test('bài Kotlin: gán lại một `val` thì báo lỗi nói được, ngay t�
   await expect(page.getByText(/khong gan lai duoc/).first()).toBeVisible({ timeout: 60_000 })
 })
 
+// PR-M9 — bài KOTLIN khép track (p6-u7-l2, dự án "Sổ chi tiêu" ghép cả ba unit u5–u7). Cùng
+// lý do với bài Kotlin của PR-M8: cổng CI đã chấm nội dung, nhưng đường đi trong giao diện thì
+// chỉ trình duyệt mới chốt được — nhất là bài này dùng sealed class, thứ cú pháp nặng nhất mà
+// bộ chạy phải phân tích trước khi chấm.
+test('bài Kotlin p6-u7-l2: dự án khép track chấm được trong trình duyệt', async ({ page }) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p6-u7-l2', { waitUntil: 'domcontentloaded' })
+
+  await expect(page.getByText('· mô phỏng').first()).toBeVisible()
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page.getByRole('button', { name: 'Xem code mẫu' }).click()
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  await expect(page.getByText('Đạt toàn bộ test!')).toBeVisible({ timeout: 60_000 })
+})
+
+test('bài Kotlin null safety: dùng thẳng dấu chấm trên kiểu có thể null thì được dạy cách sửa', async ({
+  page,
+}) => {
+  test.setTimeout(120_000)
+  await mockLogin(page, 'vi', 'dark-blue')
+  await page.goto('/lap-trinh/bai-hoc/p6-u6-l1', { waitUntil: 'domcontentloaded' })
+
+  await page.getByRole('button', { name: 'Tự viết' }).click()
+  await page
+    .getByRole('textbox')
+    .first()
+    .fill('fun main() {\n    val nhom: String? = null\n    println(nhom.length)\n}')
+  await page.getByRole('button', { name: 'Chấm bài' }).click()
+  // Thông báo phải NÊU ĐỦ BA CÁCH SỬA (?. / ?: / !!) — đây là giá trị sư phạm chính của việc
+  // tự viết bộ chạy, và nó phải tới được mắt học viên chứ không chỉ nằm trong engine.
+  await expect(page.getByText(/KHONG duoc dung thang dau/).first()).toBeVisible({ timeout: 60_000 })
+})
+
 test('bài DOM: vòng lặp vô hạn khi CHẤM bị ngắt, trang không treo', async ({ page }) => {
   test.setTimeout(120_000)
   await mockLogin(page, 'vi', 'dark-blue')
