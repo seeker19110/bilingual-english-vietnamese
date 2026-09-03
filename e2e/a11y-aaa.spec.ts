@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import { mockLogin, type ThemeName } from './helpers/auth'
 import { openLiveLocationTrip } from './helpers/location'
-import { freezeAnimations } from './helpers/axe'
+import { freezeAnimations, waitForStableDom } from './helpers/axe'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // QUÉT WCAG 2.x mức AAA — bổ sung cho e2e/a11y.spec.ts (file kia gác mức A/AA).
@@ -94,7 +94,8 @@ for (const theme of THEMES) {
       await page.goto(route, { waitUntil: 'domcontentloaded' })
       // Dữ liệu curriculum/từ điển tính OFFLINE ở client (networkidle không giúp) nên
       // chờ cố định cho render xong — cùng cách làm với e2e/a11y.spec.ts.
-      await page.waitForTimeout(1200)
+      // Chờ theo TRẠNG THÁI, không theo thời gian — xem lý do ở `waitForStableDom`.
+      await waitForStableDom(page)
 
       const violated = await scanAaa(page)
       expect(
