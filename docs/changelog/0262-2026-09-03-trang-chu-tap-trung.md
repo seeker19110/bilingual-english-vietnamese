@@ -1,6 +1,6 @@
 # 0262 — 2026-09-03 — Đợt C thiết kế lại UI/UX: trang chủ tập trung vào việc học
 
-**PR:** (điền sau) · **Loại:** `refactor` — không thêm tính năng nghiệp vụ, chỉ đổi cách trình bày.
+**PR:** #845 · **Loại:** `refactor` — không thêm tính năng nghiệp vụ, chỉ đổi cách trình bày.
 Tiếp nối đợt A+B (`0261`); người dùng duyệt phạm vi bằng "tiếp đợt C".
 
 ## Vì sao có đợt này
