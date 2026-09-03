@@ -10,6 +10,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import QRCode from 'qrcode'
 import { ShieldCheck, ShieldOff, Loader2, Copy, Check, KeyRound, ChevronDown } from 'lucide-react'
+import { Button } from '@core/Button'
 import { useToast } from '@core/ToastProvider'
 import {
   fetchTwoFactorStatus,
@@ -240,15 +241,13 @@ export default function TwoFactorSection({ isA }: { isA: boolean }) {
                   placeholder="123456"
                   className="flex-1 min-w-0 tap-44 rounded-xl bg-zinc-900 border border-zinc-700 px-3 text-base text-white placeholder:text-zinc-500 tracking-widest"
                 />
-                <button
-                  type="button"
+                <Button
                   onClick={() => void handleConfirm()}
-                  disabled={busy}
-                  className="tap-44 px-4 rounded-xl bg-accent-500 hover:bg-accent-400 transition-colors text-[#09090b] text-sm font-semibold disabled:opacity-60 flex items-center gap-2"
+                  loading={busy}
+                  loadingLabel={isA ? 'Đang xử lý' : 'Working'}
                 >
-                  {busy && <Loader2 className="w-4 h-4 animate-spin" />}
                   {isA ? 'Xác nhận' : 'Confirm'}
-                </button>
+                </Button>
               </div>
               <button
                 type="button"
@@ -306,15 +305,14 @@ export default function TwoFactorSection({ isA }: { isA: boolean }) {
 
           {/* ── Trạng thái nghỉ: bật, hoặc quản lý khi đã bật ────────────── */}
           {step === 'idle' && !enabled && (
-            <button
-              type="button"
+            <Button
               onClick={() => void handleStart()}
-              disabled={busy}
-              className="tap-44 w-full px-4 rounded-xl bg-accent-500 hover:bg-accent-400 transition-colors text-[#09090b] text-sm font-semibold disabled:opacity-60 flex items-center justify-center gap-2"
+              loading={busy}
+              loadingLabel={isA ? 'Đang xử lý' : 'Working'}
+              fullWidth
             >
-              {busy && <Loader2 className="w-4 h-4 animate-spin" />}
               {isA ? 'Bật xác thực hai bước' : 'Turn on two-factor'}
-            </button>
+            </Button>
           )}
 
           {step === 'idle' && enabled && (

@@ -5,6 +5,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Eye, EyeOff, KeyRound } from 'lucide-react'
 import { usePageTitle } from '../../lib/usePageTitle'
 import { useLang } from '../../context/useLang'
+import { Button } from '@core/Button'
 
 async function postAuth(body: Record<string, unknown>): Promise<{ ok: boolean; error?: string }> {
   try {
@@ -138,11 +139,7 @@ export default function ResetPassword() {
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="tap-44 w-full rounded-xl bg-accent-500 py-3 text-sm font-semibold text-[#09090b] disabled:opacity-60"
-          >
+          <Button type="submit" disabled={loading} fullWidth>
             {loading
               ? isA
                 ? 'Đang lưu...'
@@ -150,7 +147,7 @@ export default function ResetPassword() {
               : isA
                 ? 'Đặt mật khẩu mới'
                 : 'Set new password'}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

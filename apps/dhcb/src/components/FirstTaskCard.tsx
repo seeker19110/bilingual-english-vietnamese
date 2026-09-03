@@ -9,8 +9,9 @@
 // của tư thế đồng hành: không lấy thời gian của người dùng làm chỉ số thành công).
 
 import { useState, useEffect } from 'react'
-import { Check, Loader2 } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { fetchIntake, markTaskDone, type Suggestion } from '../lib/intakeApi'
+import { Button } from '@core/Button'
 
 export default function FirstTaskCard() {
   const [task, setTask] = useState<Suggestion | null>(null)
@@ -42,15 +43,16 @@ export default function FirstTaskCard() {
     <section className="rounded-2xl border border-accent-500/30 bg-accent-500/10 p-4 animate-fade-in">
       <h2 className="text-xs text-zinc-300 mb-1">Việc bạn chọn để bắt đầu</h2>
       <p className="text-sm font-semibold text-white">{task.title}</p>
-      <button
-        type="button"
+      <Button
         onClick={() => void handleDone()}
-        disabled={saving}
-        className="tap-44 mt-3 w-full rounded-xl bg-accent-500 px-4 text-[#09090b] text-sm font-semibold disabled:opacity-60 flex items-center justify-center gap-2"
+        loading={saving}
+        loadingLabel="Đang lưu"
+        fullWidth
+        className="mt-3"
       >
-        {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+        {!saving && <Check className="w-4 h-4" />}
         Mình làm xong rồi
-      </button>
+      </Button>
     </section>
   )
 }
