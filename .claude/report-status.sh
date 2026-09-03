@@ -2,10 +2,16 @@
 # In báo cáo vị trí dự án hiện tại
 # Chạy tự động ở đầu mỗi phiên (session-start hook)
 #
-# LƯU Ý: phần "Nợ kỹ thuật"/"Đã xong" bên dưới là TÓM TẮT TĨNH, phải TỰ TAY cập nhật khi trạng
-# thái đổi (xem PROGRESS.md mục "Nợ kỹ thuật còn mở" là nguồn thật) — nếu để lâu không sửa sẽ lại
-# lỗi thời như lần audit 2026-08-01 phát hiện (từng báo sai: Sentry/thanh toán Pro/branch
-# protection/migration Supabase đều đã xong từ lâu nhưng script vẫn báo "chưa làm").
+# LƯU Ý: phần "Đã xong" bên dưới vẫn là TÓM TẮT TĨNH, phải tự tay cập nhật khi trạng thái đổi.
+#
+# Phần "Nợ kỹ thuật" thì KHÔNG còn chép tay nữa (sửa 2026-09-03): nó đọc THẲNG mục
+# "Nợ kỹ thuật còn mở" của PROGRESS.md — nguồn thật duy nhất. Trước đây danh sách này được chép
+# cứng vào script và đã lỗi thời HAI LẦN: lần audit 2026-08-01 (báo Sentry/thanh toán Pro/branch
+# protection là "chưa làm" trong khi đã xong từ lâu) và lần 2026-09-03 (còn báo ngưỡng CSS 18 kB
+# sau khi đã nới lên 20 kB, và coverage 90,56% sau khi đã đo lại). Chép tay thì lần nào cũng chỉ
+# đặt lại đồng hồ đếm tới lần lỗi thời sau — nên bỏ hẳn chỗ chép.
+#
+# Đổi định dạng mục nợ trong PROGRESS.md thì chạy `npm test -- report-status` để biết còn khớp.
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "📍 VỊ TRÍ DỰ ÁN HIỆN TẠI"
@@ -33,33 +39,40 @@ echo "   Domain mặc định .org + redirect .com/apex → www.org (2026-07-31)
 echo "   Backup + restore R2 (DB/.env/Nginx+crontab+PM2) — kiểm chứng cả 2 chiều (2026-08-01)"
 
 echo ""
-echo "📝 NỢ KỸ THUẬT THẬT (đọc chi tiết ở PROGRESS.md mục \"Nợ kỹ thuật còn mở\"):"
-echo "   1. 🟢 npm audit: VỀ 0 LỖ HỔNG (rà soát tự động 2026-08-09). Advisory react-router" \
-     "(GHSA-qwww-vcr4-c8h2) đã được GitHub NARROW dải ảnh hưởng xuống <7.18.2 — bản 7.18.2 dự án" \
-     "đang dùng chính là bản vá, mục 'giữ nguyên, chấp nhận báo dài hạn' trước đây nay ĐÃ ĐÓNG." \
-     "2 advisory mới (js-yaml/nanoid, thuần devDependency) đã vá qua 'overrides' trong" \
-     "package.json + npm install"
-echo "   2. 🟡 restore:all: mới kiểm chứng nhánh AN TOÀN (tải về); nhánh --restore-into (phá huỷ" \
-     "DB thật) chưa test thật"
-echo "   3. 🟢 Facebook/Apple/Microsoft OAuth tạm hoãn thêm domain .org (đăng nhập Google/email" \
-     "vẫn OK) — xem docs/doi-ten-mien-chinh-org.md"
-echo "   4. 🟢 PM2 cluster mode ĐÃ chạy song song thật — VPS nâng lên 3 vCPU / 3GB RAM" \
-     "(2026-08-21), 3 instance khai thác đủ 3 core. Việc tách Postgres/Redis ra máy riêng vẫn" \
-     "thuộc GĐ2 kế hoạch scale."
-echo "   5. 🟢 [ĐÓNG 2026-08-28] Model Gemini (gemini-3.6-flash, PR #647) chạy thật trên" \
-     "production, VÀ baseline eval:tutor đã chạy lại ngày 2026-08-26 (recall 97,7% / precision" \
-     "97,7% — docs/research/eval-tutor-baseline.md), MỚI HƠN lần đổi nội dung prompt/model gần" \
-     "nhất (2026-08-25). Cả hai vế của nợ này đã xong."
-echo "   6. 🟢 [ĐÓNG 2026-08-26] nginx/en-vi.conf đã sửa trong repo (bỏ CSP-Report-Only lạc" \
-     "hậu còn trỏ supabase) VÀ đã áp lên VPS thật, cùng lượt với cloudflare-realip.conf để bịt" \
-     "lỗ hổng rate limit (xác nhận bằng bài thử A/B — xem PROGRESS.md)."
-echo "   7. 🟡 [đo lại 2026-08-28, audit toàn diện] Ngân sách BUNDLE rộng: Initial JS" \
-     "124,83/140 kB (dư ~10,8%), CSS 16,26/18 kB (dư ~9,7%) — CSS mỏng hơn JS. COVERAGE:" \
-     "branches 90,56% trên sàn 90 = dư 0,56 điểm, vẫn là biên độ hẹp nhất trong 4 chỉ số" \
-     "(stmts 95,28 · funcs 95,34 · lines 95,28). Chạy npm run budget để xem số hiện tại."
-echo "   8. 🟡 [2026-08-28] 3 cặp migration TRÙNG SỐ: 0026 · 0027 · 0059. Không cặp nào chạm" \
-     "chung bảng nên thứ tự không rủi ro, và runner theo dõi theo TÊN FILE nên không bỏ sót." \
-     "CỐ Ý KHÔNG đổi số: migration đã chạy trên production, đổi tên file = chạy lại lần nữa."
+echo "📝 NỢ KỸ THUẬT CÒN MỞ (đọc thẳng từ PROGRESS.md — nguồn thật, không chép tay):"
+PROGRESS_FILE="${PROGRESS_FILE:-PROGRESS.md}"
+if [ -f "$PROGRESS_FILE" ]; then
+  no_ky_thuat=$(awk '
+    # Rút TIÊU ĐỀ IN ĐẬM của từng mục nợ CÒN MỞ.
+    # Còn mở = gạch đầu dòng MỞ ĐẦU bằng 🟡 hoặc 🔴. Mục đã đóng luôn viết dạng "- ~~..." nên
+    # tự rơi ra ngoài mẫu này — KHÔNG lọc thêm theo "có chứa ~~", vì một mục còn mở nhắc tới
+    # ~~gạch ngang~~ trong chính dòng đầu sẽ bị bỏ sót, đúng kiểu hỏng im lặng mà cổng này
+    # sinh ra để chặn.
+    # Tiêu đề in đậm có thể vắt qua nhiều dòng nên phải gom tới khi gặp ** đóng — cắt cứng
+    # theo số ký tự sẽ xén giữa một ký tự nhiều byte và làm hỏng tiếng Việt.
+    /^## Nợ kỹ thuật còn mở/ { inside = 1; next }
+    inside && /^## /         { exit }
+    inside && /^- (🟡|🔴)/ {
+      buf = $0
+      sub(/^- /, "", buf)
+      while (gsub(/\*\*/, "**", buf) < 2 && (getline nxt) > 0) {
+        sub(/^[ \t]+/, "", nxt)
+        buf = buf " " nxt
+      }
+      sub(/^(🟡|🔴)[ ]*/, "", buf)
+      if (match(buf, /\*\*.*\*\*/)) buf = substr(buf, RSTART + 2, RLENGTH - 4)
+      n++
+      print "   " n ". " buf
+    }
+  ' "$PROGRESS_FILE")
+  if [ -n "$no_ky_thuat" ]; then
+    echo "$no_ky_thuat"
+  else
+    echo "   (không đọc được mục nợ — kiểm lại định dạng PROGRESS.md)"
+  fi
+else
+  echo "   (không thấy $PROGRESS_FILE)"
+fi
 
 # Git status
 echo ""
