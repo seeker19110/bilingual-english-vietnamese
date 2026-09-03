@@ -1,6 +1,6 @@
 # 0243 — 2026-09-02 — Lịch hoạt động: một điểm dừng Tab, bấm được từng ngày
 
-PR: (điền khi tạo) · Nhánh: `claude/modern-ui-redesign-jull9n`
+PR: #826 · Nhánh: `claude/modern-ui-redesign-jull9n`
 
 ## Bối cảnh
 
