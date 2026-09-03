@@ -1162,35 +1162,45 @@ _(Chi tiết nguồn gốc: `dac-ta-bo-chay-kotlin-2026-08-27.md`)_
 
 ## 0. Trạng thái — ĐỌC TRƯỚC KHI SOẠN NỘI DUNG
 
-| Việc                                                    | Trạng thái     |
-| ------------------------------------------------------- | -------------- |
-| Interpreter tập con chạy được, chấm được bằng test-case | ✅ xong        |
-| Bộ ca đối chiếu (48 ca) xanh trên bộ chạy DHCB          | ✅ xong        |
-| **48 ca đã chạy trên `kotlinc` THẬT và khớp**           | ❌ **CHƯA**    |
-| Cổng §3.4 (được phép soạn nội dung Kotlin chưa?)        | ❌ **CHƯA MỞ** |
+| Việc                                                    | Trạng thái   |
+| ------------------------------------------------------- | ------------ |
+| Interpreter tập con chạy được, chấm được bằng test-case | ✅ xong      |
+| Bộ ca đối chiếu (48 ca) xanh trên bộ chạy DHCB          | ✅ xong      |
+| **48 ca đã chạy trên `kotlinc` THẬT và khớp**           | ✅ **XONG**  |
+| Cổng §3.4 (được phép soạn nội dung Kotlin chưa?)        | ✅ **ĐÃ MỞ** |
 
-**Vì sao chưa:** máy dựng PR-M7 không có Kotlin toolchain (`kotlin`/`kotlinc` không có sẵn,
-proxy chặn tải). Hiến chương §3.4 cấm suy đoán kết quả từ trí nhớ, nên mọi ca giữ
-`daDoiChieu: false` cho tới khi có người chạy thật.
+**Đã đối chiếu 2026-09-03: 48/48 ca KHỚP với `kotlinc 2.0.21` thật (JRE 21.0.10, Ubuntu).**
+Mọi ca nay mang `daDoiChieu: true`. **PR-M8/M9 (nội dung Kotlin) được phép bắt đầu.**
 
-**Cách đóng cổng này (một lệnh, trên máy có Kotlin):**
+Máy dựng PR-M7 trước đây không tải được Kotlin; lần này tải được bản chính thức từ GitHub
+releases (`kotlin-compiler-2.0.21.zip`) và chạy `npm run kotlin:conformance`. Không cần Xcode
+hay máy riêng — chỉ cần JVM, mà môi trường dựng đã có sẵn `java`.
+
+**Hai bẫy đã sập ngay lần chạy thật đầu tiên** — cả hai đều là lỗi của KHUNG ĐO, không phải lỗi
+bộ chạy, và đều đã sửa trong `scripts/kotlin-conformance.ts`:
+
+1. **`kotlin <file>.kt` không chạy được file nguồn ở Kotlin 2.x** (`could not find or load main
+class`). Script cũ ưu tiên lệnh này vì tưởng nó chạy `.kt` như script. Nay luôn `kotlinc`
+   biên dịch ra jar rồi `java -jar`.
+2. **Dồn 48 ca vào một file thì trùng tên kiểu** — hai ca cùng khai `data class Diem`, kotlinc
+   báo `redeclaration`. Nay mỗi ca một file với `package ca<N>` riêng.
+
+Thêm hai lệch GIẢ đã truy ra nguyên nhân (nêu ở đây để lần sau khỏi nghi oan bộ chạy):
+
+- **K05** (chuỗi ba nháy) — khung đo thụt thân ca 4 dấu cách, mà dấu cách đó nằm TRONG chuỗi
+  thô nên thành nội dung thật. Bỏ thụt là hết.
+- **K90** (tên biến tiếng Việt) — thiếu ép UTF-8 khi chạy `java`, chữ có dấu ra `?`. Nay truyền
+  `-Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8`.
+
+**Chạy lại bất cứ lúc nào (máy cần có `kotlinc` trên PATH):**
 
 ```bash
 npm run kotlin:conformance
 ```
 
-Script `scripts/kotlin-conformance.ts` sinh một file `.kt` gồm đúng 48 ca, chạy bằng `kotlin`
-(hoặc `kotlinc` + `java`), so từng ca với cả kết quả kỳ vọng lẫn output của bộ chạy DHCB, rồi
-in ra ca nào lệch. Xong thì:
-
-1. Đặt `daDoiChieu: true` cho các ca đã khớp trong
-   `packages/subject-programming/kotlinSim/conformance.ts`.
-2. Ghi phiên bản đã dùng (`kotlin -version`) vào mục 4 của file này.
-3. Ca nào lệch thì **sửa bộ chạy** (hoặc sửa kỳ vọng nếu kỳ vọng sai), không được bỏ qua.
-
-Cổng `conformance.test.ts` tự canh điều này: hễ còn ca chưa đối chiếu mà đã có bài
-`language: 'kotlin'` trong `lessons.ts` thì CI đỏ. Tức là **không thể lỡ tay soạn nội dung
-trước**.
+Cổng `conformance.test.ts` vẫn canh: hễ còn ca chưa đối chiếu mà đã có bài `language: 'kotlin'`
+trong `lessons.ts` thì CI đỏ. Thêm ca mới sau này vẫn phải chạy lại lệnh trên rồi mới đặt
+`daDoiChieu: true` — **không được suy đoán từ trí nhớ**.
 
 ## 1. Bộ chạy này LÀ GÌ
 
@@ -1266,8 +1276,7 @@ số, companion object) · bộ sưu tập và lambda (`listOf`/`mutableListOf`,
 chuỗi · ngoại lệ (`try`/`catch`/`finally`) · tên tiếng Việt có dấu · `is`/`!is` · Boolean không
 tự suy từ số.
 
-**Phiên bản Kotlin đã đối chiếu:** _(chưa có — điền sau khi chạy `npm run kotlin:conformance`
-trên máy có Kotlin)_
+**Phiên bản Kotlin đã đối chiếu:** `kotlinc-jvm 2.0.21` (JRE 21.0.10+7-Ubuntu-124.04), chạy ngày 2026-09-03 — 48/48 ca khớp.
 
 ## 5. Bộ chạy này KHÔNG làm gì
 

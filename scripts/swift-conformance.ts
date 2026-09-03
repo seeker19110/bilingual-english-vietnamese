@@ -94,7 +94,7 @@ function main(): void {
     console.log(
       `\n✅ ${CA_DOI_CHIEU.length}/${CA_DOI_CHIEU.length} ca KHOP voi swift that.\n` +
         'Buoc cuoi: dat daDoiChieu = true cho moi ca trong conformance.ts, ghi phien ban swift ' +
-        '(`swift --version`) vao docs/research/dac-ta-bo-chay-swift-2026-08-27.md, roi commit.',
+        '(`swift --version`) vao muc "Bo chay Swift" cua docs/research/mon-lap-trinh.md, roi commit.',
     )
     process.exit(0)
   }

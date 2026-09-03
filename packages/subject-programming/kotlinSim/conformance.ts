@@ -10,18 +10,23 @@
 // Hiến chương §3.4 đòi: "Ca đối chiếu phải được chạy tay MỘT LẦN trên trình biên dịch thật và
 // ghi lại kết quả vào đặc tả bộ chạy — không suy đoán từ trí nhớ."
 //
-// Môi trường soạn PR này KHÔNG có Kotlin (`kotlinc` không có sẵn, và proxy chặn tải). Nên phần
-// đó CHƯA làm được ở đây, và tuyệt đối không được vờ như đã làm. Cách xử lý:
+// ✅ ĐÃ ĐỐI CHIẾU THẬT — 2026-09-03. Cổng §3.4 nay MỞ.
 //
-//   · Mỗi ca có trường `nguon` ghi rõ căn cứ của kết quả kỳ vọng (mục nào của tài liệu ngôn
-//     ngữ Kotlin), và `daDoiChieu` = false cho tới khi có người chạy thật.
-//   · `npm run kotlin:conformance` sinh ra file .kt chứa ĐÚNG các ca này, chạy bằng `kotlinc`
-//     nếu máy có, rồi so từng dòng và báo lệch. Người dùng chạy MỘT lệnh trên máy có Kotlin là
-//     xong, kết quả ghi ngược lại vào đây.
-//   · Cổng của §3.4 vì vậy CHƯA đóng: PR-M8/M9 (nội dung Kotlin) không được bắt đầu trước khi
-//     việc chạy thật này xong. `conformance.test.ts` tự canh điều đó.
+// Toàn bộ 48/48 ca đã chạy trên `kotlinc 2.0.21` thật (JRE 21.0.10, Ubuntu) và khớp từng dòng
+// với cả kết quả kỳ vọng lẫn bộ chạy DHCB, nên mọi ca mang `daDoiChieu: true`. Môi trường soạn
+// PR-M7 trước đây không tải được Kotlin; lần này tải được bản chính thức từ GitHub releases và
+// chạy bằng `npm run kotlin:conformance`.
 //
-// Ghi thẳng ra như vậy để phiên sau không tưởng nhầm là đã đối chiếu xong.
+// Hệ quả: PR-M8/M9 (nội dung Kotlin) nay ĐƯỢC PHÉP bắt đầu. `conformance.test.ts` vẫn canh
+// ràng buộc — thêm ca mới mà để `daDoiChieu: false` thì cổng đóng lại ngay khi có bài Kotlin.
+//
+// Mỗi ca vẫn giữ trường `nguon` ghi căn cứ của kết quả kỳ vọng (mục nào của tài liệu Kotlin) —
+// đối chiếu thật KHÔNG thay thế việc phải nêu nguồn.
+//
+// Hai bẫy đã sập khi chạy thật lần đầu, đã sửa trong `scripts/kotlin-conformance.ts` (đọc chú
+// thích ở đó trước khi sửa script): (1) `kotlin <file>.kt` KHÔNG chạy được file nguồn ở Kotlin
+// 2.x — phải `kotlinc` rồi `java -jar`; (2) mỗi ca phải nằm trong `package` riêng, vì hai ca
+// cùng khai `data class Diem` là trùng tên ở mức file.
 
 export interface CaDoiChieu {
   ma: string
@@ -51,7 +56,7 @@ println(ten)
 println(tuoi)`,
     ky: 'Lan\n21\n',
     nguon: KDOC('Basic syntax — Variables'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K02',
@@ -61,7 +66,7 @@ println(7 % 2)
 println(-7 / 2)`,
     ky: '3\n1\n-3\n',
     nguon: KDOC('Numbers — Division of integers (làm tròn về 0)'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K03',
@@ -71,7 +76,7 @@ println(3.0)
 println(1.0 / 4)`,
     ky: '3.5\n3.0\n0.25\n',
     nguon: KDOC('Numbers — Floating-point types'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K04',
@@ -81,7 +86,7 @@ val n = 3
 println("$ten co \${n * 2} quyen vo")`,
     ky: 'Lan co 6 quyen vo\n',
     nguon: KDOC('Strings — String templates'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K05',
@@ -91,7 +96,7 @@ dong hai"""
 println(s)`,
     ky: 'dong mot\ndong hai\n',
     nguon: KDOC('Strings — Multiline strings'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K06',
@@ -100,7 +105,7 @@ println(s)`,
 println("dung: " + true)`,
     ky: 'so: 5\ndung: true\n',
     nguon: KDOC('Strings — String concatenation'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
 
   // ───────────────────────── Null safety ─────────────────────────
@@ -113,7 +118,7 @@ println(s)
 println(t)`,
     ky: 'hi\nnull\n',
     nguon: KDOC('Null safety — Nullable types'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K11',
@@ -124,7 +129,7 @@ println(s?.length)
 println(t?.length)`,
     ky: 'null\n3\n',
     nguon: KDOC('Null safety — Safe calls'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K12',
@@ -135,7 +140,7 @@ val t: String? = "co"
 println(t ?: "mac dinh")`,
     ky: 'mac dinh\nco\n',
     nguon: KDOC('Null safety — Elvis operator'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K13',
@@ -146,7 +151,7 @@ if (s != null) {
 }`,
     ky: '8\n',
     nguon: KDOC('Null safety — Checking for null in conditions'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K14',
@@ -156,7 +161,7 @@ println("abc".toIntOrNull())
 println("7".toInt() + 1)`,
     ky: '42\nnull\n8\n',
     nguon: KDOC('Strings — String conversion / toIntOrNull'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K15',
@@ -166,7 +171,7 @@ println(m["a"])
 println(m["b"])`,
     ky: '1\nnull\n',
     nguon: KDOC('Maps — Retrieve a value by key returns null if absent'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
 
   // ───────────────────────── Điều khiển ─────────────────────────
@@ -178,7 +183,7 @@ val lon = if (a > 5) "lon" else "nho"
 println(lon)`,
     ky: 'lon\n',
     nguon: KDOC('Conditions and loops — If expression'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K21',
@@ -191,7 +196,7 @@ when (x) {
 }`,
     ky: 'ba\n',
     nguon: KDOC('Conditions and loops — When expression'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K22',
@@ -205,7 +210,7 @@ val h = when {
 println(h)`,
     ky: 'kha\n',
     nguon: KDOC('Conditions and loops — When without subject'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K23',
@@ -218,7 +223,7 @@ when (n) {
 }`,
     ky: 'hai chu so\n',
     nguon: KDOC('Conditions and loops — When, in ranges'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K24',
@@ -233,7 +238,7 @@ for (i in 1..6 step 2) print(i)
 println()`,
     ky: '123\n12\n321\n135\n',
     nguon: KDOC('Ranges and progressions'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K25',
@@ -248,7 +253,7 @@ for (k in 1..5) { if (k == 2) continue; if (k == 4) break; print(k) }
 println()`,
     ky: '012\n5\n13\n',
     nguon: KDOC('Conditions and loops — While loops, Returns and jumps'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K26',
@@ -259,7 +264,7 @@ for (c in "abc") print(c)
 println()`,
     ky: 'ab\nabc\n',
     nguon: KDOC('Conditions and loops — For loops'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
 
   // ───────────────────────── Hàm ─────────────────────────
@@ -274,7 +279,7 @@ println(cong(2, 3))
 println(doi(5))`,
     ky: '5\n10\n',
     nguon: KDOC('Functions — Single-expression functions'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K31',
@@ -285,7 +290,7 @@ println(chao("Nam", "Hello"))
 println(chao(loi = "Hi", ten = "Mai"))`,
     ky: 'Xin chao, Lan!\nHello, Nam!\nHi, Mai!\n',
     nguon: KDOC('Functions — Default arguments, Named arguments'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K32',
@@ -295,7 +300,7 @@ fun ben() = "duoc goi"
 println(ngoai())`,
     ky: 'duoc goi\n',
     nguon: KDOC('Functions — top-level functions are visible in the whole file'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
 
   // ───────────────────────── Lớp ─────────────────────────
@@ -310,7 +315,7 @@ p.tuoi = 21
 println(p.gioiThieu())`,
     ky: 'Lan, 21 tuoi\n',
     nguon: KDOC('Classes — Constructors'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K41',
@@ -324,7 +329,7 @@ println(p.gioiThieu())`,
 println(A(4).gap)`,
     ky: '8\n',
     nguon: KDOC('Classes — Initializer blocks'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K42',
@@ -340,7 +345,7 @@ println(c.ten)
 println(c.keu())`,
     ky: 'Mun\nGau\n',
     nguon: KDOC('Inheritance — Overriding methods'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K43',
@@ -353,7 +358,7 @@ println(a == b)
 println(a.copy(y = 9))`,
     ky: 'Diem(x=1, y=2)\ntrue\nDiem(x=1, y=9)\n',
     nguon: KDOC('Data classes'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K44',
@@ -365,7 +370,7 @@ val (m, n) = Pair("x", 7)
 println("$m-$n")`,
     ky: '3-4\nx-7\n',
     nguon: KDOC('Destructuring declarations'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K45',
@@ -376,7 +381,7 @@ data class D(val v: Int)
 println(D(1) == D(1))`,
     ky: 'false\ntrue\n',
     nguon: KDOC('Data classes — equals is generated only for data classes'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K46',
@@ -387,7 +392,7 @@ println(D(1) == D(1))`,
 println(HcN(3, 4).dienTich)`,
     ky: '12\n',
     nguon: KDOC('Properties — Getters and setters'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K47',
@@ -402,7 +407,7 @@ class M : Keu {
 println(M().chao())`,
     ky: 'toi la meo\n',
     nguon: KDOC('Interfaces — Implementing interfaces'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K48',
@@ -416,7 +421,7 @@ Dem.tang()
 println(Dem.n)`,
     ky: '2\n',
     nguon: KDOC('Object declarations'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K49',
@@ -432,7 +437,7 @@ println(ta(Tot(7)))
 println(ta(Hong("mat mang")))`,
     ky: 'duoc 7\nloi mat mang\n',
     nguon: KDOC('Sealed classes'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K50',
@@ -445,7 +450,7 @@ for (m in Mau.values()) print(m)
 println()`,
     ky: 'DO\n1\nVANG\nDOXANHVANG\n',
     nguon: KDOC('Enum classes'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K51',
@@ -456,7 +461,7 @@ println()`,
 println(Huong.DONG.goc)`,
     ky: '90\n',
     nguon: KDOC('Enum classes — Initialization'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K52',
@@ -469,7 +474,7 @@ println(Huong.DONG.goc)`,
 println(Vong.donVi().r)`,
     ky: '1\n',
     nguon: KDOC('Objects — Companion objects'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
 
   // ───────────────────────── Bộ sưu tập & lambda ─────────────────────────
@@ -482,7 +487,7 @@ println(ds[1])
 println(ds.size)`,
     ky: '[10, 20, 30]\n20\n3\n',
     nguon: KDOC('Collections overview — List'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K61',
@@ -493,7 +498,7 @@ ds.removeAt(0)
 println(ds)`,
     ky: '[2, 3]\n',
     nguon: KDOC('List-specific operations'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K62',
@@ -503,7 +508,7 @@ println(ds.filter { it % 2 == 0 })
 println(ds.map { it * 10 })`,
     ky: '[2, 4]\n[10, 20, 30, 40]\n',
     nguon: KDOC('Collection transformations / filtering — it implicit name'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K63',
@@ -516,7 +521,7 @@ println(ds.all { it > 0 })
 println(ds.count { it % 2 == 1 })`,
     ky: '6\n12\ntrue\ntrue\n2\n',
     nguon: KDOC('Aggregate operations — fold, sumOf, any, all, count'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K64',
@@ -526,7 +531,7 @@ val ds = listOf(N("Lan", 30), N("Nam", 20))
 println(ds.sortedBy { it.tuoi }.joinToString(", ") { it.ten })`,
     ky: 'Nam, Lan\n',
     nguon: KDOC('Collection ordering — sortedBy; joinToString'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K65',
@@ -536,7 +541,7 @@ val cong = { a: Int, b: Int -> a + b }
 println(cong(2, 3))`,
     ky: 'a\nb\n5\n',
     nguon: KDOC('Lambdas — Lambda expression syntax'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K66',
@@ -547,7 +552,7 @@ println(m.size)
 println(m["b"])`,
     ky: 'true\n2\n2\n',
     nguon: KDOC('Maps — Map-specific operations'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
 
   // ───────────────────────── Chuỗi ─────────────────────────
@@ -562,7 +567,7 @@ println("abc".length)
 println("abc".contains("b"))`,
     ky: 'Xin Chao\nXIN CHAO\n[a, b, c]\n3\ntrue\n',
     nguon: KDOC('Strings — String operations'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
 
   // ───────────────────────── Ngoại lệ ─────────────────────────
@@ -581,7 +586,7 @@ try {
 }`,
     ky: '3\nbat duoc\n',
     nguon: KDOC('Exceptions — Exception classes'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K81',
@@ -593,7 +598,7 @@ try {
 }`,
     ky: 'than\ncuoi cung\n',
     nguon: KDOC('Exceptions — The finally block'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
 
   // ───────────────────────── Khác ─────────────────────────
@@ -605,7 +610,7 @@ fun chàoHỏi(x: String) = "Chào $x"
 println(chàoHỏi(hoTên))`,
     ky: 'Chào Nguyễn Văn A\n',
     nguon: KDOC('Coding conventions — identifiers allow Unicode letters'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K91',
@@ -615,7 +620,7 @@ println(x is String)
 println(x !is Int)`,
     ky: 'true\ntrue\n',
     nguon: KDOC('Type checks and casts — is and !is operators'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
   {
     ma: 'K92',
@@ -625,6 +630,6 @@ println(a == 1 && true)
 println(a != 1 || false)`,
     ky: 'true\nfalse\n',
     nguon: KDOC('Booleans'),
-    daDoiChieu: false,
+    daDoiChieu: true,
   },
 ]
