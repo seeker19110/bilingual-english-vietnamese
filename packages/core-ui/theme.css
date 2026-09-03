@@ -6,39 +6,76 @@
    --glow-accent dùng cho hiệu ứng phát sáng + outline focus theo đúng màu nhấn.
    --theme-color dùng cho meta theme-color thanh trình duyệt mobile/PWA. */
 
-/* 🌙 Xanh đêm (MẶC ĐỊNH) — nền navy/slate + nhấn xanh ngọc (emerald) */
+/* 🌙 Xanh đêm (MẶC ĐỊNH) — phong cách SCI-FI (chốt 2026-09-03, chỉ áp cho theme này):
+   nền xanh-đen sâu, ánh lạnh (không còn slate xám ấm) + nhấn CYAN "xanh băng" thay emerald.
+
+   VÌ SAO ĐỔI ACCENT SANG CYAN: (1) emerald trùng với màu xanh lá NGỮ NGHĨA "đúng" (CLAUDE.md
+   mục 4.8 — `emerald`/`green` dùng ~700 chỗ cho kết quả đúng), nên "màu thương hiệu" và "màu
+   khen đúng" lâu nay không phân biệt được; cyan tách hẳn hai nghĩa đó. (2) Cyan là màu HUD/
+   hologram kinh điển của Sci-Fi. Cyan-500 SÁNG hơn emerald-500 nên chữ TỐI trên nền accent
+   (bất biến ở `Button.test.tsx`) càng đạt cao hơn; chữ trắng trên accent đặc vốn đã bị cấm.
+
+   Sci-Fi ở đây là TĨNH và qua TOKEN — không thêm glow/pulse trang trí (luật 5/6 mục 9 của
+   `.agents/skills/ui-ux-craftsman`, vừa gỡ ở đợt D1–D3). Thang zinc đi tối hơn một nấc và
+   ngả xanh (blue channel cao hơn red/green) để tạo cảm giác "màn hình điều khiển"; các cấp
+   chữ z-100..z-500 được đo lại đạt AAA/AA trên cả 3 bề mặt (scripts/contrast-audit.test.ts). */
 :root,
 [data-theme='dark-blue'] {
   color-scheme: dark;
   --c-white: 255 255 255;
-  --z-50: 248 250 252;
-  --z-100: 241 245 249;
-  --z-200: 226 232 240;
-  --z-300: 203 213 225;
-  /* Sáng hơn để text-zinc-400 đạt AAA 7:1 trên nền thẻ tối nhất. */
-  --z-400: 158 173 191;
-  /* Sáng hơn để text-zinc-500 đạt AA 4.5:1 trên MỌI bề mặt thật (z-950/900/800). */
-  --z-500: 133 145 163;
-  --z-600: 71 85 105;
-  --z-700: 51 65 85;
-  --z-800: 30 41 59;
-  --z-900: 15 23 42;
-  --z-950: 8 12 28;
-  --glass-bg: 15 23 42;
-  --glass-border: 51 65 85;
-  /* accent: emerald */
-  --a-50: 236 253 245;
-  --a-100: 209 250 229;
-  --a-200: 167 243 208;
-  --a-300: 110 231 183;
-  --a-400: 52 211 153;
-  --a-500: 16 185 129;
-  --a-600: 5 150 105;
-  --a-700: 4 120 87;
-  --a-800: 6 95 70;
-  --a-900: 6 78 59;
+  --z-50: 245 250 255;
+  --z-100: 232 241 252;
+  --z-200: 210 224 240;
+  --z-300: 184 201 222;
+  /* AAA 7:1 trên nền z-800 (bề mặt nổi) — đo 2026-09-03. */
+  --z-400: 156 176 200;
+  /* AA 4.5:1 trên MỌI bề mặt thật (z-950/900/800). */
+  --z-500: 128 146 170;
+  --z-600: 70 88 118;
+  --z-700: 44 60 90;
+  --z-800: 22 34 60;
+  --z-900: 11 18 38;
+  --z-950: 4 8 22;
+  --glass-bg: 11 18 38;
+  /* Viền ánh lạnh (ngả cyan rất nhẹ) — đường kẻ HUD, thay cho slate xám trung tính. */
+  --glass-border: 40 66 98;
+  /* accent: cyan (Tailwind cyan) */
+  --a-50: 236 254 255;
+  --a-100: 207 250 254;
+  --a-200: 165 243 252;
+  --a-300: 103 232 249;
+  --a-400: 34 211 238;
+  --a-500: 6 182 212;
+  --a-600: 8 145 178;
+  --a-700: 14 116 144;
+  --a-800: 21 94 117;
+  --a-900: 22 78 99;
   --glow-accent: 0.4;
-  --theme-color: #0f172a;
+  --theme-color: #0b1226;
+  /* Bo góc gọn hơn Tailwind mặc định một nấc — thẻ trông như tấm panel, không phải viên
+     kẹo. CHỈ theme này khai 4 biến `--r-*`; 4 theme còn lại KHÔNG khai gì và tự dùng fallback
+     `var(--r-lg, 0.5rem)` khai ngay tại `apps/dhcb/tailwind.config.js` (= đúng mặc định
+     Tailwind 3), nên không đổi gì ở theme khác. `rounded-full`/`md`/`sm` không map (hình
+     tròn/chip nhỏ giữ nguyên).
+
+     GỘP CHUNG vào khối màu này, không mở một selector data-theme riêng cho dark-blue: hai bộ
+     phân tích CSS của dự án (`themeContrast.test.ts` và `scripts/lib/contrast.ts`) đều đọc
+     theme.css bằng regex ngây thơ, gom mỗi theme vào một khoá qua tên — mở khối thứ hai trùng
+     tên "dark-blue" khiến khối sau ÂM THẦM ghi đè khối trước (đã dính đúng lỗi này lúc viết
+     đợt Sci-Fi, tự bắt bằng lệnh test ở packages/core-ui). Một khối gốc mặc định riêng cho
+     --r-* cũng KHÔNG dùng được vì lý do khác: nó đứng sau trong file, cùng độ ưu tiên chọn
+     lọc, nên nguồn đứng sau thắng và âm thầm đè ngược giá trị Sci-Fi.
+
+     CẢNH BÁO CHO NGƯỜI SỬA SAU: chính đoạn comment này PHẢI tránh ký tự dấu ngoặc nhọn đóng
+     — bộ phân tích của scripts/lib/contrast.ts cắt một khối CSS tại KÝ TỰ ĐÓNG NGOẶC NHỌN
+     ĐẦU TIÊN nó gặp kể cả khi ký tự đó nằm trong comment hay chuỗi, không hiểu cú pháp CSS
+     thật. Một bản nháp sớm của chính comment này từng chứa ví dụ dán trực tiếp cú pháp
+     selector-rồi-thân-khối, làm gãy phép đo tương phản của MỌI theme phía sau nó trong file
+     — không method dùng biến. */
+  --r-lg: 0.375rem;
+  --r-xl: 0.5rem;
+  --r-2xl: 0.75rem;
+  --r-3xl: 1rem;
 }
 
 /* ☀️ Blue sky — nền sáng tông xanh + nhấn xanh da trời (sky) */

@@ -132,6 +132,39 @@ html[data-sidebar='collapsed'] {
     }
   }
 
+  /* ── SCI-FI cho theme Xanh đêm (2026-09-03) — chi tiết TĨNH, chỉ ở [data-theme='dark-blue'] ──
+     Luật 5/6 mục 9 (ui-ux-craftsman) cấm glow/pulse trang trí, nên "chất Sci-Fi" ở đây chỉ gồm
+     thứ đứng yên: lưới toạ độ mờ trên nền trang + chữ số đều cột. KHÔNG animation mới. */
+
+  /* Chữ số đều cột: số liệu (streak, %, điểm, đếm ngược) xếp thẳng hàng như bảng điều khiển,
+     không nhảy bề rộng khi giá trị đổi (Inter Variable hỗ trợ `tnum`). */
+  [data-theme='dark-blue'] body {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Lưới nền: vẽ bằng PSEUDO-ELEMENT cố định phía sau nội dung, KHÔNG đặt background-image
+     lên body. Lý do: axe (cổng e2e/a11y*.spec.ts) gặp nền là ảnh sẽ xếp phép đo tương phản
+     vào "incomplete" thay vì tính — tức là lặng lẽ làm yếu cổng AAA cho mọi chữ nằm trực tiếp
+     trên nền trang. Pseudo-element không phải nút DOM nên axe vẫn thấy body là nền ĐẶC.
+     Độ mờ 4,5% của accent trên nền z-950: nhìn thấy khi để ý, không cạnh tranh với chữ. */
+  [data-theme='dark-blue'] body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgb(var(--a-400) / 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--a-400) / 0.045) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  /* Người dùng yêu cầu tương phản cao, hoặc in giấy: bỏ lưới hẳn. */
+  @media (prefers-contrast: more), print {
+    [data-theme='dark-blue'] body::before {
+      display: none;
+    }
+  }
+
   /* Smooth font rendering for Inter */
   h1,
   h2,
