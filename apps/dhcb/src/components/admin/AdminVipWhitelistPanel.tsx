@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Loader2, ShieldCheck, Trash2 } from 'lucide-react'
 import { useToast } from '@core/ToastProvider'
 import { getAuthHeader } from '@core/authHeader'
+import { Button } from '@core/Button'
 
 interface WhitelistItem {
   email: string
@@ -131,19 +132,14 @@ export default function AdminVipWhitelistPanel() {
           />
         </label>
 
-        <button
-          type="button"
-          onClick={handleAdd}
-          disabled={adding}
-          className="tap-44 w-full flex items-center justify-center gap-2 rounded-xl bg-accent-500 text-[#09090b] font-semibold py-3 disabled:opacity-60"
-        >
+        <Button type="button" onClick={handleAdd} disabled={adding} fullWidth>
           {adding ? (
             <Loader2 className="w-4 h-4 animate-spin" />
           ) : (
             <ShieldCheck className="w-4 h-4" />
           )}
           Thêm vào danh sách VIP
-        </button>
+        </Button>
       </section>
 
       <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4 space-y-2">
