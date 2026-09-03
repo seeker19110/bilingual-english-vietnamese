@@ -2694,6 +2694,20 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Quyết định quan trọng
 
+- **[2026-09-03] Màu Tailwind cố định: GIỮ NGUYÊN, không token hoá ~4.100 chỗ — người dùng
+  chốt.** Câu hỏi đặt ra sau PR #842: có nên đổi các họ màu Tailwind gốc (`amber` 763 ·
+  `emerald` 700 · `rose` 480 · `sky` 328 · `indigo` 277…) sang token vai trò (`--info-*`,
+  `--warn-*`…) để chúng tự đổi theo theme như `--z-*`/`--a-*` không? **Trả lời: KHÔNG.**
+  Lý do: (a) đổi thì chạm >4.000 chỗ trong ~120 file với **rủi ro thị giác thật**, đổi lấy
+  sự nhất quán về hình thức; (b) lý do an toàn — thứ duy nhất đáng đánh đổi rủi ro đó — **đã
+  không còn**: 720 chỗ rớt tương phản đã vá xong ở PR #842, và cổng
+  `scripts/fixed-color-contrast-audit.test.ts` nay đo MỌI màu cứng dùng làm màu chữ trên cả
+  5 theme mỗi lần `npm test`. Giữ nguyên là giữ cách viết quen thuộc mà vẫn không tái diễn
+  loại lỗi vừa sửa.
+  **Luật thi hành cho code mới:** dùng màu Tailwind cố định làm màu chữ thì phải kèm biến thể
+  `theme-light:text-<họ>-800/900` NGAY TỪ ĐẦU; quên thì cổng trên đỏ và chỉ luôn cách vá.
+  Đừng mở lại cuộc bàn này nếu không có dữ kiện mới.
+
 - **[2026-09-03] "Giữ nguyên mọi thứ, thang bậc 5 và cover 90%" — người dùng chốt ba việc đang
   treo, KHÔNG đổi một dòng mã chạy nào.**
   1. **`Career.tsx` giữ CẢ HAI thước đo.** "Số năm kinh nghiệm" (trường hồ sơ, dòng 662) và
@@ -2901,20 +2915,6 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 > Mục này CHỈ giữ nợ **đang mở** (🟡/🔴). Nợ đã đóng (🟢) được dời sang
 > `docs/legacy/no-ky-thuat-da-dong.md` (2026-09-01) để file này chỉ nói trạng thái hiện tại —
 > đúng vai trò ở mục 2 `CLAUDE.md`. Đóng một món nợ = cắt khối đó dán sang file kia, kèm ngày.
-
-- 🟡 **[2026-09-03, ĐO LẠI — con số 423 ghi hôm nay là ĐO HẸP, thực tế khác hẳn] Màu Tailwind
-  cố định dùng khắp app; phần THẬT SỰ hỏng đã sửa xong, phần còn lại là quyết định thiết kế.**
-  Đo đủ 21 họ màu (không chỉ 4 họ như lần trước): **~4.141 lần** dùng màu Tailwind gốc trong
-  `apps/` — nhiều nhất là `amber` 763 · `emerald` 700 · `rose` 480 · `sky` 328 · `indigo` 277.
-  Nên "423" chỉ là một lát cắt, và việc token hoá 4 họ màu như dự tính ban đầu sẽ là **tuỳ tiện**
-  (vì sao token hoá `purple` mà không token hoá `amber`?).
-  **Phần có hại đã ĐÓNG (2026-09-03):** 720 chỗ màu chữ rớt tương phản AA ở 3 theme nền sáng đã
-  vá xong + có cổng chặn `scripts/fixed-color-contrast-audit.test.ts` — xem
-  `docs/changelog/0259-*.md`.
-  **Phần CÒN MỞ là câu hỏi thiết kế, cần người dùng quyết, KHÔNG phải lỗi:** có nên đổi hẳn các
-  họ màu này sang token vai trò (`--info-*`, `--warn-*`…) để chúng đổi theo theme, hay giữ màu
-  cố định + biến thể `theme-light:` như hiện nay? Giữ nguyên thì rẻ và đã an toàn về tương phản;
-  đổi thì nhất quán hơn nhưng chạm >4.000 chỗ và có rủi ro thị giác thật. **Đề xuất: giữ nguyên.**
 
 - 🟡 **[2026-08-28] Repo có HAI file cấu hình Nginx mô tả cùng một server.** `nginx/dhcb.conf`
   tự nhận là "cấu hình ĐANG CHẠY THẬT trên VPS", trong khi `docs/cloudflare-setup.md` và

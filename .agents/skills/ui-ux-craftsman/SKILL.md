@@ -187,7 +187,15 @@ tính" — không đáng.
    Tiêu đề tự đủ sức nặng; chữ trong nhãn đó nếu quan trọng thì đưa vào chính tiêu đề hoặc câu
    mở. Đo 2026-09-03: **54 file** đang có mẫu này — chưa gỡ, chỉ chặn không sinh thêm.
 
-> **Nợ liên quan (KHÔNG thuộc skill này):** đợt đối chiếu còn phát hiện **423** chỗ dùng màu
-> Tailwind cứng (`violet/purple/cyan/fuchsia-xxx`) ngoài token — tức luật bất biến §4.8 của
-> `CLAUDE.md` đang rò rỉ ở quy mô lớn. Đã ghi vào mục "Nợ kỹ thuật còn mở" của `PROGRESS.md`;
-> cần một đợt rà riêng phân loại giữ/đổi, không gộp vào việc giao diện thường ngày.
+> **Đã chốt 2026-09-03 (người dùng quyết) — ĐỪNG mở lại cuộc bàn này.** Đợt đối chiếu đo được
+> **~4.141 lần** dùng màu Tailwind gốc trong `apps/` (`amber` 763 · `emerald` 700 · `rose` 480 ·
+> `sky` 328 · `indigo` 277…). Câu hỏi "có nên token hoá hết không" đã có câu trả lời: **KHÔNG.**
+> Đổi thì chạm >4.000 chỗ với rủi ro thị giác thật, mà lý do an toàn đã không còn — PR #842 đã
+> vá 720 chỗ rớt tương phản ở 3 theme nền sáng và thêm cổng
+> `scripts/fixed-color-contrast-audit.test.ts` đo mọi màu cứng dùng làm màu chữ trên cả 5 theme.
+>
+> **Luật thi hành khi viết code mới:** dùng màu Tailwind cố định làm màu chữ thì **phải kèm
+> `theme-light:text-<họ>-800/900` ngay từ đầu** — thang `zinc`/`accent`/`content` tự đảo ở theme
+> nền sáng, màu Tailwind gốc thì không. Quên thì cổng trên đỏ và chỉ luôn cách vá. Bậc chọn theo
+> luật "bậc sáng nhất đạt AAA trên cả 3 theme sáng": `slate-700` · `blue/indigo/violet/purple-800`
+> · còn lại `-900`.
