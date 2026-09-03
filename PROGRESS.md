@@ -2698,6 +2698,17 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 
 ## Quyết định quan trọng
 
+- **[2026-09-03] "Giữ nguyên mọi thứ, thang bậc 5 và cover 90%" — người dùng chốt ba việc đang
+  treo, KHÔNG đổi một dòng mã chạy nào.**
+  1. **`Career.tsx` giữ CẢ HAI thước đo.** "Số năm kinh nghiệm" (trường hồ sơ, dòng 662) và
+     thang 5 bậc thành thạo (per-kỹ-năng, dòng 534) đo hai cấp khác nhau nên bổ sung nhau. Mục
+     nợ cũ mô tả chúng là "mâu thuẫn" — mô tả đó sai, đã đóng mục nợ kèm lý do.
+  2. **Sàn coverage giữ nguyên 90%.** Biên độ 0,70 điểm được chấp nhận; không nâng ngưỡng,
+     không viết test chỉ để đẩy số.
+  3. **Không tự khởi động việc mới.** Hai việc còn mở (đối chiếu Nginx trên VPS, chạy
+     `npm run swift:conformance` để mở cổng cứng cho track Swift) vẫn là **việc tay của người
+     dùng** — AI không thay thế được vì cần SSH/toolchain thật.
+
 - **[2026-08-04] Tự viết "bản đồ code" thay GitNexus.** `npm run codemap` — dùng TypeScript
   compiler API (đã có sẵn, KHÔNG thêm dependency) dựng đồ thị import + đồ thị lời gọi hàm, lưu
   `.codemap/graph.json` (gitignore, dựng lại được). Đo thật: 480 file · 1364 cạnh import · 4341
@@ -2905,11 +2916,12 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 - 🟡 **[2026-08-28 — rà UI/UX 5 trang trụ cột, xem `docs/changelog/0186-*.md`] Ba việc còn để
   ngỏ, cần người dùng quyết hoặc tách đợt riêng.**
 
-  1. **`Career.tsx` vẫn hỏi "Số năm kinh nghiệm"** — mâu thuẫn với
-     `docs/research/dac-ta-nang-luc-ca-nhan-theo-do-tuoi-2026-08-23.md`, vốn chốt thay thước đo
-     đó bằng **thang 5 bậc thành thạo**; chính trang này đã có `PROFICIENCY_BAND` rồi, nên hai
-     thước đo mâu thuẫn đang sống song song. **Cần người dùng xác nhận** là cố ý hay sót —
-     đổi thước đo là quyết định sản phẩm, không phải việc dọn UI.
+  1. ~~**`Career.tsx` vẫn hỏi "Số năm kinh nghiệm"**~~ — ✅ **ĐÓNG 2026-09-03, người dùng chốt
+     "giữ nguyên mọi thứ, thang bậc 5".** Mô tả cũ ("hai thước đo mâu thuẫn sống song song") là
+     **SAI** — đã đọc lại code: `<Field label="Số năm kinh nghiệm">` (dòng 662) là trường của
+     **HỒ SƠ**, một con số cho cả người; còn `PROFICIENCY_BAND_LABELS` hiện dưới nhãn "Bạn đang
+     ở bậc:" (dòng 534) gắn với **TỪNG KỸ NĂNG**. Hai thứ đo hai cấp khác nhau nên **bổ sung
+     nhau, không mâu thuẫn**. Giữ nguyên cả hai, không đổi một dòng mã nào.
   2. ~~**`Work.tsx`/`Life.tsx` đặt `<Layout>` ở CUỐI JSX** (Career/Startup đặt ở đầu)~~ — ✅
      **KHÔNG CÒN, đo lại 2026-09-03:** cả bốn file nay đều đặt `<Layout>` ở CUỐI, đã nhất quán
      (Career 966/970 · Startup 973/977 · Work 997/1001 · Life 992/996 — dòng/tổng dòng).
@@ -3016,7 +3028,12 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   | Initial JS (brotli)  | 127,26 kB | 140 kB | dư **~9,1%** |
   | Initial CSS (brotli) | 17,00 kB  | 20 kB  | dư **~15%**  |
 
-  Coverage branches (90,67% / dư 0,67 điểm) vẫn mỏng, chưa đóng — xem khối riêng phía trên.
+  Coverage branches vẫn mỏng — **nhưng biên độ đó nay là CHẤP NHẬN ĐƯỢC theo quyết định người
+  dùng (2026-09-03: "cover 90%")**. Số hiện tại 90,70% trên sàn 90 = dư 0,70 điểm. **KHÔNG nâng
+  ngưỡng, và KHÔNG chạy đợt viết test chỉ để đẩy con số.** Phiên sau đọc cảnh báo của
+  `npm run budget` ("biên độ hẹp") thì đừng tự ý "sửa" — đó là trạng thái đã chốt, không phải
+  việc bỏ sót. Điều VẪN đúng: tính năng mới phải tự mang test cho nhánh logic của nó, nếu không
+  cổng coverage sẽ đỏ.
 
   **[Đo lại 2026-08-27, sau PR-M7]** Ba con số trên là bản mới nhất. Đợt PR-M7 là ca thực tế
   đầu tiên nợ này bật ra: bộ chạy Kotlin (~4.000 dòng nguồn) làm branches tụt xuống **88,75%**
