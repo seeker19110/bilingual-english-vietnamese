@@ -1415,9 +1415,17 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   ** · **PR-M11 ✅ (2026-09-03) — Paradigm trụ S (`p6-u15`
   thiết kế hệ thống & tư duy kỹ sư), 2 bài; dự án dùng SỰ CỐ CÓ THẬT 30/07/2026 của chính dự án
   (ba lỗi độc lập xếp chồng) + công cụ soát post-mortem sáu ô. **PHẦN NỘI DUNG CHƯƠNG TRÌNH M
-  NAY XONG**, trừ mạch Swift. Nhật ký `docs/changelog/0252-*.md`. Việc còn lại: **PR-M12**
-  (giao diện gom nhóm 15 unit P6 theo track) — việc DUY NHẤT không bị chặn; M4–M6 (Swift) vẫn
-  kẹt cổng cứng §8, cần máy có Swift toolchain.** **ĐÃ ĐẢO THỨ TỰ M7 lên trước M4–M6, người dùng duyệt 2026-08-27:** M4 bị
+  NAY XONG**, trừ mạch Swift. Nhật ký `docs/changelog/0252-*.md`. ** · **PR-M12 ✅ (2026-09-03) — gom nhóm unit P6 theo
+  mạch. Đo lại: P6 có **65 unit** chứ không phải 15 như hiến chương viết (tầng hướng chuyên sâu
+  `u16+` ra đời sau). Thêm trường `track` + `UNIT_TRACKS` + `nhomUnitTheoTrack()`; nhóm mặc định
+  KHAI RÕ nên 55 unit hướng chuyên sâu không phải sửa từng cái. P1–P5 giữ nguyên danh sách phẳng.
+  Thêm `/lap-trinh/p6` vào CẢ HAI cổng a11y (chú thích cũ "6 bậc dùng chung layout" nay đã sai).
+  Nhật ký `docs/changelog/0253-*.md`.**
+
+  **CHƯƠNG TRÌNH M XONG 11/12 PR.** Việc còn lại DUY NHẤT: **M4–M6 (nội dung Swift `p6-u8…u12`)**,
+  và nó không phải việc soạn nội dung mà là **việc TAY** — chạy `npm run swift:conformance` trên
+  máy có Swift toolchain để mở cổng cứng §8. Môi trường dựng không tải được Swift (thử lại
+  2026-09-03: `download.swift.org` mã 000, GitHub swiftlang 403). **ĐÃ ĐẢO THỨ TỰ M7 lên trước M4–M6, người dùng duyệt 2026-08-27:** M4 bị
   cổng cứng §8 chặn tới khi có người chạy `npm run swift:conformance` trên máy có Xcode, còn M7
   là bộ chạy KHÁC không đi qua cổng đó (`conformance.test.ts` của Swift chỉ đỏ khi có bài
   `language: 'swift'`). Cổng cứng M3→M4 **vẫn nguyên vẹn**, PR-M7 không chạm vào.

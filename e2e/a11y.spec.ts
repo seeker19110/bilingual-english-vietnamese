@@ -93,7 +93,12 @@ const AUTHED_ROUTES = [
   '/cai-dat',
   '/thu-thach', // màn "chưa bắt đầu thử thách" — các trạng thái khác quét riêng bên dưới
   '/lap-trinh', // môn Lập trình: tổng quan P1–P6 + dự án xuyên suốt (PR-L1)
-  '/lap-trinh/p1', // trang một bậc (6 bậc dùng chung layout)
+  '/lap-trinh/p1', // trang một bậc, bản PHẲNG (P1–P5 không chia mạch nên dùng chung layout)
+  // [PR-M12] P6 KHÔNG còn dùng chung layout với P1: 65 unit của nó được gom thành 4 mạch, nên
+  // trang có thêm một tầng tiêu đề (h3) và mục lục trỏ tới mạch thay vì unit. Trước đây dòng
+  // trên ghi "6 bậc dùng chung layout" — nay sai, và nếu không quét riêng thì bản CÓ CHIA MẠCH
+  // không cổng a11y nào soi tới.
+  '/lap-trinh/p6', // trang một bậc, bản CÓ CHIA MẠCH (chỉ P6)
   '/lap-trinh/chay-thu', // sandbox chạy Python (PR-L2) — quét màn tĩnh, không chạy Pyodide
   '/lap-trinh/bai-hoc/p1-u4-l1', // bài học 8 bước (PR-L3) — màn Khái niệm
   '/lap-trinh/du-an', // dự án trục chặng P1 (PR-L3b)

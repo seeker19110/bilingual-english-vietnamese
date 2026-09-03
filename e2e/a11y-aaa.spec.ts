@@ -48,7 +48,8 @@ const ROUTES = [
   '/cai-dat',
   '/thu-thach',
   '/lap-trinh', // môn Lập trình: tổng quan P1–P6 (PR-L1)
-  '/lap-trinh/p1', // trang một bậc (6 bậc dùng chung layout)
+  '/lap-trinh/p1', // trang một bậc, bản PHẲNG (P1–P5 dùng chung layout)
+  '/lap-trinh/p6', // trang một bậc, bản CÓ CHIA MẠCH (PR-M12) — thêm tầng tiêu đề h3 + mô tả mạch
   '/lap-trinh/chay-thu', // sandbox chạy Python (PR-L2)
   '/lap-trinh/bai-hoc/p1-u4-l1', // bài học 8 bước (PR-L3)
   '/lap-trinh/du-an', // dự án trục chặng P1 (PR-L3b)
