@@ -91,6 +91,37 @@ export function getActivityCalendar(uid: string, totalDays = 35): ActivityCalend
   }
 }
 
+// ── Chi tiết hoạt động của MỘT ngày (bấm vào ô lịch) ────────────────────────
+// Lịch heatmap chỉ nói "ngày này đậm hơn ngày kia". Câu hỏi tiếp theo của người học luôn là
+// "hôm đó mình đã làm gì?", nên ô lịch bấm được và trả lời đúng câu đó.
+// Đọc theo YÊU CẦU (chỉ khi bấm) chứ không kèm sẵn vào 182 ngày của lịch: hầu hết ô không
+// bao giờ được bấm, gói sẵn là trả giá bộ nhớ cho thứ gần như không ai xem.
+export interface DayBreakdownItem {
+  key: 'learn' | 'chat' | 'writing' | 'speaking' | 'stt' | 'pronounce'
+  count: number
+}
+
+export interface DayBreakdown {
+  date: string
+  total: number
+  /** Chỉ các mục CÓ số > 0, theo thứ tự cố định để giao diện không nhảy lung tung. */
+  items: DayBreakdownItem[]
+}
+
+export function getDayBreakdown(uid: string, date: string): DayBreakdown {
+  const u = readUsage(uid, date)
+  const raw: DayBreakdownItem[] = [
+    { key: 'learn', count: u?.learnCount ?? 0 },
+    { key: 'chat', count: u?.chatCount ?? 0 },
+    { key: 'writing', count: u?.writingCount ?? 0 },
+    { key: 'speaking', count: u?.speakingCount ?? 0 },
+    { key: 'stt', count: u?.sttCount ?? 0 },
+    { key: 'pronounce', count: u?.pronounceCount ?? 0 },
+  ]
+  const items = raw.filter((i) => i.count > 0)
+  return { date, total: usageTotal(u), items }
+}
+
 // ── Tiến bộ luyện viết (điểm IELTS ước lượng theo thời gian) ─────────────────
 // `feedback` của mỗi bài viết là JSON string (xem Writing.tsx) — parse lấy điểm.
 interface WritingScores {

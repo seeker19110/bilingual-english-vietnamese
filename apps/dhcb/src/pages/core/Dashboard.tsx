@@ -10,7 +10,6 @@ import {
   Mic,
   RotateCcw,
   TrendingUp,
-  CalendarDays,
   Trophy,
   BookMarked,
   ArrowRight,
@@ -19,6 +18,7 @@ import {
 import Layout from '../../components/Layout'
 import PageHeader from '../../components/PageHeader'
 import QuickActions from '../../components/QuickActions'
+import ActivityCalendarCard from '../../components/ActivityCalendarCard'
 import { usePageTitle } from '../../lib/usePageTitle'
 import { useIsDesktopViewport, useMediaQuery } from '../../lib/useIsDesktopViewport'
 import { PageShell } from '@core/PageShell'
@@ -56,15 +56,6 @@ import { getWeeklyProgress, type WeeklyProgress } from '../../lib/weeklyGoal'
 import { effectivePlan } from '../../lib/promo'
 import { fetchWeeklyCredit, type WeeklyCreditInfo } from '../../lib/weeklyCredit'
 import { getLimits } from '../../lib/appSettings'
-
-// Màu ô heatmap theo số hoạt động trong ngày (đậm dần).
-function heatColor(count: number): string {
-  if (count <= 0) return 'bg-zinc-800/50'
-  if (count <= 2) return 'bg-accent-900'
-  if (count <= 5) return 'bg-accent-700'
-  if (count <= 10) return 'bg-accent-500'
-  return 'bg-accent-400'
-}
 
 // Màu theo band IELTS (đồng bộ với trang Luyện viết).
 function bandBar(v: number): string {
@@ -414,102 +405,17 @@ export default function Dashboard() {
 
   const restSections = (
     <>
-      {/* ── Lịch hoạt động 5 tuần (heatmap) ─────────────────────────── */}
-      <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-3xl p-5 sm:p-6 shadow-sm animate-fade-in">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-zinc-300 flex items-center gap-2">
-            <CalendarDays className="w-4 h-4 text-accent-400" />{' '}
-            {vi ? 'Lịch hoạt động' : 'Activity calendar'}
-          </h2>
-          <span className="text-xs text-zinc-400">
-            {stats.calendar.activeDays}{' '}
-            {vi
-              ? `ngày / ${isDesktop ? calendarWeeks : 5} tuần`
-              : `days / ${isDesktop ? calendarWeeks : 5} weeks`}
-          </span>
-        </div>
-
-        {/* HAI BỐ CỤC LỊCH — đổi 2026-09-02.
-            Trước đây chỉ có một bố cục: lưới 7 CỘT (thứ) × 5 hàng (tuần), và trên desktop
-            phải chặn `lg:max-w-sm` để ô ngày khỏi phình to. Hệ quả là nửa phải của thẻ bỏ
-            trống trên màn rộng — vừa xấu, vừa phí đúng thứ desktop có nhiều nhất.
-            Nay desktop xếp NGƯỢC LẠI: 7 HÀNG (thứ) × N cột (tuần), đúng lối heatmap quen
-            thuộc. Thêm tuần là rộng ra chứ không cao lên, nên bề ngang thừa được dùng để
-            kể một câu chuyện dài hơn — 16 tuần (một quý) thay vì 5 tuần. Với người học,
-            nhìn thấy cả quý phía sau là thứ tạo cảm giác "mình đã đi được xa", điều mà
-            5 tuần không cho được.
-            Dưới 1024px giữ nguyên bố cục cũ: màn hẹp không đủ chỗ cho 16 cột. */}
-        {isDesktop ? (
-          <div className="flex gap-1.5 overflow-x-auto">
-            {/* Nhãn thứ ở cột trái, thẳng hàng với từng hàng ngày. */}
-            <div className="grid grid-rows-7 gap-1 text-[11px] text-zinc-400 shrink-0">
-              {WDOW.map((w, i) => (
-                <span key={i} className="h-4 leading-4 pr-0.5">
-                  {w}
-                </span>
-              ))}
-            </div>
-            {/* `grid-flow-col` = đổ dữ liệu theo CỘT: mỗi cột là một tuần. */}
-            <div className="grid grid-rows-7 grid-flow-col gap-1">
-              {stats.calendar.days.map((d, idx) => (
-                <div
-                  key={d.date}
-                  tabIndex={0}
-                  role="img"
-                  aria-label={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
-                  /* Ô đầu tiên lệch HÀNG theo thứ trong tuần (bố cục dọc), khác bản mobile
-                     lệch CỘT. */
-                  style={idx === 0 ? { gridRowStart: stats.calendar.firstColumn + 1 } : undefined}
-                  className={`w-4 h-4 rounded-[4px] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 ${heatColor(d.count)} ${d.date === stats.calendar.days[stats.calendar.days.length - 1]?.date ? 'ring-1 ring-accent-400/70' : ''}`}
-                  title={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
-                />
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div>
-            {/* Nhãn thứ */}
-            <div className="grid grid-cols-7 gap-1.5 mb-1.5">
-              {WDOW.map((w, i) => (
-                <span key={i} className="text-[11px] text-zinc-400 text-center">
-                  {w}
-                </span>
-              ))}
-            </div>
-
-            {/* Lưới ngày — ô đầu lệch cột theo thứ trong tuần */}
-            <div className="grid grid-cols-7 gap-1.5">
-              {stats.calendar.days.map((d, idx) => (
-                /* Ô lịch phải đọc được bằng bàn phím/trình đọc màn hình: `title` chỉ hiện khi
-                 rê chuột nên trên mobile và với người dùng bàn phím là mất hẳn thông tin.
-                 Giữ `title` cho desktop, thêm tabIndex + aria-label cho phần còn lại. */
-                <div
-                  key={d.date}
-                  tabIndex={0}
-                  role="img"
-                  aria-label={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
-                  style={
-                    idx === 0 ? { gridColumnStart: stats.calendar.firstColumn + 1 } : undefined
-                  }
-                  className={`aspect-square rounded-[4px] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 ${heatColor(d.count)} ${d.date === stats.calendar.days[stats.calendar.days.length - 1]?.date ? 'ring-1 ring-accent-400/70' : ''}`}
-                  title={`${d.date}: ${d.count} ${vi ? 'hoạt động' : 'activities'}`}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Chú thích đậm nhạt */}
-        <div className="flex items-center justify-end gap-1.5 mt-3 text-[11px] text-zinc-400">
-          <span>{vi ? 'Ít' : 'Less'}</span>
-          <span className="w-3 h-3 rounded-[3px] bg-zinc-800/50" />
-          <span className="w-3 h-3 rounded-[3px] bg-accent-900" />
-          <span className="w-3 h-3 rounded-[3px] bg-accent-700" />
-          <span className="w-3 h-3 rounded-[3px] bg-accent-500" />
-          <span className="w-3 h-3 rounded-[3px] bg-accent-400" />
-          <span>{vi ? 'Nhiều' : 'More'}</span>
-        </div>
-      </section>
+      {/* ── Lịch hoạt động (heatmap) ─────────────────────────────────
+          Tách sang `ActivityCalendarCard` (2026-09-02) khi khối này có thêm điều hướng bàn
+          phím kiểu roving tabindex và phần chi tiết theo ngày — xem chú thích đầu file đó. */}
+      <ActivityCalendarCard
+        calendar={stats.calendar}
+        uid={user?.id ?? ''}
+        vi={vi}
+        isDesktop={isDesktop}
+        weeks={isDesktop ? calendarWeeks : 5}
+        wdow={WDOW}
+      />
 
       {/* ── Hôm nay ──────────────────────────────────────────────────── */}
       <section className="animate-fade-in">
