@@ -84,7 +84,7 @@ export default function MicroDrillModal({
           <div className="space-y-4">
             <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-sky-500/20 text-sky-400 border border-sky-500/30">
+                <div className="p-1.5 rounded-lg bg-sky-500/20 text-sky-400 theme-light:text-sky-900 border border-sky-500/30">
                   <Zap className="w-4 h-4" />
                 </div>
                 <div>
@@ -96,7 +96,7 @@ export default function MicroDrillModal({
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-1 text-xs font-bold text-sky-400 font-mono">
+              <div className="flex items-center gap-1 text-xs font-bold text-sky-400 theme-light:text-sky-900 font-mono">
                 Score: {score}/{drills.length}
               </div>
             </div>
@@ -117,9 +117,10 @@ export default function MicroDrillModal({
                 if (isAnswered) {
                   if (isCorrect) {
                     btnStyle =
-                      'bg-emerald-950/60 text-emerald-300 border-emerald-500 shadow-md shadow-emerald-500/20'
+                      'bg-emerald-950/60 text-emerald-300 theme-light:text-emerald-900 border-emerald-500 shadow-md shadow-emerald-500/20'
                   } else if (isSelected) {
-                    btnStyle = 'bg-rose-950/60 text-rose-300 border-rose-500'
+                    btnStyle =
+                      'bg-rose-950/60 text-rose-300 theme-light:text-rose-900 border-rose-500'
                   } else {
                     btnStyle = 'opacity-40 border-zinc-800'
                   }
@@ -137,10 +138,10 @@ export default function MicroDrillModal({
                   >
                     <span>{opt}</span>
                     {isAnswered && isCorrect && (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 theme-light:text-emerald-900" />
                     )}
                     {isAnswered && isSelected && !isCorrect && (
-                      <XCircle className="w-4 h-4 text-rose-400" />
+                      <XCircle className="w-4 h-4 text-rose-400 theme-light:text-rose-900" />
                     )}
                   </button>
                 )
@@ -149,7 +150,9 @@ export default function MicroDrillModal({
 
             {isAnswered && (
               <div className="rounded-xl bg-sky-950/30 border border-sky-500/30 p-3 flex flex-col gap-2 animate-fade-in">
-                <p className="text-xs text-sky-200 font-medium">💡 {currentDrill.explanationVi}</p>
+                <p className="text-xs text-sky-200 theme-light:text-sky-900 font-medium">
+                  💡 {currentDrill.explanationVi}
+                </p>
                 <button
                   type="button"
                   onClick={handleNext}
@@ -163,7 +166,7 @@ export default function MicroDrillModal({
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center text-center py-6 space-y-4">
-            <div className="p-3 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/40 shadow-xl">
+            <div className="p-3 rounded-2xl bg-amber-500/20 text-amber-400 theme-light:text-amber-900 border border-amber-500/40 shadow-xl">
               <Trophy className="w-8 h-8" />
             </div>
             <div>

@@ -83,7 +83,7 @@ export default function AdminIntakePanel() {
 
   if (forbidden) {
     return (
-      <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-5 flex items-center gap-3 text-red-300">
+      <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-5 flex items-center gap-3 text-red-300 theme-light:text-red-900">
         <ShieldAlert className="w-5 h-5 shrink-0" />
         <p className="text-sm">Bạn không có quyền truy cập trang này.</p>
       </div>
@@ -134,7 +134,7 @@ export default function AdminIntakePanel() {
       )}
 
       {!loading && error && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-sm text-red-300">
+        <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-sm text-red-300 theme-light:text-red-900">
           {error}
         </div>
       )}

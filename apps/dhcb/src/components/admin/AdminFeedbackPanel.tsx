@@ -117,7 +117,7 @@ export default function AdminFeedbackPanel() {
           onClick={() => setActiveTab('tutor')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition ${
             activeTab === 'tutor'
-              ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+              ? 'bg-amber-500/20 text-amber-300 theme-light:text-amber-900 border border-amber-500/40'
               : 'text-zinc-400 hover:text-zinc-200 bg-zinc-900 border border-zinc-800'
           }`}
         >
@@ -133,7 +133,7 @@ export default function AdminFeedbackPanel() {
             {activeTab === 'user' ? (
               <MessageSquareHeart className="w-5 h-5 text-accent-400" />
             ) : (
-              <ThumbsDown className="w-5 h-5 text-amber-400" />
+              <ThumbsDown className="w-5 h-5 text-amber-400 theme-light:text-amber-900" />
             )}
             <div>
               <h3 className="font-bold text-white text-base">
@@ -205,7 +205,7 @@ export default function AdminFeedbackPanel() {
         </div>
 
         {error && (
-          <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-lg text-xs flex items-center gap-2">
+          <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 theme-light:text-rose-900 rounded-lg text-xs flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -239,7 +239,7 @@ export default function AdminFeedbackPanel() {
                         </span>
 
                         {fb.rating && (
-                          <span className="flex items-center gap-0.5 text-amber-400 font-bold text-[11px] bg-amber-500/10 px-2 py-0.5 rounded-lg border border-amber-500/20">
+                          <span className="flex items-center gap-0.5 text-amber-400 theme-light:text-amber-900 font-bold text-[11px] bg-amber-500/10 px-2 py-0.5 rounded-lg border border-amber-500/20">
                             <Star className="w-3 h-3 fill-amber-400" /> {fb.rating}/5
                           </span>
                         )}
@@ -306,11 +306,11 @@ export default function AdminFeedbackPanel() {
                 <div className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
                     {fb.source === 'chat' ? (
-                      <span className="inline-flex items-center gap-1 text-indigo-400 font-semibold bg-indigo-500/10 px-2 py-0.5 rounded text-[11px]">
+                      <span className="inline-flex items-center gap-1 text-indigo-400 theme-light:text-indigo-800 font-semibold bg-indigo-500/10 px-2 py-0.5 rounded text-[11px]">
                         <MessageSquare className="w-3 h-3" /> Chat
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded text-[11px]">
+                      <span className="inline-flex items-center gap-1 text-emerald-400 theme-light:text-emerald-900 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded text-[11px]">
                         <Mic className="w-3 h-3" /> Speaking
                       </span>
                     )}
@@ -330,10 +330,10 @@ export default function AdminFeedbackPanel() {
                     <span className="text-zinc-200">{fb.userInput}</span>
                   </div>
                   <div className="p-2 bg-rose-500/5 rounded border border-rose-500/20">
-                    <span className="text-rose-400 font-semibold block text-[11px]">
+                    <span className="text-rose-400 theme-light:text-rose-900 font-semibold block text-[11px]">
                       AI phản hồi (bị chê):
                     </span>
-                    <span className="text-rose-200">{fb.aiFeedback}</span>
+                    <span className="text-rose-200 theme-light:text-rose-900">{fb.aiFeedback}</span>
                   </div>
                 </div>
               </div>

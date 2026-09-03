@@ -25,11 +25,11 @@ export default function LifeSynthesisDashboard() {
   }, [])
 
   const domainIconColorMap: Record<string, string> = {
-    learning: 'text-sky-400 bg-sky-400/10 border-sky-400/20',
-    career: 'text-purple-400 bg-purple-400/10 border-purple-400/20',
-    work: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
-    startup: 'text-amber-400 bg-amber-400/10 border-amber-400/20',
-    life: 'text-rose-400 bg-rose-400/10 border-rose-400/20',
+    learning: 'text-sky-400 theme-light:text-sky-900 bg-sky-400/10 border-sky-400/20',
+    career: 'text-purple-400 theme-light:text-purple-800 bg-purple-400/10 border-purple-400/20',
+    work: 'text-emerald-400 theme-light:text-emerald-900 bg-emerald-400/10 border-emerald-400/20',
+    startup: 'text-amber-400 theme-light:text-amber-900 bg-amber-400/10 border-amber-400/20',
+    life: 'text-rose-400 theme-light:text-rose-900 bg-rose-400/10 border-rose-400/20',
   }
 
   const domainLabelMap: Record<string, string> = {
@@ -102,10 +102,12 @@ export default function LifeSynthesisDashboard() {
           <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-3.5 flex flex-col justify-between">
             <div className="flex items-center justify-between text-xs text-zinc-400">
               <span className="font-semibold flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                <Sparkles className="w-3.5 h-3.5 text-indigo-400 theme-light:text-indigo-800" />
                 Cộng Hưởng Đa Miền
               </span>
-              <span className="text-[11px] font-bold text-indigo-400">Synergy</span>
+              <span className="text-[11px] font-bold text-indigo-400 theme-light:text-indigo-800">
+                Synergy
+              </span>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
               <span className="text-2xl font-black text-zinc-100">
@@ -124,10 +126,12 @@ export default function LifeSynthesisDashboard() {
           <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-3.5 flex flex-col justify-between">
             <div className="flex items-center justify-between text-xs text-zinc-400">
               <span className="font-semibold flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 theme-light:text-emerald-900" />
                 Bền Bỉ Nhận Thức
               </span>
-              <span className="text-[11px] font-bold text-emerald-400">Resilience</span>
+              <span className="text-[11px] font-bold text-emerald-400 theme-light:text-emerald-900">
+                Resilience
+              </span>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
               <span className="text-2xl font-black text-zinc-100">
@@ -197,7 +201,7 @@ export default function LifeSynthesisDashboard() {
               <div className="text-xs">
                 <div className="font-bold text-zinc-100 flex items-center gap-2">
                   <span>{topGoal.title}</span>
-                  <span className="text-[11px] px-2 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+                  <span className="text-[11px] px-2 py-0.2 rounded-full bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-900 font-bold border border-emerald-500/30">
                     {topGoal.successProbabilityPercent}% Xác suất đạt
                   </span>
                 </div>

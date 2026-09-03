@@ -122,7 +122,7 @@ export default function WordFormsBlock({ forms, base, word, isA, onPick }: Props
       <p className="text-[11px] text-zinc-400 uppercase tracking-wide mb-1.5">
         {isA ? 'Các dạng của từ' : 'Word forms'}
         {irregular && (
-          <span className="ml-1.5 normal-case text-amber-400 font-medium">
+          <span className="ml-1.5 normal-case text-amber-400 theme-light:text-amber-900 font-medium">
             • {isA ? 'bất quy tắc' : 'irregular'}
           </span>
         )}

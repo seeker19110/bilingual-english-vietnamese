@@ -263,7 +263,7 @@ function HighlightText({
   active,
   wordIdx,
   className,
-  highlightClass = 'bg-sky-500/25 text-sky-200',
+  highlightClass = 'bg-sky-500/25 text-sky-200 theme-light:text-sky-900',
 }: {
   text: string
   active: boolean
@@ -495,7 +495,7 @@ function SpeakBubble({
               onClick={onPlay}
               title="Nghe lại"
               aria-label="Nghe lại"
-              className="tap-44 shrink-0 w-8 h-8 rounded-xl bg-sky-500/15 border border-sky-500/25 flex items-center justify-center text-sky-400 hover:bg-sky-500/25 transition mt-0.5 shadow-inner"
+              className="tap-44 shrink-0 w-8 h-8 rounded-xl bg-sky-500/15 border border-sky-500/25 flex items-center justify-center text-sky-400 theme-light:text-sky-900 hover:bg-sky-500/25 transition mt-0.5 shadow-inner"
             >
               <Volume2 className="w-4 h-4" />
             </button>
@@ -1137,7 +1137,7 @@ export default function Speaking() {
                     </span>
                     <button
                       onClick={cancelPendingConfirm}
-                      className="tap-44 text-xs font-medium text-red-400 border border-red-500/30 hover:bg-red-500/10 rounded-full px-3 py-1.5 transition"
+                      className="tap-44 text-xs font-medium text-red-400 theme-light:text-red-900 border border-red-500/30 hover:bg-red-500/10 rounded-full px-3 py-1.5 transition"
                     >
                       {isA ? 'Ghi lại' : 'Re-record'}
                     </button>

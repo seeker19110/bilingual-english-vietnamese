@@ -102,13 +102,13 @@ export default function LifeSynthesisDetailModal({ report, onClose, onRefresh }:
             </div>
             <div className="p-3.5 rounded-2xl bg-zinc-900/60 border border-zinc-800 text-center">
               <span className="text-[11px] font-semibold text-zinc-400">Cộng Hưởng Đa Miền</span>
-              <div className="text-xl font-black text-indigo-400 mt-1">
+              <div className="text-xl font-black text-indigo-400 theme-light:text-indigo-800 mt-1">
                 {report.lifeSynergyIndex}%
               </div>
             </div>
             <div className="p-3.5 rounded-2xl bg-zinc-900/60 border border-zinc-800 text-center">
               <span className="text-[11px] font-semibold text-zinc-400">Bền Bỉ Nhận Thức</span>
-              <div className="text-xl font-black text-emerald-400 mt-1">
+              <div className="text-xl font-black text-emerald-400 theme-light:text-emerald-900 mt-1">
                 {report.cognitiveResilienceScore}%
               </div>
             </div>
@@ -142,7 +142,7 @@ export default function LifeSynthesisDetailModal({ report, onClose, onRefresh }:
                     </div>
 
                     <div className="text-right">
-                      <span className="text-base font-black text-emerald-400">
+                      <span className="text-base font-black text-emerald-400 theme-light:text-emerald-900">
                         {goal.successProbabilityPercent}%
                       </span>
                       <span className="block text-[11px] text-zinc-500 uppercase font-semibold">
@@ -158,7 +158,7 @@ export default function LifeSynthesisDetailModal({ report, onClose, onRefresh }:
                     </span>
                     {goal.criticalPathSteps.map((step, sIdx) => (
                       <div key={sIdx} className="flex items-center gap-2 text-xs text-zinc-300">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 theme-light:text-emerald-900 shrink-0" />
                         <span>{step}</span>
                       </div>
                     ))}
@@ -171,7 +171,7 @@ export default function LifeSynthesisDetailModal({ report, onClose, onRefresh }:
           {/* High Leverage Recommendations */}
           <div className="space-y-3">
             <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider flex items-center gap-1.5">
-              <Zap className="w-4 h-4 text-amber-400" />
+              <Zap className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
               Khuyến Nghị Chiến Lược Đòn Bẩy Cao
             </h3>
 
@@ -186,10 +186,10 @@ export default function LifeSynthesisDetailModal({ report, onClose, onRefresh }:
                     <span
                       className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${
                         rec.priority === 'critical'
-                          ? 'bg-rose-500/15 text-rose-300 border-rose-500/30'
+                          ? 'bg-rose-500/15 text-rose-300 theme-light:text-rose-900 border-rose-500/30'
                           : rec.priority === 'high'
-                            ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
-                            : 'bg-sky-500/15 text-sky-300 border-sky-500/30'
+                            ? 'bg-amber-500/15 text-amber-300 theme-light:text-amber-900 border-amber-500/30'
+                            : 'bg-sky-500/15 text-sky-300 theme-light:text-sky-900 border-sky-500/30'
                       }`}
                     >
                       Ưu tiên {rec.priority}

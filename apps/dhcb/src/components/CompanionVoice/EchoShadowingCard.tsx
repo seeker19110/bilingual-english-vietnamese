@@ -75,11 +75,11 @@ export default function EchoShadowingCard() {
               <h3 className="text-base font-bold text-white tracking-wide">
                 Real-Time Echo Shadowing Engine
               </h3>
-              <span className="text-[11px] px-2 py-0.5 font-bold uppercase rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30">
+              <span className="text-[11px] px-2 py-0.5 font-bold uppercase rounded-full bg-sky-500/20 text-sky-300 theme-light:text-sky-900 border border-sky-500/30">
                 Sub-second Reflex
               </span>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 theme-light:text-slate-700">
               Huấn luyện phản xạ tai-miệng đồng bộ & đo lường độ lệch âm học thời gian thực
             </p>
           </div>
@@ -88,7 +88,7 @@ export default function EchoShadowingCard() {
         {sessionResult && (
           <button
             onClick={() => setSessionResult(null)}
-            className="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors"
+            className="p-1.5 text-slate-400 theme-light:text-slate-700 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors"
             title="Luyện lại"
           >
             <RotateCcw className="w-4 h-4" />
@@ -109,8 +109,8 @@ export default function EchoShadowingCard() {
               }}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition-all border ${
                 isSelected
-                  ? 'bg-sky-950/60 border-sky-400 text-sky-200 shadow-md shadow-sky-500/20'
-                  : 'bg-slate-800/50 border-slate-800 text-slate-400 hover:text-slate-200'
+                  ? 'bg-sky-950/60 border-sky-400 text-sky-200 theme-light:text-sky-900 shadow-md shadow-sky-500/20'
+                  : 'bg-slate-800/50 border-slate-800 text-slate-400 theme-light:text-slate-700 hover:text-slate-200'
               }`}
             >
               {p.title.split('—')[0]}
@@ -123,13 +123,15 @@ export default function EchoShadowingCard() {
         <div className="mt-4 space-y-4">
           {/* Target Text Box */}
           <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
-            <div className="flex items-center justify-between text-xs text-slate-400">
-              <span className="font-semibold text-slate-300">{currentPassage.title}</span>
+            <div className="flex items-center justify-between text-xs text-slate-400 theme-light:text-slate-700">
+              <span className="font-semibold text-slate-300 theme-light:text-slate-700">
+                {currentPassage.title}
+              </span>
               <span className="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">
                 BPM {currentPassage.bpmPacing} • {currentPassage.speakerAccent.toUpperCase()}
               </span>
             </div>
-            <p className="text-sm font-medium text-slate-100 leading-relaxed italic">
+            <p className="text-sm font-medium text-slate-100 theme-light:text-slate-700 leading-relaxed italic">
               &ldquo;{currentPassage.targetText}&rdquo;
             </p>
           </div>
@@ -150,8 +152,8 @@ export default function EchoShadowingCard() {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center gap-2 text-slate-400">
-                <Volume2 className="w-6 h-6 text-sky-400/60" />
+              <div className="flex flex-col items-center gap-2 text-slate-400 theme-light:text-slate-700">
+                <Volume2 className="w-6 h-6 text-sky-400 theme-light:text-sky-900/60" />
                 <span className="text-xs">
                   Nhấn bắt đầu để nghe mẫu và nhại lại đồng thời (trễ 0.4s)
                 </span>
@@ -159,7 +161,7 @@ export default function EchoShadowingCard() {
             )}
 
             {isRecording && (
-              <div className="absolute bottom-2 right-3 text-[11px] text-emerald-400 font-bold flex items-center gap-1">
+              <div className="absolute bottom-2 right-3 text-[11px] text-emerald-400 theme-light:text-emerald-900 font-bold flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
                 Đang đo lường phản xạ giọng nói...
               </div>
@@ -201,36 +203,42 @@ export default function EchoShadowingCard() {
             <div className="p-4 rounded-xl bg-gradient-to-br from-sky-950/60 to-blue-950/60 border border-sky-500/40 space-y-3 animate-fadeIn">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Award className="w-5 h-5 text-sky-400" />
+                  <Award className="w-5 h-5 text-sky-400 theme-light:text-sky-900" />
                   <h4 className="text-sm font-bold text-white">Kết Quả Shadowing Chuẩn Xác</h4>
                 </div>
-                <div className="text-lg font-black text-sky-400 bg-sky-400/10 px-3 py-1 rounded-lg border border-sky-400/30">
+                <div className="text-lg font-black text-sky-400 theme-light:text-sky-900 bg-sky-400/10 px-3 py-1 rounded-lg border border-sky-400/30">
                   Band: {sessionResult.overallShadowingBand}
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
-                  <div className="text-[11px] text-slate-400">Độ trễ bắt nhịp</div>
-                  <div className="text-xs font-bold text-sky-300">
+                  <div className="text-[11px] text-slate-400 theme-light:text-slate-700">
+                    Độ trễ bắt nhịp
+                  </div>
+                  <div className="text-xs font-bold text-sky-300 theme-light:text-sky-900">
                     {sessionResult.averageDriftLatencyMs} ms
                   </div>
                 </div>
                 <div className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
-                  <div className="text-[11px] text-slate-400">Đồng bộ nhịp điệu</div>
-                  <div className="text-xs font-bold text-emerald-300">
+                  <div className="text-[11px] text-slate-400 theme-light:text-slate-700">
+                    Đồng bộ nhịp điệu
+                  </div>
+                  <div className="text-xs font-bold text-emerald-300 theme-light:text-emerald-900">
                     {sessionResult.rhythmSyncScore}%
                   </div>
                 </div>
                 <div className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800">
-                  <div className="text-[11px] text-slate-400">Độ trôi chảy</div>
-                  <div className="text-xs font-bold text-indigo-300">
+                  <div className="text-[11px] text-slate-400 theme-light:text-slate-700">
+                    Độ trôi chảy
+                  </div>
+                  <div className="text-xs font-bold text-indigo-300 theme-light:text-indigo-800">
                     {sessionResult.fluencyScore}%
                   </div>
                 </div>
               </div>
 
-              <p className="text-xs text-slate-300 leading-relaxed italic">
+              <p className="text-xs text-slate-300 theme-light:text-slate-700 leading-relaxed italic">
                 💡 {sessionResult.coachingFeedback}
               </p>
             </div>

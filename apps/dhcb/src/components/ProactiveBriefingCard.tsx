@@ -26,12 +26,12 @@ export default function ProactiveBriefingCard() {
       <div className="flex items-center justify-between gap-3 mb-3">
         <div className="flex items-center gap-2.5">
           <div
-            className={`p-2 rounded-xl border ${isMorning ? 'bg-amber-500/10 border-amber-500/30 text-amber-400' : 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400'}`}
+            className={`p-2 rounded-xl border ${isMorning ? 'bg-amber-500/10 border-amber-500/30 text-amber-400 theme-light:text-amber-900' : 'bg-indigo-500/10 border-indigo-500/30 text-indigo-400 theme-light:text-indigo-800'}`}
           >
             {isMorning ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </div>
           <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
+            <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400 theme-light:text-indigo-800 flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5" />
               Bản Tin Đồng Hành {isMorning ? 'Buổi Sáng' : 'Buổi Tối'}
             </span>
@@ -41,7 +41,7 @@ export default function ProactiveBriefingCard() {
 
         <Link
           to="/ban-dong-hanh"
-          className="text-xs font-medium text-indigo-400 hover:text-indigo-300 flex items-center gap-1 shrink-0 px-2.5 py-1 rounded-lg bg-indigo-900/30 hover:bg-indigo-900/50 border border-indigo-500/20 transition-all"
+          className="text-xs font-medium text-indigo-400 theme-light:text-indigo-800 hover:text-indigo-300 flex items-center gap-1 shrink-0 px-2.5 py-1 rounded-lg bg-indigo-900/30 hover:bg-indigo-900/50 border border-indigo-500/20 transition-all"
         >
           Hội thoại
           <ChevronRight className="w-3.5 h-3.5" />
@@ -76,7 +76,7 @@ export default function ProactiveBriefingCard() {
       </div>
 
       {briefing.insights.length > 0 && (
-        <div className="mt-3.5 pt-3 border-t border-zinc-800/60 flex items-center gap-2 text-xs text-emerald-400">
+        <div className="mt-3.5 pt-3 border-t border-zinc-800/60 flex items-center gap-2 text-xs text-emerald-400 theme-light:text-emerald-900">
           <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
           <span className="truncate">{briefing.insights[0]}</span>
         </div>

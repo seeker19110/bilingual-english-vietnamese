@@ -318,7 +318,7 @@ function BatchDoneView({
         <div className="glass rounded-xl p-4">
           <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-teal-400" />
+              <Sparkles className="w-4 h-4 text-teal-400 theme-light:text-teal-900" />
               <span className="text-sm font-semibold text-white">
                 {isA ? 'Câu thông dụng từ những từ vừa học' : 'Common sentences from these words'}
               </span>
@@ -335,7 +335,7 @@ function BatchDoneView({
                 <KaraokeText
                   text={isA ? s.en : s.vi}
                   lang={isA ? 'en-US' : 'vi-VN'}
-                  textClass="font-medium text-[15px] leading-snug text-teal-300"
+                  textClass="font-medium text-[15px] leading-snug text-teal-300 theme-light:text-teal-900"
                   buttonClass="w-full"
                 />
                 <p className={`text-sm text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>
@@ -351,7 +351,7 @@ function BatchDoneView({
         <div className="glass rounded-xl p-4">
           <div className="flex items-center justify-between gap-2 mb-1 flex-wrap">
             <div className="flex items-center gap-2">
-              <MessageCircle className="w-4 h-4 text-teal-400" />
+              <MessageCircle className="w-4 h-4 text-teal-400 theme-light:text-teal-900" />
               <span className="text-sm font-semibold text-white">
                 {isA ? 'Hội thoại dùng các từ vừa học' : 'A conversation using these words'}
               </span>
@@ -375,14 +375,14 @@ function BatchDoneView({
                     className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 border ${isB ? 'bg-teal-500/10 border-teal-500/30' : 'bg-zinc-900/80 border-zinc-800/80'}`}
                   >
                     <span
-                      className={`text-[11px] font-semibold tracking-wide ${isB ? 'text-teal-300' : 'text-zinc-400'}`}
+                      className={`text-[11px] font-semibold tracking-wide ${isB ? 'text-teal-300 theme-light:text-teal-900' : 'text-zinc-400'}`}
                     >
                       {name}
                     </span>
                     <KaraokeText
                       text={isA ? ln.en : ln.vi}
                       lang={isA ? 'en-US' : 'vi-VN'}
-                      textClass={`font-medium text-[15px] leading-snug ${isB ? 'text-teal-300' : 'text-zinc-100'}`}
+                      textClass={`font-medium text-[15px] leading-snug ${isB ? 'text-teal-300 theme-light:text-teal-900' : 'text-zinc-100'}`}
                       buttonClass="w-full"
                     />
                     <p className={`text-sm text-zinc-400 mt-1 ${KARAOKE_INDENT}`}>
@@ -421,7 +421,7 @@ function BatchDoneView({
       {canLearnMore && quizPasses < dailyMax / speed - 1 && (
         <button
           onClick={onStartQuiz}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 font-medium transition"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 theme-light:text-violet-800 font-medium transition"
         >
           <ClipboardList className="w-4 h-4" />
           {isA
@@ -627,7 +627,7 @@ export function TodayLesson({
   if (batch.length === 0 && (phase === 'learning' || phase === 'batch-done')) {
     return (
       <div className="glass rounded-xl p-8 text-center animate-fade-in">
-        <Trophy className="w-10 h-10 text-amber-400 mx-auto mb-3" />
+        <Trophy className="w-10 h-10 text-amber-400 theme-light:text-amber-900 mx-auto mb-3" />
         <p className="text-white font-semibold mb-1">
           {isA
             ? 'Tuyệt vời! Bạn đã thuộc hết từ vựng phần này.'
@@ -673,14 +673,14 @@ export function TodayLesson({
     const streakTomorrow = getStreak(uid) + 1
     return (
       <div className="glass rounded-xl p-8 text-center animate-fade-in space-y-2">
-        <Trophy className="w-10 h-10 text-amber-400 mx-auto" />
+        <Trophy className="w-10 h-10 text-amber-400 theme-light:text-amber-900 mx-auto" />
         <p className="text-white font-semibold">
           {isA
             ? `Xuất sắc! Đã học đủ ${dailyMax} từ hôm nay 🎉`
             : `Amazing! ${dailyMax} words learned today 🎉`}
         </p>
         {/* Móc quay lại: cho thấy phần thưởng cụ thể của ngày mai (V-3 "kết" phiên) */}
-        <p className="text-sm text-orange-400">
+        <p className="text-sm text-orange-400 theme-light:text-orange-900">
           {isA
             ? `🔥 Hẹn mai nhé — chuỗi sẽ thành ${streakTomorrow} ngày!`
             : `🔥 See you tomorrow — your streak becomes ${streakTomorrow} days!`}
@@ -750,7 +750,7 @@ export function TodayLesson({
           </p>
           <button
             onClick={wrongWords.length > 0 ? startWrongReview : startMiniQuiz}
-            className="w-full py-3 rounded-2xl bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 font-medium transition"
+            className="w-full py-3 rounded-2xl bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 theme-light:text-violet-800 font-medium transition"
           >
             <RotateCcw className="w-4 h-4 inline mr-1" />
             {wrongWords.length > 0
@@ -775,7 +775,7 @@ export function TodayLesson({
     return (
       <div className="animate-fade-in space-y-4">
         <div className="flex items-center justify-between text-xs text-zinc-400 mb-1">
-          <span className="text-violet-400 font-medium">
+          <span className="text-violet-400 theme-light:text-violet-800 font-medium">
             {isA ? 'Kiểm tra mở batch mới' : 'Quiz to unlock next batch'}
           </span>
           <span>
@@ -808,7 +808,8 @@ export function TodayLesson({
               if (opt === q.correct)
                 cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300 animate-pop-correct'
               else if (opt === quizSel)
-                cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300 animate-shake'
+                cls =
+                  'bg-rose-500/20 border-rose-500/60 text-rose-300 theme-light:text-rose-900 animate-shake'
               else cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-400'
             }
             return (
@@ -878,7 +879,7 @@ export function TodayLesson({
 
         <button
           onClick={reviewNext}
-          className="w-full flex items-center justify-center gap-2 bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 transition py-3 rounded-xl text-sm font-medium mt-3"
+          className="w-full flex items-center justify-center gap-2 bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 theme-light:text-violet-800 transition py-3 rounded-xl text-sm font-medium mt-3"
         >
           {reviewIdx + 1 >= wrongWords.length
             ? isA
@@ -1174,11 +1175,11 @@ export function SRSReview({
     <div className="animate-fade-in">
       {/* Banner thông báo Chế độ Offline */}
       {isOffline && (
-        <div className="bg-amber-500/15 border border-amber-500/30 rounded-xl p-3 mb-3 flex items-center gap-2.5 text-xs text-amber-300">
-          <WifiOff className="w-4 h-4 shrink-0 text-amber-400" />
+        <div className="bg-amber-500/15 border border-amber-500/30 rounded-xl p-3 mb-3 flex items-center gap-2.5 text-xs text-amber-300 theme-light:text-amber-900">
+          <WifiOff className="w-4 h-4 shrink-0 text-amber-400 theme-light:text-amber-900" />
           <div>
             <p className="font-semibold">{isA ? 'Chế độ Học Offline' : 'Offline Learning Mode'}</p>
-            <p className="text-amber-200/80">
+            <p className="text-amber-200 theme-light:text-amber-900/80">
               {isA
                 ? 'Bạn đang ôn tập ngoại tuyến. Lịch SRS & Âm thanh đã sẵn sàng offline, tiến độ tự đồng bộ khi có mạng.'
                 : 'Reviewing offline. SRS schedule & audio ready offline, progress auto-syncs when online.'}
@@ -1192,7 +1193,7 @@ export function SRSReview({
         <div className="glass rounded-xl px-3.5 py-2.5 mb-3 space-y-2 text-xs">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <Download className="w-4 h-4 text-sky-400 shrink-0" />
+              <Download className="w-4 h-4 text-sky-400 theme-light:text-sky-900 shrink-0" />
               <div>
                 <span className="text-zinc-200 font-medium">
                   {isA ? 'Tải trước SRS Offline:' : 'Offline SRS Pre-download:'}
@@ -1205,7 +1206,7 @@ export function SRSReview({
             </div>
             <button
               onClick={handlePreloadOffline}
-              className="px-3 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 font-medium transition text-xs shrink-0"
+              className="px-3 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 theme-light:text-sky-900 font-medium transition text-xs shrink-0"
             >
               {preloading
                 ? isA
@@ -1264,19 +1265,19 @@ export function SRSReview({
             r: 'again' as Rating,
             la: 'Quên',
             lb: 'Again',
-            cls: 'bg-rose-500/20 text-rose-300 hover:bg-rose-500/30',
+            cls: 'bg-rose-500/20 text-rose-300 theme-light:text-rose-900 hover:bg-rose-500/30',
           },
           {
             r: 'hard' as Rating,
             la: 'Khó',
             lb: 'Hard',
-            cls: 'bg-orange-500/20 text-orange-300 hover:bg-orange-500/30',
+            cls: 'bg-orange-500/20 text-orange-300 theme-light:text-orange-900 hover:bg-orange-500/30',
           },
           {
             r: 'good' as Rating,
             la: 'Nhớ',
             lb: 'Good',
-            cls: 'bg-sky-500/20 text-sky-300 hover:bg-sky-500/30',
+            cls: 'bg-sky-500/20 text-sky-300 theme-light:text-sky-900 hover:bg-sky-500/30',
           },
           {
             r: 'easy' as Rating,
@@ -1375,7 +1376,7 @@ export function HardWords({
 
       <button
         onClick={() => setIdx((i) => i + 1)}
-        className="w-full flex items-center justify-center gap-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 transition py-3 rounded-xl text-sm font-medium"
+        className="w-full flex items-center justify-center gap-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 theme-light:text-amber-900 transition py-3 rounded-xl text-sm font-medium"
       >
         <RotateCcw className="w-4 h-4" /> {isA ? 'Từ tiếp theo' : 'Next word'}
       </button>
@@ -1536,7 +1537,7 @@ export function QuizTab({
           {questions.map((qq, i) => (
             <div
               key={i}
-              className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm ${answers[i] ? 'bg-accent-500/10 text-accent-300' : 'bg-rose-500/10 text-rose-300'}`}
+              className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm ${answers[i] ? 'bg-accent-500/10 text-accent-300' : 'bg-rose-500/10 text-rose-300 theme-light:text-rose-900'}`}
             >
               <span>{answers[i] ? '✓' : '✗'}</span>
               <span className="font-medium truncate">{qq.prompt}</span>
@@ -1544,7 +1545,7 @@ export function QuizTab({
               {!answers[i] && qq.kind === 'grammar' && qq.lessonId && (
                 <button
                   onClick={() => onOpenLesson(qq.lessonId!)}
-                  className="text-xs text-violet-300 hover:text-violet-200 underline underline-offset-2 shrink-0"
+                  className="text-xs text-violet-300 theme-light:text-violet-800 hover:text-violet-200 underline underline-offset-2 shrink-0"
                 >
                   {isA ? 'Mở lại bài' : 'Review'}
                 </button>
@@ -1603,7 +1604,8 @@ export function QuizTab({
             if (opt === q.correct)
               cls = 'bg-accent-500/20 border-accent-500/60 text-accent-300 animate-pop-correct'
             else if (opt === selected)
-              cls = 'bg-rose-500/20 border-rose-500/60 text-rose-300 animate-shake'
+              cls =
+                'bg-rose-500/20 border-rose-500/60 text-rose-300 theme-light:text-rose-900 animate-shake'
             else cls = 'bg-zinc-900/40 border-zinc-800/40 text-zinc-400'
           }
           return (
@@ -1953,7 +1955,7 @@ function DictationPractice({
       {checked && result !== null && (
         <div className="space-y-2 animate-fade-in">
           <p
-            className={`text-sm font-bold text-center ${result >= DICTATION_PASS_PCT ? 'text-accent-400' : result >= 50 ? 'text-amber-400' : 'text-rose-400'}`}
+            className={`text-sm font-bold text-center ${result >= DICTATION_PASS_PCT ? 'text-accent-400' : result >= 50 ? 'text-amber-400 theme-light:text-amber-900' : 'text-rose-400 theme-light:text-rose-900'}`}
           >
             {result}% {result >= DICTATION_PASS_PCT ? (isA ? '· Đúng!' : '· Correct!') : ''}
           </p>
@@ -1964,7 +1966,7 @@ function DictationPractice({
                 className={`px-2 py-0.5 rounded-lg text-sm font-medium ${
                   w.ok
                     ? 'bg-accent-500/15 text-accent-300 border border-accent-500/25'
-                    : 'bg-rose-500/15 text-rose-300 border border-rose-500/25'
+                    : 'bg-rose-500/15 text-rose-300 theme-light:text-rose-900 border border-rose-500/25'
                 }`}
               >
                 {w.word}

@@ -124,7 +124,7 @@ export default function StemScratchpadModal({ onClose }: StemScratchpadModalProp
               <h2 id={titleId} className="text-base sm:text-lg font-bold text-white">
                 STEM Interactive Scratchpad
               </h2>
-              <p className="text-xs text-teal-300">
+              <p className="text-xs text-teal-300 theme-light:text-teal-900">
                 Kiểm thử từng bước biến đổi logic & nhận dạng sai lầm
               </p>
             </div>
@@ -166,16 +166,18 @@ export default function StemScratchpadModal({ onClose }: StemScratchpadModalProp
           {/* Problem Statement Card */}
           <div className="p-4 rounded-2xl bg-teal-950/20 border border-teal-500/20">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold text-teal-300 uppercase tracking-wide">Đề bài</h4>
+              <h4 className="text-xs font-bold text-teal-300 theme-light:text-teal-900 uppercase tracking-wide">
+                Đề bài
+              </h4>
               {problem?.isSolved && (
-                <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-900 border border-emerald-500/30 font-bold">
                   ✓ ĐÃ GIẢI XONG
                 </span>
               )}
             </div>
             <p className="text-sm text-white font-medium mt-1">{problem?.problemStatement}</p>
             {problem?.problemLatex && (
-              <div className="mt-2 font-mono text-xs px-3 py-1.5 rounded-xl bg-black/40 text-teal-200 border border-white/5">
+              <div className="mt-2 font-mono text-xs px-3 py-1.5 rounded-xl bg-black/40 text-teal-200 theme-light:text-teal-900 border border-white/5">
                 {problem.problemLatex}
               </div>
             )}
@@ -206,8 +208,8 @@ export default function StemScratchpadModal({ onClose }: StemScratchpadModalProp
                     <span
                       className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
                         step.validation?.isValid
-                          ? 'bg-emerald-500/20 text-emerald-300'
-                          : 'bg-rose-500/20 text-rose-300'
+                          ? 'bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-900'
+                          : 'bg-rose-500/20 text-rose-300 theme-light:text-rose-900'
                       }`}
                     >
                       {step.validation?.isValid ? '✓ Hợp lệ' : '✗ Cần chỉnh sửa'}
@@ -226,13 +228,13 @@ export default function StemScratchpadModal({ onClose }: StemScratchpadModalProp
                     <div
                       className={`mt-2 text-xs p-2 rounded-xl ${
                         step.validation.isValid
-                          ? 'bg-emerald-900/30 text-emerald-200'
-                          : 'bg-rose-900/30 text-rose-200'
+                          ? 'bg-emerald-900/30 text-emerald-200 theme-light:text-emerald-900'
+                          : 'bg-rose-900/30 text-rose-200 theme-light:text-rose-900'
                       }`}
                     >
                       {step.validation.feedback}
                       {step.validation.suggestedCorrection && (
-                        <div className="mt-1 font-mono text-[11px] text-amber-300">
+                        <div className="mt-1 font-mono text-[11px] text-amber-300 theme-light:text-amber-900">
                           Gợi ý: {step.validation.suggestedCorrection}
                         </div>
                       )}
@@ -245,7 +247,7 @@ export default function StemScratchpadModal({ onClose }: StemScratchpadModalProp
 
           {/* Micro Hint Display */}
           {activeHint && (
-            <div className="p-3.5 rounded-2xl bg-amber-950/30 border border-amber-500/30 text-amber-200 text-xs animate-fade-in flex items-start gap-2">
+            <div className="p-3.5 rounded-2xl bg-amber-950/30 border border-amber-500/30 text-amber-200 theme-light:text-amber-900 text-xs animate-fade-in flex items-start gap-2">
               <span className="text-base">💡</span>
               <div className="flex-1">
                 <span className="font-bold">Gợi ý từ AI Tutor: </span>
@@ -278,7 +280,7 @@ export default function StemScratchpadModal({ onClose }: StemScratchpadModalProp
                 type="button"
                 onClick={handleGetHint}
                 disabled={!problem || problem.isSolved}
-                className="px-3.5 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-xs text-amber-300 font-semibold transition-all"
+                className="px-3.5 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-xs text-amber-300 theme-light:text-amber-900 font-semibold transition-all"
                 title="Nhận gợi ý"
               >
                 💡 Gợi ý

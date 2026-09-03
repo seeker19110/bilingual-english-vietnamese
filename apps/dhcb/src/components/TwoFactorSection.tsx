@@ -263,7 +263,7 @@ export default function TwoFactorSection({ isA }: { isA: boolean }) {
           {step === 'codes' && (
             <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 space-y-2">
               <div className="flex items-center gap-2">
-                <KeyRound className="w-4 h-4 text-amber-400" />
+                <KeyRound className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
                 <h3 className="text-sm font-semibold text-amber-100 theme-light:text-amber-900">
                   {isA ? 'Mã khôi phục — lưu lại ngay' : 'Recovery codes — save them now'}
                 </h3>

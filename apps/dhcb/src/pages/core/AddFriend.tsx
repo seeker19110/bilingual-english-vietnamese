@@ -54,7 +54,9 @@ export default function AddFriend() {
         {target === undefined && <p className="text-sm text-zinc-400">Đang kiểm tra mã…</p>}
 
         {target === null && (
-          <p className="text-sm text-red-400">Mã kết bạn không tồn tại hoặc đã hết hiệu lực.</p>
+          <p className="text-sm text-red-400 theme-light:text-red-900">
+            Mã kết bạn không tồn tại hoặc đã hết hiệu lực.
+          </p>
         )}
 
         {target && !added && (
@@ -76,7 +78,10 @@ export default function AddFriend() {
 
         {added && target && (
           <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <CheckCircle2 className="mx-auto mb-3 text-green-400" size={40} />
+            <CheckCircle2
+              className="mx-auto mb-3 text-green-400 theme-light:text-green-900"
+              size={40}
+            />
             <p className="text-base text-white mb-6">Đã kết bạn thành công!</p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link

@@ -26,11 +26,11 @@ export default function TestResultList({ results }: Props) {
           <li key={i} className={`rounded-2xl border p-3.5 text-sm ${tone}`}>
             <p className="flex items-center gap-2 font-semibold text-zinc-100">
               {r.passed ? (
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 theme-light:text-emerald-900" />
               ) : systemError ? (
-                <XCircle className="w-4 h-4 text-rose-400" />
+                <XCircle className="w-4 h-4 text-rose-400 theme-light:text-rose-900" />
               ) : (
-                <AlertCircle className="w-4 h-4 text-amber-400" />
+                <AlertCircle className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
               )}
               <span>{r.hidden ? `Ca ẩn ${i + 1}` : r.label}</span>
             </p>

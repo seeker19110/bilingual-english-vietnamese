@@ -86,13 +86,13 @@ export default function KaraokeText({
   // Cột icon: CAO ĐÚNG BẰNG dòng chữ đầu tiên (xs ≈ text-xs 18px, sm ≈ text-sm/15px 22px)
   // để icon căn giữa với dòng đầu — không lệch xuống dưới khi văn bản nhiều dòng.
   const bSize = iconSize === 'xs' ? 'w-6 h-[1.125rem]' : 'w-7 h-[1.375rem]'
-  const accent = lang === 'en-US' ? 'text-accent-300' : 'text-sky-300'
+  const accent = lang === 'en-US' ? 'text-accent-300' : 'text-sky-300 theme-light:text-sky-900'
   const idle =
     lang === 'en-US' ? 'text-zinc-400 hover:text-accent-400' : 'text-zinc-400 hover:text-sky-400'
   const wordHl =
     lang === 'en-US'
       ? 'bg-accent-500/20 text-accent-200 rounded px-0.5'
-      : 'bg-sky-500/20 text-sky-200 rounded px-0.5'
+      : 'bg-sky-500/20 text-sky-200 theme-light:text-sky-900 rounded px-0.5'
 
   // Tách text thành [từ, khoảng-trắng, từ...] để giữ nguyên whitespace gốc
   const parts = text.split(/(\s+)/)

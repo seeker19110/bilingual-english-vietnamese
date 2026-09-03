@@ -181,16 +181,16 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
               {/* Budget Guardrails Banner */}
               <div className="p-3.5 rounded-2xl bg-zinc-900/40 border border-zinc-800/80 flex items-center justify-between text-xs text-zinc-400">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 theme-light:text-emerald-900 shrink-0" />
                   <span>Trần ngân sách: tối đa 50.000 tokens</span>
                 </div>
-                <span className="text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                <span className="text-[11px] font-semibold text-emerald-400 theme-light:text-emerald-900 bg-emerald-500/10 px-2 py-0.5 rounded-full">
                   Lá chắn bảo vệ
                 </span>
               </div>
 
               {error && (
-                <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
+                <div className="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 theme-light:text-rose-900 text-xs flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{error}</span>
                 </div>
@@ -201,7 +201,7 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
             <div className="space-y-4">
               <div className="p-4 rounded-2xl bg-gradient-to-r from-indigo-950/40 to-sky-950/40 border border-indigo-500/30 flex items-center justify-between">
                 <div>
-                  <span className="text-xs font-bold text-indigo-300 uppercase tracking-wider">
+                  <span className="text-xs font-bold text-indigo-300 theme-light:text-indigo-800 uppercase tracking-wider">
                     {activeSession.sessionTitle}
                   </span>
                   <p className="text-xs text-zinc-400 mt-0.5">
@@ -209,7 +209,7 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
                     {activeSession.totalTokensUsed} tokens
                   </p>
                 </div>
-                <span className="flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-500/15 px-2.5 py-1 rounded-full border border-emerald-500/25">
+                <span className="flex items-center gap-1 text-xs font-bold text-emerald-400 theme-light:text-emerald-900 bg-emerald-500/15 px-2.5 py-1 rounded-full border border-emerald-500/25">
                   <CheckCircle2 className="w-3.5 h-3.5" /> Hoàn tất
                 </span>
               </div>
@@ -227,7 +227,7 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
                     >
                       <div className="flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2">
-                          <span className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold text-[11px] flex items-center justify-center">
+                          <span className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-300 theme-light:text-indigo-800 font-bold text-[11px] flex items-center justify-center">
                             {step.stepIndex}
                           </span>
                           <span className="font-bold text-zinc-200 uppercase text-[11px] tracking-wider bg-zinc-800 px-2 py-0.5 rounded">
@@ -241,7 +241,7 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
                       </div>
 
                       {step.outputArtifact && (
-                        <div className="ml-7 text-[11px] text-emerald-400 font-medium">
+                        <div className="ml-7 text-[11px] text-emerald-400 theme-light:text-emerald-900 font-medium">
                           ✨ Sản phẩm: {step.outputArtifact}
                         </div>
                       )}

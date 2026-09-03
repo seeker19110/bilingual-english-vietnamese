@@ -211,7 +211,7 @@ export default function AdminPlanFeaturesPanel() {
                         type="button"
                         onClick={() => handleDelete(item.key)}
                         disabled={deletingKey === item.key}
-                        className="tap-44 inline-flex items-center justify-center rounded-lg border border-red-500/30 text-red-400 p-2 disabled:opacity-60"
+                        className="tap-44 inline-flex items-center justify-center rounded-lg border border-red-500/30 text-red-400 theme-light:text-red-900 p-2 disabled:opacity-60"
                         aria-label={`Xoá ${item.label}`}
                       >
                         {deletingKey === item.key ? (

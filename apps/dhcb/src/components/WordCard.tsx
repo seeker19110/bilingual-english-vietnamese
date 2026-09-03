@@ -81,7 +81,7 @@ export default function WordCard({
           className="tap-44 absolute top-2 right-2 z-10 p-2.5 rounded-full hover:bg-zinc-700/50 transition"
         >
           <Star
-            className={`w-4 h-4 transition ${difficult ? 'fill-amber-400 text-amber-400' : 'text-zinc-400 hover:text-zinc-200'}`}
+            className={`w-4 h-4 transition ${difficult ? 'fill-amber-400 text-amber-400 theme-light:text-amber-900' : 'text-zinc-400 hover:text-zinc-200'}`}
           />
         </button>
 

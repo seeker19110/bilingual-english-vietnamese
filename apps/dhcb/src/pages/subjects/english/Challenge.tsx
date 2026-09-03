@@ -847,7 +847,7 @@ export default function Challenge() {
                   />
                 ) : (
                   <div className="w-full h-40 rounded-2xl bg-zinc-900 border border-red-500/30 flex items-center justify-center">
-                    <Mic className="w-10 h-10 text-red-400 animate-pulse" />
+                    <Mic className="w-10 h-10 text-red-400 theme-light:text-red-900 animate-pulse" />
                   </div>
                 )}
                 <p className="text-sm text-red-400 theme-light:text-red-700 font-mono">

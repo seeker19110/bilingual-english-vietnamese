@@ -92,7 +92,7 @@ export default function ProgrammingHome() {
         {xongMon ? (
           <section className="rounded-3xl border border-emerald-500/40 bg-emerald-500/10 p-5 space-y-2">
             <h2 className="text-base font-bold text-white flex items-center gap-2">
-              <PartyPopper className="w-5 h-5 text-emerald-400" />
+              <PartyPopper className="w-5 h-5 text-emerald-400 theme-light:text-emerald-900" />
               <span>Bạn đã đi hết {total} bài của môn</span>
             </h2>
             <p className="text-sm text-zinc-100 leading-relaxed">

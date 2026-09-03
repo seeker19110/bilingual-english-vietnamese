@@ -59,7 +59,7 @@ function DoneToggle({ done, label, onDone }: { done: boolean; label: string; onD
       disabled={done}
       className={`tap-44 shrink-0 w-9 h-9 rounded-xl border flex items-center justify-center transition ${
         done
-          ? 'border-emerald-500/60 bg-emerald-500/20 text-emerald-300'
+          ? 'border-emerald-500/60 bg-emerald-500/20 text-emerald-300 theme-light:text-emerald-900'
           : 'border-zinc-700 bg-zinc-950 text-zinc-400 hover:border-accent-500 hover:text-accent-400'
       }`}
     >

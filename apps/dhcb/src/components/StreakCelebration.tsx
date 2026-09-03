@@ -85,7 +85,7 @@ export default function StreakCelebration({
                 {d.active ? '✓' : ''}
               </span>
               <span
-                className={`text-[11px] ${isToday ? 'text-orange-400 font-bold' : 'text-zinc-500'}`}
+                className={`text-[11px] ${isToday ? 'text-orange-400 theme-light:text-orange-900 font-bold' : 'text-zinc-500'}`}
               >
                 {dowLabels[d.dow]}
               </span>

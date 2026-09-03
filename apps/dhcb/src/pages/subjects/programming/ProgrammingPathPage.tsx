@@ -189,7 +189,7 @@ export default function ProgrammingPathPage() {
                           {stage?.name ?? ref.stageId}
                           {xong && (
                             <CheckCircle2
-                              className="inline-block w-4 h-4 text-emerald-400 ml-1.5 align-text-bottom"
+                              className="inline-block w-4 h-4 text-emerald-400 theme-light:text-emerald-900 ml-1.5 align-text-bottom"
                               aria-label="Đã xong"
                             />
                           )}

@@ -332,7 +332,7 @@ export default function Dashboard() {
             }`}
           >
             <Flame
-              className={`w-7 h-7 ${stats.streak > 0 ? 'text-orange-400' : 'text-zinc-400'}`}
+              className={`w-7 h-7 ${stats.streak > 0 ? 'text-orange-400 theme-light:text-orange-900' : 'text-zinc-400'}`}
             />
           </div>
           <div>
@@ -420,7 +420,8 @@ export default function Dashboard() {
       {/* ── Hôm nay ──────────────────────────────────────────────────── */}
       <section className="animate-fade-in">
         <h2 className="text-sm font-semibold text-zinc-300 mb-3 flex items-center gap-2">
-          <Target className="w-4 h-4 text-lime-400" /> {vi ? 'Hôm nay' : 'Today'}
+          <Target className="w-4 h-4 text-lime-400 theme-light:text-lime-900" />{' '}
+          {vi ? 'Hôm nay' : 'Today'}
         </h2>
 
         {/* Mục tiêu từ mới hôm nay */}
@@ -475,13 +476,13 @@ export default function Dashboard() {
                 max: stats.limit.chat,
               },
               {
-                icon: <Mic className="w-4 h-4 text-sky-400" />,
+                icon: <Mic className="w-4 h-4 text-sky-400 theme-light:text-sky-900" />,
                 label: vi ? 'Nói' : 'Speak',
                 used: stats.usage.speakingCount,
                 max: stats.limit.speaking,
               },
               {
-                icon: <PenLine className="w-4 h-4 text-violet-400" />,
+                icon: <PenLine className="w-4 h-4 text-violet-400 theme-light:text-violet-800" />,
                 label: vi ? 'Viết' : 'Write',
                 used: stats.usage.writingCount,
                 max: stats.limit.writing,
@@ -506,24 +507,25 @@ export default function Dashboard() {
       {/* ── Từ vựng ──────────────────────────────────────────────────── */}
       <section className="animate-fade-in">
         <h2 className="text-sm font-semibold text-zinc-300 mb-3 flex items-center gap-2">
-          <BookOpen className="w-4 h-4 text-amber-400" /> {vi ? 'Từ vựng' : 'Vocabulary'}
+          <BookOpen className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />{' '}
+          {vi ? 'Từ vựng' : 'Vocabulary'}
         </h2>
         <div className="grid grid-cols-3 gap-3">
           <StatCard
-            icon={<BookOpen className="w-5 h-5 text-amber-300" />}
+            icon={<BookOpen className="w-5 h-5 text-amber-300 theme-light:text-amber-900" />}
             color="bg-amber-500/10"
             value={stats.learnedTotal}
             label={vi ? 'từ đã thuộc' : 'words learned'}
           />
           <StatCard
-            icon={<RotateCcw className="w-5 h-5 text-teal-300" />}
+            icon={<RotateCcw className="w-5 h-5 text-teal-300 theme-light:text-teal-900" />}
             color="bg-teal-500/10"
             value={stats.srs.due}
             label={vi ? 'cần ôn hôm nay' : 'due to review'}
             sub={vi ? `${stats.srs.total} trong SRS` : `${stats.srs.total} in SRS`}
           />
           <StatCard
-            icon={<TrendingUp className="w-5 h-5 text-lime-300" />}
+            icon={<TrendingUp className="w-5 h-5 text-lime-300 theme-light:text-lime-900" />}
             color="bg-lime-500/10"
             value={
               stats.path.total ? `${Math.round((stats.path.done / stats.path.total) * 100)}%` : '—'
@@ -538,7 +540,7 @@ export default function Dashboard() {
       {stats.mistakes.total > 0 && (
         <section className="animate-fade-in">
           <h2 className="text-sm font-semibold text-zinc-300 mb-3 flex items-center gap-2">
-            <BookMarked className="w-4 h-4 text-rose-400" />{' '}
+            <BookMarked className="w-4 h-4 text-rose-400 theme-light:text-rose-900" />{' '}
             {vi ? 'Sổ lỗi của tôi' : 'Mistake Bank'}
           </h2>
           <button
@@ -622,7 +624,7 @@ export default function Dashboard() {
       {/* ── Điểm IELTS luyện viết theo thời gian ─────────────────────── */}
       <section className="animate-fade-in">
         <h2 className="text-sm font-semibold text-zinc-300 mb-3 flex items-center gap-2">
-          <PenLine className="w-4 h-4 text-violet-400" />{' '}
+          <PenLine className="w-4 h-4 text-violet-400 theme-light:text-violet-800" />{' '}
           {vi ? 'Điểm viết IELTS (ước lượng)' : 'IELTS writing score (estimated)'}
         </h2>
 
@@ -649,7 +651,7 @@ export default function Dashboard() {
                 <p className="text-[11px] text-zinc-400 mt-1">{vi ? 'gần nhất' : 'latest'}</p>
               </div>
               <div className="text-center border-x border-zinc-800">
-                <p className="text-2xl font-bold leading-none text-amber-300 flex items-center justify-center gap-1">
+                <p className="text-2xl font-bold leading-none text-amber-300 theme-light:text-amber-900 flex items-center justify-center gap-1">
                   <Trophy className="w-4 h-4" />
                   {wp.best}
                 </p>
@@ -726,13 +728,13 @@ export default function Dashboard() {
             label={vi ? 'phiên chat' : 'chat sessions'}
           />
           <StatCard
-            icon={<Mic className="w-5 h-5 text-sky-300" />}
+            icon={<Mic className="w-5 h-5 text-sky-300 theme-light:text-sky-900" />}
             color="bg-sky-500/10"
             value={stats.speakN}
             label={vi ? 'lượt luyện nói' : 'speaking turns'}
           />
           <StatCard
-            icon={<PenLine className="w-5 h-5 text-violet-300" />}
+            icon={<PenLine className="w-5 h-5 text-violet-300 theme-light:text-violet-800" />}
             color="bg-violet-500/10"
             value={stats.writeN}
             label={vi ? 'bài đã chấm' : 'graded essays'}

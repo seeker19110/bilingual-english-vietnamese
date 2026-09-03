@@ -37,7 +37,7 @@ export default function MessageBubble({ message, isMine, onDelete }: MessageBubb
                 <button
                   type="button"
                   onClick={() => onDelete(message.id)}
-                  className="text-red-400 hover:text-red-300 font-semibold px-1 min-h-[28px] flex items-center"
+                  className="text-red-400 theme-light:text-red-900 hover:text-red-300 font-semibold px-1 min-h-[28px] flex items-center"
                 >
                   Có
                 </button>
@@ -80,7 +80,7 @@ export default function MessageBubble({ message, isMine, onDelete }: MessageBubb
           >
             {isFiltered && (
               <span
-                className="inline-flex items-center gap-0.5 text-amber-300 text-[11px]"
+                className="inline-flex items-center gap-0.5 text-amber-300 theme-light:text-amber-900 text-[11px]"
                 title="Một số từ ngữ đã được lọc theo tiêu chuẩn cộng đồng"
               >
                 <ShieldAlert size={11} />

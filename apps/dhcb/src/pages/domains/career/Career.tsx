@@ -829,7 +829,7 @@ export default function Career({ embedded = false }: { embedded?: boolean } = {}
                 id="isCurrent"
                 checked={expForm.isCurrent}
                 onChange={(e) => setExpForm({ ...expForm, isCurrent: e.target.checked })}
-                className="rounded bg-zinc-950 border-zinc-800 text-emerald-600 focus:ring-emerald-500"
+                className="rounded bg-zinc-950 border-zinc-800 text-emerald-600 theme-light:text-emerald-900 focus:ring-emerald-500"
               />
               <label htmlFor="isCurrent" className="text-xs text-zinc-300">
                 Tôi hiện đang làm việc tại đây

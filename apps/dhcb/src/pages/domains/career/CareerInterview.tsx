@@ -135,9 +135,9 @@ export default function CareerInterview() {
         {degraded && (
           <div
             role="status"
-            className="flex items-start gap-2 rounded-2xl border border-amber-500/40 bg-amber-950/20 p-3.5 text-xs text-amber-200"
+            className="flex items-start gap-2 rounded-2xl border border-amber-500/40 bg-amber-950/20 p-3.5 text-xs text-amber-200 theme-light:text-amber-900"
           >
-            <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-400 theme-light:text-amber-900" />
             <p className="leading-relaxed">
               Hiện chưa kết nối được trợ lý AI. Nội dung bên dưới là bộ mặc định, KHÔNG phải do AI
               soạn hay chấm riêng cho bạn — và lượt dùng của bạn chưa bị tính.
@@ -148,7 +148,7 @@ export default function CareerInterview() {
         {/* Cấu hình dạng phỏng vấn */}
         <section className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-zinc-800 bg-zinc-900/80 p-4">
           <div className="flex items-center gap-2">
-            <Briefcase className="h-5 w-5 text-emerald-400" />
+            <Briefcase className="h-5 w-5 text-emerald-400 theme-light:text-emerald-900" />
             <span className="text-sm font-semibold text-white">Chế độ phỏng vấn:</span>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -196,10 +196,10 @@ export default function CareerInterview() {
                 {/* Câu hỏi từ người phỏng vấn AI */}
                 <div className="flex items-start gap-3 rounded-2xl border border-zinc-800 bg-zinc-900/90 p-4 shadow-lg">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-emerald-500/30 bg-emerald-500/15">
-                    <Bot className="h-5 w-5 text-emerald-400" />
+                    <Bot className="h-5 w-5 text-emerald-400 theme-light:text-emerald-900" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <span className="mb-1 block text-xs font-bold uppercase tracking-wider text-emerald-400">
+                    <span className="mb-1 block text-xs font-bold uppercase tracking-wider text-emerald-400 theme-light:text-emerald-900">
                       Người phỏng vấn AI • Câu hỏi {index + 1}
                     </span>
                     <p className="text-sm font-medium leading-relaxed text-white">
@@ -239,7 +239,7 @@ export default function CareerInterview() {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Award className="h-4 w-4 text-amber-400" />
+                        <Award className="h-4 w-4 text-amber-400 theme-light:text-amber-900" />
                         <span className="text-xs font-bold uppercase text-white">
                           {turn.feedback.isFallback ? 'Chưa chấm được' : 'Đánh giá & Chấm điểm'}
                         </span>
@@ -252,7 +252,7 @@ export default function CareerInterview() {
                               {PROFICIENCY_BAND_LABELS[turn.feedback.bandSignal]}
                             </span>
                           )}
-                          <span className="rounded-full border border-emerald-500/40 bg-emerald-500/20 px-2.5 py-0.5 text-xs font-bold text-emerald-300">
+                          <span className="rounded-full border border-emerald-500/40 bg-emerald-500/20 px-2.5 py-0.5 text-xs font-bold text-emerald-300 theme-light:text-emerald-900">
                             {turn.feedback.score} / 10
                           </span>
                         </div>
@@ -261,7 +261,7 @@ export default function CareerInterview() {
 
                     {turn.feedback.strengths.length > 0 && (
                       <div className="space-y-1">
-                        <span className="flex items-center gap-1 text-xs font-semibold text-emerald-400">
+                        <span className="flex items-center gap-1 text-xs font-semibold text-emerald-400 theme-light:text-emerald-900">
                           <CheckCircle2 className="h-3.5 w-3.5" /> Điểm mạnh:
                         </span>
                         <ul className="list-inside list-disc space-y-0.5 pl-1 text-xs text-zinc-300">
@@ -274,7 +274,7 @@ export default function CareerInterview() {
 
                     {turn.feedback.improvements.length > 0 && (
                       <div className="space-y-1">
-                        <span className="flex items-center gap-1 text-xs font-semibold text-amber-400">
+                        <span className="flex items-center gap-1 text-xs font-semibold text-amber-400 theme-light:text-amber-900">
                           <AlertTriangle className="h-3.5 w-3.5" /> Gợi ý cải thiện:
                         </span>
                         <ul className="list-inside list-disc space-y-0.5 pl-1 text-xs text-zinc-300">

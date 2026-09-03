@@ -21,7 +21,7 @@ const PAGE_SIZE = 20
 const PLAN_BADGE: Record<AdminUserRow['plan'], string> = {
   free: 'bg-zinc-800 text-zinc-400',
   pro: 'bg-accent-500/15 text-accent-300 border border-accent-500/30',
-  vip: 'bg-amber-500/15 text-amber-300 border border-amber-500/30',
+  vip: 'bg-amber-500/15 text-amber-300 theme-light:text-amber-900 border border-amber-500/30',
 }
 
 function formatDate(iso: string | null): string {

@@ -24,8 +24,8 @@ import type { UiLang } from '../../lib/uiLang'
 // Nhãn tính năng lấy từ i18n theo `key` (icon + màu cố định, chữ dịch theo ngôn ngữ)
 const FEATURES = [
   { icon: MessageCircle, key: 'featChat', color: 'text-accent-400' },
-  { icon: Mic, key: 'featSpeak', color: 'text-sky-400' },
-  { icon: PenLine, key: 'featScore', color: 'text-violet-400' },
+  { icon: Mic, key: 'featSpeak', color: 'text-sky-400 theme-light:text-sky-900' },
+  { icon: PenLine, key: 'featScore', color: 'text-violet-400 theme-light:text-violet-800' },
 ] as const
 
 export default function Login() {
@@ -380,7 +380,7 @@ export default function Login() {
           )}
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-3 py-2 text-xs text-red-400">
+            <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-3 py-2 text-xs text-red-400 theme-light:text-red-900">
               {error}
             </div>
           )}
@@ -444,7 +444,7 @@ export default function Login() {
             type="button"
             onClick={handleGoogleRedirect}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-medium py-2.5 rounded-xl text-xs transition active:scale-[0.98] mt-2"
+            className="w-full flex items-center justify-center gap-2 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 theme-light:text-amber-900 font-medium py-2.5 rounded-xl text-xs transition active:scale-[0.98] mt-2"
           >
             <span>🌐</span>
             {isA ? 'Đăng nhập Google (Chuyển trang)' : 'Continue with Google (Redirect)'}

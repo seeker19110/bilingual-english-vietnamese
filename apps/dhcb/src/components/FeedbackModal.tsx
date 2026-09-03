@@ -121,7 +121,7 @@ export default function FeedbackModal({ isOpen, onClose, initialCategory = 'feat
 
         {success ? (
           <div className="py-8 text-center space-y-4 animate-fade-in">
-            <div className="w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400">
+            <div className="w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400 theme-light:text-emerald-900">
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <div>
@@ -206,7 +206,7 @@ export default function FeedbackModal({ isOpen, onClose, initialCategory = 'feat
                     <Star
                       className={`w-6 h-6 transition-transform group-hover:scale-110 ${
                         star <= rating
-                          ? 'text-amber-400 fill-amber-400'
+                          ? 'text-amber-400 theme-light:text-amber-900 fill-amber-400'
                           : 'text-zinc-600 group-hover:text-zinc-400'
                       }`}
                     />

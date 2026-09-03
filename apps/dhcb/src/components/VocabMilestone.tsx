@@ -42,7 +42,7 @@ export default function VocabMilestone({ userId, refreshKey }: Props) {
     <div className="glass rounded-xl p-4 mb-4 animate-fade-in">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Trophy className="w-4 h-4 text-amber-400" />
+          <Trophy className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
           <span className="text-sm font-semibold text-white">Mốc từ vựng</span>
         </div>
         <span className="text-xs text-zinc-400">

@@ -138,13 +138,13 @@ export default function PvPBattlefieldModal({
         {/* Header: Thanh điểm và Avatar đối đầu */}
         <div className="flex items-center justify-between pb-4 border-b border-zinc-800/80">
           <div className="flex items-center gap-2">
-            <span className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-base border border-amber-500/40">
+            <span className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 theme-light:text-amber-900 flex items-center justify-center font-bold text-base border border-amber-500/40">
               ⚔️
             </span>
             <div>
               <div
                 id={titleId}
-                className="text-xs font-bold text-amber-400 uppercase tracking-wider"
+                className="text-xs font-bold text-amber-400 theme-light:text-amber-900 uppercase tracking-wider"
               >
                 Đấu Trường 1v1 PvP
               </div>
@@ -172,26 +172,34 @@ export default function PvPBattlefieldModal({
               {match.player1.avatar}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="text-xs font-bold text-indigo-300 truncate">{match.player1.name}</div>
+              <div className="text-xs font-bold text-indigo-300 theme-light:text-indigo-800 truncate">
+                {match.player1.name}
+              </div>
               <div className="text-lg sm:text-xl font-black text-white flex items-center gap-1.5">
                 <span>{p1Score}</span>
-                <span className="text-[11px] font-semibold text-indigo-400">pts</span>
+                <span className="text-[11px] font-semibold text-indigo-400 theme-light:text-indigo-800">
+                  pts
+                </span>
               </div>
             </div>
           </div>
 
           {/* Biểu tượng VS tâm điểm */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/50 flex items-center justify-center text-xs font-black shadow-lg backdrop-blur-md z-10">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 theme-light:text-amber-900 border border-amber-500/50 flex items-center justify-center text-xs font-black shadow-lg backdrop-blur-md z-10">
             VS
           </div>
 
           {/* Đối thủ (Player 2 / Ghost Rival) */}
           <div className="flex items-center justify-end gap-3 p-3 rounded-2xl bg-purple-950/40 border border-purple-500/30 text-right">
             <div className="min-w-0 flex-1">
-              <div className="text-xs font-bold text-purple-300 truncate">{match.player2.name}</div>
+              <div className="text-xs font-bold text-purple-300 theme-light:text-purple-800 truncate">
+                {match.player2.name}
+              </div>
               <div className="text-lg sm:text-xl font-black text-white flex items-center justify-end gap-1.5">
                 <span>{p2Score}</span>
-                <span className="text-[11px] font-semibold text-purple-400">pts</span>
+                <span className="text-[11px] font-semibold text-purple-400 theme-light:text-purple-800">
+                  pts
+                </span>
               </div>
             </div>
             <div className="w-11 h-11 rounded-2xl bg-purple-500/20 text-2xl flex items-center justify-center border border-purple-400/40 shrink-0">
@@ -214,17 +222,18 @@ export default function PvPBattlefieldModal({
                   : 'DEFEAT — CỐ GẮNG Ở TRẬN SAU!'}
             </h3>
             <p className="text-xs sm:text-sm text-zinc-300 mt-1">
-              Điểm chung cuộc: <strong className="text-amber-400">{p1Score}</strong> vs{' '}
+              Điểm chung cuộc:{' '}
+              <strong className="text-amber-400 theme-light:text-amber-900">{p1Score}</strong> vs{' '}
               <strong className="text-zinc-400">{p2Score}</strong>
             </p>
 
             <div className="my-4 flex items-center justify-center gap-4 text-xs font-bold">
-              <div className="px-3.5 py-1.5 rounded-xl bg-amber-500/15 text-amber-300 border border-amber-500/30 flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-amber-400" />
+              <div className="px-3.5 py-1.5 rounded-xl bg-amber-500/15 text-amber-300 theme-light:text-amber-900 border border-amber-500/30 flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
                 <span>+{p1Score > p2Score ? 16 : p1Score === p2Score ? 0 : -14} Elo Rating</span>
               </div>
-              <div className="px-3.5 py-1.5 rounded-xl bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 flex items-center gap-1.5">
-                <Zap className="w-4 h-4 text-indigo-400" />
+              <div className="px-3.5 py-1.5 rounded-xl bg-indigo-500/15 text-indigo-300 theme-light:text-indigo-800 border border-indigo-500/30 flex items-center gap-1.5">
+                <Zap className="w-4 h-4 text-indigo-400 theme-light:text-indigo-800" />
                 <span>+{match.rewardExp || 120} Exp</span>
               </div>
             </div>
@@ -243,12 +252,12 @@ export default function PvPBattlefieldModal({
             <div className="my-3">
               {/* Thanh đồng hồ đếm ngược phản xạ */}
               <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400 theme-light:text-amber-900">
                   <Timer className="w-4 h-4 animate-pulse" />
                   <span>Thời gian: {timeLeft}s</span>
                 </div>
                 <div className="flex items-center gap-1 text-[11px] font-semibold text-zinc-400">
-                  <Flame className="w-3.5 h-3.5 text-orange-400" />
+                  <Flame className="w-3.5 h-3.5 text-orange-400 theme-light:text-orange-900" />
                   <span>Cấp độ: {currentQ.cefrLevel}</span>
                 </div>
               </div>
@@ -287,14 +296,16 @@ export default function PvPBattlefieldModal({
                   if (roundResult) {
                     if (isCorrect) {
                       btnStyle =
-                        'bg-emerald-950/80 border-emerald-500 text-emerald-300 shadow-lg shadow-emerald-500/20 font-bold'
+                        'bg-emerald-950/80 border-emerald-500 text-emerald-300 theme-light:text-emerald-900 shadow-lg shadow-emerald-500/20 font-bold'
                     } else if (isWrong) {
-                      btnStyle = 'bg-rose-950/80 border-rose-500 text-rose-300 font-bold'
+                      btnStyle =
+                        'bg-rose-950/80 border-rose-500 text-rose-300 theme-light:text-rose-900 font-bold'
                     } else {
                       btnStyle = 'opacity-40 border-zinc-800 text-zinc-500'
                     }
                   } else if (isSelected) {
-                    btnStyle = 'bg-amber-500/20 border-amber-400 text-amber-300 font-bold'
+                    btnStyle =
+                      'bg-amber-500/20 border-amber-400 text-amber-300 theme-light:text-amber-900 font-bold'
                   }
 
                   return (
@@ -307,10 +318,10 @@ export default function PvPBattlefieldModal({
                     >
                       <span>{opt}</span>
                       {roundResult && isCorrect && (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 theme-light:text-emerald-900 shrink-0" />
                       )}
                       {roundResult && isWrong && (
-                        <XCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                        <XCircle className="w-4 h-4 text-rose-400 theme-light:text-rose-900 shrink-0" />
                       )}
                     </button>
                   )
@@ -319,8 +330,8 @@ export default function PvPBattlefieldModal({
 
               {/* Giải thích sau khi trả lời */}
               {roundResult?.showExplanation && (
-                <div className="mt-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200 animate-fade-in flex items-start gap-2">
-                  <Sparkles className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                <div className="mt-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200 theme-light:text-amber-900 animate-fade-in flex items-start gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-400 theme-light:text-amber-900 shrink-0 mt-0.5" />
                   <div>
                     <strong>Giải thích:</strong> {currentQ.explanation}
                     <div className="mt-1 text-[11px] text-zinc-300">

@@ -171,7 +171,7 @@ export default function QuestsPanel({ isA, userId }: { isA: boolean; userId?: st
             status={e.claimed ? 'done' : 'ready'}
             action={
               e.claimed ? (
-                <span className="inline-flex items-center gap-1 text-xs text-emerald-400">
+                <span className="inline-flex items-center gap-1 text-xs text-emerald-400 theme-light:text-emerald-900">
                   <Check className="w-3.5 h-3.5" />
                   {isA ? 'Đã nhận' : 'Claimed'}
                 </span>

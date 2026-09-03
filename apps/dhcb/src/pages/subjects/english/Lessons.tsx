@@ -1014,7 +1014,7 @@ function LessonView({
               {playing && !paused && (
                 <button
                   onClick={handlePause}
-                  className="tap-44-y flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-medium transition"
+                  className="tap-44-y flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 theme-light:text-amber-900 text-xs font-medium transition"
                 >
                   <Pause className="w-3 h-3 fill-current" />
                   {isA ? 'Dừng' : 'Pause'}
@@ -1058,7 +1058,7 @@ function LessonView({
               >
                 <ChevronUp className="w-3.5 h-3.5" />
               </button>
-              <span className="min-w-[30px] text-center px-1.5 py-0.5 rounded text-xs font-medium bg-sky-500/20 text-sky-300 border border-sky-500/40">
+              <span className="min-w-[30px] text-center px-1.5 py-0.5 rounded text-xs font-medium bg-sky-500/20 text-sky-300 theme-light:text-sky-900 border border-sky-500/40">
                 {speed}×
               </span>
               <button
@@ -1082,7 +1082,7 @@ function LessonView({
                   onClick={() => changeMode(m.key)}
                   className={`px-1.5 py-0.5 rounded text-xs font-medium transition ${
                     mode === m.key
-                      ? 'bg-violet-500/20 text-violet-300 border border-violet-500/40'
+                      ? 'bg-violet-500/20 text-violet-300 theme-light:text-violet-800 border border-violet-500/40'
                       : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'
                   }`}
                 >
@@ -1137,7 +1137,7 @@ function LessonView({
                           </button>
                         </div>
                         {!canRecord && (
-                          <p className="text-[11px] text-amber-400 mt-2">
+                          <p className="text-[11px] text-amber-400 theme-light:text-amber-900 mt-2">
                             {isA
                               ? 'Trình duyệt này không hỗ trợ ghi âm.'
                               : 'This browser does not support recording.'}
@@ -1488,8 +1488,8 @@ export function InlinePronounce({
           onClick={status === 'listening' ? stop : start}
           className={`tap-44 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition ${
             status === 'listening'
-              ? 'bg-rose-500/20 text-rose-300'
-              : 'bg-violet-500/20 text-violet-300 hover:bg-violet-500/30'
+              ? 'bg-rose-500/20 text-rose-300 theme-light:text-rose-900'
+              : 'bg-violet-500/20 text-violet-300 theme-light:text-violet-800 hover:bg-violet-500/30'
           }`}
         >
           {status === 'listening' ? (
@@ -1530,7 +1530,9 @@ export function InlinePronounce({
                 <span
                   key={i}
                   className={`px-1.5 py-0.5 rounded text-xs ${
-                    w.ok ? 'bg-accent-500/15 text-accent-300' : 'bg-rose-500/15 text-rose-300'
+                    w.ok
+                      ? 'bg-accent-500/15 text-accent-300'
+                      : 'bg-rose-500/15 text-rose-300 theme-light:text-rose-900'
                   }`}
                 >
                   {w.word}
@@ -1549,7 +1551,7 @@ export function InlinePronounce({
           </button>
         </div>
       )}
-      {err && <p className="text-[11px] text-rose-400">{err}</p>}
+      {err && <p className="text-[11px] text-rose-400 theme-light:text-rose-900">{err}</p>}
     </div>
   )
 }

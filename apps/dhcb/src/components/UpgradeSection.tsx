@@ -235,7 +235,7 @@ export default function UpgradeSection({
         className="bg-zinc-900/80 border border-amber-500/30 rounded-2xl p-4 animate-fade-in scroll-mt-4"
       >
         <div className="flex items-center gap-2 mb-1.5">
-          <Crown className="w-4 h-4 text-amber-400" />
+          <Crown className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
           <h2 className="text-sm font-semibold text-white">
             {isA ? 'Nâng cấp Pro/VIP' : 'Upgrade to Pro/VIP'}
           </h2>
@@ -322,7 +322,7 @@ export default function UpgradeSection({
       className="bg-zinc-900/80 border border-amber-500/30 rounded-2xl p-4 animate-fade-in scroll-mt-4"
     >
       <div className="flex items-center gap-2 mb-3">
-        <Crown className="w-4 h-4 text-amber-400" />
+        <Crown className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
         <h2 className="text-sm font-semibold text-white">
           {isA ? 'Nâng cấp Pro/VIP' : 'Upgrade to Pro/VIP'}
         </h2>
@@ -330,7 +330,7 @@ export default function UpgradeSection({
 
       {paid ? (
         <div className="text-center py-4">
-          <Sparkles className="w-8 h-8 text-amber-400 mx-auto mb-2" />
+          <Sparkles className="w-8 h-8 text-amber-400 theme-light:text-amber-900 mx-auto mb-2" />
           <p className="text-sm font-semibold text-white mb-1">
             {isA ? 'Thanh toán thành công! 🎉' : 'Payment successful! 🎉'}
           </p>
@@ -376,7 +376,7 @@ export default function UpgradeSection({
               >
                 {checkout.paymentCode}
                 {copied ? (
-                  <Check className="w-3.5 h-3.5 text-green-400" />
+                  <Check className="w-3.5 h-3.5 text-green-400 theme-light:text-green-900" />
                 ) : (
                   <Copy className="w-3.5 h-3.5 text-zinc-400" />
                 )}

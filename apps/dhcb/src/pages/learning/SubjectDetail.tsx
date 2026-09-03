@@ -274,42 +274,42 @@ export default function SubjectDetail() {
       from: 'from-blue-600/30',
       via: 'via-cyan-600/15',
       to: 'to-indigo-600/20',
-      accent: 'text-blue-400',
+      accent: 'text-blue-400 theme-light:text-blue-800',
       ring: 'ring-blue-500/30',
     },
     physics: {
       from: 'from-purple-600/30',
       via: 'via-violet-600/15',
       to: 'to-indigo-600/20',
-      accent: 'text-purple-400',
+      accent: 'text-purple-400 theme-light:text-purple-800',
       ring: 'ring-purple-500/30',
     },
     chemistry: {
       from: 'from-amber-600/30',
       via: 'via-orange-600/15',
       to: 'to-yellow-600/20',
-      accent: 'text-amber-400',
+      accent: 'text-amber-400 theme-light:text-amber-900',
       ring: 'ring-amber-500/30',
     },
     biology: {
       from: 'from-rose-600/30',
       via: 'via-pink-600/15',
       to: 'to-red-600/20',
-      accent: 'text-rose-400',
+      accent: 'text-rose-400 theme-light:text-rose-900',
       ring: 'ring-rose-500/30',
     },
     english: {
       from: 'from-emerald-600/30',
       via: 'via-teal-600/15',
       to: 'to-green-600/20',
-      accent: 'text-emerald-400',
+      accent: 'text-emerald-400 theme-light:text-emerald-900',
       ring: 'ring-emerald-500/30',
     },
     programming: {
       from: 'from-indigo-600/30',
       via: 'via-blue-600/15',
       to: 'to-violet-600/20',
-      accent: 'text-indigo-400',
+      accent: 'text-indigo-400 theme-light:text-indigo-800',
       ring: 'ring-indigo-500/30',
     },
   }
@@ -437,7 +437,7 @@ export default function SubjectDetail() {
                 : 'text-zinc-400 hover:text-zinc-200'
             }`}
           >
-            <Flame className="w-4 h-4 text-orange-400" />
+            <Flame className="w-4 h-4 text-orange-400 theme-light:text-orange-900" />
             <span>Bài Tập Trọng Tâm</span>
           </button>
         </div>
@@ -506,7 +506,7 @@ export default function SubjectDetail() {
                       onClick={() => fileInputRef.current?.click()}
                       className="tap-44 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs font-semibold text-zinc-300 hover:text-white transition"
                     >
-                      <Camera className="w-4 h-4 text-indigo-400" />
+                      <Camera className="w-4 h-4 text-indigo-400 theme-light:text-indigo-800" />
                       <span>{imagePreview ? 'Đổi ảnh đề bài' : 'Chụp / Tải ảnh đề'}</span>
                     </button>
 
@@ -515,7 +515,7 @@ export default function SubjectDetail() {
                       onClick={() => setIsCalendarModalOpen(true)}
                       className="tap-44 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-xs font-semibold text-zinc-300 hover:text-white transition"
                     >
-                      <Calendar className="w-4 h-4 text-blue-400" />
+                      <Calendar className="w-4 h-4 text-blue-400 theme-light:text-blue-800" />
                       <span>Lên lịch học Google</span>
                     </button>
                   </div>
@@ -569,7 +569,7 @@ export default function SubjectDetail() {
               <section className="bg-zinc-900/90 border border-accent-500/30 rounded-3xl p-5 sm:p-6 space-y-4 animate-fade-in shadow-xl">
                 <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 theme-light:text-emerald-900" />
                     <h3 className="text-base font-bold text-white">
                       Lời Giải Chi Tiết Từng Bước (AI Step Analysis)
                     </h3>
@@ -602,18 +602,18 @@ export default function SubjectDetail() {
                         {step.detail}
                       </p>
                       {step.formula && (
-                        <div className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 font-mono text-xs text-amber-300 overflow-x-auto">
+                        <div className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 font-mono text-xs text-amber-300 theme-light:text-amber-900 overflow-x-auto">
                           {step.formula}
                         </div>
                       )}
                       {step.socraticHint && (
-                        <div className="flex items-start gap-2 p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs">
+                        <div className="flex items-start gap-2 p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-300 theme-light:text-blue-800 text-xs">
                           <Lightbulb className="w-4 h-4 shrink-0 mt-0.5" />
                           <span>{step.socraticHint}</span>
                         </div>
                       )}
                       {step.pitfall && (
-                        <div className="flex items-start gap-2 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs">
+                        <div className="flex items-start gap-2 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 theme-light:text-amber-900 text-xs">
                           <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
                           <span>{step.pitfall}</span>
                         </div>
@@ -675,7 +675,7 @@ export default function SubjectDetail() {
                         <p className="text-xs font-semibold text-zinc-200 group-hover:text-white transition-colors">
                           {kf.name}
                         </p>
-                        <p className="text-xs font-mono text-amber-300 bg-zinc-900/90 px-2.5 py-1.5 rounded-xl border border-zinc-800 overflow-x-auto">
+                        <p className="text-xs font-mono text-amber-300 theme-light:text-amber-900 bg-zinc-900/90 px-2.5 py-1.5 rounded-xl border border-zinc-800 overflow-x-auto">
                           {kf.formula}
                         </p>
                         {kf.note && <p className="text-[11px] text-zinc-400 italic">{kf.note}</p>}
@@ -729,10 +729,10 @@ export default function SubjectDetail() {
                       <span
                         className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase mr-2 border ${
                           prob.difficulty === 'basic'
-                            ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                            ? 'bg-emerald-500/15 text-emerald-300 theme-light:text-emerald-900 border-emerald-500/30'
                             : prob.difficulty === 'intermediate'
-                              ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
-                              : 'bg-rose-500/15 text-rose-300 border-rose-500/30'
+                              ? 'bg-amber-500/15 text-amber-300 theme-light:text-amber-900 border-amber-500/30'
+                              : 'bg-rose-500/15 text-rose-300 theme-light:text-rose-900 border-rose-500/30'
                         }`}
                       >
                         {prob.difficulty === 'basic'

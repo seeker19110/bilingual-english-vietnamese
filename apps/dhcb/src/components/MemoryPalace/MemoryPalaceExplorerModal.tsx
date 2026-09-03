@@ -171,7 +171,7 @@ export default function MemoryPalaceExplorerModal({ onClose }: MemoryPalaceExplo
           <button
             type="button"
             onClick={() => setIsCreatingRoom(true)}
-            className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-zinc-900 border border-dashed border-amber-500/40 text-amber-300 hover:bg-amber-500/10 transition-all flex items-center gap-1"
+            className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-zinc-900 border border-dashed border-amber-500/40 text-amber-300 theme-light:text-amber-900 hover:bg-amber-500/10 transition-all flex items-center gap-1"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Thêm phòng</span>
@@ -223,7 +223,9 @@ export default function MemoryPalaceExplorerModal({ onClose }: MemoryPalaceExplo
             {currentRoom && (
               <>
                 <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-950/30 to-zinc-900/60 border border-amber-500/20">
-                  <h3 className="font-bold text-base text-amber-300">{currentRoom.name}</h3>
+                  <h3 className="font-bold text-base text-amber-300 theme-light:text-amber-900">
+                    {currentRoom.name}
+                  </h3>
                   <p className="text-xs text-zinc-300 mt-1 leading-relaxed">
                     {currentRoom.description}
                   </p>
@@ -250,7 +252,7 @@ export default function MemoryPalaceExplorerModal({ onClose }: MemoryPalaceExplo
                             ? 'bg-amber-500 text-zinc-950 ring-4 ring-amber-500/30 scale-110 z-10 font-bold'
                             : locus.mastered
                               ? 'bg-emerald-600/80 text-white border border-emerald-400/40'
-                              : 'bg-zinc-800/90 text-amber-300 border border-amber-500/30 hover:border-amber-400'
+                              : 'bg-zinc-800/90 text-amber-300 theme-light:text-amber-900 border border-amber-500/30 hover:border-amber-400'
                         }`}
                         title={locus.label}
                       >
@@ -276,7 +278,7 @@ export default function MemoryPalaceExplorerModal({ onClose }: MemoryPalaceExplo
                         onClick={() => handleSelectLocus(locus)}
                         className={`p-3 rounded-xl text-left border transition-all flex items-start justify-between ${
                           selectedLocus?.id === locus.id
-                            ? 'bg-amber-500/10 border-amber-500 text-amber-200'
+                            ? 'bg-amber-500/10 border-amber-500 text-amber-200 theme-light:text-amber-900'
                             : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:border-zinc-700'
                         }`}
                       >
@@ -306,10 +308,10 @@ export default function MemoryPalaceExplorerModal({ onClose }: MemoryPalaceExplo
               <div className="p-5 rounded-2xl bg-zinc-900/90 border border-amber-500/30 space-y-4">
                 <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
                   <div className="flex items-center gap-2">
-                    <Key className="w-4 h-4 text-amber-400" />
+                    <Key className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
                     <h4 className="font-bold text-sm text-white">{selectedLocus.label}</h4>
                   </div>
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 theme-light:text-amber-900 font-bold border border-amber-500/30">
                     {selectedLocus.category.toUpperCase()}
                   </span>
                 </div>
@@ -319,16 +321,18 @@ export default function MemoryPalaceExplorerModal({ onClose }: MemoryPalaceExplo
                   <div className="text-[11px] text-zinc-400 font-bold uppercase">
                     Khái niệm & Tri thức mục tiêu
                   </div>
-                  <div className="text-sm font-bold text-amber-300">{selectedLocus.keyConcept}</div>
+                  <div className="text-sm font-bold text-amber-300 theme-light:text-amber-900">
+                    {selectedLocus.keyConcept}
+                  </div>
                 </div>
 
                 {/* Mnemonic Story */}
                 <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 space-y-1.5">
-                  <div className="text-[11px] text-amber-400 font-bold uppercase flex items-center gap-1.5">
+                  <div className="text-[11px] text-amber-400 theme-light:text-amber-900 font-bold uppercase flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5" />
                     <span>Câu chuyện liên tưởng (Mnemonic Visual Cue):</span>
                   </div>
-                  <p className="text-xs text-amber-100 leading-relaxed italic">
+                  <p className="text-xs text-amber-100 theme-light:text-amber-900 leading-relaxed italic">
                     "{selectedLocus.mnemonicStory}"
                   </p>
                 </div>
@@ -360,15 +364,15 @@ export default function MemoryPalaceExplorerModal({ onClose }: MemoryPalaceExplo
                   <div
                     className={`p-3 rounded-xl text-xs space-y-1 animate-fadeIn border ${
                       recallResult.isAccurate
-                        ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-200'
-                        : 'bg-amber-950/40 border-amber-500/40 text-amber-200'
+                        ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-200 theme-light:text-emerald-900'
+                        : 'bg-amber-950/40 border-amber-500/40 text-amber-200 theme-light:text-amber-900'
                     }`}
                   >
                     <div className="font-bold flex items-center gap-1.5">
                       {recallResult.isAccurate ? (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 theme-light:text-emerald-900" />
                       ) : (
-                        <Sparkles className="w-4 h-4 text-amber-400" />
+                        <Sparkles className="w-4 h-4 text-amber-400 theme-light:text-amber-900" />
                       )}
                       <span>Độ tương đồng: {recallResult.similarityScore}%</span>
                     </div>

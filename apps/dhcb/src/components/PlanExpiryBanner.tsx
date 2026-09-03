@@ -59,7 +59,10 @@ export default function PlanExpiryBanner() {
   return (
     <div role="status" className="bg-amber-500/10 border-b border-amber-500/25 text-sm">
       <div className="max-w-3xl mx-auto px-4 py-2.5 flex items-center gap-3">
-        <Sparkles className="w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
+        <Sparkles
+          className="w-4 h-4 text-amber-400 theme-light:text-amber-900 shrink-0"
+          aria-hidden="true"
+        />
         <p className="flex-1 min-w-0 text-zinc-200 theme-light:text-zinc-800">
           {isA ? (
             <>

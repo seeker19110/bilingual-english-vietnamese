@@ -132,7 +132,7 @@ function ResultPanel({
           <p className="text-sm font-bold text-zinc-100 mb-4 flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-rose-500" />
             {isA ? 'Lỗi cần sửa' : 'Errors to fix'}
-            <span className="ml-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/25">
+            <span className="ml-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-300 theme-light:text-rose-900 border border-rose-500/25">
               {feedback.errors.length}
             </span>
           </p>
@@ -169,7 +169,9 @@ function ResultPanel({
         <ul className="space-y-2.5 max-w-prose">
           {feedback.suggestions.map((s, i) => (
             <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-zinc-300">
-              <span className="text-amber-400 shrink-0 font-bold mt-0.5">✦</span>
+              <span className="text-amber-400 theme-light:text-amber-900 shrink-0 font-bold mt-0.5">
+                ✦
+              </span>
               <span className="leading-relaxed">{s}</span>
             </li>
           ))}
@@ -463,7 +465,7 @@ export default function Writing() {
         {/* Instant Edge Grammar Suggestions */}
         {grammarIssues.length > 0 && (
           <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl p-4 space-y-2 animate-fade-in text-xs shadow-inner">
-            <div className="font-bold text-amber-300 flex items-center gap-1.5">
+            <div className="font-bold text-amber-300 theme-light:text-amber-900 flex items-center gap-1.5">
               <span>⚡ Phát hiện nhanh lỗi ngữ pháp ({grammarIssues.length}):</span>
             </div>
             <div className="space-y-1.5">
@@ -472,8 +474,12 @@ export default function Writing() {
                   key={idx}
                   className="flex items-center justify-between text-zinc-300 bg-zinc-950/40 p-2 rounded-xl border border-amber-500/15"
                 >
-                  <span className="line-through text-rose-400 mr-2">{issue.original}</span>
-                  <span className="font-semibold text-emerald-400">→ {issue.suggestion}</span>
+                  <span className="line-through text-rose-400 theme-light:text-rose-900 mr-2">
+                    {issue.original}
+                  </span>
+                  <span className="font-semibold text-emerald-400 theme-light:text-emerald-900">
+                    → {issue.suggestion}
+                  </span>
                   <span className="text-[11px] text-zinc-400 ml-auto pl-2 truncate max-w-[200px]">
                     {issue.reason}
                   </span>
@@ -543,7 +549,7 @@ export default function Writing() {
                   // Trạng thái rỗng có ý nghĩa — tránh để cột phải trống trơn khi chưa chấm.
                   <div className="bg-zinc-900/60 border border-dashed border-zinc-800 rounded-3xl p-6 text-center space-y-2">
                     <div className="w-11 h-11 rounded-2xl bg-violet-500/10 flex items-center justify-center mx-auto">
-                      <Trophy className="w-5 h-5 text-violet-300" />
+                      <Trophy className="w-5 h-5 text-violet-300 theme-light:text-violet-800" />
                     </div>
                     <p className="text-sm font-bold text-zinc-100">
                       {isA ? 'Kết quả chấm sẽ hiện ở đây' : 'Your results will appear here'}

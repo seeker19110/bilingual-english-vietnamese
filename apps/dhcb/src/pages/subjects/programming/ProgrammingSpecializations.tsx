@@ -56,7 +56,7 @@ function SpecCard({
           <ArrowRight className="w-4 h-4 text-accent-400 shrink-0 mt-1" aria-hidden="true" />
         </div>
         {theo && (
-          <p className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/15 border border-emerald-500/50 text-emerald-200">
+          <p className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/15 border border-emerald-500/50 text-emerald-200 theme-light:text-emerald-900">
             <CheckCircle2 className="w-3 h-3" aria-hidden="true" />
             Bạn đang theo hướng này · {soChangXong}/{spec.stages.length} chặng xong
           </p>

@@ -117,7 +117,8 @@ export default function AdminTtsCachePanel() {
   }
 
   if (loading) return <p className="text-sm text-zinc-400">Đang tải số liệu cache TTS…</p>
-  if (error && !data) return <p className="text-sm text-rose-400">{error}</p>
+  if (error && !data)
+    return <p className="text-sm text-rose-400 theme-light:text-rose-900">{error}</p>
   if (!data) return null
 
   const { stats, quick, audit } = data
@@ -125,13 +126,13 @@ export default function AdminTtsCachePanel() {
 
   return (
     <div className="space-y-4 text-sm">
-      {error && <p className="text-rose-400">{error}</p>}
-      {msg && <p className="text-emerald-400">{msg}</p>}
+      {error && <p className="text-rose-400 theme-light:text-rose-900">{error}</p>}
+      {msg && <p className="text-emerald-400 theme-light:text-emerald-900">{msg}</p>}
 
       {/* ── Tỉ lệ cache hit ─────────────────────────────────────────────────────── */}
       <section className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 space-y-3">
         <div className="flex items-center gap-2.5 border-b border-zinc-800 pb-3">
-          <Database className="w-6 h-6 text-emerald-400" />
+          <Database className="w-6 h-6 text-emerald-400 theme-light:text-emerald-900" />
           <div>
             <h3 className="font-semibold text-zinc-100">Tỉ lệ cache hit ({data.days} ngày)</h3>
             <p className="text-zinc-400 text-xs">
@@ -224,7 +225,7 @@ export default function AdminTtsCachePanel() {
       {/* ── Đếm nhanh: dòng nào trỏ đúng R2 ────────────────────────────────────── */}
       <section className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 space-y-3">
         <div className="flex items-center gap-2.5 border-b border-zinc-800 pb-3">
-          <HardDrive className="w-6 h-6 text-sky-400" />
+          <HardDrive className="w-6 h-6 text-sky-400 theme-light:text-sky-900" />
           <div>
             <h3 className="font-semibold text-zinc-100">Kho cache trong DB</h3>
             <p className="text-zinc-400 text-xs">
@@ -234,7 +235,7 @@ export default function AdminTtsCachePanel() {
           </div>
         </div>
         {!quick ? (
-          <p className="text-amber-400">
+          <p className="text-amber-400 theme-light:text-amber-900">
             Chưa cấu hình <code>R2_PUBLIC_BASE_URL</code> — không phân loại được.
           </p>
         ) : (
@@ -249,7 +250,7 @@ export default function AdminTtsCachePanel() {
       <section className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 space-y-3">
         <div className="flex items-start justify-between gap-4 border-b border-zinc-800 pb-3">
           <div className="flex items-center gap-2.5">
-            <Search className="w-6 h-6 text-violet-400" />
+            <Search className="w-6 h-6 text-violet-400 theme-light:text-violet-800" />
             <div>
               <h3 className="font-semibold text-zinc-100">Đối chiếu DB ↔ R2</h3>
               <p className="text-zinc-400 text-xs">
@@ -277,7 +278,7 @@ export default function AdminTtsCachePanel() {
         )}
 
         {audit?.status === 'error' && (
-          <p className="text-rose-400 flex items-start gap-2">
+          <p className="text-rose-400 theme-light:text-rose-900 flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
             Quét lỗi: {audit.error}
           </p>
@@ -286,7 +287,7 @@ export default function AdminTtsCachePanel() {
         {audit?.status === 'done' && audit.result && (
           <div className="space-y-4">
             <p className="text-zinc-400 text-xs flex items-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 theme-light:text-emerald-900" />
               Quét xong lúc{' '}
               {audit.finished_at ? new Date(audit.finished_at).toLocaleString('vi-VN') : '—'}
             </p>
@@ -303,7 +304,9 @@ function Stat({ label, value, accent }: { label: string; value: string; accent?:
   return (
     <div className="bg-zinc-900 rounded-lg p-3 border border-zinc-800">
       <p className="text-zinc-400 text-xs">{label}</p>
-      <p className={`text-lg font-semibold ${accent ? 'text-emerald-400' : 'text-zinc-100'}`}>
+      <p
+        className={`text-lg font-semibold ${accent ? 'text-emerald-400 theme-light:text-emerald-900' : 'text-zinc-100'}`}
+      >
         {value}
       </p>
     </div>
@@ -319,10 +322,10 @@ function QuickCard({ title, q }: { title: string; q?: QuickCount }) {
       <p className="text-zinc-300">
         Tổng: <strong>{q.total.toLocaleString('vi-VN')}</strong> dòng
       </p>
-      <p className="text-emerald-400">
+      <p className="text-emerald-400 theme-light:text-emerald-900">
         Trỏ đúng R2: {q.on_r2.toLocaleString('vi-VN')} ({pct(q.on_r2, q.total)})
       </p>
-      <p className={off > 0 ? 'text-amber-400' : 'text-zinc-400'}>
+      <p className={off > 0 ? 'text-amber-400 theme-light:text-amber-900' : 'text-zinc-400'}>
         Trỏ sai chỗ: {off.toLocaleString('vi-VN')} ({pct(off, q.total)})
       </p>
     </div>
@@ -394,11 +397,11 @@ function Cell({
 }) {
   const color =
     tone === 'ok'
-      ? 'text-emerald-400'
+      ? 'text-emerald-400 theme-light:text-emerald-900'
       : tone === 'warn'
-        ? 'text-amber-400'
+        ? 'text-amber-400 theme-light:text-amber-900'
         : tone === 'bad'
-          ? 'text-rose-400'
+          ? 'text-rose-400 theme-light:text-rose-900'
           : 'text-zinc-100'
   return (
     <div>

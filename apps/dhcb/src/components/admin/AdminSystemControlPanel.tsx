@@ -69,7 +69,7 @@ export default function AdminSystemControlPanel() {
         <div className="flex items-start justify-between gap-4 border-b border-zinc-800 pb-3">
           <div className="flex items-center gap-2.5">
             <ShieldAlert
-              className={`w-6 h-6 ${circuitBreaker ? 'text-rose-500 animate-pulse' : 'text-amber-400'}`}
+              className={`w-6 h-6 ${circuitBreaker ? 'text-rose-400 theme-light:text-rose-900 animate-pulse' : 'text-amber-400 theme-light:text-amber-900'}`}
             />
             <div>
               <h3 className="font-bold text-white text-base">
@@ -93,14 +93,14 @@ export default function AdminSystemControlPanel() {
         </div>
 
         {error && (
-          <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-lg text-xs flex items-center gap-2">
+          <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 theme-light:text-rose-900 rounded-lg text-xs flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         {msg && (
-          <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 rounded-lg text-xs flex items-center gap-2">
+          <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 theme-light:text-emerald-900 rounded-lg text-xs flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 shrink-0" />
             <span>{msg}</span>
           </div>
@@ -111,11 +111,11 @@ export default function AdminSystemControlPanel() {
             <div className="flex items-center gap-2">
               <span className="font-semibold text-zinc-300">Trạng thái Cầu dao khẩn cấp:</span>
               {circuitBreaker ? (
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40">
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-400 theme-light:text-rose-900 border border-rose-500/40">
                   ĐANG BẬT — ĐÃ DẬP GỌI AI
                 </span>
               ) : (
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-400 theme-light:text-emerald-900 border border-emerald-500/40">
                   HOẠT ĐỘNG BÌNH THƯỜNG
                 </span>
               )}
