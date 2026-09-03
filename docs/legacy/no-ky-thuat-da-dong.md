@@ -6,6 +6,22 @@ bỏ). Thứ tự: như thứ tự cũ trong `PROGRESS.md`, mới hơn ở trên
 
 Khi đóng thêm một món nợ: cắt khối đó khỏi `PROGRESS.md`, dán vào ĐẦU danh sách dưới đây.
 
+- 🟢 **[ĐÓNG 2026-09-03, cùng ngày mở — PR #842 sửa phần có hại, người dùng chốt phần còn lại]
+  Màu Tailwind
+  cố định dùng khắp app; phần THẬT SỰ hỏng đã sửa xong, phần còn lại là quyết định thiết kế.**
+  Đo đủ 21 họ màu (không chỉ 4 họ như lần trước): **~4.141 lần** dùng màu Tailwind gốc trong
+  `apps/` — nhiều nhất là `amber` 763 · `emerald` 700 · `rose` 480 · `sky` 328 · `indigo` 277.
+  Nên "423" chỉ là một lát cắt, và việc token hoá 4 họ màu như dự tính ban đầu sẽ là **tuỳ tiện**
+  (vì sao token hoá `purple` mà không token hoá `amber`?).
+  **Phần có hại đã ĐÓNG (2026-09-03):** 720 chỗ màu chữ rớt tương phản AA ở 3 theme nền sáng đã
+  vá xong + có cổng chặn `scripts/fixed-color-contrast-audit.test.ts` — xem
+  `docs/changelog/0259-*.md`.
+  **Phần từng để ngỏ nay ĐÃ CHỐT (giữ nguyên, không token hoá — xem mục "Quyết định quan trọng"
+  trong `PROGRESS.md`):** có nên đổi hẳn các
+  họ màu này sang token vai trò (`--info-*`, `--warn-*`…) để chúng đổi theo theme, hay giữ màu
+  cố định + biến thể `theme-light:` như hiện nay? Giữ nguyên thì rẻ và đã an toàn về tương phản;
+  đổi thì nhất quán hơn nhưng chạm >4.000 chỗ và có rủi ro thị giác thật. **Đề xuất: giữ nguyên.**
+
 - 🟢 **[ĐÓNG 2026-09-03, cùng ngày mở] Cổng a11y đã chờ theo TRẠNG THÁI, không theo thời gian.**
   Mở buổi sáng khi chữa CI đỏ PR #826, đóng ngay trong ngày — xem
   `docs/changelog/0245-2026-09-03-cong-a11y-cho-theo-trang-thai.md`.
