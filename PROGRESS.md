@@ -1400,7 +1400,7 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   giao diện P6**. ⚠️ **Cổng cứng giữa M3 và M4:** interpreter Swift phải qua bộ test đối chiếu
   TRƯỚC khi soạn bài nội dung nào.
   **Tiến độ:** PR-M0 ✅ · PR-M1 ✅ · PR-M2 ✅ · PR-M3 ✅ · **PR-M7 ✅ (2026-08-27, LÀM SỚM —
-  xem ngay dưới)**. **ĐÃ ĐẢO THỨ TỰ M7 lên trước M4–M6, người dùng duyệt 2026-08-27:** M4 bị
+  xem ngay dưới) + cổng §3.4 ĐÃ MỞ (2026-09-03)**. **ĐÃ ĐẢO THỨ TỰ M7 lên trước M4–M6, người dùng duyệt 2026-08-27:** M4 bị
   cổng cứng §8 chặn tới khi có người chạy `npm run swift:conformance` trên máy có Xcode, còn M7
   là bộ chạy KHÁC không đi qua cổng đó (`conformance.test.ts` của Swift chỉ đỏ khi có bài
   `language: 'swift'`). Cổng cứng M3→M4 **vẫn nguyên vẹn**, PR-M7 không chạm vào.
@@ -1409,15 +1409,22 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   **tính-null theo KHAI BÁO + smart cast** (trụ cột, đối ứng với "Optional bọc tường minh" của
   Swift), 347 ca trong 4 cổng, runner + đăng ký ngôn ngữ `kotlin`, `npm run kotlin:conformance`.
   Đặc tả bộ chạy: `docs/research/dac-ta-bo-chay-kotlin-2026-08-27.md`.
-  ⚠️ **CỔNG §3.4 CHƯA MỞ:** 48 ca chưa chạy trên `kotlinc` thật. **PR-M8 chưa được bắt đầu.**
+  ✅ **CỔNG §3.4 ĐÃ MỞ (2026-09-03):** 48/48 ca đã chạy trên `kotlinc 2.0.21` thật (JRE 21.0.10)
+  và KHỚP hết — mọi ca nay `daDoiChieu: true`. **PR-M8/M9 (nội dung Kotlin) được phép bắt đầu.**
+  Hoá ra không cần máy riêng: proxy tải được `kotlin-compiler-2.0.21.zip` từ GitHub releases và
+  môi trường dựng đã có sẵn `java`. Lần chạy thật đầu tiên làm lộ 2 lỗi của KHUNG ĐO (không phải
+  lỗi bộ chạy) đã sửa trong `scripts/kotlin-conformance.ts` — xem `docs/changelog/0248-*.md`.
   PR-M3 chi tiết — hạ tầng `swiftsim`
   xong: trình thông dịch tập con Swift (~2.900 dòng, 4 file trong
   `packages/subject-programming/swiftSim/`), Optional bọc tường minh, 41 ca đối chiếu + cổng
   "lỗi phải nói được", runner + đăng ký ngôn ngữ `swift`. Đặc tả bộ chạy:
   `docs/research/dac-ta-bo-chay-swift-2026-08-27.md`.
-  ⚠️ **CỔNG CỨNG §8 CHƯA MỞ:** 41 ca chưa chạy trên `swift` thật (máy dựng PR không có Swift,
-  proxy chặn tải). **PR-M4 chưa được bắt đầu** — `conformance.test.ts` tự chặn CI nếu có bài
-  `language: 'swift'` khi ca còn `daDoiChieu: false`. Việc tay: xem mục "Cần làm tay".
+  ⚠️ **CỔNG CỨNG §8 VẪN CHƯA MỞ:** 41 ca chưa chạy trên `swift` thật. **PR-M4 chưa được bắt
+  đầu** — `conformance.test.ts` tự chặn CI nếu có bài `language: 'swift'` khi ca còn
+  `daDoiChieu: false`. **Đã thử lại 2026-09-03 (cùng lượt mở cổng Kotlin) và VẪN chặn:**
+  `download.swift.org` không tới được (mã 000), `github.com/swiftlang/swift/releases` trả 403 —
+  khác Kotlin ở chỗ Kotlin tải được từ GitHub releases. Swift vì vậy vẫn cần máy có toolchain
+  thật. Việc tay: xem mục "Cần làm tay".
   **PR-M2 chi tiết (2026-08-27)** — nội dung `p3-u11` nay có 4 bài
   (l2 đi trong cây thư mục · l3 ống lọc dữ liệu · l4 mini-project viết `bao_cao.sh`), +9 thẻ SRS
   (195 → 204), kèm 2 test trình duyệt cho mạch bash. **Đợt này sửa một lỗi thiết kế của PR-M1**:
