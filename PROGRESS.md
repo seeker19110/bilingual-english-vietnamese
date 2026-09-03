@@ -2902,6 +2902,18 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 > `docs/legacy/no-ky-thuat-da-dong.md` (2026-09-01) để file này chỉ nói trạng thái hiện tại —
 > đúng vai trò ở mục 2 `CLAUDE.md`. Đóng một món nợ = cắt khối đó dán sang file kia, kèm ngày.
 
+- 🟡 **[2026-09-03] 423 chỗ dùng màu Tailwind CỨNG ngoài token — luật bất biến §4.8 đang rò rỉ
+  ở quy mô lớn.** Đo bằng `grep -rEho "(bg|text|from|to)-(violet|purple|fuchsia|cyan)-[0-9]{3}"
+apps --include=*.tsx | wc -l` → **423**. Luật `CLAUDE.md` §4.8 bắt màu phải đi qua token
+  `--a-*`/`--z-*` để đổi theme là đổi một chỗ; 423 chỗ này **không đổi theo theme**, nên ở 4
+  theme còn lại chúng có thể lệch "mood" hoặc tụt tương phản mà hai cổng a11y không bắt được
+  (cổng chỉ đo cặp nền/chữ thực tế render, không đo "màu này có thuộc hệ thống không").
+  Phát hiện khi chắt lọc luật từ `pbakaus/impeccable` (xem `docs/changelog/0258-*.md`).
+  **Việc cần làm — một đợt RIÊNG, không gộp vào việc giao diện thường ngày:** liệt kê 423 chỗ,
+  phân ba loại — (a) màu ngữ nghĩa hợp lệ đã có token → đổi sang token; (b) màu ngữ nghĩa CHƯA
+  có token → đặt tên vai trò mới trong `index.css` rồi đổi; (c) trang trí thuần → gỡ hoặc đưa
+  về accent. Rủi ro: chạm hàng trăm file, phải chạy lại 2 cổng a11y × 15 trang × 5 theme.
+
 - 🟡 **[2026-08-28] Repo có HAI file cấu hình Nginx mô tả cùng một server.** `nginx/dhcb.conf`
   tự nhận là "cấu hình ĐANG CHẠY THẬT trên VPS", trong khi `docs/cloudflare-setup.md` và
   `docs/runbook-dung-vps-moi-tu-dau.md` lại hướng dẫn copy `nginx/en-vi.conf`. Không biết bản
