@@ -1071,7 +1071,8 @@ tập/Tiến độ) · thẻ "Học tiếp" ở Home · karaoke (sáng chữ the
 chuẩn hoá vị trí nút loa/micro + vùng chạm ≥44px.
 
 **Giọng TTS 14 giọng + gói VIP + admin cấu hình (2026-07-21, nhánh
-`claude/chirp-3-hd-voice-upgrade-c06eds`, CHƯA MERGE — xem "Cần làm tay"):** mở rộng từ 4 → 14
+`claude/chirp-3-hd-voice-upgrade-c06eds` — ✅ ĐÃ MERGE, ghi chú "CHƯA MERGE" cũ đã sai; đo lại
+2026-09-03: nhánh không còn trên remote, tính năng đã ở trên `main`):** mở rộng từ 4 → 14
 giọng Chirp3-HD thật (7 nữ/7 nam, xác minh qua Google TTS `voices.list`) cho cả en-US/vi-VN ·
 mọi user tự chọn giọng ở trang Hồ sơ (`VoicePicker`), lưu toàn cục áp dụng mọi trang · thêm gói
 `vip` (bên cạnh free/pro) · **quyết định người dùng 2026-07-21:** hạn mức free=5/pro=100/
@@ -2609,7 +2610,15 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
 
 ## ⚠️ Cần làm tay (không cần PR)
 
-- **[2026-08-27] Đối chiếu bộ chạy Swift với `swift` THẬT — CHẶN cả chương trình M từ PR-M4.**
+> **Soát lại toàn bộ 2026-09-03 bằng chứng cứ, không bằng trí nhớ.** Mục này là thứ người dùng
+> đọc để biết MÌNH phải làm gì — nên một mục đã xong nằm lại đây không vô hại: nó bắt người
+> dùng đi làm việc đã xong. Lần soát này tìm thấy **6 mục như vậy** (xem phần B).
+> Quy tắc từ nay: xong mục nào thì chuyển ngay xuống phần B kèm **bằng chứng**, đừng xoá trắng —
+> để lần sau khỏi phải đi kiểm lại từ đầu.
+
+### A. CÒN PHẢI LÀM
+
+- **[2026-08-27] Đối chiếu bộ chạy Swift với `swift` THẬT — CHẶN chương trình M từ PR-M4.**
   Chạy trên máy có Xcode hoặc Swift toolchain:
   `npm run swift:conformance`
   Script sinh một file `.swift` gồm đúng 41 ca đối chiếu, chạy bằng `swift`, so từng ca với kết
@@ -2617,50 +2626,18 @@ phonemes:[{phoneme,score}]}]}` — chọn `PhonemeAlphabet:'IPA'` thay mặc đ�
   `daDoiChieu: true` cho các ca đã khớp trong
   `packages/subject-programming/swiftSim/conformance.ts`, ghi phiên bản `swift --version` vào
   `docs/research/dac-ta-bo-chay-swift-2026-08-27.md` mục 4, rồi commit.
-  **Vì sao AI không tự làm được:** máy dựng PR-M3 không có Swift và proxy chặn tải từ swift.org
-  (đã thử, trả 403). Hiến chương chương trình M §3.4 cấm suy đoán kết quả từ trí nhớ.
-  **Hệ quả nếu bỏ qua:** PR-M4 (nội dung Swift) không được bắt đầu — `conformance.test.ts` tự
-  làm CI đỏ nếu có bài `language: 'swift'` khi ca còn chưa đối chiếu.
+  **Vì sao AI không tự làm được — đã thử lại 2026-09-03 và VẪN chặn:** `download.swift.org` trả
+  mã 000 (không tới được), `github.com/swiftlang/swift/releases` trả 403. Khác Kotlin ở đúng
+  điểm này: Kotlin tải được từ GitHub releases nên cổng đó đã tự mở (phần B mục 1).
+  Hiến chương chương trình M §3.4 cấm suy đoán kết quả từ trí nhớ.
+  **Hệ quả nếu bỏ qua:** PR-M4–M6 (nội dung Swift) không được bắt đầu — `conformance.test.ts`
+  tự làm CI đỏ nếu có bài `language: 'swift'` khi ca còn chưa đối chiếu. Đây là **việc duy nhất
+  còn lại của cả chương trình M** (11/12 PR đã xong).
 
-- **[2026-08-27] Đối chiếu bộ chạy Kotlin với `kotlinc` THẬT — CHẶN PR-M8 (nội dung Kotlin).**
-  Chạy trên máy có Kotlin toolchain:
-  `npm run kotlin:conformance`
-  Script sinh một file `.kt` gồm đúng 48 ca đối chiếu, chạy bằng `kotlin` (hoặc `kotlinc` +
-  `java`), so từng ca với kết quả kỳ vọng **và** với output của bộ chạy DHCB, rồi in ca nào lệch.
-  Xong thì đặt `daDoiChieu: true` cho các ca đã khớp trong
-  `packages/subject-programming/kotlinSim/conformance.ts`, ghi phiên bản `kotlin -version` vào
-  `docs/research/dac-ta-bo-chay-kotlin-2026-08-27.md` mục 4, rồi commit.
-  **Vì sao AI không tự làm được:** máy dựng PR-M7 không có Kotlin và proxy chặn tải.
-  **Hệ quả nếu bỏ qua:** PR-M8 (nội dung Kotlin) không được bắt đầu — `conformance.test.ts` tự
-  làm CI đỏ nếu có bài `language: 'kotlin'` khi ca còn chưa đối chiếu.
-
-- **Migration `0034`–`0037` (ADR-0002) — CHẠY TRƯỚC KHI DEPLOY.** `npm run migrate:pg` trên VPS
-  (`identities`, `entitlements`, `english.user_profile`, xoá 4 cột OAuth cũ trên `users`).
-  Sau khi deploy Bước 6, mọi người dùng đang đăng nhập bằng phiên Bearer cũ **phải đăng nhập lại
-  một lần** — đây là đánh đổi đã được xác nhận, không phải lỗi.
-
-- **Migration `0028_tts_viseme_timeline.sql` — CHẠY TRƯỚC KHI DEPLOY đợt avatar timing.**
-  Thêm cột `viseme_timeline jsonb` vào `tts_cache` (nullable, không phá dữ liệu cache cũ).
-  Lệnh: `npm run migrate:pg` (đã nằm trong `scripts/deploy.sh`). Rollback nếu cần:
-  `alter table public.tts_cache drop column viseme_timeline;`
-  Muốn thấy hiệu quả thật cần `ELEVENLABS_API_KEY` trên VPS + chọn giọng VIP "Rachel";
-  giọng Google Chirp3-HD không có timestamp nên vẫn chạy đường ước lượng như cũ.
-
-- ~~Backup R2~~ **ĐÃ XONG (2026-07-29, người dùng xác nhận).** Phát hiện qua báo cáo "backup tự
-  động lên R2 có nhưng không thấy chạy": cron `backup:r2` (Postgres → R2) chưa từng được thêm dù
-  code/docs mục 7.2 đã có từ trước (chỉ có cron `pg_dump` local). Đã sửa: cấp quyền bucket
-  `english-tutor-pg-backups` cho token R2, thêm `R2_BACKUP_BUCKET` vào `.env` VPS, upload 9 file
-  backup tồn đọng, thêm cron `backup:r2`. Trong lúc rà soát phát hiện thêm lỗ hổng: `.env`
-  (API key/secret) trước giờ KHÔNG được backup ở đâu cả — thêm mới `scripts/backup-env-to-r2.ts`
-  - `scripts/restore-env-from-r2.ts` (mã hoá AES-256-GCM, dùng chung `R2_BACKUP_BUCKET`, xem
-    `docs/setup-postgresql-vps.md` mục 7.3, PR #369 đã merge). VPS hiện có đủ **3 dòng cron**
-    (`pg_dump` 5h03, `backup:r2` 3h10, `backup:env` 3h10) chạy hàng ngày, đã xác nhận upload thành
-    công cả 2 loại. `ENV_BACKUP_PASSPHRASE` đã tạo mạnh (qua `openssl rand -base64 24`), lưu ở
-    password manager, KHÔNG đặt trong `.env`.
-- **Kế hoạch scale 50k concurrent (2026-07-25) — GĐ1-5 phần code/config/docs ĐÃ XONG
-  (PR #321-#326), còn lại là việc hạ tầng thật cần người dùng tự làm:**
-  1. **Mua thêm VPS** (khuyến nghị: tách Postgres/Redis ra 1 VPS riêng 6-8 vCPU trước tiên —
-     xem runbook `docs/deploy-vps-ubuntu.md` mục "GĐ2"), sau đó thêm 2-3 VPS app khi k6 xác
+- **Kế hoạch scale 50k concurrent (2026-07-25) — phần code/config/docs ĐÃ XONG (PR #321–#326),
+  còn lại là việc hạ tầng thật cần người dùng tự làm:**
+  1. **Mua thêm VPS** (khuyến nghị: tách Postgres/Redis ra 1 VPS riêng 6–8 vCPU trước tiên —
+     xem runbook `docs/deploy-vps-ubuntu.md` mục "GĐ2"), sau đó thêm 2–3 VPS app khi k6 xác
      nhận cần (đo trước, đừng mua hết 1 lần).
   2. **Chạy `bash scripts/verify-pg-backup.sh`** trên VPS ít nhất 1 lần để xác nhận backup
      cron hiện có thật sự restore được (chưa từng kiểm chứng).
@@ -2671,30 +2648,49 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   4. Xem `docs/rollback-runbook.md` nếu có sự cố khi triển khai các bước trên.
   5. Xem `docs/research/ke-hoach-scale-30k-concurrent.md` (tên file cũ, nội dung đã cập nhật
      mục tiêu 50k) để biết đầy đủ bối cảnh/ngân sách/quyết định đã chốt.
-- **Hạ tầng hạn dùng gói Pro/VIP (2026-07-24):** deploy kế tiếp cần `npm run migrate:pg` trên
-  VPS để áp `postgres/migrations/0004_plan_expires_at.sql` (script deploy tự chạy, không cần
-  làm tay riêng nếu deploy qua `scripts/deploy.sh` như bình thường). Cách cấp Pro/VIP thủ công
-  (trong lúc chưa có cổng thanh toán thật): admin gọi
-  `POST /api/admin-grant-plan` body `{ "email": "...", "plan": "pro", "days": 30 }` (Bearer
-  token của admin, `days: null` = vĩnh viễn).
-- **Nâng cấp giọng TTS 14 giọng + gói VIP + admin cấu hình (nhánh
-  `claude/chirp-3-hd-voice-upgrade-c06eds`, chưa merge — 2026-07-21):**
-  1. `npm run migrate:pg` trên VPS để tạo bảng `app_settings`
-     (`postgres/migrations/0001_app_settings.sql`).
-  2. Thêm `ADMIN_EMAILS=donghanhcungban.org@gmail.com` vào `.env` VPS (xác thực trang
-     `/admin-settings`, xem `api/_lib/adminAuth.ts`).
-  3. **QUAN TRỌNG:** toàn bộ code nhánh này viết trong sandbox KHÔNG có `node_modules`
-     cài sẵn nên CHƯA từng chạy `npm run build`/`typecheck`/`lint`/`test`/`test:e2e` thật —
-     PHẢI chạy đủ cổng mục 8 CLAUDE.md trước khi merge/deploy, đừng tin chỉ vì đã review
-     code bằng mắt.
-- ~~`SENTRY_DSN`/`VITE_SENTRY_DSN`~~ **ĐÃ XONG (2026-07-27, người dùng xác nhận)** — đã điền
-  trên VPS, đã thấy lỗi test được ghi nhận trên Sentry. Không còn no-op.
-- `GROQ_API_KEY` (hoặc `OPENAI_API_KEY`) trên VPS nếu chưa có — cần cho STT.
-- `AZURE_SPEECH_KEY`/`AZURE_SPEECH_REGION` — TÙY CHỌN, chỉ cần khi muốn bật chấm phát âm chi
-  tiết qua Azure (① Giai đoạn 2, PR #17). Tạo resource "Speech service" (free tier F0, 5h
-  audio/tháng) ở Azure Portal → Keys and Endpoint, điền vào `.env` VPS. Thiếu 2 biến này thì
-  `/api/pronounce-assess` tự trả lỗi "chưa cấu hình" (client rơi về Giai đoạn 1 miễn phí),
-  KHÔNG làm vỡ app — không bắt buộc phải làm ngay.
+
+- **Biến môi trường trên VPS — KHÔNG kiểm chứng được từ máy dựng** (phiên AI không đọc được
+  `.env` của VPS; cả ba mục dưới đây đều "thiếu thì tính năng tự tắt", không làm vỡ app):
+  - `GROQ_API_KEY` (hoặc `OPENAI_API_KEY`) — cần cho STT (`/api/stt`). Thiếu thì luyện nói rơi
+    về Web Speech API dự phòng.
+  - `ADMIN_EMAILS` — xác thực trang `/admin-settings` (`packages/core-auth/adminAuth.ts`).
+    Thiếu thì không ai vào được trang quản trị. Mẫu ở `.env.example` dòng 207.
+  - `AZURE_SPEECH_KEY`/`AZURE_SPEECH_REGION` — **TÙY CHỌN**, chỉ cần khi muốn bật chấm phát âm
+    chi tiết qua Azure. Tạo resource "Speech service" (free tier F0, 5h audio/tháng) ở Azure
+    Portal → Keys and Endpoint. Thiếu thì `/api/pronounce-assess` trả "chưa cấu hình" và client
+    rơi về Giai đoạn 1 miễn phí.
+
+### B. ĐÃ XONG — giữ lại kèm bằng chứng, đừng làm lại
+
+1. **~~Đối chiếu bộ chạy Kotlin với `kotlinc` thật~~ — ✅ XONG 2026-09-03, cổng §3.4 ĐÃ MỞ.**
+   48/48 ca chạy trên `kotlinc 2.0.21` thật (JRE 21.0.10) và khớp hết; mọi ca nay
+   `daDoiChieu: true`. Hoá ra không cần máy riêng — proxy tải được `kotlin-compiler-2.0.21.zip`
+   từ GitHub releases và máy dựng đã có sẵn `java`. PR-M8/M9 (nội dung Kotlin) đã làm xong nhờ
+   cổng này. Nhật ký `docs/changelog/0248-*.md`.
+2. **~~Nâng cấp giọng TTS 14 giọng + gói VIP + admin cấu hình (nhánh
+   `claude/chirp-3-hd-voice-upgrade-c06eds`)~~ — ✅ ĐÃ MERGE.** Mục cũ ghi "chưa merge, PHẢI
+   chạy đủ cổng trước khi merge" — **sai từ lâu**. Bằng chứng (đo 2026-09-03):
+   `git ls-remote --heads origin` **không còn nhánh đó**, và tính năng đã nằm trên `main`
+   (`apps/dhcb/src/components/VoicePicker.tsx`, `postgres/migrations/0001_app_settings.sql`,
+   `packages/core-billing/promo.ts`). Riêng `ADMIN_EMAILS` vẫn là việc tay — đã dời lên phần A.
+3. **~~Migration `0004_plan_expires_at.sql`~~** · 4. **~~Migration `0028_tts_viseme_timeline.sql`~~** · 5. **~~Migration `0034`–`0037` (ADR-0002)~~** — ✅ **đều đã chạy trên production từ lâu.**
+   Bằng chứng: `scripts/deploy.sh` dòng 75 gọi `npm run migrate:pg` **tự động mỗi lần deploy**,
+   và repo nay đã ở migration `0074` (77 file) — tức mọi migration số nhỏ hơn đã được áp qua các
+   lượt deploy từ đó tới nay. Ghi chú còn giá trị tra cứu: đợt `0034`–`0037` khiến **mọi phiên
+   Bearer cũ phải đăng nhập lại một lần** (đánh đổi đã xác nhận, không phải lỗi); cột
+   `viseme_timeline` chỉ phát huy khi có `ELEVENLABS_API_KEY` + giọng VIP "Rachel" (giọng Google
+   Chirp3-HD không có timestamp nên vẫn chạy đường ước lượng).
+4. **~~Backup R2~~ — ✅ XONG (2026-07-29, người dùng xác nhận).** VPS có đủ **3 dòng cron**
+   (`pg_dump` 5h03, `backup:r2` 3h10, `backup:env` 3h10), đã xác nhận upload thật cả 2 loại.
+   Trong lúc rà soát còn phát hiện và bịt thêm lỗ hổng `.env` chưa từng được backup ở đâu
+   (`scripts/backup-env-to-r2.ts` + `restore-env-from-r2.ts`, mã hoá AES-256-GCM, PR #369).
+   `ENV_BACKUP_PASSPHRASE` tạo bằng `openssl rand -base64 24`, lưu ở password manager,
+   **KHÔNG** đặt trong `.env`.
+5. **~~`SENTRY_DSN`/`VITE_SENTRY_DSN`~~ — ✅ XONG (2026-07-27, người dùng xác nhận).** Đã điền
+   trên VPS, đã thấy lỗi test được ghi nhận trên Sentry. Không còn no-op.
+6. **Cấp Pro/VIP thủ công** (vẫn dùng được, không phải việc phải làm): admin gọi
+   `POST /api/admin-grant-plan` body `{ "email": "...", "plan": "pro", "days": 30 }` với Bearer
+   token của admin — `days: null` = vĩnh viễn.
 
 ## Quyết định quan trọng
 
