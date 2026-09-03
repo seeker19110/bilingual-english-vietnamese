@@ -153,7 +153,7 @@ export default function EnglishHome() {
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center text-zinc-950 font-black shadow-lg shadow-emerald-500/20">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center text-zinc-950 font-black shadow-lg">
                 <GraduationCap className="w-6 h-6" />
               </div>
               <div>
@@ -195,7 +195,7 @@ export default function EnglishHome() {
               </div>
               <button
                 onClick={goToNextStep}
-                className="tap-44 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#09090b] font-bold text-sm shadow-md shadow-emerald-500/20 transition active:scale-95 shrink-0"
+                className="tap-44 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-[#09090b] font-bold text-sm shadow-md transition active:scale-95 shrink-0"
               >
                 <span>{isA ? 'Tiếp tục học ngay' : 'Continue learning'}</span>
                 <ChevronRight className="w-4 h-4" />
@@ -341,7 +341,7 @@ export default function EnglishHome() {
             onClick={() => nav('/lo-trinh-hoc')}
             className="p-4 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-zinc-800/80 hover:border-emerald-500/50 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex items-start gap-3.5"
           >
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shrink-0 shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
               <Target className="w-5 h-5 text-zinc-950 font-bold" />
             </div>
             <div className="flex-1 min-w-0">
@@ -362,7 +362,7 @@ export default function EnglishHome() {
             onClick={() => nav('/tu-dien')}
             className="p-4 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800/80 border border-zinc-800/80 hover:border-amber-500/50 text-left transition-all duration-200 group active:scale-[0.98] shadow-sm flex items-start gap-3.5"
           >
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500 to-orange-400 flex items-center justify-center shrink-0 shadow-md shadow-amber-500/20 group-hover:scale-105 transition-transform">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500 to-orange-400 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
               <BookOpen className="w-5 h-5 text-zinc-950 font-bold" />
             </div>
             <div className="flex-1 min-w-0">

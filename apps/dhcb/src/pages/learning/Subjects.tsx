@@ -34,39 +34,34 @@ const SUBJECT_ICONS: Record<string, typeof BookOpen> = {
 
 const SUBJECT_COLORS: Record<
   string,
-  { gradient: string; glow: string; text: string; bg: string; border: string }
+  { gradient: string; text: string; bg: string; border: string }
 > = {
   english: {
     gradient: 'from-emerald-500 to-teal-400',
-    glow: 'shadow-emerald-500/20',
     text: 'text-emerald-400 theme-light:text-emerald-800',
     bg: 'bg-emerald-500/10',
     border: 'border-emerald-500/30 hover:border-emerald-500/60',
   },
   mathematics: {
     gradient: 'from-blue-500 to-cyan-400',
-    glow: 'shadow-blue-500/20',
     text: 'text-blue-400 theme-light:text-blue-800',
     bg: 'bg-blue-500/10',
     border: 'border-blue-500/30 hover:border-blue-500/60',
   },
   physics: {
     gradient: 'from-purple-500 to-indigo-400',
-    glow: 'shadow-purple-500/20',
     text: 'text-purple-400 theme-light:text-purple-800',
     bg: 'bg-purple-500/10',
     border: 'border-purple-500/30 hover:border-purple-500/60',
   },
   chemistry: {
     gradient: 'from-amber-500 to-orange-400',
-    glow: 'shadow-amber-500/20',
     text: 'text-amber-400 theme-light:text-amber-800',
     bg: 'bg-amber-500/10',
     border: 'border-amber-500/30 hover:border-amber-500/60',
   },
   biology: {
     gradient: 'from-rose-500 to-pink-400',
-    glow: 'shadow-rose-500/20',
     text: 'text-rose-400 theme-light:text-rose-800',
     bg: 'bg-rose-500/10',
     border: 'border-rose-500/30 hover:border-rose-500/60',
@@ -120,11 +115,11 @@ export default function Subjects() {
         {/* AI Multi-Subject Diagnostic & Adaptive Recommendation Card */}
         <section
           aria-label="Đánh giá & Gợi ý lộ trình AI"
-          className="relative overflow-hidden rounded-3xl border border-accent-500/30 bg-gradient-to-br from-zinc-900/95 via-zinc-900/90 to-blue-950/40 p-5 sm:p-6 shadow-xl shadow-accent-500/5 backdrop-blur-md animate-fade-up"
+          className="relative overflow-hidden rounded-3xl border border-accent-500/30 bg-gradient-to-br from-zinc-900/95 via-zinc-900/90 to-blue-950/40 p-5 sm:p-6 shadow-xl backdrop-blur-md animate-fade-up"
         >
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/25 p-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg p-3">
                 <Brain className="w-full h-full" />
               </div>
               <div>
@@ -232,7 +227,7 @@ export default function Subjects() {
         <button
           type="button"
           onClick={() => nav('/ung-dung-thuc-te')}
-          className="tap-44 w-full text-left p-5 rounded-3xl bg-gradient-to-r from-accent-600/20 via-blue-600/20 to-purple-600/20 border border-accent-500/40 hover:border-accent-500/80 cursor-pointer transition-all flex items-center justify-between group shadow-lg shadow-accent-500/5 active:scale-[0.99]"
+          className="tap-44 w-full text-left p-5 rounded-3xl bg-gradient-to-r from-accent-600/20 via-blue-600/20 to-purple-600/20 border border-accent-500/40 hover:border-accent-500/80 cursor-pointer transition-all flex items-center justify-between group shadow-lg active:scale-[0.99]"
         >
           <div className="flex items-center gap-4">
             <div className="p-3.5 rounded-2xl bg-accent-500/20 text-accent-400 theme-light:text-accent-800 group-hover:scale-110 transition">
@@ -291,7 +286,7 @@ export default function Subjects() {
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${style.gradient} flex items-center justify-center shrink-0 shadow-md ${style.glow} group-hover:scale-105 transition-transform`}
+                          className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${style.gradient} flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform`}
                         >
                           <Icon className="w-6 h-6 text-white" />
                         </div>
@@ -367,8 +362,8 @@ export default function Subjects() {
                       }}
                       className={`w-full tap-44 flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-semibold transition active:scale-[0.98] ${
                         sub.id === 'english'
-                          ? 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-md shadow-emerald-500/20'
-                          : 'bg-accent-500 hover:bg-accent-400 text-black shadow-md shadow-accent-500/20'
+                          ? 'bg-emerald-500 hover:bg-emerald-400 text-black shadow-md'
+                          : 'bg-accent-500 hover:bg-accent-400 text-black shadow-md'
                       }`}
                     >
                       <Bot className="w-4 h-4" />

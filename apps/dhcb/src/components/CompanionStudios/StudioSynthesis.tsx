@@ -35,7 +35,7 @@ export default function StudioSynthesis({ navigate }: StudioSynthesisProps) {
         <button
           type="button"
           onClick={() => navigate('/action-canvas')}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-cyan-500 text-black hover:bg-cyan-400 transition shadow-md shadow-cyan-500/20 flex-shrink-0"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-cyan-500 text-black hover:bg-cyan-400 transition shadow-md flex-shrink-0"
         >
           <span>Mở Workspace</span>
           <ChevronRight className="w-4 h-4" />

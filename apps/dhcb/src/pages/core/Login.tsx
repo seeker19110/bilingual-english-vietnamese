@@ -284,7 +284,7 @@ export default function Login() {
 
       {/* Logo */}
       <div className="mb-7 text-center animate-fade-in">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center mx-auto mb-4 shadow-2xl shadow-accent-500/30 glow-accent">
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center mx-auto mb-4 shadow-2xl glow-accent">
           <BookOpen className="w-8 h-8 text-white" />
         </div>
         <h1 className="text-2xl font-bold text-white tracking-tight">{T.loginBrand}</h1>
@@ -388,7 +388,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-accent-600 to-accent-500 hover:from-accent-500 hover:to-teal-400 disabled:opacity-50 text-white font-semibold py-3 rounded-xl text-sm transition active:scale-[0.98] mt-1 shadow-lg shadow-accent-500/20"
+            className="w-full bg-gradient-to-r from-accent-600 to-accent-500 hover:from-accent-500 hover:to-teal-400 disabled:opacity-50 text-white font-semibold py-3 rounded-xl text-sm transition active:scale-[0.98] mt-1 shadow-lg"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">

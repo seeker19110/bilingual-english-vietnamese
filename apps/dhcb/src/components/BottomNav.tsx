@@ -121,7 +121,7 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
           title="Agent Bạn Đồng Hành"
         >
           <div
-            className={`relative flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-accent-600 via-accent-500 to-indigo-500 text-zinc-950 shadow-lg shadow-accent-500/35 transition-all duration-200 group-hover:scale-110 group-active:scale-95 ${
+            className={`relative flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-accent-600 via-accent-500 to-indigo-500 text-zinc-950 shadow-lg transition-all duration-200 group-hover:scale-110 group-active:scale-95 ${
               isCompanion
                 ? 'ring-2 ring-accent-400 ring-offset-2 ring-offset-zinc-950 scale-105'
                 : ''

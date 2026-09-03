@@ -196,7 +196,7 @@ export default function MetacognitiveReflectionModal({
                   type="button"
                   disabled={!userText.trim() || isSubmitting}
                   onClick={handleSubmit}
-                  className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-400 hover:to-emerald-500 text-white font-bold text-sm shadow-lg shadow-teal-500/25 transition-all transform active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                  className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-400 hover:to-emerald-500 text-white font-bold text-sm shadow-lg transition-all transform active:scale-95 disabled:opacity-50 flex items-center gap-2"
                 >
                   {isSubmitting ? (
                     <span>Đang phân tích nhận thức...</span>

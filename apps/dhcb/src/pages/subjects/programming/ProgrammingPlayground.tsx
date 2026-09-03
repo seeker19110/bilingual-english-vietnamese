@@ -133,7 +133,7 @@ export default function ProgrammingPlayground() {
           <button
             onClick={() => void handleRun()}
             disabled={runState === 'running' || runState === 'loading-env' || !code.trim()}
-            className="tap-44 inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-black font-semibold text-sm transition shadow-md shadow-accent-500/20 active:scale-[0.98]"
+            className="tap-44 inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-black font-semibold text-sm transition shadow-md active:scale-[0.98]"
           >
             {runState === 'idle' || runState === 'done' ? (
               <>

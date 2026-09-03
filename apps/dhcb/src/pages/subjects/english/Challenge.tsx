@@ -798,7 +798,7 @@ export default function Challenge() {
                 <button
                   onClick={startCountdown}
                   aria-label={isA ? 'Bắt đầu quay challenge' : 'Start recording challenge'}
-                  className="tap-44 w-20 h-20 rounded-full bg-gradient-to-br from-rose-500 to-red-500 shadow-xl shadow-rose-500/30 flex items-center justify-center active:scale-95 transition"
+                  className="tap-44 w-20 h-20 rounded-full bg-gradient-to-br from-rose-500 to-red-500 shadow-xl flex items-center justify-center active:scale-95 transition"
                 >
                   {wantVideo && canRecord ? (
                     <Video className="w-8 h-8 text-white" />

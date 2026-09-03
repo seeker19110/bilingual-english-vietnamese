@@ -293,7 +293,7 @@ export default function Profile() {
             trùng: trình đọc màn hình sẽ đọc tên/email hai lần. */}
             {!isDesktop && (
               <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-5 flex items-center gap-4 animate-fade-in">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center text-2xl font-bold text-white shadow-md shadow-accent-500/30 shrink-0">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-accent-500 to-accent-400 flex items-center justify-center text-2xl font-bold text-white shadow-md shrink-0">
                   {user.name[0]?.toUpperCase()}
                 </div>
                 <div className="min-w-0 flex-1">

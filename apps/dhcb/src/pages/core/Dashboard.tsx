@@ -360,7 +360,7 @@ export default function Dashboard() {
               <div
                 className={`w-full rounded-lg transition-[height] duration-300 ${
                   d.active
-                    ? 'bg-gradient-to-t from-orange-500 to-amber-400 shadow-sm shadow-orange-500/20'
+                    ? 'bg-gradient-to-t from-orange-500 to-amber-400 shadow-sm'
                     : 'bg-zinc-800/80'
                 }`}
                 style={{ height: `${d.active ? Math.max(16, (d.count / maxDay) * 100) : 8}%` }}

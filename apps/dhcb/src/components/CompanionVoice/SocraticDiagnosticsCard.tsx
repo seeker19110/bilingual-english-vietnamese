@@ -94,7 +94,7 @@ export default function SocraticDiagnosticsCard() {
       {/* Header */}
       <div className="flex items-center justify-between pb-4 border-b border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-violet-600 to-purple-500 flex items-center justify-center shadow-lg shadow-violet-500/25">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-violet-600 to-purple-500 flex items-center justify-center shadow-lg">
             <HelpCircle className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -166,7 +166,7 @@ export default function SocraticDiagnosticsCard() {
               <button
                 onClick={() => handleStartSession(currentTopic.id)}
                 disabled={isSubmitting}
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white font-semibold text-sm shadow-lg shadow-violet-600/30 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white font-semibold text-sm shadow-lg flex items-center justify-center gap-2 transition-all disabled:opacity-50"
               >
                 <Sparkles className="w-4 h-4" />
                 <span>Bắt đầu đối thoại dẫn dắt Socratic</span>
@@ -256,7 +256,7 @@ export default function SocraticDiagnosticsCard() {
               <button
                 type="submit"
                 disabled={!learnerAnswer.trim() || isSubmitting}
-                className="px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-semibold text-xs flex items-center gap-1.5 shadow-lg shadow-violet-600/30 transition-all disabled:opacity-50"
+                className="px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-semibold text-xs flex items-center gap-1.5 shadow-lg transition-all disabled:opacity-50"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>Gửi phản tư</span>

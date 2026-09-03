@@ -285,7 +285,7 @@ export default function FeedbackModal({ isOpen, onClose, initialCategory = 'feat
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="tap-44 px-5 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-zinc-950 font-bold text-xs flex items-center gap-1.5 shadow-md shadow-accent-500/20 transition"
+                  className="tap-44 px-5 py-2 rounded-xl bg-accent-500 hover:bg-accent-400 disabled:opacity-50 text-zinc-950 font-bold text-xs flex items-center gap-1.5 shadow-md transition"
                 >
                   {submitting ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />

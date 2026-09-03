@@ -143,7 +143,7 @@ export const AmbientScreenCopilot: React.FC = () => {
               {!stream ? (
                 <button
                   onClick={startScreenShare}
-                  className="tap-44 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-semibold text-xs transition shadow-md shadow-sky-500/20"
+                  className="tap-44 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-semibold text-xs transition shadow-md"
                 >
                   <Eye className="w-3.5 h-3.5" />
                   <span>Bật Chia Sẻ Màn Hình</span>

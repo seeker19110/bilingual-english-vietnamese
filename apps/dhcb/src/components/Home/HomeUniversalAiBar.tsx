@@ -303,7 +303,7 @@ export default function HomeUniversalAiBar() {
           aria-label="Gửi câu hỏi tới AI"
           className={`tap-44 px-3 py-2 rounded-xl transition-all duration-200 flex items-center justify-center gap-1.5 shrink-0 text-xs font-semibold ${
             query.trim()
-              ? 'bg-accent-500 hover:bg-accent-400 text-[#09090b] shadow-md shadow-accent-500/20 active:scale-95'
+              ? 'bg-accent-500 hover:bg-accent-400 text-[#09090b] shadow-md active:scale-95'
               : 'bg-zinc-800/80 text-zinc-500 cursor-not-allowed'
           }`}
         >
@@ -337,7 +337,7 @@ export default function HomeUniversalAiBar() {
           <div className="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl flex flex-col space-y-4 animate-scale-in">
             <div className="flex items-center justify-between pb-3 border-b border-zinc-800">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent-500 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-accent-500/20">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-accent-500 to-indigo-500 flex items-center justify-center text-white shadow-md">
                   <Bot className="w-5 h-5" />
                 </div>
                 <div>
@@ -402,7 +402,7 @@ export default function HomeUniversalAiBar() {
                   setQuickAnswerOpen(false)
                   nav(activeDomainRoute)
                 }}
-                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-[#09090b] font-semibold text-xs transition shadow-md shadow-accent-500/20 active:scale-95"
+                className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-accent-500 hover:bg-accent-400 text-[#09090b] font-semibold text-xs transition shadow-md active:scale-95"
               >
                 <span>Mở Chuyên Trang Học Sâu</span>
                 <ArrowRight className="w-4 h-4" />

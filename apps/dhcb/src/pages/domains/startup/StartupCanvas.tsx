@@ -153,7 +153,7 @@ export default function StartupCanvas() {
           <div className="flex items-center gap-2">
             <button
               onClick={handleSave}
-              className="tap-44 flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-500 hover:bg-purple-400 text-white font-bold text-xs transition shadow-md shadow-purple-500/20 active:scale-[0.98]"
+              className="tap-44 flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-500 hover:bg-purple-400 text-white font-bold text-xs transition shadow-md active:scale-[0.98]"
             >
               <Save className="w-4 h-4" />
               <span>Lưu Canvas</span>
@@ -265,7 +265,7 @@ export default function StartupCanvas() {
           </div>
 
           {/* Ô 3: Unique Value Proposition (Cột 3 - Trung tâm) */}
-          <div className="bg-zinc-900/90 border border-purple-500/40 rounded-2xl p-4 flex flex-col justify-between space-y-3 shadow-lg shadow-purple-500/5">
+          <div className="bg-zinc-900/90 border border-purple-500/40 rounded-2xl p-4 flex flex-col justify-between space-y-3 shadow-lg">
             <div>
               <div className="flex items-center gap-2 mb-2 pb-2 border-b border-purple-500/20">
                 <Sparkles className="w-4 h-4 text-purple-400 theme-light:text-purple-800" />

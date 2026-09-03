@@ -47,7 +47,7 @@ export default function LifeSynthesisDashboard() {
       <div className="rounded-3xl bg-zinc-950 border border-zinc-800 p-5 shadow-xl space-y-4 transition-all duration-300 hover:border-accent-500/40">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-accent-600 via-indigo-600 to-sky-500 flex items-center justify-center text-white shadow-lg shadow-accent-500/20">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-accent-600 via-indigo-600 to-sky-500 flex items-center justify-center text-white shadow-lg">
               <Compass className="w-5 h-5" />
             </div>
             <div>
@@ -68,7 +68,7 @@ export default function LifeSynthesisDashboard() {
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-accent-500 hover:bg-accent-400 text-zinc-950 transition active:scale-98 shadow-md shadow-accent-500/20"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-accent-500 hover:bg-accent-400 text-zinc-950 transition active:scale-98 shadow-md"
           >
             <span>Phân tích sâu</span>
             <ArrowUpRight className="w-4 h-4" />

@@ -156,7 +156,7 @@ export default function MicroDrillModal({
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="self-end flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 text-zinc-950 hover:bg-sky-400 transition shadow-lg shadow-sky-500/20"
+                  className="self-end flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 text-zinc-950 hover:bg-sky-400 transition shadow-lg"
                 >
                   <span>{currentIndex < drills.length - 1 ? 'Câu tiếp theo' : 'Hoàn tất'}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -180,7 +180,7 @@ export default function MicroDrillModal({
             <button
               type="button"
               onClick={handleReset}
-              className="px-6 py-2.5 rounded-xl text-xs font-bold bg-sky-500 text-zinc-950 hover:bg-sky-400 transition shadow-lg shadow-sky-500/25"
+              className="px-6 py-2.5 rounded-xl text-xs font-bold bg-sky-500 text-zinc-950 hover:bg-sky-400 transition shadow-lg"
             >
               Đóng
             </button>

@@ -210,7 +210,7 @@ export default function ActionCanvas() {
             <button
               type="button"
               onClick={() => setAiModalOpen(true)}
-              className="tap-44 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-blue-500 text-zinc-950 hover:opacity-90 shadow-md shadow-cyan-500/20 transition"
+              className="tap-44 flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-blue-500 text-zinc-950 hover:opacity-90 shadow-md transition"
             >
               <Sparkles className="w-3.5 h-3.5" />
               AI Phân Rã Mục Tiêu

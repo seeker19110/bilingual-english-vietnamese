@@ -99,7 +99,7 @@ function ResultPanel({
   return (
     <div className="space-y-4.5 animate-fade-up">
       <div className="bg-gradient-to-b from-zinc-900/90 via-zinc-900/80 to-zinc-950/90 border border-zinc-800/80 rounded-3xl p-7 text-center shadow-xl relative overflow-hidden">
-        <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 flex items-center justify-center mx-auto mb-4 shadow-xl shadow-violet-500/30 p-3.5">
+        <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 flex items-center justify-center mx-auto mb-4 shadow-xl p-3.5">
           <Trophy className="w-8 h-8 text-white drop-shadow-md" />
         </div>
         <p className="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1">
@@ -499,7 +499,7 @@ export default function Writing() {
         onClick={submit}
         disabled={loading || !essay.trim() || !essayPrompt.trim() || isThrottled}
         aria-label={isA ? 'Chấm bài ngay' : 'Grade my essay'}
-        className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-40 text-white font-bold py-3.5 rounded-2xl text-sm transition-all duration-200 active:scale-[0.98] shadow-xl shadow-violet-500/25 relative"
+        className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:opacity-40 text-white font-bold py-3.5 rounded-2xl text-sm transition-all duration-200 active:scale-[0.98] shadow-xl relative"
       >
         {isThrottled && throttleCountdown > 0 ? (
           <>

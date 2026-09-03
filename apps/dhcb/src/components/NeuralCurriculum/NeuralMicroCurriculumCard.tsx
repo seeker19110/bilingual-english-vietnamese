@@ -75,7 +75,7 @@ export default function NeuralMicroCurriculumCard() {
     <div className="flex flex-col gap-3 rounded-2xl border border-sky-500/30 bg-gradient-to-b from-sky-950/20 via-zinc-950 to-zinc-950 p-4 shadow-xl backdrop-blur-md">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-sky-500/20 text-sky-400 theme-light:text-sky-900 border border-sky-500/30 shadow-lg shadow-sky-500/10">
+          <div className="p-2 rounded-xl bg-sky-500/20 text-sky-400 theme-light:text-sky-900 border border-sky-500/30 shadow-lg">
             <BrainCircuit className="w-5 h-5" />
           </div>
           <div>
@@ -129,7 +129,7 @@ export default function NeuralMicroCurriculumCard() {
           <button
             type="button"
             onClick={() => setDrillModalOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-sky-500 text-zinc-950 hover:bg-sky-400 transition shadow-md shadow-sky-500/20"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-sky-500 text-zinc-950 hover:bg-sky-400 transition shadow-md"
           >
             <Zap className="w-3.5 h-3.5 fill-current" />
             Luyện Nhanh 2 Phút

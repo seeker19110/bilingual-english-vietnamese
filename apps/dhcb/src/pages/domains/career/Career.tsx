@@ -364,7 +364,7 @@ export default function Career({ embedded = false }: { embedded?: boolean } = {}
               </div>
               <button
                 onClick={() => setShowProfileModal(true)}
-                className="tap-44 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-[#fff] text-sm font-semibold shadow-lg shadow-emerald-900/30 transition self-start md:self-auto"
+                className="tap-44 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-[#fff] text-sm font-semibold shadow-lg transition self-start md:self-auto"
               >
                 {profile ? 'Chỉnh sửa hồ sơ' : 'Thiết lập hồ sơ'}
               </button>
