@@ -1211,6 +1211,32 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   **Việc để ngỏ (cố ý, nêu rõ trong spec mục "KHÔNG LÀM"):** cột ngữ cảnh cho Kanban/LifeGraph,
   command palette tìm kiếm mờ đầy đủ (hiện `⌘K` chỉ mở lại Studio switcher có sẵn).
 
+- **[2026-09-03] ✅ "UI DO AI SINH" — 9 LUẬT CHỐNG NHIỄU THỊ GIÁC, ĐỢT A→D3 ĐÃ XONG TRỌN VẸN 5
+  PR.** Đọc toàn bộ 61 luật của `pbakaus/impeccable` rồi đối chiếu bằng grep trên `apps/` để chắt
+  lọc còn 9 luật có bằng chứng chạm dự án — ghi ở `.agents/skills/ui-ux-craftsman/SKILL.md` mục
+  9 (`docs/changelog/0258-*.md`). Năm PR sau đó lần lượt thi hành, mỗi PR có test canh gác riêng
+  (allowlist trong `apps/dhcb/src/pages/core/UiNoise.design.test.ts`, khoá cả hai chiều — thêm
+  mới hay gỡ nhầm một chỗ hợp lệ đều làm CI đỏ):
+  1. **Đợt A+B — khoảng đọc + header chế độ tập trung** (`#844`, `0261-*.md`): thân bài dài
+     dùng `.read-measure`/`.read-body` (66ch, không phải `max-w-*` vì đơn vị `rem` không theo
+     cỡ chữ render); `Layout` prop `focus` ẩn bộ chuyển Studio + huy hiệu streak trên trang
+     ngồi học lâu; gỡ `animate-ping`/`animate-pulse` trang trí ở header.
+  2. **Đợt C — trang chủ tập trung** (`#845`, `0262-*.md`): gỡ banner "Bạn Đồng Hành AI Đa
+     Miền" (lối vào thứ ba trùng header), 3 thẻ quảng cáo bộ môn → danh sách phẳng dựng từ một
+     mảng dữ liệu, thẻ AI mở đầu viết lại phẳng (bỏ quầng sáng/gradient/nhấp nháy trang trí).
+  3. **Đợt D1 — quầng sáng nền** (`#846`, `0263-*.md`): gỡ 7/8 chỗ `blur-2xl`/`blur-3xl` trang
+     trí thuần; giữ `backdrop-blur` (kính mờ thật cho bề mặt nổi, không phải quầng sáng).
+  4. **Đợt D2 — bóng phát sáng màu** (`#847`, `0264-*.md`): 154 → 46 chỗ `shadow-<màu>-500/xx`
+     — chỉ giữ khi mang nghĩa trạng thái thật (đang chọn, đang ghi âm/lắng nghe, vừa chấm đúng,
+     đang trực tuyến); cố ý làm trái câu "gỡ dần khi đụng tới, không mở đợt quét riêng" của
+     chính luật 5 vì nợ đo được quá lớn (154 chỗ/57 file) — người dùng xác nhận khi được hỏi.
+  5. **Đợt D3 — nhấp nháy trang trí** (`#848`, `0265-*.md`, khép đợt D): gỡ 7 chỗ
+     `animate-pulse`/`animate-ping` không gắn điều kiện nào (badge FAB, huy hiệu WebGPU tĩnh,
+     bullet tiêu đề mục, ô "hôm nay" trong lịch); giữ skeleton tải + trạng thái sống thật.
+
+  **Quyết định liền kề, KHÔNG mở lại:** giữ nguyên ~4.100 chỗ màu Tailwind cố định, không token
+  hoá (xem mục "Quyết định quan trọng" bên dưới, `0259`/`0260-*.md`).
+
 - **[2026-09-02] ✅ ĐỢT 2 THIẾT KẾ LẠI DESKTOP — HỆ THỐNG THIẾT KẾ + BREADCRUMB TOÀN SITE, ĐÃ
   XONG TRỌN VẸN 5 PR.** Loạt 2026-08-31 ở trên mới sửa 4 trang tiêu biểu; loạt này phủ toàn bộ
   và chốt nền hệ thống thiết kế.
