@@ -349,8 +349,7 @@ export default function Profile() {
             {/* ── CÁC KHÔNG GIAN CHUYÊN BIỆT (Specialized Spaces & Hubs) ───────── */}
             <section className="space-y-3 animate-fade-in">
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-white flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-accent-400 animate-pulse" />
+                <h2 className="text-sm font-semibold text-white">
                   {isA ? 'Không Gian Chuyên Biệt (Hubs)' : 'Specialized Spaces'}
                 </h2>
                 <span className="text-xs text-zinc-500">Platform V2</span>

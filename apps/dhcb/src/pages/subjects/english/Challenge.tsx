@@ -206,7 +206,7 @@ function WeekBoard({ cells, isA }: { cells: WeekCell[]; isA: boolean }) {
                 done
                   ? 'bg-accent-500 text-black border-transparent'
                   : c.isToday
-                    ? 'bg-accent-500/15 border-accent-500/60 text-accent-300 theme-light:text-accent-800 animate-pulse'
+                    ? 'bg-accent-500/15 border-accent-500/60 text-accent-300 theme-light:text-accent-800'
                     : c.isFuture
                       ? 'bg-zinc-900/50 border-zinc-800/50 text-zinc-400'
                       : 'bg-zinc-800/60 border-zinc-700/60 text-zinc-400'

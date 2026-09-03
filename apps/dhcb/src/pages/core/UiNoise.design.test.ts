@@ -100,3 +100,80 @@ describe('Bóng phát sáng màu chỉ còn ở trạng thái có nghĩa (đợt
     expect(actual).toEqual(ALLOWED_COLOR_SHADOW_COUNT)
   })
 })
+
+// ── Đợt D3 (2026-09-03) — nhấp nháy trang trí (`animate-pulse`/`animate-ping`) ────────
+//
+// VÌ SAO CẦN: luật 6 mục 9 `.agents/skills/ui-ux-craftsman` — "Pulse chỉ dành cho thứ ĐANG
+// THAY ĐỔI THẬT": skeleton tải, hoặc trạng thái sống thật (đang ghi âm/lắng nghe/nói, đang
+// trực tuyến, tiến trình đang chạy). Nhãn trạng thái TĨNH (bullet đầu tiêu đề mục, huy hiệu
+// khả năng cố định, dữ kiện lịch không đổi trong lúc xem như "hôm nay") thì để tĩnh.
+//
+// Đo trước D3: 10 `animate-ping` + 49 `animate-pulse` (kể cả các chỗ trùng khớp giả từ
+// `animate-pulse-ring` — một animation KHÁC, không thuộc phạm vi luật này, không đụng tới).
+// Sau D3: gỡ 1 `animate-ping` (chấm mesh luôn nhấp nháy bất kể còn kết nối hay không — không
+// phản ánh trạng thái thật) + 6 `animate-pulse` (badge FAB không gắn điều kiện nào, huy hiệu
+// WebGPU tĩnh theo thiết bị, 3 bullet trang trí đầu tiêu đề mục, ô "hôm nay" trong lịch —
+// dữ kiện không đổi trong lúc xem). Test khoá cả hai chiều như D2.
+//
+// Regex loại trừ `animate-pulse-ring` bằng lookahead phủ định — đó là animation RIÊNG (dùng ở
+// `ShareToggle.tsx`/`Speaking.tsx` cho tín hiệu "đang phát trực tiếp", đã tự tôn trọng
+// prefers-reduced-motion), không phải Tailwind `animate-pulse` nên không nằm trong luật này.
+const PULSE_PATTERN = /animate-pulse(?!-ring)\b/g
+const PING_PATTERN = /animate-ping\b/g
+
+const ALLOWED_PULSE_COUNT: Record<string, number> = {
+  'components/CompanionLinkSection.tsx': 1, // skeleton tải
+  'components/CompanionStudios/StudioDialogue.tsx': 2, // voice.state đang hoạt động + nút "Dừng Ghi Âm"
+  'components/CompanionVoice/AmbientScreenCopilot.tsx': 1, // đang chia sẻ màn hình (stream sống)
+  'components/CompanionVoice/ArticulatoryPhoneticsVisualizer.tsx': 1, // minh hoạ dây thanh đang rung (thuộc tính âm vị thật)
+  'components/CompanionVoice/EchoShadowingCard.tsx': 2, // đang ghi âm (waveform + nút)
+  'components/CompanionVoice/NeuroAffectiveCard.tsx': 1, // đang ở trạng thái flow đỉnh cao
+  'components/CompanionVoice/ScenarioHolodeckCard.tsx': 1, // áp lực phiên mô phỏng đang tăng cao
+  'components/CompanionVoice/SubconsciousInsightsCard.tsx': 1, // skeleton tải
+  'components/DecisionLedger/OutcomeCalibrationCard.tsx': 1, // skeleton tải
+  'components/Home/HomeAiBriefingCard.tsx': 3, // skeleton tải (2 dòng) + comment giải thích lý do
+  'components/Home/HomeUniversalAiBar.tsx': 1, // đang lắng nghe (ghi âm)
+  'components/Layout.tsx': 1, // CHỈ LÀ CHÚ THÍCH ghi lại lý do đã gỡ, không phải mã thật
+  'components/LifeGraph/CrossDomainSynergyCard.tsx': 1, // skeleton tải
+  'components/ProactiveBriefingCard.tsx': 1, // mục ưu tiên "khẩn" (urgent) — màu ngữ nghĩa
+  'components/PvPArena/PvPArenaLobbyModal.tsx': 1, // đang ghép trận
+  'components/PvPArena/PvPBattlefieldModal.tsx': 1, // đồng hồ đếm ngược đang chạy
+  'components/ReferralSection.tsx': 1, // skeleton tải
+  'components/ShareProgress.tsx': 1, // skeleton tải (đang tạo mã QR)
+  'components/admin/AdminSystemControlPanel.tsx': 1, // circuit breaker đang ngắt (cảnh báo)
+  'components/CefrLessonViews.tsx': 3, // dòng đang đọc + lượt đang nói + nút "Dừng Ghi Âm"
+  'pages/subjects/english/CefrLevelPage.tsx': 6, // skeleton tải (aria-busy)
+  'pages/subjects/english/Challenge.tsx': 2, // skeleton media + đang ghi âm (fallback không video)
+  'pages/subjects/english/Lessons.tsx': 5, // dòng đang đọc + lượt đang nói + audio đang phát + nút ghi âm + đang lắng nghe
+}
+
+const ALLOWED_PING_COUNT: Record<string, number> = {
+  'components/Companion3D/CyberTutorAvatar3D.tsx': 1, // đang nghe/đang nói (avatar 3D)
+  'components/CompanionVoice/EchoShadowingCard.tsx': 1, // đang ghi âm
+  'components/Home/HomeUniversalAiBar.tsx': 1, // đang lắng nghe (ghi âm)
+  'components/Layout.tsx': 1, // CHỈ LÀ CHÚ THÍCH ghi lại lý do đã gỡ, không phải mã thật
+  'components/chat/PresenceDot.tsx': 1, // đang trực tuyến
+  'pages/learning/Subjects.tsx': 1, // đang tải danh sách môn học
+}
+
+describe('Nhấp nháy chỉ còn khi có thứ đang thay đổi thật (đợt D3)', () => {
+  const files = listSourceFiles(SRC_DIR)
+
+  it('animate-pulse: mỗi file khớp ĐÚNG số trong allowlist', () => {
+    const actual: Record<string, number> = {}
+    for (const f of files) {
+      const matches = readFileSync(f, 'utf8').match(PULSE_PATTERN)
+      if (matches) actual[f.slice(SRC_DIR.length + 1)] = matches.length
+    }
+    expect(actual).toEqual(ALLOWED_PULSE_COUNT)
+  })
+
+  it('animate-ping: mỗi file khớp ĐÚNG số trong allowlist', () => {
+    const actual: Record<string, number> = {}
+    for (const f of files) {
+      const matches = readFileSync(f, 'utf8').match(PING_PATTERN)
+      if (matches) actual[f.slice(SRC_DIR.length + 1)] = matches.length
+    }
+    expect(actual).toEqual(ALLOWED_PING_COUNT)
+  })
+})
