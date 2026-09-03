@@ -1229,8 +1229,7 @@ export default function Practice() {
         {/* ── TẦNG 1: LUYỆN TẬP 5 MÔN HỌC CỐT LÕI & GIẢI ĐỀ AI ── */}
         <section aria-label="Luyện tập 5 Môn học cốt lõi" className="space-y-3">
           <div className="flex items-center justify-between px-1">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-blue-400 theme-light:text-blue-800 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-blue-400 theme-light:text-blue-800">
               1. Luyện Tập 5 Môn Học & Giải Đề Từng Bước
             </h2>
             <button
@@ -1410,8 +1409,7 @@ export default function Practice() {
         {/* ── TẦNG 2: 4 TRỤ CỘT KỸ NĂNG CHÍNH (Core Skills Mastery) ── */}
         <section aria-label="4 Kỹ năng cốt lõi" className="space-y-3">
           <div className="flex items-center justify-between px-1">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-accent-400 theme-light:text-accent-800 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-accent-400 animate-pulse" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-accent-400 theme-light:text-accent-800">
               2. 4 Kỹ Năng Đàm Thoại & Đánh Giá AI
             </h2>
           </div>

@@ -28,7 +28,7 @@ export const EdgeAiIndicator: React.FC<EdgeAiIndicatorProps> = ({ className = ''
         title="Nhấn để xem chi tiết Edge AI"
       >
         {isWebGpu ? (
-          <Zap className="w-3.5 h-3.5 text-emerald-400 theme-light:text-emerald-900 animate-pulse" />
+          <Zap className="w-3.5 h-3.5 text-emerald-400 theme-light:text-emerald-900" />
         ) : (
           <Cloud className="w-3.5 h-3.5 text-zinc-400" />
         )}

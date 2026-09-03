@@ -32,7 +32,7 @@ export default function RealtimeTelemetryBar() {
   return (
     <div className="flex items-center justify-between py-1.5 px-2 bg-zinc-950/40 rounded-xl border border-zinc-800/60 mb-2">
       <div className="flex items-center gap-2">
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+        <span className="w-2 h-2 rounded-full bg-emerald-400" />
         <span className="text-[11px] text-zinc-400 font-medium">
           Mesh:{' '}
           <span className="text-zinc-200 font-semibold">{meshStatus.region.split(' ')[0]}</span>

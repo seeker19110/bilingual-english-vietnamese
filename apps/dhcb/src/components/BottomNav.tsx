@@ -128,7 +128,6 @@ export default function BottomNav({ triggerHandlers, isReachabilityOpen }: Props
             }`}
           >
             <Sparkles className="w-6 h-6 text-zinc-950" />
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 border border-zinc-950 animate-pulse" />
           </div>
           <span
             className={`truncate max-w-[5.25rem] tracking-tight mt-0.5 text-[11px] font-bold ${
