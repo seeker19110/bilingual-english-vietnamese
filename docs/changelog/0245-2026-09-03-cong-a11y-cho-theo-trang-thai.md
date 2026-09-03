@@ -1,6 +1,6 @@
 # 0245 — 2026-09-03 — Cổng a11y chờ theo trạng thái, không theo thời gian
 
-PR: (điền khi tạo) · Nhánh: `claude/modern-ui-redesign-jull9n`
+PR: #828 · Nhánh: `claude/modern-ui-redesign-jull9n`
 
 ## Bối cảnh
 
