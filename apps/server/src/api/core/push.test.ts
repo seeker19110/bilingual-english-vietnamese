@@ -44,16 +44,25 @@ function mockPool(opts: {
   subs: Row[]
   usageRows?: Record<string, unknown>[]
   challengeRows?: { user_id: string }[]
-  challengeError?: Error | null
+  challengeError?: unknown
   recentUsageRows?: { user_id: string; day: string; [k: string]: unknown }[]
-  recentUsageError?: Error | null
+  recentUsageError?: unknown
   progressRows?: {
     user_id: string
     srs?: Record<string, { due?: number }>
     weekly_goal?: { goal?: number }
   }[]
+  // Đợt 2 coverage 2026-09-05: ghi lại MỌI câu SQL đã chạy (kèm tham số) để test kiểm được
+  // câu xoá subscription hết hạn (endpoint = any(...)) — nhánh trước đó chưa test tới.
+  queryLog?: { sql: string; params?: unknown[] }[]
 }) {
-  const query = vi.fn(async (sql: string) => {
+  const query = vi.fn(async (sql: string, params?: unknown[]) => {
+    opts.queryLog?.push({ sql, params })
+    // Kiểm câu xoá subscription HẾT HẠN trước câu select chung (cả hai đều chứa chuỗi con
+    // 'from public.push_subscriptions').
+    if (sql.startsWith('delete from public.push_subscriptions where endpoint')) {
+      return { rows: [] }
+    }
     if (sql.includes('from public.push_subscriptions')) {
       return { rows: opts.subs }
     }
@@ -375,5 +384,424 @@ describe('api/push default handler', () => {
     expect(resOk.status).toBe(200)
     const json = (await resOk.json()) as { ok: boolean; deleted: number }
     expect(json.deleted).toBe(5)
+  })
+})
+
+// ═══════════════════════════════════════════════════════════════════════════════════════
+// Đợt 2 coverage 2026-09-05: nhánh chưa phủ (branch 80% → siết lên ≥93%). Không lặp lại ca
+// đã có ở trên — chỉ nhắm đúng nhánh còn thiếu trong uncovered-all.md.
+// ═══════════════════════════════════════════════════════════════════════════════════════
+
+describe('sendReminders — nhánh còn thiếu (Đợt 2 coverage 2026-09-05)', () => {
+  it('usage hôm nay chỉ có writing_count (chưa ghi chat/stt) → vẫn tính đã học hôm nay, không nhắc', async () => {
+    mockedGetPool.mockReturnValue(
+      mockPool({ subs: [sub('u10')], usageRows: [{ user_id: 'u10', writing_count: 2 }] }),
+    )
+    const result = await sendReminders(13)
+    expect(result).toEqual({ sent: 0, skipped: 1, expired: 0 })
+    expect(mockedSend).not.toHaveBeenCalled()
+  })
+
+  it('recentUsageRows có 1 ngày tổng = 0 (dữ liệu rác, không có hoạt động thật) → KHÔNG tính vào ngày hoạt động (nhánh continue)', async () => {
+    mockedGetPool.mockReturnValue(
+      mockPool({
+        subs: [sub('u9')],
+        usageRows: [],
+        challengeRows: [],
+        progressRows: [{ user_id: 'u9', weekly_goal: { goal: 3 } }],
+        recentUsageRows: [
+          { user_id: 'u9', day: '2026-07-13', chat_count: 1 },
+          { user_id: 'u9', day: '2026-07-14', chat_count: 1 },
+          // chat_count KHÔNG có (undefined) + mọi cột khác = 0 → tổng = 0, phải bị bỏ qua.
+          {
+            user_id: 'u9',
+            day: '2026-07-15',
+            writing_count: 0,
+            speaking_count: 0,
+            stt_count: 0,
+            learn_count: 0,
+          },
+        ],
+      }),
+    )
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-07-16T06:00:00Z'))
+    const result = await sendReminders(13)
+    vi.useRealTimers()
+    expect(result.sent).toBe(1)
+    const payload = JSON.parse(mockedSend.mock.calls[0]?.[1] as string)
+    // Nếu ngày tổng=0 bị tính NHẦM thành ngày hoạt động thứ 3 thì weeklyDaysDone sẽ = 3 =
+    // đạt đủ mục tiêu tuần (goal=3), và thông điệp sẽ KHÔNG còn nhắc "mục tiêu tuần" nữa —
+    // assertion này khẳng định ngày rác đó không được tính.
+    expect(payload.title).toContain('mục tiêu tuần')
+  })
+
+  it('bảng challenge_entries ném lỗi KHÔNG PHẢI Error (vd chuỗi thô) → vẫn fail-open về payload chung', async () => {
+    mockedGetPool.mockReturnValue(
+      mockPool({ subs: [sub('u14')], usageRows: [], challengeError: 'day khong ket noi duoc' }),
+    )
+    const result = await sendReminders(13)
+    expect(result.sent).toBe(1)
+    const payload = JSON.parse(mockedSend.mock.calls[0]?.[1] as string)
+    expect(payload.url).toBe('/')
+  })
+
+  it('daily_usage/learning_progress mở rộng ném lỗi KHÔNG PHẢI Error → vẫn fail-open, vẫn gửi được', async () => {
+    mockedGetPool.mockReturnValue(
+      mockPool({
+        subs: [sub('u15')],
+        usageRows: [],
+        challengeRows: [],
+        recentUsageError: 'timeout string thô',
+      }),
+    )
+    const result = await sendReminders(13)
+    expect(result.sent).toBe(1)
+    const payload = JSON.parse(mockedSend.mock.calls[0]?.[1] as string)
+    expect(payload.url).toBe('/')
+  })
+
+  it('sendNotification thất bại với statusCode 410 (subscription hết hạn) → tự xoá khỏi DB', async () => {
+    const queryLog: { sql: string; params?: unknown[] }[] = []
+    mockedGetPool.mockReturnValue(
+      mockPool({ subs: [sub('u11')], usageRows: [], challengeRows: [], queryLog }),
+    )
+    const err = Object.assign(new Error('Gone'), { statusCode: 410 })
+    mockedSend.mockRejectedValueOnce(err)
+    const result = await sendReminders(13)
+    expect(result).toEqual({ sent: 0, skipped: 0, expired: 1 })
+    const deleteCall = queryLog.find((q) =>
+      q.sql.startsWith('delete from public.push_subscriptions where endpoint'),
+    )
+    expect(deleteCall?.params?.[0]).toEqual(['https://push.example/u11'])
+  })
+
+  it('sendNotification thất bại với statusCode KHÁC 410/404 (vd 500) → không tính hết hạn, không xoá', async () => {
+    const queryLog: { sql: string; params?: unknown[] }[] = []
+    mockedGetPool.mockReturnValue(
+      mockPool({ subs: [sub('u12')], usageRows: [], challengeRows: [], queryLog }),
+    )
+    const err = Object.assign(new Error('Server Error'), { statusCode: 500 })
+    mockedSend.mockRejectedValueOnce(err)
+    const result = await sendReminders(13)
+    expect(result).toEqual({ sent: 0, skipped: 0, expired: 0 })
+    expect(
+      queryLog.some((q) =>
+        q.sql.startsWith('delete from public.push_subscriptions where endpoint'),
+      ),
+    ).toBe(false)
+  })
+
+  it('sendNotification ném lỗi KHÔNG PHẢI object (vd chuỗi) → không tính hết hạn, không crash', async () => {
+    mockedGetPool.mockReturnValue(
+      mockPool({ subs: [sub('u13')], usageRows: [], challengeRows: [] }),
+    )
+    mockedSend.mockRejectedValueOnce('mang loi roi')
+    const result = await sendReminders(13)
+    expect(result).toEqual({ sent: 0, skipped: 0, expired: 0 })
+  })
+})
+
+describe('sendReminders — biến môi trường VAPID hoàn toàn chưa set (Đợt 2 coverage 2026-09-05)', () => {
+  it('VAPID_PUBLIC_KEY/PRIVATE_KEY undefined (chưa từng set — khác chuỗi rỗng) → vẫn coi là chưa cấu hình', async () => {
+    vi.resetModules()
+    // undefined (không phải '') để hit đúng nhánh `?? ''` khi biến CHƯA TỪNG được set.
+    vi.stubEnv('VAPID_PUBLIC_KEY', undefined)
+    vi.stubEnv('VAPID_PRIVATE_KEY', undefined)
+    const mod = await import('./push.js')
+    const result = await mod.sendReminders(13)
+    expect(result).toEqual({ sent: 0, skipped: 0, expired: 0 })
+    // Khôi phục cho các test khác trong tiến trình (module cache đã bị reset).
+    vi.stubEnv('VAPID_PUBLIC_KEY', 'pub-test')
+    vi.stubEnv('VAPID_PRIVATE_KEY', 'priv-test')
+  })
+})
+
+describe('api/push default handler — nhánh còn thiếu (Đợt 2 coverage 2026-09-05)', () => {
+  let handler: typeof import('./push.js').default
+
+  beforeAll(async () => {
+    vi.resetModules()
+    vi.stubEnv('VAPID_PUBLIC_KEY', 'pub-test')
+    vi.stubEnv('VAPID_PRIVATE_KEY', 'priv-test')
+    vi.stubEnv('CRON_SECRET', 'test-cron-secret')
+    // Bypass xác thực thật (cookie/DB) — CHỈ dùng trong test, khoá cứng khi NODE_ENV=production
+    // (xem packages/core-auth/security.ts#validateAuth).
+    vi.stubEnv('SKIP_AUTH', 'true')
+    vi.stubEnv('NODE_ENV', 'test')
+    vi.stubEnv('VERCEL_ENV', undefined)
+    const mod = await import('./push.js')
+    handler = mod.default
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+    mockedGetPool.mockReset()
+  })
+
+  it('body JSON hợp lệ nhưng KHÔNG PHẢI object (vd chuỗi) → coi như body rỗng, action không hợp lệ trả 400', async () => {
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify('chi-la-mot-chuoi'),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
+    const json = (await res.json()) as { error: string }
+    expect(json.error).toBe('Action không hợp lệ')
+  })
+
+  it('subscribe: auth hợp lệ + subscription hợp lệ → lưu thành công, remindHour mặc định null', async () => {
+    const insertCalls: unknown[][] = []
+    mockedGetPool.mockReturnValue({
+      query: vi.fn(async (sql: string, params?: unknown[]) => {
+        if (sql.startsWith('insert into public.push_subscriptions')) {
+          insertCalls.push(params ?? [])
+          return { rows: [] }
+        }
+        throw new Error(`câu SQL không mong đợi: ${sql}`)
+      }),
+    } as unknown as ReturnType<typeof getPgPool>)
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'subscribe',
+        subscription: { endpoint: 'https://push.example/dev1', keys: { p256dh: 'p', auth: 'a' } },
+      }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(200)
+    const json = (await res.json()) as { ok: boolean }
+    expect(json.ok).toBe(true)
+    expect(insertCalls).toHaveLength(1)
+    expect(insertCalls[0]?.[4]).toBeNull()
+  })
+
+  it('subscribe: subscription thiếu trường bắt buộc → 400, không đụng DB', async () => {
+    mockedGetPool.mockReturnValue({
+      query: vi.fn(async (sql: string) => {
+        throw new Error(`không nên gọi DB ở ca này: ${sql}`)
+      }),
+    } as unknown as ReturnType<typeof getPgPool>)
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'subscribe', subscription: { endpoint: '' } }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(400)
+    const json = (await res.json()) as { error: string }
+    expect(json.error).toBe('Thiếu dữ liệu subscription')
+  })
+
+  it('subscribe: DB insert lỗi → 500 kèm message lỗi thật', async () => {
+    mockedGetPool.mockReturnValue({
+      query: vi.fn(async () => {
+        throw new Error('duplicate key value')
+      }),
+    } as unknown as ReturnType<typeof getPgPool>)
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'subscribe',
+        subscription: { endpoint: 'https://push.example/dev2', keys: { p256dh: 'p', auth: 'a' } },
+      }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(500)
+    const json = (await res.json()) as { error: string }
+    expect(json.error).toBe('duplicate key value')
+  })
+
+  it('subscribe: remindHour hợp lệ (0-23, có phần thập phân) → làm tròn rồi lưu', async () => {
+    const insertCalls: unknown[][] = []
+    mockedGetPool.mockReturnValue({
+      query: vi.fn(async (sql: string, params?: unknown[]) => {
+        if (sql.startsWith('insert into public.push_subscriptions')) {
+          insertCalls.push(params ?? [])
+          return { rows: [] }
+        }
+        throw new Error(`câu SQL không mong đợi: ${sql}`)
+      }),
+    } as unknown as ReturnType<typeof getPgPool>)
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'subscribe',
+        remindHour: 7.6,
+        subscription: { endpoint: 'https://push.example/dev5', keys: { p256dh: 'p', auth: 'a' } },
+      }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(200)
+    expect(insertCalls[0]?.[4]).toBe(8)
+  })
+
+  it('unsubscribe: auth hợp lệ → xoá đúng subscription', async () => {
+    const deleteCalls: unknown[][] = []
+    mockedGetPool.mockReturnValue({
+      query: vi.fn(async (sql: string, params?: unknown[]) => {
+        if (sql.startsWith('delete from public.push_subscriptions where user_id')) {
+          deleteCalls.push(params ?? [])
+          return { rows: [] }
+        }
+        throw new Error(`câu SQL không mong đợi: ${sql}`)
+      }),
+    } as unknown as ReturnType<typeof getPgPool>)
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'unsubscribe',
+        subscription: { endpoint: 'https://push.example/dev3', keys: { p256dh: 'p', auth: 'a' } },
+      }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(200)
+    expect(deleteCalls).toHaveLength(1)
+    expect(deleteCalls[0]?.[1]).toBe('https://push.example/dev3')
+  })
+
+  it('subscribe: DB insert ném lỗi KHÔNG PHẢI Error (vd chuỗi) → 500, message vẫn là chuỗi đọc được', async () => {
+    mockedGetPool.mockReturnValue({
+      query: vi.fn(async () => {
+        // KHÔNG PHẢI Error để phủ nhánh `err instanceof Error ? ... : String(err)` bên false.
+        throw 'boom-string'
+      }),
+    } as unknown as ReturnType<typeof getPgPool>)
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'subscribe',
+        subscription: { endpoint: 'https://push.example/dev6', keys: { p256dh: 'p', auth: 'a' } },
+      }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(500)
+    const json = (await res.json()) as { error: string }
+    expect(json.error).toBe('boom-string')
+  })
+
+  it('unsubscribe: DB delete lỗi → 500 kèm message lỗi thật', async () => {
+    mockedGetPool.mockReturnValue({
+      query: vi.fn(async () => {
+        throw new Error('connection lost')
+      }),
+    } as unknown as ReturnType<typeof getPgPool>)
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'unsubscribe',
+        subscription: { endpoint: 'https://push.example/dev4', keys: { p256dh: 'p', auth: 'a' } },
+      }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(500)
+    const json = (await res.json()) as { error: string }
+    expect(json.error).toBe('connection lost')
+  })
+
+  it('unsubscribe: DB delete ném lỗi KHÔNG PHẢI Error (vd chuỗi) → 500, message vẫn đọc được', async () => {
+    mockedGetPool.mockReturnValue({
+      query: vi.fn(async () => {
+        // KHÔNG PHẢI Error để phủ nhánh `err instanceof Error ? ... : String(err)` bên false.
+        throw 'boom-string-2'
+      }),
+    } as unknown as ReturnType<typeof getPgPool>)
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'unsubscribe',
+        subscription: { endpoint: 'https://push.example/dev7', keys: { p256dh: 'p', auth: 'a' } },
+      }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(500)
+    const json = (await res.json()) as { error: string }
+    expect(json.error).toBe('boom-string-2')
+  })
+
+  it('send-daily: KHÔNG truyền hour → dùng giờ UTC hiện tại của server (fallback)', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-07-16T09:30:00Z')) // UTC hour = 9
+    mockedGetPool.mockReturnValue({
+      query: vi.fn(async (sql: string) => {
+        if (sql.includes('from public.push_subscriptions')) return { rows: [] }
+        throw new Error(`câu SQL không mong đợi: ${sql}`)
+      }),
+    } as unknown as ReturnType<typeof getPgPool>)
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'send-daily', secret: 'test-cron-secret' }),
+    })
+    const res = await handler(req)
+    vi.useRealTimers()
+    expect(res.status).toBe(200)
+    const json = (await res.json()) as { hour: number }
+    expect(json.hour).toBe(9)
+  })
+
+  it('clear-all: DB không trả rowCount (undefined) → deleted mặc định 0', async () => {
+    mockedGetPool.mockReturnValue({
+      query: vi.fn(async () => ({})),
+    } as unknown as ReturnType<typeof getPgPool>)
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'clear-all', secret: 'test-cron-secret' }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(200)
+    const json = (await res.json()) as { deleted: number }
+    expect(json.deleted).toBe(0)
+  })
+
+  it('clear-all: DB lỗi → 500 kèm message lỗi thật', async () => {
+    mockedGetPool.mockReturnValue({
+      query: vi.fn(async () => {
+        throw new Error('table locked')
+      }),
+    } as unknown as ReturnType<typeof getPgPool>)
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'clear-all', secret: 'test-cron-secret' }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(500)
+    const json = (await res.json()) as { error: string }
+    expect(json.error).toBe('table locked')
+  })
+
+  it('clear-all: DB ném lỗi KHÔNG PHẢI Error (vd chuỗi) → 500, message vẫn đọc được', async () => {
+    mockedGetPool.mockReturnValue({
+      query: vi.fn(async () => {
+        // KHÔNG PHẢI Error để phủ nhánh `err instanceof Error ? ... : String(err)` bên false.
+        throw 'boom-string-3'
+      }),
+    } as unknown as ReturnType<typeof getPgPool>)
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'clear-all', secret: 'test-cron-secret' }),
+    })
+    const res = await handler(req)
+    expect(res.status).toBe(500)
+    const json = (await res.json()) as { error: string }
+    expect(json.error).toBe('boom-string-3')
+  })
+})
+
+describe('api/push default handler — thiếu VAPID (Đợt 2 coverage 2026-09-05)', () => {
+  it('POST khi CHƯA cấu hình VAPID key → 503, không đọc/định tuyến action', async () => {
+    vi.resetModules()
+    vi.stubEnv('VAPID_PUBLIC_KEY', '')
+    vi.stubEnv('VAPID_PRIVATE_KEY', '')
+    const mod = await import('./push.js')
+    const req = new Request('https://example.com/api/push', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'vapid-key' }),
+    })
+    const res = await mod.default(req)
+    expect(res.status).toBe(503)
+    const json = (await res.json()) as { error: string }
+    expect(json.error).toContain('chưa được cấu hình')
+    // Khôi phục cho tiến trình (module cache đã bị reset ở test trên).
+    vi.stubEnv('VAPID_PUBLIC_KEY', 'pub-test')
+    vi.stubEnv('VAPID_PRIVATE_KEY', 'priv-test')
   })
 })

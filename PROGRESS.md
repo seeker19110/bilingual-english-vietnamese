@@ -3121,6 +3121,30 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   thành statements 95 · branches 90 (giữ nguyên, biên độ mỏng nhất) · functions 94 · lines 95.
   Branches vẫn là chỉ số cần vá tiếp — file nhánh phủ thấp liệt kê ở trên chưa đổi.
 
+  **[2026-09-05] ĐỢT 2 — trả đúng chỗ mỏng bằng TEST, không phải bằng cách nâng ngưỡng suông.**
+  Đo `coverage-final.json` để biết chính xác nhánh nào chưa đi, xếp hạng ra 18 file gom 586/1.461
+  nhánh chưa đi của cả repo (40%), giao 8 subagent song song viết **542 test mới** (11.160 →
+  11.702). Không sửa một dòng mã nguồn nào. Số đo thật sau đợt: **stmts 97,00 · branches 94,06 ·
+  funcs 95,95 · lines 97,00**; sàn nâng thành **96 / 93 / 95 / 96** (vẫn chừa ~1 điểm biên độ).
+  Chi tiết từng file + giải trình nhánh còn trống:
+  `docs/changelog/0268-2026-09-05-coverage-dot-2-nhanh-chua-phu.md`.
+
+  **Điều quan trọng nhất rút ra: 100% branch KHÔNG đạt được bằng test hợp lệ.** Gần như toàn bộ
+  nhánh còn trống sau đợt này là fallback `?? ''`/`?? null`/`?? 0` sinh ra do
+  `noUncheckedIndexedAccess` mà vế phải không thể chạy (bất biến nơi gọi bảo đảm vế trái luôn có
+  giá trị), cộng vài `throw e` lưới an toàn cho lỗi lập trình. Muốn chạm 100% phải viết test giả
+  tạo hoặc dọn mã phòng thủ — cả hai đắt hơn giá trị thu được. **Phiên sau đừng đặt mục tiêu
+  100%**; muốn siết tiếp thì nhắm nhóm phủ thấp kế tiếp (`core-personal/*`, `core-domains/*`,
+  `api/domains/*`), và biết trước rằng chỗ dễ đã hết.
+
+  **Ba nghi bug phát hiện khi viết test — CHƯA sửa, mỗi cái một PR nhỏ có test đi kèm:**
+  (1) `packages/subject-programming/bashSim.ts` `lenhFind` cắt lệch 1 ký tự khi chạy `find /`
+  (`k.slice(pGoc.length + 1)` sai khi `pGoc === '/'` vốn đã có sẵn dấu `/`, nên `/home` → `ome`);
+  (2) `kotlinSim` `associateWith` không khử trùng khoá (`listOf(1,1,2).associateWith{}` ra Map có
+  hai cặp khoá `1`, khác Kotlin thật — `mapOf`/`groupBy` thì đã khử);
+  (3) `kotlinSim` `println(theHienDataClass)` bỏ qua `override fun toString()` trong khi gọi
+  `.toString()` tường minh thì tôn trọng (có thể cố ý nhưng chưa ghi vào tài liệu KHÁC BIỆT).
+
 - 🟡 **[2026-08-25] Tầng 8 (Core Web Vitals) và Tầng 9 (vận hành production) CHƯA kiểm được
   trong lượt audit toàn diện 2026-08-25.** Proxy của container chặn
   `en-vi.donghanhcungban.org` (403 CONNECT tunnel). Hai tầng này được ghi **TRỐNG**, không chấm

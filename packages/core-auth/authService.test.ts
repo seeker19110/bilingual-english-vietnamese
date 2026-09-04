@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { createHash } from 'node:crypto'
 import { getPgPool } from '@dhcb/core-db/pgPool'
 
 // google-auth-library: mock verifyIdToken để test verifyGoogleIdToken không gọi mạng thật.
@@ -32,6 +33,7 @@ import {
   findOrCreateFacebookUser,
   findOrCreateAppleUser,
   findOrCreateMicrosoftUser,
+  hashSessionToken,
 } from './authService.js'
 
 vi.mock('@dhcb/core-db/pgPool', () => ({ getPgPool: vi.fn() }))
@@ -561,5 +563,270 @@ describe('findOrCreate*User (Facebook/Apple/Microsoft — liên kết tài kho�
     await expect(findOrCreateMicrosoftUser('ms1', 'x@b.com')).rejects.toThrow(
       'Không tạo được user microsoft mới',
     )
+  })
+})
+
+// ═══════════════════════════════════════════════════════════════════════════════════════
+// Đợt 2 coverage 2026-09-05: nhánh chưa phủ (branch 78,5% → siết lên ≥93%). Các describe
+// dưới đây KHÔNG lặp lại ca đã có ở trên — chỉ nhắm đúng nhánh/hàm còn thiếu ghi trong
+// uncovered-all.md (đường rẽ if/??/||/ternary chưa từng đi qua vế đó, và hàm hashSessionToken
+// chưa từng được gọi).
+// ═══════════════════════════════════════════════════════════════════════════════════════
+
+describe('hashSessionToken (Đợt 2 coverage 2026-09-05)', () => {
+  it('băm đúng SHA-256 hex — khớp cách bảng public.sessions lưu session_token', () => {
+    const raw = 'raw-token-vi-du'
+    expect(hashSessionToken(raw)).toBe(createHash('sha256').update(raw).digest('hex'))
+  })
+
+  it('hai token gốc khác nhau → hai hash khác nhau', () => {
+    expect(hashSessionToken('token-a')).not.toBe(hashSessionToken('token-b'))
+  })
+})
+
+describe('createUserWithPassword — nhánh thành công (Đợt 2 coverage 2026-09-05)', () => {
+  beforeEach(() => vi.restoreAllMocks())
+
+  it('email CHƯA tồn tại → insert thành công, trả đúng user vừa tạo', async () => {
+    mockedGetPool.mockReturnValue(
+      mockPool(async () => ({ rows: [{ id: 'u9', email: 'moi@example.com' }] })),
+    )
+    const result = await createUserWithPassword('moi@example.com', 'MatKhau123')
+    expect(result).toEqual({ id: 'u9', email: 'moi@example.com' })
+  })
+
+  it('insert không lỗi nhưng không trả dòng nào (phòng thủ, hiếm vì insert không có ON CONFLICT) → null', async () => {
+    mockedGetPool.mockReturnValue(mockPool(async () => ({ rows: [] })))
+    const result = await createUserWithPassword('la@example.com', 'MatKhau123')
+    expect(result).toBeNull()
+  })
+})
+
+describe('verifyGoogleIdToken — nhánh còn thiếu (Đợt 2 coverage 2026-09-05)', () => {
+  const OLD = process.env.GOOGLE_CLIENT_ID
+  beforeEach(() => {
+    process.env.GOOGLE_CLIENT_ID = 'gclient'
+    googleAuth.verifyIdToken.mockReset()
+    vi.mocked(OAuth2Client).mockImplementation(
+      () => ({ verifyIdToken: googleAuth.verifyIdToken }) as unknown as OAuth2Client,
+    )
+  })
+  afterEach(() => {
+    if (OLD === undefined) delete process.env.GOOGLE_CLIENT_ID
+    else process.env.GOOGLE_CLIENT_ID = OLD
+  })
+
+  it('payload thiếu sub → null (không tạo được tài khoản không có sub)', async () => {
+    googleAuth.verifyIdToken.mockResolvedValue({
+      getPayload: () => ({ email: 'a@b.com', email_verified: true }),
+    })
+    expect(await verifyGoogleIdToken('tok')).toBeNull()
+  })
+
+  it('payload không có tên → dùng phần trước @ của email', async () => {
+    googleAuth.verifyIdToken.mockResolvedValue({
+      getPayload: () => ({ sub: 'g1', email: 'a@b.com', email_verified: true }),
+    })
+    const result = await verifyGoogleIdToken('tok')
+    expect(result?.name).toBe('a')
+  })
+
+  it('verifyIdToken ném lỗi KHÔNG PHẢI Error (vd chuỗi) → vẫn trả null, không crash', async () => {
+    googleAuth.verifyIdToken.mockRejectedValue('boom-khong-phai-error')
+    expect(await verifyGoogleIdToken('tok')).toBeNull()
+  })
+})
+
+describe('verifyGoogleAccessToken — nhánh còn thiếu (Đợt 2 coverage 2026-09-05)', () => {
+  const OLD = process.env.GOOGLE_CLIENT_ID
+  beforeEach(() => {
+    process.env.GOOGLE_CLIENT_ID = 'gclient'
+    vi.stubGlobal('fetch', vi.fn())
+  })
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    if (OLD === undefined) delete process.env.GOOGLE_CLIENT_ID
+    else process.env.GOOGLE_CLIENT_ID = OLD
+  })
+
+  it('tokeninfo hợp lệ nhưng userinfo trả lỗi HTTP → null', async () => {
+    vi.mocked(fetch)
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ aud: 'gclient' }) } as Response)
+      .mockResolvedValueOnce({ ok: false } as Response)
+    expect(await verifyGoogleAccessToken('atok')).toBeNull()
+  })
+
+  it('userinfo thiếu sub/email → null', async () => {
+    vi.mocked(fetch)
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ aud: 'gclient' }) } as Response)
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ email: 'a@b.com' }) } as Response)
+    expect(await verifyGoogleAccessToken('atok')).toBeNull()
+  })
+
+  it('email CHƯA xác thực (email_verified=false) → null', async () => {
+    vi.mocked(fetch)
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ aud: 'gclient' }) } as Response)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ sub: 'g3', email: 'a@b.com', email_verified: false }),
+      } as Response)
+    expect(await verifyGoogleAccessToken('atok')).toBeNull()
+  })
+
+  it('userinfo không có tên → dùng phần trước @ của email', async () => {
+    vi.mocked(fetch)
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ aud: 'gclient' }) } as Response)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ sub: 'g4', email: 'c@d.com', email_verified: true }),
+      } as Response)
+    const result = await verifyGoogleAccessToken('atok')
+    expect(result?.name).toBe('c')
+  })
+
+  it('fetch ném lỗi mạng (Error thật) → null, không crash', async () => {
+    vi.mocked(fetch).mockRejectedValueOnce(new Error('network down'))
+    expect(await verifyGoogleAccessToken('atok')).toBeNull()
+  })
+
+  it('fetch ném lỗi KHÔNG PHẢI Error → vẫn trả null', async () => {
+    vi.mocked(fetch).mockRejectedValueOnce('boom')
+    expect(await verifyGoogleAccessToken('atok')).toBeNull()
+  })
+})
+
+describe('verifyFacebookAccessToken — nhánh còn thiếu (Đợt 2 coverage 2026-09-05)', () => {
+  const OLD_ID = process.env.FACEBOOK_APP_ID
+  const OLD_SECRET = process.env.FACEBOOK_APP_SECRET
+  beforeEach(() => {
+    process.env.FACEBOOK_APP_ID = 'fbapp'
+    process.env.FACEBOOK_APP_SECRET = 'fbsecret'
+    vi.stubGlobal('fetch', vi.fn())
+  })
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    if (OLD_ID === undefined) delete process.env.FACEBOOK_APP_ID
+    else process.env.FACEBOOK_APP_ID = OLD_ID
+    if (OLD_SECRET === undefined) delete process.env.FACEBOOK_APP_SECRET
+    else process.env.FACEBOOK_APP_SECRET = OLD_SECRET
+  })
+
+  it('me.name thiếu → dùng phần trước @ của email', async () => {
+    vi.mocked(fetch)
+      .mockResolvedValueOnce({
+        json: async () => ({ data: { is_valid: true, app_id: 'fbapp' } }),
+      } as Response)
+      .mockResolvedValueOnce({ json: async () => ({ id: 'fb2', email: 'z@y.com' }) } as Response)
+    const result = await verifyFacebookAccessToken('atok')
+    expect(result?.name).toBe('z')
+  })
+
+  it('fetch ném lỗi KHÔNG PHẢI Error → null, không crash', async () => {
+    vi.mocked(fetch).mockRejectedValueOnce('boom')
+    expect(await verifyFacebookAccessToken('atok')).toBeNull()
+  })
+})
+
+describe('verifyAppleIdToken — nhánh còn thiếu (Đợt 2 coverage 2026-09-05)', () => {
+  const OLD = process.env.APPLE_CLIENT_ID
+  beforeEach(() => {
+    process.env.APPLE_CLIENT_ID = 'apple-client'
+    jose.jwtVerify.mockReset()
+  })
+  afterEach(() => {
+    if (OLD === undefined) delete process.env.APPLE_CLIENT_ID
+    else process.env.APPLE_CLIENT_ID = OLD
+  })
+
+  it('thiếu APPLE_CLIENT_ID → null (bọc trong try nên không throw ra ngoài)', async () => {
+    delete process.env.APPLE_CLIENT_ID
+    expect(await verifyAppleIdToken('idtok')).toBeNull()
+  })
+
+  it('payload.sub không phải string → null', async () => {
+    jose.jwtVerify.mockResolvedValue({ payload: { sub: 123, email: 'a@icloud.com' } })
+    expect(await verifyAppleIdToken('idtok')).toBeNull()
+  })
+
+  it('nameFromClient chỉ có khoảng trắng (trim rỗng) → dùng phần trước @ của email', async () => {
+    jose.jwtVerify.mockResolvedValue({ payload: { sub: 'ap2', email: 'b@icloud.com' } })
+    const result = await verifyAppleIdToken('idtok', '   ')
+    expect(result?.name).toBe('b')
+  })
+
+  it('email không có phần trước @ (ca hiếm) → name dùng nguyên chuỗi email', async () => {
+    jose.jwtVerify.mockResolvedValue({ payload: { sub: 'ap3', email: '@privaterelay.com' } })
+    const result = await verifyAppleIdToken('idtok')
+    expect(result?.name).toBe('@privaterelay.com')
+  })
+
+  it('jwtVerify ném lỗi KHÔNG PHẢI Error → null', async () => {
+    jose.jwtVerify.mockRejectedValue('boom')
+    expect(await verifyAppleIdToken('idtok')).toBeNull()
+  })
+})
+
+describe('verifyMicrosoftIdToken — nhánh còn thiếu (Đợt 2 coverage 2026-09-05)', () => {
+  const OLD = process.env.MICROSOFT_CLIENT_ID
+  beforeEach(() => {
+    process.env.MICROSOFT_CLIENT_ID = 'ms-client'
+    jose.jwtVerify.mockReset()
+  })
+  afterEach(() => {
+    if (OLD === undefined) delete process.env.MICROSOFT_CLIENT_ID
+    else process.env.MICROSOFT_CLIENT_ID = OLD
+  })
+
+  it('thiếu MICROSOFT_CLIENT_ID → null (bọc trong try nên không throw ra ngoài)', async () => {
+    delete process.env.MICROSOFT_CLIENT_ID
+    expect(await verifyMicrosoftIdToken('idtok')).toBeNull()
+  })
+
+  it('payload.sub không phải string → null', async () => {
+    jose.jwtVerify.mockResolvedValue({
+      payload: {
+        sub: 123,
+        iss: 'https://login.microsoftonline.com/tenant-abc/v2.0',
+        email: 'm@corp.com',
+      },
+    })
+    expect(await verifyMicrosoftIdToken('idtok')).toBeNull()
+  })
+
+  it('preferred_username không có phần trước @ (ca hiếm) → name dùng nguyên chuỗi', async () => {
+    jose.jwtVerify.mockResolvedValue({
+      payload: {
+        sub: 'ms2',
+        iss: 'https://login.microsoftonline.com/tenant-abc/v2.0',
+        preferred_username: '@corp.com',
+      },
+    })
+    const result = await verifyMicrosoftIdToken('idtok')
+    expect(result?.name).toBe('@corp.com')
+  })
+
+  it('jwtVerify ném lỗi Error thật → null', async () => {
+    jose.jwtVerify.mockRejectedValue(new Error('jwks fetch failed'))
+    expect(await verifyMicrosoftIdToken('idtok')).toBeNull()
+  })
+
+  it('jwtVerify ném lỗi KHÔNG PHẢI Error → vẫn trả null', async () => {
+    jose.jwtVerify.mockRejectedValue('boom')
+    expect(await verifyMicrosoftIdToken('idtok')).toBeNull()
+  })
+})
+
+describe('ensureProfileRow — nhánh còn thiếu (Đợt 2 coverage 2026-09-05)', () => {
+  beforeEach(() => vi.restoreAllMocks())
+
+  it('profile chưa có tên (row.name null trong DB) → dùng tên truyền vào làm mặc định', async () => {
+    mockedGetPool.mockReturnValue(
+      mockPool(async (sql) => {
+        if (sql.startsWith('insert into public.profiles')) return { rows: [] }
+        return { rows: [{ plan: 'free', plan_expires_at: null, onboarded: true, name: null }] }
+      }),
+    )
+    const result = await ensureProfileRow('u1', 'Tên Mặc Định')
+    expect(result.name).toBe('Tên Mặc Định')
   })
 })

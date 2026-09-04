@@ -109,15 +109,21 @@ export default defineConfig({
       // người dùng 2026-09-04) — mỗi lần đo cao hơn sàn nhiều thì siết sàn theo, chừa biên độ
       // để không đỏ vì dao động nhỏ giữa các lần chạy (mock ngẫu nhiên, thứ tự file…).
       //
-      // Số đo thật lúc siết (2026-09-04, sau khi vá 3 lỗi Windows chặn coverage chạy được):
-      // stmts 96,36 · branches 90,71 · funcs 95,19 · lines 96,36. branches có biên độ MỎNG
-      // nhất (0,71 so với sàn cũ) nên GIỮ NGUYÊN 90 — ba chỉ số còn lại nâng, chừa ~1 điểm.
+      // Đợt 1 (2026-09-04, PR #852): vá 3 lỗi Windows chặn coverage rồi siết theo số đo thật
+      // stmts 96,36 · branches 90,71 · funcs 95,19 · lines 96,36 → sàn 95 / 90 / 94 / 95.
+      // branches khi đó chỉ dư 0,71 điểm nên phải giữ nguyên 90.
+      //
+      // Đợt 2 (2026-09-05): TRẢ ĐÚNG CHỖ MỎNG — viết 542 test mới nhắm thẳng vào nhánh chưa đi
+      // của 18 file phủ thấp nhất (hai bộ chạy Kotlin/Swift, gitSim, 3 bộ mô phỏng tác tử,
+      // authService, push, clientAuth, geminiLive, chemistry, cefrExam, mistakes, bashSim,
+      // locationService, tts). Số đo thật sau đợt: stmts 97,00 · branches 94,06 · funcs 95,95 ·
+      // lines 97,00. Sàn nâng theo, chừa ~1 điểm mỗi chỉ số.
       // Đây vẫn là sàn tối thiểu, KHÔNG phải mục tiêu: đừng viết ít test đi cho "vừa đủ".
       thresholds: {
-        statements: 95,
-        branches: 90,
-        functions: 94,
-        lines: 95,
+        statements: 96,
+        branches: 93,
+        functions: 95,
+        lines: 96,
       },
     },
   },
