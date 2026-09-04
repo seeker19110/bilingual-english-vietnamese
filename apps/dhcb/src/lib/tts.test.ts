@@ -670,3 +670,677 @@ describe('getNativeVoicePref — giọng đọc phần sửa lỗi', () => {
     expect(getNativeVoicePref('Puck')).toBe('Kore')
   })
 })
+
+// ── Đợt 2 coverage 2026-09-05: nhánh chưa phủ ───────────────────────────────
+// Mỗi describe dưới đây nhắm đúng một nhóm nhánh/hàm mà báo cáo coverage liệt kê là chưa đi
+// qua — không phải test cho đủ số. Đặt CUỐI file, tự resetModules khi cần trạng thái sạch
+// (sharedAudio/audioUnlocked/silentUrl/playToken là biến cấp module, dính giữa các test nếu
+// không reset — xem ghi chú đã có ở describe "speakBilingual" phía trên).
+
+describe('unlockAudio — Đợt 2 coverage: getSilentUrl dùng lại URL đã tạo + nhánh catch', () => {
+  it('play() ném lỗi ở lần thử đầu → không throw ra ngoài, lần thử lại KHÔNG tạo WAV mới', async () => {
+    vi.resetModules()
+    let playCalls = 0
+    let createObjectURLCalls = 0
+    class FlakyAudio {
+      src = ''
+      preload = ''
+      play() {
+        playCalls += 1
+        if (playCalls === 1) throw new Error('play bi chan lan dau (giong Safari khoa)')
+        return Promise.resolve()
+      }
+      pause() {}
+      currentTime = 0
+    }
+    vi.stubGlobal('Audio', FlakyAudio)
+    vi.stubGlobal('URL', {
+      createObjectURL: () => {
+        createObjectURLCalls += 1
+        return 'blob:fake'
+      },
+      revokeObjectURL: () => {},
+    })
+    const { unlockAudio } = await import('./tts')
+    expect(() => unlockAudio()).not.toThrow() // lần 1: play() ném lỗi → catch nuốt, không throw
+    expect(() => unlockAudio()).not.toThrow() // lần 2: thử lại vì audioUnlocked vẫn còn false
+    expect(playCalls).toBe(2)
+    // Chỉ tạo file WAV im lặng ĐÚNG MỘT LẦN — lần thử lại dùng lại URL đã tạo (getSilentUrl cache).
+    expect(createObjectURLCalls).toBe(1)
+  })
+})
+
+describe('setVoiceRandomPref/reshuffleRandomVoice/pickAndRememberRandomVoice — Đợt 2 coverage', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    sessionStorage.clear()
+  })
+
+  it('setVoiceRandomPref(false) ghi đúng giá trị "0" (nhánh chưa test trước đây chỉ dùng true)', async () => {
+    const { getVoiceRandomPref, setVoiceRandomPref } = await import('./tts')
+    setVoiceRandomPref(true)
+    expect(getVoiceRandomPref()).toBe(true)
+    setVoiceRandomPref(false)
+    expect(getVoiceRandomPref()).toBe(false)
+  })
+
+  it('reshuffleRandomVoice không throw kể cả khi sessionStorage.removeItem bị chặn', async () => {
+    vi.stubGlobal('sessionStorage', {
+      getItem: () => null,
+      setItem: () => {},
+      removeItem: () => {
+        throw new Error('sessionStorage bi chan (che do an danh khac nghiet)')
+      },
+      clear: () => {},
+    })
+    const { reshuffleRandomVoice } = await import('./tts')
+    expect(() => reshuffleRandomVoice()).not.toThrow()
+  })
+
+  it('sessionStorage.setItem bị chặn khi bốc giọng ngẫu nhiên → vẫn trả được giọng, không throw', async () => {
+    vi.stubGlobal('sessionStorage', {
+      getItem: () => null,
+      setItem: () => {
+        throw new Error('sessionStorage bi chan (che do an danh khac nghiet)')
+      },
+      removeItem: () => {},
+      clear: () => {},
+    })
+    const { getVoicePref, setVoicePref, setVoiceRandomPref } = await import('./tts')
+    setVoicePref('Kore')
+    setVoiceRandomPref(true)
+    let picked = ''
+    expect(() => {
+      picked = getVoicePref()
+    }).not.toThrow()
+    expect(typeof picked).toBe('string')
+  })
+
+  it('bể giọng được phép KHÔNG có giọng nào đúng giới tính → lùi về TOÀN BỘ giọng của giới tính đó', async () => {
+    // Cache quyền gói chỉ có 'Rachel' (NỮ, nhưng là ElevenLabs — bị loại khỏi bể random ở
+    // byGender). clampVoiceToAllowed sẽ hạ giọng đã chọn tay (Kore) về đúng 'Rachel' (allowed
+    // duy nhất), nên gender vẫn tính ra 'female' nhưng KHÔNG voice nào trong byGender(female)
+    // (đã loại Rachel) nằm trong allowed → candidates rỗng → phải lùi về byGender.
+    localStorage.setItem('voice_allowed_cache', JSON.stringify(['Rachel']))
+    const { getVoicePref, setVoicePref, setVoiceRandomPref } = await import('./tts')
+    setVoicePref('Kore')
+    setVoiceRandomPref(true)
+    const picked = getVoicePref()
+    expect(['Kore', 'Aoede', 'Leda', 'Zephyr', 'Autonoe', 'Callirrhoe', 'Vindemiatrix']).toContain(
+      picked,
+    )
+  })
+})
+
+describe('getVoicePref — Đợt 2 coverage: giọng đã lưu clamp ra ngoài VOICE_OPTIONS', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    sessionStorage.clear()
+  })
+
+  it('cache quyền gói chỉ toàn giọng Gemini (không có Kore/Puck) → clamp ra "Gemini-Leda", gender lùi về "female"', async () => {
+    // clampVoiceToAllowed (voiceTiers.ts) có nhánh cuối `allowed[0] ?? DEFAULT_VOICE` — nếu
+    // danh sách allowed chỉ có giọng Gemini (không nằm trong VOICE_OPTIONS), giọng "đã lưu"
+    // trở thành một id KHÔNG có trong VOICE_OPTIONS. getVoicePref() (tts.ts) phải không vỡ:
+    // VOICE_OPTIONS.find(...) thất bại, lùi về gender mặc định 'female' để vẫn bốc được giọng.
+    localStorage.setItem('voice_allowed_cache', JSON.stringify(['Gemini-Leda']))
+    localStorage.setItem('tts_voice', 'Studio-O')
+    localStorage.setItem('tts_voice_random', '1')
+    const { getVoicePref } = await import('./tts')
+    const picked = getVoicePref()
+    expect([
+      'Kore',
+      'Aoede',
+      'Leda',
+      'Zephyr',
+      'Autonoe',
+      'Callirrhoe',
+      'Vindemiatrix',
+      'Rachel',
+    ]).toContain(picked)
+  })
+})
+
+describe('ensureAudioWithTimeline — Đợt 2 coverage: tải file audio đã mã hoá thất bại', () => {
+  beforeEach(async () => {
+    localStorage.clear()
+    const { getAudioEntry } = await import('./audioCache')
+    vi.mocked(getAudioEntry).mockResolvedValue(null)
+    vi.spyOn(crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey)
+    vi.spyOn(crypto.subtle, 'decrypt').mockResolvedValue(new ArrayBuffer(4))
+  })
+  afterEach(() => vi.restoreAllMocks())
+
+  it('link audio_url trả về lỗi (vd hết hạn) → ném lỗi rõ ràng kèm mã trạng thái', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation((url: string) => {
+        if (url === '/api/tts') {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            json: async () => ({ audio_url: '/fake.mp3', key_b64: 'a2V5', iv_b64: 'aXY=' }),
+          })
+        }
+        return Promise.resolve({ ok: false, status: 404 })
+      }),
+    )
+    const { ensureAudioBuffer } = await import('./tts')
+    await expect(ensureAudioBuffer('Lỗi tải audio', 'en-US', 'Kore')).rejects.toThrow(
+      'Không tải được audio: 404',
+    )
+  })
+})
+
+describe('speechCacheKey — Đợt 2 coverage: giọng ElevenLabs bỏ lang khỏi cacheKey', () => {
+  it('giọng Rachel (ElevenLabs) → cacheKey KHÔNG mang lang (không tách audio Anh/Việt giống nhau)', async () => {
+    const { speechCacheKey } = await import('./tts')
+    expect(speechCacheKey('Hello', 'en-US', 'Rachel')).toBe(':Rachel:Hello')
+    // Đối chứng: giọng thường (không phải ElevenLabs) vẫn giữ nguyên lang trong cacheKey.
+    expect(speechCacheKey('Hello', 'en-US', 'Kore')).toBe('en-US:Kore:Hello')
+  })
+})
+
+describe('speakViaGoogle — Đợt 2 coverage: mimeType theo giọng + preservesPitch dự phòng', () => {
+  class AutoEndingCaptureAudio {
+    src = ''
+    playbackRate = 1
+    currentTime = 0
+    duration = 1
+    onended: (() => void) | null = null
+    onerror: (() => void) | null = null
+    ontimeupdate: (() => void) | null = null
+    onloadedmetadata: (() => void) | null = null
+    preload = ''
+    play() {
+      queueMicrotask(() => this.onended?.())
+      return Promise.resolve()
+    }
+    pause() {}
+  }
+
+  beforeEach(async () => {
+    vi.resetModules()
+    const { getAudioEntry } = await import('./audioCache')
+    vi.mocked(getAudioEntry).mockResolvedValue({ buffer: new ArrayBuffer(4), timeline: null })
+  })
+
+  it('giọng Gemini (đọc truyện) → tạo Blob kiểu audio/wav thay vì mp3', async () => {
+    vi.stubGlobal('Audio', AutoEndingCaptureAudio)
+    const capturedTypes: string[] = []
+    vi.stubGlobal('URL', {
+      createObjectURL: (blob: Blob) => {
+        capturedTypes.push(blob.type)
+        return 'blob:fake'
+      },
+      revokeObjectURL: () => {},
+    })
+    const { speak } = await import('./tts')
+    await speak('Ngày xửa ngày xưa', 'vi-VN', 'Gemini-Leda')
+    expect(capturedTypes).toContain('audio/wav')
+  })
+
+  it('giọng thường (không phải Gemini) → tạo Blob kiểu audio/mpeg', async () => {
+    vi.stubGlobal('Audio', AutoEndingCaptureAudio)
+    const capturedTypes: string[] = []
+    vi.stubGlobal('URL', {
+      createObjectURL: (blob: Blob) => {
+        capturedTypes.push(blob.type)
+        return 'blob:fake'
+      },
+      revokeObjectURL: () => {},
+    })
+    const { speak } = await import('./tts')
+    await speak('Hello', 'en-US', 'Kore')
+    expect(capturedTypes).toContain('audio/mpeg')
+  })
+
+  it('trình duyệt chỉ hỗ trợ webkitPreservesPitch (Safari cũ) → vẫn giữ cao độ khi đổi tốc độ', async () => {
+    const createdInstances: WebkitOnlyAudio[] = []
+    class WebkitOnlyAudio {
+      src = ''
+      playbackRate = 1
+      webkitPreservesPitch = false
+      currentTime = 0
+      duration = 1
+      onended: (() => void) | null = null
+      onerror: (() => void) | null = null
+      ontimeupdate: (() => void) | null = null
+      onloadedmetadata: (() => void) | null = null
+      preload = ''
+      constructor() {
+        createdInstances.push(this)
+      }
+      play() {
+        queueMicrotask(() => this.onended?.())
+        return Promise.resolve()
+      }
+      pause() {}
+    }
+    vi.stubGlobal('Audio', WebkitOnlyAudio)
+    vi.stubGlobal('URL', { createObjectURL: () => 'blob:fake', revokeObjectURL: () => {} })
+    const { speak } = await import('./tts')
+    await speak('Hello', 'en-US', 'Kore', 1.25)
+    expect(createdInstances).toHaveLength(1)
+    expect(createdInstances[0]!.webkitPreservesPitch).toBe(true)
+  })
+})
+
+describe('speak() fallback Web Speech — Đợt 2 coverage: onWord/onboundary/chọn giọng/tốc độ en-US', () => {
+  beforeEach(async () => {
+    const { getAudioEntry } = await import('./audioCache')
+    vi.mocked(getAudioEntry).mockResolvedValue(null)
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 500 }))
+  })
+
+  it('lang en-US + onWord + trình duyệt có giọng khớp → dùng đúng tốc độ 0.9x, chọn đúng giọng, báo từ theo onboundary', async () => {
+    class FakeUtterance {
+      lang = ''
+      rate = 1
+      onboundary: ((e: { name: string; charIndex: number }) => void) | null = null
+      onend: (() => void) | null = null
+      onerror: (() => void) | null = null
+      voice: unknown = null
+      constructor(public text: string) {}
+    }
+    let capturedUtt: FakeUtterance | undefined
+    const femaleVoice = { lang: 'en-US', name: 'Microsoft Zira Female' }
+    vi.stubGlobal('SpeechSynthesisUtterance', FakeUtterance)
+    vi.stubGlobal('speechSynthesis', {
+      cancel: vi.fn(),
+      getVoices: () => [femaleVoice],
+      speak: (u: FakeUtterance) => {
+        capturedUtt = u
+      },
+    })
+    const { speak } = await import('./tts')
+    const spokenWords: number[] = []
+    const p = speak('hello world again', 'en-US', 'Kore', 1, (i) => spokenWords.push(i))
+    await new Promise((r) => setTimeout(r, 10))
+    expect(capturedUtt).toBeDefined()
+    expect(capturedUtt!.rate).toBeCloseTo(0.9) // en-US → 0.9 × rate(1), khác nhánh vi-VN (0.85) đã test trước đó
+    expect(capturedUtt!.voice).toBe(femaleVoice) // đã tìm và gán đúng giọng khớp lang + giới tính
+    capturedUtt!.onboundary!({ name: 'not-word', charIndex: 0 }) // sự kiện khác 'word' → bỏ qua
+    capturedUtt!.onboundary!({ name: 'word', charIndex: 6 }) // rơi vào từ thứ 2 ("world")
+    expect(spokenWords).toEqual([1])
+    capturedUtt!.onend!()
+    await p
+  })
+})
+
+describe('speakBilingual — Đợt 2 coverage: bị "cướp" thẻ audio giữa chừng thì bỏ qua phần sửa lỗi', () => {
+  beforeEach(async () => {
+    vi.resetModules()
+    // FakeAudio (giống bản đầu file) KHÔNG tự bắn onended — để câu thoại "đang phát dở",
+    // cho bài test cơ hội cướp thẻ audio giữa chừng như người dùng bấm nút loa khác.
+    class FakeAudioNoAutoEnd {
+      src = ''
+      playbackRate = 1
+      preservesPitch = true
+      currentTime = 0
+      duration = 1
+      onended: (() => void) | null = null
+      onerror: (() => void) | null = null
+      ontimeupdate: (() => void) | null = null
+      onloadedmetadata: (() => void) | null = null
+      preload = ''
+      play() {
+        return Promise.resolve()
+      }
+      pause() {}
+    }
+    vi.stubGlobal('Audio', FakeAudioNoAutoEnd)
+    vi.stubGlobal('URL', { createObjectURL: () => 'blob:fake', revokeObjectURL: () => {} })
+    const { getAudioEntry } = await import('./audioCache')
+    vi.mocked(getAudioEntry).mockResolvedValue({ buffer: new ArrayBuffer(4), timeline: null })
+  })
+
+  it('nút loa khác cướp thẻ audio khi câu thoại còn đang phát dở → speakBilingual dừng, KHÔNG đọc phần sửa lỗi', async () => {
+    const { speakBilingual, speak } = await import('./tts')
+    const feedbackCalls: number[] = []
+    const p = speakBilingual('Hello', 'Xin chào', 'en-US', 'vi-VN', 'Kore', 1, undefined, (i) =>
+      feedbackCalls.push(i),
+    )
+    // Đợi vài tick để speech (bên trong speakBilingual) tới đoạn "đang phát dở" (đã chiếm thẻ
+    // audio, đang await onended/onerror) — cùng kỹ thuật với test đầu file.
+    await new Promise((r) => setTimeout(r, 20))
+    // "Bấm nút loa khác" ngay lúc câu thoại còn dở dang → cướp thẻ audio, buộc Promise của
+    // speech bên trong speakBilingual settle SỚM với "vé" CŨ, lệch với playToken hiện tại.
+    // KHÔNG await lượt "cướp" này tới khi phát xong — nó cũng dùng FakeAudio không tự bắn
+    // onended nên sẽ treo mãi nếu đợi trọn vẹn (giống p2 ở test đầu file, chỉ cần nó CHIẾM
+    // được thẻ audio, không cần biết nó phát xong khi nào).
+    const stealer = speak('cuop thẻ audio', 'en-US', 'Puck')
+    stealer.catch(() => {})
+    await p
+    expect(feedbackCalls).toHaveLength(0)
+  })
+})
+
+describe('getVoicePref — Đợt 2 coverage: sessionStorage.getItem bị chặn khi đọc giọng đã bốc', () => {
+  it('không throw, coi như chưa có giọng nào được bốc trong phiên', async () => {
+    localStorage.clear()
+    sessionStorage.clear()
+    vi.stubGlobal('sessionStorage', {
+      getItem: () => {
+        throw new Error('sessionStorage bi chan (che do an danh khac nghiet)')
+      },
+      setItem: () => {},
+      removeItem: () => {},
+      clear: () => {},
+    })
+    const { getVoicePref, setVoicePref, setVoiceRandomPref } = await import('./tts')
+    setVoicePref('Kore')
+    setVoiceRandomPref(true)
+    let picked = ''
+    expect(() => {
+      picked = getVoicePref()
+    }).not.toThrow()
+    expect(typeof picked).toBe('string')
+  })
+})
+
+describe('playAudioUrl — Đợt 2 coverage: cleanup khi phát xong / lỗi', () => {
+  it('onended gọi cleanup (huỷ currentAudioId đang giữ) mà không lỗi', async () => {
+    vi.resetModules()
+    class CapturingAudio {
+      src = ''
+      playbackRate = 1
+      onended: (() => void) | null = null
+      onerror: (() => void) | null = null
+      preload = ''
+      play(): Promise<void> {
+        return Promise.resolve()
+      }
+      pause() {}
+    }
+    const instances: CapturingAudio[] = []
+    class Recording extends CapturingAudio {
+      constructor() {
+        super()
+        instances.push(this)
+      }
+    }
+    vi.stubGlobal('Audio', Recording)
+    const { playAudioUrl } = await import('./tts')
+    playAudioUrl('https://example.com/a.mp3')
+    await new Promise((r) => setTimeout(r, 0))
+    expect(() => instances[0]!.onended!()).not.toThrow()
+  })
+
+  it('play() bị từ chối (vd lỗi mạng) → bắt lỗi êm, gọi cleanup, không throw ra ngoài', async () => {
+    vi.resetModules()
+    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    class RejectingAudio {
+      src = ''
+      playbackRate = 1
+      onended: (() => void) | null = null
+      onerror: (() => void) | null = null
+      preload = ''
+      play(): Promise<void> {
+        return Promise.reject(new Error('mang loi'))
+      }
+      pause() {}
+    }
+    vi.stubGlobal('Audio', RejectingAudio)
+    const { playAudioUrl } = await import('./tts')
+    expect(() => playAudioUrl('https://example.com/b.mp3')).not.toThrow()
+    await new Promise((r) => setTimeout(r, 0))
+    expect(errSpy).toHaveBeenCalled()
+    errSpy.mockRestore()
+  })
+})
+
+describe('speakViaGoogle — Đợt 2 coverage: onWord theo tiến độ audio + nhánh audio.onerror', () => {
+  it('có onWord → gắn onloadedmetadata/ontimeupdate, báo đúng chỉ số từ theo currentTime', async () => {
+    vi.resetModules()
+    class CapAudio {
+      src = ''
+      playbackRate = 1
+      preservesPitch = true
+      currentTime = 0
+      duration = 2
+      onended: (() => void) | null = null
+      onerror: (() => void) | null = null
+      ontimeupdate: (() => void) | null = null
+      onloadedmetadata: (() => void) | null = null
+      preload = ''
+      play(): Promise<void> {
+        return Promise.resolve()
+      }
+      pause() {}
+    }
+    const instances: CapAudio[] = []
+    class Recording extends CapAudio {
+      constructor() {
+        super()
+        instances.push(this)
+      }
+    }
+    vi.stubGlobal('Audio', Recording)
+    vi.stubGlobal('URL', { createObjectURL: () => 'blob:fake', revokeObjectURL: () => {} })
+    const { getAudioEntry } = await import('./audioCache')
+    vi.mocked(getAudioEntry).mockResolvedValue({ buffer: new ArrayBuffer(4), timeline: null })
+    const { speak } = await import('./tts')
+    const spokenWords: number[] = []
+    const p = speak('hello world', 'en-US', 'Kore', 1, (i) => spokenWords.push(i))
+    await new Promise((r) => setTimeout(r, 20))
+    const a = instances[0]!
+    a.onloadedmetadata!()
+    a.currentTime = 1 // giữa audio dài 2s, 2 từ → rơi vào từ thứ 2 ("world")
+    a.ontimeupdate!()
+    a.ontimeupdate!() // gọi lại vẫn chỉ cập nhật (idempotent), không lỗi
+    a.onended!()
+    await p
+    expect(spokenWords).toContain(1)
+  })
+
+  it('duration âm (dữ liệu audio bất thường) → ontimeupdate im lặng, không tính idx sai', async () => {
+    vi.resetModules()
+    class OddDurationAudio {
+      src = ''
+      playbackRate = 1
+      preservesPitch = true
+      currentTime = 0
+      duration = -1 // truthy (khác 0) nhưng KHÔNG hợp lệ — canh nhánh `dur <= 0`
+      onended: (() => void) | null = null
+      onerror: (() => void) | null = null
+      ontimeupdate: (() => void) | null = null
+      onloadedmetadata: (() => void) | null = null
+      preload = ''
+      play(): Promise<void> {
+        return Promise.resolve()
+      }
+      pause() {}
+    }
+    const instances: OddDurationAudio[] = []
+    class Recording extends OddDurationAudio {
+      constructor() {
+        super()
+        instances.push(this)
+      }
+    }
+    vi.stubGlobal('Audio', Recording)
+    vi.stubGlobal('URL', { createObjectURL: () => 'blob:fake', revokeObjectURL: () => {} })
+    const { getAudioEntry } = await import('./audioCache')
+    vi.mocked(getAudioEntry).mockResolvedValue({ buffer: new ArrayBuffer(4), timeline: null })
+    const { speak } = await import('./tts')
+    const spokenWords: number[] = []
+    const p = speak('hello world', 'en-US', 'Kore', 1, (i) => spokenWords.push(i))
+    await new Promise((r) => setTimeout(r, 20))
+    const a = instances[0]!
+    a.onloadedmetadata!()
+    a.ontimeupdate!()
+    a.onended!()
+    await p
+    expect(spokenWords).toHaveLength(0)
+  })
+
+  it('audio.onerror (Google TTS lỗi giữa chừng) → cleanup rồi rơi về Web Speech', async () => {
+    vi.resetModules()
+    class ErrAudio {
+      src = ''
+      playbackRate = 1
+      preservesPitch = true
+      currentTime = 0
+      duration = 1
+      onended: (() => void) | null = null
+      onerror: (() => void) | null = null
+      ontimeupdate: (() => void) | null = null
+      onloadedmetadata: (() => void) | null = null
+      preload = ''
+      play(): Promise<void> {
+        return Promise.resolve()
+      }
+      pause() {}
+    }
+    const instances: ErrAudio[] = []
+    class Recording extends ErrAudio {
+      constructor() {
+        super()
+        instances.push(this)
+      }
+    }
+    vi.stubGlobal('Audio', Recording)
+    vi.stubGlobal('URL', { createObjectURL: () => 'blob:fake', revokeObjectURL: () => {} })
+    vi.stubGlobal('speechSynthesis', {
+      cancel: vi.fn(),
+      getVoices: () => [],
+      speak: (u: { onend?: () => void }) => u.onend?.(),
+    })
+    const { getAudioEntry } = await import('./audioCache')
+    vi.mocked(getAudioEntry).mockResolvedValue({ buffer: new ArrayBuffer(4), timeline: null })
+    const { speak } = await import('./tts')
+    const p = speak('Hello', 'en-US', 'Kore')
+    await new Promise((r) => setTimeout(r, 20))
+    instances[0]!.onerror!()
+    await expect(p).resolves.toEqual(expect.any(Number))
+  })
+
+  it('audio.play() bị từ chối TRỰC TIẾP (không qua sự kiện onerror) → cũng rơi về Web Speech', async () => {
+    vi.resetModules()
+    class RejectPlayAudio {
+      src = ''
+      playbackRate = 1
+      preservesPitch = true
+      currentTime = 0
+      duration = 1
+      onended: (() => void) | null = null
+      onerror: (() => void) | null = null
+      ontimeupdate: (() => void) | null = null
+      onloadedmetadata: (() => void) | null = null
+      preload = ''
+      play(): Promise<void> {
+        return Promise.reject(new Error('khong phat duoc'))
+      }
+      pause() {}
+    }
+    vi.stubGlobal('Audio', RejectPlayAudio)
+    vi.stubGlobal('URL', { createObjectURL: () => 'blob:fake', revokeObjectURL: () => {} })
+    vi.stubGlobal('speechSynthesis', {
+      cancel: vi.fn(),
+      getVoices: () => [],
+      speak: (u: { onend?: () => void }) => u.onend?.(),
+    })
+    const { getAudioEntry } = await import('./audioCache')
+    vi.mocked(getAudioEntry).mockResolvedValue({ buffer: new ArrayBuffer(4), timeline: null })
+    const { speak } = await import('./tts')
+    await expect(speak('Hello', 'en-US', 'Kore')).resolves.toEqual(expect.any(Number))
+  })
+})
+
+describe('speakViaWebSpeech — Đợt 2 coverage: onboundary hết từ + chọn giọng nam + onerror', () => {
+  class FakeUtterance {
+    lang = ''
+    rate = 1
+    onboundary: ((e: { name: string; charIndex: number }) => void) | null = null
+    onend: (() => void) | null = null
+    onerror: (() => void) | null = null
+    voice: unknown = null
+    constructor(public text: string) {}
+  }
+
+  beforeEach(async () => {
+    const { getAudioEntry } = await import('./audioCache')
+    vi.mocked(getAudioEntry).mockResolvedValue(null)
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 500 }))
+    vi.stubGlobal('SpeechSynthesisUtterance', FakeUtterance)
+  })
+
+  it('onboundary với charIndex rơi đúng TỪ ĐẦU TIÊN, và charIndex vượt quá mọi từ thì không báo gì thêm', async () => {
+    let capturedUtt: FakeUtterance | undefined
+    vi.stubGlobal('speechSynthesis', {
+      cancel: vi.fn(),
+      getVoices: () => [],
+      speak: (u: FakeUtterance) => {
+        capturedUtt = u
+      },
+    })
+    const { speak } = await import('./tts')
+    const spokenWords: number[] = []
+    const p = speak('mot hai ba', 'vi-VN', 'Kore', 1, (i) => spokenWords.push(i))
+    await new Promise((r) => setTimeout(r, 10))
+    capturedUtt!.onboundary!({ name: 'word', charIndex: 0 }) // rơi ngay từ đầu ("mot")
+    expect(spokenWords).toEqual([0])
+    capturedUtt!.onboundary!({ name: 'word', charIndex: 999 }) // vượt quá mọi từ → chạy hết vòng lặp, không gọi onWord
+    expect(spokenWords).toEqual([0])
+    capturedUtt!.onend!()
+    await p
+  })
+
+  it('giọng NAM (Puck) → tìm đúng giọng nam khớp ngôn ngữ, bỏ qua giọng khác ngôn ngữ trong danh sách', async () => {
+    let capturedUtt: FakeUtterance | undefined
+    const wrongLangVoice = { lang: 'fr-FR', name: 'French Male Voice' }
+    const maleVoice = { lang: 'en-US', name: 'Microsoft David Desktop' }
+    vi.stubGlobal('speechSynthesis', {
+      cancel: vi.fn(),
+      getVoices: () => [wrongLangVoice, maleVoice],
+      speak: (u: FakeUtterance) => {
+        capturedUtt = u
+      },
+    })
+    const { speak } = await import('./tts')
+    const p = speak('Hello', 'en-US', 'Puck')
+    await new Promise((r) => setTimeout(r, 10))
+    expect(capturedUtt!.voice).toBe(maleVoice) // không chọn giọng đúng giới tính nhưng sai ngôn ngữ
+    capturedUtt!.onend!()
+    await p
+  })
+
+  it.each([
+    ['Puck', { lang: 'en-US', name: 'Voice Male A' }], // khớp qua từ khoá "male"
+    ['Puck', { lang: 'vi-VN', name: 'Giọng Nam Miền Bắc' }], // khớp qua từ khoá "nam"
+    ['Kore', { lang: 'en-US', name: 'Samantha' }], // khớp qua từ khoá "samantha"
+    ['Kore', { lang: 'vi-VN', name: 'Giọng Nữ Miền Nam' }], // khớp qua từ khoá "nữ"
+  ] as const)('chọn đúng giọng %s theo từ khoá tên "%s"', async (voice, browserVoice) => {
+    let capturedUtt: FakeUtterance | undefined
+    vi.stubGlobal('speechSynthesis', {
+      cancel: vi.fn(),
+      getVoices: () => [browserVoice],
+      speak: (u: FakeUtterance) => {
+        capturedUtt = u
+      },
+    })
+    const { speak } = await import('./tts')
+    const p = speak('Hello', browserVoice.lang as 'en-US' | 'vi-VN', voice)
+    await new Promise((r) => setTimeout(r, 10))
+    expect(capturedUtt!.voice).toBe(browserVoice)
+    capturedUtt!.onend!()
+    await p
+  })
+
+  it('utt.onerror resolve êm (không throw ra ngoài, không crash UI)', async () => {
+    let capturedUtt: FakeUtterance | undefined
+    vi.stubGlobal('speechSynthesis', {
+      cancel: vi.fn(),
+      getVoices: () => [],
+      speak: (u: FakeUtterance) => {
+        capturedUtt = u
+      },
+    })
+    const { speak } = await import('./tts')
+    const p = speak('Hello', 'en-US', 'Kore')
+    await new Promise((r) => setTimeout(r, 10))
+    expect(() => capturedUtt!.onerror!()).not.toThrow()
+    await expect(p).resolves.toEqual(expect.any(Number))
+  })
+})

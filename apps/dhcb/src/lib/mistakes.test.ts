@@ -391,3 +391,158 @@ describe('Mistake Bank — ca biên', () => {
     vi.unstubAllGlobals()
   })
 })
+
+// Đợt 2 coverage 2026-09-05: nhánh chưa phủ theo uncovered-all.md.
+//
+// Lưu ý quan trọng: test "localStorage het dung luong ... thi addMistake khong nem ra ngoai"
+// ở trên (describe "Mistake Bank — ca biên") ghi đè `Storage.prototype.setItem` — nhưng
+// `localStorage` trong môi trường test (happy-dom + Node) có `setItem` là THUỘC TÍNH RIÊNG của
+// chính instance, KHÔNG kế thừa từ `Storage.prototype`, nên việc ghi đè đó KHÔNG có tác dụng gì:
+// addMistake vẫn ghi thành công bình thường, và nhánh catch của write() (dòng 65–67) vẫn chưa
+// từng được thực thi. Test đó không sai (assertion "không throw" vẫn đúng, addMistake thật sự
+// không ném lỗi) nhưng KHÔNG kiểm chứng được điều nó tự nhận là kiểm — bug tiềm ẩn, không sửa ở
+// đây (xem báo cáo cuối). Test dưới đây dùng `vi.spyOn(localStorage, 'setItem')` (spy đúng lên
+// INSTANCE) để thật sự bắt được nhánh catch đó.
+describe('Mistake Bank — nhánh chưa phủ (Đợt 2 coverage)', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('setItem cua CHINH localStorage nem loi (het dung luong that su) → addMistake khong nem loi va khong ghi duoc', () => {
+    const setItemSpy = vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
+      throw new Error('QuotaExceededError')
+    })
+    try {
+      expect(() => addMistake('u10', M())).not.toThrow()
+    } finally {
+      setItemSpy.mockRestore()
+    }
+    expect(getMistakes('u10')).toEqual([]) // ghi thất bại nên đọc lại vẫn rỗng
+  })
+
+  it('clip() phong thu khi field bi undefined (du lieu ngoai thieu field) — coi nhu rong, khong nem loi', () => {
+    const bad = {
+      wrong: undefined,
+      corrected: 'ok',
+      explanation: 'gt',
+      source: 'chat',
+      dir: 'A',
+    } as unknown as MistakeInput
+    expect(() => addMistake('u10', bad)).not.toThrow()
+    // wrong rỗng (< 2 ký tự sau clip) → không "đáng lưu" → không tạo thẻ nào.
+    expect(getMistakes('u10')).toEqual([])
+  })
+
+  it('loi lap lai nhung explanation lan sau rong → giu giai thich CU, khong ghi de bang rong', () => {
+    addMistake('u10', M({ wrong: 'keep old', corrected: 'kept old' }))
+    const before = getMistakes('u10')[0]!.explanation
+    addMistake('u10', M({ wrong: 'keep old', corrected: 'kept old', explanation: '' }))
+    expect(getMistakes('u10')[0]!.explanation).toBe(before)
+  })
+
+  it('crypto.randomUUID() nem loi (moi truong la) → addMistake khong nem ra ngoai', () => {
+    const uuidSpy = vi.spyOn(crypto, 'randomUUID').mockImplementation(() => {
+      throw new Error('no crypto')
+    })
+    try {
+      expect(() =>
+        addMistake('u10', M({ wrong: 'crypto boom', corrected: 'ok crypto' })),
+      ).not.toThrow()
+    } finally {
+      uuidSpy.mockRestore()
+    }
+    // Ném lỗi giữa chừng (trước khi tới write) nên không có thẻ nào được tạo ra.
+    expect(getMistakes('u10').some((m) => m.wrong === 'crypto boom')).toBe(false)
+  })
+
+  it('deleteMistake: userId rong → khong lam gi, khong loi', () => {
+    addMistake('u10', M({ wrong: 'giu lai', corrected: 'giu lai dung' }))
+    expect(() => deleteMistake('', 'bat-ky-id')).not.toThrow()
+    expect(getMistakes('u10')).toHaveLength(1) // không bị ảnh hưởng
+  })
+
+  it('markReviewed: userId rong → khong lam gi, khong loi', () => {
+    expect(() => markReviewed('', 'bat-ky-id')).not.toThrow()
+  })
+
+  it('markReviewed: id khong ton tai → bo qua, khong doi du lieu', () => {
+    addMistake('u10', M({ wrong: 'khong doi', corrected: 'khong doi dung' }))
+    const before = getMistakes('u10')
+    markReviewed('u10', 'id-khong-ton-tai')
+    expect(getMistakes('u10')).toEqual(before)
+  })
+
+  it('getDueMistakes: count bang nhau thi sap theo MOI NHAT truoc', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-02-01T00:00:00Z'))
+    addMistake('u10', M({ wrong: 'cu hon', corrected: 'cu hon dung' })) // count=1, tạo trước
+    vi.advanceTimersByTime(1000)
+    addMistake('u10', M({ wrong: 'moi hon', corrected: 'moi hon dung' })) // count=1, tạo sau
+    vi.useRealTimers()
+    const due = getDueMistakes('u10')
+    expect(due[0]!.wrong).toBe('moi hon') // cùng count=1 → mới hơn đứng trước
+  })
+
+  it('hop nhat: ca 2 ben da on (khac thoi diem) → lay moc on LON HON, khong phai null', async () => {
+    addMistake('u10', M({ wrong: 'da on ca 2 ben', corrected: 'da on dung' }))
+    const cuc = getMistakes('u10')[0]!
+    markReviewed('u10', cuc.id) // local giờ có lastReviewedAt khác null
+    const localAfterReview = getMistakes('u10')[0]!
+    const serverReviewedAt = localAfterReview.lastReviewedAt! + 999
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          mistakes: [{ ...localAfterReview, lastReviewedAt: serverReviewedAt }],
+        }),
+      }),
+    )
+    const r = await syncMistakes('u10')
+    vi.unstubAllGlobals()
+    expect(r[0]!.lastReviewedAt).toBe(serverReviewedAt)
+  })
+
+  it('hop nhat: giai thich ben server rong thi lay giai thich cuc bo', async () => {
+    addMistake(
+      'u10',
+      M({
+        wrong: 'giai thich rieng',
+        corrected: 'giai thich rieng dung',
+        explanation: 'giai thich cuc bo quan trong',
+      }),
+    )
+    const cuc = getMistakes('u10')[0]!
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ mistakes: [{ ...cuc, explanation: '' }] }),
+      }),
+    )
+    const r = await syncMistakes('u10')
+    vi.unstubAllGlobals()
+    expect(r[0]!.explanation).toBe('giai thich cuc bo quan trong')
+  })
+
+  it('hop nhat: tong hai ben vuot MAX_MISTAKES (200) thi cat con 200', async () => {
+    addMistake('u10', M({ wrong: 'local rieng', corrected: 'local rieng dung' }))
+    const serverList = Array.from({ length: 205 }, (_, i) => ({
+      id: `s${i}`,
+      wrong: `server sai ${i}`,
+      corrected: `server dung ${i}`,
+      explanation: 'gt',
+      source: 'chat' as const,
+      dir: 'A' as const,
+      createdAt: i,
+      count: 1,
+      lastReviewedAt: null,
+      reviewCount: 0,
+    }))
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({ ok: true, json: async () => ({ mistakes: serverList }) }),
+    )
+    const r = await syncMistakes('u10')
+    vi.unstubAllGlobals()
+    expect(r).toHaveLength(200)
+  })
+})

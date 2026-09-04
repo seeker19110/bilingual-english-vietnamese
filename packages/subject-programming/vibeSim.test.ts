@@ -159,3 +159,58 @@ describe('tất định + bối cảnh', () => {
     expect(hong.error).toContain('Loi khi dung boi canh')
   })
 })
+
+// Đợt 2 coverage 2026-09-05: nhánh chưa phủ — mỗi ca dưới đây khớp một dòng cụ thể liệt kê
+// trong uncovered-all.md (thiếu tham số bắt buộc, ca "đã ở trạng thái cuối", nhánh rẽ trong
+// vòng lặp quaylai). Không sửa file nguồn.
+describe('vibeSim — Đợt 2 coverage 2026-09-05: nhánh chưa phủ', () => {
+  it.each([
+    ['mota thiếu nội dung (không ngoặc kép)', 'mota', 'thieu noi dung — dung: mota'],
+    ['kehoach thiếu nội dung (không ngoặc kép)', 'kehoach', 'thieu noi dung — dung: kehoach'],
+    ['xemdiff thiếu id', 'xemdiff', 'thieu id ban nhap — dung: xemdiff <id>'],
+    ['luu thiếu tên mốc (không ngoặc kép)', 'luu', 'thieu ten moc — dung: luu'],
+  ])('%s', (_mota, script, chuoiLoi) => {
+    expect(chayLenhVibe(script).error).toContain(chuoiLoi)
+  })
+
+  it('lichsu khi chưa lưu mốc nào → chỉ chỗ lưu, không im lặng', () => {
+    const r = chayLenhVibe('lichsu')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Chua co moc nao — luu bang: luu "<ten moc>".')
+  })
+
+  it('sua thiếu góp ý (không kèm ngoặc kép) → lỗi rõ', () => {
+    const r = chayLenhVibe('sua v1', [MOTA_CHUAN])
+    expect(r.error).toContain('sua phai kem gop y — dung: sua <id>')
+  })
+
+  it('nhan thiếu id → lỗi rõ (nhánh lỗi riêng của lenhNhan, khác lenhXemDiff)', () => {
+    const r = chayLenhVibe('nhan')
+    expect(r.error).toContain('thieu id ban nhap — dung: nhan <id>')
+  })
+
+  it('nhan một bản nháp đã nhận rồi → lỗi "da duoc nhan roi"', () => {
+    const r = chayLenhVibe('nhan v1', [MOTA_CHUAN, 'xemdiff v1', 'nhan v1'])
+    expect(r.error).toContain('ban nhap v1 da duoc nhan roi.')
+  })
+
+  it('vibe sau khi đã trienkhai thành công → dòng "trien khai: da len song"', () => {
+    const r = chayLenhVibe('vibe', [MOTA_CHUAN, 'xemdiff v1', 'nhan v1', 'kiemtra', 'trienkhai'])
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('trien khai: da len song')
+  })
+
+  it('quaylai khi CÒN bản nháp cho-xem chưa nhận (chưa từng nhận) → không gỡ gì, báo giữ nguyên', () => {
+    // Bản nháp v2 chỉ được mota, KHÔNG xemdiff/nhan — nằm nguyên ở "cho-xem" khi quaylai chạy,
+    // nên vòng lặp trong lenhQuayLai phải NHẢY QUA nó (nhánh continue) thay vì gỡ nhầm.
+    const r = chayLenhVibe('quaylai', [
+      MOTA_CHUAN,
+      'xemdiff v1',
+      'nhan v1',
+      'luu "ban chay duoc dau tien"',
+      MOTA_QUEN_BIEN,
+    ])
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Khong co tinh nang nao nhan sau moc — du an giu nguyen.')
+  })
+})
