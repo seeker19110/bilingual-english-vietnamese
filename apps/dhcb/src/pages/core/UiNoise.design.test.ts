@@ -11,6 +11,14 @@ import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join, extname } from 'node:path'
 
 const SRC_DIR = join(__dirname, '../..')
+// Windows sinh đường dẫn dùng "\\" trong khi allowlist dưới đây viết bằng "/" — chuẩn hoá
+// trước khi so sánh để test không đỏ giả trên Windows (xem PR #794 — cùng lớp lỗi).
+function toRelativePosix(f: string): string {
+  return f
+    .slice(SRC_DIR.length + 1)
+    .split('\\')
+    .join('/')
+}
 // Quầng sáng: div tuyệt đối định vị, bo tròn hết cỡ, nền màu mờ, mờ nét — không phải
 // `backdrop-blur` (frosted glass hợp lệ trên bề mặt nổi như dropdown/modal).
 const GLOW_PATTERN = /rounded-full[^"]*blur-(2xl|3xl)|blur-(2xl|3xl)[^"]*rounded-full/
@@ -41,7 +49,7 @@ describe('Không còn quầng sáng nền trang trí (đợt D1)', () => {
   it('không file nào chứa mẫu quầng sáng (rounded-full + blur-2xl/3xl)', () => {
     const offenders = files
       .filter((f) => GLOW_PATTERN.test(readFileSync(f, 'utf8')))
-      .map((f) => f.slice(SRC_DIR.length + 1))
+      .map((f) => toRelativePosix(f))
     expect(offenders).toEqual([])
   })
 })
@@ -95,7 +103,7 @@ describe('Bóng phát sáng màu chỉ còn ở trạng thái có nghĩa (đợt
     const actual: Record<string, number> = {}
     for (const f of files) {
       const matches = readFileSync(f, 'utf8').match(SHADOW_COLOR_PATTERN)
-      if (matches) actual[f.slice(SRC_DIR.length + 1)] = matches.length
+      if (matches) actual[toRelativePosix(f)] = matches.length
     }
     expect(actual).toEqual(ALLOWED_COLOR_SHADOW_COUNT)
   })
@@ -163,7 +171,7 @@ describe('Nhấp nháy chỉ còn khi có thứ đang thay đổi thật (đợt
     const actual: Record<string, number> = {}
     for (const f of files) {
       const matches = readFileSync(f, 'utf8').match(PULSE_PATTERN)
-      if (matches) actual[f.slice(SRC_DIR.length + 1)] = matches.length
+      if (matches) actual[toRelativePosix(f)] = matches.length
     }
     expect(actual).toEqual(ALLOWED_PULSE_COUNT)
   })
@@ -172,7 +180,7 @@ describe('Nhấp nháy chỉ còn khi có thứ đang thay đổi thật (đợt
     const actual: Record<string, number> = {}
     for (const f of files) {
       const matches = readFileSync(f, 'utf8').match(PING_PATTERN)
-      if (matches) actual[f.slice(SRC_DIR.length + 1)] = matches.length
+      if (matches) actual[toRelativePosix(f)] = matches.length
     }
     expect(actual).toEqual(ALLOWED_PING_COUNT)
   })

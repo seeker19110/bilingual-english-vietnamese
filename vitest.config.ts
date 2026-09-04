@@ -105,21 +105,19 @@ export default defineConfig({
       // MỘT khai báo duy nhất: trước đây khoá này bị viết hai lần trong cùng object, bản trên
       // bị bản dưới ghi đè im lặng (esbuild cảnh báo "Duplicate key" mỗi lượt chạy test).
       reporter: ['text', 'text-summary', 'html', 'json-summary'],
-      // SÀN CHUNG 90% cho cả 4 chỉ số (quyết định của người dùng 2026-08-13: "set toàn bộ
-      // coverage 90%... cao thì mặc kệ, miễn từ 90 trở lên là được").
+      // Sàn 90% ban đầu (quyết định người dùng 2026-08-13) NÂNG DẦN lên gần 100% (quyết định
+      // người dùng 2026-09-04) — mỗi lần đo cao hơn sàn nhiều thì siết sàn theo, chừa biên độ
+      // để không đỏ vì dao động nhỏ giữa các lần chạy (mock ngẫu nhiên, thứ tự file…).
       //
-      // Số đo thật tại thời điểm đặt: stmts/lines 94.36 · branches 90.32 · funcs 96.33 —
-      // nghĩa là 3/4 chỉ số đang CAO HƠN sàn khá nhiều. Đây là sàn tối thiểu, KHÔNG phải mục
-      // tiêu: đừng viết ít test đi cho "vừa đủ 90".
-      //
-      // Trước đó ngưỡng là 93/89/96/93 (ratchet bám sát số đo). Đổi sang sàn phẳng 90 khiến
-      // statements/functions được nới; bù lại branches bị SIẾT (89 → 90), và đợt này đã viết
-      // thêm test để branches từ 89.06 lên 90.32 mới đạt.
+      // Số đo thật lúc siết (2026-09-04, sau khi vá 3 lỗi Windows chặn coverage chạy được):
+      // stmts 96,36 · branches 90,71 · funcs 95,19 · lines 96,36. branches có biên độ MỎNG
+      // nhất (0,71 so với sàn cũ) nên GIỮ NGUYÊN 90 — ba chỉ số còn lại nâng, chừa ~1 điểm.
+      // Đây vẫn là sàn tối thiểu, KHÔNG phải mục tiêu: đừng viết ít test đi cho "vừa đủ".
       thresholds: {
-        statements: 90,
+        statements: 95,
         branches: 90,
-        functions: 90,
-        lines: 90,
+        functions: 94,
+        lines: 95,
       },
     },
   },

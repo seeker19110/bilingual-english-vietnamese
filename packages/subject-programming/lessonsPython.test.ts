@@ -107,6 +107,10 @@ function runPython3(code: string, stdinLines: string[], cwd: string = WORK_DIR):
       cwd,
       // Không cho code mẫu đọc stdin thật (mọi input phải đi qua prelude).
       stdio: ['ignore', 'pipe', 'pipe'],
+      // Trên Windows, python3 mặc định in theo codepage console (không phải UTF-8) — chữ
+      // tiếng Việt có dấu bị hỏng thành ký tự thay thế "�" trước khi Node kịp decode utf8.
+      // Ép UTF-8 để output nhất quán trên mọi hệ điều hành.
+      env: { ...process.env, PYTHONIOENCODING: 'utf-8', PYTHONUTF8: '1' },
     })
     return { output }
   } catch (err) {
