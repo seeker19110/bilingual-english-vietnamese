@@ -183,7 +183,9 @@ export function auditRepo(root: string): Finding[] {
   ]
   const out: Finding[] = []
   for (const file of files) {
-    const rel = relative(root, file)
+    // relative() sinh "\\" trên Windows, còn ALLOWLIST/allowlist so khớp viết bằng "/" —
+    // chuẩn hoá để đường dẫn nhất quán trên mọi hệ điều hành.
+    const rel = relative(root, file).split('\\').join('/')
     readFileSync(file, 'utf-8')
       .split('\n')
       .forEach((text, i) => out.push(...auditLine(rel, i + 1, text, themes)))

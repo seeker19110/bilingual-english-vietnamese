@@ -3111,6 +3111,16 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   (`geminiLiveService.ts` 14 nhánh thiếu · `co-learning-audio.ts` 12 · `neuroAffectiveService.ts`
   8 · `redisChat.ts` 8); hoặc (b) nâng ngưỡng CÓ CHỦ ĐÍCH kèm lý do ghi vào chính mục này.
 
+  **[2026-09-04] (b) đã chọn — người dùng yêu cầu rõ "nâng coverage lên 100%", ghi đè quyết
+  định "KHÔNG nâng ngưỡng" ở trên (2026-09-03).** Phương án chọn: nâng sàn CI dần dần (không
+  viết test bổ sung ồ ạt cho toàn repo — khối lượng quá lớn một đợt). Trước khi đo được số
+  thật, `npm run test:coverage` không chạy trọn trên Windows vì 3 lỗi cùng lớp nguyên nhân với
+  PR #794 (so đường dẫn `\` vs `/`, encoding console) — đã vá cả ba (xem
+  `docs/changelog/0267-2026-09-04-siet-san-coverage-va-va-3-loi-windows.md`). Số đo thật sau vá:
+  stmts 96,36% · branches 90,71% · funcs 95,19% · lines 96,36%. Ngưỡng `vitest.config.ts` nâng
+  thành statements 95 · branches 90 (giữ nguyên, biên độ mỏng nhất) · functions 94 · lines 95.
+  Branches vẫn là chỉ số cần vá tiếp — file nhánh phủ thấp liệt kê ở trên chưa đổi.
+
 - 🟡 **[2026-08-25] Tầng 8 (Core Web Vitals) và Tầng 9 (vận hành production) CHƯA kiểm được
   trong lượt audit toàn diện 2026-08-25.** Proxy của container chặn
   `en-vi.donghanhcungban.org` (403 CONNECT tunnel). Hai tầng này được ghi **TRỐNG**, không chấm
