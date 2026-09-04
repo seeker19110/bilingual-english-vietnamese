@@ -254,14 +254,16 @@ describe('Mistake Bank — ca biên', () => {
   })
 
   it('localStorage het dung luong (setItem nem loi) thi addMistake khong nem ra ngoai', () => {
-    const goc = Storage.prototype.setItem
-    Storage.prototype.setItem = () => {
+    // Phai spy tren chinh doi tuong `localStorage`: trong moi truong test (happy-dom),
+    // `setItem` la thuoc tinh RIENG cua instance, KHONG ke thua tu `Storage.prototype`,
+    // nen ghi de prototype se khong co tac dung (mock im lang, nhanh catch khong duoc chay).
+    const setItem = vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
       throw new Error('QuotaExceededError')
-    }
+    })
     try {
       expect(() => addMistake('u9', M())).not.toThrow()
     } finally {
-      Storage.prototype.setItem = goc
+      setItem.mockRestore()
     }
   })
 

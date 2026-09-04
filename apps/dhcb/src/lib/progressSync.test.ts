@@ -551,7 +551,8 @@ describe('progressSync — ca biên hợp nhất khi kéo về', () => {
 
   it('localStorage đầy (setItem ném) khi ghi bản hợp nhất → nuốt lỗi, vẫn đẩy lên server', async () => {
     const calls = mockFetchPull({ learned: ['x'] })
-    const setItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+    // Spy tren chinh `localStorage` (thuoc tinh rieng cua instance), khong phai prototype.
+    const setItem = vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
       throw new Error('QuotaExceededError')
     })
     await expect(pullProgress('u4')).resolves.toBeUndefined()
