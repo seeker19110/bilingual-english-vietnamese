@@ -80,9 +80,10 @@ function taoMay(): May {
   return { fs, cwd: HOME, vars: {}, lastExit: 0, steps: 0 }
 }
 
-/** Gom đường dẫn về dạng chuẩn: bỏ '.', xử lý '..', bỏ '/' thừa. */
+/** Gom đường dẫn TUYỆT ĐỐI về dạng chuẩn: bỏ '.', xử lý '..', bỏ '/' thừa.
+ *  Chỉ nhận đường dẫn tuyệt đối — mọi nơi gọi đều đã ghép sẵn `HOME`/`cwd` hoặc tự bắt đầu bằng
+ *  '/', nên nhánh "trả về đường dẫn tương đối" cũ là mã chết (soát 2026-09-05, đợt mã chết). */
 function chuanHoa(duongDan: string): string {
-  const tuyetDoi = duongDan.startsWith('/')
   const phan: string[] = []
   for (const p of duongDan.split('/')) {
     if (p === '' || p === '.') continue
@@ -92,7 +93,7 @@ function chuanHoa(duongDan: string): string {
     }
     phan.push(p)
   }
-  return tuyetDoi ? `/${phan.join('/')}` : phan.join('/')
+  return `/${phan.join('/')}`
 }
 
 /** Đổi đường dẫn học viên gõ (tương đối, `~`, tuyệt đối) thành đường dẫn tuyệt đối chuẩn. */
@@ -554,10 +555,12 @@ function noiSuyLenh(s: string, ctx: NguCanh): string {
 function noTu(tok: Extract<Token, { t: 'word' }>, ctx: NguCanh): string[] {
   const truong: string[] = ['']
   const coGlob: boolean[] = [false]
-  const them = (chu: string, tachDuoc: boolean, globDuoc: boolean) => {
-    if (!tachDuoc) {
+  // MỘT cờ chứ không hai: trong bash, phần được tách khoảng trắng cũng chính là phần được glob
+  // (phần trong nháy thì không tách, không glob). Tách làm hai tham số như trước sinh ra nhánh
+  // `!tachDuoc && globDuoc` không nơi nào gọi tới — mã chết (soát 2026-09-05, đợt mã chết).
+  const them = (chu: string, noRong: boolean) => {
+    if (!noRong) {
       truong[truong.length - 1] += chu
-      if (globDuoc && /[*?]/.test(chu)) coGlob[coGlob.length - 1] = true
       return
     }
     const manh = chu.split(/[ \t\n]+/)
@@ -569,20 +572,20 @@ function noTu(tok: Extract<Token, { t: 'word' }>, ctx: NguCanh): string[] {
       const chuManh = manh[k] ?? ''
       const cuoi = truong.length - 1
       truong[cuoi] = (truong[cuoi] ?? '') + chuManh
-      if (globDuoc && /[*?]/.test(chuManh)) coGlob[cuoi] = true
+      if (/[*?]/.test(chuManh)) coGlob[cuoi] = true
     }
   }
 
   for (const p of tok.parts) {
     if (p.quote === 'single') {
-      them(p.text, false, false)
+      them(p.text, false)
       continue
     }
     // Nháy kép: nội suy nhưng KHÔNG tách khoảng trắng, không glob — đúng luật bash và là lý do
     // "$file" an toàn hơn $file khi tên file có dấu cách.
     const daNoiSuy = noiSuyBien(noiSuyLenh(p.text, ctx), ctx)
-    if (p.quote === 'double') them(daNoiSuy, false, false)
-    else them(daNoiSuy, true, true)
+    if (p.quote === 'double') them(daNoiSuy, false)
+    else them(daNoiSuy, true)
   }
 
   // Từ hoàn toàn rỗng do biến rỗng (vd `$KHONG_CO`) thì biến mất, trừ khi được nháy.
