@@ -118,6 +118,10 @@ export default function ResetPassword() {
               placeholder={isA ? 'Mật khẩu mới' : 'New password'}
               aria-label={isA ? 'Mật khẩu mới' : 'New password'}
               minLength={6}
+              // Ô nhập này chỉ xuất hiện SAU một hành động của người dùng (mở form / bấm "thêm"),
+              // nên đưa tiêu điểm vào đó là chuyển tiêu điểm đúng chỗ theo WAI-ARIA, không phải
+              // cướp tiêu điểm lúc tải trang (audit 2026-09-05, F1).
+              // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus
               required
               className="w-full bg-zinc-800/60 border border-zinc-700/60 rounded-xl px-4 py-3 pr-11 text-sm text-zinc-100 outline-none focus:border-accent-500/70"

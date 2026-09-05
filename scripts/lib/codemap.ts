@@ -194,3 +194,19 @@ export function findImportCycles(graph: CodeGraph, limit = 20): string[][] {
   for (const file of [...graph.files].sort()) walk(file)
   return cycles.slice(0, limit)
 }
+
+/**
+ * Bản đồ đã lưu có CŨ hơn mã nguồn không?
+ *
+ * Vì sao cần: các lệnh tra cứu (`impact`, `callers`, `orphans`...) đọc thẳng `.codemap/graph.json`
+ * nếu file đó tồn tại. Audit toàn diện 2026-09-05 (F2) bắt gặp bản đồ ghi ngày 18/08 — TRƯỚC đợt
+ * cải tổ cấu trúc 23/08 — vẫn được dùng im lặng, nên `orphans` liệt kê `api/`, `server.ts`,
+ * `apps/english/` là những đường dẫn đã không còn. CLAUDE.md §7 và §9 bắt buộc dùng công cụ này
+ * trước khi sửa file dùng chung và trước khi merge, nên một bản đồ cũ là câu trả lời SAI được
+ * trình bày như câu trả lời đúng — nguy hiểm hơn là không có bản đồ.
+ *
+ * Hàm thuần để test được: nơi gọi tự đo mtime rồi truyền vào.
+ */
+export function isGraphStale(graphMtimeMs: number, newestSourceMtimeMs: number): boolean {
+  return newestSourceMtimeMs > graphMtimeMs
+}

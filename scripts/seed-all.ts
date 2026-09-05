@@ -79,7 +79,6 @@ import {
   generateAudioFromGoogle,
   generateStudioAudioFromGoogle,
   isValidStudioVoice,
-  isValidVoice,
   hasGoogleTtsKey,
   probeApiKeys,
   setActiveKeyPool,
@@ -95,7 +94,6 @@ import {
   generateAudioFromGemini,
   isValidGeminiVoice,
   hasGeminiTtsKey,
-  type GeminiVoiceId,
 } from '@dhcb/core-ai/geminiTts'
 import { STORY_KIND_VOICE } from '../apps/dhcb/src/lib/stories.ts'
 import { type VoiceId as AppVoiceId } from '../apps/dhcb/src/lib/voiceTiers.ts'
@@ -1899,7 +1897,10 @@ async function verifyDb(
     const tasks = (allByCat.get(id) ?? []).filter((t): t is PatternTask => t.type === 'pattern')
     let present = 0,
       missing = 0
-    for (const t of tasks) dbHash.has(hashText(t.text, t.lang, t.voice)) ? present++ : missing++
+    for (const t of tasks) {
+      if (dbHash.has(hashText(t.text, t.lang, t.voice))) present++
+      else missing++
+    }
     totalMissing += missing
     const tag = tasks.length === 0 ? '∅' : missing === 0 ? '✅' : '⚠️'
     console.log(

@@ -339,10 +339,14 @@ export default function MemoryPalaceExplorerModal({ onClose }: MemoryPalaceExplo
 
                 {/* Active Recall Section */}
                 <div className="space-y-2 pt-2 border-t border-zinc-800">
-                  <label className="block text-xs font-bold text-zinc-300 uppercase">
+                  <label
+                    htmlFor="memorypalaceexplorermodal-kiem-tra-truy-xuat-khong-gian-sp"
+                    className="block text-xs font-bold text-zinc-300 uppercase"
+                  >
                     Kiểm tra Truy xuất Không gian (Spatial Active Recall)
                   </label>
                   <textarea
+                    id="memorypalaceexplorermodal-kiem-tra-truy-xuat-khong-gian-sp"
                     value={recallInput}
                     onChange={(e) => setRecallInput(e.target.value)}
                     placeholder="Nhắm mắt nhớ lại hình ảnh tại điểm neo này, gõ lại ý nghĩa khái niệm..."

@@ -2942,13 +2942,13 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
 > `docs/legacy/no-ky-thuat-da-dong.md` (2026-09-01) để file này chỉ nói trạng thái hiện tại —
 > đúng vai trò ở mục 2 `CLAUDE.md`. Đóng một món nợ = cắt khối đó dán sang file kia, kèm ngày.
 
-- 🟡 **[2026-08-28] Repo có HAI file cấu hình Nginx mô tả cùng một server.** `nginx/dhcb.conf`
-  tự nhận là "cấu hình ĐANG CHẠY THẬT trên VPS", trong khi `docs/cloudflare-setup.md` và
-  `docs/runbook-dung-vps-moi-tu-dau.md` lại hướng dẫn copy `nginx/en-vi.conf`. Không biết bản
-  nào mới là bản trên VPS thì mọi thay đổi Nginx đều là đoán. Đợt thêm `hub.donghanhcungban.org`
-  (changelog 0191) đã sửa CẢ HAI cho khớp, nhưng đó là chữa triệu chứng. Việc cần làm: SSH lên
-  VPS đọc `/etc/nginx/sites-enabled/`, giữ đúng một file trong repo, xoá file kia và sửa tài
-  liệu trỏ theo.
+- ✅ **[2026-08-28 → ĐÓNG 2026-09-05, audit toàn diện F3] Repo từng có HAI file cấu hình Nginx mô
+  tả cùng một server.** `nginx/dhcb.conf` tự nhận là "cấu hình ĐANG CHẠY THẬT trên VPS", trong khi
+  `docs/deploy-vps-ubuntu.md`, `docs/cloudflare-setup.md` và `docs/runbook-dung-vps-moi-tu-dau.md`
+  đều hướng dẫn copy `nginx/en-vi.conf`. Audit so hai file: `dhcb.conf` khai TRÙNG `server_name`
+  nhưng chỉ có 2 khối `location`, **thiếu** `/api/`, `@express` và cache tài nguyên tĩnh mà
+  `en-vi.conf` có (6 khối) — tức bản nghèo hơn hẳn, copy nhầm là mất cache tĩnh + proxy API. Không
+  có tài liệu nào trỏ tới nó. **Đã xoá `nginx/dhcb.conf`; `nginx/en-vi.conf` là bản duy nhất.**
 - 🟡 **[2026-08-28 — rà UI/UX 5 trang trụ cột, xem `docs/changelog/0186-*.md`] Ba việc còn để
   ngỏ, cần người dùng quyết hoặc tách đợt riêng.**
 
@@ -3069,6 +3069,11 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   | -------------------- | --------- | ------ | ------------ |
   | Initial JS (brotli)  | 127,26 kB | 140 kB | dư **~9,1%** |
   | Initial CSS (brotli) | 17,00 kB  | 20 kB  | dư **~15%**  |
+
+  **[Đo lại 2026-09-05, audit toàn diện F10] CSS lại mỏng đi: 18,03 / 20 kB — chỉ còn ~1,97 kB
+  (dư ~9,9%), tức đã ăn hết một nửa phần vừa nới ngày 02/09.** JS 128,44 / 140 kB (dư ~8,3%).
+  Không nới thêm lần nữa: nới hai lần liên tiếp là biến ngân sách thành thứ chạy theo số đo. Thêm
+  animation/theme mới thì rà `tailwind.config.js` TRƯỚC, và chạy `npm run budget` để xem số hiện tại.
 
   Coverage branches vẫn mỏng — **nhưng biên độ đó nay là CHẤP NHẬN ĐƯỢC theo quyết định người
   dùng (2026-09-03: "cover 90%")**. Số hiện tại 90,70% trên sàn 90 = dư 0,70 điểm. **KHÔNG nâng

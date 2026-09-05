@@ -1,3 +1,5 @@
+/* global __ENV -- k6 tự bơm biến toàn cục __ENV vào lúc chạy (không phải Node/trình duyệt),
+   nên ESLint không biết nó tồn tại. Khai báo ở đây thay vì tắt luật (audit 2026-09-05, F7). */
 // scripts/load-test/k6-baseline.js — Kịch bản load test k6 cơ bản (GĐ4 kế hoạch scale, xem
 // docs/research/ke-hoach-scale-30k-concurrent.md mục "GĐ4 — Quan sát & kiểm chứng tải").
 //

@@ -1,3 +1,5 @@
+/* global clients -- `clients` là biến toàn cục của ngữ cảnh Service Worker (WorkerGlobalScope),
+   không có trong env browser/node của ESLint (audit 2026-09-05, F7). */
 // Service Worker — PWA caching + web push notification nhắc học mỗi ngày
 // Chiến lược cache:
 //  - Tài nguyên app-shell (JS/CSS/font/ảnh): cache-first + cập nhật ngầm (SWR).

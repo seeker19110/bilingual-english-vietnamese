@@ -122,14 +122,22 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
             <>
               {/* Role Selection */}
               <div className="space-y-2.5">
-                <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider block">
+                <div
+                  id="agent-role-label"
+                  className="text-xs font-bold text-zinc-300 uppercase tracking-wider block"
+                >
                   1. Chọn Vai Trò Agent Chuyên Môn
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                </div>
+                <div
+                  role="group"
+                  aria-labelledby="agent-role-label"
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-2"
+                >
                   {rolesList.map((r) => (
                     <button
                       key={r.id}
                       type="button"
+                      aria-pressed={role === r.id}
                       onClick={() => setRole(r.id)}
                       className={`p-3 rounded-2xl border text-left transition flex items-start gap-2.5 ${
                         role === r.id
@@ -152,10 +160,14 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
               {/* Task Inputs */}
               <div className="space-y-3">
                 <div>
-                  <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider block mb-1.5">
+                  <label
+                    htmlFor="agentorchestratormodal-2-tieu-de-nhiem-vu"
+                    className="text-xs font-bold text-zinc-300 uppercase tracking-wider block mb-1.5"
+                  >
                     2. Tiêu Đề Nhiệm Vụ
                   </label>
                   <input
+                    id="agentorchestratormodal-2-tieu-de-nhiem-vu"
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
@@ -165,10 +177,14 @@ export default function AgentOrchestratorModal({ onClose, onSessionCreated }: Pr
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider block mb-1.5">
+                  <label
+                    htmlFor="agentorchestratormodal-3-mo-ta-chi-tiet-muc-tieu-can-da"
+                    className="text-xs font-bold text-zinc-300 uppercase tracking-wider block mb-1.5"
+                  >
                     3. Mô Tả Chi Tiết Mục Tiêu Cần Đạt
                   </label>
                   <textarea
+                    id="agentorchestratormodal-3-mo-ta-chi-tiet-muc-tieu-can-da"
                     rows={3}
                     value={goal}
                     onChange={(e) => setGoal(e.target.value)}

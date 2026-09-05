@@ -83,14 +83,14 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
   const [planForm, setPlanForm] = useState({
     title: '',
     planType: 'weekly' as LifePlan['planType'],
-    periodStart: new Date().toISOString().split('T')[0] || '',
+    periodStart: vnDateStr(),
     periodEnd: '',
   })
   const [milestoneForm, setMilestoneForm] = useState({
     title: '',
     area: 'learning' as GrowthMilestone['area'],
     description: '',
-    achievedAt: new Date().toISOString().split('T')[0] || '',
+    achievedAt: vnDateStr(),
   })
 
   const loadData = useCallback(async () => {
@@ -202,7 +202,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
       setPlanForm({
         title: '',
         planType: 'weekly',
-        periodStart: new Date().toISOString().split('T')[0] || '',
+        periodStart: vnDateStr(),
         periodEnd: '',
       })
       toast.success('Đã tạo kế hoạch cuộc sống!')
@@ -230,7 +230,7 @@ export default function Life({ embedded = false }: { embedded?: boolean } = {}) 
         title: '',
         area: 'learning',
         description: '',
-        achievedAt: new Date().toISOString().split('T')[0] || '',
+        achievedAt: vnDateStr(),
       })
       toast.success('🎉 Đã thêm cột mốc phát triển bản thân!')
     } catch (err: unknown) {

@@ -1329,10 +1329,10 @@ export default function AppliedKnowledge() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3">
-                    <label className="text-xs text-zinc-400 font-semibold">
+                    <div id="ph-compare-label" className="text-xs text-zinc-400 font-semibold">
                       Chọn Chất A và Chất B để so sánh nồng độ ion axit [H+]:
-                    </label>
-                    <div className="space-y-1.5">
+                    </div>
+                    <div role="group" aria-labelledby="ph-compare-label" className="space-y-1.5">
                       {COMMON_PH_ITEMS.map((item) => (
                         <div
                           key={item.name}
@@ -1428,8 +1428,14 @@ export default function AppliedKnowledge() {
                   <div className="space-y-4">
                     <div className="grid grid-cols-3 gap-2">
                       <div>
-                        <label className="text-[11px] text-zinc-400">Cân nặng (kg)</label>
+                        <label
+                          htmlFor="appliedknowledge-can-nang-kg"
+                          className="text-[11px] text-zinc-400"
+                        >
+                          Cân nặng (kg)
+                        </label>
                         <input
+                          id="appliedknowledge-can-nang-kg"
                           type="number"
                           value={userWeight}
                           onChange={(e) => setUserWeight(+e.target.value)}
@@ -1437,8 +1443,14 @@ export default function AppliedKnowledge() {
                         />
                       </div>
                       <div>
-                        <label className="text-[11px] text-zinc-400">Chiều cao (cm)</label>
+                        <label
+                          htmlFor="appliedknowledge-chieu-cao-cm"
+                          className="text-[11px] text-zinc-400"
+                        >
+                          Chiều cao (cm)
+                        </label>
                         <input
+                          id="appliedknowledge-chieu-cao-cm"
                           type="number"
                           value={userHeight}
                           onChange={(e) => setUserHeight(+e.target.value)}
@@ -1446,8 +1458,14 @@ export default function AppliedKnowledge() {
                         />
                       </div>
                       <div>
-                        <label className="text-[11px] text-zinc-400">Độ tuổi</label>
+                        <label
+                          htmlFor="appliedknowledge-do-tuoi"
+                          className="text-[11px] text-zinc-400"
+                        >
+                          Độ tuổi
+                        </label>
                         <input
+                          id="appliedknowledge-do-tuoi"
                           type="number"
                           value={userAge}
                           onChange={(e) => setUserAge(+e.target.value)}
@@ -1480,8 +1498,14 @@ export default function AppliedKnowledge() {
                     </div>
 
                     <div>
-                      <label className="text-[11px] text-zinc-400">Mức độ vận động thể lực:</label>
+                      <label
+                        htmlFor="appliedknowledge-muc-do-van-dong-the-luc"
+                        className="text-[11px] text-zinc-400"
+                      >
+                        Mức độ vận động thể lực:
+                      </label>
                       <select
+                        id="appliedknowledge-muc-do-van-dong-the-luc"
                         value={userActivity}
                         onChange={(e) => setUserActivity(+e.target.value)}
                         className="w-full mt-1 p-2 rounded-lg bg-zinc-950 border border-zinc-800 text-xs font-semibold text-zinc-200"
@@ -1494,11 +1518,18 @@ export default function AppliedKnowledge() {
                     </div>
 
                     <div>
-                      <label className="text-[11px] text-zinc-400">Mục tiêu thể hình:</label>
-                      <div className="grid grid-cols-3 gap-1.5 mt-1">
+                      <div id="fitness-goal-label" className="text-[11px] text-zinc-400">
+                        Mục tiêu thể hình:
+                      </div>
+                      <div
+                        role="group"
+                        aria-labelledby="fitness-goal-label"
+                        className="grid grid-cols-3 gap-1.5 mt-1"
+                      >
                         {(['fat_loss', 'maintenance', 'muscle_gain'] as const).map((g) => (
                           <button
                             key={g}
+                            aria-pressed={userGoal === g}
                             onClick={() => setUserGoal(g)}
                             className={`py-1.5 rounded-lg text-[11px] font-bold border transition ${
                               userGoal === g
@@ -1581,11 +1612,18 @@ export default function AppliedKnowledge() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div>
-                      <label className="text-xs text-zinc-400">Nhóm máu của Bố:</label>
-                      <div className="grid grid-cols-4 gap-2 mt-1">
+                      <div id="blood-father-label" className="text-xs text-zinc-400">
+                        Nhóm máu của Bố:
+                      </div>
+                      <div
+                        role="group"
+                        aria-labelledby="blood-father-label"
+                        className="grid grid-cols-4 gap-2 mt-1"
+                      >
                         {(['A', 'B', 'AB', 'O'] as BloodType[]).map((type) => (
                           <button
                             key={type}
+                            aria-pressed={fatherBlood === type}
                             onClick={() => setFatherBlood(type)}
                             className={`py-2 rounded-lg text-xs font-bold border transition ${
                               fatherBlood === type
@@ -1600,11 +1638,18 @@ export default function AppliedKnowledge() {
                     </div>
 
                     <div>
-                      <label className="text-xs text-zinc-400">Nhóm máu của Mẹ:</label>
-                      <div className="grid grid-cols-4 gap-2 mt-1">
+                      <div id="blood-mother-label" className="text-xs text-zinc-400">
+                        Nhóm máu của Mẹ:
+                      </div>
+                      <div
+                        role="group"
+                        aria-labelledby="blood-mother-label"
+                        className="grid grid-cols-4 gap-2 mt-1"
+                      >
                         {(['A', 'B', 'AB', 'O'] as BloodType[]).map((type) => (
                           <button
                             key={type}
+                            aria-pressed={motherBlood === type}
                             onClick={() => setMotherBlood(type)}
                             className={`py-2 rounded-lg text-xs font-bold border transition ${
                               motherBlood === type

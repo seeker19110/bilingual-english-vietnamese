@@ -188,6 +188,10 @@ export default function ActivityCalendarCard({
               </span>
             ))}
           </div>
+          {/* eslint-disable-next-line jsx-a11y/interactive-supports-focus -- mẫu WAI-ARIA
+              "roving tabindex": tiêu điểm nằm ở Ô (role=gridcell, tabIndex 0/-1 ở dưới), KHÔNG
+              ở khung grid; khung chỉ nhận phím uỷ quyền từ ô đang focus. Đặt tabIndex cho khung
+              sẽ thêm một điểm dừng Tab thừa — đúng thứ đã bỏ đi ở đầu file. */}
           <div
             ref={gridRef}
             role="grid"
@@ -207,6 +211,10 @@ export default function ActivityCalendarCard({
               </span>
             ))}
           </div>
+          {/* eslint-disable-next-line jsx-a11y/interactive-supports-focus -- mẫu WAI-ARIA
+              "roving tabindex": tiêu điểm nằm ở Ô (role=gridcell, tabIndex 0/-1 ở dưới), KHÔNG
+              ở khung grid; khung chỉ nhận phím uỷ quyền từ ô đang focus. Đặt tabIndex cho khung
+              sẽ thêm một điểm dừng Tab thừa — đúng thứ đã bỏ đi ở đầu file. */}
           <div
             ref={gridRef}
             role="grid"

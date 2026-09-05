@@ -15,6 +15,7 @@
 
 import { z } from 'zod'
 import { getPgPool } from '@dhcb/core-db/pgPool'
+import { addDays, vnDateStr } from '@dhcb/core-db/date'
 import {
   getCorsHeaders,
   SECURITY_HEADERS,
@@ -109,11 +110,9 @@ export default async function handler(req: Request): Promise<Response> {
 
   if (req.method === 'GET') {
     // 365 ngày để getStreak() phía client tính được chuỗi ngày liên tiếp tối đa 1 năm
-    const startDate = (() => {
-      const d = new Date()
-      d.setDate(d.getDate() - 365)
-      return d.toISOString().slice(0, 10)
-    })()
+    // Ngày mốc tính THEO GIỜ VN như mọi nghiệp vụ ngày khác (`daily_usage.day` được ghi bằng
+    // vnDateStr) — trước đây dùng ngày UTC nên khung 365 ngày lệch 7 giờ (audit 2026-09-05, F5).
+    const startDate = addDays(vnDateStr(), -365)
     const [chat, writing, speaking, usage] = await Promise.all([
       pool.query<SessionRow>(
         `select id, user_id, situation, level, messages, created_at

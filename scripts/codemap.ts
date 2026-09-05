@@ -16,9 +16,10 @@
 //   npm run codemap -- cycles                    # chu trình import
 //   npm run codemap -- orphans                   # file không ai import (KIỂM TRA TAY trước khi xoá)
 //
-// Lệnh tra cứu tự quét lại nếu chưa có .codemap/graph.json.
+// Lệnh tra cứu tự quét lại nếu CHƯA CÓ .codemap/graph.json, hoặc nếu bản đồ đã CŨ hơn mã nguồn
+// (audit 2026-09-05, F2 — trước đây bản đồ cũ vẫn được dùng im lặng).
 
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 
 import {
@@ -27,6 +28,7 @@ import {
   findImpactedFiles,
   findImportCycles,
   findOrphanFiles,
+  isGraphStale,
   type CodeGraph,
 } from './lib/codemap'
 import { scanGraph } from './lib/scanGraph'
@@ -62,10 +64,37 @@ function saveGraph(graph: CodeGraph): void {
   writeFileSync(OUTPUT_FILE, JSON.stringify(graph), 'utf8')
 }
 
-/** Đọc đồ thị đã lưu; chưa có thì quét mới rồi lưu lại. */
+/** Thời điểm sửa gần nhất trong toàn bộ mã nguồn được quét (ms). */
+function newestSourceMtimeMs(): number {
+  let newest = 0
+  for (const root of SCAN_ROOTS) {
+    const abs = path.join(REPO_ROOT, root)
+    if (!existsSync(abs)) continue
+    for (const entry of readdirSync(abs, { recursive: true, withFileTypes: true })) {
+      if (!entry.isFile()) continue
+      if (!/\.(ts|tsx|mjs|js)$/.test(entry.name)) continue
+      const m = statSync(path.join(entry.parentPath ?? abs, entry.name)).mtimeMs
+      if (m > newest) newest = m
+    }
+  }
+  return newest
+}
+
+/**
+ * Đọc đồ thị đã lưu; chưa có HOẶC đã cũ hơn mã nguồn thì quét lại rồi lưu.
+ *
+ * Quét lại tốn ~12 giây — rẻ hơn nhiều so với việc trả lời "sửa file này không ảnh hưởng ai"
+ * dựa trên bản đồ của tuần trước (audit 2026-09-05, F2).
+ */
 function loadGraph(): CodeGraph {
   if (!existsSync(OUTPUT_FILE)) {
-    console.log('Chưa có bản đồ — đang quét lần đầu (mất khoảng 1 phút)...')
+    console.log('Chưa có bản đồ — đang quét lần đầu...')
+    const graph = buildGraph()
+    saveGraph(graph)
+    return graph
+  }
+  if (isGraphStale(statSync(OUTPUT_FILE).mtimeMs, newestSourceMtimeMs())) {
+    console.log('Bản đồ đã cũ hơn mã nguồn — đang quét lại...')
     const graph = buildGraph()
     saveGraph(graph)
     return graph

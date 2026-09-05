@@ -5,7 +5,7 @@ describe('Eval V2 Context', () => {
   it('should include current_request in context', async () => {
     const mockPool = {
       query: async () => ({ rows: [] }),
-    } as any
+    } as unknown as Parameters<typeof buildContextPackage>[0]
 
     const pkg = await buildContextPackage(mockPool, {
       personId: '00000000-0000-0000-0000-000000000000',

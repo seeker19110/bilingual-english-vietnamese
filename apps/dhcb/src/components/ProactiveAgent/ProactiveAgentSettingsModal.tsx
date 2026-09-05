@@ -64,14 +64,22 @@ export default function ProactiveAgentSettingsModal({
 
         {/* Nudge Frequency */}
         <div className="space-y-2">
-          <label className="text-xs font-bold text-zinc-300 block uppercase">
+          <div
+            id="nudge-frequency-label"
+            className="text-xs font-bold text-zinc-300 block uppercase"
+          >
             Tần suất chủ động đề xuất
-          </label>
-          <div className="grid grid-cols-3 gap-2">
+          </div>
+          <div
+            role="group"
+            aria-labelledby="nudge-frequency-label"
+            className="grid grid-cols-3 gap-2"
+          >
             {(['gentle', 'balanced', 'high_focus'] as const).map((mode) => (
               <button
                 key={mode}
                 type="button"
+                aria-pressed={frequency === mode}
                 onClick={() => setFrequency(mode)}
                 className={`py-2 px-3 rounded-xl text-xs font-bold transition-all border ${
                   frequency === mode
@@ -87,10 +95,10 @@ export default function ProactiveAgentSettingsModal({
 
         {/* Quiet Hours */}
         <div className="space-y-2">
-          <label className="text-xs font-bold text-zinc-300 block uppercase">
+          <div id="quiet-hours-label" className="text-xs font-bold text-zinc-300 block uppercase">
             Khung giờ yên tĩnh (Không gửi Nudge)
-          </label>
-          <div className="flex items-center gap-3">
+          </div>
+          <div role="group" aria-labelledby="quiet-hours-label" className="flex items-center gap-3">
             <input
               type="time"
               value={quietStart}

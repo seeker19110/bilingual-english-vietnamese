@@ -5,11 +5,29 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
+    // Gác accessibility TĨNH cho JSX (CLAUDE.md §4.5). Trước 2026-09-05 tài liệu nói "kèm lint
+    // jsx-a11y" nhưng gói chưa từng được cài — lớp gác này thực tế trống, chỉ còn axe E2E chạy
+    // sau và chậm. Audit toàn diện 2026-09-05 (F1) phát hiện, nay bật thật.
+    'plugin:jsx-a11y/recommended',
     // Phải để CUỐI: tắt các luật ESLint xung đột với Prettier (định dạng do
     // Prettier lo, ESLint không cảnh báo format nữa).
     'prettier',
   ],
-  ignorePatterns: ['dist', 'node_modules', 'scripts', '.eslintrc.cjs'],
+  // 'scripts' TỪNG bị bỏ qua hoàn toàn (audit 2026-09-05, F7): script vận hành thật (backup,
+  // seed, migration) và cả test canh cổng CI đều không được lint. Nay lint như mọi mã khác.
+  // 'scripts/archive' = các script sinh dữ liệu DÙNG MỘT LẦN đã đóng băng, giữ lại làm lịch sử
+  // chứ không chạy nữa — không sửa để chiều lint.
+  ignorePatterns: [
+    'dist',
+    'dist-server',
+    'node_modules',
+    '.eslintrc.cjs',
+    'scripts/archive',
+    // Đầu ra của công cụ, không phải mã nguồn của dự án.
+    'coverage',
+    'playwright-report',
+    'test-results',
+  ],
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh'],
   rules: {

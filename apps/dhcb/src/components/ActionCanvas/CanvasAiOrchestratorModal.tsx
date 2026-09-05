@@ -73,10 +73,14 @@ export default function CanvasAiOrchestratorModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
+            <label
+              htmlFor="canvasaiorchestratormodal-nhap-muc-tieu-chien-luoc-hoac-du"
+              className="block text-xs font-semibold text-zinc-300 mb-1.5"
+            >
               Nhập Mục Tiêu Chiến Lược Hoặc Dự Định Của Bạn:
             </label>
             <textarea
+              id="canvasaiorchestratormodal-nhap-muc-tieu-chien-luoc-hoac-du"
               rows={3}
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}

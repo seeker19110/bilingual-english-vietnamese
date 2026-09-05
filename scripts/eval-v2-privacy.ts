@@ -141,7 +141,7 @@ function makeFullDataPool(personId: string) {
 function makeErasePool(personId: string) {
   const deletedSchemas = new Set<string>()
   const mockClient = {
-    query: (sql: string, params?: unknown[]) => {
+    query: (sql: string) => {
       const s = sql.toLowerCase()
       if (s.includes('begin') || s.includes('commit'))
         return Promise.resolve({ rows: [], rowCount: 0 })

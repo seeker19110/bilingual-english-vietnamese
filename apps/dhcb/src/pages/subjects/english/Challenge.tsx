@@ -259,6 +259,8 @@ function ChallengePlayback({ uid, day, label }: { uid: string; day: string; labe
           <p className="text-[11px] text-zinc-400">Video không còn trên máy này</p>
         </div>
       ) : media.kind === 'video' ? (
+        /* eslint-disable-next-line jsx-a11y/media-has-caption -- bản ghi của CHÍNH người dùng,
+           tự xem lại; không có và không thể có phụ đề (WCAG nhắm nội dung do sản phẩm cung cấp). */
         <video
           src={media.url}
           controls
@@ -266,6 +268,7 @@ function ChallengePlayback({ uid, day, label }: { uid: string; day: string; labe
           className="w-full max-h-56 rounded-xl bg-black"
         />
       ) : (
+        /* eslint-disable-next-line jsx-a11y/media-has-caption -- như trên: bản ghi cá nhân. */
         <audio src={media.url} controls className="w-full" />
       )}
     </div>
@@ -874,6 +877,8 @@ export default function Challenge() {
             {stage === 'reviewing' && recording && (
               <div className="flex flex-col items-center gap-3">
                 {recording.videoBlob && previewUrl ? (
+                  /* eslint-disable-next-line jsx-a11y/media-has-caption -- bản ghi của CHÍNH
+                     người dùng đang nghe lại trước khi nộp; không có phụ đề. */
                   <video
                     src={previewUrl}
                     controls
@@ -881,6 +886,7 @@ export default function Challenge() {
                     className="w-full max-h-72 rounded-2xl bg-black"
                   />
                 ) : previewUrl ? (
+                  /* eslint-disable-next-line jsx-a11y/media-has-caption -- như trên. */
                   <audio src={previewUrl} controls className="w-full" />
                 ) : null}
                 <p className="text-xs text-zinc-400">

@@ -92,7 +92,10 @@ export async function analyzeAmbientScreenFrame(
   focusHint?: string,
 ): Promise<AmbientContextInsight> {
   const { data: cleanedData, mimeType } = cleanBase64Image(base64Image)
-  const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || ''
+  // CHỈ đọc GEMINI_API_KEY. Trước 2026-09-05 còn nhánh dự phòng `VITE_GEMINI_API_KEY` — mọi
+  // biến có tiền tố VITE_ đều bị Vite NHÚNG THẲNG vào bundle client lúc build, nên ai đặt tên
+  // đó vào .env để "cho nó chạy" là vô tình công khai khoá Gemini (audit 2026-09-05, F4).
+  const apiKey = process.env.GEMINI_API_KEY || ''
 
   if (!apiKey) {
     // Fallback deterministic analysis khi chưa có API key trong test

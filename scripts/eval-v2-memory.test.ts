@@ -2,10 +2,10 @@ import { describe, it, expect } from 'vitest'
 import { evaluateMemoryCandidate, type MemoryCandidate } from '@dhcb/core-personal/memoryService'
 
 describe('Eval V2 Memory', () => {
-  const createMockRunner = (rows: any[]) =>
+  const createMockRunner = (rows: unknown[]) =>
     ({
       query: async () => ({ rows, rowCount: rows.length, command: '', oid: 0, fields: [] }),
-    }) as any
+    }) as unknown as Parameters<typeof evaluateMemoryCandidate>[0]
 
   it('should REJECT when confidence < 0.6', async () => {
     const runner = createMockRunner([])
