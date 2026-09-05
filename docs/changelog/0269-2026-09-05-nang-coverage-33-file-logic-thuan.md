@@ -1,6 +1,6 @@
 # 0269 — 2026-09-05 — Nâng coverage 33 file logic thuần + vá lỗi id trùng ở Memory Palace
 
-**PR:** #854
+**PR:** #856
 **Nhánh:** `test/coverage-dot-1`
 
 ## Bối cảnh
