@@ -3137,13 +3137,22 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   100%**; muốn siết tiếp thì nhắm nhóm phủ thấp kế tiếp (`core-personal/*`, `core-domains/*`,
   `api/domains/*`), và biết trước rằng chỗ dễ đã hết.
 
-  **Ba nghi bug phát hiện khi viết test — CHƯA sửa, mỗi cái một PR nhỏ có test đi kèm:**
-  (1) `packages/subject-programming/bashSim.ts` `lenhFind` cắt lệch 1 ký tự khi chạy `find /`
-  (`k.slice(pGoc.length + 1)` sai khi `pGoc === '/'` vốn đã có sẵn dấu `/`, nên `/home` → `ome`);
-  (2) `kotlinSim` `associateWith` không khử trùng khoá (`listOf(1,1,2).associateWith{}` ra Map có
-  hai cặp khoá `1`, khác Kotlin thật — `mapOf`/`groupBy` thì đã khử);
-  (3) `kotlinSim` `println(theHienDataClass)` bỏ qua `override fun toString()` trong khi gọi
-  `.toString()` tường minh thì tôn trọng (có thể cố ý nhưng chưa ghi vào tài liệu KHÁC BIỆT).
+  **Ba nghi bug phát hiện khi viết test — ĐÃ SỬA XONG 2026-09-05 (nhánh
+  `fix/ba-loi-bo-chay-bash-kotlin`, xem `docs/changelog/0269-2026-09-05-sua-ba-loi-bo-chay-bash-kotlin.md`),
+  mỗi lỗi có test canh riêng:**
+  (1) `packages/subject-programming/bashSim.ts` — `find /` **bỏ sót TOÀN BỘ nội dung**: bộ lọc
+  `k.startsWith(pGoc + '/')` với `pGoc === '/'` ghép ra tiền tố `'//'`, không khoá nào khớp nên
+  lệnh im lặng trả về đúng một dòng `/`. Chẩn đoán ban đầu ghi ở đây ("cắt lệch 1 ký tự") CHƯA
+  ĐÚNG HẲN — lỗi cắt có thật nhưng nằm SAU bộ lọc nên chưa bao giờ kịp lộ ra. Sửa bằng một biến
+  `tienTo` dùng chung cho cả bước lọc lẫn bước cắt;
+  (2) `kotlinSim` `associateWith` không khử trùng khoá → gộp theo khoá, giá trị lần cuối thắng;
+  (3) `kotlinSim` `println` bỏ qua `override fun toString()` → thêm `chuoiHoa()` (chuỗi hoá để in,
+  đệ quy qua List/Map/Pair), dùng cho cả `println`/`print` lẫn nội suy `"$x"`. Xác nhận đây là
+  LỖI chứ không phải khác biệt cố ý: không mục nào trong `KHAC_BIET` nói tới nó.
+
+  **Bài học ghi lại để đừng lặp:** nghi bug suy ra từ ĐỌC MÃ phải chạy thử trước khi tin. Lỗi (1)
+  bị mô tả sai ở trên vì suy từ công thức `slice()` mà không chạy `find /` một lần — chạy thử mất
+  mười giây và cho ra triệu chứng khác hẳn, nặng hơn, ở một dòng khác.
 
 - 🟡 **[2026-08-25] Tầng 8 (Core Web Vitals) và Tầng 9 (vận hành production) CHƯA kiểm được
   trong lượt audit toàn diện 2026-08-25.** Proxy của container chặn
