@@ -648,7 +648,7 @@ export class BoChay {
         let s = ''
         for (const m of e.manh) {
           if (m.loai === 'chu') s += m.chu ?? ''
-          else s += inGia(this.bt(m.bt!, mt))
+          else s += this.chuoiHoa(this.bt(m.bt!, mt), e.vt)
         }
         return { k: 'chuoi', gia: s }
       }
@@ -1019,6 +1019,35 @@ export class BoChay {
 
   private nhiNguyenGia(a: Gia, b: Gia, toan: string, vt: ViTri): Gia {
     return this.nhiNguyenTren(a, b, toan, vt)
+  }
+
+  /**
+   * Chuỗi hoá ĐỂ IN RA. Khác `inGia` ở đúng một điểm: tôn trọng `override fun toString()` mà
+   * học viên tự viết. Kotlin thật gọi `toString()` cho MỌI giá trị đem in — kể cả phần tử nằm
+   * trong List/Map/Pair — nên hàm này đi đệ quy qua các kiểu chứa.
+   *
+   * Trước 2026-09-05 `println` gọi thẳng `inGia`, nên `override fun toString()` bị bỏ qua khi
+   * in nhưng lại có hiệu lực khi gọi `x.toString()` tường minh: cùng một đối tượng cho hai kết
+   * quả khác nhau tuỳ cách in. Đó là LỖI, không phải khác biệt cố ý — không mục nào trong
+   * KHAC_BIET nói tới nó.
+   */
+  private chuoiHoa(g: Gia, vt: ViTri): string {
+    switch (g.k) {
+      case 'doiTuong':
+        if (this.timHam(g.lop, 'toString') !== undefined) {
+          return inGia(this.goiGiaTri(this.thanhVien(g, 'toString', vt), [], vt))
+        }
+        break
+      case 'ds':
+        return `[${g.pt.map((x) => this.chuoiHoa(x, vt)).join(', ')}]`
+      case 'map':
+        return `{${g.cap
+          .map((c) => `${this.chuoiHoa(c.khoa, vt)}=${this.chuoiHoa(c.gia, vt)}`)
+          .join(', ')}}`
+      case 'cap':
+        return `(${this.chuoiHoa(g.a, vt)}, ${this.chuoiHoa(g.b, vt)})`
+    }
+    return inGia(g)
   }
 
   /** Sắp Map theo khoá — TẤT ĐỊNH, vì bài học phải chấm được (xem KHAC_BIET). */
@@ -1468,10 +1497,10 @@ export class BoChay {
     const g = (i: number): Gia => ts[i]?.gia ?? { k: 'unit' }
     switch (ten) {
       case 'println':
-        this.in(ts.length === 0 ? '\n' : inGia(g(0)) + '\n')
+        this.in(ts.length === 0 ? '\n' : this.chuoiHoa(g(0), vt) + '\n')
         return { k: 'unit' }
       case 'print':
-        this.in(ts.length === 0 ? '' : inGia(g(0)))
+        this.in(ts.length === 0 ? '' : this.chuoiHoa(g(0), vt))
         return { k: 'unit' }
       case 'listOf':
         return { k: 'ds', pt: ts.map((t) => t.gia), doi: false }
@@ -2098,7 +2127,18 @@ export class BoChay {
           return m
         }
         case 'associateWith': {
-          const cap = dsGia.map((x) => ({ khoa: x, gia: goiF(a(0), x) }))
+          // Map KHONG cho trung khoa: phan tu trung nhau trong danh sach nguon phai gop lai
+          // thanh MOT cap, gia tri cua lan cuoi thang - dung nhu Kotlin that. Thieu buoc nay
+          // thi `listOf(1, 1, 2).associateWith { ... }` ra Map co hai cap khoa `1`, tuc mot
+          // cau truc Kotlin khong bao gio dung duoc. `mapOf`/`groupBy` da khu trung tu dau,
+          // rieng duong nay bi bo sot toi 2026-09-05.
+          const cap: { khoa: Gia; gia: Gia }[] = []
+          for (const x of dsGia) {
+            const gia = goiF(a(0), x)
+            const cu = cap.find((c) => khoaCua(c.khoa) === khoaCua(x))
+            if (cu !== undefined) cu.gia = gia
+            else cap.push({ khoa: x, gia })
+          }
           const m: Gia = { k: 'map', cap, doi: false }
           this.sapMap(m)
           return m

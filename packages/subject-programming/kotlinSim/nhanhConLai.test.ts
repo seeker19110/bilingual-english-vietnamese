@@ -519,3 +519,54 @@ describe('nhanh con lai — joinToString() khong tham so, va filterNotNull()', (
     expect(ra('println(listOf(1, null, 2).filterNotNull())')).toBe('[1, 2]\n')
   })
 })
+
+// ── Ba lỗi phát hiện khi viết test đợt coverage 2026-09-05, sửa ở PR ngay sau đó ──
+//
+// Cả ba đều thuộc loại "test cũ không hề chạm tới": bộ test trước đó chưa bao giờ in một đối
+// tượng có `override fun toString()`, cũng chưa bao giờ gọi `associateWith` trên danh sách có
+// phần tử trùng. Test dưới đây canh đúng hành vi đã sửa, để nó không lặng lẽ hồi quy.
+describe('lỗi đã sửa 2026-09-05 — associateWith khử trùng khoá', () => {
+  it('phần tử trùng nhau gộp thành MỘT cặp, không sinh Map hai khoá giống nhau', () => {
+    expect(ra('println(listOf(1, 1, 2).associateWith { it * 2 })')).toBe('{1=2, 2=4}\n')
+  })
+
+  it('giá trị của lần cuối thắng, đúng như Kotlin thật', () => {
+    // Đếm số lần gọi để phân biệt "lấy lần cuối" với "bỏ qua lần sau".
+    expect(ra('var n = 0\nprintln(listOf("a", "a").associateWith { n += 1; n })')).toBe('{a=2}\n')
+  })
+
+  it('chuỗi khác nhau vẫn giữ đủ cặp (không khử nhầm)', () => {
+    expect(ra('println(listOf("b", "a").associateWith { it.length })')).toBe('{a=1, b=1}\n')
+  })
+})
+
+describe('lỗi đã sửa 2026-09-05 — println tôn trọng override fun toString()', () => {
+  const lop = `class Diem(val x: Int, val y: Int) {
+  override fun toString(): String { return "Diem[$x;$y]" }
+}
+`
+
+  it('println dùng toString() do học viên viết, khớp với x.toString() tường minh', () => {
+    expect(ra(`${lop}val d = Diem(1, 2)\nprintln(d)\nprintln(d.toString())`)).toBe(
+      'Diem[1;2]\nDiem[1;2]\n',
+    )
+  })
+
+  it('nội suy chuỗi "$d" cũng đi qua toString() đó', () => {
+    expect(ra(`${lop}val d = Diem(3, 4)\nprintln("toa do: $d")`)).toBe('toa do: Diem[3;4]\n')
+  })
+
+  it('phần tử BÊN TRONG List/Map/Pair cũng được gọi toString()', () => {
+    expect(ra(`${lop}println(listOf(Diem(1, 1), Diem(2, 2)))`)).toBe('[Diem[1;1], Diem[2;2]]\n')
+    expect(ra(`${lop}println(mapOf("a" to Diem(5, 6)))`)).toBe('{a=Diem[5;6]}\n')
+    expect(ra(`${lop}println(Pair(Diem(7, 8), 9))`)).toBe('(Diem[7;8], 9)\n')
+  })
+
+  it('data class KHÔNG override thì vẫn in dạng tự sinh như cũ', () => {
+    expect(ra('data class P(val a: Int)\nprintln(P(1))')).toBe('P(a=1)\n')
+  })
+
+  it('print (không xuống dòng) cũng dùng toString() đó', () => {
+    expect(ra(`${lop}print(Diem(0, 0))`)).toBe('Diem[0;0]')
+  })
+})

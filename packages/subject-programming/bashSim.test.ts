@@ -656,3 +656,39 @@ describe('bashSim — Đợt 2 coverage: nhánh chưa phủ', () => {
     expect(r.exitCode).toBe(1)
   })
 })
+
+// ── Lỗi phát hiện khi viết test đợt coverage 2026-09-05, sửa ở PR ngay sau đó ──
+//
+// `find /` chưa từng được test: mọi ca cũ đều tìm từ thư mục con. Riêng gốc "/" đã tự mang sẵn
+// dấu gạch nên công thức cũ ghép ra tiền tố "//" — không khoá nào khớp, `find /` IM LẶNG trả về
+// mỗi dòng "/" thay vì cả cây thư mục (lỗi nặng hơn: mất dữ liệu chứ không phải sai định dạng).
+// Cùng công thức đó còn ăn mất chữ cái đầu khi cắt phần tương đối ("/home" thành "/ome") — chỗ
+// này chưa bao giờ lộ ra vì vòng lặp đã lọc sạch trước khi tới.
+describe('lỗi đã sửa 2026-09-05 — find / bỏ sót toàn bộ nội dung', () => {
+  it('find / liệt kê cả cây thư mục, không chỉ mỗi dòng "/"', () => {
+    const r = chayBash('mkdir -p /tmp/kho\ntouch /tmp/kho/a.txt\nfind /')
+    expect(r.error).toBeUndefined()
+    const dong = r.output.split('\n')
+    expect(dong).toContain('/')
+    expect(dong).toContain('/tmp/kho')
+    expect(dong).toContain('/tmp/kho/a.txt')
+  })
+
+  it('find / giữ nguyên tên thư mục con, không mất chữ cái đầu', () => {
+    const r = chayBash('mkdir -p /tmp/kho\ntouch /tmp/kho/a.txt\nfind / -name "a.txt"')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('/tmp/kho/a.txt')
+    expect(r.output).not.toContain('/mp/kho')
+  })
+
+  it('find / liệt kê được chính thư mục gốc', () => {
+    const r = chayBash('find / -type d')
+    expect(r.error).toBeUndefined()
+    expect(r.output.split('\n')).toContain('/')
+  })
+
+  it('find từ thư mục con vẫn đúng như trước (không hồi quy)', () => {
+    const r = chayBash('mkdir -p /tmp/kho\ntouch /tmp/kho/b.txt\nfind /tmp -name "b.txt"')
+    expect(r.output).toContain('/tmp/kho/b.txt')
+  })
+})
