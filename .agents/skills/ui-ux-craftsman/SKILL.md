@@ -199,3 +199,85 @@ tính" — không đáng.
 > nền sáng, màu Tailwind gốc thì không. Quên thì cổng trên đỏ và chỉ luôn cách vá. Bậc chọn theo
 > luật "bậc sáng nhất đạt AAA trên cả 3 theme sáng": `slate-700` · `blue/indigo/violet/purple-800`
 > · còn lại `-900`.
+
+---
+
+## 10. NHẬP TRI THỨC TỪ `Nutlope/hallmark` — 6 LUẬT + KHUÔN BÁO CÁO AUDIT (2026-09-05)
+
+**Nguồn:** `Nutlope/hallmark` (Together AI, MIT) — skill "chống UI kiểu AI": `skills/hallmark/SKILL.md`
+(67 KB) + ~130 file `references/`, trong đó `references/slop-test.md` là **57 gate + tự phê bình 6
+trục** và `references/verbs/audit.md` là khuôn rà soát.
+
+**KHÔNG cài công cụ đó vào repo** (`npx skills add nutlope/hallmark`) — nó sinh **landing page
+HTML/CSS thuần một file**, kèm 21 theme + 21 macrostructure + `design.md` riêng. DHCB là React +
+Tailwind + 5 theme + token `--a-*`/`--z-*`, đã có nguồn sự thật riêng (`apps/dhcb/src/index.css` +
+`tailwind.config.js` + `packages/core-ui/theme.ts`). Cài vào là dựng nguồn sự thật thứ hai — đúng
+lý do đã từ chối `pbakaus/impeccable` ở mục 9. **Chỉ nhập tri thức, diễn đạt lại bằng token và quy
+ước DHCB.**
+
+**Phần bị LOẠI có lý do — đừng bàn lại:** 21 theme + 21 macrostructure + catalog fingerprint
+nav/hero/footer (DHCB là APP có điều hướng cố định, không phải trang tiếp thị đổi bố cục mỗi lần
+sinh); nhóm copywriting landing page SaaS tiếng Anh (gate 46 số liệu bịa, gate 20–21 dấu triện
+macrostructure); nhóm tương phản/typography/prose-width/không-lồng-thẻ/không-animate-layout/token
+(gate 22–27, 37–41, 48) đã có ở mục 2 · 6 · 9 của skill này **và** đã có cổng chặn CI
+(`e2e/a11y.spec.ts`, `e2e/a11y-aaa.spec.ts`, `scripts/fixed-color-contrast-audit.test.ts`,
+`jsx-a11y`) — nhập vào là dựng cổng thứ hai cho cùng một việc.
+
+### A. Sáu luật MỚI (đều có bằng chứng đo trên `apps/` ngày 2026-09-05)
+
+1. **Cấm `transition-all` — khai đúng thuộc tính cần chuyển động.** `transition-all` bắt trình
+   duyệt theo dõi mọi thuộc tính đổi được, kể cả thuộc tính gây layout, nên nó vừa phá cam kết
+   60 FPS ở mục 4 vừa sinh chuyển động ngoài ý muốn khi component đổi lớp. Viết
+   `transition-colors` / `transition-transform` / `transition-opacity` (kèm `duration-200
+ease-out` như cũ). Đo được **197** chỗ `transition-all` — **không mở đợt quét sửa**, chỗ cũ
+   gỡ dần khi đụng tới; luật áp cho code MỚI.
+2. **Không dùng chung một `hover:scale-*` cho mọi thứ không liên quan.** Phóng to khi rê chuột
+   là tín hiệu "cái này bấm được và là hành động chính"; rải đều lên thẻ, badge, icon, hàng danh
+   sách thì tín hiệu mất nghĩa và trang rung khi lướt. Mỗi màn hình giữ tối đa một cấp phần tử
+   dùng `scale`; phần còn lại phản hồi bằng viền/nền như mục 4. Đo được **56** chỗ.
+3. **Mọi `transform`/`animation` phải có nhánh `prefers-reduced-motion: reduce`.** Đây là lỗ
+   hổng thật, không phải chuyện thẩm mỹ: chỉ **5 file** trong `apps/` có nhánh này, trong khi
+   mục 9.6 đã ngầm hứa "thứ `prefers-reduced-motion` phải tắt". Dùng biến thể `motion-reduce:`
+   của Tailwind (`motion-reduce:transform-none motion-reduce:animate-none`) ngay tại chỗ khai
+   hiệu ứng, không gom vào một chỗ khác.
+4. **Focus ring hiện TỨC THÌ, và viền ô nhập KHÔNG đổi độ dày giữa các trạng thái.** Ring có
+   `transition` là ring đến trễ — người dùng bàn phím mất dấu vị trí. Đổi trạng thái ô nhập
+   bằng `outline` / màu viền / nền, **giữ nguyên `border-width`**: tăng viền 1px→2px khi focus
+   làm nội dung xê dịch 1px, đây là nguồn "giật nhẹ khó truy" của các form dài.
+5. **Ô nhập chừa sẵn chỗ cho dòng lỗi.** Khối phản hồi validate (mục 3.5) phải chiếm chỗ ngay
+   cả khi rỗng (`min-h-[1lh]` hoặc khối ẩn `invisible` chứ không phải `hidden`), nếu không mỗi
+   lần hiện lỗi là cả form bị đẩy xuống — vi phạm ngân sách CLS < 0.1 ở mục 3.2 đúng lúc người
+   dùng đang cần đọc kỹ nhất.
+6. **Không toast báo thành công cho việc ĐÃ THẤY BẰNG MẮT.** Xoá một mục mà mục đó biến mất khỏi
+   danh sách, gạt công tắc mà công tắc đã đổi vị trí — thêm toast là nhiễu. Toast dành cho việc
+   xảy ra ngoài tầm nhìn (đồng bộ nền, gửi thư tuần, lưu lên máy chủ) và cho **mọi** trạng thái
+   lỗi. Luật này là rào chắn cho phần gamification (mục 1.6), nơi dễ thêm phản hồi ăn mừng chồng
+   lên nhau nhất.
+
+### B. Khuôn BÁO CÁO khi rà soát UI (lấy từ `references/verbs/audit.md`)
+
+Skill này có đủ luật nhưng chưa có **khuôn đầu ra**, nên ba đợt rà UI gần nhất
+(`docs/changelog/0206`, `0207`, `0208`) mỗi đợt tự chế một định dạng khác nhau — không so sánh
+được giữa các đợt, không biết đợt sau có sót lại lỗi của đợt trước không. Từ nay mọi lượt rà
+UI/UX ghi mỗi phát hiện đúng **4 ô**:
+
+- **Lỗi** — tên luật bị phạm (dẫn số mục của skill này, vd "mục 10.A.1").
+- **Ở đâu** — `đường/dẫn/file.tsx:dòng`.
+- **Mức** — `critical` / `major` / `minor`.
+- **Sửa** — đúng một dòng, nói cách sửa cụ thể chứ không nói lại lỗi.
+
+Nhóm theo mức, `critical` trước, kết bằng dòng đếm `N critical · M major · K minor`.
+
+Thang mức, hiệu chỉnh cho DHCB:
+
+- **critical** — chặn người dùng hoặc phá cổng đã có: rớt tương phản, thiếu `aria-label` ở nút
+  icon-only, vùng chạm < 44px, tràn layout ngang, mất dấu tiêu điểm bàn phím, thiếu trạng thái
+  lỗi ở thao tác có thể fail (mục 3.4).
+- **major** — phá quy chuẩn dự án nhưng dùng vẫn được: hardcode màu ngoài token, thiếu một trong
+  5 trạng thái, animate thuộc tính gây layout, thiếu nhánh `prefers-reduced-motion`.
+- **minor** — lệch thẩm mỹ/nhịp: khoảng cách ngoài thang chuẩn, nhịp tiêu đề (mục 9.A.2), bóng
+  màu trang trí, `text-[11px]` không có lý do chật chỗ.
+
+> **Phạm vi thi hành:** cả 6 luật ở mục A áp cho **code MỚI và code đang sửa**. Không mở đợt quét
+> riêng cho 197 chỗ `transition-all` và 56 chỗ `hover:scale-*` — cùng lập luận với mục 9.5: đổi
+> hàng loạt là rủi ro thị giác thật đổi lấy lợi ích không đo được.
