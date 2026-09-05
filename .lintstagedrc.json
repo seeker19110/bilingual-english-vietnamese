@@ -1,8 +1,8 @@
 {
-  "{apps/dhcb/src,apps/hub/src,api,packages,e2e}/**/*.{ts,tsx}": [
+  "{apps/dhcb/src,apps/hub/src,apps/server/src,packages,e2e}/**/*.{ts,tsx}": [
     "eslint --max-warnings 0",
     "prettier --write"
   ],
-  "scripts/**/*.{ts,tsx}": ["prettier --write"],
+  "scripts/**/*.{ts,tsx}": ["eslint --max-warnings 0", "prettier --write"],
   "*.{js,cjs,mjs,json,css,md,html,yml,yaml}": ["prettier --write"]
 }

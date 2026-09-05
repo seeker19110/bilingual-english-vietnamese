@@ -1,4 +1,4 @@
-# 0272 — 2026-09-05 — Audit toàn diện 12 nhóm: 11 phát hiện, vá hết trong một đợt
+# 0272 — 2026-09-05 — Audit toàn diện 12 nhóm: 12 phát hiện, vá hết trong một đợt
 
 **PR:** #TBD · **Nhánh:** `chore/audit-toan-dien-2026-09-05`
 
@@ -21,21 +21,24 @@ Mọi cổng cứng XANH, đo thật trên commit `91bdbf6b`:
 Phát hiện đáng lo nhất KHÔNG nằm ở mã sản phẩm mà ở **lớp công cụ tự kiểm**: ba trong bốn mục
 🟠 đều là "tài liệu/công cụ nói đang gác một thứ mà thực tế không gác".
 
-## 11 phát hiện và cách xử lý
+## 12 phát hiện và cách xử lý
 
-| #      | Phát hiện                                                                                                                                         | Xử lý                                                                                                         |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| F1 🟠  | `jsx-a11y` **chưa từng được cài** dù `CLAUDE.md` §4.5 và `AUDIT.md` đều nói có                                                                    | Cài + bật `plugin:jsx-a11y/recommended`; **42 vi phạm** lộ ra, vá hết                                         |
-| F2 🟠  | `.codemap/graph.json` ghi 18/08 (TRƯỚC cải tổ 23/08) vẫn được dùng im lặng → `orphans` trả về `api/`, `server.ts`, `apps/english/` đã bị xoá      | Thêm `isGraphStale()` (+3 test): bản đồ cũ hơn mã nguồn thì tự quét lại (~12s)                                |
-| F3 🟠  | `nginx/dhcb.conf` trùng `server_name` với `en-vi.conf` nhưng thiếu `/api/`, `@express`, cache tĩnh                                                | Xoá `dhcb.conf`; đóng nợ kỹ thuật #1                                                                          |
-| F4 🟡  | `ambientVisionService.ts` đọc `VITE_GEMINI_API_KEY` — đặt biến đó là Vite **nhúng khoá vào bundle client**                                        | Bỏ nhánh dự phòng, chỉ còn `GEMINI_API_KEY`                                                                   |
-| F5 🟡  | 5 chỗ dùng ngày UTC cho nghiệp vụ ngày VN (`Life.tsx` ×4, `history.ts`) → 00:00–07:00 giờ VN lệch sang hôm trước                                  | Dùng `vnDateStr()` / `addDays()`                                                                              |
-| F6 🟡  | `AUDIT.md` lệch thực tế (sàn coverage, ngân sách bundle, giới hạn AI) và **9 lệnh grep trỏ thư mục đã xoá** → chạy ra rỗng, dễ đọc nhầm là "sạch" | Sửa số + đường dẫn theo nguồn thật                                                                            |
-| F7 🟢  | ESLint bỏ qua toàn bộ `scripts/` (kể cả script vận hành và test canh CI)                                                                          | Bỏ khỏi `ignorePatterns`, mở rộng lint sang `.js/.mjs`, vá 34 lỗi lộ ra                                       |
-| F8 🟢  | 1 lỗ hổng **high** `fast-uri` (dev)                                                                                                               | `npm audit fix` → 0                                                                                           |
-| F9 🟢  | Thư mục rỗng `apps/english/` sót sau cải tổ                                                                                                       | Xoá                                                                                                           |
-| F10 🟢 | Ngân sách CSS chỉ còn 1,97 kB, trái mô tả "ngân sách bundle nay rộng"                                                                             | Ghi đúng lại trong `PROGRESS.md`, **không nới ngưỡng lần thứ hai**                                            |
-| F11 🟢 | Không có `docs/FEATURE-MAP.md` → Nhóm 12 thiếu nguồn đối chiếu                                                                                    | Thêm `npm run gen:feature-map` **sinh tự động** từ `App.tsx` + `routes.ts` (104 route, 112 endpoint) + 5 test |
+(11 từ lượt quét + F12 lộ ra trong lúc sửa F7.)
+
+| #      | Phát hiện                                                                                                                                                         | Xử lý                                                                                                         |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| F1 🟠  | `jsx-a11y` **chưa từng được cài** dù `CLAUDE.md` §4.5 và `AUDIT.md` đều nói có                                                                                    | Cài + bật `plugin:jsx-a11y/recommended`; **42 vi phạm** lộ ra, vá hết                                         |
+| F2 🟠  | `.codemap/graph.json` ghi 18/08 (TRƯỚC cải tổ 23/08) vẫn được dùng im lặng → `orphans` trả về `api/`, `server.ts`, `apps/english/` đã bị xoá                      | Thêm `isGraphStale()` (+3 test): bản đồ cũ hơn mã nguồn thì tự quét lại (~12s)                                |
+| F3 🟠  | `nginx/dhcb.conf` trùng `server_name` với `en-vi.conf` nhưng thiếu `/api/`, `@express`, cache tĩnh                                                                | Xoá `dhcb.conf`; đóng nợ kỹ thuật #1                                                                          |
+| F4 🟡  | `ambientVisionService.ts` đọc `VITE_GEMINI_API_KEY` — đặt biến đó là Vite **nhúng khoá vào bundle client**                                                        | Bỏ nhánh dự phòng, chỉ còn `GEMINI_API_KEY`                                                                   |
+| F5 🟡  | 5 chỗ dùng ngày UTC cho nghiệp vụ ngày VN (`Life.tsx` ×4, `history.ts`) → 00:00–07:00 giờ VN lệch sang hôm trước                                                  | Dùng `vnDateStr()` / `addDays()`                                                                              |
+| F6 🟡  | `AUDIT.md` lệch thực tế (sàn coverage, ngân sách bundle, giới hạn AI) và **9 lệnh grep trỏ thư mục đã xoá** → chạy ra rỗng, dễ đọc nhầm là "sạch"                 | Sửa số + đường dẫn theo nguồn thật                                                                            |
+| F7 🟢  | ESLint bỏ qua toàn bộ `scripts/` (kể cả script vận hành và test canh CI)                                                                                          | Bỏ khỏi `ignorePatterns`, mở rộng lint sang `.js/.mjs`, vá 34 lỗi lộ ra                                       |
+| F8 🟢  | 1 lỗ hổng **high** `fast-uri` (dev)                                                                                                                               | `npm audit fix` → 0                                                                                           |
+| F9 🟢  | Thư mục rỗng `apps/english/` sót sau cải tổ                                                                                                                       | Xoá                                                                                                           |
+| F10 🟢 | Ngân sách CSS chỉ còn 1,97 kB, trái mô tả "ngân sách bundle nay rộng"                                                                                             | Ghi đúng lại trong `PROGRESS.md`, **không nới ngưỡng lần thứ hai**                                            |
+| F12 🟡 | `.lintstagedrc.json` còn trỏ glob `api/**` (thư mục đã xoá 23/08) nên **`apps/server/src` không hề được ESLint kiểm lúc commit**, và `scripts/` chỉ chạy Prettier | Sửa glob sang `apps/server/src`, thêm `eslint` cho `scripts/`                                                 |
+| F11 🟢 | Không có `docs/FEATURE-MAP.md` → Nhóm 12 thiếu nguồn đối chiếu                                                                                                    | Thêm `npm run gen:feature-map` **sinh tự động** từ `App.tsx` + `routes.ts` (104 route, 112 endpoint) + 5 test |
 
 ## Quyết định kèm theo
 
