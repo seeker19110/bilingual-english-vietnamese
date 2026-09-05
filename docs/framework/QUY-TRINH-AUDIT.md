@@ -15,7 +15,8 @@
 
 ## 0. Khi nào chạy audit này
 
-> **Hai KIỂU audit, đừng lẫn.** Mục 1–4 dưới đây là audit **RỘNG**: quét toàn repo theo 11 tầng,
+> **Hai KIỂU audit, đừng lẫn.** Mục 1–4 dưới đây là audit **RỘNG**: quét toàn repo theo 11 tầng
+> (kèm các tầng phụ 1b · 2b · 5b · 6b · **8b**),
 > tìm vấn đề về cổng/bảo mật/vệ sinh/độ phủ. Nó KHÔNG bắt được lỗi tính toán sai âm thầm bên
 > trong một luồng nghiệp vụ (số hiển thị lệch số enforce, khoá ghi một đằng đọc một nẻo…) vì
 > mọi cổng vẫn xanh khi những lỗi đó tồn tại. Loại lỗi ấy cần audit **SÂU** theo một luồng dữ
@@ -318,6 +319,80 @@ loại việc.
 - **Tiêu chí đạt:** LCP ≤ 2.5s · INP ≤ 200ms · CLS ≤ 0.1 (ngân sách mục 4.7 CLAUDE.md).
 - **Nếu fail:** ghi vào báo cáo kèm trang cụ thể + chỉ số vượt ngưỡng; không tự sửa trong lượt audit.
 - **Ai xử lý:** AI đo + đề xuất; sửa performance thật (code-splitting, ảnh, font) = việc riêng.
+
+### Tầng 8b — NHÌN trang thật bằng ảnh chụp (bổ sung 2026-09-05)
+
+> **Vì sao phải có tầng riêng:** đây là loại lỗi mà **đọc mã không thấy được**. Trong chuỗi ba đợt
+> thiết kế lại desktop giáo dục (PR #861/#862/#863) có **bốn** lỗi lặp nội dung, tất cả đều chỉ lộ
+> ra khi chụp ảnh trang rồi nhìn. Không lỗi nào bị build/typecheck/lint/test/a11y bắt, và cả bốn
+> đều **trông hoàn toàn hợp lý ở dòng mã của nó**:
+>
+> - `<div className="flex … md:block">` bọc một `<p>` mô tả, cộng thêm một `<p>` khác
+>   `hidden md:block` in đúng nội dung đó. Đọc thì tưởng "dưới md kiểu này, từ md kiểu kia" —
+>   thật ra `md:block` chỉ đổi `display`, **không ẩn**, nên từ 768px trở lên chữ hiện HAI LẦN.
+> - Một `PageHeader` và một khối hero đứng cách nhau 40 dòng, cùng in một tiêu đề. Mỗi khối đọc
+>   riêng đều đúng; chỉ khi nhìn trang mới thấy chúng nói cùng một câu hai lần (và trang có hai `<h1>`).
+> - Một lưới `grid-cols-1 sm:grid-cols-2` trông rất bình thường — cho tới khi đo ra trang cao
+>   **37.266px** vì lưới dừng ở nấc `sm:` còn danh sách thì có 139 mục.
+>
+> Điểm chung: lỗi nằm ở **quan hệ giữa các chỗ cách xa nhau**, hoặc ở **con số chỉ tồn tại sau khi
+> trình duyệt dựng xong**. Không có cách nào đọc ra; phải nhìn.
+
+- **Kích hoạt khi:** BẮT BUỘC với mọi đợt việc chạm giao diện. Cũng chạy trong audit định kỳ cho
+  các trang trụ cột.
+- **Cách kiểm:** chụp mỗi trang trong phạm vi ở **hai bề rộng — 1440px và 390px**, dạng `fullPage`,
+  **trước** khi sửa và **sau** khi sửa, rồi **mở ảnh ra nhìn** (không chỉ lưu file).
+- **Bốn câu phải tự trả lời trên mỗi ảnh:**
+  1. Có câu chữ nào xuất hiện **hai lần** không? (tiêu đề, mô tả, nhãn)
+  2. **Chiều cao trang** bao nhiêu? Trên 3–4 lần chiều cao khung nhìn thì hỏi: người dùng có cách
+     nào **nhảy** tới nơi họ cần, hay chỉ có mỗi cách cuộn?
+  3. Ở 1440px có **mảng trống lớn** nào không — bên phải, hoặc giữa tiêu đề và nội dung chính?
+     Việc chính của trang có nằm trong màn hình đầu không?
+  4. Ảnh **sau** có làm hỏng ảnh 390px so với ảnh **trước** không? (cam kết "không đổi gì dưới
+     1024px" chỉ đáng tin khi có ảnh đối chứng)
+- **Tiêu chí đạt:** không có nội dung lặp; mọi danh sách dài hơn ~3 màn hình đều có mục lục/đường
+  tắt; ảnh 390px trước và sau khớp nhau (trừ phần cố ý đổi, phải nói rõ là cố ý).
+- **Nếu fail:** vá ngay trong đợt nếu là lỗi lặp nội dung (nó sai ở MỌI bề rộng, không riêng
+  desktop); ghi vào báo cáo nếu là việc bố cục lớn cần tách đợt.
+- **Ai xử lý:** AI chụp, AI nhìn, AI vá. Ảnh đính vào mô tả PR hoặc dẫn số đo (chiều cao trang
+  trước/sau) — **số đo là bằng chứng, "trông đẹp hơn" thì không**.
+
+**Công thức chụp (đã dùng thật, chạy được ngay).** Tạo file tạm `e2e/zz-shot.tmp.spec.ts`, chạy
+`npx playwright test e2e/zz-shot.tmp.spec.ts`, xem ảnh, rồi **xoá file tạm** trước khi commit:
+
+```ts
+import { test } from '@playwright/test'
+import { mockLogin } from './helpers/auth'
+
+const OUT = '/tmp/shots' // thư mục nào cũng được, miễn ngoài repo
+const ROUTES: [string, string][] = [['/mon-hoc', 'subjects']] // các trang trong phạm vi
+const PHASE = process.env.SHOT_PHASE ?? 'before' // đặt 'after' cho lượt sau
+
+for (const [w, h, tag] of [
+  [1440, 900, 'desktop'],
+  [390, 844, 'mobile'],
+] as const) {
+  test(`shot ${tag}`, async ({ page }) => {
+    await page.setViewportSize({ width: w, height: h })
+    await mockLogin(page, 'vi') // dùng helper thật của dự án, đừng tự gieo localStorage
+    for (const [route, name] of ROUTES) {
+      await page.goto(route)
+      await page.waitForTimeout(1800) // chờ nội dung nạp lười
+      await page.screenshot({ path: `${OUT}/${PHASE}-${name}-${tag}.png`, fullPage: true })
+    }
+  })
+}
+```
+
+Ba cái bẫy đã dính thật khi làm việc này:
+
+- **Đừng tự gieo `localStorage` để giả đăng nhập** — dùng `mockLogin` trong `e2e/helpers/auth.ts`.
+  Tự gieo sai khoá thì trang chụp ra là màn đăng nhập, và rất dễ tưởng đó là giao diện thật.
+- **Trang gọi API sẽ rỗng** trong môi trường chụp (Vite dev không có backend). Muốn thấy trang có
+  dữ liệu thì `page.route('**/api/...', …)` trả dữ liệu giả — nhớ đúng hình dạng đáp ứng
+  (`{ subjects: [...] }` khác `{ subject: {...} }`).
+- **Đo chiều cao trang bằng máy, đừng ước lượng:** đọc thẳng từ header PNG —
+  `python3 -c "import struct;d=open('f.png','rb').read(33);print(struct.unpack('>II',d[16:24]))"`.
 
 ### Tầng 9 — Kiểm tra vận hành (production)
 

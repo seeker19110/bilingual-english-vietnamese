@@ -76,7 +76,13 @@ function SetupScreen({
   const isA = dir === 'A'
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-4 py-10 overflow-y-auto">
+    // [2026-09-05, đợt 3 "desktop giáo dục"] Xem lý do ở `Speaking.tsx`: căn giữa theo chiều dọc
+    // đẩy thẻ cài đặt xuống quá nửa màn hình desktop (đo được thẻ bắt đầu ở y≈530 trong khi
+    // tiêu đề trang ở y≈95). Điện thoại giữ nguyên căn giữa.
+    //
+    // KHÁC `Speaking`: ở đây tiêu đề "Chọn tình huống luyện tập" được GIỮ, vì nó nói một bước
+    // khác với tiêu đề trang "Chat với gia sư" — không phải nhắc lại nguyên văn.
+    <div className="flex-1 flex flex-col items-center justify-center lg:justify-start lg:pt-2 px-4 py-10 lg:py-6 overflow-y-auto">
       <div className="w-18 h-18 rounded-3xl bg-gradient-to-br from-accent-500 via-accent-600 to-indigo-600 flex items-center justify-center mb-5 shadow-xl animate-scale-in p-4">
         <Sparkles className="w-9 h-9 text-white drop-shadow-md" />
       </div>

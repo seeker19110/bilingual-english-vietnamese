@@ -120,13 +120,19 @@ function SetupScreen({
   const isA = dir === 'A'
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-4 py-10 overflow-y-auto">
+    // [2026-09-05, đợt 3 "desktop giáo dục"] `justify-center` bỏ đi, thay bằng `justify-start`
+    // + `lg:pt-2`. Ở màn cao 900px, căn giữa theo chiều dọc đẩy thẻ cài đặt xuống quá nửa
+    // trang: đo được nút "Bắt đầu luyện nói" nằm ở y≈766 trong khi tiêu đề trang ở y≈95, tức
+    // gần 700px trống ở giữa. Trên điện thoại căn giữa là đúng (màn ngắn, nội dung vừa khít),
+    // nên chỉ đổi từ `lg` trở lên.
+    <div className="flex-1 flex flex-col items-center justify-center lg:justify-start lg:pt-2 px-4 py-10 lg:py-6 overflow-y-auto">
       <div className="w-18 h-18 rounded-3xl bg-gradient-to-br from-sky-500 via-cyan-500 to-indigo-600 flex items-center justify-center mb-5 shadow-xl animate-scale-in p-4">
         <Mic className="w-9 h-9 text-white drop-shadow-md" />
       </div>
-      <h2 className="text-2xl font-extrabold text-white mb-1.5 tracking-tight animate-fade-in delay-50">
-        {isA ? 'Luyện nói song ngữ' : 'Bilingual Speaking Practice'}
-      </h2>
+      {/* [2026-09-05, đợt 3] Bỏ thẻ `<h2>` "Luyện nói song ngữ" vốn nhắc lại NGUYÊN VĂN tiêu đề
+          `PageHeader` ngay phía trên (thấy rõ trong ảnh chụp 1440px: cùng một câu, hai lần,
+          cách nhau ~300px). Phụ đề bên dưới thì GIỮ — nó nói thêm cơ chế hai giọng, là thông
+          tin thật chứ không phải nhắc lại. */}
       <p className="text-zinc-400 text-sm mb-2 text-center max-w-xs animate-fade-in delay-100">
         {isA ? (
           <>
