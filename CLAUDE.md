@@ -46,6 +46,10 @@ Ba chế độ:
 - `docs/framework/KHUNG-1..3-*.md` — quy trình 9 giai đoạn + luật AI + research-first chọn công nghệ.
 - `docs/framework/BO-SUNG-*.md` — chất lượng Nhóm 1/2 (mobile, hiệu năng, a11y, UI/UX, chống lỗi logic), theme, i18n/PWA/Sentry/SEO.
 - `docs/framework/QUY-TRINH-AUDIT.md` — đặc tả quy trình **audit toàn diện** (11 tầng + rà độ phủ test + audit luồng dữ liệu + mẫu báo cáo). **Đọc khi được yêu cầu "rà soát toàn bộ / audit toàn diện".** Bổ sung 2026-08-24: Tầng 1b (test flaky — một lượt xanh không đủ), Tầng 6b (tài liệu điều hành có nói đúng thực tế không), Tầng 10 (logic ngẫu nhiên/thống kê — loại lỗi KHÔNG cổng nào bắt được), Tầng 11 (đường cài mới + lũy đẳng migration).
+  **Bổ sung 2026-09-05: Tầng 8b (NHÌN trang thật bằng ảnh chụp 1440px + 390px, trước/sau) — BẮT
+  BUỘC với mọi đợt việc chạm giao diện.** Lý do: chuỗi ba đợt thiết kế lại desktop giáo dục (PR
+  #861/#862/#863) tìm ra BỐN lỗi lặp nội dung mà không cổng nào bắt được và đọc mã cũng không
+  thấy — chúng chỉ lộ ra khi nhìn ảnh chụp trang.
 - `docs/framework/AP-DUNG-vao-du-an-co-san.md` — cách áp khung lên dự án có sẵn (đang theo runbook này).
 - `docs/research/dac-ta-nang-luc-ca-nhan-theo-do-tuoi-2026-08-23.md` — **năng lực cá nhân theo
   độ tuổi × bậc thành thạo × họ ngành nghề** (trụ LIFE + CAREER): 30 năng lực lõi, bảng 8 băng
