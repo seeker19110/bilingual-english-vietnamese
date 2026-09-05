@@ -8,8 +8,20 @@ import { IsoDateTimeSchema, UuidSchema } from './shared.js'
 
 export const EXAM_PLAN_SCHEMA_VERSION = 1
 
-/** Đợt 1 CHỈ một kỳ thi. Mở thêm là quyết định sản phẩm (mục 3 đặc tả), không phải thêm chuỗi. */
-export const ExamKindSchema = z.enum(['vao10-english'])
+/**
+ * Mở thêm kỳ thi là quyết định SẢN PHẨM (mục 3 đặc tả), không phải thêm chuỗi.
+ *
+ * - `vao10-english` — chiều A (người Việt học tiếng Anh): thi vào lớp 10 môn Tiếng Anh.
+ * - `vsl-b1` — chiều B (người nước ngoài học tiếng Việt): chứng chỉ tiếng Việt bậc 3 (B1) theo
+ *   Khung năng lực tiếng Việt dùng cho người nước ngoài (Thông tư 17/2015/TT-BGDĐT).
+ *
+ * ⚠️ Giới hạn ĐÃ BIẾT của `vsl-b1`, nói thẳng chứ không giấu: phạm vi ôn hiện dùng lại chính bộ
+ * cặp từ Anh–Việt A1–B1 của app (học ngược chiều), vì repo chưa có bộ từ vựng tiếng Việt phân
+ * bậc riêng. Bậc hiển thị vì vậy là bậc CEFR của phía tiếng Anh, KHÔNG phải bậc tiếng Việt thật.
+ * Trang `/on-thi` nói rõ điều này cho người học. Gỡ giới hạn = soạn bộ từ tiếng Việt phân bậc,
+ * là một đợt NỘI DUNG riêng (xem nợ kỹ thuật trong PROGRESS.md).
+ */
+export const ExamKindSchema = z.enum(['vao10-english', 'vsl-b1'])
 export type ExamKind = z.infer<typeof ExamKindSchema>
 
 export const ExamPlanStatusSchema = z.enum(['active', 'expired', 'archived'])
