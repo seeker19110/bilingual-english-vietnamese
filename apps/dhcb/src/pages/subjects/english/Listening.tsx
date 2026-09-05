@@ -9,6 +9,10 @@ import { Play, Square, Eye, EyeOff, ChevronRight } from 'lucide-react'
 import { usePageTitle } from '../../../lib/usePageTitle'
 import Layout from '../../../components/Layout'
 import { PageShell } from '@core/PageShell'
+import { TwoPane } from '@core/TwoPane'
+import { TocRail } from '@core/TocRail'
+import { useActiveSection } from '@core/useActiveSection'
+import { useIsDesktopViewport } from '../../../lib/useIsDesktopViewport'
 import PageHeader from '../../../components/PageHeader'
 import { CardListSkeleton } from '../../../components/Skeleton'
 import KaraokeText, { KARAOKE_INDENT } from '../../../components/KaraokeText'
@@ -126,7 +130,7 @@ function PhrasesTab({ isA, T }: { isA: boolean; T: Lang }) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
       {index.map((meta) => (
         <button
           key={meta.starter}
@@ -190,30 +194,80 @@ function DialoguesTab({ isA, T, plan }: { isA: boolean; T: Lang; plan: Plan }) {
   const levelKeys = Object.keys(groups)
   if (levelKeys.length === 0) return <EmptyState isA={isA} />
 
+  return <DialogueGroups groups={groups} levelKeys={levelKeys} isA={isA} onSelect={setSelected} />
+}
+
+/**
+ * Danh sách hội thoại nhóm theo cấp, kèm MỤC LỤC CẤP ở cột phụ desktop.
+ *
+ * VÌ SAO CÓ (đo 2026-09-05 ở 1440px): trang `/luyen-nghe` cao **37.266px** — hơn bốn mươi màn
+ * hình cuộn cho một danh sách phẳng. Muốn tới hội thoại cấp B2 thì phải cuộn qua toàn bộ A1–B1,
+ * và cuộn xong thì không còn biết mình đang ở cấp nào. Đó đúng là ca mà `TocRail` sinh ra để
+ * giải quyết (xem chú thích đầu `packages/core-ui/TocRail.tsx`).
+ *
+ * Tách thành component RIÊNG chứ không viết thẳng trong `DialoguesTab`: `useActiveSection` là
+ * một hook, mà ở `DialoguesTab` phần này nằm sau hai nhánh `return` sớm (đang tải / rỗng) —
+ * gọi hook sau `return` có điều kiện là vi phạm luật hook.
+ */
+function DialogueGroups({
+  groups,
+  levelKeys,
+  isA,
+  onSelect,
+}: {
+  groups: Record<string, DialogueEntry[]>
+  levelKeys: string[]
+  isA: boolean
+  onSelect: (entry: DialogueEntry) => void
+}) {
+  const isDesktop = useIsDesktopViewport()
+  const sectionIds = levelKeys.map((level) => `cap-${level}`)
+  const activeId = useActiveSection(sectionIds)
+
   return (
-    <div className="space-y-5">
-      {levelKeys.map((level) => (
-        <div key={level}>
-          <p className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wide mb-2">
-            {level}
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {groups[level]!.map((entry, i) => (
-              <button
-                key={`${entry.id}-${i}`}
-                onClick={() => setSelected(entry)}
-                className="text-left bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 hover:bg-zinc-800/60 active:scale-[0.98] transition-all flex items-center justify-between gap-2"
-              >
-                <span className="font-medium text-white text-sm truncate">
-                  {isA ? entry.dialogue.titleVi : entry.dialogue.titleEn}
-                </span>
-                <ChevronRight className="w-4 h-4 text-zinc-600 shrink-0" />
-              </button>
-            ))}
+    <TwoPane
+      isDesktop={isDesktop}
+      railLabel={isA ? 'Mục lục cấp độ' : 'Level outline'}
+      rail={
+        <TocRail
+          title={isA ? 'Cấp độ' : 'Levels'}
+          activeId={activeId}
+          items={levelKeys.map((level) => ({
+            id: `cap-${level}`,
+            label: level,
+            hint: `${groups[level]?.length ?? 0}`,
+          }))}
+        />
+      }
+    >
+      <div className="space-y-5">
+        {levelKeys.map((level) => (
+          // `scroll-mt-20` chừa đúng chiều cao header sticky, nếu không cấp được nhảy tới sẽ
+          // nằm khuất sau header.
+          <div key={level} id={`cap-${level}`} className="scroll-mt-20">
+            <p className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wide mb-2">
+              {level}
+            </p>
+            {/* [2026-09-05, đợt 3] Thêm nấc `lg:grid-cols-3`. Lưới cũ dừng ở `sm:` nên ở 1440px
+              vẫn chỉ hai cột: đo được cả trang cao 37.266px — hơn bốn mươi màn hình cuộn. */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              {groups[level]!.map((entry, i) => (
+                <button
+                  key={`${entry.id}-${i}`}
+                  onClick={() => onSelect(entry)}
+                  className="text-left bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 hover:bg-zinc-800/60 active:scale-[0.98] transition-all flex items-center justify-between gap-2"
+                >
+                  <span className="font-medium text-white text-sm truncate">
+                    {isA ? entry.dialogue.titleVi : entry.dialogue.titleEn}
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-zinc-600 shrink-0" />
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </TwoPane>
   )
 }
 
