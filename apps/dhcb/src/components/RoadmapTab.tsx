@@ -91,8 +91,21 @@ export default function RoadmapTab({ uid, isA }: { uid: string; isA: boolean }) 
     return v.done < v.total || g.done < g.total
   })?.id
 
+  // [2026-09-05, đợt 2 "desktop giáo dục"] Trước đây 6 cấp CEFR xếp thành MỘT cột dọc ở mọi bề
+  // rộng. Đo ở 1440px: trang cao 3332px, tức phải cuộn hơn ba màn hình mới nhìn hết A1→C2 —
+  // trong khi đây chính là TẤM BẢN ĐỒ cho biết mình đang ở đâu, thứ đáng lẽ phải thấy trọn một
+  // lần. Mỗi thẻ lại rộng ~1200px chỉ để chứa vài dòng "học xong bạn có thể…" ngắn.
+  //
+  // Từ 1024px xếp hai cột: bản đồ gọn còn khoảng một màn rưỡi và mỗi thẻ về đúng bề rộng mà
+  // nội dung của nó cần. Dùng `lg:` thuần CSS được ở đây (khác các trang khác trong chuỗi này)
+  // vì grid CHỈ đổi cách xếp chỗ — không nhân đôi phần tử nào trong DOM, nên không vướng bất
+  // biến "một nhánh duy nhất" của `TwoPane`.
+  //
+  // `items-start`: các thẻ cao thấp khác nhau (số dòng "can-do" mỗi cấp một khác) nên để chúng
+  // tự cao theo nội dung thay vì kéo dài bằng nhau — kéo bằng nhau sẽ chừa khoảng trống lớn
+  // dưới thẻ ngắn.
   return (
-    <div className="animate-fade-in space-y-3">
+    <div className="animate-fade-in grid grid-cols-1 lg:grid-cols-2 gap-3 items-start">
       {levels.map((level) => {
         const a = ACCENT[level.accent]
         const locked = lockedMap.get(level.id) ?? false

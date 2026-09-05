@@ -260,10 +260,20 @@ export default function Subjects() {
           </div>
         ) : filteredSubjects.length === 0 ? (
           <div className="text-center py-12 text-zinc-400 text-sm bg-zinc-900/60 rounded-3xl border border-zinc-800">
-            Không tìm thấy môn học nào khớp với từ khóa "{searchQuery}".
+            {/* [Sửa lỗi 2026-09-05] Trước đây câu này luôn đổ tại từ khoá, kể cả khi ô tìm kiếm
+                TRỐNG — lúc đó nó in ra `khớp với từ khóa ""`, vừa vô nghĩa vừa đổ lỗi cho thao
+                tác mà người dùng chưa hề làm. Danh sách rỗng khi không có từ khoá là chuyện
+                khác hẳn (bộ lọc không có môn nào, hoặc tải danh mục hỏng), nên phải nói khác. */}
+            {searchQuery.trim()
+              ? `Không tìm thấy môn học nào khớp với từ khóa "${searchQuery.trim()}".`
+              : 'Chưa có môn học nào trong mục này. Thử chọn "Tất cả môn" hoặc tải lại trang.'}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          /* Ở 1440px cột nội dung rộng ~1150px, đủ chỗ cho BA thẻ ~360px — sáu môn hiện tại
+             vừa đúng hai hàng, thấy hết một lần thay vì cuộn ba hàng. Dưới xl giữ 2 cột.
+             `items-stretch` + `h-full` trên thẻ: thẻ cùng hàng cao bằng nhau nên nút "Vào
+             phòng học" thẳng một đường, thay vì so le theo độ dài mô tả. */
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 items-stretch">
             {filteredSubjects.map((sub, subIdx) => {
               const Icon = SUBJECT_ICONS[sub.id] || BookOpen
               const style = SUBJECT_COLORS[sub.id] || SUBJECT_COLORS.english!
@@ -271,7 +281,7 @@ export default function Subjects() {
               return (
                 <div
                   key={sub.id}
-                  className={`relative overflow-hidden bg-zinc-900/80 rounded-3xl border transition-all flex flex-col justify-between group shadow-sm hover:shadow-lg animate-fade-up ${style.border}`}
+                  className={`relative h-full overflow-hidden bg-zinc-900/80 rounded-3xl border transition-all flex flex-col justify-between group shadow-sm hover:shadow-lg animate-fade-up ${style.border}`}
                   style={{ animationDelay: `${subIdx * 80}ms` }}
                 >
                   {/* Illustration nền mờ — góc phải trên */}
@@ -310,16 +320,25 @@ export default function Subjects() {
                       </span>
                     </div>
 
-                    {/* Illustration nhỏ nổi bật — chỉ hiện dưới md */}
-                    <div className="flex items-start gap-4 mb-3 md:block">
+                    {/* Illustration nhỏ nổi bật — chỉ hiện dưới md; từ md trở lên đã có hình
+                        nền mờ ở góc phải trên nên bỏ đi cho đỡ rối.
+
+                        [Sửa lỗi 2026-09-05] Trước đây chỗ này có HAI thẻ `<p>` cùng in
+                        `sub.description`: một trong khối `flex … md:block`, một là
+                        `hidden md:block`. Ý định là "dưới md hình đứng cạnh chữ, từ md trở lên
+                        chỉ còn chữ", nhưng `md:block` chỉ đổi `display` chứ KHÔNG ẩn khối thứ
+                        nhất — chỉ mỗi cái hình bên trong mới `md:hidden`. Hệ quả: từ 768px trở
+                        lên mô tả môn học hiện HAI LẦN trong mọi thẻ (thấy rõ trong ảnh chụp
+                        1440px của đợt này). Nay chỉ còn một `<p>` duy nhất: từ md trở lên hình
+                        bị ẩn nên khối flex còn đúng một con, trông y hệt `block`. */}
+                    {/* `mb-3 md:mb-4`: giữ ĐÚNG khoảng cách của cả hai khuôn cũ — dưới md
+                        khối flex cũ dùng `mb-3`, từ md trở lên thẻ `<p>` cũ dùng `mb-4`. */}
+                    <div className="flex items-start gap-4 mb-3 md:mb-4">
                       <div className="shrink-0 md:hidden animate-float">
                         <SubjectIllustration subjectId={sub.id} size="md" />
                       </div>
                       <p className="text-sm text-zinc-300 leading-relaxed">{sub.description}</p>
                     </div>
-                    <p className="text-sm text-zinc-300 leading-relaxed mb-4 hidden md:block">
-                      {sub.description}
-                    </p>
 
                     {/* Mức độ chuẩn hóa */}
                     <div className="space-y-2 mb-4">
