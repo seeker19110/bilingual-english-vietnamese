@@ -22,7 +22,9 @@ import { startListening, isSTTSupported } from '../../../lib/stt'
 import { scorePronunciation, pronounceFeedback, scoreWords } from '../../../lib/pronounceScore'
 import Layout from '../../../components/Layout'
 import { PageShell } from '@core/PageShell'
+import { TwoPane } from '@core/TwoPane'
 import PageHeader from '../../../components/PageHeader'
+import { useIsDesktopViewport } from '../../../lib/useIsDesktopViewport'
 import { getDirection, getUsage, incrementUsage } from '../../../lib/storage'
 import { useAuth } from '../../../context/useAuth'
 import { getViewedIds, markViewed } from '../../../lib/viewedTracking'
@@ -177,6 +179,9 @@ export default function Lessons() {
   usePageTitle('Bài học | Môn Tiếng Anh · Đồng hành cùng bạn')
   const dir: Direction = getDirection()
   const isA = dir === 'A'
+  // Ngưỡng 1024px quyết ở JS, không phải `lg:` — xem lý do trong `TwoPane.tsx`: ẩn bằng CSS
+  // vẫn để nguyên nội dung trong DOM cả hai nhánh, khiến trình đọc màn hình đọc hai lần.
+  const isDesktop = useIsDesktopViewport()
   const { user } = useAuth()
   const uid = user?.id ?? ''
   const [index, setIndex] = useState<LessonMeta[]>([])
@@ -223,7 +228,100 @@ export default function Lessons() {
     return index.find((m) => !viewed.has(String(m.id))) ?? null
   })()
 
-  // ── Màn hình chi tiết bài học ─────────────────────────────────────────────
+  // Gợi ý "Tiếp tục bài N" — dùng chung cho cả màn danh sách mobile lẫn cột trái desktop.
+  const continueCta = nextUnviewed && !query.trim() && (
+    <button
+      onClick={() => setSelectedMeta(nextUnviewed)}
+      className="w-full flex items-center gap-3 bg-accent-500/10 hover:bg-accent-500/15 border border-accent-500/30 rounded-2xl px-4 py-3 mb-4 transition text-left"
+    >
+      <div className="w-9 h-9 rounded-xl bg-accent-500/20 flex items-center justify-center shrink-0">
+        <Play className="w-4 h-4 text-accent-400 theme-light:text-accent-800" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-xs text-accent-400 theme-light:text-accent-800 font-medium">
+          {isA ? 'Tiếp tục' : 'Continue'}
+        </p>
+        <p className="text-sm font-semibold text-white truncate">
+          {isA ? `Bài ${nextUnviewed.id}: ${nextUnviewed.title}` : `Lesson ${nextUnviewed.id}`}
+        </p>
+      </div>
+    </button>
+  )
+
+  // ── Desktop (≥1024px): MỘT màn hình master–detail ─────────────────────────
+  // Trước đây desktop đi đúng luồng của điện thoại: danh sách BỊ THAY THẾ bởi chi tiết. Muốn
+  // đổi bài phải quay lại rồi cuộn tìm lại từ đầu, trong khi màn 1280px thừa chỗ để giữ cả hai.
+  // Dưới 1024px KHÔNG đổi gì — hai nhánh dưới đây giữ nguyên như trước đợt này.
+  if (isDesktop) {
+    const selectedColor = selectedMeta ? getColor(selectedMeta.id) : null
+    return (
+      <div className="min-h-dvh bg-zinc-950">
+        {/* `focus`: trang ngồi học lâu → ẩn bộ chuyển Studio + huy hiệu streak (xem Layout). */}
+        <Layout back focus title={selectedMeta?.title} subtitle={selectedMeta?.situation} />
+        <PageShell width="standard" baseWidth="max-w-3xl">
+          <TwoPane
+            isDesktop
+            railSide="left"
+            railLabel={isA ? 'Danh sách bài hội thoại' : 'Dialogue list'}
+            rail={
+              <div className="pr-1">
+                <h2 className="t-label px-1 pb-2 text-zinc-300">
+                  {isA ? `${index.length} bài hội thoại` : `${index.length} dialogues`}
+                </h2>
+                <div className="mb-3">
+                  <SearchBar query={query} setQuery={setQuery} isA={isA} variant="desktop" />
+                </div>
+                {continueCta}
+                <LessonList
+                  lessons={index}
+                  isA={isA}
+                  query={deferredQuery}
+                  onSelect={setSelectedMeta}
+                  compact
+                  selectedId={selectedMeta?.id}
+                />
+              </div>
+            }
+          >
+            {!selectedMeta ? (
+              // Màn rỗng: KHÔNG tự chọn bài thay người dùng — mở sẵn một bài bất kỳ thì lần
+              // sau quay lại họ không phân biệt được đâu là bài mình đang học dở.
+              <div className="rounded-3xl border border-dashed border-zinc-800 bg-zinc-900/40 px-6 py-16 text-center">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent-500/15">
+                  <Play className="h-5 w-5 text-accent-400 theme-light:text-accent-800" />
+                </div>
+                <p className="text-base font-semibold text-white">
+                  {isA ? 'Chọn một bài hội thoại để bắt đầu' : 'Pick a dialogue to start'}
+                </p>
+                <p className="read-body mx-auto mt-2 max-w-sm text-sm text-zinc-400">
+                  {isA
+                    ? 'Danh sách bài nằm ở cột bên trái và luôn hiện sẵn, nên bạn đổi bài lúc nào cũng được mà không rời trang.'
+                    : 'The lesson list stays on the left, so you can switch lessons at any time without leaving this page.'}
+                </p>
+              </div>
+            ) : loadingLesson || !lesson || !selectedColor ? (
+              <div className="flex items-center justify-center py-24 text-zinc-400">
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                {isA ? 'Đang tải bài học…' : 'Loading lesson…'}
+              </div>
+            ) : (
+              <LessonView
+                lesson={lesson}
+                isA={isA}
+                color={selectedColor}
+                plan={user?.plan ?? 'free'}
+                userId={uid}
+                onBack={() => setSelectedMeta(null)}
+                variant="desktop"
+              />
+            )}
+          </TwoPane>
+        </PageShell>
+      </div>
+    )
+  }
+
+  // ── Màn hình chi tiết bài học (mobile) ────────────────────────────────────
   if (selectedMeta) {
     const c = getColor(selectedMeta.id)
     return (
@@ -277,26 +375,7 @@ export default function Lessons() {
             }
           />
           {/* Gợi ý "Tiếp tục bài N" — bài đầu tiên chưa xem, ẩn khi đang tìm kiếm */}
-          {nextUnviewed && !query.trim() && (
-            <button
-              onClick={() => setSelectedMeta(nextUnviewed)}
-              className="w-full flex items-center gap-3 bg-accent-500/10 hover:bg-accent-500/15 border border-accent-500/30 rounded-2xl px-4 py-3 mb-4 transition text-left"
-            >
-              <div className="w-9 h-9 rounded-xl bg-accent-500/20 flex items-center justify-center shrink-0">
-                <Play className="w-4 h-4 text-accent-400 theme-light:text-accent-800" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-accent-400 theme-light:text-accent-800 font-medium">
-                  {isA ? 'Tiếp tục' : 'Continue'}
-                </p>
-                <p className="text-sm font-semibold text-white truncate">
-                  {isA
-                    ? `Bài ${nextUnviewed.id}: ${nextUnviewed.title}`
-                    : `Lesson ${nextUnviewed.id}`}
-                </p>
-              </div>
-            </button>
-          )}
+          {continueCta}
           {/* Search bar — chỉ hiện ở trên trên desktop */}
           <div className="hidden sm:block mb-4">
             <SearchBar query={query} setQuery={setQuery} isA={isA} variant="desktop" />
@@ -366,11 +445,20 @@ function LessonList({
   isA,
   query,
   onSelect,
+  compact = false,
+  selectedId,
 }: {
   lessons: LessonMeta[]
   isA: boolean
   query: string
   onSelect: (meta: LessonMeta) => void
+  /**
+   * Khuôn GỌN cho cột phụ desktop (master–detail): luôn MỘT cột và thẻ nhỏ lại. Rail rộng
+   * 288–320px, không đủ chỗ cho lưới 2 cột lẫn dòng "N lượt thoại" — nhồi vào thì chữ bị cắt.
+   */
+  compact?: boolean
+  /** Mã bài đang mở ở cột phải — tô đậm để người dùng biết mình đang ở đâu trong danh sách. */
+  selectedId?: number
 }) {
   const [visible, setVisible] = useState(PAGE_SIZE)
   const sentinelRef = useRef<HTMLDivElement>(null)
@@ -413,29 +501,46 @@ function LessonList({
         </p>
       )}
 
-      {/* Cards màu sắc — grid 2 cột trên màn rộng */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {/* Cards màu sắc — grid 2 cột trên màn rộng; khuôn `compact` luôn một cột. */}
+      <div className={compact ? 'space-y-1.5' : 'grid grid-cols-1 sm:grid-cols-2 gap-3'}>
         {shown.map((l) => {
           const c = getColor(l.id)
+          const isSelected = l.id === selectedId
           return (
             <button
               key={l.id}
               onClick={() => onSelect(l)}
-              className={`text-left bg-zinc-900/80 border rounded-xl p-3.5 hover:bg-zinc-800/60 active:scale-[0.98] transition-all group ${c.border}`}
+              // `aria-current="true"` chứ không chỉ đổi màu: người dùng trình đọc màn hình
+              // cũng cần biết mục nào đang mở, mà màu thì họ không thấy.
+              aria-current={isSelected ? 'true' : undefined}
+              className={`text-left w-full border transition-all group ${
+                compact ? 'rounded-xl p-2.5' : 'rounded-xl p-3.5 active:scale-[0.98]'
+              } ${
+                isSelected
+                  ? `bg-zinc-800 ${c.border} ring-1 ring-inset ring-accent-500/40`
+                  : `bg-zinc-900/80 hover:bg-zinc-800/60 ${c.border}`
+              }`}
             >
-              <div className="flex items-start gap-3">
+              <div className={`flex items-start ${compact ? 'gap-2.5' : 'gap-3'}`}>
                 {/* Số bài + chấm màu */}
                 <div
-                  className={`w-8 h-8 rounded-lg ${c.bg} flex items-center justify-center shrink-0 mt-0.5`}
+                  className={`${compact ? 'w-7 h-7' : 'w-8 h-8'} rounded-lg ${c.bg} flex items-center justify-center shrink-0 mt-0.5`}
                 >
                   <span className={`text-xs font-bold ${c.text}`}>{l.id}</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={`font-semibold text-[15px] leading-snug ${c.text}`}>{l.title}</p>
-                  <p className="text-xs text-zinc-400 truncate mt-0.5">{l.situation}</p>
-                  <p className="text-[11px] text-zinc-400 mt-1.5">
-                    {l.turnCount / 2} {isA ? 'lượt thoại' : 'exchanges'}
+                  <p
+                    className={`font-semibold leading-snug ${compact ? 'text-sm' : 'text-[15px]'} ${c.text}`}
+                  >
+                    {l.title}
                   </p>
+                  <p className="text-xs text-zinc-400 truncate mt-0.5">{l.situation}</p>
+                  {/* Dòng "N lượt thoại" chỉ có chỗ ở khuôn rộng. */}
+                  {!compact && (
+                    <p className="text-[11px] text-zinc-400 mt-1.5">
+                      {l.turnCount / 2} {isA ? 'lượt thoại' : 'exchanges'}
+                    </p>
+                  )}
                 </div>
               </div>
             </button>
@@ -467,6 +572,7 @@ function LessonView({
   plan,
   userId,
   onBack,
+  variant = 'mobile',
 }: {
   lesson: Lesson
   isA: boolean
@@ -474,7 +580,18 @@ function LessonView({
   plan: Plan
   userId: string
   onBack: () => void
+  /**
+   * Khuôn dựng — QUYẾT ĐỊNH BỞI JS chứ không phải `lg:` (xem luật của `TwoPane`).
+   *
+   * - `mobile`: như trước — cột dọc chiếm trọn chiều cao, thanh điều khiển đứng yên ở trên,
+   *   bong bóng hội thoại cuộn NỘI BỘ. Đúng cho màn hình chỉ chứa được một thứ một lúc.
+   * - `desktop`: nằm trong cột phải của master–detail. Ở đây trang đã cuộn theo cả trang rồi,
+   *   nên cuộn nội bộ nữa là hai thanh cuộn lồng nhau; thanh điều khiển chuyển sang `sticky`
+   *   để vẫn bám theo, còn nút "← Danh sách" bỏ đi vì danh sách hiện sẵn bên trái.
+   */
+  variant?: 'mobile' | 'desktop'
 }) {
+  const isDesktopPane = variant === 'desktop'
   // Phân giọng cho từng nhân vật — RANDOM trong số giọng gói hiện tại cho phép (đúng giới
   // tính của vai), đổi mỗi lần mở bài học khác/mở lại, để người dùng nghe thử nhiều giọng rồi
   // chọn giọng ưng ý làm mặc định (nút "Đặt mặc định" ở VoiceRoleBadge).
@@ -986,19 +1103,33 @@ function LessonView({
 
   return (
     <>
-      {/* Thanh điều khiển audio — không cuộn, giống CommonPhrases giữ nội dung trong flex */}
-      <div className="bg-zinc-950/95 backdrop-blur-sm border-b border-zinc-800/40 px-4 py-2.5">
-        <div className="max-w-3xl mx-auto">
+      {/* Thanh điều khiển audio — không cuộn, giống CommonPhrases giữ nội dung trong flex.
+          Ở khuôn desktop nó nằm trong luồng cuộn của trang nên phải `sticky`: truyện/hội thoại
+          dài vài màn hình, mà Tạm dừng/Dừng là thứ cần đúng lúc đang nghe dở. `top-16` chừa
+          đúng header sticky cao 56px cộng khoảng thở, khớp `top-20` của cột phụ `TwoPane`. */}
+      <div
+        className={
+          isDesktopPane
+            ? 'sticky top-16 z-10 mb-4 rounded-2xl border border-zinc-800/60 bg-zinc-950/95 backdrop-blur-sm px-3 py-2.5'
+            : 'bg-zinc-950/95 backdrop-blur-sm border-b border-zinc-800/40 px-4 py-2.5'
+        }
+      >
+        <div className={isDesktopPane ? '' : 'max-w-3xl mx-auto'}>
           <div className="glass rounded-xl px-3 py-2 flex flex-wrap items-center gap-x-3 gap-y-2">
-            {/* Nút quay lại danh sách */}
-            <button
-              onClick={onBack}
-              className="tap-44-y shrink-0 text-xs text-zinc-400 hover:text-white transition flex items-center gap-1"
-            >
-              ← {isA ? 'Danh sách' : 'Back'}
-            </button>
+            {/* Nút quay lại danh sách — CHỈ khuôn mobile. Ở desktop danh sách đứng sẵn bên
+                trái nên nút này vừa thừa vừa gây hiểu nhầm là sẽ rời trang. */}
+            {!isDesktopPane && (
+              <>
+                <button
+                  onClick={onBack}
+                  className="tap-44-y shrink-0 text-xs text-zinc-400 hover:text-white transition flex items-center gap-1"
+                >
+                  ← {isA ? 'Danh sách' : 'Back'}
+                </button>
 
-            <div className="h-3.5 w-px bg-zinc-700" />
+                <div className="h-3.5 w-px bg-zinc-700" />
+              </>
+            )}
 
             {/* Play / Pause / Resume / Stop */}
             <div className="flex items-center gap-1.5">
@@ -1234,9 +1365,14 @@ function LessonView({
         </div>
       </div>
 
-      {/* Bong bóng hội thoại — cuộn nội bộ, không cuộn cả trang */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-3xl mx-auto px-4 py-4 space-y-3 pb-8">
+      {/* Bong bóng hội thoại — khuôn mobile cuộn NỘI BỘ (không cuộn cả trang); khuôn desktop
+          nằm trong luồng cuộn chung của `PageShell` nên không tự cuộn nữa. */}
+      <div className={isDesktopPane ? '' : 'flex-1 overflow-y-auto'}>
+        <div
+          className={
+            isDesktopPane ? 'space-y-3 pb-8' : 'max-w-3xl mx-auto px-4 py-4 space-y-3 pb-8'
+          }
+        >
           {lesson.turns.map((t, i) => {
             const isActive = activeTurn === i
             const isLeft = t.speaker === 'A'
