@@ -1211,13 +1211,18 @@ function lenhFind(args: string[], ctx: NguCanh): KetQuaLenh {
   const pGoc = giai(ctx.may, goc)
   if (!ctx.may.fs.has(pGoc)) throw new LoiBash(`Khong co "${goc}".`)
   const ra: string[] = []
+  // Thu muc goc "/" da tu mang san dau gach, nen ghep them "/" nua se ra tien to "//" —
+  // KHONG khoa nao khop, va `find /` im lang tra ve moi dong "/" thay vi ca cay thu muc.
+  // Cung cong thuc do con an mat chu cai dau khi cat phan duong dan tuong doi ("/home" thanh
+  // "ome"). Ca hai chi bung ra o dung goc "/", va khong test nao chay `find /` toi 2026-09-05.
+  const tienTo = pGoc === '/' ? '/' : `${pGoc}/`
   for (const k of [...ctx.may.fs.keys()].sort()) {
-    if (k !== pGoc && !k.startsWith(`${pGoc}/`)) continue
+    if (k !== pGoc && !k.startsWith(tienTo)) continue
     const n = ctx.may.fs.get(k)!
     if (loai === 'f' && n.kind !== 'file') continue
     if (loai === 'd' && n.kind !== 'dir') continue
     if (mau && !mau.test(ten(k))) continue
-    ra.push(k === pGoc ? goc : `${goc === '/' ? '' : goc}/${k.slice(pGoc.length + 1)}`)
+    ra.push(k === pGoc ? goc : `${goc === '/' ? '' : goc}/${k.slice(tienTo.length)}`)
   }
   return { stdout: noiDong(ra), code: 0 }
 }

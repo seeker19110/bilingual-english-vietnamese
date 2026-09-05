@@ -306,3 +306,62 @@ describe('hermesSim — lenhChuanBi dựng bối cảnh', () => {
     expect(r.output).toContain('v1')
   })
 })
+
+// Đợt 2 coverage 2026-09-05: nhánh chưa phủ — mỗi ca dưới đây khớp một dòng cụ thể liệt kê
+// trong uncovered-all.md (nhánh "khong hieu ..." của từng bảng lệnh con, và các ca thiếu
+// tham số bắt buộc chưa ai gọi tới). Không sửa file nguồn.
+describe('hermesSim — Đợt 2 coverage 2026-09-05: nhánh chưa phủ', () => {
+  it.each([
+    ['hermes gateway lệnh lạ', 'hermes gateway foobar', 'khong hieu "hermes gateway foobar"'],
+    ['hermes profile lệnh lạ', 'hermes profile foobar', 'khong hieu "hermes profile foobar"'],
+    ['hermes nhóm lệnh lạ', 'hermes foobar', 'khong hieu "hermes foobar"'],
+    [
+      '/foobar (slash lạ)',
+      '/foobar',
+      'mo phong khong lam lenh "/foobar" — cac lenh co: /new /resume /model /skills /learn /goal /steer /permission /stop.',
+    ],
+  ])('%s', (_mota, script, chuoiLoi) => {
+    expect(chayLenhHermes(script).error).toContain(chuoiLoi)
+  })
+
+  it.each([
+    ['hermes model curator thiếu tên', 'hermes model curator', 'thieu ten model'],
+    ['hermes profile create thiếu tên', 'hermes profile create', 'thieu ten profile'],
+    ['/resume thiếu tên phiên', '/resume', 'thieu ten phien — dung: /resume <ten-phien>.'],
+    ['/learn thiếu tên kỹ năng', '/learn', 'thieu ten ky nang — dung: /learn <ten-ky-nang>.'],
+    ['/steer thiếu chỉ dẫn (không có ngoặc kép)', '/steer', 'thieu chi dan — dung: /steer'],
+    ['/permission chế độ lạ', '/permission banana', 'che do quyen chi co: hoi hoac tu-do.'],
+    [
+      'giao thiếu nội dung (không có ngoặc kép)',
+      'giao',
+      'thieu noi dung viec — dung: giao "<viec can lam>".',
+    ],
+    ['giao ngoặc kép rỗng — cùng lỗi như không có ngoặc', 'giao ""', 'thieu noi dung viec'],
+    ['duyet thiếu id', 'duyet', 'thieu id viec — dung: duyet <id>. Xem id bang "trangthai".'],
+  ])('%s', (_mota, script, chuoiLoi) => {
+    expect(chayLenhHermes(script).error).toContain(chuoiLoi)
+  })
+
+  it('/new với tên phiên trùng phiên mặc định "phien-1" → lỗi gợi /resume', () => {
+    const r = chayLenhHermes('/new phien-1')
+    expect(r.error).toContain('phien "phien-1" da ton tai — dung /resume phien-1 de quay lai.')
+  })
+
+  it('/goal khi chưa từng đặt mục tiêu và gõ không kèm ngoặc kép → báo "Chua co muc tieu"', () => {
+    const r = chayLenhHermes('/goal')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Chua co muc tieu — dat bang /goal "<muc tieu>".')
+  })
+
+  it('/permission không kèm chế độ → đọc chế độ hiện tại (mặc định hoi)', () => {
+    const r = chayLenhHermes('/permission')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Che do quyen hien tai: hoi')
+  })
+
+  it('/stop báo đã dừng, trạng thái công việc giữ nguyên', () => {
+    const r = chayLenhHermes('/stop')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Da dung viec dang chay — trang thai cong viec giu nguyen')
+  })
+})

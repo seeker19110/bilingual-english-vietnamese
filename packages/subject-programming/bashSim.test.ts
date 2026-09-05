@@ -670,3 +670,90 @@ describe('bashSim — nốt các lối rẽ hiếm gặp nhưng có thật', () 
     expect(() => chayBash(sau)).toThrow(RangeError)
   })
 })
+
+// Đợt 2 coverage 2026-09-05: nhánh chưa phủ — mỗi ca dưới đây nhắm đúng một nhánh mà báo cáo
+// coverage liệt kê là chưa đi qua (xem chú thích ở từng `it`), không phải test cho đủ số.
+describe('bashSim — Đợt 2 coverage: nhánh chưa phủ', () => {
+  it('lệnh KHÔNG chuyển hướng trong lenhChuanBi bị nuốt im lặng (nhánh inRa của bối cảnh)', () => {
+    // Trước đây mọi test lenhChuanBi chỉ dùng lệnh CÓ ">" (không gọi tới ctx.inRa của bối
+    // cảnh) — dòng dưới đây in ra thẳng (không redirect) nên phải đi qua đúng nhánh đó, và
+    // khẳng định output bị nuốt mất, không lộ ra ngoài.
+    const r = chayBash('cat ghi_chu.txt', [
+      'echo "dong nay phai bi nuot"',
+      'echo "noi dung that" > ghi_chu.txt',
+    ])
+    expect(r.output).toBe(`${DONG_TU_KHAI}\nnoi dung that\n`)
+    expect(r.output).not.toContain('bi nuot')
+  })
+
+  it('cd không tham số thì về thư mục nhà (nhánh mặc định "~" của args[0])', () => {
+    expect(ra('mkdir a\ncd a\ncd\npwd')).toBe('/home/ban\n')
+  })
+
+  it('lệnh đọc file RỖNG không lỗi, các số đều ra 0 (nhánh "chuỗi rỗng" của thanhDong)', () => {
+    expect(ra('touch rong.txt\nwc -l rong.txt')).toBe('0 rong.txt\n')
+    expect(ra('touch rong.txt\ncat rong.txt | wc -w')).toBe('0\n')
+  })
+
+  it('grep đọc từ ỐNG khi không truyền tên file (nhánh dùng stdin thay vì đọc file)', () => {
+    expect(ra('echo "co loi\nkhong sao" | grep loi')).toBe('co loi\n')
+  })
+
+  it('cut -d đứng cuối, không kèm giá trị thì lùi về dấu tab mặc định', () => {
+    expect(ra('echo "a\tb" > f.txt\ncut -f1 f.txt -d')).toBe('a\n')
+  })
+
+  it('cut -f đứng một mình, không kèm số cột thì báo lỗi thiếu số cột', () => {
+    expect(ra('cut -f')).toContain('phai la so cot')
+  })
+
+  it('lỗi bên trong script gọi qua "bash x.sh" báo lại ở đúng dòng NGOÀI gọi lệnh, không phải dòng bên trong file (nhánh rethrow khi lỗi không phải ThoatSom)', () => {
+    const outer = [
+      "echo 'touch a.txt' > loi.sh",
+      "echo 'touch b.txt' >> loi.sh",
+      "echo 'echo x > *.txt' >> loi.sh",
+      'bash loi.sh',
+    ].join('\n')
+    const r = chayBash(outer)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('dong 4:')
+    expect(r.output).toContain('DUNG MOT ten file')
+    expect(r.exitCode).toBe(1)
+  })
+})
+
+// ── Lỗi phát hiện khi viết test đợt coverage 2026-09-05, sửa ở PR ngay sau đó ──
+//
+// `find /` chưa từng được test: mọi ca cũ đều tìm từ thư mục con. Riêng gốc "/" đã tự mang sẵn
+// dấu gạch nên công thức cũ ghép ra tiền tố "//" — không khoá nào khớp, `find /` IM LẶNG trả về
+// mỗi dòng "/" thay vì cả cây thư mục (lỗi nặng hơn: mất dữ liệu chứ không phải sai định dạng).
+// Cùng công thức đó còn ăn mất chữ cái đầu khi cắt phần tương đối ("/home" thành "/ome") — chỗ
+// này chưa bao giờ lộ ra vì vòng lặp đã lọc sạch trước khi tới.
+describe('lỗi đã sửa 2026-09-05 — find / bỏ sót toàn bộ nội dung', () => {
+  it('find / liệt kê cả cây thư mục, không chỉ mỗi dòng "/"', () => {
+    const r = chayBash('mkdir -p /tmp/kho\ntouch /tmp/kho/a.txt\nfind /')
+    expect(r.error).toBeUndefined()
+    const dong = r.output.split('\n')
+    expect(dong).toContain('/')
+    expect(dong).toContain('/tmp/kho')
+    expect(dong).toContain('/tmp/kho/a.txt')
+  })
+
+  it('find / giữ nguyên tên thư mục con, không mất chữ cái đầu', () => {
+    const r = chayBash('mkdir -p /tmp/kho\ntouch /tmp/kho/a.txt\nfind / -name "a.txt"')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('/tmp/kho/a.txt')
+    expect(r.output).not.toContain('/mp/kho')
+  })
+
+  it('find / liệt kê được chính thư mục gốc', () => {
+    const r = chayBash('find / -type d')
+    expect(r.error).toBeUndefined()
+    expect(r.output.split('\n')).toContain('/')
+  })
+
+  it('find từ thư mục con vẫn đúng như trước (không hồi quy)', () => {
+    const r = chayBash('mkdir -p /tmp/kho\ntouch /tmp/kho/b.txt\nfind /tmp -name "b.txt"')
+    expect(r.output).toContain('/tmp/kho/b.txt')
+  })
+})

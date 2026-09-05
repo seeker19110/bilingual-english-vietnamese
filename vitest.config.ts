@@ -109,9 +109,17 @@ export default defineConfig({
       // người dùng 2026-09-04) — mỗi lần đo cao hơn sàn nhiều thì siết sàn theo, chừa biên độ
       // để không đỏ vì dao động nhỏ giữa các lần chạy (mock ngẫu nhiên, thứ tự file…).
       //
-      // Số đo thật lúc siết (2026-09-05, sau đợt bổ sung test 33 file logic thuần):
-      // stmts 97,79 · branches 92,09 · funcs 96,98 · lines 97,79 — chừa ~1 điểm biên độ để
-      // không đỏ vì dao động nhỏ giữa các lần chạy.
+      // Đợt 1 (2026-09-04, PR #852): vá 3 lỗi Windows chặn coverage rồi siết theo số đo thật
+      // stmts 96,36 · branches 90,71 · funcs 95,19 · lines 96,36 → sàn 95 / 90 / 94 / 95.
+      //
+      // Đợt 2 (2026-09-05, PR #855): 542 test nhắm nhánh chưa đi của 18 file phủ thấp nhất
+      // (Kotlin/Swift, gitSim, 3 bộ mô phỏng tác tử, authService, push, clientAuth, geminiLive,
+      // chemistry, cefrExam, mistakes, bashSim, locationService, tts) → 97,00 / 94,06 / 95,95 / 97,00.
+      //
+      // Đợt 3 (2026-09-05, PR #856 — đợt này): 33 file logic thuần (5 bộ chạy mã, 7 lib tiến độ
+      // lập trình, 6 handler API trụ Learning, 4 file điều hướng/UI thuần, 2 file dữ liệu hoá học,
+      // 5 trình mô phỏng). Hai đợt 2 và 3 làm SONG SONG trên hai nhánh, phủ những file khác nhau,
+      // nên số dưới đây là ĐO LẠI SAU KHI GỘP — không phải số của riêng đợt nào.
       // Đây vẫn là sàn tối thiểu, KHÔNG phải mục tiêu: đừng viết ít test đi cho "vừa đủ".
       //
       // Vì sao KHÔNG đặt sàn 100: phần chưa phủ còn lại KHÔNG phải "thiếu test" mà là hai
@@ -122,7 +130,7 @@ export default defineConfig({
       // chỉ đẻ ra test giả kiểm chính cái mock vừa dựng.
       thresholds: {
         statements: 97,
-        branches: 91,
+        branches: 93,
         functions: 96,
         lines: 97,
       },
