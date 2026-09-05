@@ -80,6 +80,74 @@ describe('hermesSim — cài đặt & cấu hình (chương C1)', () => {
     const trung = chayLenhHermes('hermes profile create thu-ky\nhermes profile create thu-ky')
     expect(trung.error).toContain('da ton tai')
   })
+
+  it('hermes gateway <lệnh lạ> → lỗi gợi đúng setup/start', () => {
+    const r = chayLenhHermes('hermes gateway ngung')
+    expect(r.error).toContain('khong hieu "hermes gateway ngung"')
+    expect(r.error).toContain('dung: setup hoac start')
+  })
+
+  it('hermes profile create thiếu tên → lỗi', () => {
+    const r = chayLenhHermes('hermes profile create')
+    expect(r.error).toContain('thieu ten profile')
+  })
+
+  it('hermes profile <lệnh lạ> → lỗi gợi đúng create', () => {
+    const r = chayLenhHermes('hermes profile xoa thu-ky')
+    expect(r.error).toContain('khong hieu "hermes profile xoa thu-ky"')
+  })
+
+  it('hermes <nhóm lệnh lạ> → lỗi liệt kê toàn bộ bộ lệnh hermes', () => {
+    const r = chayLenhHermes('hermes abc xyz')
+    expect(r.error).toContain('khong hieu "hermes abc xyz"')
+    expect(r.error).toContain('hermes gateway setup|start')
+  })
+
+  it('hermes model curator thiếu tên → lỗi', () => {
+    const r = chayLenhHermes('hermes model curator')
+    expect(r.error).toContain('thieu ten model')
+  })
+
+  it('giao "" (chuỗi rỗng sau khi trim) cũng bị coi là thiếu nội dung', () => {
+    const r = chayLenhHermes('giao "   "')
+    expect(r.error).toContain('thieu noi dung viec')
+  })
+
+  it('/new đặt tên trùng phiên đang có → lỗi gợi /resume', () => {
+    const r = chayLenhHermes('/new phien-1')
+    expect(r.error).toContain('da ton tai')
+    expect(r.error).toContain('/resume phien-1')
+  })
+
+  it('/resume thiếu tên phiên → lỗi', () => {
+    const r = chayLenhHermes('/resume')
+    expect(r.error).toContain('thieu ten phien')
+  })
+
+  it('/learn thiếu tên kỹ năng → lỗi', () => {
+    const r = chayLenhHermes('/learn')
+    expect(r.error).toContain('thieu ten ky nang')
+  })
+
+  it('/steer thiếu chỉ dẫn (không có nội dung trong nháy kép) → lỗi', () => {
+    const r = chayLenhHermes('/steer')
+    expect(r.error).toContain('thieu chi dan')
+  })
+
+  it('trangthai/duyet/tuchoi thiếu id việc → lỗi', () => {
+    expect(chayLenhHermes('duyet').error).toContain('thieu id viec')
+    expect(chayLenhHermes('tuchoi').error).toContain('thieu id viec')
+  })
+
+  it('lệnh hoàn toàn không nhận diện được (không phải / hay nhóm nào) → lỗi liệt kê bộ lệnh', () => {
+    const r = chayLenhHermes('abc-khong-ro-nghia')
+    expect(r.error).toContain('mo phong khong lam lenh "abc-khong-ro-nghia"')
+  })
+
+  it('nhánh khác của luật chặn secret: "mat khau la …" (không có sk-) vẫn bị từ chối', () => {
+    const r = chayLenhHermes('giao "dang nhap voi mat khau la 12345"')
+    expect(r.error).toContain('agent tu choi')
+  })
 })
 
 describe('hermesSim — phiên & kỹ năng (chương C1)', () => {
@@ -126,6 +194,44 @@ describe('hermesSim — goal & steer (chương C2)', () => {
   it('/steer khi chưa có mục tiêu → lỗi gợi /goal', () => {
     const r = chayLenhHermes('/steer "nhanh len"')
     expect(r.error).toContain('/goal')
+  })
+
+  it('/goal không tham số và chưa có mục tiêu → nhắc cách đặt mục tiêu', () => {
+    const r = chayLenhHermes('/goal')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Chua co muc tieu — dat bang /goal')
+  })
+})
+
+describe('hermesSim — /permission (chương C2)', () => {
+  it('/permission không tham số → in chế độ hiện tại kèm giải thích hoi/tu-do', () => {
+    const r = chayLenhHermes('/permission')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Che do quyen hien tai: hoi')
+  })
+
+  it('/permission giá trị lạ → lỗi chỉ đúng hai lựa chọn', () => {
+    const r = chayLenhHermes('/permission linh-hoat')
+    expect(r.error).toContain('chi co: hoi hoac tu-do')
+  })
+
+  it('/permission tu-do đổi được chế độ, đọc lại đúng giá trị mới', () => {
+    const r = chayLenhHermes('/permission tu-do\n/permission')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Da chuyen che do quyen: tu-do')
+    expect(r.output).toContain('Che do quyen hien tai: tu-do')
+  })
+
+  it('/stop báo đã dừng, trạng thái việc giữ nguyên', () => {
+    const r = chayLenhHermes('/stop')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Da dung viec dang chay')
+  })
+
+  it('lệnh slash lạ → lỗi liệt kê toàn bộ lệnh slash có', () => {
+    const r = chayLenhHermes('/khong-ton-tai')
+    expect(r.error).toContain('mo phong khong lam lenh "/khong-ton-tai"')
+    expect(r.error).toContain('/new /resume /model /skills /learn /goal /steer /permission /stop')
   })
 })
 

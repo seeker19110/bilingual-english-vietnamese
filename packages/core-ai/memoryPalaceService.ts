@@ -1,4 +1,5 @@
 // packages/core-ai/memoryPalaceService.ts — V5 Flagship Spatial Memory Palace & Method of Loci Engine.
+import { randomUUID } from 'node:crypto'
 import {
   MemoryPalaceRoom,
   MemoryPalaceTheme,
@@ -140,7 +141,9 @@ export class MemoryPalaceService {
       const concept = sampleConcepts[i % sampleConcepts.length]
       if (tmpl && concept) {
         loci.push({
-          id: `locus-${params.theme}-${i + 1}-${Date.now()}`,
+          // Hậu tố ngẫu nhiên (không dùng Date.now()) — hai locus tạo trong cùng một
+          // mili-giây từng sinh ra id TRÙNG NHAU, khiến tra cứu trả về nhầm bản ghi.
+          id: `locus-${params.theme}-${i + 1}-${randomUUID()}`,
           positionIndex: i,
           label: tmpl.label,
           spatialCoordinates: { x: tmpl.x, y: tmpl.y, z: tmpl.z || 0 },
@@ -154,7 +157,9 @@ export class MemoryPalaceService {
       }
     }
 
-    const roomId = `room-${params.theme}-${Date.now()}`
+    // Cùng lý do như id của locus: phòng mặc định và phòng người dùng vừa tạo có thể rơi
+    // vào cùng một mili-giây và cùng theme, làm find(id) khớp nhầm phòng rồi trả 404.
+    const roomId = `room-${params.theme}-${randomUUID()}`
     const now = new Date().toISOString()
 
     return {

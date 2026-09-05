@@ -95,6 +95,47 @@ describe('openclawSim — cài đặt & gateway (chương C1)', () => {
     const ok = chayLenhOpenclaw('openclaw doctor', DA_CHAY)
     expect(ok.output).toContain('[OK] gateway dang chay')
   })
+
+  it('gateway start khi đang chạy / stop khi đã dừng → lỗi; hành động lạ → lỗi', () => {
+    expect(chayLenhOpenclaw('openclaw gateway start', DA_CHAY).error).toContain(
+      'gateway dang chay roi',
+    )
+    expect(chayLenhOpenclaw('openclaw gateway stop', DA_CAI).error).toContain(
+      'gateway dang dung san roi',
+    )
+    expect(chayLenhOpenclaw('openclaw gateway banh', DA_CAI).error).toContain(
+      'khong hieu "openclaw gateway banh"',
+    )
+  })
+
+  it('chat thiếu nội dung → lỗi; nội dung bình thường (không secret, không việc máy thật) → agent trả lời thẳng', () => {
+    expect(chayLenhOpenclaw('openclaw chat', DA_CHAY).error).toContain('thieu noi dung')
+    expect(chayLenhOpenclaw('openclaw chat ""', DA_CHAY).error).toContain('thieu noi dung')
+    const r = chayLenhOpenclaw('openclaw chat "hom nay thoi tiet the nao"', DA_CHAY)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('da nhan "hom nay thoi tiet the nao"')
+  })
+
+  it('models hành động lạ → lỗi; nhóm lệnh openclaw không rõ → lỗi liệt kê bộ lệnh', () => {
+    expect(chayLenhOpenclaw('openclaw models banh', DA_CAI).error).toContain(
+      'khong hieu "openclaw models banh"',
+    )
+    expect(chayLenhOpenclaw('openclaw banh', DA_CAI).error).toContain('khong hieu "openclaw banh"')
+  })
+
+  it('models use thiếu tên → lỗi kể danh sách model', () => {
+    expect(chayLenhOpenclaw('openclaw models use', DA_CAI).error).toContain('khong co model ""')
+  })
+
+  it('skills hành động lạ → lỗi', () => {
+    expect(chayLenhOpenclaw('openclaw skills banh', DA_CAI).error).toContain(
+      'khong hieu "openclaw skills banh"',
+    )
+  })
+
+  it('skills info thiếu tên → lỗi', () => {
+    expect(chayLenhOpenclaw('openclaw skills info', DA_CAI).error).toContain('khong co ky nang ""')
+  })
 })
 
 describe('openclawSim — kênh & hàng rào an toàn (chương C2)', () => {
@@ -163,8 +204,118 @@ describe('openclawSim — kênh & hàng rào an toàn (chương C2)', () => {
 
   it('duyet id không tồn tại / tuchoi thiếu lý do → lỗi rõ', () => {
     expect(chayLenhOpenclaw('duyet d9', DA_CAI).error).toContain('khong co muc cho duyet "d9"')
+    expect(chayLenhOpenclaw('duyet d9', DA_CAI).error).toContain('(trong)')
     const thieu = chayLenhOpenclaw('openclaw chat "xoa file cu"\ntuchoi d1', DA_CHAY)
     expect(thieu.error).toContain('tu choi phai kem ly do')
+  })
+
+  it('duyet/tuchoi thiếu id → lỗi thiếu id; id lạ khi hàng chờ không rỗng → kể đúng id đang chờ', () => {
+    expect(chayLenhOpenclaw('duyet', DA_CAI).error).toContain('thieu id')
+    const r = chayLenhOpenclaw('duyet d9', [...DA_CHAY, 'openclaw chat "xoa file rac"'])
+    expect(r.error).toContain('khong co muc cho duyet "d9"')
+    expect(r.error).toContain('dang cho: d1')
+  })
+
+  it('channel list rỗng → nhắc cách thêm kênh', () => {
+    const r = chayLenhOpenclaw('openclaw channel list', DA_CAI)
+    expect(r.output).toContain('Chua co kenh nao')
+  })
+
+  it('channel status: đòi gateway chạy, kênh không tồn tại → lỗi kể danh sách kênh đã có', () => {
+    const chuanBi = [...DA_CAI, 'openclaw channel add telegram']
+    const rot = chayLenhOpenclaw('openclaw channel status telegram', chuanBi)
+    expect(rot.error).toContain('gateway chua chay')
+    const ok = chayLenhOpenclaw('openclaw channel status telegram', [
+      ...chuanBi,
+      'openclaw gateway start',
+    ])
+    expect(ok.error).toBeUndefined()
+    expect(ok.output).toContain('dmPolicy: chan-nguoi-la')
+    const laKhongTonTai = chayLenhOpenclaw('openclaw channel status discord', [
+      ...DA_CHAY,
+      'openclaw channel add telegram',
+    ])
+    expect(laKhongTonTai.error).toContain('chua co kenh "discord"')
+    expect(laKhongTonTai.error).toContain('Da co: telegram')
+  })
+
+  it('channel remove gỡ đúng kênh khỏi danh sách', () => {
+    const r = chayLenhOpenclaw('openclaw channel remove telegram\nopenclaw channel list', [
+      ...DA_CAI,
+      'openclaw channel add telegram',
+    ])
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Da go kenh telegram')
+    expect(r.output).toContain('Chua co kenh nao')
+  })
+
+  it('channel allow thiếu người → lỗi; allow trùng người → lỗi', () => {
+    const chuanBi = [...DA_CAI, 'openclaw channel add telegram']
+    expect(chayLenhOpenclaw('openclaw channel allow telegram', chuanBi).error).toContain(
+      'thieu nguoi can mo',
+    )
+    const trung = chayLenhOpenclaw(
+      'openclaw channel allow telegram a\nopenclaw channel allow telegram a',
+      chuanBi,
+    )
+    expect(trung.error).toContain('da nam trong allowFrom roi')
+  })
+
+  it('channel test: kênh chưa nối → lỗi; thiếu người gửi → lỗi; kênh/hành động lạ → lỗi', () => {
+    const chuanBi = [...DA_CAI, 'openclaw channel add telegram']
+    const chuaNoi = chayLenhOpenclaw('openclaw channel test telegram ai-do', chuanBi)
+    expect(chuaNoi.error).toContain('chua noi (dang cho-token)')
+    const thieuNguoi = chayLenhOpenclaw('openclaw channel test telegram', [
+      ...chuanBi,
+      'openclaw gateway start',
+      'openclaw channel reconnect telegram',
+    ])
+    expect(thieuNguoi.error).toContain('thieu nguoi gui')
+    expect(chayLenhOpenclaw('openclaw channel banh telegram', DA_CAI).error).toContain(
+      'khong hieu "openclaw channel banh telegram"',
+    )
+    expect(chayLenhOpenclaw('openclaw channel reconnect', DA_CAI).error).toContain('thieu ten kenh')
+  })
+
+  it('channel allow/remove/test với kênh không tồn tại → lỗi không có kênh (danh sách rỗng)', () => {
+    expect(chayLenhOpenclaw('openclaw channel allow telegram a', DA_CAI).error).toContain(
+      'chua co kenh "telegram"',
+    )
+    expect(chayLenhOpenclaw('openclaw channel allow telegram a', DA_CAI).error).toContain(
+      '(chua co kenh nao)',
+    )
+    expect(chayLenhOpenclaw('openclaw channel remove telegram', DA_CAI).error).toContain(
+      'chua co kenh "telegram"',
+    )
+    expect(chayLenhOpenclaw('openclaw channel test telegram a', DA_CAI).error).toContain(
+      'chua co kenh "telegram"',
+    )
+  })
+
+  it('moTaKenh in đủ danh sách allowFrom khi đã mở người (không còn "trong")', () => {
+    const chuanBi = [
+      ...DA_CHAY,
+      'openclaw channel add telegram',
+      'openclaw channel reconnect telegram',
+      'openclaw channel allow telegram dong-nghiep',
+    ]
+    const r = chayLenhOpenclaw('openclaw channel status telegram', chuanBi)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('allowFrom: dong-nghiep')
+  })
+
+  it('reconnect nhắc allowFrom đã có người mở, không còn TRONG (kênh reconnect lại sau khi allow)', () => {
+    const chuanBi = [
+      ...DA_CHAY,
+      'openclaw channel add telegram',
+      'openclaw channel reconnect telegram',
+      'openclaw channel allow telegram dong-nghiep',
+      'openclaw gateway stop',
+      'openclaw gateway start',
+    ]
+    const r = chayLenhOpenclaw('openclaw channel reconnect telegram', chuanBi)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('allowFrom dang dong-nghiep')
   })
 })
 
@@ -204,11 +355,72 @@ describe('openclawSim — skills, cron, plugins (chương C3)', () => {
     expect(chayLenhOpenclaw('openclaw cron run c9', DA_CAI).error).toContain('khong co viec "c9"')
   })
 
+  it('cron list hiện [tat] cho việc đã tắt', () => {
+    const r = chayLenhOpenclaw('openclaw cron disable c1\nopenclaw cron list', [
+      ...DA_CAI,
+      'openclaw cron add "8h" "don dep"',
+    ])
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('c1 [tat] 8h — don dep')
+  })
+
+  it('cron enable/run id lạ khi danh sách KHÔNG rỗng → lỗi kể đúng id đang có', () => {
+    const r = chayLenhOpenclaw('openclaw cron run c9', [
+      ...DA_CAI,
+      'openclaw cron add "8h" "don dep"',
+    ])
+    expect(r.error).toContain('khong co viec "c9"')
+    expect(r.error).toContain('dang co: c1')
+  })
+
+  it('cron add thiếu lịch/tên → lỗi; list rỗng → nhắc cách tạo; hành động lạ → lỗi', () => {
+    expect(chayLenhOpenclaw('openclaw cron add "7h"', DA_CAI).error).toContain(
+      'thieu lich hoac ten viec',
+    )
+    expect(chayLenhOpenclaw('openclaw cron list', DA_CAI).output).toContain(
+      'Chua co viec dinh ky nao',
+    )
+    expect(chayLenhOpenclaw('openclaw cron enable', DA_CAI).error).toContain('thieu id viec')
+    expect(chayLenhOpenclaw('openclaw cron banh', DA_CAI).error).toContain(
+      'khong hieu "openclaw cron banh"',
+    )
+  })
+
   it('/config in tóm tắt cấu hình, /plugins bật được plugin trong kho', () => {
     const r = chayLenhOpenclaw('/config\n/plugins\n/plugins bat ghi-chu', DA_CAI)
     expect(r.output).toContain('model chinh: can-bang')
     expect(r.output).toContain('[tat] ghi-chu')
     expect(r.output).toContain('Da bat plugin ghi-chu')
+  })
+
+  it('/config in đúng danh sách kênh khi đã có kênh; /plugins list hiện cả [bat] lẫn [tat]', () => {
+    const r = chayLenhOpenclaw('/plugins bat ghi-chu\n/plugins\n/config', [
+      ...DA_CAI,
+      'openclaw channel add telegram',
+    ])
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('[bat] ghi-chu')
+    expect(r.output).toContain('[tat] lich-hop')
+    expect(r.output).toContain('kenh: telegram')
+  })
+
+  it('lệnh gạch chéo trước khi onboard → lỗi đòi onboard', () => {
+    const r = chayLenhOpenclaw('/config')
+    expect(r.error).toContain('chua cai dat/onboard')
+  })
+
+  it('/plugins bat tên lạ/thiếu → lỗi; bật trùng → lỗi', () => {
+    expect(chayLenhOpenclaw('/plugins bat', DA_CAI).error).toContain('khong co plugin ""')
+    expect(chayLenhOpenclaw('/plugins bat khong-co', DA_CAI).error).toContain(
+      'khong co plugin "khong-co"',
+    )
+    expect(chayLenhOpenclaw('/plugins bat ghi-chu\n/plugins bat ghi-chu', DA_CAI).error).toContain(
+      'da bat roi',
+    )
+  })
+
+  it('lệnh gạch chéo lạ → lỗi kể /config /plugins', () => {
+    expect(chayLenhOpenclaw('/banh', DA_CAI).error).toContain('/config /plugins')
   })
 })
 
@@ -236,6 +448,69 @@ describe('openclawSim — nhiều agent (chương C4)', () => {
     expect(chayLenhOpenclaw('openclaw agents delete mac-dinh', DA_CAI).error).toContain(
       'khong xoa duoc agent mac-dinh',
     )
+  })
+
+  it('agents delete xoá agent thường ra khỏi danh sách', () => {
+    const r = chayLenhOpenclaw('openclaw agents delete thu-ky\nopenclaw agents list', [
+      ...DA_CAI,
+      'openclaw agents add thu-ky',
+    ])
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Da xoa agent "thu-ky"')
+    expect(r.output).not.toContain('thu-ky —')
+  })
+
+  it('agents delete/bind/unbind agent không tồn tại → lỗi rõ', () => {
+    expect(chayLenhOpenclaw('openclaw agents delete ma', DA_CAI).error).toContain(
+      'khong co agent "ma"',
+    )
+    expect(chayLenhOpenclaw('openclaw agents unbind ma telegram', DA_CAI).error).toContain(
+      'khong co agent "ma"',
+    )
+  })
+
+  it('agents bind/unbind thiếu tên kênh → lỗi; unbind kênh chưa ghim → lỗi; unbind thành công', () => {
+    const chuanBi = [...DA_CAI, 'openclaw channel add telegram', 'openclaw agents add thu-ky']
+    expect(chayLenhOpenclaw('openclaw agents bind thu-ky', chuanBi).error).toContain(
+      'thieu ten kenh',
+    )
+    expect(chayLenhOpenclaw('openclaw agents unbind thu-ky telegram', chuanBi).error).toContain(
+      'khong ghim kenh telegram',
+    )
+    const r = chayLenhOpenclaw('openclaw agents unbind thu-ky telegram\nopenclaw agents list', [
+      ...chuanBi,
+      'openclaw agents bind thu-ky telegram',
+    ])
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Da bo ghim kenh telegram khoi agent "thu-ky"')
+    expect(r.output).toContain('thu-ky — kenh ghim: (khong)')
+  })
+
+  it('agents bind kênh đã ghim rồi → lỗi', () => {
+    const chuanBi = [
+      ...DA_CAI,
+      'openclaw channel add telegram',
+      'openclaw agents add thu-ky',
+      'openclaw agents bind thu-ky telegram',
+    ]
+    expect(chayLenhOpenclaw('openclaw agents bind thu-ky telegram', chuanBi).error).toContain(
+      'da ghim telegram roi',
+    )
+  })
+
+  it('agents add thiếu tên / trùng tên → lỗi; hành động lạ → lỗi', () => {
+    expect(chayLenhOpenclaw('openclaw agents add', DA_CAI).error).toContain('thieu ten agent')
+    expect(
+      chayLenhOpenclaw('openclaw agents add thu-ky\nopenclaw agents add thu-ky', DA_CAI).error,
+    ).toContain('da ton tai')
+    expect(chayLenhOpenclaw('openclaw agents banh', DA_CAI).error).toContain(
+      'khong hieu "openclaw agents banh"',
+    )
+  })
+
+  it('agents delete/bind/unbind không tên (khi danh sách agent còn agent mac-dinh) → lỗi thiếu tên', () => {
+    expect(chayLenhOpenclaw('openclaw agents delete', DA_CAI).error).toContain('khong co agent ""')
+    expect(chayLenhOpenclaw('openclaw agents bind', DA_CAI).error).toContain('khong co agent ""')
   })
 })
 

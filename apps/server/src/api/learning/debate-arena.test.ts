@@ -2,6 +2,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import handler from './debate-arena.js'
 import * as security from '@dhcb/core-auth/security'
+import * as usage from '@dhcb/core-billing/usage'
 
 // Handler đã chuyển state sang platform.feature_state — mock bằng Map in-memory (hành vi giống
 // hệt Map cấp module cũ: state sống suốt file test), theo đúng khuôn pvp-arena.test.ts.
@@ -203,5 +204,259 @@ describe('Debate Arena API Handler (/api/debate-arena)', () => {
       new Request('http://localhost/api/debate-arena', { method: 'DELETE' }),
     )
     expect(methodNotAllowed.status).toBe(405)
+  })
+
+  it('trả 429 khi vượt rate limit', async () => {
+    vi.spyOn(security, 'checkRateLimit').mockResolvedValueOnce(false)
+    const res = await handler(new Request('http://localhost/api/debate-arena', { method: 'GET' }))
+    expect(res.status).toBe(429)
+  })
+
+  it('trả 400 khi body POST không phải JSON hợp lệ', async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValue({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+    const res = await handler(
+      new Request('http://localhost/api/debate-arena?action=create_session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{invalid-json',
+      }),
+    )
+    expect(res.status).toBe(400)
+  })
+
+  it('kết thúc trận đấu và chấm điểm khi vượt số round tối đa (maxRounds=0)', async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValue({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+
+    const createReq = new Request('http://localhost/api/debate-arena?action=create_session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        config: {
+          topicId: 'ai-ethics',
+          motion: 'Motion kết thúc ngay',
+          category: 'technology',
+          userStance: 'support',
+          difficulty: 'advanced_c1',
+          maxRounds: 0,
+        },
+      }),
+    })
+    const createRes = await handler(createReq)
+    const { session } = await createRes.json()
+
+    const turnReq = new Request('http://localhost/api/debate-arena?action=submit_turn', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId: session.id, content: 'Lập luận kết thúc trận' }),
+    })
+    const turnRes = await handler(turnReq)
+    expect(turnRes.status).toBe(200)
+    const turnData = await turnRes.json()
+    expect(turnData.session.status).toBe('completed')
+    expect(turnData.session.finalRubric).toBeDefined()
+  })
+
+  it('trả 429 khi hết lượt dùng chat (usage gate) lúc submit_turn', async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValue({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+    vi.spyOn(usage, 'checkAndConsumeUsage').mockResolvedValueOnce({
+      ok: false,
+      message: 'Hết lượt chat hôm nay',
+    } as never)
+
+    const createReq = new Request('http://localhost/api/debate-arena?action=create_session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        config: {
+          topicId: 'ai-ethics',
+          motion: 'Motion hết lượt',
+          category: 'technology',
+          userStance: 'support',
+          difficulty: 'advanced_c1',
+          maxRounds: 4,
+        },
+      }),
+    })
+    const createRes = await handler(createReq)
+    const { session } = await createRes.json()
+
+    const turnRes = await handler(
+      new Request('http://localhost/api/debate-arena?action=submit_turn', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: session.id, content: 'Lập luận' }),
+      }),
+    )
+    expect(turnRes.status).toBe(429)
+  })
+
+  it('sinh câu hỏi socratic moderator khi đủ 4 lượt trong vòng', async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValue({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+
+    const createReq = new Request('http://localhost/api/debate-arena?action=create_session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        config: {
+          topicId: 'ai-ethics',
+          motion: 'Motion nhiều vòng',
+          category: 'technology',
+          userStance: 'support',
+          difficulty: 'advanced_c1',
+          maxRounds: 10,
+        },
+      }),
+    })
+    const createRes = await handler(createReq)
+    const { session } = await createRes.json()
+
+    // Mỗi submit_turn thêm 2 lượt (user + AI) — lượt thứ 2 (tổng 4 lượt) sẽ kích hoạt moderator.
+    await handler(
+      new Request('http://localhost/api/debate-arena?action=submit_turn', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: session.id, content: 'Lập luận vòng 1' }),
+      }),
+    )
+    const secondTurnRes = await handler(
+      new Request('http://localhost/api/debate-arena?action=submit_turn', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: session.id, content: 'Lập luận vòng 2' }),
+      }),
+    )
+    expect(secondTurnRes.status).toBe(200)
+    const data = await secondTurnRes.json()
+    expect(data.session.turns.length).toBeGreaterThanOrEqual(4)
+    expect(data.session.currentRound).toBeGreaterThanOrEqual(2)
+  })
+
+  it("cắt bớt phiên khi có bản ghi thiếu updatedAt (nhánh fallback ?? '')", async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValue({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+    const USER = '11111111-1111-4111-8111-111111111111'
+    // Cấy sẵn 20 phiên KHÔNG có updatedAt để buộc nhánh `?? ''` trong comparator sort chạy khi
+    // trim — dữ liệu cũ/hỏng trong thực tế có thể thiếu trường này.
+    const seeded: Record<string, unknown> = {}
+    for (let i = 0; i < 20; i++) {
+      seeded[`legacy-${i}`] = { id: `legacy-${i}` }
+    }
+    featureStore.set(USER + '|debate_arena', seeded)
+
+    const res = await handler(
+      new Request('http://localhost/api/debate-arena?action=create_session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          config: {
+            topicId: 'ai-ethics',
+            motion: 'Motion vượt trần',
+            category: 'technology',
+            userStance: 'support',
+            difficulty: 'advanced_c1',
+            maxRounds: 4,
+          },
+        }),
+      }),
+    )
+    expect(res.status).toBe(200)
+  })
+
+  it('evaluate_match không truyền sessionId → 404 (nhánh sessionId falsy)', async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValue({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+    const res = await handler(
+      new Request('http://localhost/api/debate-arena?action=evaluate_match', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      }),
+    )
+    expect(res.status).toBe(404)
+  })
+
+  it('submit_turn với userStance "oppose" → đối thủ AI đứng vai affirmative', async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValue({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+    const createReq = new Request('http://localhost/api/debate-arena?action=create_session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        config: {
+          topicId: 'ai-ethics',
+          motion: 'Motion phản đối',
+          category: 'technology',
+          userStance: 'oppose',
+          difficulty: 'advanced_c1',
+          maxRounds: 4,
+        },
+      }),
+    })
+    const createRes = await handler(createReq)
+    const { session } = await createRes.json()
+
+    const turnRes = await handler(
+      new Request('http://localhost/api/debate-arena?action=submit_turn', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: session.id, content: 'Lập luận phản đối' }),
+      }),
+    )
+    expect(turnRes.status).toBe(200)
+  })
+
+  it('cắt bớt phiên cũ nhất khi vượt trần MAX_SESSIONS (20 phiên/người)', async () => {
+    vi.spyOn(security, 'validateAuth').mockResolvedValue({
+      userId: '11111111-1111-4111-8111-111111111111',
+    })
+
+    // Fake timer để mỗi phiên có updatedAt phân biệt rõ ràng (tránh localeCompare hoà khi trùng ms).
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-01-01T00:00:00.000Z'))
+
+    let firstSessionId = ''
+    try {
+      for (let i = 0; i < 21; i++) {
+        const res = await handler(
+          new Request('http://localhost/api/debate-arena?action=create_session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              config: {
+                topicId: `topic-${i}`,
+                motion: `Motion số ${i}`,
+                category: 'technology',
+                userStance: 'support',
+                difficulty: 'advanced_c1',
+                maxRounds: 4,
+              },
+            }),
+          }),
+        )
+        const data = await res.json()
+        if (i === 0) firstSessionId = data.session.id
+        vi.setSystemTime(new Date(Date.now() + 1000))
+      }
+    } finally {
+      vi.useRealTimers()
+    }
+
+    const notFoundRes = await handler(
+      new Request(`http://localhost/api/debate-arena?sessionId=${firstSessionId}`, {
+        method: 'GET',
+      }),
+    )
+    expect(notFoundRes.status).toBe(404)
   })
 })

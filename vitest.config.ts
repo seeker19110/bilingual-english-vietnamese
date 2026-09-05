@@ -111,19 +111,30 @@ export default defineConfig({
       //
       // Đợt 1 (2026-09-04, PR #852): vá 3 lỗi Windows chặn coverage rồi siết theo số đo thật
       // stmts 96,36 · branches 90,71 · funcs 95,19 · lines 96,36 → sàn 95 / 90 / 94 / 95.
-      // branches khi đó chỉ dư 0,71 điểm nên phải giữ nguyên 90.
       //
-      // Đợt 2 (2026-09-05): TRẢ ĐÚNG CHỖ MỎNG — viết 542 test mới nhắm thẳng vào nhánh chưa đi
-      // của 18 file phủ thấp nhất (hai bộ chạy Kotlin/Swift, gitSim, 3 bộ mô phỏng tác tử,
-      // authService, push, clientAuth, geminiLive, chemistry, cefrExam, mistakes, bashSim,
-      // locationService, tts). Số đo thật sau đợt: stmts 97,00 · branches 94,06 · funcs 95,95 ·
-      // lines 97,00. Sàn nâng theo, chừa ~1 điểm mỗi chỉ số.
+      // Đợt 2 (2026-09-05, PR #855): 542 test nhắm nhánh chưa đi của 18 file phủ thấp nhất
+      // (Kotlin/Swift, gitSim, 3 bộ mô phỏng tác tử, authService, push, clientAuth, geminiLive,
+      // chemistry, cefrExam, mistakes, bashSim, locationService, tts) → 97,00 / 94,06 / 95,95 / 97,00.
+      //
+      // Đợt 3 (2026-09-05, PR #856 — đợt này): 33 file logic thuần (5 bộ chạy mã, 7 lib tiến độ
+      // lập trình, 6 handler API trụ Learning, 4 file điều hướng/UI thuần, 2 file dữ liệu hoá học,
+      // 5 trình mô phỏng). Hai đợt 2 và 3 làm SONG SONG trên hai nhánh, phủ những file khác nhau,
+      // nên số dưới đây là ĐO LẠI SAU KHI GỘP — không phải số của riêng đợt nào:
+      // stmts 98,32 · branches 94,53 · funcs 97,69 · lines 98,32 (573/573 file test xanh).
+      // Sàn chừa 1,3–1,7 điểm biên độ để không đỏ vì dao động nhỏ giữa các lần chạy.
       // Đây vẫn là sàn tối thiểu, KHÔNG phải mục tiêu: đừng viết ít test đi cho "vừa đủ".
+      //
+      // Vì sao KHÔNG đặt sàn 100: phần chưa phủ còn lại KHÔNG phải "thiếu test" mà là hai
+      // loại mã mà test đơn vị không chạm tới được một cách trung thực — (a) nhánh phòng thủ
+      // chết do `noUncheckedIndexedAccess` bắt viết (`?? ''`, `?? 0`) mà bất biến của chính
+      // module bảo đảm không bao giờ kích hoạt, (b) vỏ bọc WebSocket/mạng sống
+      // (wsCoLearningHandler, wsGeminiLiveHandler, clientAuth…) thuộc phạm vi E2E. Ép 100
+      // chỉ đẻ ra test giả kiểm chính cái mock vừa dựng.
       thresholds: {
-        statements: 96,
+        statements: 97,
         branches: 93,
-        functions: 95,
-        lines: 96,
+        functions: 96,
+        lines: 97,
       },
     },
   },

@@ -1,13 +1,19 @@
 // Test lib onboarding (U-3): cache localStorage, đọc từ GET /api/profile (mock fetch), map
 // phút/ngày → tốc độ học.
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { act } from 'react'
+import { createRoot, type Root } from 'react-dom/client'
 import {
   getCachedOnboarding,
   cacheOnboarding,
   fetchOnboarding,
   minutesToSpeed,
   pushAgeGroup,
+  isValidAgeGroup,
+  useOnboarding,
 } from './onboarding'
+
+;(globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
 // Giả lập GET /api/profile trả về body cho trước (hoặc lỗi HTTP nếu ok=false).
 function mockProfileResponse(body: unknown, ok = true) {
@@ -39,6 +45,21 @@ describe('minutesToSpeed', () => {
 })
 
 describe('cache localStorage', () => {
+  it('localStorage đầy lúc ghi cache → không throw (chỉ bỏ qua)', () => {
+    const setItem = vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
+      throw new Error('QuotaExceededError')
+    })
+    expect(() =>
+      cacheOnboarding('u1', {
+        level: 'beginner',
+        goal: 'daily',
+        dailyMinutes: 10,
+        ageGroup: 'nguoi_lon',
+      }),
+    ).not.toThrow()
+    setItem.mockRestore()
+  })
+
   it('ghi rồi đọc lại đúng dữ liệu, tách theo uid', () => {
     cacheOnboarding('u1', {
       level: 'advanced',
@@ -164,5 +185,105 @@ describe('pushAgeGroup', () => {
   it('fetch ném lỗi mạng → bắt lỗi, không throw', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')))
     await expect(pushAgeGroup('u1', 'nguoi_lon')).resolves.toBeUndefined()
+  })
+
+  it('fetch ném giá trị không phải Error → vẫn bắt lỗi, không throw (nhánh khác instanceof Error)', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue('chuoi loi khong phai Error'))
+    await expect(pushAgeGroup('u1', 'nguoi_lon')).resolves.toBeUndefined()
+  })
+})
+
+describe('isValidAgeGroup', () => {
+  it('nhận đúng 4 nhóm tuổi hợp lệ', () => {
+    expect(isValidAgeGroup('nhi_dong')).toBe(true)
+    expect(isValidAgeGroup('thieu_nien')).toBe(true)
+    expect(isValidAgeGroup('thanh_nien')).toBe(true)
+    expect(isValidAgeGroup('nguoi_lon')).toBe(true)
+  })
+
+  it('giá trị lạ / không phải string → false', () => {
+    expect(isValidAgeGroup('hacker')).toBe(false)
+    expect(isValidAgeGroup(undefined)).toBe(false)
+    expect(isValidAgeGroup(123)).toBe(false)
+  })
+})
+
+describe('useOnboarding (hook)', () => {
+  let container: HTMLDivElement
+  let root: Root
+  let latest: ReturnType<typeof useOnboarding> = null
+
+  function Consumer({ uid }: { uid: string | undefined }) {
+    latest = useOnboarding(uid)
+    return null
+  }
+
+  beforeEach(() => {
+    latest = null
+    container = document.createElement('div')
+    document.body.appendChild(container)
+    root = createRoot(container)
+  })
+
+  it('không có uid → luôn null, không gọi fetch', async () => {
+    await act(async () => {
+      root.render(<Consumer uid={undefined} />)
+    })
+    expect(latest).toBeNull()
+    container.remove()
+  })
+
+  it('đã có cache → trả ngay, không cần chờ fetch', async () => {
+    cacheOnboarding('u1', {
+      level: 'beginner',
+      goal: 'daily',
+      dailyMinutes: 10,
+      ageGroup: 'nguoi_lon',
+    })
+    await act(async () => {
+      root.render(<Consumer uid="u1" />)
+    })
+    expect(latest?.level).toBe('beginner')
+    container.remove()
+  })
+
+  it('chưa có cache → gọi fetch nền rồi cập nhật state', async () => {
+    localStorage.clear()
+    mockProfileResponse({
+      userLevel: 'advanced',
+      goal: 'work',
+      dailyMinutes: 30,
+      onboarded: true,
+    })
+    await act(async () => {
+      root.render(<Consumer uid="u2" />)
+    })
+    expect(latest?.level).toBe('advanced')
+    container.remove()
+  })
+
+  it('unmount trước khi fetch nền xong → không setState sau khi huỷ (không cảnh báo)', async () => {
+    localStorage.clear()
+    let resolveFetch: (v: unknown) => void = () => {}
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        () =>
+          new Promise((resolve) => {
+            resolveFetch = resolve
+          }),
+      ),
+    )
+    await act(async () => {
+      root.render(<Consumer uid="u3" />)
+    })
+    await act(async () => {
+      root.unmount()
+    })
+    // fetch resolve sau khi đã unmount — nhánh `alive` false, chỉ cần không throw.
+    await act(async () => {
+      resolveFetch({ ok: true, json: async () => ({ onboarded: false }) })
+    })
+    container.remove()
   })
 })
