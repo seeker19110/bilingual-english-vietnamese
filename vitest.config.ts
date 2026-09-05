@@ -119,7 +119,9 @@ export default defineConfig({
       // Đợt 3 (2026-09-05, PR #856 — đợt này): 33 file logic thuần (5 bộ chạy mã, 7 lib tiến độ
       // lập trình, 6 handler API trụ Learning, 4 file điều hướng/UI thuần, 2 file dữ liệu hoá học,
       // 5 trình mô phỏng). Hai đợt 2 và 3 làm SONG SONG trên hai nhánh, phủ những file khác nhau,
-      // nên số dưới đây là ĐO LẠI SAU KHI GỘP — không phải số của riêng đợt nào.
+      // nên số dưới đây là ĐO LẠI SAU KHI GỘP — không phải số của riêng đợt nào:
+      // stmts 98,32 · branches 94,53 · funcs 97,69 · lines 98,32 (573/573 file test xanh).
+      // Sàn chừa 1,3–1,7 điểm biên độ để không đỏ vì dao động nhỏ giữa các lần chạy.
       // Đây vẫn là sàn tối thiểu, KHÔNG phải mục tiêu: đừng viết ít test đi cho "vừa đủ".
       //
       // Vì sao KHÔNG đặt sàn 100: phần chưa phủ còn lại KHÔNG phải "thiếu test" mà là hai

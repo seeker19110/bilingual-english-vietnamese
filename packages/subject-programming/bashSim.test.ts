@@ -640,8 +640,10 @@ describe('bashSim — nốt các lối rẽ hiếm gặp nhưng có thật', () 
     expect(ra('echo "a,b" > f.txt\ncut -d, f.txt -f')).toContain('phai la so cot')
   })
 
-  it('find ngay tại thư mục gốc "/" chỉ liệt kê đúng chính nó (không ghép sai dấu "/" kép)', () => {
-    expect(ra('find / -type d')).toBe('/\n')
+  it('find ngay tại thư mục gốc "/" liệt kê CẢ CÂY thư mục (không ghép sai dấu "/" kép)', () => {
+    // Bản cũ ghép tiền tố thành "//" nên không khoá nào khớp và `find /` im lặng trả về mỗi
+    // dòng "/". Đã vá ở PR #855: gốc "/" phải liệt kê chính nó rồi tới các thư mục con.
+    expect(ra('find / -type d')).toBe('/\n/home\n/home/ban\n')
   })
 
   it('boi canh (lenhChuanBi) chạy im lặng — lệnh in ra vẫn được nuốt, không lọt vào output', () => {

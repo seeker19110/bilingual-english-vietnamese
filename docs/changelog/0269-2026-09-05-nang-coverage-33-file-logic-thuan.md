@@ -82,20 +82,47 @@ Xoá chúng làm code gọn hơn nhưng bỏ mất lưới an toàn nếu bất 
 
 ## Siết sàn coverage
 
-`vitest.config.ts`: 95/90/94/95 → **97/91/96/97** (chừa ~1 điểm biên độ theo đúng quy ước
-"đo cao hơn sàn nhiều thì siết theo"). Kèm comment giải thích vì sao KHÔNG đặt sàn 100.
+`vitest.config.ts`: 95/90/94/95 → **97/93/96/97** (số chốt SAU khi gộp PR #855, chừa
+1,3–1,7 điểm biên độ theo đúng quy ước "đo cao hơn sàn nhiều thì siết theo"). Kèm comment
+ghi nhận cả ba đợt và giải thích vì sao KHÔNG đặt sàn 100.
 
-## Bằng chứng kiểm chứng (đo thật, máy rảnh)
+## Xung đột với PR #855 và một test SAI bị bắt tại chỗ
+
+Đợt này chạy **song song** với PR #855 (542 test nhắm 18 file phủ thấp nhất) trên hai
+nhánh khác nhau. Khi gộp `main` có hai loại xung đột:
+
+1. **Xung đột văn bản** ở `vitest.config.ts` — cả hai cùng siết ngưỡng. Giải bằng cách
+   giữ comment ghi nhận cả ba đợt rồi **đo lại số thật sau khi gộp**, không chọn bừa số
+   của bên nào.
+2. **Xung đột NGỮ NGHĨA mà git không báo** — nguy hiểm hơn nhiều. Test
+   `find ngay tại thư mục gốc "/"` của đợt này khẳng định `find /` chỉ trả về `/`. Nhưng
+   đó là **hành vi LỖI**: bản cũ ghép tiền tố thành `//` nên không khoá nào khớp. PR #855
+   đã vá đúng lỗi đó, nên test của đợt này đang **khoá một cái bug lại làm chuẩn**.
+
+Nguyên nhân gốc: agent viết test cho `bashSim` đã liệt dòng 1220 vào danh sách "mã chết"
+và suy ra hành vi quan sát được là bất biến đúng, thay vì đối chiếu xem nó CÓ ĐÚNG không.
+**Bài học: "nhánh không chạm tới được" và "nhánh đúng" là hai chuyện khác nhau** — một
+nhánh chết có thể chết chính vì mã quanh nó sai. Đã sửa test theo hành vi đúng
+(`/
+/home
+/home/ban
+`).
+
+Điều này cũng có nghĩa danh sách mã chết ở mục trên **cần soát lại từng dòng trước khi
+xoá**, không xoá hàng loạt.
+
+## Bằng chứng kiểm chứng (đo thật, máy rảnh, TRÊN KẾT QUẢ ĐÃ GỘP `main`)
 
 ```
-Test Files  568 passed (568)
-Statements : 97.79% ( 120782/123510 )   [trước: 96,36]
-Branches   : 92.09% (  15038/16328  )   [trước: 90,71]
-Functions  : 96.98% (   2384/2458   )   [trước: 95,19]
-Lines      : 97.79% ( 120782/123510 )   [trước: 96,36]
+Test Files  573 passed (573)
+Statements : 98.32% ( 121462/123535 )
+Branches   : 94.53% (  15944/16866  )
+Functions  : 97.69% (   2412/2469   )
+Lines      : 98.32% ( 121462/123535 )
 ```
 
-528/812 file đạt 100% tuyệt đối (cả statements lẫn branches).
+Số của riêng nhánh này trước khi gộp: 97,79 / 92,09 / 96,98 / 97,79
+(xuất phát 96,36 / 90,71 / 95,19 / 96,36).
 
 Cổng: Build ✅ · Typecheck ✅ · Lint ✅ (0 cảnh báo) · Format ✅ · Test ✅ (568/568).
 
