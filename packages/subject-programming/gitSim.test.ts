@@ -107,6 +107,20 @@ ls`)
     expect(dongCuoi).toBe('f.txt')
   })
 
+  it('restore <file> khoi phuc TU BAN DA ADD (chua commit) khi dang co trong vung cho', () => {
+    const r = chayLenh(`git init
+echo "goc" > f.txt
+git add .
+git commit -m "c1"
+echo "da add" > f.txt
+git add .
+echo "sua tiep sau khi add" > f.txt
+git restore f.txt
+cat f.txt`)
+    expect(r.error).toBeUndefined()
+    expect(r.output.trim().split('\n').pop()).toBe('da add')
+  })
+
   it('reset tới commit không tồn tại thì báo lỗi dạy được (gợi ý git log)', () => {
     expect(
       chayLenh('git init\necho "a" > f.txt\ngit add .\ngit commit -m "c"\ngit reset c9').error,
@@ -131,6 +145,23 @@ cat f.txt`)
     expect(r.output).toContain('c2 c2 sai roi')
     expect(r.output).toContain('a')
     expect(r.output).not.toContain('\nb\n')
+  })
+
+  it('revert khi nhanh hien tai CHUA co commit nao (khong co cha)', () => {
+    const r = chayLenh(`git init
+git branch b
+echo "a" > f.txt
+git add .
+git commit -m "c1 tren main"
+git switch b
+git revert c1
+git log --oneline`)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Revert "c1 tren main"')
+  })
+
+  it('revert thieu ma commit thi bao loi', () => {
+    expect(chayLenh('git init\ngit revert').error).toContain('Thieu ma commit')
   })
 
   it('revert commit không tồn tại thì báo lỗi', () => {
@@ -340,6 +371,19 @@ git stash list`)
     expect(r.output).toContain('(khong co stash nao)')
   })
 
+  it('stash push cat luon thay doi DA ADD (vung cho khac commit goc)', () => {
+    const r = chayLenh(`git init
+echo "goc" > f.txt
+git add .
+git commit -m "c1"
+echo "da add roi" > f.txt
+git add .
+git stash push -m "da add"
+git status`)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('thu muc lam viec sach')
+  })
+
   it('stash push khi không có gì để cất thì báo lỗi', () => {
     expect(chayLenh('git init\ngit stash push').error).toContain('Khong co gi de stash')
   })
@@ -431,6 +475,609 @@ git rebase dich
 git log --oneline`)
     expect(r.error).toBeUndefined()
     expect(r.output).toContain('Da rebase 1 commit')
+  })
+})
+
+describe('gitSim — lệnh git chưa init / thiếu tham số / ca biên status-add-commit-log-branch', () => {
+  it('mọi lệnh git đều đòi hỏi đã "git init" trước', () => {
+    expect(chayLenh('git status').error).toContain('Thu muc nay chua phai kho git')
+  })
+
+  it('git status: hiện "chua chuan bi" khi sua file da commit nhung chua add lai', () => {
+    const r = chayLenh(`git init
+echo "goc" > f.txt
+git add .
+git commit -m "c1"
+echo "sua roi" > f.txt
+git status`)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Thay doi chua chuan bi (can git add)')
+  })
+
+  it('git add khong co tham so thi bao loi', () => {
+    expect(chayLenh('git init\ngit add').error).toContain('Thieu ten file')
+  })
+
+  it('git add file khong ton tai trong thu muc thi bao loi', () => {
+    expect(chayLenh('git init\ngit add khong-co.txt').error).toContain('Khong co file')
+  })
+
+  it('git commit thieu -m thi bao loi', () => {
+    expect(chayLenh('git init\necho "a" > f.txt\ngit add .\ngit commit').error).toContain(
+      'Commit phai co loi nhan',
+    )
+  })
+
+  it('git commit khi vung cho khong co gi moi thi bao loi', () => {
+    expect(
+      chayLenh(
+        'git init\necho "a" > f.txt\ngit add .\ngit commit -m "c1"\ngit add .\ngit commit -m "lai nua"',
+      ).error,
+    ).toContain('Khong co gi trong vung cho de commit')
+  })
+
+  it('git log khi chua co commit nao', () => {
+    expect(chayLenh('git init\ngit log').output).toContain('Chua co commit nao')
+  })
+
+  it('git log dang day du (khong --oneline) hien nhanh + loi nhan', () => {
+    const r = chayLenh('git init\necho "a" > f.txt\ngit add .\ngit commit -m "c1"\ngit log')
+    expect(r.output).toContain('commit c1')
+    expect(r.output).toContain('Nhanh: main')
+  })
+
+  it('git branch khong tham so thi liet ke, nhanh hien tai co dau *', () => {
+    const r = chayLenh(
+      'git init\necho "a" > f.txt\ngit add .\ngit commit -m "c1"\ngit branch phu\ngit branch',
+    )
+    expect(r.output).toContain('* main')
+    expect(r.output).toContain('  phu')
+  })
+
+  it('git branch ten da ton tai thi bao loi', () => {
+    expect(chayLenh('git init\ngit branch main').error).toContain('da ton tai roi')
+  })
+
+  it('git switch sang nhanh khong ton tai thi bao loi', () => {
+    expect(chayLenh('git init\ngit switch khong-co').error).toContain('Khong co nhanh')
+  })
+
+  it('git switch -c sang nhanh da ton tai thi bao loi', () => {
+    expect(
+      chayLenh(
+        'git init\necho "a" > f.txt\ngit add .\ngit commit -m "c1"\ngit branch phu\ngit switch -c phu',
+      ).error,
+    ).toContain('da ton tai roi')
+  })
+
+  it('git switch thieu ten nhanh thi bao loi', () => {
+    expect(chayLenh('git init\ngit switch').error).toContain('Thieu ten nhanh')
+  })
+})
+
+describe('gitSim — git merge: thiếu tham số, nhánh không tồn tại, gộp thật + xung đột', () => {
+  it('merge thieu ten nhanh thi bao loi', () => {
+    expect(chayLenh('git init\ngit merge').error).toContain('Thieu ten nhanh')
+  })
+
+  it('merge nhanh khong ton tai thi bao loi', () => {
+    expect(chayLenh('git init\ngit merge khong-co').error).toContain('Khong co nhanh')
+  })
+
+  it('merge vao chinh no thi bao loi', () => {
+    expect(chayLenh('git init\ngit merge main').error).toContain('gop mot nhanh vao chinh no')
+  })
+
+  it('merge nhanh trung tip voi main (tao SAU khi da co commit) thi fast-forward, khong loi', () => {
+    expect(
+      chayLenh(
+        'git init\necho "a" > f.txt\ngit add .\ngit commit -m "c1"\ngit branch phu\ngit merge phu',
+      ).error,
+    ).toBeUndefined() // fast-forward vì phu trùng main, không lỗi — kiểm output riêng dưới
+  })
+
+  it('merge nhanh CHUA TUNG co commit nao (tao TRUOC commit dau) thi bao loi', () => {
+    // git branch phu khi main chưa có commit nào -> phu cũng có HEAD null. Khác test phía trên
+    // (branch tạo SAU commit, nên trùng tip = fast-forward) — đây là ca thật sự "chưa có gì".
+    expect(
+      chayLenh(
+        'git init\ngit branch phu\necho "a" > f.txt\ngit add .\ngit commit -m "c1"\ngit merge phu',
+      ).error,
+    ).toContain('chua co commit nao de gop')
+  })
+
+  it('merge khong-fast-forward, hai nhanh sua file khac nhau: tao commit gop, canh bao khi trung', () => {
+    const r = chayLenh(`git init
+echo "a" > f.txt
+git add .
+git commit -m "c1"
+git switch -c phu
+echo "b" > g.txt
+git add .
+git commit -m "them g"
+git switch main
+echo "c" > h.txt
+git add .
+git commit -m "them h"
+git merge phu`)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Da gop nhanh phu vao main')
+  })
+
+  it('merge khong-fast-forward, hai nhanh cung sua MOT file: gop nhung canh bao xung dot', () => {
+    const r = chayLenh(`git init
+echo "goc" > f.txt
+git add .
+git commit -m "c1"
+git switch -c phu
+echo "sua o phu" > f.txt
+git add .
+git commit -m "sua tren phu"
+git switch main
+echo "sua o main" > f.txt
+git add .
+git commit -m "sua tren main"
+git merge phu`)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Luu y: ca hai nhanh cung sua f.txt')
+    expect(r.output).toContain('XUNG DOT')
+  })
+})
+
+describe('gitSim — diff/restore/reset ca bien con lai', () => {
+  it('diff file moi tao chua add hien dong + (khong co dong -)', () => {
+    const r = chayLenh('git init\necho "noi dung moi" > moi.txt\ngit diff')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('+noi dung moi')
+  })
+
+  it('diff --staged hien dung dong doi khi vung cho co thay doi thuc su', () => {
+    const r = chayLenh('git init\necho "dong moi" > f.txt\ngit add .\ngit diff --staged')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('diff --git a/f.txt b/f.txt')
+    expect(r.output).toContain('+dong moi')
+  })
+
+  it('diff --staged rong khi vung cho khong co gi khac voi commit gan nhat', () => {
+    const r = chayLenh(
+      'git init\necho "a" > f.txt\ngit add .\ngit commit -m "c1"\ngit diff --staged',
+    )
+    expect(r.error).toBeUndefined()
+    expect(r.output.trim().endsWith('$ git diff --staged')).toBe(true)
+  })
+
+  it('restore file chua tung add/commit thi bao loi khong co gi de khoi phuc', () => {
+    expect(chayLenh('git init\necho "a" > f.txt\ngit restore f.txt').error).toContain(
+      'Khong co gi de khoi phuc',
+    )
+  })
+
+  it('git reset khong tham so nao va chua co commit thi bao loi', () => {
+    expect(chayLenh('git init\ngit reset').error).toContain('Khong co commit de reset ve')
+  })
+
+  it('git reset khong tham so muc (mac dinh mixed) ve chinh HEAD hien tai', () => {
+    const r = chayLenh('git init\necho "a" > f.txt\ngit add .\ngit commit -m "c1"\ngit reset')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Da reset (mixed)')
+  })
+})
+
+describe('gitSim — revert ca bien: revert commit dau tien (khong co cha)', () => {
+  it('revert commit dau tien: khong co "truoc", xoa het file khoi ban chup moi', () => {
+    const r = chayLenh(`git init
+echo "a" > f.txt
+git add .
+git commit -m "c1"
+git revert c1
+ls`)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Revert "c1"')
+    const dongCuoi = r.output.trim().split('\n').pop()
+    expect(dongCuoi).toBe('(thu muc rong)')
+  })
+})
+
+describe('gitSim — remote/push/fetch ca bien con lai', () => {
+  it('remote -v khi chua co remote nao', () => {
+    expect(chayLenh('git init\ngit remote -v').output).toContain('(chua co remote nao)')
+  })
+
+  it('remote add ten khac "origin" thi bao loi', () => {
+    expect(
+      chayLenh('git init\ngit remote add upstream https://vi-du.local/kho.git').error,
+    ).toContain('mot remote ten "origin"')
+  })
+
+  it('remote add thieu URL thi bao loi', () => {
+    expect(chayLenh('git init\ngit remote add origin').error).toContain('Thieu URL')
+  })
+
+  it('remote subcommand khong ho tro thi bao loi', () => {
+    expect(chayLenh('git init\ngit remote rm origin').error).toContain('Mo phong ho tro')
+  })
+
+  it('push voi remote khac "origin" thi bao loi', () => {
+    expect(
+      chayLenh(
+        'git init\necho "a" > f.txt\ngit add .\ngit commit -m "c1"\ngit remote add origin https://vi-du.local/kho.git\ngit push khac main',
+      ).error,
+    ).toContain('chi co remote "origin"')
+  })
+
+  it('push nhanh chua co commit nao thi bao loi', () => {
+    expect(
+      chayLenh('git init\ngit remote add origin https://vi-du.local/kho.git\ngit push origin main')
+        .error,
+    ).toContain('chua co commit nao de day')
+  })
+
+  it('fetch chua co remote thi bao loi', () => {
+    expect(chayLenh('git init\ngit fetch').error).toContain('Chua co remote')
+  })
+
+  it('fetch khi remote chua co nhanh nao', () => {
+    expect(
+      chayLenh('git init\ngit remote add origin https://vi-du.local/kho.git\ngit fetch').output,
+    ).toContain('origin chua co nhanh nao')
+  })
+
+  it('pull lan hai lien tiep sau khi da dong bo het thi bao "da cap nhat"', () => {
+    const r = chayLenh(`git init
+echo "a" > f.txt
+git add .
+git commit -m "c1"
+git remote add origin https://vi-du.local/kho.git
+git push -u origin main
+git pull
+git pull`)
+    expect(r.error).toBeUndefined()
+    // Pull lần 2: idKia === idNay ngay trong origin (không có gì đổi từ lần fetch trước sau ff)
+    const soLanKhongMoi = (r.output.match(/khong co gi moi/g) ?? []).length
+    expect(soLanKhongMoi).toBeGreaterThanOrEqual(1)
+  })
+
+  it('pull khi local da vuot xa remote (local dang truoc) thi bao "da cap nhat"', () => {
+    const boiCanh = [
+      'git init',
+      'echo "a" > f.txt',
+      'git add .',
+      'git commit -m "c1"',
+      'git remote add origin https://vi-du.local/kho.git',
+      'git push -u origin main',
+      'echo "b" > g.txt',
+      'git add .',
+      'git commit -m "c2 them local"',
+    ]
+    const r = chayLenh('git pull', boiCanh)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Da cap nhat')
+  })
+
+  it('pull gop sach (khong trung file) tu ca hai nhanh phan ky: tao commit gop tu dong', () => {
+    const boiCanh = [
+      'git init',
+      'echo "a" > f.txt',
+      'git add .',
+      'git commit -m "c1"',
+      'git remote add origin https://vi-du.local/kho.git',
+      'git push -u origin main',
+      'echo "cua toi" > minh.txt',
+      'git add .',
+      'git commit -m "them cua toi"',
+      'remote-seed main "them cua nguoi khac" nguoikhac.txt "noi dung ho"',
+    ]
+    const r = chayLenh('git pull\ngit log --oneline\nls', boiCanh)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Da gop origin/main vao main')
+    expect(r.output).toContain('minh.txt')
+    expect(r.output).toContain('nguoikhac.txt')
+  })
+
+  it('xung dot khi ben kia con sua them file KHONG trung: file rieng cua kia van duoc ap dung', () => {
+    const boiCanh = [
+      'git init',
+      'echo "ban goc" > f.txt',
+      'git add .',
+      'git commit -m "c1"',
+      'git remote add origin https://vi-du.local/kho.git',
+      'git push -u origin main',
+      'echo "toi sua" > f.txt',
+      'git add .',
+      'git commit -m "sua o may toi"',
+    ]
+    // remote-seed nối tiếp thêm commit khác của "người khác" chứa cả file trùng (f.txt) lẫn
+    // file riêng (chi_co_o_remote.txt) — kiểm nhánh áp file riêng của phía kia khi có xung đột.
+    const boiCanhDay = [
+      ...boiCanh,
+      'remote-seed main "sua tren github" f.txt "ban cua nguoi khac"',
+      'remote-seed main "them file rieng" chi_co_o_remote.txt "chi co ben do"',
+    ]
+    const r = chayLenh('git pull\ncat chi_co_o_remote.txt', boiCanhDay)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('XUNG DOT')
+    expect(r.output.trim().split('\n').pop()).toBe('chi co ben do')
+  })
+
+  it('pull khi dang gop do (con xung dot chua giai) thi bao loi, khong pull tiep', () => {
+    const boiCanh = [
+      'git init',
+      'echo "ban goc" > f.txt',
+      'git add .',
+      'git commit -m "c1"',
+      'git remote add origin https://vi-du.local/kho.git',
+      'git push -u origin main',
+      'echo "ban cua toi" > f.txt',
+      'git add .',
+      'git commit -m "sua o may toi"',
+      'remote-seed main "sua tren github" f.txt "ban cua nguoi khac"',
+      'git pull',
+    ]
+    const r = chayLenh('git pull', boiCanh)
+    expect(r.error).toContain('Dang gop dang do')
+  })
+
+  it('clone khi remote ton tai (dung URL) nhung nhanh "main" chua tung co commit nao', () => {
+    // remote-seed dựng remote với URL cố định 'https://mo-phong.local/kho.git', nhưng seed vào
+    // nhánh KHÁC ("feature") — nhánh "main" mà clone mặc định lấy vẫn chưa có commit nào, phủ
+    // đúng nhánh `id === null` (kho từ xa có tồn tại nhưng nhánh main rỗng).
+    const r = chayLenh('git clone https://mo-phong.local/kho.git\nls', [
+      'remote-seed feature "commit tren nhanh khac" f.txt "noi dung"',
+    ])
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Da clone tu')
+    expect(r.output.trim().split('\n').pop()).toBe('(thu muc rong)')
+  })
+
+  it('clone thieu URL thi bao loi', () => {
+    expect(chayLenh('git clone').error).toContain('Thieu URL')
+  })
+
+  it('pull chua co remote thi bao loi', () => {
+    expect(
+      chayLenh('git init\necho "a" > f.txt\ngit add .\ngit commit -m "c1"\ngit pull').error,
+    ).toContain('Chua co remote')
+  })
+
+  it('pull khi CHUA TUNG push (origin khong co nhanh nay) thi bao dung thong diep "Khong co gi moi"', () => {
+    const r = chayLenh(`git init
+echo "a" > f.txt
+git add .
+git commit -m "c1"
+git remote add origin https://vi-du.local/kho.git
+git pull`)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Khong co gi moi tu origin/main.')
+  })
+})
+
+describe('gitSim — stash/tag/cherry-pick/rebase ca bien con lai', () => {
+  it('stash push khong -m dung thong diep mac dinh "WIP tren <nhanh>"', () => {
+    const r = chayLenh('git init\necho "a" > f.txt\ngit stash push')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('WIP tren main')
+  })
+
+  it('stash list khi co nhieu muc, moi nhat dung dau', () => {
+    const r = chayLenh(`git init
+echo "a" > f.txt
+git stash push -m "cai thu nhat"
+echo "b" > g.txt
+git stash push -m "cai thu hai"
+git stash list`)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('stash@{0}: cai thu hai')
+    expect(r.output).toContain('stash@{1}: cai thu nhat')
+  })
+
+  it('stash apply giu nguyen trong ngan (khac pop)', () => {
+    const r = chayLenh(`git init
+echo "a" > f.txt
+git stash push -m "x"
+git stash apply
+git stash list`)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('VAN GIU trong ngan stash')
+    expect(r.output).toContain('stash@{0}: x')
+  })
+
+  it('stash drop xoa muc moi nhat', () => {
+    const r = chayLenh(`git init
+echo "a" > f.txt
+git stash push -m "x"
+git stash drop
+git stash list`)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Da xoa stash@{0}')
+    expect(r.output).toContain('(khong co stash nao)')
+  })
+
+  it('stash khong kem subcommand mac dinh la "push"', () => {
+    const r = chayLenh('git init\necho "a" > f.txt\ngit stash\ngit status')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Da cat (stash) thay doi')
+    expect(r.output).toContain('thu muc lam viec sach')
+  })
+
+  it('stash push -m nhung thieu chu sau -m thi dung mac dinh "WIP"', () => {
+    const r = chayLenh('git init\necho "a" > f.txt\ngit stash push -m')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Da cat (stash) thay doi: WIP')
+  })
+
+  it('stash drop khi ngan rong thi bao loi', () => {
+    expect(chayLenh('git init\ngit stash drop').error).toContain('Khong co stash nao de xoa')
+  })
+
+  it('stash subcommand khong ho tro thi bao loi', () => {
+    expect(chayLenh('git init\ngit stash unstash').error).toContain('Mo phong ho tro')
+  })
+
+  it('tag khong tham so va chua co tag nao', () => {
+    expect(chayLenh('git init\ngit tag').output).toContain('(chua co tag nao)')
+  })
+
+  it('tag khong kem -a (vi du "git tag v1.0") thi bao loi', () => {
+    expect(chayLenh('git init\ngit tag v1.0').error).toContain('Mo phong chi ho tro')
+  })
+
+  it('tag -a khi chua co commit nao thi bao loi', () => {
+    expect(chayLenh('git init\ngit tag -a v1.0 -m "x"').error).toContain(
+      'Chua co commit nao de gan tag',
+    )
+  })
+
+  it('cherry-pick khi nhanh hien tai CHUA co commit nao (khong co cha)', () => {
+    const r = chayLenh(`git init
+git branch b
+echo "a" > f.txt
+git add .
+git commit -m "c1 tren main"
+git switch b
+git cherry-pick c1
+git log --oneline`)
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('c1 tren main')
+  })
+
+  it('cherry-pick thieu ma commit thi bao loi', () => {
+    expect(chayLenh('git init\ngit cherry-pick').error).toContain('Thieu ma commit')
+  })
+
+  it('rebase thieu ten nhanh thi bao loi', () => {
+    expect(
+      chayLenh('git init\necho "a" > f.txt\ngit add .\ngit commit -m "c1"\ngit rebase').error,
+    ).toContain('Thieu ten nhanh')
+  })
+
+  it('rebase nhanh khong ton tai thi bao loi', () => {
+    expect(
+      chayLenh('git init\necho "a" > f.txt\ngit add .\ngit commit -m "c1"\ngit rebase khong-co')
+        .error,
+    ).toContain('Khong co nhanh')
+  })
+
+  it('rebase khi nhanh hien tai chua co commit nao thi bao loi', () => {
+    expect(chayLenh('git init\ngit branch dich\ngit rebase dich').error).toContain(
+      'chua co commit nao de rebase',
+    )
+  })
+
+  it('rebase khong tuyen tinh (hai nhanh KHONG chung to tien, tao boi git branch truoc commit dau) thi bao loi', () => {
+    // git branch b" khi main CHUA co commit nao -> ca hai nhanh cung co HEAD null; commit dau
+    // tien tren moi nhanh vi vay co parents=[] rieng biet — hai "goc" khac nhau, khong chung
+    // to tien. Day la ca duy nhat hop le de tao lich su khong lien thong trong mo phong nay.
+    const r = chayLenh(`git init
+git branch b
+echo "a" > f.txt
+git add .
+git commit -m "c1 tren main"
+git switch b
+echo "b" > g.txt
+git add .
+git commit -m "c2 tren b"
+git rebase main`)
+    expect(r.error).toContain('to tien chung')
+  })
+})
+
+describe('gitSim — chayGit: lệnh chưa hỗ trợ / thiếu lệnh / init lặp lại', () => {
+  it('git khong kem lenh con thi bao loi', () => {
+    expect(chayLenh('git').error).toContain('Thieu lenh git')
+  })
+
+  it('git init lan hai tren cung kho thi bao "da la kho git roi" (khong loi)', () => {
+    const r = chayLenh('git init\ngit init')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('da la kho git roi')
+  })
+
+  it('lenh git khong duoc ho tro thi bao loi liet ke danh sach lenh dung duoc', () => {
+    expect(chayLenh('git init\ngit foobar').error).toContain('Mo phong chua ho tro "git foobar"')
+  })
+})
+
+describe('gitSim — lệnh shell: pwd/ls/cat/rm/echo/mkdir/cd/không hỗ trợ', () => {
+  it('pwd tra ve duong dan gia lap co dinh', () => {
+    expect(chayLenh('pwd').output).toContain('/home/ban/du-an')
+  })
+
+  it('ls khi thu muc rong', () => {
+    expect(chayLenh('ls').output).toBe('$ ls\n(thu muc rong)')
+  })
+
+  it('cat thieu ten file thi bao loi', () => {
+    expect(chayLenh('cat').error).toContain('Thieu ten file')
+  })
+
+  it('cat file khong ton tai thi bao loi', () => {
+    expect(chayLenh('cat khong-co.txt').error).toContain('Khong co file')
+  })
+
+  it('rm thieu ten file thi bao loi', () => {
+    expect(chayLenh('rm').error).toContain('Thieu ten file')
+  })
+
+  it('rm file khong ton tai thi bao loi', () => {
+    expect(chayLenh('rm khong-co.txt').error).toContain('Khong co file')
+  })
+
+  it('rm xoa file thanh cong', () => {
+    const r = chayLenh('echo "a" > f.txt\nrm f.txt\nls')
+    expect(r.error).toBeUndefined()
+    expect(r.output.trim().split('\n').pop()).toBe('(thu muc rong)')
+  })
+
+  it('echo khong co dau chuyen huong thi tra ve nguyen van noi dung', () => {
+    expect(chayLenh('echo xin chao ban').output).toContain('xin chao ban')
+  })
+
+  it('echo voi >> noi tiep vao file da co', () => {
+    const r = chayLenh('echo "dong 1" > f.txt\necho "dong 2" >> f.txt\ncat f.txt')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('dong 1')
+    expect(r.output).toContain('dong 2')
+  })
+
+  it('echo voi > nhung thieu ten file thi bao loi', () => {
+    expect(chayLenh('echo "xin chao" >').error).toContain('Thieu ten file sau dau')
+  })
+
+  it('remote-seed thieu tham so thi bao loi', () => {
+    expect(chayLenh('remote-seed main').error).toContain('remote-seed can 4 tham so')
+  })
+
+  it('mkdir va cd tra ve thong diep mo phong phang', () => {
+    expect(chayLenh('mkdir thumuc').output).toContain('mo phong: khong tao cay thu muc')
+    expect(chayLenh('cd thumuc').output).toContain('mo phong: khong tao cay thu muc')
+  })
+
+  it('lenh shell khong ho tro thi bao loi', () => {
+    expect(chayLenh('lenh-la').error).toContain('Mo phong chua ho tro lenh')
+  })
+})
+
+describe('gitSim — chayLenh: bối cảnh lỗi, dòng trống/comment, ký tự nháy đơn', () => {
+  it('dòng trống trong lenhChuanBi (bối cảnh) không sinh lệnh, không lỗi', () => {
+    const r = chayLenh('git status', ['git init', ''])
+    expect(r.error).toBeUndefined()
+  })
+
+  it('bối cảnh (lenhChuanBi) gặp lỗi thì trả lỗi ngay, không chạy script chính', () => {
+    const r = chayLenh('git status', ['git khong-ton-tai'])
+    expect(r.error).toContain('Loi khi dung boi canh')
+  })
+
+  it('dòng trống và dòng comment (#) trong script bị bỏ qua', () => {
+    const r = chayLenh('\n# day la comment\ngit init\n\n# init xong\npwd')
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('/home/ban/du-an')
+    expect(r.output).not.toContain('#')
+  })
+
+  it("echo voi nhay don ('...') van tach tu dung", () => {
+    const r = chayLenh("echo 'xin chao the gioi'")
+    expect(r.output).toContain('xin chao the gioi')
   })
 })
 

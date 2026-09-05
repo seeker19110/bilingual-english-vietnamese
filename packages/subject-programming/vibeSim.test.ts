@@ -43,6 +43,32 @@ describe('luật 1 — mô tả mơ hồ thì agent hỏi lại, không xây gì
     const r = chayLenhVibe(`${MOTA_CHUAN}\nvibe`)
     expect(r.error).toBeUndefined()
     expect(r.output).toContain('ban nhap cho xem: 1')
+    // moc gan nhat phai hien dung ten khi da co moc (nhanh mocCuoi truthy).
+  })
+
+  it('mota không có nội dung trong ngoặc kép → lỗi thiếu nội dung', () => {
+    const r = chayLenhVibe('mota')
+    expect(r.error).toContain('thieu noi dung')
+  })
+
+  it('mota với ngoặc kép rỗng → lỗi thiếu nội dung', () => {
+    const r = chayLenhVibe('mota ""')
+    expect(r.error).toContain('thieu noi dung')
+  })
+
+  it('kehoach không có nội dung → lỗi thiếu nội dung', () => {
+    const r = chayLenhVibe('kehoach')
+    expect(r.error).toContain('thieu noi dung')
+  })
+
+  it('kehoach đủ rõ → in đủ 4 bước kế hoạch, chưa đụng vào code', () => {
+    const r = chayLenhVibe(
+      'kehoach "them may tinh chia tien an trua, chia deu, bao loi khi so nguoi bang 0"',
+    )
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Ke hoach cho:')
+    expect(r.output).toContain('4. Noi giao dien, chay thu tung buoc.')
+    expect(r.output).toContain('Chua dung vao code')
   })
 })
 
@@ -65,6 +91,42 @@ describe('luật 2 — không nhận code chưa đọc', () => {
     ])
     expect(r.error).toContain('chua xem diff')
   })
+
+  it('nhan bản nháp đã nhận rồi → lỗi đã nhận', () => {
+    const r = chayLenhVibe('nhan v1', [MOTA_CHUAN, 'xemdiff v1', 'nhan v1'])
+    expect(r.error).toContain('da duoc nhan roi')
+  })
+
+  it('xemdiff/nhan/giaithich/sua thiếu id → lỗi thiếu id', () => {
+    expect(chayLenhVibe('xemdiff').error).toContain('thieu id ban nhap')
+    expect(chayLenhVibe('nhan').error).toContain('thieu id ban nhap')
+    expect(chayLenhVibe('giaithich').error).toContain('thieu id ban nhap')
+    expect(chayLenhVibe('sua').error).toContain('thieu id ban nhap')
+  })
+
+  it('xemdiff/nhan id không tồn tại → lỗi không có bản nháp', () => {
+    const r = chayLenhVibe('xemdiff v9', [MOTA_CHUAN])
+    expect(r.error).toContain('khong co ban nhap "v9"')
+  })
+
+  it('giaithich giải thích bản nháp bằng lời thường (không phải diff)', () => {
+    const r = chayLenhVibe('giaithich v1', [MOTA_CHUAN])
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Giai thich v1 bang loi thuong')
+    expect(r.output).toContain('Hoi tiep duoc')
+  })
+
+  it('sua thiếu id → lỗi thiếu id ban nhap (đã canh ở trên); sua id không tồn tại → lỗi', () => {
+    const r = chayLenhVibe('sua v9 "gop y"', [MOTA_CHUAN])
+    expect(r.error).toContain('khong co ban nhap "v9"')
+  })
+
+  it('sua không kèm góp ý trong ngoặc kép → lỗi thiếu góp ý', () => {
+    const r = chayLenhVibe('sua v1', [MOTA_CHUAN])
+    expect(r.error).toContain('sua phai kem gop y')
+    const rong = chayLenhVibe('sua v1 ""', [MOTA_CHUAN])
+    expect(rong.error).toContain('sua phai kem gop y')
+  })
 })
 
 describe('luật 3 — test chưa xanh thì không deploy', () => {
@@ -79,6 +141,12 @@ describe('luật 3 — test chưa xanh thì không deploy', () => {
     const r = chayLenhVibe('kiemtra\ntrienkhai', CHUAN_BI_DA_NHAN)
     expect(r.error).toBeUndefined()
     expect(r.output).toContain('Da trien khai')
+  })
+
+  it('vibe hiện "da len song" sau khi đã trienkhai thành công', () => {
+    const r = chayLenhVibe('vibe', [...CHUAN_BI_DA_NHAN, 'kiemtra', 'trienkhai'])
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('trien khai: da len song')
   })
 
   it('nhận thêm tính năng SAU khi kiểm → test về chua-chay, deploy lại bị chặn', () => {
@@ -144,6 +212,52 @@ describe('mốc & hoàn tác', () => {
     expect(r.output).toContain('cho-xem: v2')
     expect(r.output).toContain('tinh nang da nhan: 1')
   })
+
+  it('luu thiếu tên mốc → lỗi thiếu tên', () => {
+    expect(chayLenhVibe('luu').error).toContain('thieu ten moc')
+    expect(chayLenhVibe('luu ""').error).toContain('thieu ten moc')
+  })
+
+  it('lichsu khi chưa có mốc → nhắc cách lưu', () => {
+    const r = chayLenhVibe('lichsu')
+    expect(r.output).toContain('Chua co moc nao')
+  })
+
+  it('lichsu liệt kê các mốc đã lưu theo thứ tự', () => {
+    const r = chayLenhVibe('luu "moc 2"\nlichsu', [MOTA_CHUAN, 'luu "moc 1"'])
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('1. moc 1 (0 tinh nang)')
+    expect(r.output).toContain('2. moc 2 (0 tinh nang)')
+  })
+
+  it('quaylai khi không có tính năng nào nhận sau mốc → báo giữ nguyên', () => {
+    const r = chayLenhVibe('quaylai', [MOTA_CHUAN, 'luu "moc rong"'])
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('Khong co tinh nang nao nhan sau moc')
+  })
+
+  it('vibe hiện đúng tên mốc gần nhất sau khi đã lưu', () => {
+    const r = chayLenhVibe('vibe', [MOTA_CHUAN, 'luu "moc dau tien"'])
+    expect(r.output).toContain('moc gan nhat: moc dau tien')
+  })
+})
+
+describe('kiemtra ca biên', () => {
+  it('kiemtra khi chưa nhận tính năng nào → lỗi không có gì để kiểm', () => {
+    const r = chayLenhVibe('kiemtra')
+    expect(r.error).toContain('chua co tinh nang nao duoc nhan')
+  })
+
+  it('kiemtra khi còn bản nháp cho-xem → cảnh báo chưa tính vào dự án', () => {
+    const r = chayLenhVibe('kiemtra', [
+      MOTA_CHUAN,
+      'xemdiff v1',
+      'nhan v1',
+      MOTA_QUEN_BIEN.replace('nut doi giao dien', 'khung tim kiem nang cao'),
+    ])
+    expect(r.error).toBeUndefined()
+    expect(r.output).toContain('con 1 ban nhap cho xem')
+  })
 })
 
 describe('tất định + bối cảnh', () => {
@@ -157,5 +271,11 @@ describe('tất định + bối cảnh', () => {
     expect(ok.output).not.toContain('$ mota')
     const hong = chayLenhVibe('vibe', ['mota "mo ho"'])
     expect(hong.error).toContain('Loi khi dung boi canh')
+  })
+
+  it('dòng trống và dòng bắt đầu bằng # bị bỏ qua, không echo ra output', () => {
+    const r = chayLenhVibe('\n# ghi chu khong chay\nvibe')
+    expect(r.output).not.toContain('ghi chu khong chay')
+    expect(r.output).toContain('$ vibe')
   })
 })

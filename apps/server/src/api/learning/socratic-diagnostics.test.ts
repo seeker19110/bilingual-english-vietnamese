@@ -76,4 +76,66 @@ describe('api/socratic-diagnostics', () => {
     const res = await handler(req('GET'))
     expect(res.status).toBe(401)
   })
+
+  it('handles OPTIONS request with 204', async () => {
+    const res = await handler(req('OPTIONS'))
+    expect(res.status).toBe(204)
+  })
+
+  it('trả 429 khi vượt rate limit', async () => {
+    rateLimitOk = false
+    const res = await handler(req('GET'))
+    expect(res.status).toBe(429)
+  })
+
+  it('POST start: thiếu misconceptionId trả 400', async () => {
+    const res = await handler(req('POST', { action: 'start' }))
+    expect(res.status).toBe(400)
+  })
+
+  it('POST reflect: thiếu sessionId hoặc answer trả 400', async () => {
+    const res = await handler(req('POST', { action: 'reflect', sessionId: 's1' }))
+    expect(res.status).toBe(400)
+  })
+
+  it('POST action không hợp lệ trả 400', async () => {
+    const res = await handler(req('POST', { action: 'unknown' }))
+    expect(res.status).toBe(400)
+  })
+
+  it('method không được hỗ trợ trả 405', async () => {
+    const res = await handler(req('DELETE'))
+    expect(res.status).toBe(405)
+  })
+
+  it('trả 400 khi body không phải JSON hợp lệ (readJsonBody lỗi)', async () => {
+    const res = await handler(
+      new Request('http://localhost/api/socratic-diagnostics', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: '{invalid-json',
+      }),
+    )
+    expect(res.status).toBe(400)
+  })
+
+  it('POST reflect với sessionId không tồn tại → lỗi hạ tầng bất kỳ trả 500', async () => {
+    const res = await handler(
+      req('POST', { action: 'reflect', sessionId: 'phien-khong-ton-tai', answer: 'abc' }),
+    )
+    expect(res.status).toBe(500)
+    const data = await res.json()
+    expect(data.error).toBe('Lỗi xử lý chẩn đoán nhận thức Socratic')
+  })
+
+  it('GET: getOrCreatePerson ném AppError → trả đúng status/body của AppError', async () => {
+    const { AppError } = await import('@dhcb/core-errors/appError')
+    getOrCreatePerson.mockRejectedValueOnce(
+      new AppError('Người dùng không hợp lệ', 422, 'bad_person'),
+    )
+    const res = await handler(req('GET'))
+    expect(res.status).toBe(422)
+    const data = await res.json()
+    expect(data.error.code).toBe('bad_person')
+  })
 })

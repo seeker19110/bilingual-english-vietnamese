@@ -109,15 +109,22 @@ export default defineConfig({
       // người dùng 2026-09-04) — mỗi lần đo cao hơn sàn nhiều thì siết sàn theo, chừa biên độ
       // để không đỏ vì dao động nhỏ giữa các lần chạy (mock ngẫu nhiên, thứ tự file…).
       //
-      // Số đo thật lúc siết (2026-09-04, sau khi vá 3 lỗi Windows chặn coverage chạy được):
-      // stmts 96,36 · branches 90,71 · funcs 95,19 · lines 96,36. branches có biên độ MỎNG
-      // nhất (0,71 so với sàn cũ) nên GIỮ NGUYÊN 90 — ba chỉ số còn lại nâng, chừa ~1 điểm.
+      // Số đo thật lúc siết (2026-09-05, sau đợt bổ sung test 33 file logic thuần):
+      // stmts 97,79 · branches 92,09 · funcs 96,98 · lines 97,79 — chừa ~1 điểm biên độ để
+      // không đỏ vì dao động nhỏ giữa các lần chạy.
       // Đây vẫn là sàn tối thiểu, KHÔNG phải mục tiêu: đừng viết ít test đi cho "vừa đủ".
+      //
+      // Vì sao KHÔNG đặt sàn 100: phần chưa phủ còn lại KHÔNG phải "thiếu test" mà là hai
+      // loại mã mà test đơn vị không chạm tới được một cách trung thực — (a) nhánh phòng thủ
+      // chết do `noUncheckedIndexedAccess` bắt viết (`?? ''`, `?? 0`) mà bất biến của chính
+      // module bảo đảm không bao giờ kích hoạt, (b) vỏ bọc WebSocket/mạng sống
+      // (wsCoLearningHandler, wsGeminiLiveHandler, clientAuth…) thuộc phạm vi E2E. Ép 100
+      // chỉ đẻ ra test giả kiểm chính cái mock vừa dựng.
       thresholds: {
-        statements: 95,
-        branches: 90,
-        functions: 94,
-        lines: 95,
+        statements: 97,
+        branches: 91,
+        functions: 96,
+        lines: 97,
       },
     },
   },

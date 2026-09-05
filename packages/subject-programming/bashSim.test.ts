@@ -604,4 +604,69 @@ describe('bashSim — nốt các lối rẽ hiếm gặp nhưng có thật', () 
     expect(ra('touch a.txt\nmkdir d\nfind . -type f')).toBe('./a.txt\n')
     expect(ra('touch a.txt\nfind . -name')).toBe('.\n./a.txt\n')
   })
+
+  it('grep không có tên file thì đọc từ stdin (qua pipe)', () => {
+    // Nhánh "khong co ten file" của grep: nguon rỗng thì dùng thẳng stdin.
+    expect(ra('echo "cam\nchuoi" | grep cam')).toBe('cam\n')
+  })
+
+  it('cut nhận "-d ," (dấu ngăn cách rời khỏi cờ) và nhiều cột "-f1,2"', () => {
+    expect(ra('echo "a,b,c" > d.csv\ncut -d , -f2 d.csv')).toBe('b\n')
+    expect(ra('echo "a,b,c" > d.csv\ncut -d, -f1,3 d.csv')).toBe('a,c\n')
+  })
+
+  it('wc/head/tail trên nội dung rỗng không vỡ (thanhDong trả mảng rỗng)', () => {
+    expect(ra('touch rong.txt\nwc -l rong.txt')).toBe('0 rong.txt\n')
+    expect(ra('touch rong.txt\nhead rong.txt')).toBe('')
+  })
+
+  it('script con LỖI CÚ PHÁP (không phải lỗi lệnh thường) thì lỗi vẫn thoát ra ngoài đúng chỗ', () => {
+    // Lỗi lệnh thường (vd gõ sai tên lệnh) bị chayChuoi tự bắt cho TỪNG câu lệnh một, không ném
+    // ra ngoài. Nhưng lỗi CÚ PHÁP (vd thiếu dấu nháy đóng) xảy ra lúc tách token — TRƯỚC vòng lặp
+    // từng câu lệnh — nên ném thẳng ra khỏi chayChuoi(), rồi bị chayScript() bắt lại và ném tiếp
+    // ra ngoài (nhánh "else throw e", khác nhánh bắt ThoatSom của lệnh exit).
+    const r = ra("echo 'echo \"chua dong' > loi.sh\nchmod +x loi.sh\n./loi.sh")
+    expect(r).toContain('nhay kep')
+  })
+
+  it('cd không tham số thì về thư mục nhà ("~" mặc định)', () => {
+    expect(ra('mkdir a\ncd a\ncd\npwd')).toBe('/home/ban\n')
+  })
+
+  it('cut -d/-f đứng cuối, thiếu giá trị đi kèm thì dùng mặc định thay vì vỡ', () => {
+    // "-d" là token CUỐI CÙNG, không còn ký tự ngăn cách theo sau → rơi về mặc định tab.
+    expect(ra('echo "a\tb" > f.txt\ncut -f1 f.txt -d')).toBe('a\n')
+    // "-f" là token CUỐI CÙNG, không còn số cột theo sau → chuỗi rỗng không phải số cột hợp lệ.
+    expect(ra('echo "a,b" > f.txt\ncut -d, f.txt -f')).toContain('phai la so cot')
+  })
+
+  it('find ngay tại thư mục gốc "/" chỉ liệt kê đúng chính nó (không ghép sai dấu "/" kép)', () => {
+    expect(ra('find / -type d')).toBe('/\n')
+  })
+
+  it('boi canh (lenhChuanBi) chạy im lặng — lệnh in ra vẫn được nuốt, không lọt vào output', () => {
+    const r = chayBash('pwd', ['echo boi-canh-khong-duoc-hien'])
+    expect(r.output).not.toContain('boi-canh-khong-duoc-hien')
+  })
+
+  it('chuỗi trong nháy kép trải dài NHIỀU DÒNG vẫn được ghép đúng làm một khối', () => {
+    const r = ra('echo "dong mot\ndong hai"')
+    expect(r).toBe('dong mot\ndong hai\n')
+  })
+
+  it('vòng "for" thiếu "done" chạy tới hết script vẫn không bị treo (gom khối tới cuối file)', () => {
+    // Bộ gom khối theo dòng: thiếu "done"/"fi" thì cứ gom mãi tới hết script rồi mới dừng —
+    // nhánh "hết dòng" của điều kiện while, khác nhánh "gặp done/fi cân bằng lại".
+    const r = ra('for x in 1 2\necho $x')
+    expect(r).toContain('tu khoa')
+  })
+
+  it('lỗi JS THẬT (không phải LoiBash/ThoatSom) ở chayTungDong thì ném thẳng ra ngoài', () => {
+    // $( ) lồng quá sâu làm tràn ngăn xếp gọi hàm (RangeError) — không phải lỗi dạy được
+    // (LoiBash) và không phải exit (ThoatSom), nên nhánh "else throw e" phải ném nguyên lỗi
+    // đó ra ngoài chayBash() thay vì nuốt hoặc biến thành thông báo tiếng Việt.
+    let sau = 'echo hi'
+    for (let i = 0; i < 1000; i += 1) sau = `echo $(${sau})`
+    expect(() => chayBash(sau)).toThrow(RangeError)
+  })
 })

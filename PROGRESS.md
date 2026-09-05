@@ -3087,6 +3087,20 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   tức bản thân việc vá coverage có giá trị chứ không chỉ là làm đẹp con số. Vẫn còn mỏng: nửa
   điểm là đủ để một PR thêm khối mã lớn mà quên test làm CI đỏ.
 
+  **[Đo lại 2026-09-05, PR #854 — phần coverage của nợ này coi như ĐÓNG.]** Sau đợt bổ sung
+  test cho 33 file logic thuần: stmts **97,79%** · branches **92,09%** · funcs **96,98%** ·
+  lines **97,79%** (568/568 file test xanh, 528/812 file đạt 100% tuyệt đối). Sàn siết lên
+  97/91/96/97, biên độ branches nay **1,09 điểm** — gấp đôi mức 0,54 ghi ở trên, đủ chỗ cho
+  một PR thêm khối mã lớn. Đợt này cũng bắt ra một lỗi thật nữa (id trùng do `Date.now()` ở
+  `memoryPalaceService.ts` làm API trả 404 sai) — lần thứ hai liên tiếp việc vá coverage lòi
+  ra bug thật chứ không chỉ làm đẹp con số.
+
+  **Không đóng hẳn được ở mức 100%, và đây là kết luận có chủ đích, không phải việc bỏ dở.**
+  Phần chưa phủ còn lại là (a) nhánh phòng thủ chết do `noUncheckedIndexedAccess` bắt viết,
+  (b) vỏ bọc WebSocket/mạng sống thuộc phạm vi E2E. Danh sách mã chết cụ thể theo từng
+  file:dòng nằm ở `docs/changelog/0269-2026-09-05-nang-coverage-33-file-logic-thuan.md` —
+  **cần người dùng quyết xoá hay giữ, tách đợt riêng.**
+
   **[Đo lại 2026-08-31, sau loạt "thiết kế lại web cho desktop" PR #743/#750/#756] Bundle ăn
   bớt biên độ, coverage chưa đo lại.** `npm run build && npm run budget` trên `main` sau khi cả
   3 PR merge:
