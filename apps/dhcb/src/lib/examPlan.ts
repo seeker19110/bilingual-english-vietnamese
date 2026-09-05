@@ -7,7 +7,7 @@
 // (thi gì, ngày nào) — xem `apps/server/src/api/learning/exam-plan.ts`.
 
 import { buildExamPlan, type ExamPlanOutput } from '@dhcb/core-examplan/examPlan'
-import type { ExamPlan, CreateExamPlanInput } from '@dhcb/core-contracts/examPlan'
+import type { ExamPlan, CreateExamPlanInput, ExamKind } from '@dhcb/core-contracts/examPlan'
 import { getAuthHeader } from '@core/authHeader'
 import { getLevelWords, getDailySpeed } from './curriculum'
 import { getLearnedWords } from './vocab'
@@ -23,6 +23,18 @@ import type { CefrLevel } from '../data/cefrTypes'
  * ngày phình lên và kế hoạch thành bất khả thi giả.
  */
 const EXAM_SCOPE_LEVELS: Array<CefrLevel['id']> = ['A1', 'A2', 'B1']
+
+/**
+ * Kỳ thi mặc định theo CHIỀU HỌC — mỗi chiều đúng một kỳ thi (luật 4.4: một kế hoạch tại một
+ * thời điểm, và đợt này không làm màn hình chọn kỳ thi).
+ *
+ * Chiều B dùng `vsl-b1` (chứng chỉ tiếng Việt bậc 3). Phạm vi ôn của nó **dùng lại cùng bộ cặp
+ * từ A1–B1**, chỉ khác chiều hỏi — xem ghi chú giới hạn ở `@dhcb/core-contracts/examPlan`. Vì
+ * phạm vi trùng nhau nên `getExamScopeWords()` không cần tham số kỳ thi.
+ */
+export function examKindForDirection(isA: boolean): ExamKind {
+  return isA ? 'vao10-english' : 'vsl-b1'
+}
 
 /** Từ vựng trong phạm vi kỳ thi (đã khử trùng giữa các cấp). */
 export function getExamScopeWords(): string[] {
@@ -87,7 +99,14 @@ export async function fetchExamPlan(): Promise<ExamPlan | null> {
 
 export type CreateOutcome = { ok: true; plan: ExamPlan } | { ok: false; message: string }
 
-export async function createExamPlan(input: CreateExamPlanInput): Promise<CreateOutcome> {
+/**
+ * `isA` chỉ dùng để chọn NGÔN NGỮ của câu lỗi dự phòng khi server không nói gì (lỗi mạng, phản
+ * hồi rỗng). Lỗi do server trả về thì hiện nguyên văn — server là nơi biết chuyện gì đã xảy ra.
+ */
+export async function createExamPlan(
+  input: CreateExamPlanInput,
+  isA = true,
+): Promise<CreateOutcome> {
   try {
     const res = await fetch(ENDPOINT, {
       method: 'POST',
@@ -96,10 +115,16 @@ export async function createExamPlan(input: CreateExamPlanInput): Promise<Create
     })
     const data = (await res.json()) as { plan?: ExamPlan; error?: string }
     if (!res.ok || !data.plan)
-      return { ok: false, message: data.error ?? 'Không tạo được kế hoạch' }
+      return {
+        ok: false,
+        message: data.error ?? (isA ? 'Không tạo được kế hoạch' : 'Could not create a plan'),
+      }
     return { ok: true, plan: data.plan }
   } catch {
-    return { ok: false, message: 'Lỗi mạng — thử lại sau' }
+    return {
+      ok: false,
+      message: isA ? 'Lỗi mạng — thử lại sau' : 'Network error — please try again',
+    }
   }
 }
 

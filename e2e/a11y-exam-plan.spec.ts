@@ -4,6 +4,10 @@
 //   1. Chưa có kế hoạch → biểu mẫu (input ngày, thanh trượt, nút chọn ngày nghỉ).
 //   2. Đã có kế hoạch → đồng hồ đếm ngược + khối cảnh báo "không kịp" (nền hổ phách).
 // Màn hình 2 cần giả lập API vì E2E chạy bằng Vite dev, không có backend.
+//
+// Chiều B (2026-09-05, trả nợ): trang nay có bản tiếng Anh cho người nước ngoài học tiếng Việt
+// (kỳ thi `vsl-b1`) — quét thêm 2 theme ở `direction='B'` + 1 vòng AAA, cùng khuôn đã áp cho
+// `a11y-companion-link.spec.ts`.
 
 import { test, expect, type Page } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
@@ -71,4 +75,53 @@ test('a11y AAA: chữ nội dung trang Ôn thi đạt tương phản ≥ 7:1', a
   await page.goto('/on-thi', { waitUntil: 'domcontentloaded' })
   await expect(page.getByRole('heading', { name: 'Hôm nay' })).toBeVisible({ timeout: 15_000 })
   expect(await scan(page, ['wcag2aaa'])).toEqual([])
+})
+
+// ── Chiều B ─────────────────────────────────────────────────────────────────
+const DIRECTION_B_THEMES: ThemeName[] = ['blue-sky', 'pink']
+
+/** Cùng kế hoạch "không kịp" như chiều A, chỉ đổi kỳ thi + nhãn mục tiêu sang chiều B. */
+const NEAR_PLAN_B = { ...NEAR_PLAN, examKind: 'vsl-b1', targetLabel: 'level 3' }
+
+async function gotoPlanB(page: Page, theme?: ThemeName) {
+  await mockLogin(page, 'en', theme)
+  await page.addInitScript(() => localStorage.setItem('et_direction', 'B'))
+  await mockApi(page, NEAR_PLAN_B)
+  await page.goto('/on-thi', { waitUntil: 'domcontentloaded' })
+  await expect(page.getByRole('heading', { name: 'Today' })).toBeVisible({ timeout: 15_000 })
+}
+
+for (const theme of DIRECTION_B_THEMES) {
+  test(`a11y: /on-thi chiều B — biểu mẫu tạo kế hoạch, theme=${theme} — 0 vi phạm A/AA`, async ({
+    page,
+  }) => {
+    await mockLogin(page, 'en', theme)
+    await page.addInitScript(() => localStorage.setItem('et_direction', 'B'))
+    await mockApi(page, null)
+    await page.goto('/on-thi', { waitUntil: 'domcontentloaded' })
+    await expect(page.getByRole('button', { name: 'Start the countdown' })).toBeVisible({
+      timeout: 15_000,
+    })
+    expect(await scan(page, AA_TAGS)).toEqual([])
+  })
+
+  test(`a11y: /on-thi chiều B — đã có kế hoạch, theme=${theme} — 0 vi phạm A/AA`, async ({
+    page,
+  }) => {
+    await gotoPlanB(page, theme)
+    expect(await scan(page, AA_TAGS)).toEqual([])
+  })
+}
+
+test('a11y AAA chiều B: chữ nội dung trang Exam prep đạt tương phản ≥ 7:1', async ({ page }) => {
+  await gotoPlanB(page)
+  expect(await scan(page, ['wcag2aaa'])).toEqual([])
+})
+
+// Canh bất biến của đợt trả nợ: chiều B KHÔNG được lọt chuỗi tiếng Việt nào ra giao diện.
+test('chiều B: trang Ôn thi không lọt chuỗi tiếng Việt nào', async ({ page }) => {
+  await gotoPlanB(page)
+  const text = (await page.locator('main').innerText()).replace(/Đồng hành cùng bạn/g, '')
+  // Dấu phụ tiếng Việt (ăâêôơưđ + thanh điệu) — tiếng Anh không có ký tự nào trong dải này.
+  expect(text).not.toMatch(/[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i)
 })

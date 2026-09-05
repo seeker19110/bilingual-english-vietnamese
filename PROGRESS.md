@@ -2970,9 +2970,13 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   Ngoài ra: **4 trang trụ Career/Work/Startup/Life vẫn chưa có bản chiều B** (0/4 file dùng
   `direction`, toàn bộ chuỗi hardcode tiếng Việt) — cùng loại nợ với mục ngay dưới đây.
 
-- 🟡 **[2026-08-26 — NỢ CÓ CHỦ ĐÍCH, người dùng chốt; TRẢ MỘT PHẦN 2026-09-03] Hai tính năng mới
-  CHƯA có bản chiều B** (người nước ngoài học tiếng Việt). Người dùng xác nhận: "chiều A là ok
-  rồi, chiều B nợ".
+- 🟡 **[2026-08-26 — NỢ CÓ CHỦ ĐÍCH, người dùng chốt; TRẢ XONG PHẦN GIAO DIỆN 2026-09-05] Hai
+  tính năng mới CHƯA có bản chiều B** (người nước ngoài học tiếng Việt). Người dùng xác nhận:
+  "chiều A là ok rồi, chiều B nợ".
+
+  **Trạng thái nay: CẢ HAI tính năng đã chạy được ở chiều B** ("Người thân theo dõi" 2026-09-03,
+  "Chế độ ôn thi" 2026-09-05). Phần còn mở KHÔNG còn là việc dịch giao diện nữa mà là **việc
+  NỘI DUNG**: bộ từ vựng tiếng Việt phân bậc cho phạm vi ôn thi `vsl-b1` (chi tiết ngay dưới).
 
   **[2026-09-03] "Người thân theo dõi" — ĐÃ TRẢ XONG.** Khối `CompanionLinkSection.tsx` nay nhận
   prop `isA` (như `ReferralSection`) và render đủ ở cả hai chiều — bỏ điều kiện `{isA && ...}` ở
@@ -2983,21 +2987,25 @@ scripts/load-test/k6-baseline.js`) nhắm staging/production — tăng dần VU_
   `WeeklyReportDataSchema` với `.default('A')` để dữ liệu/test cũ không cần đổi. Cổng
   `e2e/a11y-companion-link.spec.ts` đã nới thêm 2 theme + 1 vòng AAA ở `direction='B'`.
 
-  **Còn nợ: Chế độ ôn thi (`/on-thi`).** Trang vẫn toàn chữ tiếng Việt; kỳ thi "vào lớp 10 —
-  Tiếng Anh" cũng không hợp với người học chiều B — **đây là việc NỘI DUNG** (cần một kỳ thi khác,
-  người nước ngoài học tiếng Việt thi VSTEP/chứng chỉ tiếng Việt), không chỉ việc dịch chuỗi, nên
-  tách khỏi đợt vừa xong.
+  **[2026-09-05] "Chế độ ôn thi" — ĐÃ TRẢ XONG phần giao diện + kỳ thi.** `ExamPlan.tsx` nay song
+  ngữ trọn vẹn theo khuôn `isA ? 'vi' : 'en'` (giống `CompanionLinkSection`), `ExamKindSchema` mở
+  thêm `vsl-b1` (chứng chỉ tiếng Việt bậc 3 theo Khung năng lực tiếng Việt cho người nước ngoài,
+  Thông tư 17/2015) và `examKindForDirection()` chọn kỳ thi theo chiều học. Không cần migration:
+  cột `exam_kind` là `text` không có ràng buộc CHECK. Cổng `e2e/a11y-exam-plan.spec.ts` nới thêm
+  2 theme × 2 màn hình + 1 vòng AAA ở `direction='B'`, **cộng một test bất biến mới**: quét toàn
+  bộ `main` ở chiều B và bắt đỏ nếu lọt bất kỳ ký tự có dấu tiếng Việt nào. 17/17 test xanh.
 
-  **Việc còn lại khi trả nốt:**
+  **GIỚI HẠN CÒN LẠI, cố ý và NÓI THẲNG trên giao diện** (người dùng không có ưu tiên khi được
+  hỏi, nên chọn phương án ship được ngay): phạm vi ôn của `vsl-b1` dùng lại chính bộ cặp từ
+  A1–B1 sẵn có, học ngược chiều Việt → Anh, vì repo **chưa có bộ từ vựng tiếng Việt phân bậc**.
+  Bậc hiển thị vì vậy là bậc CEFR của phía tiếng Anh, không phải bậc tiếng Việt thật — trang
+  `/on-thi` in rõ điều này cho người học ở khối "Scope note", không giấu. Ghi chú giới hạn cũng
+  nằm ngay trên `ExamKindSchema`.
 
-  1. `apps/dhcb/src/pages/learning/ExamPlan.tsx` + `apps/dhcb/src/lib/examPlan.ts` — chuỗi song
-     ngữ, và mở `ExamKindSchema` (`packages/core-contracts/examPlan.ts`) cho kỳ thi của chiều B
-     kèm phạm vi từ vựng tương ứng.
-  2. Nới cổng `e2e/a11y-exam-plan.spec.ts` sang `uiLang: 'en'` + `direction='B'` (cùng khuôn vừa
-     áp cho `a11y-companion-link.spec.ts`).
-
-  **Điều kiện gỡ nợ (phần còn lại):** chế độ ôn thi chạy được ở `direction === 'B'` với 0 chuỗi
-  tiếng Việt lọt ra, và cổng a11y xanh ở cả hai ngôn ngữ giao diện.
+  **Việc còn lại (đợt NỘI DUNG riêng, chưa lên lịch):** soạn bộ từ vựng tiếng Việt phân bậc theo
+  Khung năng lực tiếng Việt cho người nước ngoài rồi thay vào phạm vi của `vsl-b1`. Đây là việc
+  soạn nội dung vài nghìn mục cần nguồn tham chiếu, không phải việc sửa mã — nên tách hẳn, và
+  cần một đặc tả riêng trước khi bắt đầu.
 
 - 🟡 **[2026-08-26 — HẠ MỨC sau khi chẩn đoán; ban đầu ghi 🔴 là ĐÁNH GIÁ QUÁ NẶNG] Redis rớt
   kết nối 7 lần/ngày, mỗi lần DƯỚI MỘT GIÂY.** `pm2 logs dhcb --err` cho thấy 7 cặp log
