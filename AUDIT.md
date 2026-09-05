@@ -39,28 +39,28 @@ flowchart TD
 
 ### TẦNG 1: Cổng Tự Động & Static Analysis Khắt Khe Nhất
 
-| Chỉ tiêu               | Lệnh thực thi          | Tiêu chí đạt chuẩn                                          | Dấu hiệu lỗi vi mô cần bắt                                                 |
-| :--------------------- | :--------------------- | :---------------------------------------------------------- | :------------------------------------------------------------------------- |
-| **TypeScript Strict**  | `npm run typecheck`    | 0 errors trên cả 4 tsconfigs (`root`, `api`, `e2e`, `hub`). | Bất kỳ implicit `any`, type assertion ép kiểu nguy hiểm `as unknown as T`. |
-| **ESLint Static Code** | `npm run lint`         | 0 errors, 0 warnings (`--max-warnings 0`).                  | Biến không dùng, hook dependency thiếu, `console.log` sót lại.             |
-| **Prettier Format**    | `npm run format:check` | 100% matched Prettier style.                                | Khoảng trắng, ký tự điều khiển ẩn, xuống dòng không chuẩn.                 |
-| **Unit & Integration** | `npm test`             | **100% test passed** (≥ 4.258 tests).                       | Unhandled promise rejections, test flaky, stderr bất thường.               |
-| **Bundle Size Budget** | `npm run size`         | JS ≤ 123 kB, CSS ≤ 11 kB (Brotli).                          | Code-splitting hỏng khiến bundle phình to vượt ngân sách.                  |
-| **Build Integrity**    | `npm run build`        | Thành công trọn vẹn cả Client, Server, Hub.                 | Lỗi đóng gói Vite, circular chunking warnings.                             |
+| Chỉ tiêu               | Lệnh thực thi          | Tiêu chí đạt chuẩn                                                  | Dấu hiệu lỗi vi mô cần bắt                                                 |
+| :--------------------- | :--------------------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------- |
+| **TypeScript Strict**  | `npm run typecheck`    | 0 errors trên cả 4 tsconfigs (`root`, `api`, `e2e`, `hub`).         | Bất kỳ implicit `any`, type assertion ép kiểu nguy hiểm `as unknown as T`. |
+| **ESLint Static Code** | `npm run lint`         | 0 errors, 0 warnings (`--max-warnings 0`).                          | Biến không dùng, hook dependency thiếu, `console.log` sót lại.             |
+| **Prettier Format**    | `npm run format:check` | 100% matched Prettier style.                                        | Khoảng trắng, ký tự điều khiển ẩn, xuống dòng không chuẩn.                 |
+| **Unit & Integration** | `npm test`             | **100% test passed** (≥ 12.152 test, đo 2026-09-05).                | Unhandled promise rejections, test flaky, stderr bất thường.               |
+| **Bundle Size Budget** | `npm run size`         | JS ≤ 140 kB, CSS ≤ 20 kB (Brotli — nguồn thật: `.size-limit.json`). | Code-splitting hỏng khiến bundle phình to vượt ngân sách.                  |
+| **Build Integrity**    | `npm run build`        | Thành công trọn vẹn cả Client, Server, Hub.                         | Lỗi đóng gói Vite, circular chunking warnings.                             |
 
 ---
 
 ### TẦNG 2: An Ninh Ứng Dụng & Kiểm Soát Quyền (OWASP ASVS Level 3)
 
-| Nhóm vi phạm                      | Kỹ thuật quét vi mô                                            | Dấu hiệu lỗi vi mô                                                                                                |
-| :-------------------------------- | :------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------- |
-| **1. SQL Injection**              | `grep -rn "query(" api/ packages/`                             | Nối chuỗi SQL (`+`, template `${var}`) thay vì truyền mảng tham số `[$1, $2]`.                                    |
-| **2. IDOR / Quyền dữ liệu**       | Rà soát mọi API handler có nhận `id`, `userId`, `roomId`       | Sử dụng trực tiếp tham số người dùng truyền lên thay vì đối chiếu với `auth.userId` từ token xác thực của server. |
-| **3. XSS (Cross-Site Scripting)** | `grep -rn "dangerouslySetInnerHTML" apps/`                     | Sử dụng HTML thô chưa được lọc qua bộ khử khuẩn DOMPurify.                                                        |
-| **4. Lộ Secret / PII**            | `grep -rn "sk-\|AIza\|Bearer \|password" apps/ api/ packages/` | Hardcode API keys, in token/password ra console hoặc gửi PII lên Sentry logs.                                     |
-| **5. CSRF & Token Spoofing**      | Kiểm tra header `Authorization` trong `validateAuth()`         | Chấp nhận request thay đổi trạng thái (POST/PUT/DELETE) chỉ dựa vào cookie không an toàn.                         |
-| **6. Lỗ hổng Dependency**         | `npm audit --omit=dev`                                         | Tồn tại lỗ hổng cấp độ High hoặc Critical trong production dependencies.                                          |
-| **7. Security Headers**           | Rà soát CSP trong `server.ts` & Nginx config                   | Thiếu `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `Referrer-Policy` hoặc CSP lỏng lẻo.        |
+| Nhóm vi phạm                      | Kỹ thuật quét vi mô                                                             | Dấu hiệu lỗi vi mô                                                                                                |
+| :-------------------------------- | :------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------- |
+| **1. SQL Injection**              | `grep -rn "query(" apps/server/src/ packages/`                                  | Nối chuỗi SQL (`+`, template `${var}`) thay vì truyền mảng tham số `[$1, $2]`.                                    |
+| **2. IDOR / Quyền dữ liệu**       | Rà soát mọi API handler có nhận `id`, `userId`, `roomId`                        | Sử dụng trực tiếp tham số người dùng truyền lên thay vì đối chiếu với `auth.userId` từ token xác thực của server. |
+| **3. XSS (Cross-Site Scripting)** | `grep -rn "dangerouslySetInnerHTML" apps/`                                      | Sử dụng HTML thô chưa được lọc qua bộ khử khuẩn DOMPurify.                                                        |
+| **4. Lộ Secret / PII**            | `grep -rn "sk-\|AIza\|Bearer \|password" apps/ packages/`                       | Hardcode API keys, in token/password ra console hoặc gửi PII lên Sentry logs.                                     |
+| **5. CSRF & Token Spoofing**      | Kiểm tra cookie phiên `session_token` trong `validateAuth()` (Bearer đã bỏ hẳn) | Chấp nhận request thay đổi trạng thái (POST/PUT/DELETE) chỉ dựa vào cookie không an toàn.                         |
+| **6. Lỗ hổng Dependency**         | `npm audit --omit=dev`                                                          | Tồn tại lỗ hổng cấp độ High hoặc Critical trong production dependencies.                                          |
+| **7. Security Headers**           | Rà soát CSP trong `apps/server/src/routes.ts` & `nginx/en-vi.conf`              | Thiếu `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `Referrer-Policy` hoặc CSP lỏng lẻo.        |
 
 ---
 
@@ -95,10 +95,10 @@ flowchart TD
 ### TẦNG 5: Độ Phủ Kiểm Thử & Kiểm Thử Ca Biên (Edge Cases)
 
 1. **Ngưỡng Độ Phủ Kiểm Thử Cứng (Coverage Ratchet)**:
-   - Statements ≥ 93% · Branches ≥ 89% · Functions ≥ 96% · Lines ≥ 93%.
+   - Statements ≥ 97% · Branches ≥ 93% · Functions ≥ 96% · Lines ≥ 97% (nguồn thật: `vitest.config.ts`).
 2. **Ma Trận Kiểm Thử Ca Biên (Edge-Case Matrix)**:
    - **Phân biệt `null` vs `0` vs `undefined`**: Xử lý rạch ròi giữa "chưa từng học/chưa có dữ liệu" và "điểm số/lượt dùng bằng 0".
-   - **Dữ liệu đầu vào bất thường**: Mảng rỗng `[]`, chuỗi rỗng `""`, chuỗi siêu dài (vượt 4.000 ký tự), ký tự Unicode đặc biệt, SQL injection payloads.
+   - **Dữ liệu đầu vào bất thường**: Mảng rỗng `[]`, chuỗi rỗng `""`, chuỗi siêu dài (vượt 2.000 ký tự / tin nhắn), ký tự Unicode đặc biệt, SQL injection payloads.
    - **Xử lý ngắt kết nối mạng**: Kiểm thử hành vi khi mạng bị ngắt giữa chừng lúc đang gửi tin nhắn chat, tải âm thanh, hoặc đồng bộ bài tập.
 
 ---
@@ -132,7 +132,7 @@ Theo quy định nghiêm ngặt của W3C (_Understanding Conformance_):
 
 ### TẦNG 9: AI Gateway, Guardrails & Kiểm Soát Chi Phí
 
-- **Giới hạn độ dài Input/Output**: Giới hạn tối đa 4.000 ký tự cho mỗi request chat/writing để tránh cạn kiệt token và tấn công DoS chi phí.
+- **Giới hạn độ dài Input/Output**: Giới hạn 2.000 ký tự mỗi TIN NHẮN, 40.000 ký tự tổng nội dung và 64 KB thân request (`packages/core-ai/ai.ts`) để tránh cạn kiệt token và tấn công DoS chi phí.
 - **Chuỗi Fallback Đa Tầng**: Gateway AI tự động chuyển đổi nhà cung cấp dự phòng (`Groq Whisper` ⇄ `OpenAI Whisper`, `Gemini` ⇄ `Groq LLaMA` ⇄ `Claude`) với timeout xác định (tối đa 30s).
 - **Đánh giá Prompt Regression**: Mỗi khi thay đổi prompt trong `src/prompts/`, bắt buộc chạy `npm run eval:tutor` để chứng minh precision/recall không bị suy giảm.
 
@@ -162,8 +162,8 @@ npm run lint                   # Phải báo: 0 errors, 0 warnings
 npm run format:check           # Phải báo: All matched files use Prettier style
 
 # ── BƯỚC 3: Kiểm tra toàn bộ Test Suite & Độ phủ ───────────────────────────
-npm test                       # Phải báo: 100% tests passed (≥ 4.258 tests)
-npm run test:coverage          # Xác nhận vượt sàn 93/89/96/93%
+npm test                       # Phải báo: 100% tests passed (≥ 12.152 test)
+npm run test:coverage          # Xác nhận vượt sàn 97/93/96/97%
 
 # ── BƯỚC 4: Kiểm tra an ninh & Lỗ hổng Dependency ──────────────────────────
 npm audit --omit=dev           # Phải báo: 0 vulnerabilities
@@ -184,25 +184,25 @@ Sau khi các cổng tự động đạt 100%, kiểm toán viên/AI bắt buộc
 
 ```bash
 # 1. Quét tìm nối chuỗi SQL nguy hiểm
-grep -rn "query(" api/ packages/core-db/ --include=*.ts | grep -v "\.test\." | grep -E "\+|`.*\\$"
+grep -rn "query(" apps/server/src/ packages/core-db/ --include=*.ts | grep -v "\.test\." | grep -E "\+|`.*\\$"
 
 # 2. Quét tìm lệnh shell / file path ghép chuỗi
-grep -rn -E "exec\(|execSync\(|path\.join\(.*req\." api/ server.ts
+grep -rn -E "exec\(|execSync\(|path\.join\(.*req\." apps/server/src/
 
 # 3. Quét tìm XSS thô
 grep -rn "dangerouslySetInnerHTML" apps/
 
 # 4. Quét tìm console.log rác còn sót
-grep -rn "console\.log" apps/english/src/ api/ packages/ --include=*.ts --include=*.tsx | grep -v "\.test\."
+grep -rn "console\.log" apps/dhcb/src/ apps/server/src/ packages/ --include=*.ts --include=*.tsx | grep -v "\.test\."
 
 # 5. Quét tìm ép kiểu 'any'
-grep -rn -E ":\s*any|as\s+any" apps/english/src/ api/ packages/ --include=*.ts --include=*.tsx | grep -v "\.test\."
+grep -rn -E ":\s*any|as\s+any" apps/dhcb/src/ apps/server/src/ packages/ --include=*.ts --include=*.tsx | grep -v "\.test\."
 
 # 6. Quét tìm bắt lỗi rỗng (Empty catch blocks)
-grep -rn -A 2 "catch\s*(" api/ packages/ apps/english/src/ --include=*.ts --include=*.tsx | grep -B 1 "{\s*}"
+grep -rn -A 2 "catch\s*(" apps/server/src/ packages/ apps/dhcb/src/ --include=*.ts --include=*.tsx | grep -B 1 "{\s*}"
 
 # 7. Quét tìm ngày tháng dùng toISOString sai múi giờ VN
-grep -rn "\.toISOString\(\)\.slice\(0,\s*10\)" apps/english/src/ api/ packages/ --include=*.ts --include=*.tsx | grep -v "\.test\."
+grep -rn "\.toISOString\(\)\.slice\(0,\s*10\)" apps/dhcb/src/ apps/server/src/ packages/ --include=*.ts --include=*.tsx | grep -v "\.test\."
 ```
 
 ---
@@ -221,7 +221,7 @@ Nhánh kiểm toán: <branch_name> | Commit SHA: <commit_hash>
 - Prettier Formatting: ✅ 100% compliant
 - Unit & Integration Tests: ✅ X / X passed (100%)
 - Test Coverage: Statements X% | Branches X% | Functions X% | Lines X%
-- Bundle Size: JS X kB / 123 kB | CSS X kB / 11 kB
+- Bundle Size: JS X kB / 140 kB | CSS X kB / 20 kB
 - Production Build: ✅ Thành công Client, Server, Hub
 - Dependency Security (npm audit): ✅ 0 vulnerabilities
 
@@ -256,6 +256,7 @@ KẾT LUẬN: SẴN SÀNG TRIỂN KHAI PRODUCTION 100% (ZERO DEFECTS)
 
 ## 5. Lịch Sử Khắc Phục Lỗi Qua Các Đợt Audit (Historical Evidence)
 
+- **2026-09-05 (Audit toàn diện 12 nhóm)**: 11 phát hiện, 0 nghiêm trọng. Bật `jsx-a11y` (trước đó tài liệu nói có nhưng gói CHƯA TỪNG được cài), lint cả `scripts/`, chống bản đồ codemap cũ, xoá `nginx/dhcb.conf` trùng, bỏ bẫy `VITE_GEMINI_API_KEY`, vá 5 chỗ lệch múi giờ VN. Xem `docs/changelog/`.
 - **2026-08-18 (Platform Hardening & Deep Telemetry)**: Bổ sung endpoint `/api/health/deep`, tích hợp Web Push cho Chat ngoại tuyến, thêm `OfflineStatusBanner`, 4.258 tests pass 100%.
 - **2026-08-04 (WCAG AAA Contrast Overhaul)**: Siết chặt cổng tương phản màu AAA (≥7:1) cho nội dung trên 5 theme, chuẩn hóa vùng chạm `tap-44`.
 - **2026-07-14 (Gamification & Challenge Audit)**: Sửa lỗi cache transcript STT khi chấm lại, thêm khóa đồng bộ `submittingRef` chống double-click.

@@ -33,7 +33,7 @@ async function main() {
         }))
         return { rows, rowCount: rows.length, command: '', oid: 0, fields: [] }
       },
-    } as any
+    } as unknown as Parameters<typeof evaluateMemoryCandidate>[0]
 
     const result = await evaluateMemoryCandidate(mockRunner, 'person-123', fx.candidate)
 

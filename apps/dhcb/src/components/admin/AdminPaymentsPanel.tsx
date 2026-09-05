@@ -344,10 +344,14 @@ export default function AdminPaymentsPanel() {
 
             <form onSubmit={handleManualMatch} className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1">
+                <label
+                  htmlFor="adminpaymentspanel-email-tai-khoan-nhan-goi"
+                  className="block text-xs font-semibold text-zinc-300 mb-1"
+                >
                   Email tài khoản nhận gói:
                 </label>
                 <input
+                  id="adminpaymentspanel-email-tai-khoan-nhan-goi"
                   type="email"
                   required
                   placeholder="nhap.email.khach@example.com"

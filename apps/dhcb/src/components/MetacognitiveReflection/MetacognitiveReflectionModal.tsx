@@ -179,10 +179,14 @@ export default function MetacognitiveReflectionModal({
 
               {/* Reflection Input */}
               <div className="space-y-2">
-                <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider">
+                <label
+                  htmlFor="metacognitivereflectionmodal-dong-suy-ngam-chan-thuc-cua-ban"
+                  className="block text-xs font-bold text-zinc-300 uppercase tracking-wider"
+                >
                   Dòng suy ngẫm chân thực của bạn
                 </label>
                 <textarea
+                  id="metacognitivereflectionmodal-dong-suy-ngam-chan-thuc-cua-ban"
                   value={userText}
                   onChange={(e) => setUserText(e.target.value)}
                   placeholder="Hãy viết lại cảm nhận, suy nghĩ, sự ngập ngừng hoặc bài học của bạn một cách tự do không phán xét..."

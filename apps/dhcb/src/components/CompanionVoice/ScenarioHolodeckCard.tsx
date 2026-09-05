@@ -185,10 +185,15 @@ export default function ScenarioHolodeckCard() {
             {scenarios.map((sc) => {
               const isSelected = sc.id === selectedScenarioId
               return (
-                <div
+                // Thẻ chọn kịch bản LÀ nút bấm thật (audit 2026-09-05, F1): trước đây là <div
+                // onClick> nên bàn phím và trình đọc màn hình không dùng được. aria-pressed cho
+                // biết thẻ nào đang được chọn.
+                <button
                   key={sc.id}
+                  type="button"
+                  aria-pressed={isSelected}
                   onClick={() => setSelectedScenarioId(sc.id)}
-                  className={`p-4 rounded-xl cursor-pointer border transition-all duration-200 ${
+                  className={`w-full text-left p-4 rounded-xl cursor-pointer border transition-all duration-200 ${
                     isSelected
                       ? 'bg-indigo-950/40 border-indigo-500 shadow-lg shadow-indigo-500/10'
                       : 'bg-slate-800/40 border-slate-800 hover:border-slate-700'
@@ -206,7 +211,7 @@ export default function ScenarioHolodeckCard() {
                   <p className="text-xs text-slate-400 theme-light:text-slate-700 line-clamp-2">
                     {sc.description}
                   </p>
-                </div>
+                </button>
               )
             })}
           </div>

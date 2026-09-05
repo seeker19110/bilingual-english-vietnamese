@@ -177,6 +177,10 @@ export default function WorkKanban() {
                     value={quickTitle}
                     onChange={(e) => setQuickTitle(e.target.value)}
                     placeholder="Nhập tiêu đề công việc..."
+                    // Ô nhập này chỉ xuất hiện SAU một hành động của người dùng (mở form / bấm "thêm"),
+                    // nên đưa tiêu điểm vào đó là chuyển tiêu điểm đúng chỗ theo WAI-ARIA, không phải
+                    // cướp tiêu điểm lúc tải trang (audit 2026-09-05, F1).
+                    // eslint-disable-next-line jsx-a11y/no-autofocus
                     autoFocus
                     className="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-2 text-xs text-white focus:outline-none"
                   />

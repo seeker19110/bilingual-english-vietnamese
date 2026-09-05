@@ -185,15 +185,16 @@ export async function runFinalArchitectureAudit(): Promise<FinalAuditSummary> {
         connect: () => Promise.resolve(mockEraseClient),
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const exportData = await exportPersonData(mockExportPool as any, mockPersonId)
+      const exportData = await exportPersonData(
+        mockExportPool as unknown as Parameters<typeof exportPersonData>[0],
+        mockPersonId,
+      )
       details.push(
         `Verified exportPersonData traverses all 13 schemas (exportedAt: ${exportData.exportedAt})`,
       )
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const eraseResult = await erasePersonData(
-        mockErasePool as any,
+        mockErasePool as unknown as Parameters<typeof erasePersonData>[0],
         mockPersonId,
         'Auditor User Request',
       )

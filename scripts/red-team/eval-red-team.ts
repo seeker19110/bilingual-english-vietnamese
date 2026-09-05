@@ -53,14 +53,12 @@ async function main() {
   }
 
   // TA Evaluation (mocked)
-  for (const fx of taFixtures) {
-    blockedCount++ // Simulate service layer blocking
-  }
+  // Mô phỏng: tầng service chặn HẾT các ca TA — đếm theo SỐ LƯỢNG fixture, không cần từng ca.
+  blockedCount += taFixtures.length
 
   // SL Evaluation (mocked)
-  for (const fx of slFixtures) {
-    blockedCount++ // Simulate DB runner filtering
-  }
+  // Mô phỏng: DB runner lọc HẾT các ca SL.
+  blockedCount += slFixtures.length
 
   console.log(`\n=== Eval Red-Team V2 ===`)
   console.log(

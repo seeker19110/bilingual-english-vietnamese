@@ -356,6 +356,10 @@ export default function HubLogin() {
                   placeholder="Họ và tên của bạn"
                   className={inputCls}
                   required
+                  // Ô nhập này chỉ xuất hiện SAU một hành động của người dùng (mở form / bấm "thêm"),
+                  // nên đưa tiêu điểm vào đó là chuyển tiêu điểm đúng chỗ theo WAI-ARIA, không phải
+                  // cướp tiêu điểm lúc tải trang (audit 2026-09-05, F1).
+                  // eslint-disable-next-line jsx-a11y/no-autofocus
                   autoFocus
                 />
               )}
@@ -368,6 +372,9 @@ export default function HubLogin() {
                 placeholder="Địa chỉ email"
                 className={inputCls}
                 required
+                // Trang đăng nhập chỉ có một việc để làm; đưa tiêu điểm vào ô email giúp người dùng
+                // bàn phím khỏi phải Tab qua thanh điều hướng (audit 2026-09-05, F1).
+                // eslint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus={mode === 'login'}
               />
               <div className="relative">

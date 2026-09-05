@@ -32,7 +32,7 @@ async function main() {
 
   for (const fx of fixtures) {
     const mockPool = {
-      query: async (queryText: string, params: any[]) => {
+      query: async (queryText: string, params: unknown[]) => {
         const [, subject, action, scope] = params
         const policy = fx.policies.find(
           (p) =>
@@ -49,7 +49,7 @@ async function main() {
           fields: [],
         }
       },
-    } as any
+    } as unknown as Parameters<typeof resolveAuthority>[0]
 
     const authority = await resolveAuthority(
       mockPool,

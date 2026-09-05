@@ -9,6 +9,7 @@ import {
   findImpactedFiles,
   findImportCycles,
   findOrphanFiles,
+  isGraphStale,
   functionKey,
   parseFunctionKey,
   type CodeGraph,
@@ -176,5 +177,21 @@ describe('findImportCycles', () => {
       calls: [],
     }
     expect(findImportCycles(graph)).toEqual([['a.ts', 'b.ts', 'c.ts']])
+  })
+})
+
+// Bản đồ cũ hơn mã nguồn thì phải quét lại — audit 2026-09-05 (F2): bản đồ ghi 18/08 vẫn được
+// dùng im lặng sau đợt cải tổ 23/08, khiến `orphans` trả về đường dẫn đã bị xoá.
+describe('isGraphStale', () => {
+  it('bản đồ cũ hơn mã nguồn → CŨ', () => {
+    expect(isGraphStale(1_000, 2_000)).toBe(true)
+  })
+
+  it('bản đồ mới hơn mã nguồn → còn dùng được', () => {
+    expect(isGraphStale(2_000, 1_000)).toBe(false)
+  })
+
+  it('bằng nhau (quét xong đúng lúc sửa xong) → còn dùng được, không quét lại vô ích', () => {
+    expect(isGraphStale(2_000, 2_000)).toBe(false)
   })
 })

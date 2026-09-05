@@ -130,10 +130,14 @@ export default function SocraticDiagnosticsCard() {
             {misconceptions.map((m) => {
               const isSelected = m.id === selectedId
               return (
-                <div
+                // Thẻ chọn chủ đề LÀ nút bấm thật (audit 2026-09-05, F1): trước đây là <div
+                // onClick> nên bàn phím và trình đọc màn hình không dùng được.
+                <button
                   key={m.id}
+                  type="button"
+                  aria-pressed={isSelected}
                   onClick={() => setSelectedId(m.id)}
-                  className={`p-4 rounded-xl cursor-pointer border transition-all duration-200 ${
+                  className={`w-full text-left p-4 rounded-xl cursor-pointer border transition-all duration-200 ${
                     isSelected
                       ? 'bg-violet-950/40 border-violet-500 shadow-lg shadow-violet-500/10'
                       : 'bg-slate-800/40 border-slate-800 hover:border-slate-700'
@@ -149,7 +153,7 @@ export default function SocraticDiagnosticsCard() {
                   <p className="text-xs text-slate-400 theme-light:text-slate-700 line-clamp-2">
                     {m.rootCauseAnalysis}
                   </p>
-                </div>
+                </button>
               )
             })}
           </div>

@@ -831,8 +831,11 @@ export default function LifeGraph() {
               </div>
 
               <div>
-                <label className="text-xs text-zinc-400 block mb-1">Loại Node</label>
+                <label htmlFor="lifegraph-loai-node" className="text-xs text-zinc-400 block mb-1">
+                  Loại Node
+                </label>
                 <select
+                  id="lifegraph-loai-node"
                   value={newNodeType}
                   onChange={(e) => setNewNodeType(e.target.value as LifeGraphNodeType)}
                   className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 outline-none"
@@ -848,8 +851,14 @@ export default function LifeGraph() {
               </div>
 
               <div>
-                <label className="text-xs text-zinc-400 block mb-1">Tên / Nhãn Node</label>
+                <label
+                  htmlFor="lifegraph-ten-nhan-node"
+                  className="text-xs text-zinc-400 block mb-1"
+                >
+                  Tên / Nhãn Node
+                </label>
                 <input
+                  id="lifegraph-ten-nhan-node"
                   type="text"
                   value={newNodeLabel}
                   onChange={(e) => setNewNodeLabel(e.target.value)}
@@ -906,8 +915,11 @@ export default function LifeGraph() {
             </div>
 
             <div>
-              <label className="text-xs text-zinc-400 block mb-1">Phân loại</label>
+              <label htmlFor="lifegraph-phan-loai" className="text-xs text-zinc-400 block mb-1">
+                Phân loại
+              </label>
               <select
+                id="lifegraph-phan-loai"
                 value={newFactCategory}
                 onChange={(e) => setNewFactCategory(e.target.value)}
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 outline-none"
@@ -920,8 +932,11 @@ export default function LifeGraph() {
             </div>
 
             <div>
-              <label className="text-xs text-zinc-400 block mb-1">Từ khóa (Key)</label>
+              <label htmlFor="lifegraph-tu-khoa-key" className="text-xs text-zinc-400 block mb-1">
+                Từ khóa (Key)
+              </label>
               <input
+                id="lifegraph-tu-khoa-key"
                 type="text"
                 value={newFactKey}
                 onChange={(e) => setNewFactKey(e.target.value)}
@@ -932,8 +947,14 @@ export default function LifeGraph() {
             </div>
 
             <div>
-              <label className="text-xs text-zinc-400 block mb-1">Nội dung giá trị</label>
+              <label
+                htmlFor="lifegraph-noi-dung-gia-tri"
+                className="text-xs text-zinc-400 block mb-1"
+              >
+                Nội dung giá trị
+              </label>
               <input
+                id="lifegraph-noi-dung-gia-tri"
                 type="text"
                 value={newFactValue}
                 onChange={(e) => setNewFactValue(e.target.value)}
@@ -944,8 +965,14 @@ export default function LifeGraph() {
             </div>
 
             <div>
-              <label className="text-xs text-zinc-400 block mb-1">Mức độ nhạy cảm</label>
+              <label
+                htmlFor="lifegraph-muc-do-nhay-cam"
+                className="text-xs text-zinc-400 block mb-1"
+              >
+                Mức độ nhạy cảm
+              </label>
               <select
+                id="lifegraph-muc-do-nhay-cam"
                 value={newFactSensitivity}
                 onChange={(e) => setNewFactSensitivity(e.target.value as Sensitivity)}
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 outline-none"
@@ -1002,8 +1029,11 @@ export default function LifeGraph() {
             </div>
 
             <div>
-              <label className="text-xs text-zinc-400 block mb-1">Namespace</label>
+              <label htmlFor="lifegraph-namespace" className="text-xs text-zinc-400 block mb-1">
+                Namespace
+              </label>
               <select
+                id="lifegraph-namespace"
                 value={newMemNamespace}
                 onChange={(e) => setNewMemNamespace(e.target.value as MemoryNamespace)}
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 outline-none"
@@ -1017,8 +1047,14 @@ export default function LifeGraph() {
             </div>
 
             <div>
-              <label className="text-xs text-zinc-400 block mb-1">Nội dung ký ức</label>
+              <label
+                htmlFor="lifegraph-noi-dung-ky-uc"
+                className="text-xs text-zinc-400 block mb-1"
+              >
+                Nội dung ký ức
+              </label>
               <textarea
+                id="lifegraph-noi-dung-ky-uc"
                 value={newMemContent}
                 onChange={(e) => setNewMemContent(e.target.value)}
                 placeholder="Nhập điều bạn muốn AI ghi nhớ lâu dài..."
