@@ -1122,6 +1122,38 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
 
 > Mỗi mục 1 PR, dừng xin duyệt ở mỗi cổng (CLAUDE.md mục 3).
 
+- **[2026-09-05] ✅ THIẾT KẾ LẠI UI/UX DESKTOP CHO CÁC TRANG GIÁO DỤC — XONG TRỌN VẸN CẢ 3 ĐỢT.**
+  Đặc tả `docs/specs/2026-09-05-thiet-ke-lai-desktop-giao-duc.md` (người dùng chốt phạm vi trực
+  tiếp trong phiên: cả ba nhóm trang, ba PR nối tiếp, mức "bố cục + gộp/tách lại luồng màn hình").
+  Bối cảnh: **vỏ** desktop đã làm ở các đợt 2026-09-02/09-03; cái còn thiếu là **thân các trang
+  học**, vẫn là màn hình mobile phóng to.
+  - **Đợt 1/3 — ✅ (`#861`, nhật ký `docs/changelog/0273-*.md`):** `Lessons` thành master–detail
+    (danh sách bài không còn bị thay thế khi mở bài); `StoryReader` có cột phụ điều khiển audio
+    - mục lục đoạn.
+  - **Đợt 2/3 — ✅ (`#862`, nhật ký `docs/changelog/0274-*.md`):** `RoadmapTab` 2 cột
+    (`/lo-trinh-hoc` 3332→2294px), `Subjects` 3 cột ở `xl` (`/mon-hoc` 1695→1237px), **+3 lỗi
+    lặp nội dung**. `EnglishHome` cố ý KHÔNG sửa — đo ở 1440px thấy đã lấp đủ bề ngang.
+  - **Đợt 3/3 — ✅ (`#863`, nhật ký `docs/changelog/0275-*.md`):** `Listening` 3 cột + mục lục
+    cấp độ dùng `TocRail` (`/luyen-nghe` **37.266→24.982px**); `Speaking`/`Chat` bỏ căn giữa dọc
+    ở desktop; **+1 lỗi lặp tiêu đề**. `Writing` cố ý KHÔNG sửa — đã sẵn bố cục hai cột.
+
+- **[2026-09-05] 🔑 QUYẾT ĐỊNH QUAN TRỌNG — thêm Tầng 8b "NHÌN trang thật bằng ảnh chụp" vào
+  `docs/framework/QUY-TRINH-AUDIT.md`, BẮT BUỘC với mọi đợt việc chạm giao diện** (người dùng
+  chốt trong phiên, cùng PR `#863`; cập nhật chéo mục 2 `CLAUDE.md`).
+
+  Căn cứ đo được, không phải phòng xa: chuỗi ba đợt trên tìm ra **bốn** lỗi lặp nội dung, **không
+  lỗi nào** bị build/typecheck/lint/test/a11y bắt, và cả bốn chỉ lộ ra khi chụp ảnh trang rồi
+  nhìn. Lý do chúng vô hình khi đọc mã: lỗi nằm ở **quan hệ giữa các chỗ cách xa nhau** (một
+  `PageHeader` và một hero cách 40 dòng cùng in một câu) hoặc ở **con số chỉ tồn tại sau khi
+  trình duyệt dựng xong** (trang cao 37.266px vì lưới dừng ở nấc `sm:`).
+
+  Nội dung tầng: chụp `fullPage` ở **1440px và 390px**, **trước và sau** khi sửa, kèm 4 câu phải
+  tự trả lời trên mỗi ảnh, công thức Playwright chạy được ngay, và 3 cái bẫy đã dính thật. Đặt là
+  tầng phụ theo tiền lệ `1b`/`2b`/`5b`/`6b` nên tổng số tầng chính vẫn là 11.
+
+  **Đánh đổi đã biết:** tầng này làm mọi đợt việc UI dài thêm một bước tay. Nếu sau vài đợt thấy
+  tốn hơn lợi thì xem lại — ghi ở đây để lần sau có căn cứ đánh giá chứ không phải cãi từ trí nhớ.
+
 - **[2026-08-31] ✅ HAI KHOÁ NGẮN "TÁC TỬ AI" — HERMES + OPENCLAW, ĐÃ XONG TRỌN VẸN.** Tầng
   khoá ngắn (`packages/subject-programming/courses/`, cắt ngang bậc P1–P6, đúng khuôn khoá Git)
   có thêm hai khoá mới, mỗi khoá dạy qua bộ mô phỏng CLI tất định riêng (khuôn `gitSim`) —
