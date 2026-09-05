@@ -19,7 +19,6 @@ import {
 } from 'lucide-react'
 import Layout from '../../components/Layout'
 import { PageShell } from '@core/PageShell'
-import PageHeader from '../../components/PageHeader'
 import SubjectIllustration from '../../components/SubjectIllustration'
 import { getSubjectDetails } from '../../lib/subjectApi'
 import { solveProblemImage } from '../../lib/visionSolverApi'
@@ -347,7 +346,9 @@ export default function SubjectDetail() {
                 </span>
                 <span className="text-xs text-zinc-400">STEM Học Bổ Trợ</span>
               </div>
-              <h1 className="text-xl sm:text-2xl font-extrabold text-white leading-tight tracking-tight">
+              {/* [2026-09-05, đợt 2] Đây nay là tiêu đề DUY NHẤT của trang nên lên đúng cỡ
+                  chữ tiêu đề trang của app (khớp `PageHeader`: text-2xl sm:text-3xl). */}
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight tracking-tight">
                 {subject.label}
               </h1>
               <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed line-clamp-2">
@@ -377,11 +378,14 @@ export default function SubjectDetail() {
           </div>
         </section>
 
-        <PageHeader
-          title={`Gia Sư AI: ${subject.label}`}
-          subtitle={`Phòng học thông minh và giải bài tập từng bước (${subject.description})`}
-        />
+        {/* [2026-09-05, đợt 2 "desktop giáo dục"] Bỏ hẳn `PageHeader` ở đây.
 
+            Trước đó trang nói CÙNG MỘT THỨ hai lần liên tiếp: hero in "Toán học" kèm mô tả
+            môn, rồi ngay dưới `PageHeader` in "Gia Sư AI: Toán học" kèm đúng mô tả đó nhét
+            trong ngoặc đơn. Thấy rõ trong ảnh chụp 1440px của đợt này — hai khối tiêu đề
+            chồng nhau chiếm gần một phần ba màn hình đầu mà không thêm thông tin nào.
+
+            Nó còn là lỗi ngữ nghĩa: trang có HAI thẻ `<h1>`. Nay hero là tiêu đề duy nhất. */}
         {/* Khối chọn khối lớp */}
         <section className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-4 flex items-center justify-between gap-4 flex-wrap shadow-sm">
           <div className="flex items-center gap-2">
