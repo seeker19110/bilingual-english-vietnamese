@@ -49,22 +49,49 @@ describe('GET /api/analytics-summary', () => {
     expect(res.status).toBe(403)
   })
 
-  it('admin → 200, group theo ngày (giờ VN) + event', async () => {
+  it('admin → 200, gộp sự kiện client + ba bước phễu suy từ users/daily_usage, sắp theo ngày', async () => {
+    // Truy vấn 1: bảng analytics_events (client bắn). Truy vấn 2: phễu suy ra.
     query.mockResolvedValueOnce({
       rows: [
         { day: '2026-07-20', event: 'landing_view', count: 5 },
-        { day: '2026-07-20', event: 'signup', count: 2 },
+        { day: '2026-07-21', event: 'cta_click', count: 2 },
+      ],
+    })
+    query.mockResolvedValueOnce({
+      rows: [
+        { day: '2026-07-19', event: 'signup', count: 2 },
         { day: '2026-07-21', event: 'signup', count: 1 },
+        { day: '2026-07-20', event: 'first_session_done', count: 2 },
+        { day: '2026-07-22', event: 'day2_return', count: 1 },
       ],
     })
     const res = await handler(makeRequest())
     expect(res.status).toBe(200)
     const body = (await res.json()) as {
       totalsByEvent: Record<string, number>
-      daily: unknown[]
+      daily: { day: string; event: string; count: number }[]
     }
-    expect(body.totalsByEvent).toEqual({ landing_view: 5, signup: 3 })
-    expect(body.daily).toHaveLength(3)
+    expect(body.totalsByEvent).toEqual({
+      landing_view: 5,
+      cta_click: 2,
+      signup: 3,
+      first_session_done: 2,
+      day2_return: 1,
+    })
+    expect(body.daily).toHaveLength(6)
+    expect(body.daily.map((r) => r.day)).toEqual([...body.daily.map((r) => r.day)].sort())
+  })
+
+  it('phễu suy ra: cùng cửa sổ N ngày, so ngày theo giờ VN, không tin client', async () => {
+    await handler(makeRequest('?days=30'))
+    const funnelSql = String(query.mock.calls[1]?.[0])
+    expect(query.mock.calls[1]?.[1]).toEqual([30])
+    expect(funnelSql).toContain('public.users')
+    expect(funnelSql).toContain('public.daily_usage')
+    expect(funnelSql).toContain('Asia/Ho_Chi_Minh')
+    expect(funnelSql).toContain('a.day > c.signup_day') // day2 = có lượt dùng SAU ngày đăng ký
+    expect(funnelSql).toContain('code_feedback_count') // không bỏ sót cột đếm nào
+    expect(funnelSql).not.toContain('analytics_events')
   })
 
   it('mặc định 14 ngày, chấp nhận query days hợp lệ', async () => {

@@ -22,14 +22,10 @@ import { validateBody, readJsonBody } from '@dhcb/core-http/validation'
 import { jsonResponse, getClientIp } from '@dhcb/core-http/http'
 
 // Whitelist cố định — KHÔNG nhận chuỗi tự do để tránh spam bảng dữ liệu rác.
-const EVENT_TYPES = [
-  'landing_view',
-  'cta_click',
-  'signup',
-  'first_session_done',
-  'share_click',
-  'day2_return',
-] as const
+// [2026-09-06] `signup` / `first_session_done` / `day2_return` đã BỎ khỏi đây: chúng được suy
+// ra từ `users` + `daily_usage` trong analytics-summary.ts, không nhận từ client nữa (client có
+// thể bắn giả; và trước đó cũng chưa nơi nào bắn).
+const EVENT_TYPES = ['landing_view', 'cta_click', 'share_click'] as const
 
 const AnalyticsSchema = z.object({
   event: z.enum(EVENT_TYPES),
