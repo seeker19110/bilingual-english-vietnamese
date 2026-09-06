@@ -1,6 +1,6 @@
 # 0277 — 2026-09-06 — Phễu admin: 3 bước suy từ `users` + `daily_usage`, không chờ client bắn
 
-**PR:** (điền khi tạo) · **Loại:** `fix(admin)` · **Nhánh:** `claude/danh-gia-sau-du-an-tpvud1`
+**PR:** #865 · **Loại:** `fix(admin)` · **Nhánh:** `claude/danh-gia-sau-du-an-tpvud1`
 
 ## Vấn đề (đo được, không suy đoán)
 

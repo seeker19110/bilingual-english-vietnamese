@@ -1,6 +1,6 @@
 # 0276 — 2026-09-06 — Đánh giá sâu dự án + cắt gọn tài liệu điều hành
 
-**PR:** (điền khi tạo) · **Loại:** `docs` · **Nhánh:** `claude/danh-gia-sau-du-an-tpvud1`
+**PR:** #865 · **Loại:** `docs` · **Nhánh:** `claude/danh-gia-sau-du-an-tpvud1`
 
 ## Việc đã làm
 
