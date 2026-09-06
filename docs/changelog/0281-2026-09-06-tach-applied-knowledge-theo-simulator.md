@@ -1,6 +1,6 @@
 # 0281 — 2026-09-06 — Tách `AppliedKnowledge.tsx` (1.942 dòng) theo từng simulator — phương án A
 
-**PR:** #TBD · **Loại:** `refactor(learning)` · **Nhánh:** `claude/phuong-an-a-rgkgoc` ·
+**PR:** #869 · **Loại:** `refactor(learning)` · **Nhánh:** `claude/phuong-an-a-rgkgoc` ·
 **Đặc tả:** `docs/specs/2026-09-06-tach-applied-knowledge-theo-simulator.md`
 
 ## Việc đã làm

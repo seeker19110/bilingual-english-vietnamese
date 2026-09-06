@@ -118,7 +118,7 @@ npm run codemap -- impact apps/dhcb/src/pages/learning/AppliedKnowledge.tsx
 
 ## Nghiệm thu (bên giao việc điền SAU khi nhận kết quả)
 
-- Ngày · PR: 2026-09-06 · PR #TBD (`docs/changelog/0281`).
+- Ngày · PR: 2026-09-06 · PR #869 (`docs/changelog/0281`).
 - Phương án state đã chọn (A/B): **A** — state trong từng simulator; `activeSimulator` vẫn ở
   trang để đổi tab rồi quay lại đúng simulator (chỉ GIÁ TRỊ về mặc định).
 - Ảnh Tầng 8b: 14 ảnh (1440 + 390 × simulator 1/4/9/10 + 3 tab) → 10 giống hệt từng byte, 4 lệch
