@@ -1,6 +1,6 @@
 # 0278 — 2026-09-06 — Tách `StudyTabs.tsx` (2.071 dòng) thành thư mục `studyTabs/`
 
-**PR:** (điền khi tạo) · **Loại:** `refactor(english)` · **Nhánh:** `claude/danh-gia-sau-du-an-tpvud1`
+**PR:** #866 · **Loại:** `refactor(english)` · **Nhánh:** `claude/danh-gia-sau-du-an-tpvud1`
 
 ## Việc đã làm
 
