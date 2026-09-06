@@ -1,7 +1,9 @@
 // Nút "Đóng vai" trên thanh điều khiển: popover chọn vai (Pro/VIP) hoặc lời mời nâng cấp
 // (Free), và nút "Dừng đóng vai" khi đang chạy. Tách từ LessonView.tsx (2026-09-06), JSX giữ nguyên.
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Square, Drama, Lock } from 'lucide-react'
+import { shouldAlignPopoverRightFor } from '../../../../lib/popoverAlign'
 
 type Props = {
   isA: boolean
@@ -26,6 +28,8 @@ export function RolePlayToolbar({
   startRolePlay,
   stopRolePlay,
 }: Props) {
+  // Phía neo popover, quyết lúc bấm theo vị trí thật của nút (xem lib/popoverAlign.ts).
+  const [alignRight, setAlignRight] = useState(false)
   return (
     <>
       {/* Đóng vai — chỉ Pro/VIP. Free thấy nút khoá + link nâng cấp. */}
@@ -33,7 +37,10 @@ export function RolePlayToolbar({
         <div className="relative">
           <button
             type="button"
-            onClick={() => setRolePicker((o) => !o)}
+            onClick={(e) => {
+              setAlignRight(shouldAlignPopoverRightFor(e.currentTarget))
+              setRolePicker((o) => !o)
+            }}
             aria-expanded={rolePicker}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition ${
               rolePicker
@@ -45,7 +52,9 @@ export function RolePlayToolbar({
             {isA ? 'Đóng vai' : 'Role-play'}
           </button>
           {rolePicker && (
-            <div className="absolute right-0 z-20 mt-1.5 w-64 glass rounded-xl p-3 animate-fade-in shadow-xl">
+            <div
+              className={`absolute ${alignRight ? 'right-0' : 'left-0'} z-20 mt-1.5 w-64 glass rounded-xl p-3 animate-fade-in shadow-xl`}
+            >
               {isPro ? (
                 <>
                   <p className="text-xs text-zinc-400 mb-2">
