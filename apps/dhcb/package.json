@@ -8,6 +8,6 @@
     "@codemirror/language": "^6.12.4",
     "@lezer/highlight": "^1.2.3",
     "codemirror": "^6.0.2",
-    "pyodide": "^314.0.5"
+    "pyodide": "^314.0.6"
   }
 }
