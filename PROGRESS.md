@@ -158,9 +158,11 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
 
 ### Ưu tiên 2 — nợ nội dung của mảng đã ship (đi sâu, không mở rộng)
 
-- **Lộ trình "Kỹ Sư Trưởng AI": quiz sau chặng mới soạn 4/22 chặng P1–P4** — 18 chặng còn hiện
-  "chưa có bài kiểm" (đợt 3, `docs/changelog/0210-*.md`). Soạn nốt theo khuôn
-  `packages/subject-programming/learningPaths/stageQuizzes.ts`.
+- ~~Lộ trình "Kỹ Sư Trưởng AI": quiz sau chặng mới soạn 4/22~~ — **SAI, đo lại 2026-09-06:**
+  `stageQuizzes.ts` đã có **27 chặng** (22/22 P1–P4 + 4 P5 + dư), đặc tả
+  `docs/specs/2026-08-31-quiz-18-chang-con-lai.md` đã thi hành, test canh mỗi chặng đúng 5 câu.
+  Ghi nhầm vì chép từ nhật ký đợt 3 (`0210`) mà không kiểm mã — đúng lỗi mà luật "đo, đừng
+  đoán" nhắm tới. Không còn việc.
 - **Chế độ ôn thi chiều B (`vsl-b1`) dùng tạm bộ từ A1–B1 học ngược** vì repo chưa có bộ từ
   vựng tiếng Việt phân bậc — việc NỘI DUNG vài nghìn mục, cần đặc tả riêng trước (xem "Nợ kỹ
   thuật còn mở").
@@ -175,9 +177,10 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
 
 ### Ưu tiên 3 — kỹ thuật (nhỏ, đo được, không đổi hành vi)
 
-- **Tách 4 file giao diện > 1.700 dòng** (`StudyTabs.tsx` 2.071 · `AppliedKnowledge.tsx` 1.942 ·
-  `Practice.tsx` 1.752 · `Lessons.tsx` 1.693) — điểm nóng sửa là dễ gãy. Mỗi file một PR, bắt
-  buộc Tầng 8b (ảnh chụp trước/sau 1440px + 390px) vì là việc chạm giao diện.
+- **Tách 4 file giao diện > 1.700 dòng** — điểm nóng sửa là dễ gãy. Mỗi file một PR, bắt buộc
+  Tầng 8b (ảnh chụp trước/sau 1440px + 390px). ✅ `StudyTabs.tsx` 2.071 → thư mục `studyTabs/`
+  6 file + barrel 23 dòng (`docs/changelog/0278-*.md`). Còn: `AppliedKnowledge.tsx` 1.942 ·
+  `Practice.tsx` 1.752 · `Lessons.tsx` 1.693.
 - **Rà lại sau vài ngày:** log Redis (`pm2 logs dhcb --err`) sau khi VPS có swap — còn ~7 lần
   rớt/ngày thì đào tiếp, giảm hẳn thì đóng nợ (chi tiết ở "Nợ kỹ thuật còn mở").
 - **Đã kiểm 2026-09-06, KHÔNG cần làm:** (1) Zod — mọi handler API có đọc `req.body/query/params`
