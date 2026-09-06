@@ -1,6 +1,6 @@
 # 0279 — 2026-09-06 — Tách `Practice.tsx` (1.752 dòng) thành thư mục `practice/`
 
-**PR:** (điền khi tạo) · **Loại:** `refactor(english)` · **Nhánh:** `claude/danh-gia-sau-du-an-tpvud1`
+**PR:** #867 · **Loại:** `refactor(english)` · **Nhánh:** `claude/danh-gia-sau-du-an-tpvud1`
 
 ## Việc đã làm
 
