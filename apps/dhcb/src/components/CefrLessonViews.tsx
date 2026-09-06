@@ -67,6 +67,7 @@ import { isGrammarDone, markGrammarDone, unmarkGrammarDone } from '../lib/cefrPr
 import { ACCENT, type AccentClasses } from '../lib/cefrAccent'
 import { startRecording, isRecordingSupported, type Recorder } from '../lib/sttServer'
 import { callClaude, parseJson } from '../lib/ai'
+import { shouldAlignPopoverRightFor } from '../lib/popoverAlign'
 import { speakingFullEvaluationPrompt } from '../prompts'
 import { effectivePlan } from '../lib/promo'
 import { isFeatureEnabled } from '../lib/planFeatures'
@@ -868,6 +869,8 @@ export function DialogueView({
   const canRecord = isRecordingSupported()
   const [rolePlay, setRolePlay] = useState<{ role: 'A' | 'B' } | null>(null)
   const [rolePicker, setRolePicker] = useState(false)
+  // Phía neo popover chọn vai, quyết lúc bấm theo vị trí thật của nút (lib/popoverAlign.ts).
+  const [rpAlignRight, setRpAlignRight] = useState(false)
   const [rpIdx, setRpIdx] = useState<number | null>(null)
   const [rpRecording, setRpRecording] = useState(false)
   const [rpTranscribing, setRpTranscribing] = useState(false)
@@ -1210,12 +1213,11 @@ export function DialogueView({
             <div className="relative">
               <button
                 type="button"
-                onClick={
-                  () =>
-                    isPro
-                      ? setRolePicker((o) => !o)
-                      : setRolePicker((o) => !o) /* mở panel để hiện thông báo nâng cấp */
-                }
+                onClick={(e) => {
+                  // Gói Free cũng mở panel — để hiện thông báo nâng cấp.
+                  setRpAlignRight(shouldAlignPopoverRightFor(e.currentTarget))
+                  setRolePicker((o) => !o)
+                }}
                 aria-expanded={rolePicker}
                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition ${
                   rolePicker
@@ -1227,7 +1229,9 @@ export function DialogueView({
                 {isA ? 'Đóng vai' : 'Role-play'}
               </button>
               {rolePicker && (
-                <div className="absolute right-0 z-20 mt-1.5 w-64 glass rounded-xl p-3 animate-fade-in shadow-xl">
+                <div
+                  className={`absolute ${rpAlignRight ? 'right-0' : 'left-0'} z-20 mt-1.5 w-64 glass rounded-xl p-3 animate-fade-in shadow-xl`}
+                >
                   {isPro ? (
                     <>
                       <p className="text-xs text-zinc-400 mb-2">

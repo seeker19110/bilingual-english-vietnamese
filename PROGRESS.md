@@ -185,9 +185,6 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   `docs/specs/2026-09-06-tach-applied-knowledge-theo-simulator.md`). Phần dở còn lại
   `lessons/LessonView.tsx` 1.016 dòng cũng đã tách: chế độ Đóng vai ra hook `useRolePlay` + 3
   component, còn 699 dòng (`0282`, đặc tả `docs/specs/2026-09-06-tach-dong-vai-lesson-view.md`).
-- **Popover "Đóng vai" tràn mép trái ở 390px** (`lessons/RolePlayToolbar.tsx`, `absolute right-0
-w-64`) — lỗi sẵn có, phát hiện khi chụp Tầng 8b đợt `0282`. Sửa nhỏ nhưng phải chụp lại
-  trước/sau; tách PR riêng.
 - **Rà lại sau vài ngày:** log Redis (`pm2 logs dhcb --err`) sau khi VPS có swap — còn ~7 lần
   rớt/ngày thì đào tiếp, giảm hẳn thì đóng nợ (chi tiết ở "Nợ kỹ thuật còn mở").
 - **Đã kiểm 2026-09-06, KHÔNG cần làm:** (1) Zod — mọi handler API có đọc `req.body/query/params`
