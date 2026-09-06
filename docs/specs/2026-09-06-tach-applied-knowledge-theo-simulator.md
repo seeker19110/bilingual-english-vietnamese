@@ -1,7 +1,7 @@
 # Đặc tả: tách `AppliedKnowledge.tsx` (1.942 dòng) theo từng simulator
 
-> Khuôn: `docs/templates/dac-ta-tinh-nang.md`. Trạng thái: **NHÁP — chờ người dùng duyệt**
-> ("Approved for implementation" chưa có). Bối cảnh: mục "Tiếp theo" ưu tiên 3 của đánh giá sâu
+> Khuôn: `docs/templates/dac-ta-tinh-nang.md`. Trạng thái: **ĐÃ THI HÀNH 2026-09-06** — người
+> dùng chốt phương án A ("triển khai phương án A"); kết quả ở `docs/changelog/0281`. Bối cảnh: mục "Tiếp theo" ưu tiên 3 của đánh giá sâu
 > (`docs/changelog/0276`); ba file lớn khác đã tách thuần dời mã ở PR #866/#867/#868, riêng file
 > này **không tách bằng dời mã được** nên cần đặc tả trước.
 
@@ -118,7 +118,12 @@ npm run codemap -- impact apps/dhcb/src/pages/learning/AppliedKnowledge.tsx
 
 ## Nghiệm thu (bên giao việc điền SAU khi nhận kết quả)
 
-- Ngày · PR:
-- Phương án state đã chọn (A/B):
-- Ảnh Tầng 8b: giống hệt / khác ở đâu:
-- Bảng đối chiếu 10 simulator: đạt / lệch ở đâu:
+- Ngày · PR: 2026-09-06 · PR #869 (`docs/changelog/0281`).
+- Phương án state đã chọn (A/B): **A** — state trong từng simulator; `activeSimulator` vẫn ở
+  trang để đổi tab rồi quay lại đúng simulator (chỉ GIÁ TRỊ về mặc định).
+- Ảnh Tầng 8b: 14 ảnh (1440 + 390 × simulator 1/4/9/10 + 3 tab) → 10 giống hệt từng byte, 4 lệch
+  5–106 px do răng cưa chữ (chụp lại cùng mã cũng lệch đúng 4 ảnh đó) — không có dòng mã gây khác.
+- Bảng đối chiếu 10 simulator: **10/10 đạt** (băm chữ khung kết quả với bộ giá trị khác mặc định
+  giống hệt bản cũ).
+- Lệch so với đặc tả: không cần `constants.ts` (không có hằng nào nằm trong component);
+  `AppliedKnowledge.tsx` còn 112 dòng.

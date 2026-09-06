@@ -88,7 +88,8 @@ const ALLOWED_COLOR_SHADOW_COUNT: Record<string, number> = {
   'components/chat/PresenceDot.tsx': 1, // đang trực tuyến
   'pages/companion/Companion.tsx': 1, // studio đang mở
   'pages/domains/life/LifeGraph.tsx': 1, // tab đang chọn
-  'pages/learning/AppliedKnowledge.tsx': 14, // 4 tab + 10 simulator đang chọn
+  'pages/learning/AppliedKnowledge.tsx': 4, // 4 tab đang chọn (tách 2026-09-06)
+  'pages/learning/appliedKnowledge/tabs/SimulatorsLab.tsx': 10, // 10 simulator đang chọn
   'pages/learning/SubjectDetail.tsx': 2, // lớp/độ khó đang chọn
   'pages/learning/Subjects.tsx': 3, // 3 bộ lọc đang chọn
   'pages/subjects/english/Chat.tsx': 1, // cấp độ đang chọn
