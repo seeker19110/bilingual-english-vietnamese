@@ -147,15 +147,12 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   môn/khoá/hướng mới cho tới khi có số đo người học thật. Lý do: 3 tuần qua ~15 đợt việc/ngày,
   hầu hết là mở rộng chiều rộng (14 hướng lập trình, 8 khoá ngắn, 2 bộ chạy ngôn ngữ, 3 môn STEM
   nháp), trong khi chưa có một con số retention nào.
-- **[2026-09-06] Đo phễu học thật — nối nốt các sự kiện đã khai mà chưa bao giờ bắn.** Hạ tầng
-  ĐÃ CÓ: bảng `analytics_events` (migration `0006`), client `apps/dhcb/src/lib/analytics.ts`,
-  tab admin "Analytics" + DAU/WAU/MAU/returning từ `daily_usage`
-  (`apps/server/src/api/admin/analytics-summary.ts`, `admin-usage-stats.ts`). Lỗ hổng đo được:
-  whitelist có 6 sự kiện nhưng chỉ 3 (`landing_view`, `cta_click`, `share_click`) được gọi;
-  `signup`, `first_session_done`, `day2_return` **chưa nơi nào bắn** nên phễu admin luôn hiện 0
-  ở ba bước quan trọng nhất. Việc: bắn `signup` sau đăng ký thành công, `first_session_done` khi
-  hoàn tất phiên học đầu (Chat/Speaking/Writing/lộ trình), `day2_return` khi user đăng nhập ngày
-  thứ hai; test canh mỗi sự kiện bắn đúng 1 lần. Không cần migration, không cần đặc tả mới.
+- **[2026-09-06] ✅ Đo phễu học thật — XONG (`docs/changelog/0277-*.md`).** Hạ tầng đã có
+  (bảng `analytics_events`, `lib/analytics.ts`, tab admin Analytics + DAU/WAU/MAU). Lỗ hổng: 3/6
+  bước phễu (`signup`, `first_session_done`, `day2_return`) chưa nơi nào bắn → luôn 0. Sửa bằng
+  cách SUY RA từ `users.created_at` + `daily_usage` ngay trong `analytics-summary.ts` (một câu
+  SQL, đã chạy thật trên Postgres 16), không bắn từ client. Từ nay tab admin Analytics đọc
+  được phễu thật, có cả số quá khứ.
 - **[2026-09-06] Mời 5 người học thật, quan sát 2 tuần** (việc tay của người dùng, xem mục
   "Cần làm tay"). Sau 2 tuần đọc phễu + DAU/returning rồi mới quyết mảng nào đi sâu.
 

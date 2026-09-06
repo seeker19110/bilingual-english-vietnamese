@@ -58,10 +58,18 @@ describe('/api/analytics', () => {
 
   it('có Authorization hợp lệ → ghi kèm user_id', async () => {
     authState.user = { userId: 'user-1' }
-    const resp = await handler(makeRequest({ event: 'signup' }, true))
+    const resp = await handler(makeRequest({ event: 'share_click' }, true))
     expect(resp.status).toBe(200)
     const [, params] = query.mock.calls[0] as [string, unknown[]]
     expect(params[1]).toBe('user-1')
+  })
+
+  it('signup/first_session_done/day2_return KHÔNG còn nhận từ client (suy ra ở server) → 400', async () => {
+    for (const event of ['signup', 'first_session_done', 'day2_return']) {
+      const resp = await handler(makeRequest({ event }, true))
+      expect(resp.status).toBe(400)
+    }
+    expect(query).not.toHaveBeenCalled()
   })
 
   it('field optional thiếu không crash, ghi null', async () => {

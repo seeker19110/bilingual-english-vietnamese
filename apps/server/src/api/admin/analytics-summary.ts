@@ -5,6 +5,15 @@
 //
 // GET /api/analytics-summary?days=14  (cần đăng nhập — cookie, user phải nằm trong ADMIN_EMAILS)
 // Trả về: tổng số theo event trong N ngày gần nhất + số liệu theo ngày cho biểu đồ đơn giản.
+//
+// [2026-09-06] Ba bước phễu `signup` · `first_session_done` · `day2_return` KHÔNG còn là sự kiện
+// client bắn lên (whitelist từng khai nhưng chưa nơi nào gọi → phễu admin luôn 0 ở đúng ba bước
+// quan trọng nhất). Nay SUY RA từ bảng có thẩm quyền — `users.created_at` + `daily_usage` — nên
+// không thể quên bắn, không bị chặn quảng cáo, và có luôn số quá khứ. Định nghĩa (đoàn hệ = user
+// tạo trong cửa sổ N ngày, ngày theo giờ VN như `daily_usage.day`):
+//   signup             — ngày tạo tài khoản
+//   first_session_done — ngày ĐẦU TIÊN có bất kỳ lượt dùng nào (chat/viết/nói/học/phát âm/code)
+//   day2_return        — ngày đầu tiên có lượt dùng SAU ngày đăng ký (quay lại ít nhất 1 ngày)
 
 import { getPgPool } from '@dhcb/core-db/pgPool'
 import {
@@ -26,6 +35,42 @@ interface DailyRow {
   event: string
   count: number
 }
+
+// Cột lượt dùng của `daily_usage` — có > 0 ở bất kỳ cột nào = "đã học thật" trong ngày đó.
+// Khớp `admin-usage-stats.ts`; thêm cột đếm mới thì thêm vào đây.
+const USAGE_SUM =
+  'd.chat_count + d.writing_count + d.speaking_count + d.stt_count + d.learn_count + d.pronounce_count + d.code_feedback_count'
+
+// Một câu SQL, ba bước phễu, cùng đoàn hệ. `daily_usage.day` đã là 'YYYY-MM-DD' giờ VN
+// (`vnDateStr()` ở core-billing/usage.ts) nên so chuỗi với ngày đăng ký đổi sang giờ VN là đúng.
+const FUNNEL_SQL = `
+  with cohort as (
+    select id,
+           to_char(created_at at time zone 'Asia/Ho_Chi_Minh', 'YYYY-MM-DD') as signup_day
+    from public.users
+    where created_at >= now() - ($1 || ' days')::interval
+  ),
+  active as (
+    select d.user_id, d.day
+    from public.daily_usage d
+    where (${USAGE_SUM}) > 0
+  ),
+  first_session as (
+    select c.id, min(a.day) as day
+    from cohort c join active a on a.user_id = c.id
+    group by c.id
+  ),
+  day2 as (
+    select c.id, min(a.day) as day
+    from cohort c join active a on a.user_id = c.id and a.day > c.signup_day
+    group by c.id
+  )
+  select 'signup' as event, signup_day as day, count(*)::int as count from cohort group by 2
+  union all
+  select 'first_session_done', day, count(*)::int from first_session group by 2
+  union all
+  select 'day2_return', day, count(*)::int from day2 group by 2
+  order by 2 asc`
 
 export default async function handler(req: Request): Promise<Response> {
   const allHeaders = { ...getCorsHeaders(req), ...SECURITY_HEADERS }
@@ -67,12 +112,15 @@ export default async function handler(req: Request): Promise<Response> {
     [days],
   )
 
+  const { rows: funnelRows } = await pool.query<DailyRow>(FUNNEL_SQL, [days])
+
   const totalsByEvent: Record<string, number> = {}
-  for (const row of rows) {
+  for (const row of [...rows, ...funnelRows]) {
     totalsByEvent[row.event] = (totalsByEvent[row.event] ?? 0) + row.count
   }
 
-  return jsonResponse({ days, daily: rows, totalsByEvent }, 200, allHeaders)
+  const daily = [...rows, ...funnelRows].sort((a, b) => a.day.localeCompare(b.day))
+  return jsonResponse({ days, daily, totalsByEvent }, 200, allHeaders)
 }
 
 export const config = { runtime: 'edge' }

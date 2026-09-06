@@ -135,8 +135,13 @@ export default function AdminAnalyticsPanel() {
         <>
           {/* Tổng theo event */}
           <section className="bg-zinc-900/80 border border-zinc-800/80 rounded-2xl p-4">
-            <p className="text-sm font-semibold text-white mb-3">
+            <p className="text-sm font-semibold text-white mb-1">
               Tổng {summary.days} ngày gần đây
+            </p>
+            <p className="text-xs text-zinc-400 mb-3">
+              Ba bước &quot;Đăng ký&quot; · &quot;Phiên học đầu&quot; · &quot;Quay lại ngày thứ
+              2&quot; tính từ tài khoản tạo trong cửa sổ này (bảng users + daily_usage), không phải
+              sự kiện client gửi lên.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {eventKeys.map((key) => (
