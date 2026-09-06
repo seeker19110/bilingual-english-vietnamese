@@ -183,8 +183,9 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
   thư mục `practice/` 9 file (`0279`). ✅ `Lessons.tsx` 1.693 → trang chính 241 dòng + thư mục
   `lessons/` 6 file (`0280`); `LessonView.tsx` còn 1.018 dòng vì chế độ Đóng vai lồng chung
   state — tách tiếp cần đặc tả ngắn. Còn: `AppliedKnowledge.tsx` 1.942 (**một hàm
-  component 42 `useState`, không tách bằng dời mã được** — cần thiết kế lại thành section
-  component, đợt riêng có đặc tả ngắn).
+  component 42 `useState`, không tách bằng dời mã được**) — **đặc tả đã viết, CHỜ DUYỆT:**
+  `docs/specs/2026-09-06-tach-applied-knowledge-theo-simulator.md` (10 simulator + 4 tab thành
+  component riêng; cần người dùng chốt phương án A/B về "nhớ giá trị khi đổi simulator").
 - **Rà lại sau vài ngày:** log Redis (`pm2 logs dhcb --err`) sau khi VPS có swap — còn ~7 lần
   rớt/ngày thì đào tiếp, giảm hẳn thì đóng nợ (chi tiết ở "Nợ kỹ thuật còn mở").
 - **Đã kiểm 2026-09-06, KHÔNG cần làm:** (1) Zod — mọi handler API có đọc `req.body/query/params`
