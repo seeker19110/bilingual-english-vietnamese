@@ -43,6 +43,6 @@ file — nên đây vẫn là dời mã, bằng chứng chính là so DOM/ảnh,
 
 ## Nghiệm thu
 
-- Ngày · PR: 2026-09-06 · PR #TBD.
+- Ngày · PR: 2026-09-06 · PR #870.
 - Ảnh Tầng 8b: xem `docs/changelog/0282`.
 - Lệch phát hiện thêm: xem `docs/changelog/0282` mục "Phát hiện bên lề".

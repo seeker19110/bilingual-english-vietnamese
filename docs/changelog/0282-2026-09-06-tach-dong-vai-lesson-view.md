@@ -1,6 +1,6 @@
 # 0282 — 2026-09-06 — Tách chế độ "Đóng vai" khỏi `LessonView.tsx` (1.016 → 699 dòng)
 
-**PR:** #TBD · **Loại:** `refactor(english)` · **Nhánh:** `claude/phuong-an-a-rgkgoc` ·
+**PR:** #870 · **Loại:** `refactor(english)` · **Nhánh:** `claude/phuong-an-a-rgkgoc` ·
 **Đặc tả ngắn:** `docs/specs/2026-09-06-tach-dong-vai-lesson-view.md`
 
 ## Việc đã làm
