@@ -92,7 +92,7 @@ const ALLOWED_COLOR_SHADOW_COUNT: Record<string, number> = {
   'pages/learning/SubjectDetail.tsx': 2, // lớp/độ khó đang chọn
   'pages/learning/Subjects.tsx': 3, // 3 bộ lọc đang chọn
   'pages/subjects/english/Chat.tsx': 1, // cấp độ đang chọn
-  'pages/subjects/english/Lessons.tsx': 1, // dòng hội thoại đang đọc
+  'pages/subjects/english/lessons/LessonView.tsx': 1, // dòng hội thoại đang đọc (tách từ Lessons.tsx 2026-09-06)
   'pages/subjects/english/Speaking.tsx': 2, // cấp độ đang chọn + đang ghi âm
 }
 
@@ -152,7 +152,9 @@ const ALLOWED_PULSE_COUNT: Record<string, number> = {
   'components/CefrLessonViews.tsx': 3, // dòng đang đọc + lượt đang nói + nút "Dừng Ghi Âm"
   'pages/subjects/english/CefrLevelPage.tsx': 6, // skeleton tải (aria-busy)
   'pages/subjects/english/Challenge.tsx': 2, // skeleton media + đang ghi âm (fallback không video)
-  'pages/subjects/english/Lessons.tsx': 5, // dòng đang đọc + lượt đang nói + audio đang phát + nút ghi âm + đang lắng nghe
+  // Lessons.tsx tách thành lessons/ ngày 2026-09-06 — cùng 5 chỗ, chỉ đổi file.
+  'pages/subjects/english/lessons/LessonView.tsx': 4, // dòng đang đọc + lượt đang nói + audio đang phát + nút ghi âm
+  'pages/subjects/english/lessons/InlinePronounce.tsx': 1, // đang lắng nghe
 }
 
 const ALLOWED_PING_COUNT: Record<string, number> = {
