@@ -177,15 +177,14 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
 
 ### Ưu tiên 3 — kỹ thuật (nhỏ, đo được, không đổi hành vi)
 
-- **Tách 4 file giao diện > 1.700 dòng** — điểm nóng sửa là dễ gãy. Mỗi file một PR, bắt buộc
-  Tầng 8b (ảnh chụp trước/sau 1440px + 390px). ✅ `StudyTabs.tsx` 2.071 → thư mục `studyTabs/`
-  6 file + barrel 23 dòng (`docs/changelog/0278-*.md`). ✅ `Practice.tsx` 1.752 → hub 743 dòng +
-  thư mục `practice/` 9 file (`0279`). ✅ `Lessons.tsx` 1.693 → trang chính 241 dòng + thư mục
-  `lessons/` 6 file (`0280`); `LessonView.tsx` còn 1.018 dòng vì chế độ Đóng vai lồng chung
-  state — tách tiếp cần đặc tả ngắn. Còn: `AppliedKnowledge.tsx` 1.942 (**một hàm
-  component 42 `useState`, không tách bằng dời mã được**) — **đặc tả đã viết, CHỜ DUYỆT:**
-  `docs/specs/2026-09-06-tach-applied-knowledge-theo-simulator.md` (10 simulator + 4 tab thành
-  component riêng; cần người dùng chốt phương án A/B về "nhớ giá trị khi đổi simulator").
+- **Tách 4 file giao diện > 1.700 dòng** — ✅ XONG cả 4 (mỗi file một PR, có Tầng 8b):
+  `StudyTabs.tsx` 2.071 → `studyTabs/` (`docs/changelog/0278`) · `Practice.tsx` 1.752 → `practice/`
+  (`0279`) · `Lessons.tsx` 1.693 → `lessons/` (`0280`) · `AppliedKnowledge.tsx` 1.942 → trang 112
+  dòng + `appliedKnowledge/` 14 file, state theo từng simulator — **phương án A**, giá trị nhập
+  không còn được nhớ khi đổi simulator (`0281`, đặc tả
+  `docs/specs/2026-09-06-tach-applied-knowledge-theo-simulator.md`). Còn dở có chủ ý:
+  `lessons/LessonView.tsx` 1.018 dòng vì chế độ Đóng vai lồng chung state — tách tiếp cần đặc
+  tả ngắn.
 - **Rà lại sau vài ngày:** log Redis (`pm2 logs dhcb --err`) sau khi VPS có swap — còn ~7 lần
   rớt/ngày thì đào tiếp, giảm hẳn thì đóng nợ (chi tiết ở "Nợ kỹ thuật còn mở").
 - **Đã kiểm 2026-09-06, KHÔNG cần làm:** (1) Zod — mọi handler API có đọc `req.body/query/params`
