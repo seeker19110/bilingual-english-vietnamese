@@ -1,6 +1,6 @@
 # 0280 — 2026-09-06 — Tách `Lessons.tsx` (1.693 dòng) thành thư mục `lessons/`
 
-**PR:** (điền khi tạo) · **Loại:** `refactor(english)` · **Nhánh:** `claude/danh-gia-sau-du-an-tpvud1`
+**PR:** #868 · **Loại:** `refactor(english)` · **Nhánh:** `claude/danh-gia-sau-du-an-tpvud1`
 
 ## Việc đã làm
 
