@@ -179,8 +179,11 @@ wc -l`), đừng cộng nhẩm — ghi chú trước đó từng ghi `fairy-tale
 
 - **Tách 4 file giao diện > 1.700 dòng** — điểm nóng sửa là dễ gãy. Mỗi file một PR, bắt buộc
   Tầng 8b (ảnh chụp trước/sau 1440px + 390px). ✅ `StudyTabs.tsx` 2.071 → thư mục `studyTabs/`
-  6 file + barrel 23 dòng (`docs/changelog/0278-*.md`). Còn: `AppliedKnowledge.tsx` 1.942 ·
-  `Practice.tsx` 1.752 · `Lessons.tsx` 1.693.
+  6 file + barrel 23 dòng (`docs/changelog/0278-*.md`). ✅ `Practice.tsx` 1.752 → hub 743 dòng +
+  thư mục `practice/` 9 file (`0279`). Còn: `Lessons.tsx` 1.693 (tách được một phần thuần dời;
+  `LessonView` ~970 dòng cần tách chế độ Đóng vai) · `AppliedKnowledge.tsx` 1.942 (**một hàm
+  component 42 `useState`, không tách bằng dời mã được** — cần thiết kế lại thành section
+  component, đợt riêng có đặc tả ngắn).
 - **Rà lại sau vài ngày:** log Redis (`pm2 logs dhcb --err`) sau khi VPS có swap — còn ~7 lần
   rớt/ngày thì đào tiếp, giảm hẳn thì đóng nợ (chi tiết ở "Nợ kỹ thuật còn mở").
 - **Đã kiểm 2026-09-06, KHÔNG cần làm:** (1) Zod — mọi handler API có đọc `req.body/query/params`
