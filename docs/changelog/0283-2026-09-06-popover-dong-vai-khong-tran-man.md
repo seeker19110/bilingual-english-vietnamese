@@ -1,6 +1,6 @@
 # 0283 — 2026-09-06 — Popover "Đóng vai" không còn tràn ra ngoài màn hình hẹp
 
-**PR:** #TBD · **Loại:** `fix(english)` · **Nhánh:** `claude/phuong-an-a-rgkgoc`
+**PR:** #871 · **Loại:** `fix(english)` · **Nhánh:** `claude/phuong-an-a-rgkgoc`
 
 ## Việc đã làm
 
