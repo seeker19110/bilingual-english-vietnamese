@@ -154,7 +154,8 @@ const ALLOWED_PULSE_COUNT: Record<string, number> = {
   'pages/subjects/english/CefrLevelPage.tsx': 6, // skeleton tải (aria-busy)
   'pages/subjects/english/Challenge.tsx': 2, // skeleton media + đang ghi âm (fallback không video)
   // Lessons.tsx tách thành lessons/ ngày 2026-09-06 — cùng 5 chỗ, chỉ đổi file.
-  'pages/subjects/english/lessons/LessonView.tsx': 4, // dòng đang đọc + lượt đang nói + audio đang phát + nút ghi âm
+  'pages/subjects/english/lessons/LessonView.tsx': 3, // dòng đang đọc + lượt đang nói + audio đang phát
+  'pages/subjects/english/lessons/RolePlayTurnControls.tsx': 1, // nút "Dừng ghi âm" (tách khỏi LessonView 2026-09-06)
   'pages/subjects/english/lessons/InlinePronounce.tsx': 1, // đang lắng nghe
 }
 
